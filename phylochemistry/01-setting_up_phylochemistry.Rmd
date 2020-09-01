@@ -2,6 +2,15 @@
 
 `phylochemistry` is not just a set of functions that helps with analyses. It is also a conceptual and organizational framework that helps you perform analyses efficiently and with versatility. It takes a few minutes to understand and set up a phylochemistry analysis, but that investment will be paid back many-fold over the course of a project's lifetime.
 
+## Installing `phylochemistry` directly from github and view documentation contents
+
+```{r}
+devtools::install_github("LucasBusta/phylochemistry", quiet = FALSE, force = TRUE)
+packages <- c("phylochemistry")
+lapply(packages, require, character.only = TRUE)
+help(package = "phylochemistry")
+```
+
 ## Conventions in `phylochemsitry`
 
 ### File paths and directory paths

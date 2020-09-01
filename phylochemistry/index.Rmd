@@ -97,12 +97,3 @@ For us to run our analyses, we need to install a set of add-on functions that ex
 ```{r}
 install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 ```
-
-## Installing `phylochemistry` directly from github and view documentation contents
-
-```{r}
-devtools::install_github("LucasBusta/phylochemistry", quiet = FALSE, force = TRUE)
-packages <- c("phylochemistry")
-lapply(packages, require, character.only = TRUE)
-help(package = "phylochemistry")
-```
