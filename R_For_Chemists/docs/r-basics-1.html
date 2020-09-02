@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 R Basics 1 | R For Chemists</title>
+  <meta name="description" content="Textbook R For Chemists." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 R Basics 1 | R For Chemists" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Textbook R For Chemists." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 R Basics 1 | R For Chemists" />
+  
+  <meta name="twitter:description" content="Textbook R For Chemists." />
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2020-09-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="installation.html"/>
+<link rel="next" href="visualization.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  { background-color: #f8f8f8; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installation</a><ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-r"><i class="fa fa-check"></i><b>2.1</b> Installing <code>R</code></a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
+<li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
+<li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="r-basics-1.html"><a href="r-basics-1.html"><i class="fa fa-check"></i><b>3</b> R Basics 1</a><ul>
+<li class="chapter" data-level="3.1" data-path="r-basics-1.html"><a href="r-basics-1.html#before-we-start"><i class="fa fa-check"></i><b>3.1</b> Before we start…</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="r-basics-1.html"><a href="r-basics-1.html#help"><i class="fa fa-check"></i><b>3.1.1</b> Help</a></li>
+<li class="chapter" data-level="3.1.2" data-path="r-basics-1.html"><a href="r-basics-1.html#syntax"><i class="fa fa-check"></i><b>3.1.2</b> Syntax</a></li>
+<li class="chapter" data-level="3.1.3" data-path="r-basics-1.html"><a href="r-basics-1.html#paths"><i class="fa fa-check"></i><b>3.1.3</b> Paths</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="r-basics-1.html"><a href="r-basics-1.html#functions"><i class="fa fa-check"></i><b>3.2</b> Functions</a></li>
+<li class="chapter" data-level="3.3" data-path="r-basics-1.html"><a href="r-basics-1.html#load-the-tidyverse-librarypackage"><i class="fa fa-check"></i><b>3.3</b> Load the tidyverse library/package</a></li>
+<li class="chapter" data-level="3.4" data-path="r-basics-1.html"><a href="r-basics-1.html#read-in-the-algae_chemistry-data.-the-quotes-are-critical-pc-forward-slash-mac-backward-slash"><i class="fa fa-check"></i><b>3.4</b> Read in the algae_chemistry data. The quotes are critical! ## PC = forward slash ## Mac = backward slash</a></li>
+<li class="chapter" data-level="3.5" data-path="r-basics-1.html"><a href="r-basics-1.html#display-the-contents-of-the-dataset"><i class="fa fa-check"></i><b>3.5</b> Display the contents of the dataset</a></li>
+<li class="chapter" data-level="3.6" data-path="r-basics-1.html"><a href="r-basics-1.html#lets-filter-the-dataset-to-only-show-abundances-of-fatty-acids-fas"><i class="fa fa-check"></i><b>3.6</b> Let’s filter the dataset to only show abundances of fatty acids (“FAs”)</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="visualization.html"><a href="visualization.html"><i class="fa fa-check"></i><b>4</b> Visualization</a><ul>
+<li class="chapter" data-level="4.1" data-path="visualization.html"><a href="visualization.html#setting-up-a-ggplot-step-1-define"><i class="fa fa-check"></i><b>4.1</b> Setting up a ggplot! step 1: define</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R For Chemists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="r-basics-1" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> R Basics 1</h1>
+<p>Now that we’ve got R, RStudio, and the <code>tidyverse</code> installed, we’re going to look at a few core concepts in R.</p>
+<div id="before-we-start" class="section level2">
+<h2><span class="header-section-number">3.1</span> Before we start…</h2>
+<div id="help" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> Help</h3>
+<p>Throughout your time with R, you will probably want help. I ceratinly do. You can use a question mark <code>?</code> to get help with many different concepts. You can just put it in front of the thing you want help with. We’ll see an example in just a minute…</p>
+</div>
+<div id="syntax" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> Syntax</h3>
+<p>Throughout this book, we’ll use this <code>&lt;notation&gt;</code> to indicate a place where the requested item that corresponds to your situation. For example, if I am instructed to run this command: <code>print(&quot;&lt;your_name_here&gt;&quot;)</code>, I would type:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">print</span>(<span class="st">&quot;Luke&quot;</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;Luke&quot;</code></pre>
+<p>Computers are very powerful but can be dumb at times. They are not very good with unexpected characters - they are often particularly sensitive when it comes to spaces <code></code>, slashes <code>\</code> <code>/</code>, equal signs <code>=</code> (vs. <code>==</code>), and quotes <code>&quot;</code>. This book will try to warn you when syntax issues may arise. To try and prevent issues, this book will also use snake case (see the image below) - consider doing the same to avoid problems!</p>
+<p><img src="http://lucasbusta.github.io/phylochemistry/figures/in_that_case.png" style="display: block; margin: auto;" /></p>
+</div>
+<div id="paths" class="section level3">
+<h3><span class="header-section-number">3.1.3</span> Paths</h3>
+<p>To analyze data on your own computer, you will need to know the “path” to your data. This is essentially the street address of your data on your computer’s hard drive. Paths look different on Mac and PC.</p>
+<ul>
+<li>On Mac: <code>/Users/lucasbusta/Documents/sample_data_set.csv</code> (note the forward slashes!)</li>
+<li>On PC: <code>C:\My Computer\Documents\sample_data_set.csv</code> (note the backward slashes!)</li>
+</ul>
+<p>You can quickly find paths to files via the following:</p>
+<ul>
+<li>On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click “Copy <file> as Pathname”</li>
+<li>On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click “Copy As Path”</li>
+</ul>
+</div>
+</div>
+<div id="functions" class="section level2">
+<h2><span class="header-section-number">3.2</span> Functions</h2>
+<p>Ok, we’ve got some bookkeeping out of the way. Let’s get down to working with data! For this we need functions:</p>
+<ul>
+<li>A function is a command that tells R to perform an action!</li>
+<li>A function begins and ends with parentheses: <code>this_is_a_function()</code></li>
+<li>The stuff inside the parentheses are the details of how you want the function to perform its action: <code>run_this_analysis(on_this_data)</code></li>
+</ul>
+<p>Let’s illustrate this with an example. We’re going to use a function from the <code>tidyverse</code> called <code>read_csv</code>. We’ll use it to read some data from a path on our computer. We’ll run <code>read_csv(&quot;&lt;path_to_your_data&gt;&quot;)</code>. Note the use of QUOTES! Those are necessary. Also make sure your path uses appropriate slashes for your operating system.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read_csv()</span></a></code></pre></div>
+</div>
+<div id="load-the-tidyverse-librarypackage" class="section level2">
+<h2><span class="header-section-number">3.3</span> Load the tidyverse library/package</h2>
+<p>library(tidyverse)</p>
+</div>
+<div id="read-in-the-algae_chemistry-data.-the-quotes-are-critical-pc-forward-slash-mac-backward-slash" class="section level2">
+<h2><span class="header-section-number">3.4</span> Read in the algae_chemistry data. The quotes are critical! ## PC = forward slash ## Mac = backward slash</h2>
+<p>algae_chemistry &lt;- read_csv(“/Users/lucasbusta/Desktop/algae_data.csv”)</p>
+</div>
+<div id="display-the-contents-of-the-dataset" class="section level2">
+<h2><span class="header-section-number">3.5</span> Display the contents of the dataset</h2>
+<p>algae_chemistry</p>
+</div>
+<div id="lets-filter-the-dataset-to-only-show-abundances-of-fatty-acids-fas" class="section level2">
+<h2><span class="header-section-number">3.6</span> Let’s filter the dataset to only show abundances of fatty acids (“FAs”)</h2>
+<p>algae_chemistry_small &lt;- filter(algae_chemistry, chemical_species == “FAs”)</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="installation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="visualization.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "fixed"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

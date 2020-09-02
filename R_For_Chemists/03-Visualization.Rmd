@@ -1,0 +1,5 @@
+# Visualization
+
+## Setting up a ggplot! step 1: define
+ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
+  geom_violin(aes(color = harvesting_regime, size = replicate))

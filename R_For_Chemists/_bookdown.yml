@@ -1,0 +1,12 @@
+book_filename: "bio723-book"
+language:
+  ui:
+    chapter_name: "Chapter "
+delete_merged_file: true
+output_dir: "docs"
+rmd_files: [
+"index.Rmd",
+"01-Installation.Rmd",
+"02-R_Basics_1.Rmd",
+"03-Visualization.Rmd",
+]
