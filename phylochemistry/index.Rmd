@@ -68,7 +68,7 @@ Once we install R, we can install RStudio, which is essentially a convenient way
 
 If you have trouble installing RStudio please google "Install RStudio Mac" or "Install RStudio PC" and following one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.
 
-## Check your installations of R and RStudio
+## Verifying installations
 
 Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
 
@@ -76,11 +76,12 @@ Open RStudio by clicking on the appropriate file in your applications folder, or
 knitr::include_graphics('http://thebustalab.github.io/phylochemistry/figures/rstudio_components.png', dpi = NA)
 ```
 
-The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R.
+The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.
 
 ```{r}
 head(Indometh)
 ```
+
 
 Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin dataset in a basic way.
 
@@ -92,8 +93,19 @@ If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and th
 
 ## Installing the `tidyverse`
 
-For us to run our analyses, we need to install a set of add-on functions that expand R's capabilities. These functions are collected in something called the `tidyverse`, a very well-known and widely-used R package developed by Hadley Wickham. In the R Console, type `install.packages("tidyverse", repos = "http://cran.us.r-project.org")` to install the tidyverse. RSudio might ask you: "Do you want to install from sources the packages which need compilation? (Yes/no/cancel)", for now, type `no` and press enter.
+For us to run our analyses, we need to install a set of add-on functions that expand R's capabilities. These functions are collected in something called the `tidyverse`, a very well-known and widely-used R package developed by Hadley Wickham. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type `install.packages("tidyverse", repos = "http://cran.us.r-project.org")` to install the tidyverse. RSudio might ask you: "Do you want to install from sources the packages which need compilation? (Yes/no/cancel)", for now, type `no` and press enter.
 
 ```{r}
 install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 ```
+
+Let's make sure your version of the `tidyverse` is installed correctly. To do this, we will load the `tidyverse` library/package inside of an R session. We can do this using `library(tidyverse)`. Let's try it:
+```{r}
+library(tidyverse)
+```
+
+If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the `tidyverse`.
+
+## Importing data
+
+Let's import some data and get down to business! First, remember that RSudio operates as a session. 

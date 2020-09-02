@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-09-01" />
+<meta name="date" content="2020-09-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -130,8 +130,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#installing-r"><i class="fa fa-check"></i><b>1.1</b> Installing <code>R</code></a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#installing-rstudio"><i class="fa fa-check"></i><b>1.2</b> Installing <code>RStudio</code></a></li>
-<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#check-your-installations-of-r-and-rstudio"><i class="fa fa-check"></i><b>1.3</b> Check your installations of R and RStudio</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#verifying-installations"><i class="fa fa-check"></i><b>1.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>1.4</b> Installing the <code>tidyverse</code></a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#importing-data"><i class="fa fa-check"></i><b>1.5</b> Importing data</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html"><i class="fa fa-check"></i><b>2</b> Setting up a <code>phylochemistry</code> analysis</a><ul>
 <li class="chapter" data-level="2.1" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#installing-phylochemistry-directly-from-github-and-view-documentation-contents"><i class="fa fa-check"></i><b>2.1</b> Installing <code>phylochemistry</code> directly from github and view documentation contents</a></li>
@@ -170,7 +171,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Phylochemistry</h1>
 <p class="author"><em>Lucas Busta</em></p>
-<p class="date"><em>2020-09-01</em></p>
+<p class="date"><em>2020-09-02</em></p>
 </div>
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
@@ -201,11 +202,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <p>If you have trouble installing RStudio please google “Install RStudio Mac” or “Install RStudio PC” and following one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.</p>
 </div>
-<div id="check-your-installations-of-r-and-rstudio" class="section level2">
-<h2><span class="header-section-number">1.3</span> Check your installations of R and RStudio</h2>
+<div id="verifying-installations" class="section level2">
+<h2><span class="header-section-number">1.3</span> Verifying installations</h2>
 <p>Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.</p>
 <p><img src="http://thebustalab.github.io/phylochemistry/figures/rstudio_components.png" style="display: block; margin: auto;" /></p>
-<p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indometh)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R.</p>
+<p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indometh)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">head</span>(Indometh)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">## # A tibble: 6 x 3</span></a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">##   Subject  time  conc</span></a>
@@ -223,11 +224,26 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="installing-the-tidyverse" class="section level2">
 <h2><span class="header-section-number">1.4</span> Installing the <code>tidyverse</code></h2>
-<p>For us to run our analyses, we need to install a set of add-on functions that expand R’s capabilities. These functions are collected in something called the <code>tidyverse</code>, a very well-known and widely-used R package developed by Hadley Wickham. In the R Console, type <code>install.packages(&quot;tidyverse&quot;, repos = &quot;http://cran.us.r-project.org&quot;)</code> to install the tidyverse. RSudio might ask you: “Do you want to install from sources the packages which need compilation? (Yes/no/cancel)”, for now, type <code>no</code> and press enter.</p>
+<p>For us to run our analyses, we need to install a set of add-on functions that expand R’s capabilities. These functions are collected in something called the <code>tidyverse</code>, a very well-known and widely-used R package developed by Hadley Wickham. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type <code>install.packages(&quot;tidyverse&quot;, repos = &quot;http://cran.us.r-project.org&quot;)</code> to install the tidyverse. RSudio might ask you: “Do you want to install from sources the packages which need compilation? (Yes/no/cancel)”, for now, type <code>no</code> and press enter.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;http://cran.us.r-project.org&quot;</span>)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">## </span></a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">## The downloaded binary packages are in</span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">##  /var/folders/d4/m9ll00q10hdd6kz0vk9q0nx80000gn/T//RtmpExJdaJ/downloaded_packages</span></a></code></pre></div>
+<p>Let’s make sure your version of the <code>tidyverse</code> is installed correctly. To do this, we will load the <code>tidyverse</code> library/package inside of an R session. We can do this using <code>library(tidyverse)</code>. Let’s try it:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">## ✓ tibble  2.1.3     ✓ dplyr   0.8.4</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">## ✓ tidyr   1.0.2     ✓ stringr 1.4.0</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">## ✓ readr   1.3.1     ✓ forcats 0.4.0</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">## x dplyr::filter() masks stats::filter()</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">## x dplyr::lag()    masks stats::lag()</span></a></code></pre></div>
+<p>If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the <code>tidyverse</code>.</p>
+</div>
+<div id="importing-data" class="section level2">
+<h2><span class="header-section-number">1.5</span> Importing data</h2>
+<p>Let’s import some data and get down to business! First, remember that RSudio operates as a session.</p>
 
 </div>
 </div>
