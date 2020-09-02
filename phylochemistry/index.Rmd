@@ -76,7 +76,7 @@ Open RStudio by clicking on the appropriate file in your applications folder, or
 knitr::include_graphics('http://thebustalab.github.io/phylochemistry/figures/rstudio_components.png', dpi = NA)
 ```
 
-The R Console window should have a `>` in it. Type `head(Indomet)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R.
+The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R.
 
 ```{r}
 head(Indometh)

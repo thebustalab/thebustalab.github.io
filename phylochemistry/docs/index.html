@@ -134,10 +134,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>1.4</b> Installing the <code>tidyverse</code></a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html"><i class="fa fa-check"></i><b>2</b> Setting up a <code>phylochemistry</code> analysis</a><ul>
-<li class="chapter" data-level="2.1" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#conventions-in-phylochemsitry"><i class="fa fa-check"></i><b>2.1</b> Conventions in <code>phylochemsitry</code></a><ul>
-<li class="chapter" data-level="2.1.1" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#file-paths-and-directory-paths"><i class="fa fa-check"></i><b>2.1.1</b> File paths and directory paths</a></li>
-<li class="chapter" data-level="2.1.2" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#monolists"><i class="fa fa-check"></i><b>2.1.2</b> Monolists</a></li>
-<li class="chapter" data-level="2.1.3" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#recommendations"><i class="fa fa-check"></i><b>2.1.3</b> Recommendations</a></li>
+<li class="chapter" data-level="2.1" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#installing-phylochemistry-directly-from-github-and-view-documentation-contents"><i class="fa fa-check"></i><b>2.1</b> Installing <code>phylochemistry</code> directly from github and view documentation contents</a></li>
+<li class="chapter" data-level="2.2" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#conventions-in-phylochemsitry"><i class="fa fa-check"></i><b>2.2</b> Conventions in <code>phylochemsitry</code></a><ul>
+<li class="chapter" data-level="2.2.1" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#file-paths-and-directory-paths"><i class="fa fa-check"></i><b>2.2.1</b> File paths and directory paths</a></li>
+<li class="chapter" data-level="2.2.2" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#monolists"><i class="fa fa-check"></i><b>2.2.2</b> Monolists</a></li>
+<li class="chapter" data-level="2.2.3" data-path="setting-up-a-phylochemistry-analysis.html"><a href="setting-up-a-phylochemistry-analysis.html#recommendations"><i class="fa fa-check"></i><b>2.2.3</b> Recommendations</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="analyzing-chromatography-data-with-phylochemistry.html"><a href="analyzing-chromatography-data-with-phylochemistry.html"><i class="fa fa-check"></i><b>3</b> Analyzing chromatography data with <code>phylochemistry</code></a><ul>
@@ -204,7 +205,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.3</span> Check your installations of R and RStudio</h2>
 <p>Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.</p>
 <p><img src="http://thebustalab.github.io/phylochemistry/figures/rstudio_components.png" style="display: block; margin: auto;" /></p>
-<p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indomet)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R.</p>
+<p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indometh)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">head</span>(Indometh)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">## # A tibble: 6 x 3</span></a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">##   Subject  time  conc</span></a>
