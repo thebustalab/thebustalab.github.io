@@ -1,0 +1,14 @@
+# Exercises 1 {#Exercises_1}
+
+In this set of exercises we're going to practice importing, filtering, and plotting data. We're going to work with two datasets: (i) [algae_chemistry_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv) and (ii) [alaska_lake_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv). By clicking on those links you can download each dataset.
+
+**For these exercises, you will write your code and answers to any questions in the RStudio script editor, then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing any pathnames - so don't worry about compatibility for those).**
+
+## Importing data
+
+Import the algae chemistry data. Remember that `read_csv()` is part of the `tidyverse`, so that library needs to be loaded into your `R` session. Also remember that another option is to paste and run `readCSV <- function() { return(readr::read_csv(file.choose())) }` in your R Console, which then gives you access to the function `readCSV()`. That command doesn't require an input path, so you don't need to mess around with slashes and quotes. If you need examples of how to import data, please see the [Sections](#R_Basics_1) \@ref(#R_Basics_1) of this book.
+
+
+# Nedx thing
+
+

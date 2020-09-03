@@ -1,4 +1,4 @@
-# R Basics 1
+# R Basics 1 {#R_Basics_1}
 
 Now that we've got R, RStudio, and the `tidyverse` installed, we're going to look at a few core concepts in R.
 
