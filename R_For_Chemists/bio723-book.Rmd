@@ -364,3 +364,6 @@ ggplot(data = <algae_data>, aes(x = <something>, y = <something else>)) +
 ```
 
 What advantages does this one extra line provide over what you had to do in question 9?
+
+<!--chapter:end:index.Rmd-->
+
