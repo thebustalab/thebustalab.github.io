@@ -63,7 +63,7 @@ read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.cs
 You can think of objects as if they were "files" inside an R session where information can be stored. Let's try making an object. All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
 
 ```{r}
-algae_chemistry <- read_csv("/Users/lucasbusta/Desktop/algae_data.csv")
+algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 
 # Alternative:
 # algae_chemistry <- readCSV()
