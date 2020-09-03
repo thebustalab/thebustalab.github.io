@@ -33,6 +33,14 @@ You can quickly find paths to files via the following:
 * On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
 * On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
 
+On either operating system, if you don't want to type paths into your command line, another option is to define the following function within your R Session. You can do that by pasting the line below into your R Console and pressing enter.
+
+```{r}
+readCSV <- function() { return(readr::read_csv(file.choose())) }
+```
+
+Once that is done, you can use the command `readCSV()` to open up a navigation window and select your file that way. Cool!
+
 ## Functions
 
 Ok, we've got some bookkeeping out of the way. Let's get down to working with data! For this we need functions:
@@ -41,22 +49,41 @@ Ok, we've got some bookkeeping out of the way. Let's get down to working with da
 * A function begins and ends with parentheses: `this_is_a_function()`
 * The stuff inside the parentheses are the details of how you want the function to perform its action: `run_this_analysis(on_this_data)`
 
-Let's illustrate this with an example. We're going to use a function from the `tidyverse` called `read_csv`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES! Those are necessary. Also make sure your path uses appropriate slashes for your operating system.
+Let's illustrate this with an example. We're going to use a function from the `tidyverse` called `read_csv`. This means we need to first load the `tidyverse`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
 
 ```{r}
-read_csv("https://github.com/thebustalab/R_For_Chemists/sample_data/algae_data.csv")
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 ```
 
+** Note, we also could have imported this data by using `readCSV()` and then navigating to and selecting our file.
 
+## Objects
 
-## Load the tidyverse library/package
-  library(tidyverse)
+You can think of objects as if they were "files" inside an R session where information can be stored. Let's try making an object. All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
 
-## Read in the algae_chemistry data. The quotes are critical! ## PC = forward slash ## Mac = backward slash
-  algae_chemistry <- read_csv("/Users/lucasbusta/Desktop/algae_data.csv")
+```{r}
+algae_chemistry <- read_csv("/Users/lucasbusta/Desktop/algae_data.csv")
 
-## Display the contents of the dataset
-  algae_chemistry
+# Alternative:
+# algae_chemistry <- readCSV()
+```
 
-## Let's filter the dataset to only show abundances of fatty acids ("FAs")
-  algae_chemistry_small <- filter(algae_chemistry, chemical_species == "FAs")
+Now we have an object called `algae_chemistry`. We can examine the contents of that object by typing its name. For example:
+```{r}
+algae_chemistry
+```
+
+Cool! However, this is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_chemistry` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_chemistry` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
+
+```{r}
+filter(algae_chemistry, chemical_species == "FAs")
+```
+
+Cool! Now it's just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let's write this new, smaller dataset into a new object. For that we use `<-`, remember?
+
+```{r}
+algae_data_small <- filter(algae_chemistry, chemical_species == "FAs")
+```
+
+Now we have a nice, small table that we can use to practice data visualization. We'll do that in the next chapter.
