@@ -155,7 +155,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="Exercises-1.html"><a href="Exercises-1.html"><i class="fa fa-check"></i><b>5</b> Exercises 1</a><ul>
-<li class="chapter" data-level="5.1" data-path="Exercises-1.html"><a href="Exercises-1.html#part-1"><i class="fa fa-check"></i><b>5.1</b> Part 1:</a><ul>
+<li class="chapter" data-level="5.1" data-path="Exercises-1.html"><a href="Exercises-1.html#part-1-the-algae-dataset"><i class="fa fa-check"></i><b>5.1</b> Part 1: The Algae Dataset</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="Exercises-1.html"><a href="Exercises-1.html#question-1-importing-data"><i class="fa fa-check"></i><b>5.1.1</b> Question 1: Importing data</a></li>
 <li class="chapter" data-level="5.1.2" data-path="Exercises-1.html"><a href="Exercises-1.html#question-2-dataset-dimensions"><i class="fa fa-check"></i><b>5.1.2</b> Question 2: Dataset dimensions</a></li>
 <li class="chapter" data-level="5.1.3" data-path="Exercises-1.html"><a href="Exercises-1.html#question-3-objects"><i class="fa fa-check"></i><b>5.1.3</b> Question 3: Objects</a></li>
@@ -189,8 +189,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 5</span> Exercises 1</h1>
 <p>In this set of exercises we’re going to practice importing, filtering, and plotting data. We’re going to work with two datasets: (i) <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv">algae_chemistry_data.csv</a> and (ii) <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv">alaska_lake_data.csv</a>. By clicking on those links you can download each dataset.</p>
 <p><strong>For these exercises, you will write your code and answers to any questions in the RStudio script editor, then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don’t worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that specifies the answers to the questions asked below</strong></p>
-<div id="part-1" class="section level2">
-<h2><span class="header-section-number">5.1</span> Part 1:</h2>
+<div id="part-1-the-algae-dataset" class="section level2">
+<h2><span class="header-section-number">5.1</span> Part 1: The Algae Dataset</h2>
 <div id="question-1-importing-data" class="section level3">
 <h3><span class="header-section-number">5.1.1</span> Question 1: Importing data</h3>
 <p>Import the algae chemistry data. Remember that <code>read_csv()</code> is part of the <code>tidyverse</code>, so that library needs to be loaded into your <code>R</code> session. Also remember that another option is to paste and run <code>readCSV &lt;- function() { return(readr::read_csv(file.choose())) }</code> in your R Console, which then gives you access to the function <code>readCSV()</code>. That command doesn’t require an input path, so you don’t need to mess around with slashes and quotes. If you need examples of how to import data, please see the <a href="R-Basics-1.html#R_Basics_1">R Basics 1</a> section of this book.</p>
@@ -220,13 +220,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="question-5-plotting" class="section level3">
 <h3><span class="header-section-number">5.1.5</span> Question 5: Plotting</h3>
-<p>Make a ggplot that has algae strain on the x axis and abundance on the y axis. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points.</p>
+<p>Make a ggplot that has <code>algae_strain</code> on the x axis and <code>abundance</code> on the y axis. Remember about <code>aes()</code>. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points. If you need a refresher on how to make a ggplot, please refer to the <a href="Visualization-1.html#Visualization_1">Visualization 1</a> Section of this book.</p>
 <p>Which algae strain has the most abundant compound out of all the compounds in the dataset?</p>
 </div>
 <div id="question-6-plotting" class="section level3">
 <h3><span class="header-section-number">5.1.6</span> Question 6: Plotting</h3>
-<p>Make a ggplot that has abundance on the x axis and <code>chemical_species</code> on the y axis. Use points to represent each compound. You don’t need to color the points.</p>
-<p>Generally speaking, which class of chemical species are the most abundant in these algae strains?</p>
+<p>Make a ggplot that has <code>abundance</code> on the x axis and <code>chemical_species</code> on the y axis. Use points to represent each compound. You don’t need to color the points.</p>
+<p>Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)</p>
 </div>
 <div id="question-7-filtering-and-plotting" class="section level3">
 <h3><span class="header-section-number">5.1.7</span> Question 7: Filtering and plotting</h3>
@@ -243,25 +243,27 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">## )</span></a>
 <a class="sourceLine" id="cb20-11" data-line-number="11"><span class="kw">ggplot</span>(<span class="dt">data =</span> <span class="kw">filter</span>(algae_chemistry_data, chemical_species <span class="op">==</span><span class="st"> &quot;essential_Aas&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb20-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_point</span>()</a></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-23-1.png" width="576" /></p>
-<p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to harvesting_regime. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>.</p>
-<p>Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
-<p>Now change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>.</p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-31-1.png" width="576" /></p>
+<p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
 </div>
 <div id="question-8-filtering-and-plotting" class="section level3">
 <h3><span class="header-section-number">5.1.8</span> Question 8: Filtering and plotting</h3>
 </div>
 <div id="question-9-open-ended-plotting" class="section level3">
 <h3><span class="header-section-number">5.1.9</span> Question 9: Open-ended plotting</h3>
-<p>With the ease of modifying plots in ggplot, we can use graphics to quickly evaluate dataset quality. For this question, make a plot that checks to see whether any of the three replicates consistently have higher abundance than the others. Use filtered data so that just one algae strain is shown, an x and a y axis, and points to represent the measurements. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.</p>
-<p>Do you see any obvious bias across the replicates?</p>
+<p>Make a plot that checks to see which <code>chemical_species</code> were more abundant under light as opposed to heavy <code>harvesting_regime</code> in all three replicates. Use filtered data so that just one <code>algae_strain</code> is shown, an x and a y axis, and points to represent the measurements. Make the points <code>size = 5</code> and also set the point’s <code>alpha = 0.6</code>. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.</p>
 </div>
 <div id="question-10-a-peek-at-whats-to-come" class="section level3">
 <h3><span class="header-section-number">5.1.10</span> Question 10: A peek at what’s to come…</h3>
-<p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(harvesting_regime~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> <span class="op">&lt;</span>algae_data<span class="op">&gt;</span>, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="op">&lt;</span>something<span class="op">&gt;</span>, <span class="dt">y =</span> <span class="op">&lt;</span>something <span class="cf">else</span><span class="op">&gt;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="op">&lt;</span>maybe some things<span class="op">&gt;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw">facet_grid</span>(harvesting_regime<span class="op">~</span>algae_strain)</a></code></pre></div>
+<p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_data, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="op">&lt;</span>something<span class="op">&gt;</span>, <span class="dt">y =</span> <span class="op">&lt;</span>something <span class="cf">else</span><span class="op">&gt;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="op">&lt;</span>some things<span class="op">&gt;</span>), <span class="op">&lt;</span>some here too<span class="op">&gt;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw">facet_grid</span>(.<span class="op">~</span>algae_strain)</a></code></pre></div>
+<p>Also try, instead of <code>facet_grid(.~algae_strain)</code>, <code>facet_grid(algae_strain~.)</code> at the end of you plot command. (note the swap in the position of the <code>.~</code> relative to <code>algae_strain</code>). This means your code should look something like:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_data, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="op">&lt;</span>something<span class="op">&gt;</span>, <span class="dt">y =</span> <span class="op">&lt;</span>something <span class="cf">else</span><span class="op">&gt;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="op">&lt;</span>some things<span class="op">&gt;</span>), <span class="op">&lt;</span>some here too<span class="op">&gt;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw">facet_grid</span>(algae_strain<span class="op">~</span>.)</a></code></pre></div>
+<p>What advantages does this one extra line provide over what you had to do in question 9?</p>
 
 </div>
 </div>
