@@ -279,260 +279,260 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 
 In this set of exercises we're going to practice importing, filtering, and plotting data. We're going to work with two datasets: (i) [algae_chemistry_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv) and (ii) [alaska_lake_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv). By clicking on those links you can download each dataset.
 
-<!-- **For these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like [here](https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R). If you have any questions please let me know** -->
+**For these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like [here](https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R). If you have any questions please let me know**
 
-<!-- ## Part 1: Algae Chemistry Dataset -->
+## Part 1: Algae Chemistry Dataset
 
-<!-- ### Question 1: Importing data -->
+### Question 1: Importing data
 
-<!-- Import the algae chemistry data. Remember that `read_csv()` is part of the `tidyverse`, so that library needs to be loaded into your `R` session. Also remember that another option is to paste and run `readCSV <- function() { return(readr::read_csv(file.choose())) }` in your R Console, which then gives you access to the function `readCSV()`. That command doesn't require an input path, so you don't need to mess around with slashes and quotes. If you need examples of how to import data, please see the [R Basics 1](#R_Basics_1) section of this book. -->
+Import the algae chemistry data. Remember that `read_csv()` is part of the `tidyverse`, so that library needs to be loaded into your `R` session. Also remember that another option is to paste and run `readCSV <- function() { return(readr::read_csv(file.choose())) }` in your R Console, which then gives you access to the function `readCSV()`. That command doesn't require an input path, so you don't need to mess around with slashes and quotes. If you need examples of how to import data, please see the [R Basics 1](#R_Basics_1) section of this book.
 
-<!-- ```{r, include = FALSE} -->
-<!-- library(tidyverse) -->
-<!-- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv") -->
-<!-- ``` -->
+```{r, include = FALSE}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+```
 
-<!-- ### Question 2: Dataset dimensions -->
+### Question 2: Dataset dimensions
 
-<!-- How many rows and columns does the algae chemistry dataset have? (hint: when you display the dataset on your screen by typing its name into the console, dimensions are also displayed). Write the answer to this question in your R Script right below the code you use to find the answer. -->
+How many rows and columns does the algae chemistry dataset have? (hint: when you display the dataset on your screen by typing its name into the console, dimensions are also displayed). Write the answer to this question in your R Script right below the code you use to find the answer.
 
-<!-- ```{r, include = FALSE} -->
-<!-- library(tidyverse) -->
-<!-- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv") -->
-<!-- # 180 x 5 -->
-<!-- ``` -->
+```{r, include = FALSE}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+# 180 x 5
+```
 
-<!-- ### Question 3: Objects -->
+### Question 3: Objects
 
-<!-- Import the algae chemistry data and send it into a new object called `algae_chemistry_data`. Remember about `<-`. See the [R Basics 1](#R_Basics_1) section of this book if you need help. -->
+Import the algae chemistry data and send it into a new object called `algae_chemistry_data`. Remember about `<-`. See the [R Basics 1](#R_Basics_1) section of this book if you need help.
 
-<!-- ```{r, include = FALSE} -->
-<!-- library(tidyverse) -->
-<!-- algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv") -->
-<!-- ``` -->
+```{r, include = FALSE}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+```
 
-<!-- ### Question 4: Filtering -->
+### Question 4: Filtering
 
-<!-- #### A -->
+#### A
 
-<!-- Now that you have the algae data imported and stored in an object called `algae_chemistry_data`, filter the data so that only entries are shown for which the `chemical_species` is "FAs". What are the dimensions (i.e. number of rows and columns) of the resulting dataset? -->
+Now that you have the algae data imported and stored in an object called `algae_chemistry_data`, filter the data so that only entries are shown for which the `chemical_species` is "FAs". What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
-<!-- ```{r, include = FALSE} -->
-<!-- filter(algae_chemistry_data, chemical_species == "FAs") -->
-<!-- # 18 x 5 -->
-<!-- ``` -->
+```{r, include = FALSE}
+filter(algae_chemistry_data, chemical_species == "FAs")
+# 18 x 5
+```
 
 
-<!-- #### B -->
+#### B
 
-<!-- Now filter the dataset so that only entries for the `algae_strain` "Tsv1" are shown. What are the dimensions of the resulting dataset? -->
+Now filter the dataset so that only entries for the `algae_strain` "Tsv1" are shown. What are the dimensions of the resulting dataset?
 
-<!-- ```{r, include = FALSE} -->
-<!-- filter(algae_chemistry_data, algae_strain == "Tsv1") -->
-<!-- # 60 x 5 -->
-<!-- ``` -->
+```{r, include = FALSE}
+filter(algae_chemistry_data, algae_strain == "Tsv1")
+# 60 x 5
+```
 
-<!-- #### C -->
+#### C
 
-<!-- Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that `>` can be used in the filter command instead of `==`, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset? -->
+Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that `>` can be used in the filter command instead of `==`, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?
 
-<!-- ```{r, include = FALSE} -->
-<!-- filter(algae_chemistry_data, abundance > 250) -->
-<!-- # 71 x 5 -->
-<!-- ``` -->
+```{r, include = FALSE}
+filter(algae_chemistry_data, abundance > 250)
+# 71 x 5
+```
 
-<!-- ### Question 5: Plotting -->
+### Question 5: Plotting
 
-<!-- Make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axis. Remember about `aes()`. Use points (`geom_point()`) to represent each compound. You don't need to color the points. If you need a refresher on how to make a ggplot, please refer to the [Visualization 1](#Visualization_1) Section of this book. -->
+Make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axis. Remember about `aes()`. Use points (`geom_point()`) to represent each compound. You don't need to color the points. If you need a refresher on how to make a ggplot, please refer to the [Visualization 1](#Visualization_1) Section of this book.
 
-<!-- Which algae strain has the most abundant compound out of all the compounds in the dataset? -->
+Which algae strain has the most abundant compound out of all the compounds in the dataset?
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data = algae_chemistry_data, aes(x = algae_strain, y = abundance)) +  -->
-<!--   geom_point() -->
-<!-- #Tsv2 -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = algae_strain, y = abundance)) + 
+  geom_point()
+#Tsv2
+```
 
-<!-- ### Question 6: Plotting -->
+### Question 6: Plotting
 
-<!-- Make a ggplot that has `abundance` on the x axis and `chemical_species` on the y axis. Use points to represent each compound. You don't need to color the points. -->
+Make a ggplot that has `abundance` on the x axis and `chemical_species` on the y axis. Use points to represent each compound. You don't need to color the points.
 
-<!-- Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.) -->
+Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +  -->
-<!--   geom_point() -->
-<!-- #non_essential_Aas and essential_Aas -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) + 
+  geom_point()
+#non_essential_Aas and essential_Aas
+```
 
-<!-- ### Question 7: Filtering and plotting -->
+### Question 7: Filtering and plotting
 
-<!-- I am going to show you an example of how you can filter and plot at the same time: -->
+I am going to show you an example of how you can filter and plot at the same time:
 
-<!-- ```{r} -->
-<!-- library(tidyverse) -->
-<!-- algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv") -->
-<!-- ggplot(data = filter(algae_chemistry_data, chemical_species == "essential_Aas"), aes(x = algae_strain, y = abundance)) + -->
-<!--   geom_point() -->
-<!-- ``` -->
+```{r}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_chemistry_data, chemical_species == "essential_Aas"), aes(x = algae_strain, y = abundance)) +
+  geom_point()
+```
 
-<!-- Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`? -->
+Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
-<!-- ```{r, include = FALSE} -->
-<!-- library(tidyverse) -->
-<!-- algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv") -->
-<!-- ggplot(data = filter(algae_chemistry_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) + -->
-<!--   geom_point(aes(color = harvesting_regime), size = 5) -->
-<!-- # light harvesting -->
-<!-- ``` -->
+```{r, include = FALSE}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_chemistry_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) +
+  geom_point(aes(color = harvesting_regime), size = 5)
+# light harvesting
+```
 
-<!-- ### Question 8: Filtering and plotting -->
+### Question 8: Filtering and plotting
 
-<!-- Use a combination of filtering and plotting to show the abundance of the different chemical species in just the `algae_strain` called "Tsv1". Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime. -->
+Use a combination of filtering and plotting to show the abundance of the different chemical species in just the `algae_strain` called "Tsv1". Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.
 
-<!-- ```{r, include = FALSE} -->
-<!-- library(tidyverse) -->
-<!-- algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv") -->
-<!-- ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) + -->
-<!--   geom_point(aes(color = harvesting_regime, size = replicate)) -->
-<!-- # light harvesting -->
-<!-- ``` -->
+```{r, include = FALSE}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime, size = replicate))
+# light harvesting
+```
 
-<!-- ### Question 9: Open-ended plotting -->
+### Question 9: Open-ended plotting
 
-<!-- Make a plot that checks to see which `chemical_species` were more abundant under light as opposed to heavy `harvesting_regime` in all three replicates. Use filtered data so that just one `algae_strain` is shown, an x and a y axis, and points to represent the measurements. Make the points `size = 5` and also set the point's `alpha = 0.6`. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae. -->
+Make a plot that checks to see which `chemical_species` were more abundant under light as opposed to heavy `harvesting_regime` in all three replicates. Use filtered data so that just one `algae_strain` is shown, an x and a y axis, and points to represent the measurements. Make the points `size = 5` and also set the point's `alpha = 0.6`. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) + -->
-<!--   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
+```
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv2"), aes(x = abundance, y = chemical_species)) + -->
-<!--   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv2"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
+```
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv11"), aes(x = abundance, y = chemical_species)) + -->
-<!--   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv11"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
+```
 
-<!-- ### Question 10: A peek at what's to come... -->
+### Question 10: A peek at what's to come...
 
-<!-- Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like: -->
+Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
 
-<!-- ```{r, eval = FALSE}  -->
-<!-- ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) + -->
-<!--   geom_point(aes(<some things>), <some here too>) + -->
-<!--   facet_grid(.~algae_strain) -->
-<!-- ``` -->
+```{r, eval = FALSE} 
+ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) +
+  geom_point(aes(<some things>), <some here too>) +
+  facet_grid(.~algae_strain)
+```
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) + -->
-<!--   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) + -->
-<!--   facet_grid(.~algae_strain) -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
+  facet_grid(.~algae_strain)
+```
 
-<!-- Also try, instead of `facet_grid(.~algae_strain)`, `facet_grid(algae_strain~.)` at the end of you plot command. (note the swap in the position of the `.~` relative to `algae_strain`). This means your code should look something like: -->
+Also try, instead of `facet_grid(.~algae_strain)`, `facet_grid(algae_strain~.)` at the end of you plot command. (note the swap in the position of the `.~` relative to `algae_strain`). This means your code should look something like:
 
-<!-- ```{r, eval = FALSE}  -->
-<!-- ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) + -->
-<!--   geom_point(aes(<some things>), <some here too>) + -->
-<!--   facet_grid(algae_strain~.) -->
-<!-- ``` -->
+```{r, eval = FALSE} 
+ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) +
+  geom_point(aes(<some things>), <some here too>) +
+  facet_grid(algae_strain~.)
+```
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) + -->
-<!--   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) + -->
-<!--   facet_grid(algae_strain~.) -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
+  facet_grid(algae_strain~.)
+```
 
-<!-- What advantages does this one extra line provide over what you had to do in question 9? -->
+What advantages does this one extra line provide over what you had to do in question 9?
 
-<!-- ## Part 2: Alaska Lakes Dataset -->
+## Part 2: Alaska Lakes Dataset
 
-<!-- ### Question 1: Importing Data -->
+### Question 1: Importing Data
 
-<!-- Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises. -->
+Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises.
 
-<!-- ```{r, include = FALSE} -->
-<!-- data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv") -->
-<!-- ``` -->
+```{r, include = FALSE}
+data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+```
 
-<!-- ### Question 2: Objects -->
+### Question 2: Objects
 
-<!-- How many variables are in the Alaska lakes dataset? -->
+How many variables are in the Alaska lakes dataset?
 
-<!-- ```{r, include = FALSE} -->
-<!-- data -->
-<!-- # 220 x 7 -->
-<!-- ``` -->
+```{r, include = FALSE}
+data
+# 220 x 7
+```
 
-<!-- ### Question 3: Filtering -->
+### Question 3: Filtering
 
-<!-- Filter the data set so only meausurements of free elements are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset? -->
+Filter the data set so only meausurements of free elements are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset?
 
-<!-- ```{r, include = FALSE} -->
-<!-- filter(data, element_type == "free") -->
-<!-- # 160 x 7 -->
-<!-- ``` -->
+```{r, include = FALSE}
+filter(data, element_type == "free")
+# 160 x 7
+```
 
-<!-- ### Question 4: Plotting -->
+### Question 4: Plotting
 
-<!-- Make a plot that shows the water temperatures of each lake. Don't worry if you get a warning message from R about "missing values". Which is the hottest lake? The coolest? -->
+Make a plot that shows the water temperatures of each lake. Don't worry if you get a warning message from R about "missing values". Which is the hottest lake? The coolest?
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data, aes(x = lake, y = water_temp)) + geom_point() + coord_flip() -->
-<!-- # Lava Lake -->
-<!-- # Desperation Lake -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data, aes(x = lake, y = water_temp)) + geom_point() + coord_flip()
+# Lava Lake
+# Desperation Lake
+```
 
-<!-- ### Question 5: Plotting -->
+### Question 5: Plotting
 
-<!-- Make a plot that shows the water temperature of each lake. The x axis should be `park`, the y axis `water temp`. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures? -->
+Make a plot that shows the water temperature of each lake. The x axis should be `park`, the y axis `water temp`. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(data, aes(x = park, y = water_temp)) +  -->
-<!--   geom_violin() + -->
-<!--   geom_point(aes(color = water_temp), size = 5) -->
-<!-- # GAAR -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(data, aes(x = park, y = water_temp)) + 
+  geom_violin() +
+  geom_point(aes(color = water_temp), size = 5)
+# GAAR
+```
 
-<!-- ### Question 6: Filtering and Plotting -->
+### Question 6: Filtering and Plotting
 
-<!-- From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from `park == "NOAT"` are shown (note the double equals sign and the quotes around NOAT...). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is. -->
+From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from `park == "NOAT"` are shown (note the double equals sign and the quotes around NOAT...). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(filter(data, park == "NOAT"), aes(x = lake, y = water_temp)) +  -->
-<!--   geom_point() -->
-<!-- # Lake Narvakrak -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(filter(data, park == "NOAT"), aes(x = lake, y = water_temp)) + 
+  geom_point()
+# Lake Narvakrak
+```
 
-<!-- ### Question 7: Filtering and Plotting -->
+### Question 7: Filtering and Plotting
 
-<!-- Make a plot that shows which lake has the highest abundance of sulfur. -->
+Make a plot that shows which lake has the highest abundance of sulfur.
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(filter(data, element == "S"), aes(x = lake, y = mg_per_L)) +  -->
-<!--   geom_point() -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(filter(data, element == "S"), aes(x = lake, y = mg_per_L)) + 
+  geom_point()
+```
 
-<!-- ### Question 8: Open-ended Plotting -->
+### Question 8: Open-ended Plotting
 
-<!-- Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly. Here is an example: -->
+Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly. Here is an example:
 
-<!-- ```{r} -->
-<!-- library(tidyverse) -->
-<!-- lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv") -->
-<!-- ggplot(data = filter(lake_data, lake == "Lake_Narvakrak"), aes(x = lake, y = mg_per_L)) + -->
-<!--   geom_point(shape = 21, size = 10, color = "black", fill = "green") -->
-<!-- ``` -->
+```{r}
+library(tidyverse)
+lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+ggplot(data = filter(lake_data, lake == "Lake_Narvakrak"), aes(x = lake, y = mg_per_L)) +
+  geom_point(shape = 21, size = 10, color = "black", fill = "green")
+```
 
-<!-- Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you. -->
+Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
-<!-- ```{r, include = FALSE} -->
-<!-- ggplot(filter(data, element == "C"), aes(x = park, y = mg_per_L)) +  -->
-<!--   geom_point(shape = 21, size = 10, aes(fill = park), color = "black") -->
-<!-- ``` -->
+```{r, include = FALSE}
+ggplot(filter(data, element == "C"), aes(x = park, y = mg_per_L)) + 
+  geom_point(shape = 21, size = 10, aes(fill = park), color = "black")
+```
 
-<!-- When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
+When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
