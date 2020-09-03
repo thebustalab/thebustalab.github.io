@@ -279,7 +279,7 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 
 In this set of exercises we're going to practice importing, filtering, and plotting data. We're going to work with two datasets: (i) [algae_chemistry_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv) and (ii) [alaska_lake_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv). By clicking on those links you can download each dataset.
 
-**For these exercises, you will write your code and answers to any questions in the RStudio script editor, then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that specifies the answers to the questions asked below**
+**For these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like [here](https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R). If you have any questions please let me know**
 
 ## Part 1: Algae Chemistry Dataset
 
@@ -470,7 +470,7 @@ data
 
 ### Question 3: Filtering
 
-Filter the data set so only meausurements of free elements are shown. Remember, it's `==`, not `=`. What are the dimensions of the following dataset?
+Filter the data set so only meausurements of free elements are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset?
 
 ```{r, include = FALSE}
 filter(data, element_type == "free")
@@ -489,12 +489,13 @@ ggplot(data, aes(x = lake, y = water_temp)) + geom_point() + coord_flip()
 
 ### Question 5: Plotting
 
-Make a plot that shows the water temperature of each lake. The x axis should be `park`, the y axis `water temp`. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has the most uniformity among its lakes' temperatures?
+Make a plot that shows the water temperature of each lake. The x axis should be `park`, the y axis `water temp`. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?
 
 ```{r, include = FALSE}
 ggplot(data, aes(x = park, y = water_temp)) + 
   geom_violin() +
   geom_point(aes(color = water_temp), size = 5)
+# GAAR
 ```
 
 ### Question 6: Filtering and Plotting
@@ -518,20 +519,20 @@ ggplot(filter(data, element == "S"), aes(x = lake, y = mg_per_L)) +
 
 ### Question 8: Open-ended Plotting
 
-Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to new aesthetics: `fill` and `stroke`. It also changes the behaviour of the `color` aesthetic slightly. Here is an example:
+Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly. Here is an example:
 
 ```{r}
 library(tidyverse)
 lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 ggplot(data = filter(lake_data, lake == "Lake_Narvakrak"), aes(x = lake, y = mg_per_L)) +
-  geom_point(shape = 21, size = 10, color = "black", fill = "green", stroke = 3)
+  geom_point(shape = 21, size = 10, color = "black", fill = "green")
 ```
 
-Now we have lots of aesthetics we can map to: x, y, size, color, fill, and stroke (leave shape set to 21). Make a plot that uses the whole dataset and all of these aesthetics. It's ok to map multiple aesthetics to the same variable if you want.
+Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
 ```{r, include = FALSE}
-ggplot(data, aes(x = element, y = mg_per_L)) + 
-  geom_point(shape = 21, )
+ggplot(filter(data, element == "C"), aes(x = park, y = mg_per_L)) + 
+  geom_point(shape = 21, size = 10, aes(fill = park), color = "black")
 ```
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
