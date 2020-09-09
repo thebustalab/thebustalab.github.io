@@ -562,7 +562,7 @@ We've looked at how to import data, filter data, and map variables in our data t
 
 ## Geoms
 
-I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables:
+I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
 ```{r}
 library(tidyverse)
@@ -572,15 +572,113 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_point()
 ```
 
-algae <- readCSV()
-ggplot(data = filter(algae, harvesting_regime == "Heavy"), aes(x = algae_strain, y = chemical_species)) + 
-  geom_tile(aes(fill = abundance), color = "black") +
+Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the center color and the border color, respectively.
 
-?geom_tile
-  
+```{r}
+library(tidyverse)
+algae <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae, harvesting_regime == "Heavy"), aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black", size = 1)
+```
+
+These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
+
+There is a [handy cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+
+## Facets
+
+As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
+
+Here, we can facet in the horizontal direction:
+```{r}
 ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
-  scale_fill_gradient(low = "white", high = "black") +
-  theme(axis.text.x = element_text(size = 20))
+  facet_grid(.~replicate)
+```
 
-                      
+We can facet in the vertical direction:
+```{r}
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(replicate~.)
+```
+
+And we can do both at the same time:
+```{r}
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(harvesting_regime~replicate)
+```
+  
+Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
+
+## Scales
+
+Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
+
+```{r}
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(harvesting_regime~replicate) +
+  scale_fill_gradient(low = "white", high = "black") +
+  theme_classic()
+```
+  
+  
+## Themes.
+  
+So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
+
+### Complete themes
+
+`ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_classic()
+```
+
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_dark()
+```
+  
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_void()
+```
+
+### Theme components
+
+You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme(
+    text = element_text(size = 20, color = "black")
+  )
+```
+
+Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth(color = "#4daf4a") +
+  scale_x_continuous(name = "Boiling Point", breaks = seq(0,200,25), limits = c(30,160)) +
+  scale_y_continuous(name = "Vapor Pressure", breaks = seq(0,600,50)) +
+  geom_point(color = "#377eb8", size = 4, alpha = 0.6) +
+  theme_bw() +
+  theme(
+    axis.text = element_text(color = "black"),
+    text = element_text(size = 20, color = "black")
+  )
+```

@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-09-03" />
+<meta name="date" content="2020-09-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="Visualization-1.html"/>
-
+<link rel="next" href="R-Basics-2.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -176,6 +176,19 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.2.6" data-path="Exercises-1.html"><a href="Exercises-1.html#question-6-filtering-and-plotting"><i class="fa fa-check"></i><b>5.2.6</b> Question 6: Filtering and Plotting</a></li>
 <li class="chapter" data-level="5.2.7" data-path="Exercises-1.html"><a href="Exercises-1.html#question-7-filtering-and-plotting-1"><i class="fa fa-check"></i><b>5.2.7</b> Question 7: Filtering and Plotting</a></li>
 <li class="chapter" data-level="5.2.8" data-path="Exercises-1.html"><a href="Exercises-1.html#question-8-open-ended-plotting"><i class="fa fa-check"></i><b>5.2.8</b> Question 8: Open-ended Plotting</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="Exercises-1.html"><a href="Exercises-1.html#more-geoms."><i class="fa fa-check"></i><b>5.3</b> More geoms.</a></li>
+<li class="chapter" data-level="5.4" data-path="Exercises-1.html"><a href="Exercises-1.html#small-multiples"><i class="fa fa-check"></i><b>5.4</b> Small multiples</a></li>
+<li class="chapter" data-level="5.5" data-path="Exercises-1.html"><a href="Exercises-1.html#scales"><i class="fa fa-check"></i><b>5.5</b> Scales</a></li>
+<li class="chapter" data-level="5.6" data-path="Exercises-1.html"><a href="Exercises-1.html#non-data-ink-themes"><i class="fa fa-check"></i><b>5.6</b> Non-data ink (themes)</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="R-Basics-2.html"><a href="R-Basics-2.html"><i class="fa fa-check"></i><b>6</b> R Basics 2</a><ul>
+<li class="chapter" data-level="6.1" data-path="R-Basics-2.html"><a href="R-Basics-2.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
+<li class="chapter" data-level="6.2" data-path="R-Basics-2.html"><a href="R-Basics-2.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
+<li class="chapter" data-level="6.3" data-path="R-Basics-2.html"><a href="R-Basics-2.html#scales-1"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.4" data-path="R-Basics-2.html"><a href="R-Basics-2.html#themes."><i class="fa fa-check"></i><b>6.4</b> Themes.</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="R-Basics-2.html"><a href="R-Basics-2.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
+<li class="chapter" data-level="6.4.2" data-path="R-Basics-2.html"><a href="R-Basics-2.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -326,9 +339,27 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb23-14" data-line-number="14"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">10</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;green&quot;</span>)</a></code></pre></div>
 <p><img src="bio723-book_files/figure-html/unnamed-chunk-48-1.png" width="576" /></p>
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
-<p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.</p>
-
+<p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
+# Visualization 2 {#Visualization_2}</p>
+<p>After completing Exercises 1, you may have noticed that there were more variables in the data than could be represented using what we learned in the section called (Visualiation 1)[#Visualiation_1]. In this section, Visualization 2, we’re going to look at additional ways of encoding variables using <code>ggplot</code>, as well as some new geoms. Let’s get started!</p>
 </div>
+</div>
+<div id="more-geoms." class="section level2">
+<h2><span class="header-section-number">5.3</span> More geoms.</h2>
+<p>geom_histogram()
+geom_line()
+geom_area()
+geom_ribbon()</p>
+</div>
+<div id="small-multiples" class="section level2">
+<h2><span class="header-section-number">5.4</span> Small multiples</h2>
+<p>One of the most common (and powerful) ways of…</p>
+</div>
+<div id="scales" class="section level2">
+<h2><span class="header-section-number">5.5</span> Scales</h2>
+</div>
+<div id="non-data-ink-themes" class="section level2">
+<h2><span class="header-section-number">5.6</span> Non-data ink (themes)</h2>
 </div>
 </div>
             </section>
@@ -336,8 +367,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="Visualization-1.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="Visualization-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="R-Basics-2.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
