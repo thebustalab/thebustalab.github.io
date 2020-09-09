@@ -673,7 +673,7 @@ Last, here is an example of combining `scale_*` and `theme*` with previous comma
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth(color = "#4daf4a") +
-  scale_x_continuous(name = "Boiling Point", breaks = seq(0,200,25), limits = c(30,160)) +
+  scale_x_continuous(name = "Boiling Point", breaks = seq(0,200,25), limits = c(30,210)) +
   scale_y_continuous(name = "Vapor Pressure", breaks = seq(0,600,50)) +
   geom_point(color = "#377eb8", size = 4, alpha = 0.6) +
   theme_bw() +
