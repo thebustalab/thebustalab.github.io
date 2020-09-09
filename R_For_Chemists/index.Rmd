@@ -536,3 +536,51 @@ ggplot(filter(data, element == "C"), aes(x = park, y = mg_per_L)) +
 ```
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
+# Visualization 2 {#Visualization_2}
+
+After completing Exercises 1, you may have noticed that there were more variables in the data than could be represented using what we learned in the section called (Visualiation 1)[#Visualiation_1]. In this section, Visualization 2, we're going to look at additional ways of encoding variables using `ggplot`, as well as some new geoms. Let's get started!
+
+## More geoms.
+
+geom_histogram()
+geom_line()
+geom_area()
+geom_ribbon()
+
+## Small multiples
+
+One of the most common (and powerful) ways of...
+
+## Scales
+
+## Non-data ink (themes)
+
+
+# R Basics 2 {#R_Basics_2}
+
+We've looked at how to import data, filter data, and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use this [solvents dataset](https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv).
+
+## Geoms
+
+I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables:
+
+```{r}
+library(tidyverse)
+solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv")
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point()
+```
+
+algae <- readCSV()
+ggplot(data = filter(algae, harvesting_regime == "Heavy"), aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") +
+
+?geom_tile
+  
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  scale_fill_gradient(low = "white", high = "black") +
+  theme(axis.text.x = element_text(size = 20))
+
+                      
