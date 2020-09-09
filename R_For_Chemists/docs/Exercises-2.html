@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>R For Chemists</title>
+  <title>Chapter 7 Exercises 2 | R For Chemists</title>
   <meta name="description" content="Textbook R For Chemists." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="R For Chemists" />
+  <meta property="og:title" content="Chapter 7 Exercises 2 | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="R For Chemists" />
+  <meta name="twitter:title" content="Chapter 7 Exercises 2 | R For Chemists" />
   
   <meta name="twitter:description" content="Textbook R For Chemists." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
+<link rel="prev" href="R-Basics-2.html"/>
 
-<link rel="next" href="installation.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -215,22 +215,40 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">R For Chemists</h1>
-<p class="author"><em>Lucas Busta</em></p>
-<p class="date"><em>2020-09-09</em></p>
+<div id="Exercises_2" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Exercises 2</h1>
+<p>In this set of exercises we’re going to practice making more plots using the <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv">solvents dataset</a>. Since you are now familiar with importing, filtering, and plotting data, the prompts are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in <a href="R-Basics-2.html#R_Basics_2">R Basics 2</a>. This includes geoms beyond <code>geom_point()</code> and <code>geom_voilin()</code>, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! <strong>Show me that you have mastered this materal.</strong> Don’t forget about the ggplot cheat sheet.</p>
+<p>As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don’t worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R">here</a>. If you have any questions please let me know.</p>
+<div id="question-1" class="section level2">
+<h2><span class="header-section-number">7.1</span> Question 1</h2>
+<p>Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot <em>and</em> the trend you’ve identified and highlighted.</p>
+<p>note: I realize that the word “optimize” is not clearly defined here. That’s ok! You are the judge of what is optimized and what is not. Use your caption to make a case for <em>why</em> your plot is optimized. <em>Defend</em> your ideas with argument!</p>
 </div>
-<div id="introduction" class="section level1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
-<p><img src="http://thebustalab.github.io/R_For_Chemists/figures/R_For_Chemists_logo.jpg" style="display: block; margin: auto;" /></p>
+<div id="question-2" class="section level2">
+<h2><span class="header-section-number">7.2</span> Question 2</h2>
+<p>Create two plots that are identical except that one uses the <code>scales = &quot;free&quot;</code> feature of <code>facet_grid</code> while the other does not (i.e. one should use <code>facet_grid(&lt;things&gt;)</code>, whiel the other uses <code>facet_grid(&lt;things&gt;, scales = &quot;free&quot;)</code>). Write a single caption that describes <em>both</em> plots, highlighting the advantages provided by each plot over the other.</p>
+</div>
+<div id="question-3" class="section level2">
+<h2><span class="header-section-number">7.3</span> Question 3</h2>
+<p>Create two plots that are identical except that one uses <code>geom_point()</code>, while the other uses <code>geom_jitter()</code>. Write a single caption that describes <em>both</em> plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use <code>geom_jitter()</code> over <code>geom_point()</code>.</p>
+</div>
+<div id="question-4" class="section level2">
+<h2><span class="header-section-number">7.4</span> Question 4</h2>
+<p>Make a plot that has five aesthetic mappings (x and y mappings count). Use the <code>scales_*</code> family of commands to modify some aspect of each scale create by the five mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, …), and some scales are easier to modify (x, y, color, fill, shape).</p>
+</div>
+<div id="question-5" class="section level2">
+<h2><span class="header-section-number">7.5</span> Question 5</h2>
+<p>Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as <code>theme_classic()</code>, rather, manually modify components of the theme using <code>theme()</code>). This means that inside your <code>theme()</code> command, there should be three arguments separated by commas.</p>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
+<a href="R-Basics-2.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="installation.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

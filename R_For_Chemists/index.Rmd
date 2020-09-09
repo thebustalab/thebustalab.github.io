@@ -625,7 +625,7 @@ ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) +
 ```
   
   
-## Themes.
+## Themes
   
 So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
 
@@ -682,3 +682,31 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
     text = element_text(size = 20, color = "black")
   )
 ```
+
+# Exercises 2 {#Exercises_2}
+
+In this set of exercises we're going to practice making more plots using the [solvents dataset](https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv). Since you are now familiar with importing, filtering, and plotting data, the prompts are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in [R Basics 2](#R_Basics_2). This includes geoms beyond `geom_point()` and `geom_voilin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this materal.** Don't forget about the ggplot cheat sheet.
+
+As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like [here](https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R). If you have any questions please let me know.
+
+## Question 1
+
+Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted.
+
+note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized. *Defend* your ideas with argument!
+
+## Question 2
+
+Create two plots that are identical except that one uses the `scales = "free"` feature of `facet_grid` while the other does not (i.e. one should use `facet_grid(<things>)`, whiel the other uses `facet_grid(<things>, scales = "free")`). Write a single caption that describes *both* plots, highlighting the advantages provided by each plot over the other.
+
+## Question 3
+
+Create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
+
+## Question 4
+
+Make a plot that has five aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the five mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape).
+
+## Question 5
+
+Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as `theme_classic()`, rather, manually modify components of the theme using `theme()`). This means that inside your `theme()` command, there should be three arguments separated by commas.
