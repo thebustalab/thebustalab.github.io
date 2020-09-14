@@ -710,3 +710,23 @@ Make a plot that has five aesthetic mappings (x and y mappings count). Use the `
 ## Question 5
 
 Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as `theme_classic()`, rather, manually modify components of the theme using `theme()`). This means that inside your `theme()` command, there should be three arguments separated by commas.
+
+# R Basics 3 {#R_Basics_3}
+
+## Tidy data
+
+When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
+
+```{r}
+library(tidyverse)
+FAs <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/fadb_sample.csv")
+FAs
+```
+
+While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = FAs`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
+
+```{r}
+pivot_longer(data = FAs, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
+```
+
+Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
