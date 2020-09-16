@@ -713,6 +713,16 @@ Make a plot and manually modify at least three aspects of its theme (i.e. do not
 
 # R Basics 3 {#R_Basics_3}
 
+## Summary statistics
+
+So far, we have been importing and plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the [NY Trees](https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv) dataset.
+
+The NY Trees dataset contains information on nearly half a million trees in New York City:
+
+```{r}
+
+
+
 ## Tidy data
 
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
@@ -733,4 +743,6 @@ Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
 
 # Exercises 3 {#Exercises_3}
 
-In this set of exercises we are going to use the [Periodic Table]() dataset
+In this set of exercises we are going to use the [Periodic Table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv) dataset. Please download and import that dataset into R. Then, open a new powerpoint presentation and make 10 empty slides. There are 10 questions below. Each will direct you to make a particular type of plot. Copy and paste those plots, in order, into the 10 slides in your presentation. Paste the code underlying your figure into the "notes" section for that slide (the little space under the slide where you can write notes). When you are done, email that presentation to me, which will comprise your submission for this assignment. Please let me know if you have any questions. Good luck, and have fun!
+
+## Question 1
