@@ -730,3 +730,7 @@ pivot_longer(data = FAs, cols = 2:11, names_to = "plant_species", values_to = "r
 ```
 
 Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+
+# Exercises 3 {#Exercises_3}
+
+In this set of exercises we are going to use the [Periodic Table]() dataset
