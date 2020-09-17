@@ -717,11 +717,112 @@ Make a plot and manually modify at least three aspects of its theme (i.e. do not
 
 So far, we have been importing and plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the [NY Trees](https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv) dataset.
 
-The NY Trees dataset contains information on nearly half a million trees in New York City:
+The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
 
 ```{r}
+library(tidyverse)
+ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
+ny_trees
+```
+
+More than 300,000 observations of 14 variables! That's 4.2M datapoints! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
+
+Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. Also, keep in mind that a single column of a dataset can be accessed using `$`. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
+
+```{r}
+mean(ny_trees$tree_height)
+sd(ny_trees$tree_height)
+```
+
+Great! But how to do this for each species? We need to divide up the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics. Please note that both `group_by()` and `summarize()` require `.data = ` as an argument, as opposed to `data = `, which we have been using up to this point.
+
+```{r}
+ny_trees_by_spc <- group_by(.data = ny_trees, spc_latin)
+summarize(.data = ny_trees_by_spc, mean_height = mean(tree_height))
+```
+
+Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
+
+```{r}
+ny_trees_by_spc <- group_by(.data = ny_trees, spc_latin)
+ny_trees_by_spc_summ <- summarize(.data = ny_trees_by_spc, mean_height = mean(tree_height), stdev_height = sd(tree_height))
+ny_trees_by_spc_summ
+```
+
+Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax`. Note that in this case, if we map spc_latin to the x axis, the x axis tick labels will have long names that will overlap in our plot. In the past we have avoided this by swapping the mappings of x and y in out plots. Here, this gets a bit tedious since we will have to change ymin and ymax as well. Instead of all this, we can just add `coord_flip()` to our plot, which will swap x and y axes automatically. Also, note that in the aesthetic mappings for `ymin` and `ymax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
+
+```{r}
+ggplot(data = ny_trees_by_spc_summ) +
+  geom_pointrange(
+      aes(
+        x = spc_latin,
+        y = mean_height,
+        ymin = mean_height - stdev_height,
+        ymax = mean_height + stdev_height
+      )
+    ) +
+    coord_flip()
+```
+
+Cool! Just like that we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out.
+
+```{r}
+ny_trees_by_spc_boro <- group_by(.data = ny_trees, spc_latin, boroname)
+ny_trees_by_spc_boro_summ <- summarize(.data = ny_trees_by_spc_boro, mean_diam = mean(tree_diameter), stdev_diam = sd(tree_diameter))
+ny_trees_by_spc_boro_summ
+```
+
+Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let's map boroname to x and facet over tree species, which used to be on x. We'll also manually modify the theme element `strip.text.y` to get the species names in a readable position.
+
+```{r}
+ggplot(data = ny_trees_by_spc_boro_summ) +
+  geom_pointrange(
+    aes(
+      x = boroname,
+      y = mean_diam,
+      ymin = mean_diam-stdev_diam,
+      ymax = mean_diam+stdev_diam
+    )
+  ) +
+  facet_grid(spc_latin~.) +
+  coord_flip() +
+  theme(
+    strip.text.y = element_text(angle = 0)
+  )
+```
+
+Excellent! And if we really want to go for something pretty:
+
+```{r fig.height = 10}
+library(RColorBrewer)
+ggplot(data = ny_trees_by_spc_boro_summ) +
+  geom_pointrange(
+    aes(
+      x = boroname,
+      y = mean_diam,
+      ymin = mean_diam-stdev_diam,
+      ymax = mean_diam+stdev_diam,
+      fill = spc_latin
+    ), color = "black", shape = 21
+  ) +
+  labs(
+    x = "Borough", 
+    y = "Trunk diameter",
+    caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
+  ) +
+  facet_grid(spc_latin~.) +
+  guides(fill = "none") +
+  scale_fill_brewer(palette = "Paired") +
+  coord_flip() +
+  theme_bw() +
+  theme(
+    strip.text.y = element_text(angle = 0),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
 
 
+*Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
 ## Tidy data
 
