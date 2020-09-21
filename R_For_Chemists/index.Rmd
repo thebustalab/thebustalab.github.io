@@ -846,7 +846,7 @@ Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
-In this set of exercises we are going to use the [Periodic Table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv) dataset. Please download and import that dataset into R. Then, open a new powerpoint presentation and make 10 empty slides. There are 10 questions below. Each will direct you to make a particular type of plot. Copy and paste those plots, in order, into the 10 slides in your presentation. Paste the code underlying your figure into the "notes" section for that slide (the little space under the slide where you can write notes). If the question also requires some text to answer properly, put that text in the "notes" section as well. When you are done, email that presentation to me, which will comprise your submission for this assignment. Please let me know if you have any questions. Good luck, and have fun!
+In this set of exercises we are going to use the [Periodic Table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv) dataset. Please download and import that dataset into R. Then, open a new powerpoint presentation and make seven empty slides. There are seven questions below. Each will direct you to make a particular type of plot. Copy and paste those plots, in order, into the seven slides in your presentation. Paste the code underlying your figure into the "notes" section for that slide (the little space under the slide where you can write notes). If the question also requires some text to answer properly, put that text in the "notes" section as well. When you are done, email that presentation to me, which will comprise your submission for this assignment. Please let me know if you have any questions. Good luck, and have fun!
 
 ## Question 1
 
@@ -962,3 +962,45 @@ ggplot(pt_by_year_summ,
 ## Question 7
 
 You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
+
+# (APPENDIX) Appendix {-}
+
+# Functions
+
+`head()` (base function)
+
+`install.packages()` (base function)
+
+`tidyverse::read_csv()` (a readr function - part of the tidyverse)
+
+`plot()` (base function)
+
+`readCSV()` (custom function: `readCSV <- function() { return(readr::read_csv(file.choose())) }`)
+
+`read.csv()` (base function)
+
+`dplyr::filter()` (a dplyr function - part of the tidyverse)
+
+`ggplot2::ggplot()`(a ggplot2 function - part of the tidyverse)
+
+`ggplot2::aes()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::geom_*()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::facet_grid()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::scale_*_*()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::theme_*()` (a ggplot2 function - part of the tidyverse)
+
+`mean()` (base function)
+
+`sd()` (base function)
+
+`dplyr::group_by()` (a dplyr function - part of the tidyverse)
+
+`dplyr::summarize()` (a dplyr function - part of the tidyverse)
+
+`ggplot2::coord_flip()` (a ggplot2 function - part of the tidyverse)
+
+`tidyr::pivot_longer()` (a tidyr function - part of the tidyverse)

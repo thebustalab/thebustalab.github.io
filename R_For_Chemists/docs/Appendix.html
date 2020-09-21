@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 9 Exercises 3 | R For Chemists</title>
+  <title>Chapter 10 (APPENDIX) Appendix | R For Chemists</title>
   <meta name="description" content="Textbook R For Chemists." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 9 Exercises 3 | R For Chemists" />
+  <meta property="og:title" content="Chapter 10 (APPENDIX) Appendix | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 9 Exercises 3 | R For Chemists" />
+  <meta name="twitter:title" content="Chapter 10 (APPENDIX) Appendix | R For Chemists" />
   
   <meta name="twitter:description" content="Textbook R For Chemists." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="R-Basics-3.html"/>
-<link rel="next" href="functions-1.html"/>
+<link rel="prev" href="Exercises-3.html"/>
+
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -211,8 +211,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="9.6" data-path="Exercises-3.html"><a href="Exercises-3.html#question-6"><i class="fa fa-check"></i><b>9.6</b> Question 6</a></li>
 <li class="chapter" data-level="9.7" data-path="Exercises-3.html"><a href="Exercises-3.html#question-7"><i class="fa fa-check"></i><b>9.7</b> Question 7</a></li>
 </ul></li>
-<li class="appendix"><span><b>Appendix</b></span></li>
-<li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
+<li class="chapter" data-level="10" data-path="Appendix.html"><a href="Appendix.html"><i class="fa fa-check"></i><b>10</b> (APPENDIX) Appendix</a></li>
 </ul>
 
       </nav>
@@ -230,49 +229,18 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="Exercises_3" class="section level1">
-<h1><span class="header-section-number">Chapter 9</span> Exercises 3</h1>
-<p>Isn’t seven the most powerfully magical number? <em>Isn’t seven the most powerfully magical number?</em> Yes… I think the idea of a seven-part assignment would greatly appeal to an alchemist.</p>
-<p>In this set of exercises we are going to use the <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv">Periodic Table</a> dataset. Please download and import that dataset into R. Then, open a new powerpoint presentation and make seven empty slides. There are seven questions below. Each will direct you to make a particular type of plot. Copy and paste those plots, in order, into the seven slides in your presentation. Paste the code underlying your figure into the “notes” section for that slide (the little space under the slide where you can write notes). If the question also requires some text to answer properly, put that text in the “notes” section as well. When you are done, email that presentation to me, which will comprise your submission for this assignment. Please let me know if you have any questions. Good luck, and have fun!</p>
-<div id="question-1-1" class="section level2">
-<h2><span class="header-section-number">9.1</span> Question 1</h2>
-<p>Make a plot using <code>geom_point()</code> that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?</p>
-</div>
-<div id="question-2-1" class="section level2">
-<h2><span class="header-section-number">9.2</span> Question 2</h2>
-<p>The column <code>state_at_RT</code> indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in <code>state_at_RT</code> (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?</p>
-</div>
-<div id="question-3-1" class="section level2">
-<h2><span class="header-section-number">9.3</span> Question 3</h2>
-<p>Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of <code>crystal_structure</code>? Make a plot using <code>geom_pointrange()</code> that shows the mean and standard deviation of each of these groups. What’s up with elements that have a cubic crystal structure?</p>
-</div>
-<div id="question-4-1" class="section level2">
-<h2><span class="header-section-number">9.4</span> Question 4</h2>
-<p>Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four <em>periods</em> in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does “CHON” mean? (not the rock band, though they are also excellent, especially that song that features GoYama)</p>
-</div>
-<div id="question-5-1" class="section level2">
-<h2><span class="header-section-number">9.5</span> Question 5</h2>
-<p>Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each <code>group_number</code>. Use <code>geom_point()</code> and <code>geom_errorbar()</code> to illustrate the average, minimum, and maximum values for each group number.</p>
-</div>
-<div id="question-6" class="section level2">
-<h2><span class="header-section-number">9.6</span> Question 6</h2>
-<p>Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by <code>color</code>. Now filter out those that have <code>color == &quot;colorless&quot;</code>. Of the remaining elements, which has the widest range of specific heats? Use <code>geom_point()</code> and <code>geom_errorbar()</code> to illustrate the mean and standard deviation of each color’s specific heats.</p>
-</div>
-<div id="question-7" class="section level2">
-<h2><span class="header-section-number">9.7</span> Question 7</h2>
-<p>You have learned many things in this course so far. <code>filter()</code>, <code>ggplot()</code>, and now <code>group_by()</code> and <code>summarize()</code>. Using <strong>all</strong> these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!</p>
-</div>
-</div>
+<div id="Appendix" class="section level1">
+<h1><span class="header-section-number">Chapter 10</span> (APPENDIX) Appendix</h1>
+<p>here we are</p>
 
-
-
+</div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="R-Basics-3.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="functions-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="Exercises-3.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
