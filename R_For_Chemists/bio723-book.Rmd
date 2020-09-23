@@ -1285,3 +1285,6 @@ theme_bw() +
 scale_fill_manual(values = status_color)
 ```
 
+
+<!--chapter:end:index.Rmd-->
+
