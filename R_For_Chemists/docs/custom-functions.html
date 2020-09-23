@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Exercises 1 | R For Chemists</title>
+  <title>B Custom functions | R For Chemists</title>
   <meta name="description" content="Textbook R For Chemists." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Exercises 1 | R For Chemists" />
+  <meta property="og:title" content="B Custom functions | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Exercises 1 | R For Chemists" />
+  <meta name="twitter:title" content="B Custom functions | R For Chemists" />
   
   <meta name="twitter:description" content="Textbook R For Chemists." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="Visualization-1.html"/>
-<link rel="next" href="R-Basics-2.html"/>
+<link rel="prev" href="functions-1.html"/>
+<link rel="next" href="faq.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -241,158 +241,152 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="Exercises_1" class="section level1">
-<h1><span class="header-section-number">Chapter 5</span> Exercises 1</h1>
-<p>In this set of exercises we’re going to practice importing, filtering, and plotting data. We’re going to work with two datasets: (i) <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv">algae_chemistry_data.csv</a> and (ii) <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv">alaska_lake_data.csv</a>. By clicking on those links you can download each dataset.</p>
-<p><strong>For these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don’t worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R">here</a>. If you have any questions please let me know</strong></p>
-<div id="part-1-algae-chemistry-dataset" class="section level2">
-<h2><span class="header-section-number">5.1</span> Part 1: Algae Chemistry Dataset</h2>
-<div id="question-1-importing-data" class="section level3">
-<h3><span class="header-section-number">5.1.1</span> Question 1: Importing data</h3>
-<p>Import the algae chemistry data. Remember that <code>read_csv()</code> is part of the <code>tidyverse</code>, so that library needs to be loaded into your <code>R</code> session. Also remember that another option is to paste and run <code>readCSV &lt;- function() { return(readr::read_csv(file.choose())) }</code> in your R Console, which then gives you access to the function <code>readCSV()</code>. That command doesn’t require an input path, so you don’t need to mess around with slashes and quotes. If you need examples of how to import data, please see the <a href="R-Basics-1.html#R_Basics_1">R Basics 1</a> section of this book.</p>
+<div id="custom-functions" class="section level1">
+<h1><span class="header-section-number">B</span> Custom functions</h1>
+<div id="readcsv" class="section level2">
+<h2><span class="header-section-number">B.1</span> readCSV</h2>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">readCSV &lt;-<span class="st"> </span><span class="cf">function</span>() { <span class="kw">return</span>(readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">file.choose</span>())) }</a></code></pre></div>
 </div>
-<div id="question-2-dataset-dimensions" class="section level3">
-<h3><span class="header-section-number">5.1.2</span> Question 2: Dataset dimensions</h3>
-<p>How many rows and columns does the algae chemistry dataset have? (hint: when you display the dataset on your screen by typing its name into the console, dimensions are also displayed). Write the answer to this question in your R Script right below the code you use to find the answer.</p>
+<div id="runmatrixanalysis" class="section level2">
+<h2><span class="header-section-number">B.2</span> runMatrixAnalysis</h2>
+<div id="once-you-have-activated-runmatrixanalysis-in-your-r-session-see-below-you-can-use-the-function-by-filling-out-and-executing-this-template" class="section level3">
+<h3><span class="header-section-number">B.2.1</span> Once you have activated <code>runMatrixAnalysis</code> in your R session (see below), you can use the function by filling out and executing this template:</h3>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="kw">runMatrixAnalysis</span>(</a>
+<a class="sourceLine" id="cb46-2" data-line-number="2">                                </a>
+<a class="sourceLine" id="cb46-3" data-line-number="3">    <span class="dt">data =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb46-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb46-5" data-line-number="5">    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>),</a>
+<a class="sourceLine" id="cb46-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb46-7" data-line-number="7">    <span class="dt">column_w_multiple_analyte_names =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb46-8" data-line-number="8">    <span class="dt">column_w_multiple_analyte_values =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb46-9" data-line-number="9">    <span class="dt">columns_w_single_analyte_values =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb46-10" data-line-number="10">    <span class="dt">columns_w_analyte_annotation_info =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb46-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb46-12" data-line-number="12">    <span class="dt">columns_for_sample_unique_ID =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb46-13" data-line-number="13">    <span class="dt">columns_w_sample_annotation_info =</span> <span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb46-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb46-15" data-line-number="15">)</a></code></pre></div>
 </div>
-<div id="question-3-objects" class="section level3">
-<h3><span class="header-section-number">5.1.3</span> Question 3: Objects</h3>
-<p>Import the algae chemistry data and send it into a new object called <code>algae_chemistry_data</code>. Remember about <code>&lt;-</code>. See the <a href="R-Basics-1.html#R_Basics_1">R Basics 1</a> section of this book if you need help.</p>
+<div id="to-activate-runmatrixanalysis-in-your-session-run-the-following-in-your-console" class="section level3">
+<h3><span class="header-section-number">B.2.2</span> To activate <code>runMatrixAnalysis</code> in your session, run the following in your console:</h3>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="co">#### runMatrixAnalysis</span></a>
+<a class="sourceLine" id="cb47-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb47-3" data-line-number="3">    <span class="co">#&#39; Runs a matrix analysis (clustering, kmeans, pca).</span></a>
+<a class="sourceLine" id="cb47-4" data-line-number="4">    <span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb47-5" data-line-number="5">    <span class="co">#&#39; @param data The data.frame or tibble to use.</span></a>
+<a class="sourceLine" id="cb47-6" data-line-number="6">    <span class="co">#&#39; @param analysis  </span></a>
+<a class="sourceLine" id="cb47-7" data-line-number="7">    <span class="co">#&#39; @param column_w_multiple_analyte_names</span></a>
+<a class="sourceLine" id="cb47-8" data-line-number="8">    <span class="co">#&#39; @param column_w_multiple_analyte_values</span></a>
+<a class="sourceLine" id="cb47-9" data-line-number="9">    <span class="co">#&#39; @param columns_w_single_analyte_values</span></a>
+<a class="sourceLine" id="cb47-10" data-line-number="10">    <span class="co">#&#39; @param columns_w_analyte_annotation_info</span></a>
+<a class="sourceLine" id="cb47-11" data-line-number="11">    <span class="co">#&#39; @param columns_for_sample_unique_ID</span></a>
+<a class="sourceLine" id="cb47-12" data-line-number="12">    <span class="co">#&#39; @param columns_w_sample_annotation_info</span></a>
+<a class="sourceLine" id="cb47-13" data-line-number="13">    <span class="co">#&#39; @examples</span></a>
+<a class="sourceLine" id="cb47-14" data-line-number="14">    <span class="co">#&#39; @export</span></a>
+<a class="sourceLine" id="cb47-15" data-line-number="15">    <span class="co">#&#39; runMatrixAnalysis</span></a>
+<a class="sourceLine" id="cb47-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb47-17" data-line-number="17">        runMatrixAnalysis &lt;-<span class="st">    </span><span class="cf">function</span>(</a>
+<a class="sourceLine" id="cb47-18" data-line-number="18">                                </a>
+<a class="sourceLine" id="cb47-19" data-line-number="19">                                    data,</a>
+<a class="sourceLine" id="cb47-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb47-21" data-line-number="21">                                    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>),</a>
+<a class="sourceLine" id="cb47-22" data-line-number="22">                                    </a>
+<a class="sourceLine" id="cb47-23" data-line-number="23">                                    column_w_multiple_analyte_names,</a>
+<a class="sourceLine" id="cb47-24" data-line-number="24">                                    column_w_multiple_analyte_values,</a>
+<a class="sourceLine" id="cb47-25" data-line-number="25">                                    columns_w_single_analyte_values,</a>
+<a class="sourceLine" id="cb47-26" data-line-number="26">                                    columns_w_analyte_annotation_info,</a>
+<a class="sourceLine" id="cb47-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb47-28" data-line-number="28">                                    columns_for_sample_unique_ID,</a>
+<a class="sourceLine" id="cb47-29" data-line-number="29">                                    columns_w_sample_annotation_info</a>
+<a class="sourceLine" id="cb47-30" data-line-number="30"></a>
+<a class="sourceLine" id="cb47-31" data-line-number="31">                                ) {</a>
+<a class="sourceLine" id="cb47-32" data-line-number="32"></a>
+<a class="sourceLine" id="cb47-33" data-line-number="33">            <span class="co"># Add analyte_unique_ID_column if necessary</span></a>
+<a class="sourceLine" id="cb47-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb47-35" data-line-number="35">                <span class="co"># if( length(columns_for_analyte_unique_ID) &gt; 1 ) {</span></a>
+<a class="sourceLine" id="cb47-36" data-line-number="36">                    <span class="co">#add analyte_unique_ID column if necessary</span></a>
+<a class="sourceLine" id="cb47-37" data-line-number="37">                <span class="co"># }</span></a>
+<a class="sourceLine" id="cb47-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb47-39" data-line-number="39">            <span class="co"># Needs to remove columns that are not included in input lists</span></a>
+<a class="sourceLine" id="cb47-40" data-line-number="40"></a>
+<a class="sourceLine" id="cb47-41" data-line-number="41">            <span class="co"># Remove analyte annotation columns before pivoting</span></a>
+<a class="sourceLine" id="cb47-42" data-line-number="42"></a>
+<a class="sourceLine" id="cb47-43" data-line-number="43">                <span class="cf">if</span>( <span class="kw">length</span>(columns_w_analyte_annotation_info) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) {</a>
+<a class="sourceLine" id="cb47-44" data-line-number="44">                    analyte_annotation_free_data &lt;-<span class="st"> </span>data[,<span class="op">-</span><span class="kw">match</span>(columns_w_analyte_annotation_info, <span class="kw">colnames</span>(data))]</a>
+<a class="sourceLine" id="cb47-45" data-line-number="45">                } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb47-46" data-line-number="46">                    analyte_annotation_free_data &lt;-<span class="st"> </span>data</a>
+<a class="sourceLine" id="cb47-47" data-line-number="47">                }</a>
+<a class="sourceLine" id="cb47-48" data-line-number="48"></a>
+<a class="sourceLine" id="cb47-49" data-line-number="49">            <span class="co"># If no pivot required, skip pivoting</span></a>
+<a class="sourceLine" id="cb47-50" data-line-number="50"></a>
+<a class="sourceLine" id="cb47-51" data-line-number="51">                <span class="cf">if</span>( <span class="kw">length</span>(column_w_multiple_analyte_names) <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">length</span>(columns_w_single_analyte_values) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span> ) {</a>
+<a class="sourceLine" id="cb47-52" data-line-number="52">                    data_wide &lt;-<span class="st"> </span>analyte_annotation_free_data</a>
+<a class="sourceLine" id="cb47-53" data-line-number="53">                    analyte_columns &lt;-<span class="st"> </span>columns_w_single_analyte_values</a>
+<a class="sourceLine" id="cb47-54" data-line-number="54">                }</a>
+<a class="sourceLine" id="cb47-55" data-line-number="55"></a>
+<a class="sourceLine" id="cb47-56" data-line-number="56">            <span class="co"># If pivoting require, pivot_wider any long-style data</span></a>
+<a class="sourceLine" id="cb47-57" data-line-number="57"></a>
+<a class="sourceLine" id="cb47-58" data-line-number="58">                <span class="cf">if</span>( <span class="kw">length</span>(column_w_multiple_analyte_names) <span class="op">==</span><span class="st"> </span><span class="dv">1</span> ) {</a>
+<a class="sourceLine" id="cb47-59" data-line-number="59">                    data_wide &lt;-<span class="st"> </span><span class="kw">pivot_wider</span>(</a>
+<a class="sourceLine" id="cb47-60" data-line-number="60">                        analyte_annotation_free_data,</a>
+<a class="sourceLine" id="cb47-61" data-line-number="61">                        <span class="dt">names_from =</span> <span class="kw">all_of</span>(column_w_multiple_analyte_names),</a>
+<a class="sourceLine" id="cb47-62" data-line-number="62">                        <span class="dt">values_from =</span> <span class="kw">all_of</span>(column_w_multiple_analyte_values)</a>
+<a class="sourceLine" id="cb47-63" data-line-number="63">                    )</a>
+<a class="sourceLine" id="cb47-64" data-line-number="64">                    analyte_columns &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">unique</span>(analyte_annotation_free_data[,<span class="kw">colnames</span>(analyte_annotation_free_data) <span class="op">==</span><span class="st"> </span>column_w_multiple_analyte_names]))</a>
+<a class="sourceLine" id="cb47-65" data-line-number="65">                } </a>
+<a class="sourceLine" id="cb47-66" data-line-number="66"></a>
+<a class="sourceLine" id="cb47-67" data-line-number="67">            <span class="co"># Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column</span></a>
+<a class="sourceLine" id="cb47-68" data-line-number="68"></a>
+<a class="sourceLine" id="cb47-69" data-line-number="69">                <span class="cf">if</span>( <span class="kw">length</span>(columns_for_sample_unique_ID) <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) {</a>
+<a class="sourceLine" id="cb47-70" data-line-number="70">                    sample_unique_IDs &lt;-<span class="st"> </span><span class="kw">apply</span>(</a>
+<a class="sourceLine" id="cb47-71" data-line-number="71">                        data_wide[,<span class="kw">match</span>(columns_for_sample_unique_ID, <span class="kw">colnames</span>(data_wide))],</a>
+<a class="sourceLine" id="cb47-72" data-line-number="72">                        <span class="dv">1</span>, paste, <span class="dt">collapse =</span> <span class="st">&quot;_&quot;</span></a>
+<a class="sourceLine" id="cb47-73" data-line-number="73">                    )</a>
+<a class="sourceLine" id="cb47-74" data-line-number="74">                    <span class="cf">if</span>( <span class="kw">any</span>(<span class="kw">duplicated</span>(sample_unique_IDs)) ) {<span class="kw">stop</span>(<span class="st">&quot;columns_for_sample_unique_ID specified do not lead to unique sample IDs&quot;</span>)}</a>
+<a class="sourceLine" id="cb47-75" data-line-number="75">                    data_wide<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>sample_unique_IDs</a>
+<a class="sourceLine" id="cb47-76" data-line-number="76">                } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb47-77" data-line-number="77">                    <span class="kw">colnames</span>(data_wide)[<span class="kw">colnames</span>(data_wide) <span class="op">==</span><span class="st"> </span>columns_for_sample_unique_ID] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb47-78" data-line-number="78">                    <span class="cf">if</span>( <span class="kw">any</span>(<span class="kw">duplicated</span>(data_wide<span class="op">$</span>sample_unique_ID)) ) {<span class="kw">stop</span>(<span class="st">&quot;columns_for_sample_unique_ID specified do not lead to unique sample IDs&quot;</span>)}</a>
+<a class="sourceLine" id="cb47-79" data-line-number="79">                }</a>
+<a class="sourceLine" id="cb47-80" data-line-number="80"></a>
+<a class="sourceLine" id="cb47-81" data-line-number="81">            <span class="co"># Clustering analysis</span></a>
+<a class="sourceLine" id="cb47-82" data-line-number="82"></a>
+<a class="sourceLine" id="cb47-83" data-line-number="83">                <span class="co"># Prepare the matrix</span></a>
+<a class="sourceLine" id="cb47-84" data-line-number="84"></a>
+<a class="sourceLine" id="cb47-85" data-line-number="85">                    matrix &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(data_wide[,<span class="kw">match</span>(analyte_columns, <span class="kw">colnames</span>(data_wide))])</a>
+<a class="sourceLine" id="cb47-86" data-line-number="86">                    <span class="kw">rownames</span>(matrix) &lt;-<span class="st"> </span>data_wide<span class="op">$</span>sample_unique_ID</a>
+<a class="sourceLine" id="cb47-87" data-line-number="87"></a>
+<a class="sourceLine" id="cb47-88" data-line-number="88">                <span class="co"># Run hclust, if requested</span></a>
+<a class="sourceLine" id="cb47-89" data-line-number="89"></a>
+<a class="sourceLine" id="cb47-90" data-line-number="90">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;hclust&quot;</span> ) {</a>
+<a class="sourceLine" id="cb47-91" data-line-number="91">                        clustering &lt;-<span class="st"> </span><span class="kw">fortify</span>(ape<span class="op">::</span><span class="kw">as.phylo</span>(stats<span class="op">::</span><span class="kw">hclust</span>(stats<span class="op">::</span><span class="kw">dist</span>(matrix))))</a>
+<a class="sourceLine" id="cb47-92" data-line-number="92">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>clustering<span class="op">$</span>label </a>
+<a class="sourceLine" id="cb47-93" data-line-number="93">                    }</a>
+<a class="sourceLine" id="cb47-94" data-line-number="94">                    </a>
+<a class="sourceLine" id="cb47-95" data-line-number="95">                <span class="co"># Add back annotations to the output</span></a>
+<a class="sourceLine" id="cb47-96" data-line-number="96"></a>
+<a class="sourceLine" id="cb47-97" data-line-number="97">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb47-98" data-line-number="98">                        data_wide[,<span class="kw">match</span>(<span class="kw">c</span>(columns_w_sample_annotation_info, <span class="st">&quot;sample_unique_ID&quot;</span>), <span class="kw">colnames</span>(data_wide))],</a>
+<a class="sourceLine" id="cb47-99" data-line-number="99">                        clustering,</a>
+<a class="sourceLine" id="cb47-100" data-line-number="100">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb47-101" data-line-number="101">                    )</a>
+<a class="sourceLine" id="cb47-102" data-line-number="102"></a>
+<a class="sourceLine" id="cb47-103" data-line-number="103">                    rownames_matrix &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">enframe</span>(<span class="kw">rownames</span>(matrix), <span class="dt">name =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb47-104" data-line-number="104">                    <span class="kw">colnames</span>(rownames_matrix)[<span class="dv">1</span>] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb47-105" data-line-number="105"></a>
+<a class="sourceLine" id="cb47-106" data-line-number="106">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb47-107" data-line-number="107">                        clustering,</a>
+<a class="sourceLine" id="cb47-108" data-line-number="108">                        <span class="kw">as_tibble</span>(<span class="kw">cbind</span>(rownames_matrix, <span class="kw">as_tibble</span>(matrix))),</a>
+<a class="sourceLine" id="cb47-109" data-line-number="109">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb47-110" data-line-number="110">                    )</a>
+<a class="sourceLine" id="cb47-111" data-line-number="111">                    clustering</a>
+<a class="sourceLine" id="cb47-112" data-line-number="112"></a>
+<a class="sourceLine" id="cb47-113" data-line-number="113">            <span class="co"># Return results</span></a>
+<a class="sourceLine" id="cb47-114" data-line-number="114"></a>
+<a class="sourceLine" id="cb47-115" data-line-number="115">                <span class="kw">return</span>( clustering )</a>
+<a class="sourceLine" id="cb47-116" data-line-number="116"></a>
+<a class="sourceLine" id="cb47-117" data-line-number="117">        }</a></code></pre></div>
 </div>
-<div id="question-4-filtering" class="section level3">
-<h3><span class="header-section-number">5.1.4</span> Question 4: Filtering</h3>
-<div id="a" class="section level4">
-<h4><span class="header-section-number">5.1.4.1</span> A</h4>
-<p>Now that you have the algae data imported and stored in an object called <code>algae_chemistry_data</code>, filter the data so that only entries are shown for which the <code>chemical_species</code> is “FAs”. What are the dimensions (i.e. number of rows and columns) of the resulting dataset?</p>
-</div>
-<div id="b" class="section level4">
-<h4><span class="header-section-number">5.1.4.2</span> B</h4>
-<p>Now filter the dataset so that only entries for the <code>algae_strain</code> “Tsv1” are shown. What are the dimensions of the resulting dataset?</p>
-</div>
-<div id="c" class="section level4">
-<h4><span class="header-section-number">5.1.4.3</span> C</h4>
-<p>Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that <code>&gt;</code> can be used in the filter command instead of <code>==</code>, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?</p>
-</div>
-</div>
-<div id="question-5-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.5</span> Question 5: Plotting</h3>
-<p>Make a ggplot that has <code>algae_strain</code> on the x axis and <code>abundance</code> on the y axis. Remember about <code>aes()</code>. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points. If you need a refresher on how to make a ggplot, please refer to the <a href="Visualization-1.html#Visualization_1">Visualization 1</a> Section of this book.</p>
-<p>Which algae strain has the most abundant compound out of all the compounds in the dataset?</p>
-</div>
-<div id="question-6-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.6</span> Question 6: Plotting</h3>
-<p>Make a ggplot that has <code>abundance</code> on the x axis and <code>chemical_species</code> on the y axis. Use points to represent each compound. You don’t need to color the points.</p>
-<p>Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)</p>
-</div>
-<div id="question-7-filtering-and-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.7</span> Question 7: Filtering and plotting</h3>
-<p>I am going to show you an example of how you can filter and plot at the same time:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">algae_chemistry_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">## Parsed with column specification:</span></a>
-<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">## cols(</span></a>
-<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">##   replicate = col_double(),</span></a>
-<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">##   algae_strain = col_character(),</span></a>
-<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">##   harvesting_regime = col_character(),</span></a>
-<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="co">##   chemical_species = col_character(),</span></a>
-<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co">##   abundance = col_double()</span></a>
-<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">## )</span></a>
-<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="kw">ggplot</span>(<span class="dt">data =</span> <span class="kw">filter</span>(algae_chemistry_data, chemical_species <span class="op">==</span><span class="st"> &quot;essential_Aas&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb20-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_point</span>()</a></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-31-1.png" width="576" /></p>
-<p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
-</div>
-<div id="question-8-filtering-and-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.8</span> Question 8: Filtering and plotting</h3>
-<p>Use a combination of filtering and plotting to show the abundance of the different chemical species in just the <code>algae_strain</code> called “Tsv1”. Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.</p>
-</div>
-<div id="question-9-open-ended-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.9</span> Question 9: Open-ended plotting</h3>
-<p>Make a plot that checks to see which <code>chemical_species</code> were more abundant under light as opposed to heavy <code>harvesting_regime</code> in all three replicates. Use filtered data so that just one <code>algae_strain</code> is shown, an x and a y axis, and points to represent the measurements. Make the points <code>size = 5</code> and also set the point’s <code>alpha = 0.6</code>. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.</p>
-</div>
-<div id="question-10-a-peek-at-whats-to-come" class="section level3">
-<h3><span class="header-section-number">5.1.10</span> Question 10: A peek at what’s to come…</h3>
-<p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_data, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="op">&lt;</span>something<span class="op">&gt;</span>, <span class="dt">y =</span> <span class="op">&lt;</span>something <span class="cf">else</span><span class="op">&gt;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="op">&lt;</span>some things<span class="op">&gt;</span>), <span class="op">&lt;</span>some here too<span class="op">&gt;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw">facet_grid</span>(.<span class="op">~</span>algae_strain)</a></code></pre></div>
-<p>Also try, instead of <code>facet_grid(.~algae_strain)</code>, <code>facet_grid(algae_strain~.)</code> at the end of you plot command. (note the swap in the position of the <code>.~</code> relative to <code>algae_strain</code>). This means your code should look something like:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_data, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="op">&lt;</span>something<span class="op">&gt;</span>, <span class="dt">y =</span> <span class="op">&lt;</span>something <span class="cf">else</span><span class="op">&gt;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="op">&lt;</span>some things<span class="op">&gt;</span>), <span class="op">&lt;</span>some here too<span class="op">&gt;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw">facet_grid</span>(algae_strain<span class="op">~</span>.)</a></code></pre></div>
-<p>What advantages does this one extra line provide over what you had to do in question 9?</p>
-</div>
-</div>
-<div id="part-2-alaska-lakes-dataset" class="section level2">
-<h2><span class="header-section-number">5.2</span> Part 2: Alaska Lakes Dataset</h2>
-<div id="question-1-importing-data-1" class="section level3">
-<h3><span class="header-section-number">5.2.1</span> Question 1: Importing Data</h3>
-<p>Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises.</p>
-</div>
-<div id="question-2-objects" class="section level3">
-<h3><span class="header-section-number">5.2.2</span> Question 2: Objects</h3>
-<p>How many variables are in the Alaska lakes dataset?</p>
-</div>
-<div id="question-3-filtering" class="section level3">
-<h3><span class="header-section-number">5.2.3</span> Question 3: Filtering</h3>
-<p>Filter the data set so only meausurements of free elements are shown. Remember, it’s <code>==</code>, not <code>=</code>. What are the dimensions of the resulting dataset?</p>
-</div>
-<div id="question-4-plotting" class="section level3">
-<h3><span class="header-section-number">5.2.4</span> Question 4: Plotting</h3>
-<p>Make a plot that shows the water temperatures of each lake. Don’t worry if you get a warning message from R about “missing values”. Which is the hottest lake? The coolest?</p>
-</div>
-<div id="question-5-plotting-1" class="section level3">
-<h3><span class="header-section-number">5.2.5</span> Question 5: Plotting</h3>
-<p>Make a plot that shows the water temperature of each lake. The x axis should be <code>park</code>, the y axis <code>water temp</code>. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?</p>
-</div>
-<div id="question-6-filtering-and-plotting" class="section level3">
-<h3><span class="header-section-number">5.2.6</span> Question 6: Filtering and Plotting</h3>
-<p>From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from <code>park == &quot;NOAT&quot;</code> are shown (note the double equals sign and the quotes around NOAT…). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.</p>
-</div>
-<div id="question-7-filtering-and-plotting-1" class="section level3">
-<h3><span class="header-section-number">5.2.7</span> Question 7: Filtering and Plotting</h3>
-<p>Make a plot that shows which lake has the highest abundance of sulfur.</p>
-</div>
-<div id="question-8-open-ended-plotting" class="section level3">
-<h3><span class="header-section-number">5.2.8</span> Question 8: Open-ended Plotting</h3>
-<p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly. Here is an example:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">lake_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="co">## Parsed with column specification:</span></a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="co">## cols(</span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">##   lake = col_character(),</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">##   park = col_character(),</span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">##   water_temp = col_double(),</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">##   pH = col_double(),</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">##   element = col_character(),</span></a>
-<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">##   mg_per_L = col_double(),</span></a>
-<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="co">##   element_type = col_character()</span></a>
-<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="co">## )</span></a>
-<a class="sourceLine" id="cb23-13" data-line-number="13"><span class="kw">ggplot</span>(<span class="dt">data =</span> <span class="kw">filter</span>(lake_data, lake <span class="op">==</span><span class="st"> &quot;Lake_Narvakrak&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> lake, <span class="dt">y =</span> mg_per_L)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb23-14" data-line-number="14"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">10</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;green&quot;</span>)</a></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-48-1.png" width="576" /></p>
-<p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
-<p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
-# Visualization 2 {#Visualization_2}</p>
-<p>After completing Exercises 1, you may have noticed that there were more variables in the data than could be represented using what we learned in the section called (Visualiation 1)[#Visualiation_1]. In this section, Visualization 2, we’re going to look at additional ways of encoding variables using <code>ggplot</code>, as well as some new geoms. Let’s get started!</p>
-</div>
-</div>
-<div id="more-geoms." class="section level2">
-<h2><span class="header-section-number">5.3</span> More geoms.</h2>
-<p>geom_histogram()
-geom_line()
-geom_area()
-geom_ribbon()</p>
-</div>
-<div id="small-multiples" class="section level2">
-<h2><span class="header-section-number">5.4</span> Small multiples</h2>
-<p>One of the most common (and powerful) ways of…</p>
-</div>
-<div id="scales" class="section level2">
-<h2><span class="header-section-number">5.5</span> Scales</h2>
-</div>
-<div id="non-data-ink-themes" class="section level2">
-<h2><span class="header-section-number">5.6</span> Non-data ink (themes)</h2>
 </div>
 </div>
             </section>
@@ -400,8 +394,8 @@ geom_ribbon()</p>
           </div>
         </div>
       </div>
-<a href="Visualization-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="R-Basics-2.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="functions-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="faq.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

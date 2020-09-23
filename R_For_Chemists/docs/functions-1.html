@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="Exercises-3.html"/>
-<link rel="next" href="filtering.html"/>
+<link rel="next" href="custom-functions.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -213,9 +213,16 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
-<li class="chapter" data-level="B" data-path="filtering.html"><a href="filtering.html"><i class="fa fa-check"></i><b>B</b> Filtering</a></li>
+<li class="chapter" data-level="B" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>B</b> Custom functions</a><ul>
+<li class="chapter" data-level="B.1" data-path="custom-functions.html"><a href="custom-functions.html#readcsv"><i class="fa fa-check"></i><b>B.1</b> readCSV</a></li>
+<li class="chapter" data-level="B.2" data-path="custom-functions.html"><a href="custom-functions.html#runmatrixanalysis"><i class="fa fa-check"></i><b>B.2</b> runMatrixAnalysis</a><ul>
+<li class="chapter" data-level="B.2.1" data-path="custom-functions.html"><a href="custom-functions.html#once-you-have-activated-runmatrixanalysis-in-your-r-session-see-below-you-can-use-the-function-by-filling-out-and-executing-this-template"><i class="fa fa-check"></i><b>B.2.1</b> Once you have activated <code>runMatrixAnalysis</code> in your R session (see below), you can use the function by filling out and executing this template:</a></li>
+<li class="chapter" data-level="B.2.2" data-path="custom-functions.html"><a href="custom-functions.html#to-activate-runmatrixanalysis-in-your-session-run-the-following-in-your-console"><i class="fa fa-check"></i><b>B.2.2</b> To activate <code>runMatrixAnalysis</code> in your session, run the following in your console:</a></li>
+</ul></li>
+</ul></li>
 <li class="chapter" data-level="C" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>C</b> FAQ</a><ul>
-<li class="chapter" data-level="C.1" data-path="faq.html"><a href="faq.html#order-categorical-axes"><i class="fa fa-check"></i><b>C.1</b> Order categorical axes</a></li>
+<li class="chapter" data-level="C.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>C.1</b> Filtering</a></li>
+<li class="chapter" data-level="C.2" data-path="faq.html"><a href="faq.html#order-categorical-axes"><i class="fa fa-check"></i><b>C.2</b> Order categorical axes</a></li>
 </ul></li>
 </ul>
 
@@ -240,7 +247,6 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><code>install.packages()</code> (base function)</p>
 <p><code>tidyverse::read_csv()</code> (a readr function - part of the tidyverse)</p>
 <p><code>plot()</code> (base function)</p>
-<p><code>readCSV()</code> (custom function: <code>readCSV &lt;- function() { return(readr::read_csv(file.choose())) }</code>)</p>
 <p><code>read.csv()</code> (base function)</p>
 <p><code>dplyr::filter()</code> (a dplyr function - part of the tidyverse)</p>
 <p><code>ggplot2::ggplot()</code>(a ggplot2 function - part of the tidyverse)</p>
@@ -262,7 +268,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
         </div>
       </div>
 <a href="Exercises-3.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="filtering.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="custom-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
