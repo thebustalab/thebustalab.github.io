@@ -1008,10 +1008,61 @@ You have learned many things in this course so far. `filter()`, `ggplot()`, and 
 # Filtering
 
 `dplyr::filter(<data>, <variable> < 18)` ## less than 18
+
 `dplyr::filter(<data>, <variable> <= 18)` ## less than or equal to 18
+
 `dplyr::filter(<data>, <variable> > 18)` ## greater than 18
+
 `dplyr::filter(<data>, <variable> >= 18)` ## greater than or equal to 18
+
 `dplyr::filter(<data>, <variable> == 18)` ## equals than 18
+
 `dplyr::filter(<data>, <variable> != 18)` ## not equal to 18
 
 `dplyr::filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
+
+# FAQ
+
+## Order categorical axes
+
+Under normal plotting scenario:
+
+```{r}
+library(tidyverse)
+NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
+NY_trees
+
+tree_data_status <- group_by(.data = NY_trees, status)
+tree_data_status
+
+tree_data_status_summary <- summarize(.data = tree_data_status, mean_height = mean(tree_height), stdev_height = sd(tree_height))
+
+status_color <- c("red","darkorange","gold","darkgreen")
+names(status_color) <- c("Dead", "Poor", "Good", "Excellent")
+
+ggplot(data = tree_data_status_summary) + 
+geom_pointrange(aes(x = status, 
+                    y = mean_height, 
+                    ymin = mean_height -stdev_height, 
+                    ymax = mean_height + stdev_height), color = "navy") +
+geom_point(data = filter(NY_trees, tree_height > 150),
+           aes(x = status, y = tree_height, fill = status), stroke = 1.5, shape = 21, size = 5) + 
+theme_bw() +
+scale_fill_manual(values = status_color)
+```
+
+But what if we want the order on the x-axis to be from worst `status` to best? We need to make the `status` column into factors (a list of characters that has an order other than alphabetical). Here's how:
+
+```{r}
+tree_data_status_summary$status <- factor(tree_data_status_summary$status, levels = c("Dead", "Poor", "Good", "Excellent")) # note that we specify the order we want right here in "levels"...
+
+ggplot(data = tree_data_status_summary) + 
+geom_pointrange(aes(x = status, 
+                    y = mean_height, 
+                    ymin = mean_height -stdev_height, 
+                    ymax = mean_height + stdev_height), color = "navy") +
+geom_point(data = filter(NY_trees, tree_height > 150),
+           aes(x = status, y = tree_height, fill = status), stroke = 1.5, shape = 21, size = 5) + 
+theme_bw() + 
+scale_fill_manual(values = status_color)
+```
