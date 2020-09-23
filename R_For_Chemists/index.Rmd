@@ -1003,118 +1003,146 @@ So far we have been looking at how to plot raw data, as well as data that has be
     #' Runs a matrix analysis (clustering, kmeans, pca).
     #'
     #' @param data The data.frame or tibble to use.
-    #' @param analysis  
+    #' @param analysis	
     #' @param column_w_multiple_analyte_names
-    #' @param column_w_multiple_analyte_values
-    #' @param columns_w_single_analyte_values
-    #' @param columns_w_analyte_annotation_info
-    #' @param columns_for_sample_unique_ID
-    #' @param columns_w_sample_annotation_info
+	#' @param column_w_multiple_analyte_values
+	#' @param columns_w_single_analyte_values
+	#' @param columns_w_analyte_annotation_info
+	#' @param columns_for_sample_unique_ID
+	#' @param columns_w_sample_annotation_info
     #' @examples
     #' @export
     #' runMatrixAnalysis
 
-        runMatrixAnalysis <-    function(
-                                
-                                    data,
+		runMatrixAnalysis <-	function(
+								
+									data,
 
-                                    analysis = c("hclust"),
-                                    
-                                    column_w_multiple_analyte_names,
-                                    column_w_multiple_analyte_values,
-                                    columns_w_single_analyte_values,
-                                    columns_w_analyte_annotation_info,
+									analysis = c("hclust"),
+									
+									column_w_multiple_analyte_names,
+									column_w_multiple_analyte_values,
 
-                                    columns_for_sample_unique_ID,
-                                    columns_w_sample_annotation_info
+									columns_w_single_analyte_values,
+									columns_w_analyte_annotation_info,
 
-                                ) {
+									columns_w_sample_ID_info
 
-            # Add analyte_unique_ID_column if necessary
+								) {
 
-                # if( length(columns_for_analyte_unique_ID) > 1 ) {
-                    #add analyte_unique_ID column if necessary
-                # }
+			# Add analyte_unique_ID_column if necessary
 
-            # Needs to remove columns that are not included in input lists
+				# if( length(columns_for_analyte_unique_ID) > 1 ) {
+					#add analyte_unique_ID column if necessary
+				# }
 
-            # Remove analyte annotation columns before pivoting
+			# Remove columns that are not included in input column lists
 
-                if( length(columns_w_analyte_annotation_info) > 0 ) {
-                    analyte_annotation_free_data <- data[,-match(columns_w_analyte_annotation_info, colnames(data))]
-                } else {
-                    analyte_annotation_free_data <- data
-                }
+				if (length(
+						which(!colnames(data) %in% 
+							c(
+								column_w_multiple_analyte_names,
+								column_w_multiple_analyte_values,
 
-            # If no pivot required, skip pivoting
+								columns_w_single_analyte_values,
+								columns_w_analyte_annotation_info,
 
-                if( length(column_w_multiple_analyte_names) == 0 & length(columns_w_single_analyte_values) >= 1 ) {
-                    data_wide <- analyte_annotation_free_data
-                    analyte_columns <- columns_w_single_analyte_values
-                }
+								columns_w_sample_ID_info
+							)
+						)
+					) > 0 
+				) {
+					data <- data[,-which(!colnames(data) %in% 
+						c(
+							column_w_multiple_analyte_names,
+							column_w_multiple_analyte_values,
 
-            # If pivoting require, pivot_wider any long-style data
+							columns_w_single_analyte_values,
+							columns_w_analyte_annotation_info,
 
-                if( length(column_w_multiple_analyte_names) == 1 ) {
-                    data_wide <- pivot_wider(
-                        analyte_annotation_free_data,
-                        names_from = all_of(column_w_multiple_analyte_names),
-                        values_from = all_of(column_w_multiple_analyte_values)
-                    )
-                    analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_multiple_analyte_names]))
-                } 
+							columns_w_sample_ID_info
+						)
+					)]
+				}
 
-            # Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
+			# Remove analyte annotation columns before pivoting
 
-                if( length(columns_for_sample_unique_ID) > 1 ) {
-                    sample_unique_IDs <- apply(
-                        data_wide[,match(columns_for_sample_unique_ID, colnames(data_wide))],
-                        1, paste, collapse = "_"
-                    )
-                    if( any(duplicated(sample_unique_IDs)) ) {stop("columns_for_sample_unique_ID specified do not lead to unique sample IDs")}
-                    data_wide$sample_unique_ID <- sample_unique_IDs
-                } else {
-                    colnames(data_wide)[colnames(data_wide) == columns_for_sample_unique_ID] <- "sample_unique_ID"
-                    if( any(duplicated(data_wide$sample_unique_ID)) ) {stop("columns_for_sample_unique_ID specified do not lead to unique sample IDs")}
-                }
+				if( length(columns_w_analyte_annotation_info) > 0 ) {
+					analyte_annotation_free_data <- data[,-match(columns_w_analyte_annotation_info, colnames(data))]
+				} else {
+					analyte_annotation_free_data <- data
+				}
 
-            # Clustering analysis
+			# If no pivot required, skip pivoting
 
-                # Prepare the matrix
+				if( length(column_w_multiple_analyte_names) == 0 & length(columns_w_single_analyte_values) >= 1 ) {
+					data_wide <- analyte_annotation_free_data
+					analyte_columns <- columns_w_single_analyte_values
+				}
 
-                    matrix <- as.matrix(data_wide[,match(analyte_columns, colnames(data_wide))])
-                    rownames(matrix) <- data_wide$sample_unique_ID
+			# If pivoting require, pivot_wider any long-style data
 
-                # Run hclust, if requested
+				if( length(column_w_multiple_analyte_names) == 1 ) {
+					data_wide <- pivot_wider(
+						analyte_annotation_free_data,
+						names_from = all_of(column_w_multiple_analyte_names),
+						values_from = all_of(column_w_multiple_analyte_values)
+					)
+					analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_multiple_analyte_names]))
+					analyte_columns <- c(columns_w_single_analyte_values, analyte_columns)
+				} 
 
-                    if( analysis == "hclust" ) {
-                        clustering <- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
-                        clustering$sample_unique_ID <- clustering$label 
-                    }
-                    
-                # Add back annotations to the output
+			# Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
 
-                    clustering <- full_join(
-                        data_wide[,match(c(columns_w_sample_annotation_info, "sample_unique_ID"), colnames(data_wide))],
-                        clustering,
-                        by = "sample_unique_ID"
-                    )
+				if( length(columns_w_sample_ID_info) > 1 ) {
+					sample_unique_IDs <- apply(
+						data_wide[,match(columns_w_sample_ID_info, colnames(data_wide))],
+						1, paste, collapse = "_"
+					)
+					if( any(duplicated(sample_unique_IDs)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
+					data_wide$sample_unique_ID <- sample_unique_IDs
+				} else {
+					colnames(data_wide)[colnames(data_wide) == columns_w_sample_ID_info] <- "sample_unique_ID"
+					if( any(duplicated(data_wide$sample_unique_ID)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
+				}
 
-                    rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
-                    colnames(rownames_matrix)[1] <- "sample_unique_ID"
+			# Clustering analysis
 
-                    clustering <- full_join(
-                        clustering,
-                        as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
-                        by = "sample_unique_ID"
-                    )
-                    clustering
+				# Prepare the matrix
 
-            # Return results
+					matrix <- as.matrix(data_wide[,match(analyte_columns, colnames(data_wide))])
+					rownames(matrix) <- data_wide$sample_unique_ID
 
-                return( clustering )
+				# Run hclust, if requested
 
-        }
+					if( analysis == "hclust" ) {
+						clustering <- ggplot2::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
+						clustering$sample_unique_ID <- clustering$label	
+					}
+					
+				# Add back annotations to the output
+
+					clustering <- full_join(
+						data_wide[,match(c(columns_w_sample_ID_info, "sample_unique_ID"), colnames(data_wide))],
+						clustering,
+						by = "sample_unique_ID"
+					)
+
+					rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
+					colnames(rownames_matrix)[1] <- "sample_unique_ID"
+
+					clustering <- full_join(
+						clustering,
+						as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
+						by = "sample_unique_ID"
+					)
+					clustering
+
+			# Return results
+
+				return( clustering )
+
+		}
 ```
 
 We load `runMatrixAnalysis()` into our session by pasting the definition of the function into the console and running it (again, please see [runMatrixAnalysis](#Custom_functions) in the Appendix). Then we use the template for `runMatrixAnalysis()` to begin our command. In order to use the template, it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaksa lakes data set:
@@ -1124,28 +1152,29 @@ library(tidyverse)
 read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 ```
 
-We can see that this dataset is comprised of measuring various *analytes* (elements, water_temp, pH), across different *samples* lakes. We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structure. See the image below for an explanation.
+We can see that this dataset is comprised of measuring various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structure. See the image below for an explanation.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr::include_graphics('http://thebustalab.github.io/phylochemistry/figures/runMatrixAnalysis1.png', dpi = NA)
+knitr::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png', dpi = NA)
 ```
 
-Let's try out our template:
+With this in mind, let's try out our template:
 
-```{r eval = FALSE}
+```{r}
 runMatrixAnalysis(
                                 
-    data = NULL,
+    data = AK_lakes,
 
-    analysis = c("hclust"),
+    analysis = "hclust",
 
-    column_w_multiple_analyte_names = NULL,
-    column_w_multiple_analyte_values = NULL,
-    columns_w_single_analyte_values = NULL,
-    columns_w_analyte_annotation_info = NULL,
+    column_w_names_of_nultiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    
+    columns_w_additional_analyte_info = "element_type",
 
-    columns_for_sample_unique_ID = NULL,
-    columns_w_sample_annotation_info = NULL
+    columns_w_sample_ID_info = c("lake", "park")
 
 )
 ```
@@ -1248,11 +1277,11 @@ runMatrixAnalysis(
 									
 									column_w_multiple_analyte_names,
 									column_w_multiple_analyte_values,
+
 									columns_w_single_analyte_values,
 									columns_w_analyte_annotation_info,
 
-									columns_for_sample_unique_ID,
-									columns_w_sample_annotation_info
+									columns_w_sample_ID_info
 
 								) {
 
@@ -1262,7 +1291,34 @@ runMatrixAnalysis(
 					#add analyte_unique_ID column if necessary
 				# }
 
-			# Needs to remove columns that are not included in input lists
+			# Remove columns that are not included in input column lists
+
+				if (length(
+						which(!colnames(data) %in% 
+							c(
+								column_w_multiple_analyte_names,
+								column_w_multiple_analyte_values,
+
+								columns_w_single_analyte_values,
+								columns_w_analyte_annotation_info,
+
+								columns_w_sample_ID_info
+							)
+						)
+					) > 0 
+				) {
+					data <- data[,-which(!colnames(data) %in% 
+						c(
+							column_w_multiple_analyte_names,
+							column_w_multiple_analyte_values,
+
+							columns_w_single_analyte_values,
+							columns_w_analyte_annotation_info,
+
+							columns_w_sample_ID_info
+						)
+					)]
+				}
 
 			# Remove analyte annotation columns before pivoting
 
@@ -1288,20 +1344,21 @@ runMatrixAnalysis(
 						values_from = all_of(column_w_multiple_analyte_values)
 					)
 					analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_multiple_analyte_names]))
+					analyte_columns <- c(columns_w_single_analyte_values, analyte_columns)
 				} 
 
 			# Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
 
-				if( length(columns_for_sample_unique_ID) > 1 ) {
+				if( length(columns_w_sample_ID_info) > 1 ) {
 					sample_unique_IDs <- apply(
-						data_wide[,match(columns_for_sample_unique_ID, colnames(data_wide))],
+						data_wide[,match(columns_w_sample_ID_info, colnames(data_wide))],
 						1, paste, collapse = "_"
 					)
-					if( any(duplicated(sample_unique_IDs)) ) {stop("columns_for_sample_unique_ID specified do not lead to unique sample IDs")}
+					if( any(duplicated(sample_unique_IDs)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
 					data_wide$sample_unique_ID <- sample_unique_IDs
 				} else {
-					colnames(data_wide)[colnames(data_wide) == columns_for_sample_unique_ID] <- "sample_unique_ID"
-					if( any(duplicated(data_wide$sample_unique_ID)) ) {stop("columns_for_sample_unique_ID specified do not lead to unique sample IDs")}
+					colnames(data_wide)[colnames(data_wide) == columns_w_sample_ID_info] <- "sample_unique_ID"
+					if( any(duplicated(data_wide$sample_unique_ID)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
 				}
 
 			# Clustering analysis
@@ -1314,14 +1371,14 @@ runMatrixAnalysis(
 				# Run hclust, if requested
 
 					if( analysis == "hclust" ) {
-						clustering <- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
+						clustering <- ggplot2::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
 						clustering$sample_unique_ID <- clustering$label	
 					}
 					
 				# Add back annotations to the output
 
 					clustering <- full_join(
-						data_wide[,match(c(columns_w_sample_annotation_info, "sample_unique_ID"), colnames(data_wide))],
+						data_wide[,match(c(columns_w_sample_ID_info, "sample_unique_ID"), colnames(data_wide))],
 						clustering,
 						by = "sample_unique_ID"
 					)

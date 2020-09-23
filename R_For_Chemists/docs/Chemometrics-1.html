@@ -263,24 +263,41 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb47-14" data-line-number="14"><span class="co">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></a>
 <a class="sourceLine" id="cb47-15" data-line-number="15"><span class="co">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></a>
 <a class="sourceLine" id="cb47-16" data-line-number="16"><span class="co">## # … with 210 more rows</span></a></code></pre></div>
-<p>We can see that this dataset is comprised of measuring various <em>analytes</em> (elements, water_temp, pH), across different <em>samples</em> lakes. We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
-<p><img src="http://thebustalab.github.io/phylochemistry/figures/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
-<p>Let’s try out our template:</p>
+<p>We can see that this dataset is comprised of measuring various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
+<p><img src="http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
+<p>With this in mind, let’s try out our template:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw">runMatrixAnalysis</span>(</a>
 <a class="sourceLine" id="cb48-2" data-line-number="2">                                </a>
-<a class="sourceLine" id="cb48-3" data-line-number="3">    <span class="dt">data =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb48-3" data-line-number="3">    <span class="dt">data =</span> AK_lakes,</a>
 <a class="sourceLine" id="cb48-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb48-5" data-line-number="5">    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>),</a>
+<a class="sourceLine" id="cb48-5" data-line-number="5">    <span class="dt">analysis =</span> <span class="st">&quot;hclust&quot;</span>,</a>
 <a class="sourceLine" id="cb48-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb48-7" data-line-number="7">    <span class="dt">column_w_multiple_analyte_names =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb48-8" data-line-number="8">    <span class="dt">column_w_multiple_analyte_values =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb48-9" data-line-number="9">    <span class="dt">columns_w_single_analyte_values =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb48-10" data-line-number="10">    <span class="dt">columns_w_analyte_annotation_info =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb48-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb48-12" data-line-number="12">    <span class="dt">columns_for_sample_unique_ID =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb48-13" data-line-number="13">    <span class="dt">columns_w_sample_annotation_info =</span> <span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb48-7" data-line-number="7">    <span class="dt">column_w_multiple_analyte_names =</span> <span class="st">&quot;element&quot;</span>,</a>
+<a class="sourceLine" id="cb48-8" data-line-number="8">    <span class="dt">column_w_multiple_analyte_values =</span> <span class="st">&quot;mg_per_L&quot;</span>,</a>
+<a class="sourceLine" id="cb48-9" data-line-number="9">    </a>
+<a class="sourceLine" id="cb48-10" data-line-number="10">    <span class="dt">columns_w_single_analyte_values =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</a>
+<a class="sourceLine" id="cb48-11" data-line-number="11">    <span class="dt">columns_w_analyte_annotation_info =</span> <span class="st">&quot;element_type&quot;</span>,</a>
+<a class="sourceLine" id="cb48-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb48-13" data-line-number="13">    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</a>
 <a class="sourceLine" id="cb48-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb48-15" data-line-number="15">)</a></code></pre></div>
+<a class="sourceLine" id="cb48-15" data-line-number="15">)</a>
+<a class="sourceLine" id="cb48-16" data-line-number="16"><span class="co">## # A tibble: 39 x 25</span></a>
+<a class="sourceLine" id="cb48-17" data-line-number="17"><span class="co">##    lake  park  sample_unique_ID parent  node branch.length label isTip</span></a>
+<a class="sourceLine" id="cb48-18" data-line-number="18"><span class="co">##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;             &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt;</span></a>
+<a class="sourceLine" id="cb48-19" data-line-number="19"><span class="co">##  1 Devi… BELA  Devil_Mountain_…     33     1          7.25 Devi… TRUE </span></a>
+<a class="sourceLine" id="cb48-20" data-line-number="20"><span class="co">##  2 Imur… BELA  Imuruk_Lake_BELA     32     2          4.91 Imur… TRUE </span></a>
+<a class="sourceLine" id="cb48-21" data-line-number="21"><span class="co">##  3 Kuzi… BELA  Kuzitrin_Lake_B…     36     3          3.27 Kuzi… TRUE </span></a>
+<a class="sourceLine" id="cb48-22" data-line-number="22"><span class="co">##  4 Lava… BELA  Lava_Lake_BELA       35     4          3.02 Lava… TRUE </span></a>
+<a class="sourceLine" id="cb48-23" data-line-number="23"><span class="co">##  5 Nort… BELA  North_Killeak_L…     21     5        204.   Nort… TRUE </span></a>
+<a class="sourceLine" id="cb48-24" data-line-number="24"><span class="co">##  6 Whit… BELA  White_Fish_Lake…     22     6         65.2  Whit… TRUE </span></a>
+<a class="sourceLine" id="cb48-25" data-line-number="25"><span class="co">##  7 Inia… GAAR  Iniakuk_Lake_GA…     29     7          3.60 Inia… TRUE </span></a>
+<a class="sourceLine" id="cb48-26" data-line-number="26"><span class="co">##  8 Kuru… GAAR  Kurupa_Lake_GAAR     31     8          8.57 Kuru… TRUE </span></a>
+<a class="sourceLine" id="cb48-27" data-line-number="27"><span class="co">##  9 Lake… GAAR  Lake_Matcharak_…     29     9          3.60 Lake… TRUE </span></a>
+<a class="sourceLine" id="cb48-28" data-line-number="28"><span class="co">## 10 Lake… GAAR  Lake_Selby_GAAR      30    10          5.24 Lake… TRUE </span></a>
+<a class="sourceLine" id="cb48-29" data-line-number="29"><span class="co">## # … with 29 more rows, and 17 more variables: x &lt;dbl&gt;, y &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb48-30" data-line-number="30"><span class="co">## #   branch &lt;dbl&gt;, angle &lt;dbl&gt;, water_temp &lt;dbl&gt;, pH &lt;dbl&gt;, C &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb48-31" data-line-number="31"><span class="co">## #   N &lt;dbl&gt;, P &lt;dbl&gt;, Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb48-32" data-line-number="32"><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></a></code></pre></div>
 </div>
 
 
