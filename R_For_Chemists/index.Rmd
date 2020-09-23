@@ -1126,7 +1126,7 @@ runMatrixAnalysis(
 				# Run hclust, if requested
 
 					if( analysis == "hclust" ) {
-						clustering <- fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
+						clustering <- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
 						clustering$sample_unique_ID <- clustering$label	
 					}
 					
