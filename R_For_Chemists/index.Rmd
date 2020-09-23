@@ -824,6 +824,36 @@ ggplot(data = ny_trees_by_spc_boro_summ) +
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
+
+## The pipe (%>%)
+
+When we want to get summary statistics for a dataset, we often end up creating lots of new objects, sometimes with convoluted names. For example, what if we want to know and visualize the average temperature across the lakes in each of the three Alaska parks? We might do something like the below: 
+
+```{r}
+library(tidyverse)
+AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+head(AK_lakes)
+
+AK_lakes_by_park <- group_by(.data = AK_lakes, park)
+
+AK_lakes_by_park_summ <- summarize(.data = AK_lakes_by_park, mean_temperature = mean(water_temp))
+
+ggplot(AK_lakes_by_park_summ) + geom_point(aes(x = park, y = mean_temperature))
+```
+
+In order to do that, we created two new objects `AK_lakes_by_park` and `AK_lakes_by_park_summ`. In big analysis chains, we can end up creating lots of objects with complicated names. There must be a better way! There is. Meet the pipe: `%>%`. It sends the output from one command directly to the next, so we neither need to have each command create a new object, nor do we need to start each command by telling it what data to use. With the pipe, the same analysis as above can be done with the text below. Neat! Easier!
+
+```{r}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv") %>%
+
+group_by(park) %>%
+
+summarize(mean_temperature = mean(water_temp)) %>%
+
+ggplot() + geom_point(aes(x = park, y = mean_temperature))
+```
+
 ## Tidy data
 
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
