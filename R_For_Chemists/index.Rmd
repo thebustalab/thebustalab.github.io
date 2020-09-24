@@ -1236,7 +1236,7 @@ For this set of exercises, please use `runMatrixAnalysis()` to run and visualize
 [the Alaska lakes data](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv), 
 [the solvents data](https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv)
 [solvents dataset](https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv)
-, and [THIS SUBSET of the periodic table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv). You do not need to use the entire periodic table dataset. 
+, and [THIS SUBSET of the periodic table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv). You do not need to use the entire periodic table dataset. ..
 
 Put the figure from each cluster analysis in its own slide of a powerpoint presentation, put the underlying code in the corresponding notes section, and send the pptx to me. Let me know if you have any questions!
 
