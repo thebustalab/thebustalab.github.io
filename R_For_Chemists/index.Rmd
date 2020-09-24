@@ -1289,7 +1289,7 @@ colnames(mini_per_table)
 
 `tidyr::pivot_longer()` (a tidyr function - part of the tidyverse)
 
-# Custom functions {#Custom_functions}
+# Custom functions {#custom_functions}
 
 ## readCSV
 
