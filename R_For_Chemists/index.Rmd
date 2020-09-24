@@ -995,7 +995,16 @@ You have learned many things in this course so far. `filter()`, `ggplot()`, and 
 
 # Chemometrics 1 {#Chemometrics_1}
 
-So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use `runMatrixAnalysis()` a function that you can load into your R Session by having a look at [runMatrixAnalysis](#Custom_functions) in the Appendix.
+So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use `runMatrixAnalysis()` a function that you can load into your R Session by having a look at [runMatrixAnalysis](#Custom_functions) in the Appendix. In order for `runMatrixAnalysis()` to work, you will also need to install `ape` and `ggtree`. Use the code below to do that:
+
+```{r eval = FALSE}
+install.packages("ape", repos = "https://cloud.r-project.org", quiet = FALSE)
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+install.packages("BiocManager")
+
+BiocManager::install("ggtree")
+```
 
 ```{r echo = FALSE}
 #### runMatrixAnalysis
@@ -1004,10 +1013,10 @@ So far we have been looking at how to plot raw data, as well as data that has be
     #'
     #' @param data The data.frame or tibble to use.
     #' @param analysis	
-    #' @param column_w_multiple_analyte_names
-	#' @param column_w_multiple_analyte_values
-	#' @param columns_w_single_analyte_values
-	#' @param columns_w_analyte_annotation_info
+    #' @param column_w_names_of_multiple_analytes
+	#' @param column_w_values_for_multiple_analytes
+	#' @param columns_w_values_for_single_analyte
+	#' @param columns_w_additional_analyte_info
 	#' @param columns_for_sample_unique_ID
 	#' @param columns_w_sample_annotation_info
     #' @examples
@@ -1020,15 +1029,31 @@ So far we have been looking at how to plot raw data, as well as data that has be
 
 									analysis = c("hclust"),
 									
-									column_w_multiple_analyte_names,
-									column_w_multiple_analyte_values,
+									column_w_names_of_multiple_analytes,
+									column_w_values_for_multiple_analytes,
 
-									columns_w_single_analyte_values,
-									columns_w_analyte_annotation_info,
+									columns_w_values_for_single_analyte,
+
+									columns_w_additional_analyte_info,
 
 									columns_w_sample_ID_info
 
 								) {
+
+			# Check that column names are spelled correctly
+
+				if( any(
+					!c(
+						column_w_names_of_multiple_analytes,
+						column_w_values_for_multiple_analytes,
+						columns_w_values_for_single_analyte,
+						columns_w_additional_analyte_info,
+						columns_w_sample_ID_info
+					) %in% colnames(data)
+					) == TRUE
+				) {
+					stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
+				}
 
 			# Add analyte_unique_ID_column if necessary
 
@@ -1041,11 +1066,11 @@ So far we have been looking at how to plot raw data, as well as data that has be
 				if (length(
 						which(!colnames(data) %in% 
 							c(
-								column_w_multiple_analyte_names,
-								column_w_multiple_analyte_values,
+								column_w_names_of_multiple_analytes,
+								column_w_values_for_multiple_analytes,
 
-								columns_w_single_analyte_values,
-								columns_w_analyte_annotation_info,
+								columns_w_values_for_single_analyte,
+								columns_w_additional_analyte_info,
 
 								columns_w_sample_ID_info
 							)
@@ -1054,11 +1079,11 @@ So far we have been looking at how to plot raw data, as well as data that has be
 				) {
 					data <- data[,-which(!colnames(data) %in% 
 						c(
-							column_w_multiple_analyte_names,
-							column_w_multiple_analyte_values,
+							column_w_names_of_multiple_analytes,
+							column_w_values_for_multiple_analytes,
 
-							columns_w_single_analyte_values,
-							columns_w_analyte_annotation_info,
+							columns_w_values_for_single_analyte,
+							columns_w_additional_analyte_info,
 
 							columns_w_sample_ID_info
 						)
@@ -1067,29 +1092,29 @@ So far we have been looking at how to plot raw data, as well as data that has be
 
 			# Remove analyte annotation columns before pivoting
 
-				if( length(columns_w_analyte_annotation_info) > 0 ) {
-					analyte_annotation_free_data <- data[,-match(columns_w_analyte_annotation_info, colnames(data))]
+				if( length(columns_w_additional_analyte_info) > 0 ) {
+					analyte_annotation_free_data <- data[,-match(columns_w_additional_analyte_info, colnames(data))]
 				} else {
 					analyte_annotation_free_data <- data
 				}
 
 			# If no pivot required, skip pivoting
 
-				if( length(column_w_multiple_analyte_names) == 0 & length(columns_w_single_analyte_values) >= 1 ) {
+				if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
 					data_wide <- analyte_annotation_free_data
-					analyte_columns <- columns_w_single_analyte_values
+					analyte_columns <- columns_w_values_for_single_analyte
 				}
 
 			# If pivoting require, pivot_wider any long-style data
 
-				if( length(column_w_multiple_analyte_names) == 1 ) {
+				if( length(column_w_names_of_multiple_analytes) == 1 ) {
 					data_wide <- pivot_wider(
 						analyte_annotation_free_data,
-						names_from = all_of(column_w_multiple_analyte_names),
-						values_from = all_of(column_w_multiple_analyte_values)
+						names_from = all_of(column_w_names_of_multiple_analytes),
+						values_from = all_of(column_w_values_for_multiple_analytes)
 					)
-					analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_multiple_analyte_names]))
-					analyte_columns <- c(columns_w_single_analyte_values, analyte_columns)
+					analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
+					analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
 				} 
 
 			# Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
@@ -1145,7 +1170,7 @@ So far we have been looking at how to plot raw data, as well as data that has be
 		}
 ```
 
-We load `runMatrixAnalysis()` into our session by pasting the definition of the function into the console and running it (again, please see [runMatrixAnalysis](#Custom_functions) in the Appendix). Then we use the template for `runMatrixAnalysis()` to begin our command. In order to use the template, it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaksa lakes data set:
+With the requisite packages installed, we can load `runMatrixAnalysis()` into our session by pasting the definition of the function into the console and running it (again, please see [runMatrixAnalysis](#Custom_functions) in the Appendix). Then we use the template for `runMatrixAnalysis()` to begin our command. In order to use the template, it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaksa lakes data set:
 
 ```{r message = FALSE}
 library(tidyverse)
@@ -1161,13 +1186,13 @@ knitr::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/run
 With this in mind, let's try out our template:
 
 ```{r}
-runMatrixAnalysis(
+AK_lakes_clustered <- runMatrixAnalysis(
                                 
     data = AK_lakes,
 
     analysis = "hclust",
 
-    column_w_names_of_nultiple_analytes = "element",
+    column_w_names_of_multiple_analytes = "element",
     column_w_values_for_multiple_analytes = "mg_per_L",
     
     columns_w_values_for_single_analyte = c("water_temp", "pH"),
@@ -1177,8 +1202,47 @@ runMatrixAnalysis(
     columns_w_sample_ID_info = c("lake", "park")
 
 )
+AK_lakes_clustered
 ```
 
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+```{r}
+library(ggtree)
+ggtree(tr = AK_lakes_clustered) +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic()
+```
+
+Cool! Though that plot could use some tweaking... let's try:
+
+```{r}
+ggtree(tr = AK_lakes_clustered) +
+		geom_tiplab(aes(label = lake), offset = 10) +
+		geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+		coord_cartesian(xlim = c(0,350))
+```
+ 
+ Very nice!
+
+# Exercises 4 {#Exercises_4}
+
+For this set of exercises, please run and visualize a hierarchical cluster analysis on each of the main datasets that we have worked with so far, except for NY_trees. This means [The algae data]("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv"), [The Alaska lakes data]("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv"), [The solvents data]("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv"), and [THIS SUBSET of the periodic table]("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv").
+
+For this assignment, you may find the `colnames()` function useful. It will list all the column names in a dataset for you. For example:
+
+```{r message = FALSE}
+mini_per_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+```
+```{r}
+colnames(mini_per_table)
+```
+
+Put the figure from each cluster analysis in it's own slide of a powerpoint presentation, put your code in the notes section, and send it to me. Let me know if you have any questions!
 
 # (APPENDIX) Appendix {-}
 
@@ -1239,13 +1303,14 @@ runMatrixAnalysis(
 
 	analysis = c("hclust"),
 
-	column_w_multiple_analyte_names = NULL,
-	column_w_multiple_analyte_values = NULL,
-	columns_w_single_analyte_values = NULL,
-	columns_w_analyte_annotation_info = NULL,
+	column_w_names_of_multiple_analytes = NULL,
+  	column_w_values_for_multiple_analytes = NULL,
+    
+  	columns_w_values_for_single_analyte = NULL,
+    
+  	columns_w_additional_analyte_info = NULL,
 
-	columns_for_sample_unique_ID = NULL,
-	columns_w_sample_annotation_info = NULL
+  	columns_w_sample_ID_info = NULL
 
 )
 ```
@@ -1259,10 +1324,10 @@ runMatrixAnalysis(
     #'
     #' @param data The data.frame or tibble to use.
     #' @param analysis	
-    #' @param column_w_multiple_analyte_names
-	#' @param column_w_multiple_analyte_values
-	#' @param columns_w_single_analyte_values
-	#' @param columns_w_analyte_annotation_info
+    #' @param column_w_names_of_multiple_analytes
+	#' @param column_w_values_for_multiple_analytes
+	#' @param columns_w_values_for_single_analyte
+	#' @param columns_w_additional_analyte_info
 	#' @param columns_for_sample_unique_ID
 	#' @param columns_w_sample_annotation_info
     #' @examples
@@ -1275,15 +1340,31 @@ runMatrixAnalysis(
 
 									analysis = c("hclust"),
 									
-									column_w_multiple_analyte_names,
-									column_w_multiple_analyte_values,
+									column_w_names_of_multiple_analytes,
+									column_w_values_for_multiple_analytes,
 
-									columns_w_single_analyte_values,
-									columns_w_analyte_annotation_info,
+									columns_w_values_for_single_analyte,
+
+									columns_w_additional_analyte_info,
 
 									columns_w_sample_ID_info
 
 								) {
+
+			# Check that column names are spelled correctly
+
+				if( any(
+					!c(
+						column_w_names_of_multiple_analytes,
+						column_w_values_for_multiple_analytes,
+						columns_w_values_for_single_analyte,
+						columns_w_additional_analyte_info,
+						columns_w_sample_ID_info
+					) %in% colnames(data)
+					) == TRUE
+				) {
+					stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
+				}
 
 			# Add analyte_unique_ID_column if necessary
 
@@ -1296,11 +1377,11 @@ runMatrixAnalysis(
 				if (length(
 						which(!colnames(data) %in% 
 							c(
-								column_w_multiple_analyte_names,
-								column_w_multiple_analyte_values,
+								column_w_names_of_multiple_analytes,
+								column_w_values_for_multiple_analytes,
 
-								columns_w_single_analyte_values,
-								columns_w_analyte_annotation_info,
+								columns_w_values_for_single_analyte,
+								columns_w_additional_analyte_info,
 
 								columns_w_sample_ID_info
 							)
@@ -1309,11 +1390,11 @@ runMatrixAnalysis(
 				) {
 					data <- data[,-which(!colnames(data) %in% 
 						c(
-							column_w_multiple_analyte_names,
-							column_w_multiple_analyte_values,
+							column_w_names_of_multiple_analytes,
+							column_w_values_for_multiple_analytes,
 
-							columns_w_single_analyte_values,
-							columns_w_analyte_annotation_info,
+							columns_w_values_for_single_analyte,
+							columns_w_additional_analyte_info,
 
 							columns_w_sample_ID_info
 						)
@@ -1322,29 +1403,29 @@ runMatrixAnalysis(
 
 			# Remove analyte annotation columns before pivoting
 
-				if( length(columns_w_analyte_annotation_info) > 0 ) {
-					analyte_annotation_free_data <- data[,-match(columns_w_analyte_annotation_info, colnames(data))]
+				if( length(columns_w_additional_analyte_info) > 0 ) {
+					analyte_annotation_free_data <- data[,-match(columns_w_additional_analyte_info, colnames(data))]
 				} else {
 					analyte_annotation_free_data <- data
 				}
 
 			# If no pivot required, skip pivoting
 
-				if( length(column_w_multiple_analyte_names) == 0 & length(columns_w_single_analyte_values) >= 1 ) {
+				if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
 					data_wide <- analyte_annotation_free_data
-					analyte_columns <- columns_w_single_analyte_values
+					analyte_columns <- columns_w_values_for_single_analyte
 				}
 
 			# If pivoting require, pivot_wider any long-style data
 
-				if( length(column_w_multiple_analyte_names) == 1 ) {
+				if( length(column_w_names_of_multiple_analytes) == 1 ) {
 					data_wide <- pivot_wider(
 						analyte_annotation_free_data,
-						names_from = all_of(column_w_multiple_analyte_names),
-						values_from = all_of(column_w_multiple_analyte_values)
+						names_from = all_of(column_w_names_of_multiple_analytes),
+						values_from = all_of(column_w_values_for_multiple_analytes)
 					)
-					analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_multiple_analyte_names]))
-					analyte_columns <- c(columns_w_single_analyte_values, analyte_columns)
+					analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
+					analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
 				} 
 
 			# Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
