@@ -1231,7 +1231,9 @@ ggtree(tr = AK_lakes_clustered) +
 
 # Exercises 4 {#Exercises_4}
 
-For this set of exercises, please run and visualize a hierarchical cluster analysis on each of the main datasets that we have worked with so far, except for NY_trees. This means [The algae data]("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv"), [The Alaska lakes data]("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv"), [The solvents data]("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv"), and [THIS SUBSET of the periodic table]("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv").
+For this set of exercises, please run and visualize a hierarchical cluster analysis using each of the main datasets that we have worked with so far, except for NY_trees. This means [the algae data]("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv"), [the Alaska lakes data]("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv"), [the solvents data]("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv"), and [THIS SUBSET of the periodic table]("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv"). You do not need to use the entire periodic table dataset.
+
+Put the figure from each cluster analysis in its own slide of a powerpoint presentation, put the underlying code in the corresponding notes section, and send the pptx to me. Let me know if you have any questions!
 
 For this assignment, you may find the `colnames()` function useful. It will list all the column names in a dataset for you. For example:
 
@@ -1242,7 +1244,6 @@ mini_per_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_
 colnames(mini_per_table)
 ```
 
-Put the figure from each cluster analysis in it's own slide of a powerpoint presentation, put your code in the notes section, and send it to me. Let me know if you have any questions!
 
 # (APPENDIX) Appendix {-}
 
