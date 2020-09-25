@@ -1461,7 +1461,7 @@ runMatrixAnalysis(
 
 					if( analysis == "hclust" ) {
 						clustering <- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
-						clustering$sample_unique_ID <- clustering$label	
+						clustering$sample_unique_ID <- clustering$label
 					}
 					
 				# Add back annotations to the output

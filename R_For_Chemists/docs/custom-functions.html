@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-09-24" />
+<meta name="date" content="2020-09-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -407,8 +407,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb56-132" data-line-number="132">                <span class="co"># Run hclust, if requested</span></a>
 <a class="sourceLine" id="cb56-133" data-line-number="133"></a>
 <a class="sourceLine" id="cb56-134" data-line-number="134">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;hclust&quot;</span> ) {</a>
-<a class="sourceLine" id="cb56-135" data-line-number="135">                        clustering &lt;-<span class="st"> </span>ggplot2<span class="op">::</span><span class="kw">fortify</span>(ape<span class="op">::</span><span class="kw">as.phylo</span>(stats<span class="op">::</span><span class="kw">hclust</span>(stats<span class="op">::</span><span class="kw">dist</span>(matrix))))</a>
-<a class="sourceLine" id="cb56-136" data-line-number="136">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>clustering<span class="op">$</span>label </a>
+<a class="sourceLine" id="cb56-135" data-line-number="135">                        clustering &lt;-<span class="st"> </span>ggtree<span class="op">::</span><span class="kw">fortify</span>(ape<span class="op">::</span><span class="kw">as.phylo</span>(stats<span class="op">::</span><span class="kw">hclust</span>(stats<span class="op">::</span><span class="kw">dist</span>(matrix))))</a>
+<a class="sourceLine" id="cb56-136" data-line-number="136">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>clustering<span class="op">$</span>label</a>
 <a class="sourceLine" id="cb56-137" data-line-number="137">                    }</a>
 <a class="sourceLine" id="cb56-138" data-line-number="138">                    </a>
 <a class="sourceLine" id="cb56-139" data-line-number="139">                <span class="co"># Add back annotations to the output</span></a>
