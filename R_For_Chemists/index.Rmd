@@ -1027,7 +1027,7 @@ BiocManager::install("ggtree")
 								
 									data,
 
-									analysis = c("hclust"),
+									analysis = c("hclust", "pca"),
 									
 									column_w_names_of_multiple_analytes,
 									column_w_values_for_multiple_analytes,
@@ -1144,6 +1144,14 @@ BiocManager::install("ggtree")
 						clustering <- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
 						clustering$sample_unique_ID <- clustering$label	
 					}
+
+				# Run PCA, if requested
+
+					if( analysis == "pca" ) {
+						coords <- FactoMineR::PCA(matrix)$ind$coord[,c(1:2)]
+						clustering <- as_tibble(coords)
+						clustering$sample_unique_ID <- rownames(coords)
+					}
 					
 				# Add back annotations to the output
 
@@ -1252,6 +1260,9 @@ colnames(mini_per_table)
 ```
 
 
+# Chemometrics 2 {#Chemometrics_2}
+
+
 # (APPENDIX) Appendix {-}
 
 # Functions
@@ -1309,7 +1320,7 @@ runMatrixAnalysis(
 								
 	data = NULL,
 
-	analysis = c("hclust"),
+	analysis = c("hclust", "pca"),
 
 	column_w_names_of_multiple_analytes = NULL,
   	column_w_values_for_multiple_analytes = NULL,
@@ -1346,7 +1357,7 @@ runMatrixAnalysis(
 								
 									data,
 
-									analysis = c("hclust"),
+									analysis = c("hclust", "pca"),
 									
 									column_w_names_of_multiple_analytes,
 									column_w_values_for_multiple_analytes,
@@ -1461,7 +1472,15 @@ runMatrixAnalysis(
 
 					if( analysis == "hclust" ) {
 						clustering <- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
-						clustering$sample_unique_ID <- clustering$label
+						clustering$sample_unique_ID <- clustering$label	
+					}
+
+				# Run PCA, if requested
+
+					if( analysis == "pca" ) {
+						coords <- FactoMineR::PCA(matrix)$ind$coord[,c(1:2)]
+						clustering <- as_tibble(coords)
+						clustering$sample_unique_ID <- rownames(coords)
 					}
 					
 				# Add back annotations to the output
