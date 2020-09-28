@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-09-25" />
+<meta name="date" content="2020-09-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -214,6 +214,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="Chemometrics-1.html"><a href="Chemometrics-1.html"><i class="fa fa-check"></i><b>10</b> Chemometrics 1</a></li>
 <li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
+<li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
 <li class="chapter" data-level="B" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>B</b> Custom functions</a><ul>
@@ -258,7 +259,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb55-2" data-line-number="2">                                </a>
 <a class="sourceLine" id="cb55-3" data-line-number="3">    <span class="dt">data =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb55-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb55-5" data-line-number="5">    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>),</a>
+<a class="sourceLine" id="cb55-5" data-line-number="5">    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</a>
 <a class="sourceLine" id="cb55-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb55-7" data-line-number="7">    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb55-8" data-line-number="8">    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
@@ -293,7 +294,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb56-18" data-line-number="18">                                </a>
 <a class="sourceLine" id="cb56-19" data-line-number="19">                                    data,</a>
 <a class="sourceLine" id="cb56-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb56-21" data-line-number="21">                                    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>),</a>
+<a class="sourceLine" id="cb56-21" data-line-number="21">                                    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</a>
 <a class="sourceLine" id="cb56-22" data-line-number="22">                                    </a>
 <a class="sourceLine" id="cb56-23" data-line-number="23">                                    column_w_names_of_multiple_analytes,</a>
 <a class="sourceLine" id="cb56-24" data-line-number="24">                                    column_w_values_for_multiple_analytes,</a>
@@ -408,32 +409,40 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb56-133" data-line-number="133"></a>
 <a class="sourceLine" id="cb56-134" data-line-number="134">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;hclust&quot;</span> ) {</a>
 <a class="sourceLine" id="cb56-135" data-line-number="135">                        clustering &lt;-<span class="st"> </span>ggtree<span class="op">::</span><span class="kw">fortify</span>(ape<span class="op">::</span><span class="kw">as.phylo</span>(stats<span class="op">::</span><span class="kw">hclust</span>(stats<span class="op">::</span><span class="kw">dist</span>(matrix))))</a>
-<a class="sourceLine" id="cb56-136" data-line-number="136">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>clustering<span class="op">$</span>label</a>
+<a class="sourceLine" id="cb56-136" data-line-number="136">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>clustering<span class="op">$</span>label </a>
 <a class="sourceLine" id="cb56-137" data-line-number="137">                    }</a>
-<a class="sourceLine" id="cb56-138" data-line-number="138">                    </a>
-<a class="sourceLine" id="cb56-139" data-line-number="139">                <span class="co"># Add back annotations to the output</span></a>
+<a class="sourceLine" id="cb56-138" data-line-number="138"></a>
+<a class="sourceLine" id="cb56-139" data-line-number="139">                <span class="co"># Run PCA, if requested</span></a>
 <a class="sourceLine" id="cb56-140" data-line-number="140"></a>
-<a class="sourceLine" id="cb56-141" data-line-number="141">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
-<a class="sourceLine" id="cb56-142" data-line-number="142">                        data_wide[,<span class="kw">match</span>(<span class="kw">c</span>(columns_w_sample_ID_info, <span class="st">&quot;sample_unique_ID&quot;</span>), <span class="kw">colnames</span>(data_wide))],</a>
-<a class="sourceLine" id="cb56-143" data-line-number="143">                        clustering,</a>
-<a class="sourceLine" id="cb56-144" data-line-number="144">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb56-145" data-line-number="145">                    )</a>
-<a class="sourceLine" id="cb56-146" data-line-number="146"></a>
-<a class="sourceLine" id="cb56-147" data-line-number="147">                    rownames_matrix &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">enframe</span>(<span class="kw">rownames</span>(matrix), <span class="dt">name =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb56-148" data-line-number="148">                    <span class="kw">colnames</span>(rownames_matrix)[<span class="dv">1</span>] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb56-149" data-line-number="149"></a>
-<a class="sourceLine" id="cb56-150" data-line-number="150">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb56-141" data-line-number="141">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;pca&quot;</span> ) {</a>
+<a class="sourceLine" id="cb56-142" data-line-number="142">                        coords &lt;-<span class="st"> </span>FactoMineR<span class="op">::</span><span class="kw">PCA</span>(matrix)<span class="op">$</span>ind<span class="op">$</span>coord[,<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
+<a class="sourceLine" id="cb56-143" data-line-number="143">                        clustering &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(coords)</a>
+<a class="sourceLine" id="cb56-144" data-line-number="144">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span><span class="kw">rownames</span>(coords)</a>
+<a class="sourceLine" id="cb56-145" data-line-number="145">                    }</a>
+<a class="sourceLine" id="cb56-146" data-line-number="146">                    </a>
+<a class="sourceLine" id="cb56-147" data-line-number="147">                <span class="co"># Add back annotations to the output</span></a>
+<a class="sourceLine" id="cb56-148" data-line-number="148"></a>
+<a class="sourceLine" id="cb56-149" data-line-number="149">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb56-150" data-line-number="150">                        data_wide[,<span class="kw">match</span>(<span class="kw">c</span>(columns_w_sample_ID_info, <span class="st">&quot;sample_unique_ID&quot;</span>), <span class="kw">colnames</span>(data_wide))],</a>
 <a class="sourceLine" id="cb56-151" data-line-number="151">                        clustering,</a>
-<a class="sourceLine" id="cb56-152" data-line-number="152">                        <span class="kw">as_tibble</span>(<span class="kw">cbind</span>(rownames_matrix, <span class="kw">as_tibble</span>(matrix))),</a>
-<a class="sourceLine" id="cb56-153" data-line-number="153">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb56-154" data-line-number="154">                    )</a>
-<a class="sourceLine" id="cb56-155" data-line-number="155">                    clustering</a>
-<a class="sourceLine" id="cb56-156" data-line-number="156"></a>
-<a class="sourceLine" id="cb56-157" data-line-number="157">            <span class="co"># Return results</span></a>
-<a class="sourceLine" id="cb56-158" data-line-number="158"></a>
-<a class="sourceLine" id="cb56-159" data-line-number="159">                <span class="kw">return</span>( clustering )</a>
-<a class="sourceLine" id="cb56-160" data-line-number="160"></a>
-<a class="sourceLine" id="cb56-161" data-line-number="161">        }</a></code></pre></div>
+<a class="sourceLine" id="cb56-152" data-line-number="152">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb56-153" data-line-number="153">                    )</a>
+<a class="sourceLine" id="cb56-154" data-line-number="154"></a>
+<a class="sourceLine" id="cb56-155" data-line-number="155">                    rownames_matrix &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">enframe</span>(<span class="kw">rownames</span>(matrix), <span class="dt">name =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb56-156" data-line-number="156">                    <span class="kw">colnames</span>(rownames_matrix)[<span class="dv">1</span>] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb56-157" data-line-number="157"></a>
+<a class="sourceLine" id="cb56-158" data-line-number="158">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb56-159" data-line-number="159">                        clustering,</a>
+<a class="sourceLine" id="cb56-160" data-line-number="160">                        <span class="kw">as_tibble</span>(<span class="kw">cbind</span>(rownames_matrix, <span class="kw">as_tibble</span>(matrix))),</a>
+<a class="sourceLine" id="cb56-161" data-line-number="161">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb56-162" data-line-number="162">                    )</a>
+<a class="sourceLine" id="cb56-163" data-line-number="163">                    clustering</a>
+<a class="sourceLine" id="cb56-164" data-line-number="164"></a>
+<a class="sourceLine" id="cb56-165" data-line-number="165">            <span class="co"># Return results</span></a>
+<a class="sourceLine" id="cb56-166" data-line-number="166"></a>
+<a class="sourceLine" id="cb56-167" data-line-number="167">                <span class="kw">return</span>( clustering )</a>
+<a class="sourceLine" id="cb56-168" data-line-number="168"></a>
+<a class="sourceLine" id="cb56-169" data-line-number="169">        }</a></code></pre></div>
 </div>
 </div>
 </div>
