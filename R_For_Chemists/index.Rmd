@@ -1570,3 +1570,70 @@ theme_bw() +
 scale_fill_manual(values = status_color)
 ```
 
+
+# PCA and Big Data
+
+In this course it is possible that you will want to run a clustering or PCA analysis on a data set with hundreds of thousands of observations (like NY_trees, for example). This is not always straightforward, since looking at a dendrogram or a scatter plot with hundreds of thousands of points is not always fruitful. Consider the meteorological dataset below.
+
+```{r}
+mdata <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv")
+dim(mdata)
+```
+
+
+
+However, that does not mean that you cannot use those analyses on such a dataset. Consider just running the PCA or cluster analysis on a summary of the dataset. You can even create your own groups by which to summarize directly from large continuous variables in your dataset. In the example below, 
+
+
+
+mdata <- mdata[!is.na(mdata$WINDSPEED),]
+mdata$WIND_GROUP <- as.numeric(cut(mdata$WINDSPEED, breaks = 20))
+
+mdata_windgroup <- group_by(mdata, WIND_GROUP) %>%
+  summarize(
+    TEMPERATURE = mean(TEMPERATURE, na.rm = TRUE),
+    TEMPERATURE_DELTA = mean(TEMPERATURE_DELTA, na.rm = TRUE),
+    RELATIVE_HUMIDITY = mean(RELATIVE_HUMIDITY, na.rm = TRUE),
+    SOLAR_RADIATION = mean(SOLAR_RADIATION, na.rm = TRUE),
+    OZONE = mean(OZONE, na.rm = TRUE),
+    PRECIPITATION = mean(PRECIPITATION, na.rm = TRUE),
+    WINDSPEED = mean(WINDSPEED, na.rm = TRUE),
+    SHELTER_TEMPERATURE = mean(SHELTER_TEMPERATURE, na.rm = TRUE),
+    WIND_DIRECTION = mean(WIND_DIRECTION, na.rm = TRUE),
+    WINDSPEED_SCALAR = mean(WINDSPEED_SCALAR, na.rm = TRUE),
+    FLOW_RATE = mean(FLOW_RATE, na.rm = TRUE),
+    WETNESS = mean(WETNESS, na.rm = TRUE),
+  )
+mdata_windgroup
+
+mdata_windgroup_analyzed <- runMatrixAnalysis(
+  data = mdata_windgroup,
+  analysis = c("hclust"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = c("TEMPERATURE", "TEMPERATURE_DELTA", "RELATIVE_HUMIDITY", "SOLAR_RADIATION", "OZONE", "PRECIPITATION", "WINDSPEED", "SHELTER_TEMPERATURE", "WIND_DIRECTION", "WINDSPEED_SCALAR", "FLOW_RATE", "WETNESS"),
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("WIND_GROUP")
+)
+
+library(ggtree)
+ggtree(mdata_windgroup_analyzed) + 
+  geom_tiplab(aes(label = round(WINDSPEED, digits = 1)), offset = 50, align = TRUE, hjust = 0) +
+  geom_tippoint(aes(fill = TEMPERATURE), shape = 21, size = 6) +
+  theme_void() +
+  coord_cartesian(xlim = c(0,500))
+
+mdata_windgroup_analyzed_2 <- runMatrixAnalysis(
+  data = mdata_windgroup,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = c("TEMPERATURE", "TEMPERATURE_DELTA", "RELATIVE_HUMIDITY", "SOLAR_RADIATION", "OZONE", "PRECIPITATION", "WINDSPEED", "SHELTER_TEMPERATURE", "WIND_DIRECTION", "WINDSPEED_SCALAR", "FLOW_RATE", "WETNESS"),
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("WIND_GROUP")
+)
+
+ggplot(mdata_windgroup_analyzed_2) + 
+  geom_point(aes(x = Dim.1, y = Dim.2, fill = WINDSPEED, size = TEMPERATURE), shape = 21) +
+  theme_classic()
+```
