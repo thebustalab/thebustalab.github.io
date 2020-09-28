@@ -1007,8 +1007,7 @@ BiocManager::install("ggtree")
 ```
 
 ```{r echo = FALSE}
-read_chunk("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
-<<loadRunMatrixAnalysis#### runMatrixAnalysis
+#### runMatrixAnalysis
 
     #' Runs a matrix analysis (clustering, kmeans, pca).
     #'
@@ -1626,3 +1625,6 @@ ggplot(mdata_windgroup_analyzed) +
   geom_point(aes(x = Dim.1, y = Dim.2, fill = WINDSPEED, size = TEMPERATURE), shape = 21) +
   theme_classic()
 ```
+
+<!--chapter:end:index.Rmd-->
+
