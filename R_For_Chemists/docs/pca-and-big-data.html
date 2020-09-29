@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Exercises 1 | R For Chemists</title>
+  <title>D PCA and Big Data | R For Chemists</title>
   <meta name="description" content="Textbook R For Chemists." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Exercises 1 | R For Chemists" />
+  <meta property="og:title" content="D PCA and Big Data | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Exercises 1 | R For Chemists" />
+  <meta name="twitter:title" content="D PCA and Big Data | R For Chemists" />
   
   <meta name="twitter:description" content="Textbook R For Chemists." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="Visualization-1.html"/>
-<link rel="next" href="R-Basics-2.html"/>
+<link rel="prev" href="faq.html"/>
+
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -246,167 +246,99 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="Exercises_1" class="section level1">
-<h1><span class="header-section-number">Chapter 5</span> Exercises 1</h1>
-<p>In this set of exercises we’re going to practice importing, filtering, and plotting data. We’re going to work with two datasets: (i) <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv">algae_chemistry_data.csv</a> and (ii) <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv">alaska_lake_data.csv</a>. By clicking on those links you can download each dataset.</p>
-<p><strong>For these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don’t worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R">here</a>. If you have any questions please let me know</strong></p>
-<div id="part-1-algae-chemistry-dataset" class="section level2">
-<h2><span class="header-section-number">5.1</span> Part 1: Algae Chemistry Dataset</h2>
-<div id="question-1-importing-data" class="section level3">
-<h3><span class="header-section-number">5.1.1</span> Question 1: Importing data</h3>
-<p>Import the algae chemistry data. Remember that <code>read_csv()</code> is part of the <code>tidyverse</code>, so that library needs to be loaded into your <code>R</code> session. Also remember that another option is to paste and run <code>readCSV &lt;- function() { return(readr::read_csv(file.choose())) }</code> in your R Console, which then gives you access to the function <code>readCSV()</code>. That command doesn’t require an input path, so you don’t need to mess around with slashes and quotes. If you need examples of how to import data, please see the <a href="R-Basics-1.html#R_Basics_1">R Basics 1</a> section of this book.</p>
-</div>
-<div id="question-2-dataset-dimensions" class="section level3">
-<h3><span class="header-section-number">5.1.2</span> Question 2: Dataset dimensions</h3>
-<p>How many rows and columns does the algae chemistry dataset have? (hint: when you display the dataset on your screen by typing its name into the console, dimensions are also displayed). Write the answer to this question in your R Script right below the code you use to find the answer.</p>
-</div>
-<div id="question-3-objects" class="section level3">
-<h3><span class="header-section-number">5.1.3</span> Question 3: Objects</h3>
-<p>Import the algae chemistry data and send it into a new object called <code>algae_chemistry_data</code>. Remember about <code>&lt;-</code>. See the <a href="R-Basics-1.html#R_Basics_1">R Basics 1</a> section of this book if you need help.</p>
-</div>
-<div id="question-4-filtering" class="section level3">
-<h3><span class="header-section-number">5.1.4</span> Question 4: Filtering</h3>
-<div id="a" class="section level4">
-<h4><span class="header-section-number">5.1.4.1</span> A</h4>
-<p>Now that you have the algae data imported and stored in an object called <code>algae_chemistry_data</code>, filter the data so that only entries are shown for which the <code>chemical_species</code> is “FAs”. What are the dimensions (i.e. number of rows and columns) of the resulting dataset?</p>
-</div>
-<div id="b" class="section level4">
-<h4><span class="header-section-number">5.1.4.2</span> B</h4>
-<p>Now filter the dataset so that only entries for the <code>algae_strain</code> “Tsv1” are shown. What are the dimensions of the resulting dataset?</p>
-</div>
-<div id="c" class="section level4">
-<h4><span class="header-section-number">5.1.4.3</span> C</h4>
-<p>Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that <code>&gt;</code> can be used in the filter command instead of <code>==</code>, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?</p>
-</div>
-</div>
-<div id="question-5-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.5</span> Question 5: Plotting</h3>
-<p>Make a ggplot that has <code>algae_strain</code> on the x axis and <code>abundance</code> on the y axis. Remember about <code>aes()</code>. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points. If you need a refresher on how to make a ggplot, please refer to the <a href="Visualization-1.html#Visualization_1">Visualization 1</a> Section of this book.</p>
-<p>Which algae strain has the most abundant compound out of all the compounds in the dataset?</p>
-</div>
-<div id="question-6-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.6</span> Question 6: Plotting</h3>
-<p>Make a ggplot that has <code>abundance</code> on the x axis and <code>chemical_species</code> on the y axis. Use points to represent each compound. You don’t need to color the points.</p>
-<p>Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)</p>
-</div>
-<div id="question-7-filtering-and-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.7</span> Question 7: Filtering and plotting</h3>
-<p>I am going to show you an example of how you can filter and plot at the same time:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">algae_chemistry_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">## Parsed with column specification:</span></a>
-<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">## cols(</span></a>
-<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">##   replicate = col_double(),</span></a>
-<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">##   algae_strain = col_character(),</span></a>
-<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">##   harvesting_regime = col_character(),</span></a>
-<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="co">##   chemical_species = col_character(),</span></a>
-<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co">##   abundance = col_double()</span></a>
-<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">## )</span></a>
-<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="kw">ggplot</span>(<span class="dt">data =</span> <span class="kw">filter</span>(algae_chemistry_data, chemical_species <span class="op">==</span><span class="st"> &quot;essential_Aas&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb20-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_point</span>()</a></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-31-1.png" width="576" /></p>
-<p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
-</div>
-<div id="question-8-filtering-and-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.8</span> Question 8: Filtering and plotting</h3>
-<p>Use a combination of filtering and plotting to show the abundance of the different chemical species in just the <code>algae_strain</code> called “Tsv1”. Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.</p>
-</div>
-<div id="question-9-open-ended-plotting" class="section level3">
-<h3><span class="header-section-number">5.1.9</span> Question 9: Open-ended plotting</h3>
-<p>Make a plot that checks to see which <code>chemical_species</code> were more abundant under light as opposed to heavy <code>harvesting_regime</code> in all three replicates. Use filtered data so that just one <code>algae_strain</code> is shown, an x and a y axis, and points to represent the measurements. Make the points <code>size = 5</code> and also set the point’s <code>alpha = 0.6</code>. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.</p>
-</div>
-<div id="question-10-a-peek-at-whats-to-come" class="section level3">
-<h3><span class="header-section-number">5.1.10</span> Question 10: A peek at what’s to come…</h3>
-<p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_data, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="op">&lt;</span>something<span class="op">&gt;</span>, <span class="dt">y =</span> <span class="op">&lt;</span>something <span class="cf">else</span><span class="op">&gt;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="op">&lt;</span>some things<span class="op">&gt;</span>), <span class="op">&lt;</span>some here too<span class="op">&gt;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw">facet_grid</span>(.<span class="op">~</span>algae_strain)</a></code></pre></div>
-<p>Also try, instead of <code>facet_grid(.~algae_strain)</code>, <code>facet_grid(algae_strain~.)</code> at the end of you plot command. (note the swap in the position of the <code>.~</code> relative to <code>algae_strain</code>). This means your code should look something like:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_data, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="op">&lt;</span>something<span class="op">&gt;</span>, <span class="dt">y =</span> <span class="op">&lt;</span>something <span class="cf">else</span><span class="op">&gt;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="op">&lt;</span>some things<span class="op">&gt;</span>), <span class="op">&lt;</span>some here too<span class="op">&gt;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw">facet_grid</span>(algae_strain<span class="op">~</span>.)</a></code></pre></div>
-<p>What advantages does this one extra line provide over what you had to do in question 9?</p>
-</div>
-</div>
-<div id="part-2-alaska-lakes-dataset" class="section level2">
-<h2><span class="header-section-number">5.2</span> Part 2: Alaska Lakes Dataset</h2>
-<div id="question-1-importing-data-1" class="section level3">
-<h3><span class="header-section-number">5.2.1</span> Question 1: Importing Data</h3>
-<p>Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises.</p>
-</div>
-<div id="question-2-objects" class="section level3">
-<h3><span class="header-section-number">5.2.2</span> Question 2: Objects</h3>
-<p>How many variables are in the Alaska lakes dataset?</p>
-</div>
-<div id="question-3-filtering" class="section level3">
-<h3><span class="header-section-number">5.2.3</span> Question 3: Filtering</h3>
-<p>Filter the data set so only meausurements of free elements are shown. Remember, it’s <code>==</code>, not <code>=</code>. What are the dimensions of the resulting dataset?</p>
-</div>
-<div id="question-4-plotting" class="section level3">
-<h3><span class="header-section-number">5.2.4</span> Question 4: Plotting</h3>
-<p>Make a plot that shows the water temperatures of each lake. Don’t worry if you get a warning message from R about “missing values”. Which is the hottest lake? The coolest?</p>
-</div>
-<div id="question-5-plotting-1" class="section level3">
-<h3><span class="header-section-number">5.2.5</span> Question 5: Plotting</h3>
-<p>Make a plot that shows the water temperature of each lake. The x axis should be <code>park</code>, the y axis <code>water temp</code>. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?</p>
-</div>
-<div id="question-6-filtering-and-plotting" class="section level3">
-<h3><span class="header-section-number">5.2.6</span> Question 6: Filtering and Plotting</h3>
-<p>From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from <code>park == &quot;NOAT&quot;</code> are shown (note the double equals sign and the quotes around NOAT…). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.</p>
-</div>
-<div id="question-7-filtering-and-plotting-1" class="section level3">
-<h3><span class="header-section-number">5.2.7</span> Question 7: Filtering and Plotting</h3>
-<p>Make a plot that shows which lake has the highest abundance of sulfur.</p>
-</div>
-<div id="question-8-open-ended-plotting" class="section level3">
-<h3><span class="header-section-number">5.2.8</span> Question 8: Open-ended Plotting</h3>
-<p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly. Here is an example:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">lake_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="co">## Parsed with column specification:</span></a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="co">## cols(</span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">##   lake = col_character(),</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">##   park = col_character(),</span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">##   water_temp = col_double(),</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">##   pH = col_double(),</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">##   element = col_character(),</span></a>
-<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">##   mg_per_L = col_double(),</span></a>
-<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="co">##   element_type = col_character()</span></a>
-<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="co">## )</span></a>
-<a class="sourceLine" id="cb23-13" data-line-number="13"><span class="kw">ggplot</span>(<span class="dt">data =</span> <span class="kw">filter</span>(lake_data, lake <span class="op">==</span><span class="st"> &quot;Lake_Narvakrak&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> lake, <span class="dt">y =</span> mg_per_L)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb23-14" data-line-number="14"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">10</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;green&quot;</span>)</a></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-48-1.png" width="576" /></p>
-<p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
-<p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
-# Visualization 2 {#Visualization_2}</p>
-<p>After completing Exercises 1, you may have noticed that there were more variables in the data than could be represented using what we learned in the section called (Visualiation 1)[#Visualiation_1]. In this section, Visualization 2, we’re going to look at additional ways of encoding variables using <code>ggplot</code>, as well as some new geoms. Let’s get started!</p>
-</div>
-</div>
-<div id="more-geoms." class="section level2">
-<h2><span class="header-section-number">5.3</span> More geoms.</h2>
-<p>geom_histogram()
-geom_line()
-geom_area()
-geom_ribbon()</p>
-</div>
-<div id="small-multiples" class="section level2">
-<h2><span class="header-section-number">5.4</span> Small multiples</h2>
-<p>One of the most common (and powerful) ways of…</p>
-</div>
-<div id="scales" class="section level2">
-<h2><span class="header-section-number">5.5</span> Scales</h2>
-</div>
-<div id="non-data-ink-themes" class="section level2">
-<h2><span class="header-section-number">5.6</span> Non-data ink (themes)</h2>
-</div>
+<div id="pca-and-big-data" class="section level1">
+<h1><span class="header-section-number">D</span> PCA and Big Data</h1>
+<p>In this course it is possible that you will want to run a clustering or PCA analysis on a data set with hundreds of thousands of observations (like NY_trees, for example). This is not always straightforward, since looking at a dendrogram or a scatter plot with hundreds of thousands of points is not always fruitful. Consider the meteorological dataset below.</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1">mdata &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv&quot;</span>)</a>
+<a class="sourceLine" id="cb59-2" data-line-number="2"><span class="co">## Parsed with column specification:</span></a>
+<a class="sourceLine" id="cb59-3" data-line-number="3"><span class="co">## cols(</span></a>
+<a class="sourceLine" id="cb59-4" data-line-number="4"><span class="co">##   SITE_ID = col_character(),</span></a>
+<a class="sourceLine" id="cb59-5" data-line-number="5"><span class="co">##   DATE_TIME = col_character(),</span></a>
+<a class="sourceLine" id="cb59-6" data-line-number="6"><span class="co">##   TEMPERATURE = col_double(),</span></a>
+<a class="sourceLine" id="cb59-7" data-line-number="7"><span class="co">##   TEMPERATURE_DELTA = col_double(),</span></a>
+<a class="sourceLine" id="cb59-8" data-line-number="8"><span class="co">##   RELATIVE_HUMIDITY = col_double(),</span></a>
+<a class="sourceLine" id="cb59-9" data-line-number="9"><span class="co">##   SOLAR_RADIATION = col_double(),</span></a>
+<a class="sourceLine" id="cb59-10" data-line-number="10"><span class="co">##   OZONE = col_double(),</span></a>
+<a class="sourceLine" id="cb59-11" data-line-number="11"><span class="co">##   PRECIPITATION = col_double(),</span></a>
+<a class="sourceLine" id="cb59-12" data-line-number="12"><span class="co">##   WINDSPEED = col_double(),</span></a>
+<a class="sourceLine" id="cb59-13" data-line-number="13"><span class="co">##   WIND_DIRECTION = col_double(),</span></a>
+<a class="sourceLine" id="cb59-14" data-line-number="14"><span class="co">##   FLOW_RATE = col_double(),</span></a>
+<a class="sourceLine" id="cb59-15" data-line-number="15"><span class="co">##   WINDSPEED_SCALAR = col_double(),</span></a>
+<a class="sourceLine" id="cb59-16" data-line-number="16"><span class="co">##   WETNESS = col_double(),</span></a>
+<a class="sourceLine" id="cb59-17" data-line-number="17"><span class="co">##   SHELTER_TEMPERATURE = col_double(),</span></a>
+<a class="sourceLine" id="cb59-18" data-line-number="18"><span class="co">##   UPDATE_DATE = col_character()</span></a>
+<a class="sourceLine" id="cb59-19" data-line-number="19"><span class="co">## )</span></a>
+<a class="sourceLine" id="cb59-20" data-line-number="20"><span class="kw">dim</span>(mdata)</a>
+<a class="sourceLine" id="cb59-21" data-line-number="21"><span class="co">## [1] 234528     15</span></a></code></pre></div>
+<p>Nearly a quarter million observations! However, that does not mean that you cannot use those analyses on such a dataset. Consider just running the PCA or cluster analysis on a summary of the dataset. You can even create your own groups by which to summarize directly from large continuous variables in your dataset. In the example below, a new categorical variable <code>WIND_GROUP</code> is created by binning the observations according to <code>WINDSPEED</code> into 20 groups. This is accomplished using the <code>cut()</code> command.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">mdata &lt;-<span class="st"> </span>mdata[<span class="op">!</span><span class="kw">is.na</span>(mdata<span class="op">$</span>WINDSPEED),]</a>
+<a class="sourceLine" id="cb60-2" data-line-number="2">mdata<span class="op">$</span>WIND_GROUP &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">cut</span>(mdata<span class="op">$</span>WINDSPEED, <span class="dt">breaks =</span> <span class="dv">20</span>))</a></code></pre></div>
+<p>Cool! Now we can <code>group_by()</code> and <code>summarize()</code> on <code>WIND_GROUP</code>:</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">mdata_windgroup &lt;-<span class="st"> </span><span class="kw">group_by</span>(mdata, WIND_GROUP) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb61-2" data-line-number="2"><span class="st">  </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb61-3" data-line-number="3">    <span class="dt">TEMPERATURE =</span> <span class="kw">mean</span>(TEMPERATURE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-4" data-line-number="4">    <span class="dt">TEMPERATURE_DELTA =</span> <span class="kw">mean</span>(TEMPERATURE_DELTA, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-5" data-line-number="5">    <span class="dt">RELATIVE_HUMIDITY =</span> <span class="kw">mean</span>(RELATIVE_HUMIDITY, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-6" data-line-number="6">    <span class="dt">SOLAR_RADIATION =</span> <span class="kw">mean</span>(SOLAR_RADIATION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-7" data-line-number="7">    <span class="dt">OZONE =</span> <span class="kw">mean</span>(OZONE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-8" data-line-number="8">    <span class="dt">PRECIPITATION =</span> <span class="kw">mean</span>(PRECIPITATION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-9" data-line-number="9">    <span class="dt">WINDSPEED =</span> <span class="kw">mean</span>(WINDSPEED, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-10" data-line-number="10">    <span class="dt">SHELTER_TEMPERATURE =</span> <span class="kw">mean</span>(SHELTER_TEMPERATURE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-11" data-line-number="11">    <span class="dt">WIND_DIRECTION =</span> <span class="kw">mean</span>(WIND_DIRECTION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-12" data-line-number="12">    <span class="dt">WINDSPEED_SCALAR =</span> <span class="kw">mean</span>(WINDSPEED_SCALAR, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-13" data-line-number="13">    <span class="dt">FLOW_RATE =</span> <span class="kw">mean</span>(FLOW_RATE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-14" data-line-number="14">    <span class="dt">WETNESS =</span> <span class="kw">mean</span>(WETNESS, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb61-15" data-line-number="15">  )</a>
+<a class="sourceLine" id="cb61-16" data-line-number="16">mdata_windgroup</a>
+<a class="sourceLine" id="cb61-17" data-line-number="17"><span class="co">## # A tibble: 20 x 13</span></a>
+<a class="sourceLine" id="cb61-18" data-line-number="18"><span class="co">##    WIND_GROUP TEMPERATURE TEMPERATURE_DEL… RELATIVE_HUMIDI… SOLAR_RADIATION</span></a>
+<a class="sourceLine" id="cb61-19" data-line-number="19"><span class="co">##         &lt;dbl&gt;       &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb61-20" data-line-number="20"><span class="co">##  1          1        6.05           0.251              75.6            138.</span></a>
+<a class="sourceLine" id="cb61-21" data-line-number="21"><span class="co">##  2          2        4.72           0.124              75.2            143.</span></a>
+<a class="sourceLine" id="cb61-22" data-line-number="22"><span class="co">##  3          3        4.35           0.146              74.1            131.</span></a>
+<a class="sourceLine" id="cb61-23" data-line-number="23"><span class="co">##  4          4        4.09           0.175              74.5            118.</span></a>
+<a class="sourceLine" id="cb61-24" data-line-number="24"><span class="co">##  5          5        3.22           0.103              74.0            113.</span></a>
+<a class="sourceLine" id="cb61-25" data-line-number="25"><span class="co">##  6          6        3.28           0.0127             73.1            120.</span></a>
+<a class="sourceLine" id="cb61-26" data-line-number="26"><span class="co">##  7          7        4.10          -0.0685             72.0            138.</span></a>
+<a class="sourceLine" id="cb61-27" data-line-number="27"><span class="co">##  8          8        4.76          -0.137              70.5            155.</span></a>
+<a class="sourceLine" id="cb61-28" data-line-number="28"><span class="co">##  9          9        5.16          -0.180              69.0            167.</span></a>
+<a class="sourceLine" id="cb61-29" data-line-number="29"><span class="co">## 10         10        5.71          -0.199              67.0            184.</span></a>
+<a class="sourceLine" id="cb61-30" data-line-number="30"><span class="co">## 11         11        6.15          -0.222              64.9            199.</span></a>
+<a class="sourceLine" id="cb61-31" data-line-number="31"><span class="co">## 12         12        6.32          -0.176              65.9            184.</span></a>
+<a class="sourceLine" id="cb61-32" data-line-number="32"><span class="co">## 13         13        6.07          -0.176              65.6            181.</span></a>
+<a class="sourceLine" id="cb61-33" data-line-number="33"><span class="co">## 14         14        7.63          -0.168              66.2            169.</span></a>
+<a class="sourceLine" id="cb61-34" data-line-number="34"><span class="co">## 15         15        8.57          -0.132              67.6            176.</span></a>
+<a class="sourceLine" id="cb61-35" data-line-number="35"><span class="co">## 16         16        6.14          -0.193              66.8            218.</span></a>
+<a class="sourceLine" id="cb61-36" data-line-number="36"><span class="co">## 17         17       12.7           -0.3                51.1            420.</span></a>
+<a class="sourceLine" id="cb61-37" data-line-number="37"><span class="co">## 18         18        8.23         NaN                  47.3            520.</span></a>
+<a class="sourceLine" id="cb61-38" data-line-number="38"><span class="co">## 19         19       -1.9            0                  70                3 </span></a>
+<a class="sourceLine" id="cb61-39" data-line-number="39"><span class="co">## 20         20       -5.9          NaN                  60              249 </span></a>
+<a class="sourceLine" id="cb61-40" data-line-number="40"><span class="co">## # … with 8 more variables: OZONE &lt;dbl&gt;, PRECIPITATION &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb61-41" data-line-number="41"><span class="co">## #   WINDSPEED &lt;dbl&gt;, SHELTER_TEMPERATURE &lt;dbl&gt;, WIND_DIRECTION &lt;dbl&gt;,</span></a>
+<a class="sourceLine" id="cb61-42" data-line-number="42"><span class="co">## #   WINDSPEED_SCALAR &lt;dbl&gt;, FLOW_RATE &lt;dbl&gt;, WETNESS &lt;dbl&gt;</span></a></code></pre></div>
+<p>With that done, we can run matrix analyses on the summarized data, using our new <code>WIND_GROUP</code> variable as the sample ID, and plot the results!</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1">mdata_windgroup_analyzed &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</a>
+<a class="sourceLine" id="cb62-2" data-line-number="2">  <span class="dt">data =</span> mdata_windgroup,</a>
+<a class="sourceLine" id="cb62-3" data-line-number="3">  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</a>
+<a class="sourceLine" id="cb62-4" data-line-number="4">  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb62-5" data-line-number="5">  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb62-6" data-line-number="6">  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;TEMPERATURE&quot;</span>, <span class="st">&quot;TEMPERATURE_DELTA&quot;</span>, <span class="st">&quot;RELATIVE_HUMIDITY&quot;</span>, <span class="st">&quot;SOLAR_RADIATION&quot;</span>, <span class="st">&quot;OZONE&quot;</span>, <span class="st">&quot;PRECIPITATION&quot;</span>, <span class="st">&quot;WINDSPEED&quot;</span>, <span class="st">&quot;SHELTER_TEMPERATURE&quot;</span>, <span class="st">&quot;WIND_DIRECTION&quot;</span>, <span class="st">&quot;WINDSPEED_SCALAR&quot;</span>, <span class="st">&quot;FLOW_RATE&quot;</span>, <span class="st">&quot;WETNESS&quot;</span>),</a>
+<a class="sourceLine" id="cb62-7" data-line-number="7">  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb62-8" data-line-number="8">  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;WIND_GROUP&quot;</span>)</a>
+<a class="sourceLine" id="cb62-9" data-line-number="9">)</a>
+<a class="sourceLine" id="cb62-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb62-11" data-line-number="11"><span class="kw">ggplot</span>(mdata_windgroup_analyzed) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb62-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> WINDSPEED, <span class="dt">size =</span> TEMPERATURE), <span class="dt">shape =</span> <span class="dv">21</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb62-13" data-line-number="13"><span class="st">  </span><span class="kw">theme_classic</span>()</a></code></pre></div>
+
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="Visualization-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="R-Basics-2.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="faq.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

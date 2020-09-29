@@ -1,23 +1,7 @@
-# This is an external R script with the runMatrixAnalysis() command for R For Chemists
+## This is an external R script with the runMatrixAnalysis() command for R For Chemists
 
 ## @knitr loadRunMatrixAnalysis
 
-#### runMatrixAnalysis
-
-  #' Runs a matrix analysis (clustering, kmeans, pca).
-  #'
-  #' @param data The data.frame or tibble to use.
-  #' @param analysis	
-  #' @param column_w_names_of_multiple_analytes
-  #' @param column_w_values_for_multiple_analytes
-  #' @param columns_w_values_for_single_analyte
-  #' @param columns_w_additional_analyte_info
-  #' @param columns_for_sample_unique_ID
-  #' @param columns_w_sample_annotation_info
-  #' @examples
-  #' @export
-  #' runMatrixAnalysis
-  
   runMatrixAnalysis <-	function(
     
     data,

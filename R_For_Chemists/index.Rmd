@@ -1008,9 +1008,9 @@ BiocManager::install("ggtree")
 
 ```{r echo = FALSE}
 knitr::read_chunk("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
-<<loadRunMatrixAnalysis>>
 ```
-
+```{r loadRunMatrixAnalysis}
+```
 With the requisite packages installed, we can load `runMatrixAnalysis()` into our session by pasting the definition of the function into the console and running it (again, please see [runMatrixAnalysis](#Custom_functions) in the Appendix). Then we use the template for `runMatrixAnalysis()` to begin our command. In order to use the template, it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaksa lakes data set:
 
 ```{r message = FALSE}
@@ -1443,7 +1443,7 @@ mdata_windgroup
 
 With that done, we can run matrix analyses on the summarized data, using our new `WIND_GROUP` variable as the sample ID, and plot the results!
 
-```{r}
+```{r loadRunMatrixAnalysis}
 mdata_windgroup_analyzed <- runMatrixAnalysis(
   data = mdata_windgroup,
   analysis = c("pca"),
