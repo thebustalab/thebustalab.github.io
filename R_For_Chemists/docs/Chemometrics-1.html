@@ -257,21 +257,22 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb47-6" data-line-number="6">BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;ggtree&quot;</span>)</a></code></pre></div>
 <p>With the requisite packages installed, we can load <code>runMatrixAnalysis()</code> into our session by pasting the definition of the function into the console and running it (again, please see <a href="#Custom_functions">runMatrixAnalysis</a> in the Appendix). Then we use the template for <code>runMatrixAnalysis()</code> to begin our command. In order to use the template, it is <em>critical</em> that we think about our data in terms of <strong>samples</strong> and <strong>analytes</strong>. Let’s consider our Alaksa lakes data set:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb48-2" data-line-number="2"><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb48-3" data-line-number="3"><span class="co">## # A tibble: 220 x 7</span></a>
-<a class="sourceLine" id="cb48-4" data-line-number="4"><span class="co">##    lake                park  water_temp    pH element mg_per_L element_type</span></a>
-<a class="sourceLine" id="cb48-5" data-line-number="5"><span class="co">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></a>
-<a class="sourceLine" id="cb48-6" data-line-number="6"><span class="co">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></a>
-<a class="sourceLine" id="cb48-7" data-line-number="7"><span class="co">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></a>
-<a class="sourceLine" id="cb48-8" data-line-number="8"><span class="co">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></a>
-<a class="sourceLine" id="cb48-9" data-line-number="9"><span class="co">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></a>
-<a class="sourceLine" id="cb48-10" data-line-number="10"><span class="co">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></a>
-<a class="sourceLine" id="cb48-11" data-line-number="11"><span class="co">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free        </span></a>
-<a class="sourceLine" id="cb48-12" data-line-number="12"><span class="co">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02  free        </span></a>
-<a class="sourceLine" id="cb48-13" data-line-number="13"><span class="co">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92  free        </span></a>
-<a class="sourceLine" id="cb48-14" data-line-number="14"><span class="co">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></a>
-<a class="sourceLine" id="cb48-15" data-line-number="15"><span class="co">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></a>
-<a class="sourceLine" id="cb48-16" data-line-number="16"><span class="co">## # … with 210 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb48-2" data-line-number="2">AK_lakes &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</a>
+<a class="sourceLine" id="cb48-3" data-line-number="3">AK_lakes</a>
+<a class="sourceLine" id="cb48-4" data-line-number="4"><span class="co">## # A tibble: 220 x 7</span></a>
+<a class="sourceLine" id="cb48-5" data-line-number="5"><span class="co">##    lake                park  water_temp    pH element mg_per_L element_type</span></a>
+<a class="sourceLine" id="cb48-6" data-line-number="6"><span class="co">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></a>
+<a class="sourceLine" id="cb48-7" data-line-number="7"><span class="co">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></a>
+<a class="sourceLine" id="cb48-8" data-line-number="8"><span class="co">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></a>
+<a class="sourceLine" id="cb48-9" data-line-number="9"><span class="co">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></a>
+<a class="sourceLine" id="cb48-10" data-line-number="10"><span class="co">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></a>
+<a class="sourceLine" id="cb48-11" data-line-number="11"><span class="co">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></a>
+<a class="sourceLine" id="cb48-12" data-line-number="12"><span class="co">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free        </span></a>
+<a class="sourceLine" id="cb48-13" data-line-number="13"><span class="co">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02  free        </span></a>
+<a class="sourceLine" id="cb48-14" data-line-number="14"><span class="co">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92  free        </span></a>
+<a class="sourceLine" id="cb48-15" data-line-number="15"><span class="co">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></a>
+<a class="sourceLine" id="cb48-16" data-line-number="16"><span class="co">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></a>
+<a class="sourceLine" id="cb48-17" data-line-number="17"><span class="co">## # … with 210 more rows</span></a></code></pre></div>
 <p>We can see that this dataset is comprised of measuring various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
 <p><img src="http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
 <p>With this in mind, let’s try out our template:</p>
