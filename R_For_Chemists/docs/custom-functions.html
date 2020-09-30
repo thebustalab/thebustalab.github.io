@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-09-28" />
+<meta name="date" content="2020-09-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -276,174 +276,212 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="to-activate-runmatrixanalysis-in-your-session-run-the-following-in-your-console" class="section level3">
 <h3><span class="header-section-number">B.2.2</span> To activate <code>runMatrixAnalysis</code> in your session, run the following in your console:</h3>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1">runMatrixAnalysis &lt;-<span class="st">    </span><span class="cf">function</span>(</a>
-<a class="sourceLine" id="cb58-2" data-line-number="2">      </a>
-<a class="sourceLine" id="cb58-3" data-line-number="3">      data,</a>
-<a class="sourceLine" id="cb58-4" data-line-number="4">      </a>
-<a class="sourceLine" id="cb58-5" data-line-number="5">      <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</a>
-<a class="sourceLine" id="cb58-6" data-line-number="6">      </a>
-<a class="sourceLine" id="cb58-7" data-line-number="7">      column_w_names_of_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-8" data-line-number="8">      column_w_values_for_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-9" data-line-number="9">      </a>
-<a class="sourceLine" id="cb58-10" data-line-number="10">      columns_w_values_for_single_analyte,</a>
-<a class="sourceLine" id="cb58-11" data-line-number="11">      </a>
-<a class="sourceLine" id="cb58-12" data-line-number="12">      columns_w_additional_analyte_info,</a>
-<a class="sourceLine" id="cb58-13" data-line-number="13">      </a>
-<a class="sourceLine" id="cb58-14" data-line-number="14">      columns_w_sample_ID_info</a>
-<a class="sourceLine" id="cb58-15" data-line-number="15">      </a>
-<a class="sourceLine" id="cb58-16" data-line-number="16">    ) {</a>
-<a class="sourceLine" id="cb58-17" data-line-number="17">      </a>
-<a class="sourceLine" id="cb58-18" data-line-number="18">      <span class="co"># Check that column names are spelled correctly</span></a>
-<a class="sourceLine" id="cb58-19" data-line-number="19">      </a>
-<a class="sourceLine" id="cb58-20" data-line-number="20">      <span class="cf">if</span>( <span class="kw">any</span>(</a>
-<a class="sourceLine" id="cb58-21" data-line-number="21">        <span class="op">!</span><span class="kw">c</span>(</a>
-<a class="sourceLine" id="cb58-22" data-line-number="22">          column_w_names_of_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-23" data-line-number="23">          column_w_values_for_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-24" data-line-number="24">          columns_w_values_for_single_analyte,</a>
-<a class="sourceLine" id="cb58-25" data-line-number="25">          columns_w_additional_analyte_info,</a>
-<a class="sourceLine" id="cb58-26" data-line-number="26">          columns_w_sample_ID_info</a>
-<a class="sourceLine" id="cb58-27" data-line-number="27">        ) <span class="op">%in%</span><span class="st"> </span><span class="kw">colnames</span>(data)</a>
-<a class="sourceLine" id="cb58-28" data-line-number="28">      ) <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb58-29" data-line-number="29">      ) {</a>
-<a class="sourceLine" id="cb58-30" data-line-number="30">        <span class="kw">stop</span>(<span class="st">&quot;There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.&quot;</span>)</a>
-<a class="sourceLine" id="cb58-31" data-line-number="31">      }</a>
-<a class="sourceLine" id="cb58-32" data-line-number="32">      </a>
-<a class="sourceLine" id="cb58-33" data-line-number="33">      <span class="co"># Add analyte_unique_ID_column if necessary</span></a>
-<a class="sourceLine" id="cb58-34" data-line-number="34">      </a>
-<a class="sourceLine" id="cb58-35" data-line-number="35">      <span class="co"># if( length(columns_for_analyte_unique_ID) &gt; 1 ) {</span></a>
-<a class="sourceLine" id="cb58-36" data-line-number="36">      <span class="co">#add analyte_unique_ID column if necessary</span></a>
-<a class="sourceLine" id="cb58-37" data-line-number="37">      <span class="co"># }</span></a>
-<a class="sourceLine" id="cb58-38" data-line-number="38">      </a>
-<a class="sourceLine" id="cb58-39" data-line-number="39">      <span class="co"># Remove columns that are not included in input column lists</span></a>
-<a class="sourceLine" id="cb58-40" data-line-number="40">      </a>
-<a class="sourceLine" id="cb58-41" data-line-number="41">      <span class="cf">if</span> (<span class="kw">length</span>(</a>
-<a class="sourceLine" id="cb58-42" data-line-number="42">        <span class="kw">which</span>(<span class="op">!</span><span class="kw">colnames</span>(data) <span class="op">%in%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb58-43" data-line-number="43"><span class="st">              </span><span class="kw">c</span>(</a>
-<a class="sourceLine" id="cb58-44" data-line-number="44">                column_w_names_of_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-45" data-line-number="45">                column_w_values_for_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-46" data-line-number="46">                </a>
-<a class="sourceLine" id="cb58-47" data-line-number="47">                columns_w_values_for_single_analyte,</a>
-<a class="sourceLine" id="cb58-48" data-line-number="48">                columns_w_additional_analyte_info,</a>
-<a class="sourceLine" id="cb58-49" data-line-number="49">                </a>
-<a class="sourceLine" id="cb58-50" data-line-number="50">                columns_w_sample_ID_info</a>
-<a class="sourceLine" id="cb58-51" data-line-number="51">              )</a>
-<a class="sourceLine" id="cb58-52" data-line-number="52">        )</a>
-<a class="sourceLine" id="cb58-53" data-line-number="53">      ) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> </a>
-<a class="sourceLine" id="cb58-54" data-line-number="54">      ) {</a>
-<a class="sourceLine" id="cb58-55" data-line-number="55">        data &lt;-<span class="st"> </span>data[,<span class="op">-</span><span class="kw">which</span>(<span class="op">!</span><span class="kw">colnames</span>(data) <span class="op">%in%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb58-56" data-line-number="56"><span class="st">                               </span><span class="kw">c</span>(</a>
-<a class="sourceLine" id="cb58-57" data-line-number="57">                                 column_w_names_of_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-58" data-line-number="58">                                 column_w_values_for_multiple_analytes,</a>
-<a class="sourceLine" id="cb58-59" data-line-number="59">                                 </a>
-<a class="sourceLine" id="cb58-60" data-line-number="60">                                 columns_w_values_for_single_analyte,</a>
-<a class="sourceLine" id="cb58-61" data-line-number="61">                                 columns_w_additional_analyte_info,</a>
-<a class="sourceLine" id="cb58-62" data-line-number="62">                                 </a>
-<a class="sourceLine" id="cb58-63" data-line-number="63">                                 columns_w_sample_ID_info</a>
-<a class="sourceLine" id="cb58-64" data-line-number="64">                               )</a>
-<a class="sourceLine" id="cb58-65" data-line-number="65">        )]</a>
-<a class="sourceLine" id="cb58-66" data-line-number="66">      }</a>
-<a class="sourceLine" id="cb58-67" data-line-number="67">      </a>
-<a class="sourceLine" id="cb58-68" data-line-number="68">      <span class="co"># Remove analyte annotation columns before pivoting</span></a>
-<a class="sourceLine" id="cb58-69" data-line-number="69">      </a>
-<a class="sourceLine" id="cb58-70" data-line-number="70">      <span class="cf">if</span>( <span class="kw">length</span>(columns_w_additional_analyte_info) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) {</a>
-<a class="sourceLine" id="cb58-71" data-line-number="71">        analyte_annotation_free_data &lt;-<span class="st"> </span>data[,<span class="op">-</span><span class="kw">match</span>(columns_w_additional_analyte_info, <span class="kw">colnames</span>(data))]</a>
-<a class="sourceLine" id="cb58-72" data-line-number="72">      } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb58-73" data-line-number="73">        analyte_annotation_free_data &lt;-<span class="st"> </span>data</a>
-<a class="sourceLine" id="cb58-74" data-line-number="74">      }</a>
-<a class="sourceLine" id="cb58-75" data-line-number="75">      </a>
-<a class="sourceLine" id="cb58-76" data-line-number="76">      <span class="co"># If no pivot required, skip pivoting</span></a>
-<a class="sourceLine" id="cb58-77" data-line-number="77">      </a>
-<a class="sourceLine" id="cb58-78" data-line-number="78">      <span class="cf">if</span>( <span class="kw">length</span>(column_w_names_of_multiple_analytes) <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">length</span>(columns_w_values_for_single_analyte) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span> ) {</a>
-<a class="sourceLine" id="cb58-79" data-line-number="79">        data_wide &lt;-<span class="st"> </span>analyte_annotation_free_data</a>
-<a class="sourceLine" id="cb58-80" data-line-number="80">        analyte_columns &lt;-<span class="st"> </span>columns_w_values_for_single_analyte</a>
-<a class="sourceLine" id="cb58-81" data-line-number="81">      }</a>
-<a class="sourceLine" id="cb58-82" data-line-number="82">      </a>
-<a class="sourceLine" id="cb58-83" data-line-number="83">      <span class="co"># If pivoting require, pivot_wider any long-style data</span></a>
-<a class="sourceLine" id="cb58-84" data-line-number="84">      </a>
-<a class="sourceLine" id="cb58-85" data-line-number="85">      <span class="cf">if</span>( <span class="kw">length</span>(column_w_names_of_multiple_analytes) <span class="op">==</span><span class="st"> </span><span class="dv">1</span> ) {</a>
-<a class="sourceLine" id="cb58-86" data-line-number="86">        data_wide &lt;-<span class="st"> </span><span class="kw">pivot_wider</span>(</a>
-<a class="sourceLine" id="cb58-87" data-line-number="87">          analyte_annotation_free_data,</a>
-<a class="sourceLine" id="cb58-88" data-line-number="88">          <span class="dt">names_from =</span> <span class="kw">all_of</span>(column_w_names_of_multiple_analytes),</a>
-<a class="sourceLine" id="cb58-89" data-line-number="89">          <span class="dt">values_from =</span> <span class="kw">all_of</span>(column_w_values_for_multiple_analytes)</a>
-<a class="sourceLine" id="cb58-90" data-line-number="90">        )</a>
-<a class="sourceLine" id="cb58-91" data-line-number="91">        analyte_columns &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">unique</span>(analyte_annotation_free_data[,<span class="kw">colnames</span>(analyte_annotation_free_data) <span class="op">==</span><span class="st"> </span>column_w_names_of_multiple_analytes]))</a>
-<a class="sourceLine" id="cb58-92" data-line-number="92">        analyte_columns &lt;-<span class="st"> </span><span class="kw">c</span>(columns_w_values_for_single_analyte, analyte_columns)</a>
-<a class="sourceLine" id="cb58-93" data-line-number="93">      }</a>
-<a class="sourceLine" id="cb58-94" data-line-number="94">      </a>
-<a class="sourceLine" id="cb58-95" data-line-number="95">      <span class="co"># Convert analyte columns to numeric</span></a>
-<a class="sourceLine" id="cb58-96" data-line-number="96">      </a>
-<a class="sourceLine" id="cb58-97" data-line-number="97">        which_analyte_columns &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">colnames</span>(data_wide) <span class="op">%in%</span><span class="st"> </span>analyte_columns)</a>
-<a class="sourceLine" id="cb58-98" data-line-number="98">        <span class="cf">for</span>( i <span class="cf">in</span> which_analyte_columns ) {</a>
-<a class="sourceLine" id="cb58-99" data-line-number="99">          data_wide[[i]] &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(data_wide[[i]])</a>
-<a class="sourceLine" id="cb58-100" data-line-number="100">        }</a>
-<a class="sourceLine" id="cb58-101" data-line-number="101">      </a>
-<a class="sourceLine" id="cb58-102" data-line-number="102">      <span class="co"># Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column</span></a>
-<a class="sourceLine" id="cb58-103" data-line-number="103">      </a>
-<a class="sourceLine" id="cb58-104" data-line-number="104">      <span class="cf">if</span>( <span class="kw">length</span>(columns_w_sample_ID_info) <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) {</a>
-<a class="sourceLine" id="cb58-105" data-line-number="105">        sample_unique_IDs &lt;-<span class="st"> </span><span class="kw">apply</span>(</a>
-<a class="sourceLine" id="cb58-106" data-line-number="106">          data_wide[,<span class="kw">match</span>(columns_w_sample_ID_info, <span class="kw">colnames</span>(data_wide))],</a>
-<a class="sourceLine" id="cb58-107" data-line-number="107">          <span class="dv">1</span>, paste, <span class="dt">collapse =</span> <span class="st">&quot;_&quot;</span></a>
-<a class="sourceLine" id="cb58-108" data-line-number="108">        )</a>
-<a class="sourceLine" id="cb58-109" data-line-number="109">        <span class="cf">if</span>( <span class="kw">any</span>(<span class="kw">duplicated</span>(sample_unique_IDs)) ) {<span class="kw">stop</span>(<span class="st">&quot;columns_w_sample_ID_info specified do not lead to unique sample IDs&quot;</span>)}</a>
-<a class="sourceLine" id="cb58-110" data-line-number="110">        data_wide<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>sample_unique_IDs</a>
-<a class="sourceLine" id="cb58-111" data-line-number="111">      } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb58-112" data-line-number="112">        <span class="kw">colnames</span>(data_wide)[<span class="kw">colnames</span>(data_wide) <span class="op">==</span><span class="st"> </span>columns_w_sample_ID_info] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-113" data-line-number="113">        <span class="cf">if</span>( <span class="kw">any</span>(<span class="kw">duplicated</span>(data_wide<span class="op">$</span>sample_unique_ID)) ) {<span class="kw">stop</span>(<span class="st">&quot;columns_w_sample_ID_info specified do not lead to unique sample IDs&quot;</span>)}</a>
-<a class="sourceLine" id="cb58-114" data-line-number="114">      }</a>
-<a class="sourceLine" id="cb58-115" data-line-number="115">      </a>
-<a class="sourceLine" id="cb58-116" data-line-number="116">      <span class="co"># Make sure &quot;sample_unique_ID&quot; is character</span></a>
-<a class="sourceLine" id="cb58-117" data-line-number="117">      data_wide<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span><span class="kw">as.character</span>(data_wide<span class="op">$</span>sample_unique_ID)</a>
-<a class="sourceLine" id="cb58-118" data-line-number="118">      </a>
-<a class="sourceLine" id="cb58-119" data-line-number="119">      <span class="co"># Clustering analysis</span></a>
-<a class="sourceLine" id="cb58-120" data-line-number="120">      </a>
-<a class="sourceLine" id="cb58-121" data-line-number="121">      <span class="co"># Prepare the matrix</span></a>
-<a class="sourceLine" id="cb58-122" data-line-number="122">      </a>
-<a class="sourceLine" id="cb58-123" data-line-number="123">      matrix &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(data_wide[,<span class="kw">match</span>(analyte_columns, <span class="kw">colnames</span>(data_wide))])</a>
-<a class="sourceLine" id="cb58-124" data-line-number="124">      <span class="kw">rownames</span>(matrix) &lt;-<span class="st"> </span>data_wide<span class="op">$</span>sample_unique_ID</a>
-<a class="sourceLine" id="cb58-125" data-line-number="125">      </a>
-<a class="sourceLine" id="cb58-126" data-line-number="126">      <span class="co"># Run hclust, if requested</span></a>
-<a class="sourceLine" id="cb58-127" data-line-number="127">      </a>
-<a class="sourceLine" id="cb58-128" data-line-number="128">      <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;hclust&quot;</span> ) {</a>
-<a class="sourceLine" id="cb58-129" data-line-number="129">        clustering &lt;-<span class="st"> </span>ggtree<span class="op">::</span><span class="kw">fortify</span>(ape<span class="op">::</span><span class="kw">as.phylo</span>(stats<span class="op">::</span><span class="kw">hclust</span>(stats<span class="op">::</span><span class="kw">dist</span>(matrix))))</a>
-<a class="sourceLine" id="cb58-130" data-line-number="130">        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>clustering<span class="op">$</span>label </a>
-<a class="sourceLine" id="cb58-131" data-line-number="131">      }</a>
-<a class="sourceLine" id="cb58-132" data-line-number="132">      </a>
-<a class="sourceLine" id="cb58-133" data-line-number="133">      <span class="co"># Run PCA, if requested</span></a>
-<a class="sourceLine" id="cb58-134" data-line-number="134">      </a>
-<a class="sourceLine" id="cb58-135" data-line-number="135">      <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;pca&quot;</span> ) {</a>
-<a class="sourceLine" id="cb58-136" data-line-number="136">        coords &lt;-<span class="st"> </span>FactoMineR<span class="op">::</span><span class="kw">PCA</span>(matrix)<span class="op">$</span>ind<span class="op">$</span>coord[,<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
-<a class="sourceLine" id="cb58-137" data-line-number="137">        clustering &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(coords)</a>
-<a class="sourceLine" id="cb58-138" data-line-number="138">        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span><span class="kw">rownames</span>(coords)</a>
-<a class="sourceLine" id="cb58-139" data-line-number="139">      }</a>
-<a class="sourceLine" id="cb58-140" data-line-number="140">      </a>
-<a class="sourceLine" id="cb58-141" data-line-number="141">      <span class="co"># Add back annotations to the output</span></a>
-<a class="sourceLine" id="cb58-142" data-line-number="142">      </a>
-<a class="sourceLine" id="cb58-143" data-line-number="143">      clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
-<a class="sourceLine" id="cb58-144" data-line-number="144">        data_wide[,<span class="kw">match</span>(</a>
-<a class="sourceLine" id="cb58-145" data-line-number="145">          <span class="cf">if</span>( <span class="kw">length</span>(columns_w_sample_ID_info) <span class="op">==</span><span class="st"> </span><span class="dv">1</span> ) {</a>
-<a class="sourceLine" id="cb58-146" data-line-number="146">            <span class="st">&quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-147" data-line-number="147">          } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb58-148" data-line-number="148">            <span class="kw">c</span>(columns_w_sample_ID_info, <span class="st">&quot;sample_unique_ID&quot;</span>)</a>
-<a class="sourceLine" id="cb58-149" data-line-number="149">          }, <span class="kw">colnames</span>(data_wide))],</a>
-<a class="sourceLine" id="cb58-150" data-line-number="150">        clustering,</a>
-<a class="sourceLine" id="cb58-151" data-line-number="151">        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-152" data-line-number="152">      )</a>
-<a class="sourceLine" id="cb58-153" data-line-number="153">      </a>
-<a class="sourceLine" id="cb58-154" data-line-number="154">      rownames_matrix &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">enframe</span>(<span class="kw">rownames</span>(matrix), <span class="dt">name =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb58-155" data-line-number="155">      <span class="kw">colnames</span>(rownames_matrix)[<span class="dv">1</span>] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-156" data-line-number="156">      </a>
-<a class="sourceLine" id="cb58-157" data-line-number="157">      clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
-<a class="sourceLine" id="cb58-158" data-line-number="158">        clustering,</a>
-<a class="sourceLine" id="cb58-159" data-line-number="159">        <span class="kw">as_tibble</span>(<span class="kw">cbind</span>(rownames_matrix, <span class="kw">as_tibble</span>(matrix))),</a>
-<a class="sourceLine" id="cb58-160" data-line-number="160">        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-161" data-line-number="161">      )</a>
-<a class="sourceLine" id="cb58-162" data-line-number="162">      clustering</a>
-<a class="sourceLine" id="cb58-163" data-line-number="163">      </a>
-<a class="sourceLine" id="cb58-164" data-line-number="164">      <span class="co"># Return results</span></a>
-<a class="sourceLine" id="cb58-165" data-line-number="165">      </a>
-<a class="sourceLine" id="cb58-166" data-line-number="166">      <span class="kw">return</span>( clustering )</a>
-<a class="sourceLine" id="cb58-167" data-line-number="167">      </a>
-<a class="sourceLine" id="cb58-168" data-line-number="168">    }</a></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1"><span class="co">#### runMatrixAnalysis</span></a>
+<a class="sourceLine" id="cb58-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb58-3" data-line-number="3">    <span class="co">#&#39; Runs a matrix analysis (clustering, kmeans, pca).</span></a>
+<a class="sourceLine" id="cb58-4" data-line-number="4">    <span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb58-5" data-line-number="5">    <span class="co">#&#39; @param data The data.frame or tibble to use.</span></a>
+<a class="sourceLine" id="cb58-6" data-line-number="6">    <span class="co">#&#39; @param analysis  </span></a>
+<a class="sourceLine" id="cb58-7" data-line-number="7">    <span class="co">#&#39; @param column_w_names_of_multiple_analytes</span></a>
+<a class="sourceLine" id="cb58-8" data-line-number="8">    <span class="co">#&#39; @param column_w_values_for_multiple_analytes</span></a>
+<a class="sourceLine" id="cb58-9" data-line-number="9">    <span class="co">#&#39; @param columns_w_values_for_single_analyte</span></a>
+<a class="sourceLine" id="cb58-10" data-line-number="10">    <span class="co">#&#39; @param columns_w_additional_analyte_info</span></a>
+<a class="sourceLine" id="cb58-11" data-line-number="11">    <span class="co">#&#39; @param columns_for_sample_unique_ID</span></a>
+<a class="sourceLine" id="cb58-12" data-line-number="12">    <span class="co">#&#39; @param columns_w_sample_annotation_info</span></a>
+<a class="sourceLine" id="cb58-13" data-line-number="13">    <span class="co">#&#39; @examples</span></a>
+<a class="sourceLine" id="cb58-14" data-line-number="14">    <span class="co">#&#39; @export</span></a>
+<a class="sourceLine" id="cb58-15" data-line-number="15">    <span class="co">#&#39; runMatrixAnalysis</span></a>
+<a class="sourceLine" id="cb58-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb58-17" data-line-number="17">        runMatrixAnalysis &lt;-<span class="st">    </span><span class="cf">function</span>(</a>
+<a class="sourceLine" id="cb58-18" data-line-number="18">                                </a>
+<a class="sourceLine" id="cb58-19" data-line-number="19">                                    data,</a>
+<a class="sourceLine" id="cb58-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb58-21" data-line-number="21">                                    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</a>
+<a class="sourceLine" id="cb58-22" data-line-number="22">                                    </a>
+<a class="sourceLine" id="cb58-23" data-line-number="23">                                    column_w_names_of_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-24" data-line-number="24">                                    column_w_values_for_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb58-26" data-line-number="26">                                    columns_w_values_for_single_analyte,</a>
+<a class="sourceLine" id="cb58-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb58-28" data-line-number="28">                                    columns_w_additional_analyte_info,</a>
+<a class="sourceLine" id="cb58-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb58-30" data-line-number="30">                                    columns_w_sample_ID_info</a>
+<a class="sourceLine" id="cb58-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb58-32" data-line-number="32">                                ) {</a>
+<a class="sourceLine" id="cb58-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb58-34" data-line-number="34">            <span class="co"># Check that column names are spelled correctly</span></a>
+<a class="sourceLine" id="cb58-35" data-line-number="35"></a>
+<a class="sourceLine" id="cb58-36" data-line-number="36">                <span class="cf">if</span>( <span class="kw">any</span>(</a>
+<a class="sourceLine" id="cb58-37" data-line-number="37">                    <span class="op">!</span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb58-38" data-line-number="38">                        column_w_names_of_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-39" data-line-number="39">                        column_w_values_for_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-40" data-line-number="40">                        columns_w_values_for_single_analyte,</a>
+<a class="sourceLine" id="cb58-41" data-line-number="41">                        columns_w_additional_analyte_info,</a>
+<a class="sourceLine" id="cb58-42" data-line-number="42">                        columns_w_sample_ID_info</a>
+<a class="sourceLine" id="cb58-43" data-line-number="43">                    ) <span class="op">%in%</span><span class="st"> </span><span class="kw">colnames</span>(data)</a>
+<a class="sourceLine" id="cb58-44" data-line-number="44">                    ) <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb58-45" data-line-number="45">                ) {</a>
+<a class="sourceLine" id="cb58-46" data-line-number="46">                    <span class="kw">stop</span>(<span class="st">&quot;There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.&quot;</span>)</a>
+<a class="sourceLine" id="cb58-47" data-line-number="47">                }</a>
+<a class="sourceLine" id="cb58-48" data-line-number="48"></a>
+<a class="sourceLine" id="cb58-49" data-line-number="49">            <span class="co"># Add analyte_unique_ID_column if necessary</span></a>
+<a class="sourceLine" id="cb58-50" data-line-number="50"></a>
+<a class="sourceLine" id="cb58-51" data-line-number="51">                <span class="co"># if( length(columns_for_analyte_unique_ID) &gt; 1 ) {</span></a>
+<a class="sourceLine" id="cb58-52" data-line-number="52">                    <span class="co">#add analyte_unique_ID column if necessary</span></a>
+<a class="sourceLine" id="cb58-53" data-line-number="53">                <span class="co"># }</span></a>
+<a class="sourceLine" id="cb58-54" data-line-number="54"></a>
+<a class="sourceLine" id="cb58-55" data-line-number="55">            <span class="co"># Remove columns that are not included in input column lists</span></a>
+<a class="sourceLine" id="cb58-56" data-line-number="56"></a>
+<a class="sourceLine" id="cb58-57" data-line-number="57">                <span class="cf">if</span> (<span class="kw">length</span>(</a>
+<a class="sourceLine" id="cb58-58" data-line-number="58">                        <span class="kw">which</span>(<span class="op">!</span><span class="kw">colnames</span>(data) <span class="op">%in%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb58-59" data-line-number="59"><span class="st">                            </span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb58-60" data-line-number="60">                                column_w_names_of_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-61" data-line-number="61">                                column_w_values_for_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-62" data-line-number="62"></a>
+<a class="sourceLine" id="cb58-63" data-line-number="63">                                columns_w_values_for_single_analyte,</a>
+<a class="sourceLine" id="cb58-64" data-line-number="64">                                columns_w_additional_analyte_info,</a>
+<a class="sourceLine" id="cb58-65" data-line-number="65"></a>
+<a class="sourceLine" id="cb58-66" data-line-number="66">                                columns_w_sample_ID_info</a>
+<a class="sourceLine" id="cb58-67" data-line-number="67">                            )</a>
+<a class="sourceLine" id="cb58-68" data-line-number="68">                        )</a>
+<a class="sourceLine" id="cb58-69" data-line-number="69">                    ) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> </a>
+<a class="sourceLine" id="cb58-70" data-line-number="70">                ) {</a>
+<a class="sourceLine" id="cb58-71" data-line-number="71">                    data &lt;-<span class="st"> </span>data[,<span class="op">-</span><span class="kw">which</span>(<span class="op">!</span><span class="kw">colnames</span>(data) <span class="op">%in%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb58-72" data-line-number="72"><span class="st">                        </span><span class="kw">c</span>(</a>
+<a class="sourceLine" id="cb58-73" data-line-number="73">                            column_w_names_of_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-74" data-line-number="74">                            column_w_values_for_multiple_analytes,</a>
+<a class="sourceLine" id="cb58-75" data-line-number="75"></a>
+<a class="sourceLine" id="cb58-76" data-line-number="76">                            columns_w_values_for_single_analyte,</a>
+<a class="sourceLine" id="cb58-77" data-line-number="77">                            columns_w_additional_analyte_info,</a>
+<a class="sourceLine" id="cb58-78" data-line-number="78"></a>
+<a class="sourceLine" id="cb58-79" data-line-number="79">                            columns_w_sample_ID_info</a>
+<a class="sourceLine" id="cb58-80" data-line-number="80">                        )</a>
+<a class="sourceLine" id="cb58-81" data-line-number="81">                    )]</a>
+<a class="sourceLine" id="cb58-82" data-line-number="82">                }</a>
+<a class="sourceLine" id="cb58-83" data-line-number="83"></a>
+<a class="sourceLine" id="cb58-84" data-line-number="84">            <span class="co"># Remove analyte annotation columns before pivoting</span></a>
+<a class="sourceLine" id="cb58-85" data-line-number="85"></a>
+<a class="sourceLine" id="cb58-86" data-line-number="86">                <span class="cf">if</span>( <span class="kw">length</span>(columns_w_additional_analyte_info) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ) {</a>
+<a class="sourceLine" id="cb58-87" data-line-number="87">                    analyte_annotation_free_data &lt;-<span class="st"> </span>data[,<span class="op">-</span><span class="kw">match</span>(columns_w_additional_analyte_info, <span class="kw">colnames</span>(data))]</a>
+<a class="sourceLine" id="cb58-88" data-line-number="88">                } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb58-89" data-line-number="89">                    analyte_annotation_free_data &lt;-<span class="st"> </span>data</a>
+<a class="sourceLine" id="cb58-90" data-line-number="90">                }</a>
+<a class="sourceLine" id="cb58-91" data-line-number="91"></a>
+<a class="sourceLine" id="cb58-92" data-line-number="92">            <span class="co"># If no pivot required, skip pivoting</span></a>
+<a class="sourceLine" id="cb58-93" data-line-number="93"></a>
+<a class="sourceLine" id="cb58-94" data-line-number="94">                <span class="cf">if</span>( <span class="kw">length</span>(column_w_names_of_multiple_analytes) <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">length</span>(columns_w_values_for_single_analyte) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span> ) {</a>
+<a class="sourceLine" id="cb58-95" data-line-number="95">                    data_wide &lt;-<span class="st"> </span>analyte_annotation_free_data</a>
+<a class="sourceLine" id="cb58-96" data-line-number="96">                    analyte_columns &lt;-<span class="st"> </span>columns_w_values_for_single_analyte</a>
+<a class="sourceLine" id="cb58-97" data-line-number="97">                }</a>
+<a class="sourceLine" id="cb58-98" data-line-number="98"></a>
+<a class="sourceLine" id="cb58-99" data-line-number="99">            <span class="co"># If pivoting require, pivot_wider any long-style data</span></a>
+<a class="sourceLine" id="cb58-100" data-line-number="100"></a>
+<a class="sourceLine" id="cb58-101" data-line-number="101">                <span class="cf">if</span>( <span class="kw">length</span>(column_w_names_of_multiple_analytes) <span class="op">==</span><span class="st"> </span><span class="dv">1</span> ) {</a>
+<a class="sourceLine" id="cb58-102" data-line-number="102">                    data_wide &lt;-<span class="st"> </span><span class="kw">pivot_wider</span>(</a>
+<a class="sourceLine" id="cb58-103" data-line-number="103">                        analyte_annotation_free_data,</a>
+<a class="sourceLine" id="cb58-104" data-line-number="104">                        <span class="dt">names_from =</span> <span class="kw">all_of</span>(column_w_names_of_multiple_analytes),</a>
+<a class="sourceLine" id="cb58-105" data-line-number="105">                        <span class="dt">values_from =</span> <span class="kw">all_of</span>(column_w_values_for_multiple_analytes)</a>
+<a class="sourceLine" id="cb58-106" data-line-number="106">                    )</a>
+<a class="sourceLine" id="cb58-107" data-line-number="107">                    analyte_columns &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">unique</span>(analyte_annotation_free_data[,<span class="kw">colnames</span>(analyte_annotation_free_data) <span class="op">==</span><span class="st"> </span>column_w_names_of_multiple_analytes]))</a>
+<a class="sourceLine" id="cb58-108" data-line-number="108">                    analyte_columns &lt;-<span class="st"> </span><span class="kw">c</span>(columns_w_values_for_single_analyte, analyte_columns)</a>
+<a class="sourceLine" id="cb58-109" data-line-number="109">                }</a>
+<a class="sourceLine" id="cb58-110" data-line-number="110"></a>
+<a class="sourceLine" id="cb58-111" data-line-number="111">            <span class="co"># Convert analyte columns to numeric</span></a>
+<a class="sourceLine" id="cb58-112" data-line-number="112"></a>
+<a class="sourceLine" id="cb58-113" data-line-number="113">                which_analyte_columns &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">colnames</span>(data_wide) <span class="op">%in%</span><span class="st"> </span>analyte_columns)</a>
+<a class="sourceLine" id="cb58-114" data-line-number="114">                <span class="cf">for</span>( i <span class="cf">in</span> which_analyte_columns ) {</a>
+<a class="sourceLine" id="cb58-115" data-line-number="115">                  data_wide[[i]] &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(data_wide[[i]])</a>
+<a class="sourceLine" id="cb58-116" data-line-number="116">                }</a>
+<a class="sourceLine" id="cb58-117" data-line-number="117"></a>
+<a class="sourceLine" id="cb58-118" data-line-number="118">            <span class="co"># Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column</span></a>
+<a class="sourceLine" id="cb58-119" data-line-number="119"></a>
+<a class="sourceLine" id="cb58-120" data-line-number="120">                <span class="cf">if</span>( <span class="kw">length</span>(columns_w_sample_ID_info) <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) {</a>
+<a class="sourceLine" id="cb58-121" data-line-number="121">                    sample_unique_IDs &lt;-<span class="st"> </span><span class="kw">apply</span>(</a>
+<a class="sourceLine" id="cb58-122" data-line-number="122">                        data_wide[,<span class="kw">match</span>(columns_w_sample_ID_info, <span class="kw">colnames</span>(data_wide))],</a>
+<a class="sourceLine" id="cb58-123" data-line-number="123">                        <span class="dv">1</span>, paste, <span class="dt">collapse =</span> <span class="st">&quot;_&quot;</span></a>
+<a class="sourceLine" id="cb58-124" data-line-number="124">                    )</a>
+<a class="sourceLine" id="cb58-125" data-line-number="125">                    <span class="cf">if</span>( <span class="kw">any</span>(<span class="kw">duplicated</span>(sample_unique_IDs)) ) {<span class="kw">stop</span>(<span class="st">&quot;columns_w_sample_ID_info specified do not lead to unique sample IDs&quot;</span>)}</a>
+<a class="sourceLine" id="cb58-126" data-line-number="126">                    data_wide<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>sample_unique_IDs</a>
+<a class="sourceLine" id="cb58-127" data-line-number="127">                } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb58-128" data-line-number="128">                    <span class="kw">colnames</span>(data_wide)[<span class="kw">colnames</span>(data_wide) <span class="op">==</span><span class="st"> </span>columns_w_sample_ID_info] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb58-129" data-line-number="129">                    <span class="cf">if</span>( <span class="kw">any</span>(<span class="kw">duplicated</span>(data_wide<span class="op">$</span>sample_unique_ID)) ) {<span class="kw">stop</span>(<span class="st">&quot;columns_w_sample_ID_info specified do not lead to unique sample IDs&quot;</span>)}</a>
+<a class="sourceLine" id="cb58-130" data-line-number="130">                }</a>
+<a class="sourceLine" id="cb58-131" data-line-number="131"></a>
+<a class="sourceLine" id="cb58-132" data-line-number="132">                <span class="co"># Make sure &quot;sample_unique_ID&quot; is character</span></a>
+<a class="sourceLine" id="cb58-133" data-line-number="133">                    data_wide<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span><span class="kw">as.character</span>(data_wide<span class="op">$</span>sample_unique_ID)</a>
+<a class="sourceLine" id="cb58-134" data-line-number="134"></a>
+<a class="sourceLine" id="cb58-135" data-line-number="135">            <span class="co"># Clustering analysis</span></a>
+<a class="sourceLine" id="cb58-136" data-line-number="136"></a>
+<a class="sourceLine" id="cb58-137" data-line-number="137">                <span class="co"># Prepare the matrix</span></a>
+<a class="sourceLine" id="cb58-138" data-line-number="138"></a>
+<a class="sourceLine" id="cb58-139" data-line-number="139">                    matrix &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(data_wide[,<span class="kw">match</span>(analyte_columns, <span class="kw">colnames</span>(data_wide))])</a>
+<a class="sourceLine" id="cb58-140" data-line-number="140">                    <span class="kw">rownames</span>(matrix) &lt;-<span class="st"> </span>data_wide<span class="op">$</span>sample_unique_ID</a>
+<a class="sourceLine" id="cb58-141" data-line-number="141"></a>
+<a class="sourceLine" id="cb58-142" data-line-number="142">                <span class="co"># Run hclust, if requested</span></a>
+<a class="sourceLine" id="cb58-143" data-line-number="143"></a>
+<a class="sourceLine" id="cb58-144" data-line-number="144">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;hclust&quot;</span> ) {</a>
+<a class="sourceLine" id="cb58-145" data-line-number="145">                        clustering &lt;-<span class="st"> </span>ggtree<span class="op">::</span><span class="kw">fortify</span>(ape<span class="op">::</span><span class="kw">as.phylo</span>(stats<span class="op">::</span><span class="kw">hclust</span>(stats<span class="op">::</span><span class="kw">dist</span>(matrix))))</a>
+<a class="sourceLine" id="cb58-146" data-line-number="146">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span>clustering<span class="op">$</span>label </a>
+<a class="sourceLine" id="cb58-147" data-line-number="147">                    }</a>
+<a class="sourceLine" id="cb58-148" data-line-number="148"></a>
+<a class="sourceLine" id="cb58-149" data-line-number="149">                <span class="co"># Run PCA, if requested</span></a>
+<a class="sourceLine" id="cb58-150" data-line-number="150"></a>
+<a class="sourceLine" id="cb58-151" data-line-number="151">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;pca&quot;</span> ) {</a>
+<a class="sourceLine" id="cb58-152" data-line-number="152">                        coords &lt;-<span class="st"> </span>FactoMineR<span class="op">::</span><span class="kw">PCA</span>(matrix)<span class="op">$</span>ind<span class="op">$</span>coord[,<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
+<a class="sourceLine" id="cb58-153" data-line-number="153">                        clustering &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(coords)</a>
+<a class="sourceLine" id="cb58-154" data-line-number="154">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span><span class="kw">rownames</span>(coords)</a>
+<a class="sourceLine" id="cb58-155" data-line-number="155">                    }</a>
+<a class="sourceLine" id="cb58-156" data-line-number="156"></a>
+<a class="sourceLine" id="cb58-157" data-line-number="157">                <span class="co"># Run PCA and return ordination plot coordinates, if requested</span></a>
+<a class="sourceLine" id="cb58-158" data-line-number="158"></a>
+<a class="sourceLine" id="cb58-159" data-line-number="159">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;pca-ord&quot;</span> ) {</a>
+<a class="sourceLine" id="cb58-160" data-line-number="160">                        coords &lt;-<span class="st"> </span>FactoMineR<span class="op">::</span><span class="kw">PCA</span>(matrix)<span class="op">$</span>var<span class="op">$</span>coord[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</a>
+<a class="sourceLine" id="cb58-161" data-line-number="161">                        clustering &lt;-<span class="st"> </span><span class="kw">as_tibble</span>(coords)</a>
+<a class="sourceLine" id="cb58-162" data-line-number="162">                        clustering<span class="op">$</span>sample_unique_ID &lt;-<span class="st"> </span><span class="kw">rownames</span>(coords)</a>
+<a class="sourceLine" id="cb58-163" data-line-number="163">                        <span class="kw">return</span>(clustering)</a>
+<a class="sourceLine" id="cb58-164" data-line-number="164">                        <span class="kw">stop</span>(<span class="st">&quot;Returning ordination plot coordinates.&quot;</span>)</a>
+<a class="sourceLine" id="cb58-165" data-line-number="165">                    }</a>
+<a class="sourceLine" id="cb58-166" data-line-number="166"></a>
+<a class="sourceLine" id="cb58-167" data-line-number="167">                <span class="co"># Run PCA and return eigenvalues, if requested</span></a>
+<a class="sourceLine" id="cb58-168" data-line-number="168"></a>
+<a class="sourceLine" id="cb58-169" data-line-number="169">                    <span class="cf">if</span>( analysis <span class="op">==</span><span class="st"> &quot;pca-dim&quot;</span> ) {</a>
+<a class="sourceLine" id="cb58-170" data-line-number="170">                        coords &lt;-<span class="st"> </span>FactoMineR<span class="op">::</span><span class="kw">PCA</span>(matrix)<span class="op">$</span>eig[,<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb58-171" data-line-number="171">                        clustering &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">enframe</span>(coords, <span class="dt">name =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb58-172" data-line-number="172">                        clustering<span class="op">$</span>principal_component &lt;-<span class="st"> </span><span class="kw">names</span>(coords)</a>
+<a class="sourceLine" id="cb58-173" data-line-number="173">                        clustering<span class="op">$</span>principal_component &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">gsub</span>(<span class="st">&quot;comp &quot;</span>, <span class="st">&quot;&quot;</span>, clustering<span class="op">$</span>principal_component))</a>
+<a class="sourceLine" id="cb58-174" data-line-number="174">                        <span class="kw">colnames</span>(clustering)[<span class="kw">colnames</span>(clustering) <span class="op">==</span><span class="st"> &quot;value&quot;</span>] &lt;-<span class="st"> &quot;percent_variance_explained&quot;</span></a>
+<a class="sourceLine" id="cb58-175" data-line-number="175">                        <span class="kw">return</span>(clustering)</a>
+<a class="sourceLine" id="cb58-176" data-line-number="176">                        <span class="kw">stop</span>(<span class="st">&quot;Returning eigenvalues.&quot;</span>)</a>
+<a class="sourceLine" id="cb58-177" data-line-number="177">                    }</a>
+<a class="sourceLine" id="cb58-178" data-line-number="178">                    </a>
+<a class="sourceLine" id="cb58-179" data-line-number="179">                <span class="co"># Add back annotations to the output</span></a>
+<a class="sourceLine" id="cb58-180" data-line-number="180"></a>
+<a class="sourceLine" id="cb58-181" data-line-number="181">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb58-182" data-line-number="182">                        data_wide[,<span class="kw">match</span>(</a>
+<a class="sourceLine" id="cb58-183" data-line-number="183">                            <span class="cf">if</span>( <span class="kw">length</span>(columns_w_sample_ID_info) <span class="op">==</span><span class="st"> </span><span class="dv">1</span> ) {</a>
+<a class="sourceLine" id="cb58-184" data-line-number="184">                                <span class="st">&quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb58-185" data-line-number="185">                            } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb58-186" data-line-number="186">                                <span class="kw">c</span>(columns_w_sample_ID_info, <span class="st">&quot;sample_unique_ID&quot;</span>)</a>
+<a class="sourceLine" id="cb58-187" data-line-number="187">                            }, <span class="kw">colnames</span>(data_wide))],</a>
+<a class="sourceLine" id="cb58-188" data-line-number="188">                        clustering,</a>
+<a class="sourceLine" id="cb58-189" data-line-number="189">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb58-190" data-line-number="190">                    )</a>
+<a class="sourceLine" id="cb58-191" data-line-number="191"></a>
+<a class="sourceLine" id="cb58-192" data-line-number="192">                    rownames_matrix &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">enframe</span>(<span class="kw">rownames</span>(matrix), <span class="dt">name =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb58-193" data-line-number="193">                    <span class="kw">colnames</span>(rownames_matrix)[<span class="dv">1</span>] &lt;-<span class="st"> &quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb58-194" data-line-number="194"></a>
+<a class="sourceLine" id="cb58-195" data-line-number="195">                    clustering &lt;-<span class="st"> </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb58-196" data-line-number="196">                        clustering,</a>
+<a class="sourceLine" id="cb58-197" data-line-number="197">                        <span class="kw">as_tibble</span>(<span class="kw">cbind</span>(rownames_matrix, <span class="kw">as_tibble</span>(matrix))),</a>
+<a class="sourceLine" id="cb58-198" data-line-number="198">                        <span class="dt">by =</span> <span class="st">&quot;sample_unique_ID&quot;</span></a>
+<a class="sourceLine" id="cb58-199" data-line-number="199">                    )</a>
+<a class="sourceLine" id="cb58-200" data-line-number="200">                    clustering</a>
+<a class="sourceLine" id="cb58-201" data-line-number="201"></a>
+<a class="sourceLine" id="cb58-202" data-line-number="202">            <span class="co"># Return results</span></a>
+<a class="sourceLine" id="cb58-203" data-line-number="203"></a>
+<a class="sourceLine" id="cb58-204" data-line-number="204">                <span class="kw">return</span>( clustering )</a>
+<a class="sourceLine" id="cb58-205" data-line-number="205"></a>
+<a class="sourceLine" id="cb58-206" data-line-number="206">        }</a></code></pre></div>
 </div>
 </div>
 </div>
