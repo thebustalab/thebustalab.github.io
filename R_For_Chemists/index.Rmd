@@ -1140,7 +1140,7 @@ It is possible that you will want access to the information that creates the ord
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
 per_small <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
 
-clustering <- runMatrixAnalysis(
+per_small_pca_ord <- runMatrixAnalysis(
     data = per_small,
     analysis = c("pca-ord"),
     column_w_names_of_multiple_analytes = NULL,
@@ -1149,14 +1149,59 @@ clustering <- runMatrixAnalysis(
     columns_w_additional_analyte_info = NULL,
     columns_w_sample_ID_info = c("atomic_number", "atomic_symbol", "group_number", "period", "state_at_RT")
 )
-head(clustering)
+head(per_small_pca_ord)
 ```
 
-library(ggforce)
-ggplot(clustering) +
+We can now visualize the ordination plot using our standard ggplot plotting techniques:
+
+```{r}
+library(ggforce) # Gives access to geom_circle
+ggplot(per_small_pca_ord) +
 	geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2), size = 1) +
 	geom_circle(aes(x0 = 0, y0 = 0, r = 1))
 ```
+
+We also can access information about the how much of the variance in the dataset is explained by each principal component:
+
+```{r}
+per_small <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+
+per_small_pca_dim <- runMatrixAnalysis(
+                                
+	    data = per_small,
+
+	    analysis = c("pca-dim"),
+
+	    column_w_names_of_multiple_analytes = NULL,
+	    column_w_values_for_multiple_analytes = NULL,
+	    
+	    columns_w_values_for_single_analyte = c("atomic_mass_rounded", "melting_point_C", "boiling_point_C", "density_g_per_mL", "electronegativity_pauling", "first_ionization_poten_eV", "second_ionization_poten_eV", "third_ionization_poten_eV", "electron_affinity_eV", "atomic_radius_ang", "ionic_radius_ang", "covalent_radius_ang", "atomic_volume_cm3_per_mol", "electrical_conductivity_mho_per_cm", "specific_heat_J_per_g_K", "heat_of_fusion_kJ_per_mol", "heat_of_vaporization_kJ_per_mol", "thermal_conductivity_W_per_m_K", "polarizability_A_cubed", "heat_atomization_kJ_per_mol"),
+	    
+	    columns_w_additional_analyte_info = NULL,
+
+	    columns_w_sample_ID_info = c("atomic_number", "atomic_symbol", "group_number", "period", "state_at_RT")
+
+	)
+head(per_small_pca_dim)
+```
+
+
+And we can now plot that using ggplot:
+
+
+```{r, fig.height = 2.5, fig.width = 3, fig.align = "center"}
+ggplot(
+  data = per_small_pca_dim, 
+  aes(x = principal_component, y = percent_variance_explained)
+) +
+  geom_line() +
+  geom_point() +
+  theme_bw()
+```
+
+
+Cool!
+
 
 # (APPENDIX) Appendix {-}
 
