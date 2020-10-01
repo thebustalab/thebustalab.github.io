@@ -149,7 +149,7 @@
                 # Run PCA, if requested
 
                     if( analysis == "pca" ) {
-                        coords <- FactoMineR::PCA(matrix)$ind$coord[,c(1:2)]
+                        coords <- FactoMineR::PCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
                         clustering <- as_tibble(coords)
                         clustering$sample_unique_ID <- rownames(coords)
                     }
@@ -157,7 +157,7 @@
                 # Run PCA and return ordination plot coordinates, if requested
 
                     if( analysis == "pca-ord" ) {
-                        coords <- FactoMineR::PCA(matrix)$var$coord[,c(1,2)]
+                        coords <- FactoMineR::PCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
                         clustering <- as_tibble(coords)
                         clustering$sample_unique_ID <- rownames(coords)
                         return(clustering)
@@ -167,7 +167,7 @@
                 # Run PCA and return eigenvalues, if requested
 
                     if( analysis == "pca-dim" ) {
-                        coords <- FactoMineR::PCA(matrix)$eig[,2]
+                        coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
                         clustering <- tibble::enframe(coords, name = NULL)
                         clustering$principal_component <- names(coords)
                         clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))

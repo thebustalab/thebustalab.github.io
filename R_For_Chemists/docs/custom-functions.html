@@ -250,117 +250,33 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">B</span> Custom functions</h1>
 <div id="readcsv" class="section level2">
 <h2><span class="header-section-number">B.1</span> readCSV</h2>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">readCSV &lt;-<span class="st"> </span><span class="cf">function</span>() { <span class="kw">return</span>(readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">file.choose</span>())) }</a></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1">readCSV &lt;-<span class="st"> </span><span class="cf">function</span>() { <span class="kw">return</span>(readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">file.choose</span>())) }</a></code></pre></div>
 </div>
 <div id="runmatrixanalysis" class="section level2">
 <h2><span class="header-section-number">B.2</span> runMatrixAnalysis</h2>
 <div id="once-you-have-activated-runmatrixanalysis-in-your-r-session-see-below-you-can-use-the-function-by-filling-out-and-executing-this-template" class="section level3">
 <h3><span class="header-section-number">B.2.1</span> Once you have activated <code>runMatrixAnalysis</code> in your R session (see below), you can use the function by filling out and executing this template:</h3>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" data-line-number="1"></a>
-<a class="sourceLine" id="cb57-2" data-line-number="2"><span class="kw">runMatrixAnalysis</span>(</a>
-<a class="sourceLine" id="cb57-3" data-line-number="3">                                </a>
-<a class="sourceLine" id="cb57-4" data-line-number="4">    <span class="dt">data =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb57-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb57-6" data-line-number="6">    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</a>
-<a class="sourceLine" id="cb57-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb57-8" data-line-number="8">    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb57-9" data-line-number="9">    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb57-10" data-line-number="10">    </a>
-<a class="sourceLine" id="cb57-11" data-line-number="11">    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb57-12" data-line-number="12">    </a>
-<a class="sourceLine" id="cb57-13" data-line-number="13">    <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb57-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb57-15" data-line-number="15">    <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></a>
-<a class="sourceLine" id="cb57-16" data-line-number="16"></a>
-<a class="sourceLine" id="cb57-17" data-line-number="17">)</a></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb60-2" data-line-number="2"><span class="kw">runMatrixAnalysis</span>(</a>
+<a class="sourceLine" id="cb60-3" data-line-number="3">                                </a>
+<a class="sourceLine" id="cb60-4" data-line-number="4">    <span class="dt">data =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb60-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb60-6" data-line-number="6">    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</a>
+<a class="sourceLine" id="cb60-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb60-8" data-line-number="8">    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb60-9" data-line-number="9">    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb60-10" data-line-number="10">    </a>
+<a class="sourceLine" id="cb60-11" data-line-number="11">    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb60-12" data-line-number="12">    </a>
+<a class="sourceLine" id="cb60-13" data-line-number="13">    <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb60-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb60-15" data-line-number="15">    <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb60-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb60-17" data-line-number="17">)</a></code></pre></div>
 </div>
 <div id="to-activate-runmatrixanalysis-in-your-session-run-the-following-in-your-console" class="section level3">
 <h3><span class="header-section-number">B.2.2</span> To activate <code>runMatrixAnalysis</code> in your session, run the following in your console:</h3>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1"><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">::</span><span class="kw">knit_global</span>())</a>
-<a class="sourceLine" id="cb58-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb58-3" data-line-number="3">runMatrixAnalysis</a>
-<a class="sourceLine" id="cb58-4" data-line-number="4"><span class="co">## function (data, analysis = c(&quot;hclust&quot;, &quot;pca&quot;), column_w_names_of_multiple_analytes, </span></a>
-<a class="sourceLine" id="cb58-5" data-line-number="5"><span class="co">##     column_w_values_for_multiple_analytes, columns_w_values_for_single_analyte, </span></a>
-<a class="sourceLine" id="cb58-6" data-line-number="6"><span class="co">##     columns_w_additional_analyte_info, columns_w_sample_ID_info) </span></a>
-<a class="sourceLine" id="cb58-7" data-line-number="7"><span class="co">## {</span></a>
-<a class="sourceLine" id="cb58-8" data-line-number="8"><span class="co">##     if (any(!c(column_w_names_of_multiple_analytes, column_w_values_for_multiple_analytes, </span></a>
-<a class="sourceLine" id="cb58-9" data-line-number="9"><span class="co">##         columns_w_values_for_single_analyte, columns_w_additional_analyte_info, </span></a>
-<a class="sourceLine" id="cb58-10" data-line-number="10"><span class="co">##         columns_w_sample_ID_info) %in% colnames(data)) == TRUE) {</span></a>
-<a class="sourceLine" id="cb58-11" data-line-number="11"><span class="co">##         stop(&quot;There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.&quot;)</span></a>
-<a class="sourceLine" id="cb58-12" data-line-number="12"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-13" data-line-number="13"><span class="co">##     if (length(which(!colnames(data) %in% c(column_w_names_of_multiple_analytes, </span></a>
-<a class="sourceLine" id="cb58-14" data-line-number="14"><span class="co">##         column_w_values_for_multiple_analytes, columns_w_values_for_single_analyte, </span></a>
-<a class="sourceLine" id="cb58-15" data-line-number="15"><span class="co">##         columns_w_additional_analyte_info, columns_w_sample_ID_info))) &gt; </span></a>
-<a class="sourceLine" id="cb58-16" data-line-number="16"><span class="co">##         0) {</span></a>
-<a class="sourceLine" id="cb58-17" data-line-number="17"><span class="co">##         data &lt;- data[, -which(!colnames(data) %in% c(column_w_names_of_multiple_analytes, </span></a>
-<a class="sourceLine" id="cb58-18" data-line-number="18"><span class="co">##             column_w_values_for_multiple_analytes, columns_w_values_for_single_analyte, </span></a>
-<a class="sourceLine" id="cb58-19" data-line-number="19"><span class="co">##             columns_w_additional_analyte_info, columns_w_sample_ID_info))]</span></a>
-<a class="sourceLine" id="cb58-20" data-line-number="20"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-21" data-line-number="21"><span class="co">##     if (length(columns_w_additional_analyte_info) &gt; 0) {</span></a>
-<a class="sourceLine" id="cb58-22" data-line-number="22"><span class="co">##         analyte_annotation_free_data &lt;- data[, -match(columns_w_additional_analyte_info, </span></a>
-<a class="sourceLine" id="cb58-23" data-line-number="23"><span class="co">##             colnames(data))]</span></a>
-<a class="sourceLine" id="cb58-24" data-line-number="24"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-25" data-line-number="25"><span class="co">##     else {</span></a>
-<a class="sourceLine" id="cb58-26" data-line-number="26"><span class="co">##         analyte_annotation_free_data &lt;- data</span></a>
-<a class="sourceLine" id="cb58-27" data-line-number="27"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-28" data-line-number="28"><span class="co">##     if (length(column_w_names_of_multiple_analytes) == 0 &amp; length(columns_w_values_for_single_analyte) &gt;= </span></a>
-<a class="sourceLine" id="cb58-29" data-line-number="29"><span class="co">##         1) {</span></a>
-<a class="sourceLine" id="cb58-30" data-line-number="30"><span class="co">##         data_wide &lt;- analyte_annotation_free_data</span></a>
-<a class="sourceLine" id="cb58-31" data-line-number="31"><span class="co">##         analyte_columns &lt;- columns_w_values_for_single_analyte</span></a>
-<a class="sourceLine" id="cb58-32" data-line-number="32"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-33" data-line-number="33"><span class="co">##     if (length(column_w_names_of_multiple_analytes) == 1) {</span></a>
-<a class="sourceLine" id="cb58-34" data-line-number="34"><span class="co">##         data_wide &lt;- pivot_wider(analyte_annotation_free_data, </span></a>
-<a class="sourceLine" id="cb58-35" data-line-number="35"><span class="co">##             names_from = all_of(column_w_names_of_multiple_analytes), </span></a>
-<a class="sourceLine" id="cb58-36" data-line-number="36"><span class="co">##             values_from = all_of(column_w_values_for_multiple_analytes))</span></a>
-<a class="sourceLine" id="cb58-37" data-line-number="37"><span class="co">##         analyte_columns &lt;- unlist(unique(analyte_annotation_free_data[, </span></a>
-<a class="sourceLine" id="cb58-38" data-line-number="38"><span class="co">##             colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))</span></a>
-<a class="sourceLine" id="cb58-39" data-line-number="39"><span class="co">##         analyte_columns &lt;- c(columns_w_values_for_single_analyte, </span></a>
-<a class="sourceLine" id="cb58-40" data-line-number="40"><span class="co">##             analyte_columns)</span></a>
-<a class="sourceLine" id="cb58-41" data-line-number="41"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-42" data-line-number="42"><span class="co">##     which_analyte_columns &lt;- which(colnames(data_wide) %in% analyte_columns)</span></a>
-<a class="sourceLine" id="cb58-43" data-line-number="43"><span class="co">##     for (i in 1:length(which_analyte_columns)) {</span></a>
-<a class="sourceLine" id="cb58-44" data-line-number="44"><span class="co">##         data_wide[[i]] &lt;- as.numeric(data_wide[[i]])</span></a>
-<a class="sourceLine" id="cb58-45" data-line-number="45"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-46" data-line-number="46"><span class="co">##     if (length(columns_w_sample_ID_info) &gt; 1) {</span></a>
-<a class="sourceLine" id="cb58-47" data-line-number="47"><span class="co">##         sample_unique_IDs &lt;- apply(data_wide[, match(columns_w_sample_ID_info, </span></a>
-<a class="sourceLine" id="cb58-48" data-line-number="48"><span class="co">##             colnames(data_wide))], 1, paste, collapse = &quot;_&quot;)</span></a>
-<a class="sourceLine" id="cb58-49" data-line-number="49"><span class="co">##         if (any(duplicated(sample_unique_IDs))) {</span></a>
-<a class="sourceLine" id="cb58-50" data-line-number="50"><span class="co">##             stop(&quot;columns_w_sample_ID_info specified do not lead to unique sample IDs&quot;)</span></a>
-<a class="sourceLine" id="cb58-51" data-line-number="51"><span class="co">##         }</span></a>
-<a class="sourceLine" id="cb58-52" data-line-number="52"><span class="co">##         data_wide$sample_unique_ID &lt;- sample_unique_IDs</span></a>
-<a class="sourceLine" id="cb58-53" data-line-number="53"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-54" data-line-number="54"><span class="co">##     else {</span></a>
-<a class="sourceLine" id="cb58-55" data-line-number="55"><span class="co">##         colnames(data_wide)[colnames(data_wide) == columns_w_sample_ID_info] &lt;- &quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-56" data-line-number="56"><span class="co">##         if (any(duplicated(data_wide$sample_unique_ID))) {</span></a>
-<a class="sourceLine" id="cb58-57" data-line-number="57"><span class="co">##             stop(&quot;columns_w_sample_ID_info specified do not lead to unique sample IDs&quot;)</span></a>
-<a class="sourceLine" id="cb58-58" data-line-number="58"><span class="co">##         }</span></a>
-<a class="sourceLine" id="cb58-59" data-line-number="59"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-60" data-line-number="60"><span class="co">##     data_wide$sample_unique_ID &lt;- as.character(data_wide$sample_unique_ID)</span></a>
-<a class="sourceLine" id="cb58-61" data-line-number="61"><span class="co">##     matrix &lt;- as.matrix(data_wide[, match(analyte_columns, colnames(data_wide))])</span></a>
-<a class="sourceLine" id="cb58-62" data-line-number="62"><span class="co">##     rownames(matrix) &lt;- data_wide$sample_unique_ID</span></a>
-<a class="sourceLine" id="cb58-63" data-line-number="63"><span class="co">##     if (analysis == &quot;hclust&quot;) {</span></a>
-<a class="sourceLine" id="cb58-64" data-line-number="64"><span class="co">##         clustering &lt;- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))</span></a>
-<a class="sourceLine" id="cb58-65" data-line-number="65"><span class="co">##         clustering$sample_unique_ID &lt;- clustering$label</span></a>
-<a class="sourceLine" id="cb58-66" data-line-number="66"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-67" data-line-number="67"><span class="co">##     if (analysis == &quot;pca&quot;) {</span></a>
-<a class="sourceLine" id="cb58-68" data-line-number="68"><span class="co">##         coords &lt;- FactoMineR::PCA(matrix)$ind$coord[, c(1:2)]</span></a>
-<a class="sourceLine" id="cb58-69" data-line-number="69"><span class="co">##         clustering &lt;- as_tibble(coords)</span></a>
-<a class="sourceLine" id="cb58-70" data-line-number="70"><span class="co">##         clustering$sample_unique_ID &lt;- rownames(coords)</span></a>
-<a class="sourceLine" id="cb58-71" data-line-number="71"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-72" data-line-number="72"><span class="co">##     clustering &lt;- full_join(data_wide[, match(if (length(columns_w_sample_ID_info) == </span></a>
-<a class="sourceLine" id="cb58-73" data-line-number="73"><span class="co">##         1) {</span></a>
-<a class="sourceLine" id="cb58-74" data-line-number="74"><span class="co">##         &quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-75" data-line-number="75"><span class="co">##     }</span></a>
-<a class="sourceLine" id="cb58-76" data-line-number="76"><span class="co">##     else {</span></a>
-<a class="sourceLine" id="cb58-77" data-line-number="77"><span class="co">##         c(columns_w_sample_ID_info, &quot;sample_unique_ID&quot;)</span></a>
-<a class="sourceLine" id="cb58-78" data-line-number="78"><span class="co">##     }, colnames(data_wide))], clustering, by = &quot;sample_unique_ID&quot;)</span></a>
-<a class="sourceLine" id="cb58-79" data-line-number="79"><span class="co">##     rownames_matrix &lt;- tibble::enframe(rownames(matrix), name = NULL)</span></a>
-<a class="sourceLine" id="cb58-80" data-line-number="80"><span class="co">##     colnames(rownames_matrix)[1] &lt;- &quot;sample_unique_ID&quot;</span></a>
-<a class="sourceLine" id="cb58-81" data-line-number="81"><span class="co">##     clustering &lt;- full_join(clustering, as_tibble(cbind(rownames_matrix, </span></a>
-<a class="sourceLine" id="cb58-82" data-line-number="82"><span class="co">##         as_tibble(matrix))), by = &quot;sample_unique_ID&quot;)</span></a>
-<a class="sourceLine" id="cb58-83" data-line-number="83"><span class="co">##     clustering</span></a>
-<a class="sourceLine" id="cb58-84" data-line-number="84"><span class="co">##     return(clustering)</span></a>
-<a class="sourceLine" id="cb58-85" data-line-number="85"><span class="co">## }</span></a></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1"><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>)</a></code></pre></div>
 </div>
 </div>
 </div>

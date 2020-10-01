@@ -291,45 +291,29 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>Let’s illustrate this with an example. We’re going to use a function from the <code>tidyverse</code> called <code>read_csv</code>. This means we need to first load the <code>tidyverse</code>. We’ll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We’re going to import that tidied version (not the original, untidied version) using the <code>read_csv</code> command. We’ll run <code>read_csv(&quot;&lt;path_to_your_data&gt;&quot;)</code>. Note the use of QUOTES <code>&quot;&quot;</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">## Parsed with column specification:</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">## cols(</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">##   replicate = col_double(),</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">##   algae_strain = col_character(),</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">##   harvesting_regime = col_character(),</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">##   chemical_species = col_character(),</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">##   abundance = col_double()</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">## )</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">## # A tibble: 180 x 5</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">##    replicate algae_strain harvesting_regime chemical_species      abundance</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">##  1         1 Tsv1         Heavy             FAs                       520. </span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">##  2         1 Tsv1         Heavy             saturated_Fas             123. </span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">##  3         1 Tsv1         Heavy             omega_3_polyunsatura…     186. </span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">##  4         1 Tsv1         Heavy             monounsaturated_Fas        28.4</span></a>
-<a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">##  5         1 Tsv1         Heavy             polyunsaturated_Fas       369. </span></a>
-<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co">##  6         1 Tsv1         Heavy             omega_6_polyunsatura…     183. </span></a>
-<a class="sourceLine" id="cb7-20" data-line-number="20"><span class="co">##  7         1 Tsv1         Heavy             lysine                     84.1</span></a>
-<a class="sourceLine" id="cb7-21" data-line-number="21"><span class="co">##  8         1 Tsv1         Heavy             methionine                 24.1</span></a>
-<a class="sourceLine" id="cb7-22" data-line-number="22"><span class="co">##  9         1 Tsv1         Heavy             essential_Aas             692. </span></a>
-<a class="sourceLine" id="cb7-23" data-line-number="23"><span class="co">## 10         1 Tsv1         Heavy             non_essential_Aas         919. </span></a>
-<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">## # … with 170 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">## # A tibble: 180 x 5</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">##    replicate algae_strain harvesting_regime chemical_species      abundance</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                     &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">##  1         1 Tsv1         Heavy             FAs                       520. </span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">##  2         1 Tsv1         Heavy             saturated_Fas             123. </span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">##  3         1 Tsv1         Heavy             omega_3_polyunsatura…     186. </span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">##  4         1 Tsv1         Heavy             monounsaturated_Fas        28.4</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">##  5         1 Tsv1         Heavy             polyunsaturated_Fas       369. </span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">##  6         1 Tsv1         Heavy             omega_6_polyunsatura…     183. </span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">##  7         1 Tsv1         Heavy             lysine                     84.1</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">##  8         1 Tsv1         Heavy             methionine                 24.1</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">##  9         1 Tsv1         Heavy             essential_Aas             692. </span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">## 10         1 Tsv1         Heavy             non_essential_Aas         919. </span></a>
+<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">## # … with 170 more rows</span></a></code></pre></div>
 <p>** Note, we also could have imported this data by using <code>readCSV()</code> and then navigating to and selecting our file.</p>
 </div>
 <div id="objects" class="section level2">
 <h2><span class="header-section-number">3.3</span> Objects</h2>
 <p>You can think of objects as if they were “files” inside an R session where information can be stored. Let’s try making an object. All we have to do is use <code>&lt;-</code> to send the information from our <code>read_csv</code> command into a new object. This will create the object. See the example below.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">algae_chemistry &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">## Parsed with column specification:</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">## cols(</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">##   replicate = col_double(),</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">##   algae_strain = col_character(),</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">##   harvesting_regime = col_character(),</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">##   chemical_species = col_character(),</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">##   abundance = col_double()</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">## )</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co"># Alternative:</span></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co"># algae_chemistry &lt;- readCSV()</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co"># Alternative:</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co"># algae_chemistry &lt;- readCSV()</span></a></code></pre></div>
 <p>Now we have an object called <code>algae_chemistry</code>. We can examine the contents of that object by typing its name. For example:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">algae_chemistry</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">## # A tibble: 180 x 5</span></a>

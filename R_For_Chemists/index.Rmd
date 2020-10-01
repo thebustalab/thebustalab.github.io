@@ -158,7 +158,7 @@ Ok, we've got some bookkeeping out of the way. Let's get down to working with da
 
 Let's illustrate this with an example. We're going to use a function from the `tidyverse` called `read_csv`. This means we need to first load the `tidyverse`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
 
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 ```
@@ -169,7 +169,7 @@ read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.cs
 
 You can think of objects as if they were "files" inside an R session where information can be stored. Let's try making an object. All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
 
-```{r}
+```{r, message = FALSE}
 algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 
 # Alternative:
@@ -1033,6 +1033,7 @@ knitr::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/run
 With this in mind, let's try out our template:
 
 ```{r}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R", local = knitr::knit_global())
 AK_lakes_clustered <- runMatrixAnalysis(
                                 
     data = AK_lakes,
@@ -1111,7 +1112,7 @@ In the example above, the three dimensional space can be reduced to a two dimens
 
 We can run and visualize principal components analyses using the runMatrixAnalysis() function as in the example below:
 
-```{r}
+```{r, message = FALSE}
 AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 head(AK_lakes)
 
@@ -1131,6 +1132,30 @@ ggplot(data = AK_lakes_analyzed, aes(x = Dim.1, y = Dim.2)) +
 	geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
 	geom_label_repel(aes(label = lake), alpha = 0.5) +
 	theme_classic()
+```
+
+It is possible that you will want access to the information that creates the ordination plot as well as the the percent variances explained by each of the principal components. These can be obtained using `analysis = "pca-ord"` and `analysis = "pca-dim`. See below:
+
+```{r, echo = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
+per_small <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+
+clustering <- runMatrixAnalysis(
+    data = per_small,
+    analysis = c("pca-ord"),
+    column_w_names_of_multiple_analytes = NULL,
+    column_w_values_for_multiple_analytes = NULL,
+    columns_w_values_for_single_analyte = c("atomic_mass_rounded", "melting_point_C", "boiling_point_C", "density_g_per_mL", "electronegativity_pauling", "first_ionization_poten_eV", "second_ionization_poten_eV", "third_ionization_poten_eV", "electron_affinity_eV", "atomic_radius_ang", "ionic_radius_ang", "covalent_radius_ang", "atomic_volume_cm3_per_mol", "electrical_conductivity_mho_per_cm", "specific_heat_J_per_g_K", "heat_of_fusion_kJ_per_mol", "heat_of_vaporization_kJ_per_mol", "thermal_conductivity_W_per_m_K", "polarizability_A_cubed", "heat_atomization_kJ_per_mol"),
+    columns_w_additional_analyte_info = NULL,
+    columns_w_sample_ID_info = c("atomic_number", "atomic_symbol", "group_number", "period", "state_at_RT")
+)
+head(clustering)
+```
+
+library(ggforce)
+ggplot(clustering) +
+	geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2), size = 1) +
+	geom_circle(aes(x0 = 0, y0 = 0, r = 1))
 ```
 
 # (APPENDIX) Appendix {-}
@@ -1237,7 +1262,7 @@ source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixA
 
 Under normal plotting scenario:
 
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
 NY_trees
@@ -1282,7 +1307,7 @@ scale_fill_manual(values = status_color)
 
 In this course it is possible that you will want to run a clustering or PCA analysis on a data set with hundreds of thousands of observations (like NY_trees, for example). This is not always straightforward, since looking at a dendrogram or a scatter plot with hundreds of thousands of points is not always fruitful. Consider the meteorological dataset below.
 
-```{r}
+```{r, message = FALSE}
 mdata <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv")
 dim(mdata)
 ```
