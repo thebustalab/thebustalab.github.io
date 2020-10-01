@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-09-30" />
+<meta name="date" content="2020-10-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -217,7 +217,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="Chemometrics-1.html"><a href="Chemometrics-1.html"><i class="fa fa-check"></i><b>10</b> Chemometrics 1</a></li>
 <li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
 <li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a></li>
-<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a></li>
+<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a><ul>
+<li class="chapter" data-level="13.1" data-path="Exercises-5.html"><a href="Exercises-5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
+</ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
 <li class="chapter" data-level="B" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>B</b> Custom functions</a><ul>
@@ -264,73 +266,73 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="order-categorical-axes" class="section level2">
 <h2><span class="header-section-number">C.2</span> Order categorical axes</h2>
 <p>Under normal plotting scenario:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="faq.html#cb65-1"></a><span class="kw">library</span>(tidyverse)</span>
-<span id="cb65-2"><a href="faq.html#cb65-2"></a>NY_trees &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv&quot;</span>)</span>
-<span id="cb65-3"><a href="faq.html#cb65-3"></a>NY_trees</span>
-<span id="cb65-4"><a href="faq.html#cb65-4"></a><span class="co">## # A tibble: 378,762 x 14</span></span>
-<span id="cb65-5"><a href="faq.html#cb65-5"></a><span class="co">##    tree_height tree_diameter address tree_loc pit_type soil_lvl status</span></span>
-<span id="cb65-6"><a href="faq.html#cb65-6"></a><span class="co">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; </span></span>
-<span id="cb65-7"><a href="faq.html#cb65-7"></a><span class="co">##  1        21.1             6 1139 5… Front    Sidewal… Level    Good  </span></span>
-<span id="cb65-8"><a href="faq.html#cb65-8"></a><span class="co">##  2        59.0             6 2220 B… Across   Sidewal… Level    Good  </span></span>
-<span id="cb65-9"><a href="faq.html#cb65-9"></a><span class="co">##  3        92.4            13 2254 B… Across   Sidewal… Level    Good  </span></span>
-<span id="cb65-10"><a href="faq.html#cb65-10"></a><span class="co">##  4        50.2            15 2332 B… Across   Sidewal… Level    Good  </span></span>
-<span id="cb65-11"><a href="faq.html#cb65-11"></a><span class="co">##  5        95.0            21 2361 E… Front    Sidewal… Level    Poor  </span></span>
-<span id="cb65-12"><a href="faq.html#cb65-12"></a><span class="co">##  6        67.5            19 2409 E… Front    Continu… Level    Good  </span></span>
-<span id="cb65-13"><a href="faq.html#cb65-13"></a><span class="co">##  7        75.3            11 1481 E… Front    Lawn     Level    Excel…</span></span>
-<span id="cb65-14"><a href="faq.html#cb65-14"></a><span class="co">##  8        27.9             7 1129 5… Front    Sidewal… Level    Good  </span></span>
-<span id="cb65-15"><a href="faq.html#cb65-15"></a><span class="co">##  9       111.             26 2076 E… Across   Sidewal… Level    Excel…</span></span>
-<span id="cb65-16"><a href="faq.html#cb65-16"></a><span class="co">## 10        83.9            20 2025 E… Front    Sidewal… Level    Excel…</span></span>
-<span id="cb65-17"><a href="faq.html#cb65-17"></a><span class="co">## # … with 378,752 more rows, and 7 more variables: spc_latin &lt;chr&gt;,</span></span>
-<span id="cb65-18"><a href="faq.html#cb65-18"></a><span class="co">## #   spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;,</span></span>
-<span id="cb65-19"><a href="faq.html#cb65-19"></a><span class="co">## #   latitude &lt;dbl&gt;, longitude &lt;dbl&gt;</span></span>
-<span id="cb65-20"><a href="faq.html#cb65-20"></a></span>
-<span id="cb65-21"><a href="faq.html#cb65-21"></a>tree_data_status &lt;-<span class="st"> </span><span class="kw">group_by</span>(<span class="dt">.data =</span> NY_trees, status)</span>
-<span id="cb65-22"><a href="faq.html#cb65-22"></a>tree_data_status</span>
-<span id="cb65-23"><a href="faq.html#cb65-23"></a><span class="co">## # A tibble: 378,762 x 14</span></span>
-<span id="cb65-24"><a href="faq.html#cb65-24"></a><span class="co">##    tree_height tree_diameter address tree_loc pit_type soil_lvl status</span></span>
-<span id="cb65-25"><a href="faq.html#cb65-25"></a><span class="co">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; </span></span>
-<span id="cb65-26"><a href="faq.html#cb65-26"></a><span class="co">##  1        21.1             6 1139 5… Front    Sidewal… Level    Good  </span></span>
-<span id="cb65-27"><a href="faq.html#cb65-27"></a><span class="co">##  2        59.0             6 2220 B… Across   Sidewal… Level    Good  </span></span>
-<span id="cb65-28"><a href="faq.html#cb65-28"></a><span class="co">##  3        92.4            13 2254 B… Across   Sidewal… Level    Good  </span></span>
-<span id="cb65-29"><a href="faq.html#cb65-29"></a><span class="co">##  4        50.2            15 2332 B… Across   Sidewal… Level    Good  </span></span>
-<span id="cb65-30"><a href="faq.html#cb65-30"></a><span class="co">##  5        95.0            21 2361 E… Front    Sidewal… Level    Poor  </span></span>
-<span id="cb65-31"><a href="faq.html#cb65-31"></a><span class="co">##  6        67.5            19 2409 E… Front    Continu… Level    Good  </span></span>
-<span id="cb65-32"><a href="faq.html#cb65-32"></a><span class="co">##  7        75.3            11 1481 E… Front    Lawn     Level    Excel…</span></span>
-<span id="cb65-33"><a href="faq.html#cb65-33"></a><span class="co">##  8        27.9             7 1129 5… Front    Sidewal… Level    Good  </span></span>
-<span id="cb65-34"><a href="faq.html#cb65-34"></a><span class="co">##  9       111.             26 2076 E… Across   Sidewal… Level    Excel…</span></span>
-<span id="cb65-35"><a href="faq.html#cb65-35"></a><span class="co">## 10        83.9            20 2025 E… Front    Sidewal… Level    Excel…</span></span>
-<span id="cb65-36"><a href="faq.html#cb65-36"></a><span class="co">## # … with 378,752 more rows, and 7 more variables: spc_latin &lt;chr&gt;,</span></span>
-<span id="cb65-37"><a href="faq.html#cb65-37"></a><span class="co">## #   spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;,</span></span>
-<span id="cb65-38"><a href="faq.html#cb65-38"></a><span class="co">## #   latitude &lt;dbl&gt;, longitude &lt;dbl&gt;</span></span>
-<span id="cb65-39"><a href="faq.html#cb65-39"></a></span>
-<span id="cb65-40"><a href="faq.html#cb65-40"></a>tree_data_status_summary &lt;-<span class="st"> </span><span class="kw">summarize</span>(<span class="dt">.data =</span> tree_data_status, <span class="dt">mean_height =</span> <span class="kw">mean</span>(tree_height), <span class="dt">stdev_height =</span> <span class="kw">sd</span>(tree_height))</span>
-<span id="cb65-41"><a href="faq.html#cb65-41"></a></span>
-<span id="cb65-42"><a href="faq.html#cb65-42"></a>status_color &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;darkorange&quot;</span>,<span class="st">&quot;gold&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>)</span>
-<span id="cb65-43"><a href="faq.html#cb65-43"></a><span class="kw">names</span>(status_color) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)</span>
-<span id="cb65-44"><a href="faq.html#cb65-44"></a></span>
-<span id="cb65-45"><a href="faq.html#cb65-45"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> tree_data_status_summary) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb65-46"><a href="faq.html#cb65-46"></a><span class="kw">geom_pointrange</span>(<span class="kw">aes</span>(<span class="dt">x =</span> status, </span>
-<span id="cb65-47"><a href="faq.html#cb65-47"></a>                    <span class="dt">y =</span> mean_height, </span>
-<span id="cb65-48"><a href="faq.html#cb65-48"></a>                    <span class="dt">ymin =</span> mean_height <span class="op">-</span>stdev_height, </span>
-<span id="cb65-49"><a href="faq.html#cb65-49"></a>                    <span class="dt">ymax =</span> mean_height <span class="op">+</span><span class="st"> </span>stdev_height), <span class="dt">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="op">+</span></span>
-<span id="cb65-50"><a href="faq.html#cb65-50"></a><span class="kw">geom_point</span>(<span class="dt">data =</span> <span class="kw">filter</span>(NY_trees, tree_height <span class="op">&gt;</span><span class="st"> </span><span class="dv">150</span>),</span>
-<span id="cb65-51"><a href="faq.html#cb65-51"></a>           <span class="kw">aes</span>(<span class="dt">x =</span> status, <span class="dt">y =</span> tree_height, <span class="dt">fill =</span> status), <span class="dt">stroke =</span> <span class="fl">1.5</span>, <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb65-52"><a href="faq.html#cb65-52"></a><span class="kw">theme_bw</span>() <span class="op">+</span></span>
-<span id="cb65-53"><a href="faq.html#cb65-53"></a><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> status_color)</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-100-1.png" width="576" /></p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="faq.html#cb68-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb68-2"><a href="faq.html#cb68-2"></a>NY_trees &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv&quot;</span>)</span>
+<span id="cb68-3"><a href="faq.html#cb68-3"></a>NY_trees</span>
+<span id="cb68-4"><a href="faq.html#cb68-4"></a><span class="co">## # A tibble: 378,762 x 14</span></span>
+<span id="cb68-5"><a href="faq.html#cb68-5"></a><span class="co">##    tree_height tree_diameter address tree_loc pit_type soil_lvl status</span></span>
+<span id="cb68-6"><a href="faq.html#cb68-6"></a><span class="co">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; </span></span>
+<span id="cb68-7"><a href="faq.html#cb68-7"></a><span class="co">##  1        21.1             6 1139 5… Front    Sidewal… Level    Good  </span></span>
+<span id="cb68-8"><a href="faq.html#cb68-8"></a><span class="co">##  2        59.0             6 2220 B… Across   Sidewal… Level    Good  </span></span>
+<span id="cb68-9"><a href="faq.html#cb68-9"></a><span class="co">##  3        92.4            13 2254 B… Across   Sidewal… Level    Good  </span></span>
+<span id="cb68-10"><a href="faq.html#cb68-10"></a><span class="co">##  4        50.2            15 2332 B… Across   Sidewal… Level    Good  </span></span>
+<span id="cb68-11"><a href="faq.html#cb68-11"></a><span class="co">##  5        95.0            21 2361 E… Front    Sidewal… Level    Poor  </span></span>
+<span id="cb68-12"><a href="faq.html#cb68-12"></a><span class="co">##  6        67.5            19 2409 E… Front    Continu… Level    Good  </span></span>
+<span id="cb68-13"><a href="faq.html#cb68-13"></a><span class="co">##  7        75.3            11 1481 E… Front    Lawn     Level    Excel…</span></span>
+<span id="cb68-14"><a href="faq.html#cb68-14"></a><span class="co">##  8        27.9             7 1129 5… Front    Sidewal… Level    Good  </span></span>
+<span id="cb68-15"><a href="faq.html#cb68-15"></a><span class="co">##  9       111.             26 2076 E… Across   Sidewal… Level    Excel…</span></span>
+<span id="cb68-16"><a href="faq.html#cb68-16"></a><span class="co">## 10        83.9            20 2025 E… Front    Sidewal… Level    Excel…</span></span>
+<span id="cb68-17"><a href="faq.html#cb68-17"></a><span class="co">## # … with 378,752 more rows, and 7 more variables: spc_latin &lt;chr&gt;,</span></span>
+<span id="cb68-18"><a href="faq.html#cb68-18"></a><span class="co">## #   spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;,</span></span>
+<span id="cb68-19"><a href="faq.html#cb68-19"></a><span class="co">## #   latitude &lt;dbl&gt;, longitude &lt;dbl&gt;</span></span>
+<span id="cb68-20"><a href="faq.html#cb68-20"></a></span>
+<span id="cb68-21"><a href="faq.html#cb68-21"></a>tree_data_status &lt;-<span class="st"> </span><span class="kw">group_by</span>(<span class="dt">.data =</span> NY_trees, status)</span>
+<span id="cb68-22"><a href="faq.html#cb68-22"></a>tree_data_status</span>
+<span id="cb68-23"><a href="faq.html#cb68-23"></a><span class="co">## # A tibble: 378,762 x 14</span></span>
+<span id="cb68-24"><a href="faq.html#cb68-24"></a><span class="co">##    tree_height tree_diameter address tree_loc pit_type soil_lvl status</span></span>
+<span id="cb68-25"><a href="faq.html#cb68-25"></a><span class="co">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt; </span></span>
+<span id="cb68-26"><a href="faq.html#cb68-26"></a><span class="co">##  1        21.1             6 1139 5… Front    Sidewal… Level    Good  </span></span>
+<span id="cb68-27"><a href="faq.html#cb68-27"></a><span class="co">##  2        59.0             6 2220 B… Across   Sidewal… Level    Good  </span></span>
+<span id="cb68-28"><a href="faq.html#cb68-28"></a><span class="co">##  3        92.4            13 2254 B… Across   Sidewal… Level    Good  </span></span>
+<span id="cb68-29"><a href="faq.html#cb68-29"></a><span class="co">##  4        50.2            15 2332 B… Across   Sidewal… Level    Good  </span></span>
+<span id="cb68-30"><a href="faq.html#cb68-30"></a><span class="co">##  5        95.0            21 2361 E… Front    Sidewal… Level    Poor  </span></span>
+<span id="cb68-31"><a href="faq.html#cb68-31"></a><span class="co">##  6        67.5            19 2409 E… Front    Continu… Level    Good  </span></span>
+<span id="cb68-32"><a href="faq.html#cb68-32"></a><span class="co">##  7        75.3            11 1481 E… Front    Lawn     Level    Excel…</span></span>
+<span id="cb68-33"><a href="faq.html#cb68-33"></a><span class="co">##  8        27.9             7 1129 5… Front    Sidewal… Level    Good  </span></span>
+<span id="cb68-34"><a href="faq.html#cb68-34"></a><span class="co">##  9       111.             26 2076 E… Across   Sidewal… Level    Excel…</span></span>
+<span id="cb68-35"><a href="faq.html#cb68-35"></a><span class="co">## 10        83.9            20 2025 E… Front    Sidewal… Level    Excel…</span></span>
+<span id="cb68-36"><a href="faq.html#cb68-36"></a><span class="co">## # … with 378,752 more rows, and 7 more variables: spc_latin &lt;chr&gt;,</span></span>
+<span id="cb68-37"><a href="faq.html#cb68-37"></a><span class="co">## #   spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;,</span></span>
+<span id="cb68-38"><a href="faq.html#cb68-38"></a><span class="co">## #   latitude &lt;dbl&gt;, longitude &lt;dbl&gt;</span></span>
+<span id="cb68-39"><a href="faq.html#cb68-39"></a></span>
+<span id="cb68-40"><a href="faq.html#cb68-40"></a>tree_data_status_summary &lt;-<span class="st"> </span><span class="kw">summarize</span>(<span class="dt">.data =</span> tree_data_status, <span class="dt">mean_height =</span> <span class="kw">mean</span>(tree_height), <span class="dt">stdev_height =</span> <span class="kw">sd</span>(tree_height))</span>
+<span id="cb68-41"><a href="faq.html#cb68-41"></a></span>
+<span id="cb68-42"><a href="faq.html#cb68-42"></a>status_color &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;darkorange&quot;</span>,<span class="st">&quot;gold&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>)</span>
+<span id="cb68-43"><a href="faq.html#cb68-43"></a><span class="kw">names</span>(status_color) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)</span>
+<span id="cb68-44"><a href="faq.html#cb68-44"></a></span>
+<span id="cb68-45"><a href="faq.html#cb68-45"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> tree_data_status_summary) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb68-46"><a href="faq.html#cb68-46"></a><span class="kw">geom_pointrange</span>(<span class="kw">aes</span>(<span class="dt">x =</span> status, </span>
+<span id="cb68-47"><a href="faq.html#cb68-47"></a>                    <span class="dt">y =</span> mean_height, </span>
+<span id="cb68-48"><a href="faq.html#cb68-48"></a>                    <span class="dt">ymin =</span> mean_height <span class="op">-</span>stdev_height, </span>
+<span id="cb68-49"><a href="faq.html#cb68-49"></a>                    <span class="dt">ymax =</span> mean_height <span class="op">+</span><span class="st"> </span>stdev_height), <span class="dt">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="op">+</span></span>
+<span id="cb68-50"><a href="faq.html#cb68-50"></a><span class="kw">geom_point</span>(<span class="dt">data =</span> <span class="kw">filter</span>(NY_trees, tree_height <span class="op">&gt;</span><span class="st"> </span><span class="dv">150</span>),</span>
+<span id="cb68-51"><a href="faq.html#cb68-51"></a>           <span class="kw">aes</span>(<span class="dt">x =</span> status, <span class="dt">y =</span> tree_height, <span class="dt">fill =</span> status), <span class="dt">stroke =</span> <span class="fl">1.5</span>, <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb68-52"><a href="faq.html#cb68-52"></a><span class="kw">theme_bw</span>() <span class="op">+</span></span>
+<span id="cb68-53"><a href="faq.html#cb68-53"></a><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> status_color)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-105-1.png" width="576" /></p>
 <p>But what if we want the order on the x-axis to be from worst <code>status</code> to best? We need to make the <code>status</code> column into factors (a list of characters that has an order other than alphabetical). Here’s how:</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="faq.html#cb66-1"></a>tree_data_status_summary<span class="op">$</span>status &lt;-<span class="st"> </span><span class="kw">factor</span>(tree_data_status_summary<span class="op">$</span>status, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)) <span class="co"># note that we specify the order we want right here in &quot;levels&quot;...</span></span>
-<span id="cb66-2"><a href="faq.html#cb66-2"></a></span>
-<span id="cb66-3"><a href="faq.html#cb66-3"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> tree_data_status_summary) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb66-4"><a href="faq.html#cb66-4"></a><span class="kw">geom_pointrange</span>(<span class="kw">aes</span>(<span class="dt">x =</span> status, </span>
-<span id="cb66-5"><a href="faq.html#cb66-5"></a>                    <span class="dt">y =</span> mean_height, </span>
-<span id="cb66-6"><a href="faq.html#cb66-6"></a>                    <span class="dt">ymin =</span> mean_height <span class="op">-</span>stdev_height, </span>
-<span id="cb66-7"><a href="faq.html#cb66-7"></a>                    <span class="dt">ymax =</span> mean_height <span class="op">+</span><span class="st"> </span>stdev_height), <span class="dt">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="op">+</span></span>
-<span id="cb66-8"><a href="faq.html#cb66-8"></a><span class="kw">geom_point</span>(<span class="dt">data =</span> <span class="kw">filter</span>(NY_trees, tree_height <span class="op">&gt;</span><span class="st"> </span><span class="dv">150</span>),</span>
-<span id="cb66-9"><a href="faq.html#cb66-9"></a>           <span class="kw">aes</span>(<span class="dt">x =</span> status, <span class="dt">y =</span> tree_height, <span class="dt">fill =</span> status), <span class="dt">stroke =</span> <span class="fl">1.5</span>, <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb66-10"><a href="faq.html#cb66-10"></a><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span></span>
-<span id="cb66-11"><a href="faq.html#cb66-11"></a><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> status_color)</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-101-1.png" width="576" /></p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="faq.html#cb69-1"></a>tree_data_status_summary<span class="op">$</span>status &lt;-<span class="st"> </span><span class="kw">factor</span>(tree_data_status_summary<span class="op">$</span>status, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)) <span class="co"># note that we specify the order we want right here in &quot;levels&quot;...</span></span>
+<span id="cb69-2"><a href="faq.html#cb69-2"></a></span>
+<span id="cb69-3"><a href="faq.html#cb69-3"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> tree_data_status_summary) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb69-4"><a href="faq.html#cb69-4"></a><span class="kw">geom_pointrange</span>(<span class="kw">aes</span>(<span class="dt">x =</span> status, </span>
+<span id="cb69-5"><a href="faq.html#cb69-5"></a>                    <span class="dt">y =</span> mean_height, </span>
+<span id="cb69-6"><a href="faq.html#cb69-6"></a>                    <span class="dt">ymin =</span> mean_height <span class="op">-</span>stdev_height, </span>
+<span id="cb69-7"><a href="faq.html#cb69-7"></a>                    <span class="dt">ymax =</span> mean_height <span class="op">+</span><span class="st"> </span>stdev_height), <span class="dt">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="op">+</span></span>
+<span id="cb69-8"><a href="faq.html#cb69-8"></a><span class="kw">geom_point</span>(<span class="dt">data =</span> <span class="kw">filter</span>(NY_trees, tree_height <span class="op">&gt;</span><span class="st"> </span><span class="dv">150</span>),</span>
+<span id="cb69-9"><a href="faq.html#cb69-9"></a>           <span class="kw">aes</span>(<span class="dt">x =</span> status, <span class="dt">y =</span> tree_height, <span class="dt">fill =</span> status), <span class="dt">stroke =</span> <span class="fl">1.5</span>, <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb69-10"><a href="faq.html#cb69-10"></a><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb69-11"><a href="faq.html#cb69-11"></a><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> status_color)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-106-1.png" width="576" /></p>
 </div>
 </div>
             </section>

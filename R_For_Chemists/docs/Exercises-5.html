@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-09-30" />
+<meta name="date" content="2020-10-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -217,7 +217,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="Chemometrics-1.html"><a href="Chemometrics-1.html"><i class="fa fa-check"></i><b>10</b> Chemometrics 1</a></li>
 <li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
 <li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a></li>
-<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a></li>
+<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a><ul>
+<li class="chapter" data-level="13.1" data-path="Exercises-5.html"><a href="Exercises-5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
+</ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
 <li class="chapter" data-level="B" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>B</b> Custom functions</a><ul>
@@ -251,32 +253,184 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="Exercises_5" class="section level1">
 <h1><span class="header-section-number">Chapter 13</span> Exercises 5</h1>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="Exercises-5.html#cb61-1"></a><span class="kw">library</span>(tidyverse)</span>
-<span id="cb61-2"><a href="Exercises-5.html#cb61-2"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>)</span>
-<span id="cb61-3"><a href="Exercises-5.html#cb61-3"></a>metabolomics_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv&quot;</span>)</span>
-<span id="cb61-4"><a href="Exercises-5.html#cb61-4"></a></span>
-<span id="cb61-5"><a href="Exercises-5.html#cb61-5"></a>pca &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb61-6"><a href="Exercises-5.html#cb61-6"></a>  <span class="dt">data =</span> metabolomics_data,</span>
-<span id="cb61-7"><a href="Exercises-5.html#cb61-7"></a>  <span class="dt">analysis =</span> <span class="st">&quot;pca&quot;</span>,</span>
-<span id="cb61-8"><a href="Exercises-5.html#cb61-8"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb61-9"><a href="Exercises-5.html#cb61-9"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb61-10"><a href="Exercises-5.html#cb61-10"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(metabolomics_data)[<span class="dv">3</span><span class="op">:</span><span class="dv">124</span>],</span>
-<span id="cb61-11"><a href="Exercises-5.html#cb61-11"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
-<span id="cb61-12"><a href="Exercises-5.html#cb61-12"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">colnames</span>(metabolomics_data)[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</span>
-<span id="cb61-13"><a href="Exercises-5.html#cb61-13"></a>)</span>
-<span id="cb61-14"><a href="Exercises-5.html#cb61-14"></a></span>
-<span id="cb61-15"><a href="Exercises-5.html#cb61-15"></a>pca<span class="op">$</span>Label &lt;-<span class="st"> </span><span class="kw">factor</span>(pca<span class="op">$</span>patient_status)</span>
-<span id="cb61-16"><a href="Exercises-5.html#cb61-16"></a></span>
-<span id="cb61-17"><a href="Exercises-5.html#cb61-17"></a><span class="kw">ggplot</span>(pca) <span class="op">+</span></span>
-<span id="cb61-18"><a href="Exercises-5.html#cb61-18"></a><span class="st">  </span><span class="kw">geom_point</span>(</span>
-<span id="cb61-19"><a href="Exercises-5.html#cb61-19"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> patient_status),</span>
-<span id="cb61-20"><a href="Exercises-5.html#cb61-20"></a>    <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>, <span class="dt">alpha =</span> <span class="fl">0.8</span></span>
-<span id="cb61-21"><a href="Exercises-5.html#cb61-21"></a>  ) <span class="op">+</span></span>
-<span id="cb61-22"><a href="Exercises-5.html#cb61-22"></a><span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span></span>
-<span id="cb61-23"><a href="Exercises-5.html#cb61-23"></a><span class="st">  </span><span class="kw">theme</span>(</span>
-<span id="cb61-24"><a href="Exercises-5.html#cb61-24"></a>    <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">16</span>)</span>
-<span id="cb61-25"><a href="Exercises-5.html#cb61-25"></a>  )</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-95-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>In this set of exercises you will choose to complete one of the following options. For either option please note the following:</p>
+<ol style="list-style-type: decimal">
+<li>The data sets and the <code>runMatrixAnalysis()</code> function can all be loaded into your R Session by running the command below:</li>
+</ol>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="Exercises-5.html#cb60-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>When you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code>colnames()</code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</li>
+</ol>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="Exercises-5.html#cb61-1"></a>pts &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv&quot;</span>)</span>
+<span id="cb61-2"><a href="Exercises-5.html#cb61-2"></a><span class="kw">colnames</span>(pts)[<span class="dv">10</span><span class="op">:</span><span class="dv">20</span>]</span>
+<span id="cb61-3"><a href="Exercises-5.html#cb61-3"></a><span class="co">##  [1] &quot;electronegativity_pauling&quot;         </span></span>
+<span id="cb61-4"><a href="Exercises-5.html#cb61-4"></a><span class="co">##  [2] &quot;first_ionization_poten_eV&quot;         </span></span>
+<span id="cb61-5"><a href="Exercises-5.html#cb61-5"></a><span class="co">##  [3] &quot;second_ionization_poten_eV&quot;        </span></span>
+<span id="cb61-6"><a href="Exercises-5.html#cb61-6"></a><span class="co">##  [4] &quot;third_ionization_poten_eV&quot;         </span></span>
+<span id="cb61-7"><a href="Exercises-5.html#cb61-7"></a><span class="co">##  [5] &quot;electron_affinity_eV&quot;              </span></span>
+<span id="cb61-8"><a href="Exercises-5.html#cb61-8"></a><span class="co">##  [6] &quot;atomic_radius_ang&quot;                 </span></span>
+<span id="cb61-9"><a href="Exercises-5.html#cb61-9"></a><span class="co">##  [7] &quot;ionic_radius_ang&quot;                  </span></span>
+<span id="cb61-10"><a href="Exercises-5.html#cb61-10"></a><span class="co">##  [8] &quot;covalent_radius_ang&quot;               </span></span>
+<span id="cb61-11"><a href="Exercises-5.html#cb61-11"></a><span class="co">##  [9] &quot;atomic_volume_cm3_per_mol&quot;         </span></span>
+<span id="cb61-12"><a href="Exercises-5.html#cb61-12"></a><span class="co">## [10] &quot;electrical_conductivity_mho_per_cm&quot;</span></span>
+<span id="cb61-13"><a href="Exercises-5.html#cb61-13"></a><span class="co">## [11] &quot;specific_heat_J_per_g_K&quot;</span></span></code></pre></div>
+<p>We can use that command in the template, as in the example below. With the notation <code>colnames(pts)[c(5:7,9:25)]</code>, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run <code>c(5:7,9:25)</code> in the console, and what happens when you run <code>colnames(pts)[c(5:7,9:25)]</code> in the console). With the notation <code>colnames(pts)[c(1:4, 8)]</code> we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run <code>c(1:4, 8)</code> in the console, and what happens when you run <code>colnames(pts)[c(1:4, 8)]</code> in the console).</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="Exercises-5.html#cb62-1"></a>pca &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb62-2"><a href="Exercises-5.html#cb62-2"></a>  <span class="dt">data =</span> pts,</span>
+<span id="cb62-3"><a href="Exercises-5.html#cb62-3"></a>  <span class="dt">analysis =</span> <span class="st">&quot;pca&quot;</span>,</span>
+<span id="cb62-4"><a href="Exercises-5.html#cb62-4"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb62-5"><a href="Exercises-5.html#cb62-5"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb62-6"><a href="Exercises-5.html#cb62-6"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(pts)[<span class="kw">c</span>(<span class="dv">5</span><span class="op">:</span><span class="dv">7</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">25</span>)],</span>
+<span id="cb62-7"><a href="Exercises-5.html#cb62-7"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb62-8"><a href="Exercises-5.html#cb62-8"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">colnames</span>(pts)[<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">8</span>)]</span>
+<span id="cb62-9"><a href="Exercises-5.html#cb62-9"></a>)</span></code></pre></div>
+<p>Use the two suggestions above to help you complete one of the two options below.</p>
+<div id="option-1-human-metabolomics." class="section level2">
+<h2><span class="header-section-number">13.1</span> Option 1: Human metabolomics.</h2>
+<p>This first option is to work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:</p>
+<ol style="list-style-type: decimal">
+<li>Conduct a PCA analysis of the data.</li>
+</ol>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="Exercises-5.html#cb63-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb63-2"><a href="Exercises-5.html#cb63-2"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>)</span>
+<span id="cb63-3"><a href="Exercises-5.html#cb63-3"></a>metabolomics_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv&quot;</span>)</span>
+<span id="cb63-4"><a href="Exercises-5.html#cb63-4"></a></span>
+<span id="cb63-5"><a href="Exercises-5.html#cb63-5"></a><span class="kw">dim</span>(metabolomics_data)</span>
+<span id="cb63-6"><a href="Exercises-5.html#cb63-6"></a><span class="co">## [1]  93 126</span></span>
+<span id="cb63-7"><a href="Exercises-5.html#cb63-7"></a></span>
+<span id="cb63-8"><a href="Exercises-5.html#cb63-8"></a>pca &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb63-9"><a href="Exercises-5.html#cb63-9"></a>  <span class="dt">data =</span> metabolomics_data,</span>
+<span id="cb63-10"><a href="Exercises-5.html#cb63-10"></a>  <span class="dt">analysis =</span> <span class="st">&quot;pca&quot;</span>,</span>
+<span id="cb63-11"><a href="Exercises-5.html#cb63-11"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb63-12"><a href="Exercises-5.html#cb63-12"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb63-13"><a href="Exercises-5.html#cb63-13"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(metabolomics_data)[<span class="dv">3</span><span class="op">:</span><span class="dv">124</span>],</span>
+<span id="cb63-14"><a href="Exercises-5.html#cb63-14"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb63-15"><a href="Exercises-5.html#cb63-15"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">colnames</span>(metabolomics_data)[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</span>
+<span id="cb63-16"><a href="Exercises-5.html#cb63-16"></a>)</span>
+<span id="cb63-17"><a href="Exercises-5.html#cb63-17"></a></span>
+<span id="cb63-18"><a href="Exercises-5.html#cb63-18"></a>pca<span class="op">$</span>Label &lt;-<span class="st"> </span><span class="kw">factor</span>(pca<span class="op">$</span>patient_status)</span>
+<span id="cb63-19"><a href="Exercises-5.html#cb63-19"></a></span>
+<span id="cb63-20"><a href="Exercises-5.html#cb63-20"></a><span class="kw">ggplot</span>(pca) <span class="op">+</span></span>
+<span id="cb63-21"><a href="Exercises-5.html#cb63-21"></a><span class="st">  </span><span class="kw">geom_point</span>(</span>
+<span id="cb63-22"><a href="Exercises-5.html#cb63-22"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> patient_status),</span>
+<span id="cb63-23"><a href="Exercises-5.html#cb63-23"></a>    <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>, <span class="dt">alpha =</span> <span class="fl">0.8</span></span>
+<span id="cb63-24"><a href="Exercises-5.html#cb63-24"></a>  ) <span class="op">+</span></span>
+<span id="cb63-25"><a href="Exercises-5.html#cb63-25"></a><span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span></span>
+<span id="cb63-26"><a href="Exercises-5.html#cb63-26"></a><span class="st">  </span><span class="kw">theme</span>(</span>
+<span id="cb63-27"><a href="Exercises-5.html#cb63-27"></a>    <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">16</span>)</span>
+<span id="cb63-28"><a href="Exercises-5.html#cb63-28"></a>  )</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-99-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="Exercises-5.html#cb64-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>)</span>
+<span id="cb64-2"><a href="Exercises-5.html#cb64-2"></a></span>
+<span id="cb64-3"><a href="Exercises-5.html#cb64-3"></a>wine_grape_data &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv&quot;</span>)</span>
+<span id="cb64-4"><a href="Exercises-5.html#cb64-4"></a><span class="co">## Parsed with column specification:</span></span>
+<span id="cb64-5"><a href="Exercises-5.html#cb64-5"></a><span class="co">## cols(</span></span>
+<span id="cb64-6"><a href="Exercises-5.html#cb64-6"></a><span class="co">##   metabolite = col_character(),</span></span>
+<span id="cb64-7"><a href="Exercises-5.html#cb64-7"></a><span class="co">##   m_z = col_double(),</span></span>
+<span id="cb64-8"><a href="Exercises-5.html#cb64-8"></a><span class="co">##   chromatography = col_character(),</span></span>
+<span id="cb64-9"><a href="Exercises-5.html#cb64-9"></a><span class="co">##   Cabernet_Sauvignon__dry = col_double(),</span></span>
+<span id="cb64-10"><a href="Exercises-5.html#cb64-10"></a><span class="co">##   Cabernet_Sauvignon__well_watered = col_double(),</span></span>
+<span id="cb64-11"><a href="Exercises-5.html#cb64-11"></a><span class="co">##   Merlot__dry = col_double(),</span></span>
+<span id="cb64-12"><a href="Exercises-5.html#cb64-12"></a><span class="co">##   Merlot__well_watered = col_double(),</span></span>
+<span id="cb64-13"><a href="Exercises-5.html#cb64-13"></a><span class="co">##   Pinot_Noir__dry = col_double(),</span></span>
+<span id="cb64-14"><a href="Exercises-5.html#cb64-14"></a><span class="co">##   Pinot_Noir__well_watered = col_double(),</span></span>
+<span id="cb64-15"><a href="Exercises-5.html#cb64-15"></a><span class="co">##   Chardonnay__dry = col_double(),</span></span>
+<span id="cb64-16"><a href="Exercises-5.html#cb64-16"></a><span class="co">##   Chardonnay__well_watered = col_double(),</span></span>
+<span id="cb64-17"><a href="Exercises-5.html#cb64-17"></a><span class="co">##   Semillon__dry = col_double(),</span></span>
+<span id="cb64-18"><a href="Exercises-5.html#cb64-18"></a><span class="co">##   Semillon__well_watered = col_double()</span></span>
+<span id="cb64-19"><a href="Exercises-5.html#cb64-19"></a><span class="co">## )</span></span>
+<span id="cb64-20"><a href="Exercises-5.html#cb64-20"></a>wine_grape_data &lt;-<span class="st"> </span><span class="kw">pivot_longer</span>(wine_grape_data, <span class="dt">cols =</span> <span class="dv">4</span><span class="op">:</span><span class="dv">13</span>, <span class="dt">names_to =</span> <span class="st">&quot;cultivar&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;log_abundance&quot;</span>)</span>
+<span id="cb64-21"><a href="Exercises-5.html#cb64-21"></a>wine_grape_data<span class="op">$</span>treatment &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;.*__&quot;</span>, <span class="st">&quot;&quot;</span>, wine_grape_data<span class="op">$</span>cultivar)</span>
+<span id="cb64-22"><a href="Exercises-5.html#cb64-22"></a>wine_grape_data<span class="op">$</span>cultivar &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;__.*&quot;</span>, <span class="st">&quot;&quot;</span>, wine_grape_data<span class="op">$</span>cultivar)</span>
+<span id="cb64-23"><a href="Exercises-5.html#cb64-23"></a>wine_grape_data &lt;-<span class="st"> </span><span class="kw">select</span>(wine_grape_data, cultivar, treatment, chromatography, metabolite, m_z, log_abundance)</span>
+<span id="cb64-24"><a href="Exercises-5.html#cb64-24"></a></span>
+<span id="cb64-25"><a href="Exercises-5.html#cb64-25"></a><span class="kw">head</span>(wine_grape_data)</span>
+<span id="cb64-26"><a href="Exercises-5.html#cb64-26"></a><span class="co">## # A tibble: 6 x 6</span></span>
+<span id="cb64-27"><a href="Exercises-5.html#cb64-27"></a><span class="co">##   cultivar       treatment   chromatography metabolite    m_z log_abundance</span></span>
+<span id="cb64-28"><a href="Exercises-5.html#cb64-28"></a><span class="co">##   &lt;chr&gt;          &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;       &lt;dbl&gt;         &lt;dbl&gt;</span></span>
+<span id="cb64-29"><a href="Exercises-5.html#cb64-29"></a><span class="co">## 1 Cabernet_Sauv… dry         GC/MS          Alanine_2T…   116         1.43 </span></span>
+<span id="cb64-30"><a href="Exercises-5.html#cb64-30"></a><span class="co">## 2 Cabernet_Sauv… well_water… GC/MS          Alanine_2T…   116         1.50 </span></span>
+<span id="cb64-31"><a href="Exercises-5.html#cb64-31"></a><span class="co">## 3 Merlot         dry         GC/MS          Alanine_2T…   116        -0.442</span></span>
+<span id="cb64-32"><a href="Exercises-5.html#cb64-32"></a><span class="co">## 4 Merlot         well_water… GC/MS          Alanine_2T…   116        -0.203</span></span>
+<span id="cb64-33"><a href="Exercises-5.html#cb64-33"></a><span class="co">## 5 Pinot_Noir     dry         GC/MS          Alanine_2T…   116         1.83 </span></span>
+<span id="cb64-34"><a href="Exercises-5.html#cb64-34"></a><span class="co">## 6 Pinot_Noir     well_water… GC/MS          Alanine_2T…   116         2.18</span></span>
+<span id="cb64-35"><a href="Exercises-5.html#cb64-35"></a></span>
+<span id="cb64-36"><a href="Exercises-5.html#cb64-36"></a>wine_grape_data_pca &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb64-37"><a href="Exercises-5.html#cb64-37"></a>  <span class="dt">data =</span> wine_grape_data,</span>
+<span id="cb64-38"><a href="Exercises-5.html#cb64-38"></a>  <span class="dt">analysis =</span> <span class="st">&quot;pca&quot;</span>,</span>
+<span id="cb64-39"><a href="Exercises-5.html#cb64-39"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;metabolite&quot;</span>,</span>
+<span id="cb64-40"><a href="Exercises-5.html#cb64-40"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;log_abundance&quot;</span>,</span>
+<span id="cb64-41"><a href="Exercises-5.html#cb64-41"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</span>
+<span id="cb64-42"><a href="Exercises-5.html#cb64-42"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb64-43"><a href="Exercises-5.html#cb64-43"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;cultivar&quot;</span>, <span class="st">&quot;treatment&quot;</span>)</span>
+<span id="cb64-44"><a href="Exercises-5.html#cb64-44"></a>)</span>
+<span id="cb64-45"><a href="Exercises-5.html#cb64-45"></a></span>
+<span id="cb64-46"><a href="Exercises-5.html#cb64-46"></a><span class="kw">head</span>(wine_grape_data_pca)</span>
+<span id="cb64-47"><a href="Exercises-5.html#cb64-47"></a><span class="co">## # A tibble: 6 x 112</span></span>
+<span id="cb64-48"><a href="Exercises-5.html#cb64-48"></a><span class="co">##   cultivar treatment sample_unique_ID Dim.1   Dim.2 Alanine_2TMS</span></span>
+<span id="cb64-49"><a href="Exercises-5.html#cb64-49"></a><span class="co">##   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;            &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;</span></span>
+<span id="cb64-50"><a href="Exercises-5.html#cb64-50"></a><span class="co">## 1 Caberne… dry       Cabernet_Sauvig… -1.50 -11.1          1.43 </span></span>
+<span id="cb64-51"><a href="Exercises-5.html#cb64-51"></a><span class="co">## 2 Caberne… well_wat… Cabernet_Sauvig… -1.08  -9.55         1.50 </span></span>
+<span id="cb64-52"><a href="Exercises-5.html#cb64-52"></a><span class="co">## 3 Merlot   dry       Merlot_dry       -9.17   5.22        -0.442</span></span>
+<span id="cb64-53"><a href="Exercises-5.html#cb64-53"></a><span class="co">## 4 Merlot   well_wat… Merlot_well_wat… -8.07   4.76        -0.203</span></span>
+<span id="cb64-54"><a href="Exercises-5.html#cb64-54"></a><span class="co">## 5 Pinot_N… dry       Pinot_Noir_dry   -1.43   0.858        1.83 </span></span>
+<span id="cb64-55"><a href="Exercises-5.html#cb64-55"></a><span class="co">## 6 Pinot_N… well_wat… Pinot_Noir_well… -1.19   0.747        2.18 </span></span>
+<span id="cb64-56"><a href="Exercises-5.html#cb64-56"></a><span class="co">## # … with 106 more variables: Alanine_3TMS &lt;dbl&gt;, Beta_alanine_2TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-57"><a href="Exercises-5.html#cb64-57"></a><span class="co">## #   Arabitol_5TMS &lt;dbl&gt;, Arginine &lt;dbl&gt;, Aspartic_acid_2TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-58"><a href="Exercises-5.html#cb64-58"></a><span class="co">## #   Aspartic_acid_3TMS &lt;dbl&gt;, Benzoic_acid_1TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-59"><a href="Exercises-5.html#cb64-59"></a><span class="co">## #   Butanoic_acid_2_4_dihydroxy_3TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-60"><a href="Exercises-5.html#cb64-60"></a><span class="co">## #   Butanoic_acid_4_amino_3TMS &lt;dbl&gt;, Caffeic_acid_cis_3TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-61"><a href="Exercises-5.html#cb64-61"></a><span class="co">## #   Catechin_5TMS &lt;dbl&gt;, Cinnamic_acid_trans_1TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-62"><a href="Exercises-5.html#cb64-62"></a><span class="co">## #   Citric_acid_Citrate &lt;dbl&gt;, Epicatechin &lt;dbl&gt;, Erythritol_4TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-63"><a href="Exercises-5.html#cb64-63"></a><span class="co">## #   Erythronic_acid_4TMS &lt;dbl&gt;, Ethanolamine_3TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-64"><a href="Exercises-5.html#cb64-64"></a><span class="co">## #   Fucose_rhamnose_1MEOX_4TMS_BP &lt;dbl&gt;, Fumaric_acid_2TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-65"><a href="Exercises-5.html#cb64-65"></a><span class="co">## #   Galactinol_9TMS &lt;dbl&gt;, Galactonic_acid_6TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-66"><a href="Exercises-5.html#cb64-66"></a><span class="co">## #   Gallic_acid_4TMS &lt;dbl&gt;, Glucopyranose_4TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-67"><a href="Exercises-5.html#cb64-67"></a><span class="co">## #   Glucopyranose_5TMS &lt;dbl&gt;, Glutamic_acid_2TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-68"><a href="Exercises-5.html#cb64-68"></a><span class="co">## #   Glutamic_acid_3TMS &lt;dbl&gt;, Glutamine_2TMS &lt;dbl&gt;, Glutamine_3TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-69"><a href="Exercises-5.html#cb64-69"></a><span class="co">## #   Glyceric_acid &lt;dbl&gt;, Gulonic_acid &lt;dbl&gt;, Inositol_myo_6TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-70"><a href="Exercises-5.html#cb64-70"></a><span class="co">## #   Leucine_1TMS &lt;dbl&gt;, Leucine_2TMS &lt;dbl&gt;, Lyxonic_acid_5TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-71"><a href="Exercises-5.html#cb64-71"></a><span class="co">## #   Maleic_acid_2TMS &lt;dbl&gt;, Malic_acid_3TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-72"><a href="Exercises-5.html#cb64-72"></a><span class="co">## #   Malonic_acid_3TMS &lt;dbl&gt;, Morin_5TMS &lt;dbl&gt;, Nicotinic_acid_1TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-73"><a href="Exercises-5.html#cb64-73"></a><span class="co">## #   Ornithine_3TMS &lt;dbl&gt;, Ornithine_4TMS &lt;dbl&gt;, Phenylalanine_1TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-74"><a href="Exercises-5.html#cb64-74"></a><span class="co">## #   Phenylalanine_2TMS &lt;dbl&gt;, Phosphoric_acid_3TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-75"><a href="Exercises-5.html#cb64-75"></a><span class="co">## #   Proline_1TMS &lt;dbl&gt;, Proline_2TMS &lt;dbl&gt;, `Proline_[+CO2]_2TMS` &lt;dbl&gt;,</span></span>
+<span id="cb64-76"><a href="Exercises-5.html#cb64-76"></a><span class="co">## #   Pyroglutamic_acid_2TMS &lt;dbl&gt;, Raffinose_11TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-77"><a href="Exercises-5.html#cb64-77"></a><span class="co">## #   Ribitol_5TMS &lt;dbl&gt;, Ribonic_acid_5TMS &lt;dbl&gt;, Sernie_2TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-78"><a href="Exercises-5.html#cb64-78"></a><span class="co">## #   Serine_3TMS &lt;dbl&gt;, Shikimic_acid_4TMS &lt;dbl&gt;, Sucrose_8TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-79"><a href="Exercises-5.html#cb64-79"></a><span class="co">## #   Tartaric_acid_4TMS &lt;dbl&gt;, Threonic_acid_4TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-80"><a href="Exercises-5.html#cb64-80"></a><span class="co">## #   Threonine_2TMS &lt;dbl&gt;, Threonine_3TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-81"><a href="Exercises-5.html#cb64-81"></a><span class="co">## #   Trehalose_alpha_alpha_D_8TMS &lt;dbl&gt;, Tryptophan_D5_2TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-82"><a href="Exercises-5.html#cb64-82"></a><span class="co">## #   Tyrosine_2TMS &lt;dbl&gt;, Uracil_2TMS &lt;dbl&gt;, Valine_2TMS &lt;dbl&gt;,</span></span>
+<span id="cb64-83"><a href="Exercises-5.html#cb64-83"></a><span class="co">## #   Epigallocatechin &lt;dbl&gt;, Catechin &lt;dbl&gt;, Astilbin &lt;dbl&gt;,</span></span>
+<span id="cb64-84"><a href="Exercises-5.html#cb64-84"></a><span class="co">## #   cis_Resveratrol &lt;dbl&gt;, cis_Piceid &lt;dbl&gt;, Citric_acid &lt;dbl&gt;,</span></span>
+<span id="cb64-85"><a href="Exercises-5.html#cb64-85"></a><span class="co">## #   Coumaric_acid_hexoside &lt;dbl&gt;, Cyanidin_3_O_6_acetylglucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-86"><a href="Exercises-5.html#cb64-86"></a><span class="co">## #   Cyanidin_3_O_6_p_coumaroylglucoside &lt;dbl&gt;, Cyanidin_3_glucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-87"><a href="Exercises-5.html#cb64-87"></a><span class="co">## #   Delphinidin_3_O_6_acetylglucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-88"><a href="Exercises-5.html#cb64-88"></a><span class="co">## #   Delphinidin_3_O_6_p_coumaroylglucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-89"><a href="Exercises-5.html#cb64-89"></a><span class="co">## #   Delphinidin_3_glucoside &lt;dbl&gt;, Ferulate &lt;dbl&gt;,</span></span>
+<span id="cb64-90"><a href="Exercises-5.html#cb64-90"></a><span class="co">## #   Kaempferol_hexoside &lt;dbl&gt;, Malvidin_3_O_6_acetylglucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-91"><a href="Exercises-5.html#cb64-91"></a><span class="co">## #   Malvidin_3_O_6_p_coumaroylglucoside &lt;dbl&gt;, Malvidin_3_glucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-92"><a href="Exercises-5.html#cb64-92"></a><span class="co">## #   Myricetin_3_O_glucuronide &lt;dbl&gt;, Naringenin_chalcone_hexose &lt;dbl&gt;,</span></span>
+<span id="cb64-93"><a href="Exercises-5.html#cb64-93"></a><span class="co">## #   p_coumaric_acid &lt;dbl&gt;, p_Coumaroyl_tartaric_acid &lt;dbl&gt;,</span></span>
+<span id="cb64-94"><a href="Exercises-5.html#cb64-94"></a><span class="co">## #   Peonidin_3_O_6_acetylglucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-95"><a href="Exercises-5.html#cb64-95"></a><span class="co">## #   Peonidin_3_O_6_p_coumaroylglucoside &lt;dbl&gt;, Peonidin_3_glucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-96"><a href="Exercises-5.html#cb64-96"></a><span class="co">## #   Petunidin_3_O_6_acetylglucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-97"><a href="Exercises-5.html#cb64-97"></a><span class="co">## #   Petunidin_3_O_6_p_coumaroylglucoside &lt;dbl&gt;,</span></span>
+<span id="cb64-98"><a href="Exercises-5.html#cb64-98"></a><span class="co">## #   Petunidin_3_glucoside &lt;dbl&gt;, Phenylalanine &lt;dbl&gt;,</span></span>
+<span id="cb64-99"><a href="Exercises-5.html#cb64-99"></a><span class="co">## #   Procyanidin_3_O_gallate &lt;dbl&gt;, Procyanidin_dimer_B2 &lt;dbl&gt;,</span></span>
+<span id="cb64-100"><a href="Exercises-5.html#cb64-100"></a><span class="co">## #   Procyanidin_dimer_B3 &lt;dbl&gt;, Quercetin &lt;dbl&gt;,</span></span>
+<span id="cb64-101"><a href="Exercises-5.html#cb64-101"></a><span class="co">## #   Quercetin_3_O_galactoside &lt;dbl&gt;, Quercetin_3_O_glucuronide &lt;dbl&gt;,</span></span>
+<span id="cb64-102"><a href="Exercises-5.html#cb64-102"></a><span class="co">## #   Sucrose &lt;dbl&gt;, …</span></span>
+<span id="cb64-103"><a href="Exercises-5.html#cb64-103"></a></span>
+<span id="cb64-104"><a href="Exercises-5.html#cb64-104"></a><span class="kw">ggplot</span>(</span>
+<span id="cb64-105"><a href="Exercises-5.html#cb64-105"></a>  wine_grape_data_pca,</span>
+<span id="cb64-106"><a href="Exercises-5.html#cb64-106"></a>  <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> cultivar)</span>
+<span id="cb64-107"><a href="Exercises-5.html#cb64-107"></a>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb64-108"><a href="Exercises-5.html#cb64-108"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span></span>
+<span id="cb64-109"><a href="Exercises-5.html#cb64-109"></a><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;#e41a1c&quot;</span>, <span class="st">&quot;#377eb8&quot;</span>, <span class="st">&quot;#4daf4a&quot;</span>, <span class="st">&quot;#984ea3&quot;</span>, <span class="st">&quot;#ff7f00&quot;</span>))</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-100-1.png" width="576" /></p>
+</div>
 </div>
 
 

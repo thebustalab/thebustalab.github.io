@@ -1086,8 +1086,8 @@ For this set of exercises, please use `runMatrixAnalysis()` to run and visualize
 
 Please note that each one of these datasets will be loaded into your R session when you run:
 
-```{r, echo = FALSE}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/CHEM5725.R")
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 ```
 
 To complete this assignment, put the figure from each cluster analysis in its own slide of a powerpoint presentation, put the underlying code in the corresponding notes section, and send the pptx to me. Let me know if you have any questions!
@@ -1108,7 +1108,11 @@ colnames(mini_per_table)
 
 # Chemometrics 2 {#Chemometrics_2}
 
-There is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the dataset. This method is called k-means, which we will look at later, but for it we need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA). PCA looks at all the variance in a high dimensional dataset and chooses new axes within that dataset that align with the directions containing higest variance. These new axes are called principal components. Let's look at an example:
+There is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA). 
+
+## PCA 
+
+PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr::include_graphics('https://thebustalab.github.io/R_For_Chemists/figures/PCA.png', dpi = NA)
@@ -1116,55 +1120,55 @@ knitr::include_graphics('https://thebustalab.github.io/R_For_Chemists/figures/PC
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
 
-We can run and visualize principal components analyses using the runMatrixAnalysis() function as in the example below:
+We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below:
 
-```{r, message = FALSE}
+```{r, message = FALSE, fig.align = "center"}
 AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 head(AK_lakes)
 
-	AK_lakes_analyzed <- runMatrixAnalysis(
-		data = AK_lakes,
-		analysis = c("pca"),
-		column_w_names_of_multiple_analytes = "element",
-		column_w_values_for_multiple_analytes = "mg_per_L",
-		columns_w_values_for_single_analyte = c("water_temp", "pH"),
-		columns_w_additional_analyte_info = "element_type",
-		columns_w_sample_ID_info = c("lake", "park")
-	)
+AK_lakes_pca <- runMatrixAnalysis(
+	data = AK_lakes,
+	analysis = c("pca"),
+	column_w_names_of_multiple_analytes = "element",
+	column_w_values_for_multiple_analytes = "mg_per_L",
+	columns_w_values_for_single_analyte = c("water_temp", "pH"),
+	columns_w_additional_analyte_info = "element_type",
+	columns_w_sample_ID_info = c("lake", "park")
+)
 
 library(ggrepel)
 
-ggplot(data = AK_lakes_analyzed, aes(x = Dim.1, y = Dim.2)) +
+ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
 	geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
 	geom_label_repel(aes(label = lake), alpha = 0.5) +
 	theme_classic()
 ```
 
-It is possible that you will want access to the information that creates the ordination plot as well as the the percent variances explained by each of the principal components. These can be obtained using `analysis = "pca-ord"` and `analysis = "pca-dim`. See below:
+## Drivers of PCA dimensions
+
+You will also want access to the information about which analytes are major contributors to each principal component. This can be determined using an ordination plot. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca-ord"`:
 
 ```{r, echo = FALSE, message = FALSE}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
-per_small <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
-
-per_small_pca_ord <- runMatrixAnalysis(
-    data = per_small,
-    analysis = c("pca-ord"),
-    column_w_names_of_multiple_analytes = NULL,
-    column_w_values_for_multiple_analytes = NULL,
-    columns_w_values_for_single_analyte = c("atomic_mass_rounded", "melting_point_C", "boiling_point_C", "density_g_per_mL", "electronegativity_pauling", "first_ionization_poten_eV", "second_ionization_poten_eV", "third_ionization_poten_eV", "electron_affinity_eV", "atomic_radius_ang", "ionic_radius_ang", "covalent_radius_ang", "atomic_volume_cm3_per_mol", "electrical_conductivity_mho_per_cm", "specific_heat_J_per_g_K", "heat_of_fusion_kJ_per_mol", "heat_of_vaporization_kJ_per_mol", "thermal_conductivity_W_per_m_K", "polarizability_A_cubed", "heat_atomization_kJ_per_mol"),
-    columns_w_additional_analyte_info = NULL,
-    columns_w_sample_ID_info = c("atomic_number", "atomic_symbol", "group_number", "period", "state_at_RT")
+AK_lakes_pca_ord <- runMatrixAnalysis(
+	data = AK_lakes,
+	analysis = c("pca-ord"),
+	column_w_names_of_multiple_analytes = "element",
+	column_w_values_for_multiple_analytes = "mg_per_L",
+	columns_w_values_for_single_analyte = c("water_temp", "pH"),
+	columns_w_additional_analyte_info = "element_type",
+	columns_w_sample_ID_info = c("lake", "park")
 )
 head(per_small_pca_ord)
 ```
 
 We can now visualize the ordination plot using our standard ggplot plotting techniques:
 
-```{r}
+```{r, fig.align = "center", fig.height = 2, fig.width = 3}
 library(ggforce) # Gives access to geom_circle
 ggplot(per_small_pca_ord) +
 	geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2), size = 1) +
-	geom_circle(aes(x0 = 0, y0 = 0, r = 1))
+	geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  theme_bw()
 ```
 
 We also can access information about the how much of the variance in the dataset is explained by each principal component:
@@ -1211,7 +1215,44 @@ Cool!
 
 # Exercises 5 {#Exercises_5}
 
-In
+In this set of exercises you will choose to complete one of the following options. For either option please note the following:
+
+1. The data sets and the `runMatrixAnalysis()` function can all be loaded into your R Session by running the command below:
+
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+```
+
+2. When you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
+
+```{r, message = FALSE}
+pts <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+colnames(pts)[10:20]
+```
+
+We can use that command in the template, as in the example below. With the notation `colnames(pts)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(pts)[c(5:7,9:25)]` in the console). With the notation `colnames(pts)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(pts)[c(1:4, 8)]` in the console).
+
+```{r, eval = FALSE, message = FALSE}
+pca <- runMatrixAnalysis(
+  data = pts,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(pts)[c(5:7,9:25)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(pts)[c(1:4, 8)]
+)
+```
+
+Use the two suggestions above to help you complete one of the two options below.
+
+## Option 1: Human metabolomics.
+
+This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
+
+1. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca=ord"`).
 
 ```{r, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center"}
 library(tidyverse)
@@ -1236,9 +1277,64 @@ ggplot(pca) +
     shape = 21, size = 5, alpha = 0.8
   ) +
   theme_bw() +
+  scale_fill_manual(values = c("#e41a1c", "#377eb8")) +
   theme(
     text = element_text(size = 16)
   )
+
+## The first dimension
+
+```
+```{r}
+
+pca_ord <- runMatrixAnalysis(
+  data = metabolomics_data,
+  analysis = "pca-ord",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
+)
+
+
+ggplot() +
+  geom_segment(data = pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label(data = filter(pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = sample_unique_ID), alpha = 0.4)
+
+## Citrulline
+
+```
+
+```{r}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
+
+wine_grape_data <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
+wine_grape_data <- pivot_longer(wine_grape_data, cols = 4:13, names_to = "cultivar", values_to = "log_abundance")
+wine_grape_data$treatment <- gsub(".*__", "", wine_grape_data$cultivar)
+wine_grape_data$cultivar <- gsub("__.*", "", wine_grape_data$cultivar)
+wine_grape_data <- select(wine_grape_data, cultivar, treatment, chromatography, metabolite, m_z, log_abundance)
+
+head(wine_grape_data)
+
+wine_grape_data_pca <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment")
+)
+
+head(wine_grape_data_pca)
+
+ggplot(
+  wine_grape_data_pca,
+  aes(x = Dim.1, y = Dim.2, fill = cultivar)
+) + 
+  geom_point(shape = 21, size = 5) +
+  scale_fill_manual(values = c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00"))
 ```
 
 # (APPENDIX) Appendix {-}

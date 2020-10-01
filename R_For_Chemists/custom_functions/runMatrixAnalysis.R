@@ -81,6 +81,21 @@
                     )]
                 }
 
+            # Check for duplicate analyte names
+
+                if( length(columns_w_values_for_single_analyte) > 0 ) {
+                    if( any(duplicated(columns_w_values_for_single_analyte)) ) {
+                        stop("There are duplicate analyte names.")
+                    }
+                }
+
+                if( length(column_w_names_of_multiple_analytes) > 0 ) {
+                    x <- table(select(data, column_w_names_of_multiple_analytes))
+                    if( all(range(x) / mean(x) != c(1,1)) ) {
+                        stop("There are duplicate analyte names.")
+                    }
+                } 
+
             # Remove analyte annotation columns before pivoting
 
                 if( length(columns_w_additional_analyte_info) > 0 ) {
@@ -96,7 +111,7 @@
                     analyte_columns <- columns_w_values_for_single_analyte
                 }
 
-            # If pivoting require, pivot_wider any long-style data
+            # If pivoting required, pivot_wider any long-style data
 
                 if( length(column_w_names_of_multiple_analytes) == 1 ) {
                     data_wide <- pivot_wider(
@@ -136,7 +151,7 @@
 
                 # Prepare the matrix
 
-                    matrix <- as.matrix(data_wide[,match(analyte_columns, colnames(data_wide))])
+                    matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
                     rownames(matrix) <- data_wide$sample_unique_ID
 
                 # Run hclust, if requested
@@ -147,6 +162,8 @@
                     }
 
                 # Run PCA, if requested
+
+                    as.data.frame(matrix)
 
                     if( analysis == "pca" ) {
                         coords <- FactoMineR::PCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
@@ -159,7 +176,8 @@
                     if( analysis == "pca-ord" ) {
                         coords <- FactoMineR::PCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
                         clustering <- as_tibble(coords)
-                        clustering$sample_unique_ID <- rownames(coords)
+                        clustering$analyte <- rownames(coords)
+                        clustering <- select(clustering, analyte, Dim.1, Dim.2)
                         return(clustering)
                         stop("Returning ordination plot coordinates.")
                     }
