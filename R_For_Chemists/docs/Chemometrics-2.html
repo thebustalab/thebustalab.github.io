@@ -216,7 +216,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="Chemometrics-1.html"><a href="Chemometrics-1.html"><i class="fa fa-check"></i><b>10</b> Chemometrics 1</a></li>
 <li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
-<li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a></li>
+<li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a><ul>
+<li class="chapter" data-level="12.1" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html#pca"><i class="fa fa-check"></i><b>12.1</b> PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html#drivers-of-pca-dimensions"><i class="fa fa-check"></i><b>12.2</b> Drivers of PCA dimensions</a></li>
+<li class="chapter" data-level="12.3" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html#comparing-principal-components"><i class="fa fa-check"></i><b>12.3</b> Comparing principal components</a></li>
+</ul></li>
 <li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a><ul>
 <li class="chapter" data-level="13.1" data-path="Exercises-5.html"><a href="Exercises-5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
 </ul></li>
@@ -253,87 +257,123 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="Chemometrics_2" class="section level1">
 <h1><span class="header-section-number">Chapter 12</span> Chemometrics 2</h1>
-<p>There is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the dataset. This method is called k-means, which we will look at later, but for it we need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA). PCA looks at all the variance in a high dimensional dataset and chooses new axes within that dataset that align with the directions containing higest variance. These new axes are called principal components. Let’s look at an example:</p>
+<p>There is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA).</p>
+<div id="pca" class="section level2">
+<h2><span class="header-section-number">12.1</span> PCA</h2>
+<p>PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let’s look at an example:</p>
 <p><img src="https://thebustalab.github.io/R_For_Chemists/figures/PCA.png" style="display: block; margin: auto;" /></p>
 <p>In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).</p>
-<p>We can run and visualize principal components analyses using the runMatrixAnalysis() function as in the example below:</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="Chemometrics-2.html#cb55-1"></a>AK_lakes &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
-<span id="cb55-2"><a href="Chemometrics-2.html#cb55-2"></a><span class="kw">head</span>(AK_lakes)</span>
-<span id="cb55-3"><a href="Chemometrics-2.html#cb55-3"></a><span class="co">## # A tibble: 6 x 7</span></span>
-<span id="cb55-4"><a href="Chemometrics-2.html#cb55-4"></a><span class="co">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb55-5"><a href="Chemometrics-2.html#cb55-5"></a><span class="co">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb55-6"><a href="Chemometrics-2.html#cb55-6"></a><span class="co">## 1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
-<span id="cb55-7"><a href="Chemometrics-2.html#cb55-7"></a><span class="co">## 2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
-<span id="cb55-8"><a href="Chemometrics-2.html#cb55-8"></a><span class="co">## 3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
-<span id="cb55-9"><a href="Chemometrics-2.html#cb55-9"></a><span class="co">## 4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span id="cb55-10"><a href="Chemometrics-2.html#cb55-10"></a><span class="co">## 5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
-<span id="cb55-11"><a href="Chemometrics-2.html#cb55-11"></a><span class="co">## 6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free</span></span>
-<span id="cb55-12"><a href="Chemometrics-2.html#cb55-12"></a></span>
-<span id="cb55-13"><a href="Chemometrics-2.html#cb55-13"></a>    AK_lakes_analyzed &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb55-14"><a href="Chemometrics-2.html#cb55-14"></a>        <span class="dt">data =</span> AK_lakes,</span>
-<span id="cb55-15"><a href="Chemometrics-2.html#cb55-15"></a>        <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
-<span id="cb55-16"><a href="Chemometrics-2.html#cb55-16"></a>        <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb55-17"><a href="Chemometrics-2.html#cb55-17"></a>        <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb55-18"><a href="Chemometrics-2.html#cb55-18"></a>        <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb55-19"><a href="Chemometrics-2.html#cb55-19"></a>        <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb55-20"><a href="Chemometrics-2.html#cb55-20"></a>        <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb55-21"><a href="Chemometrics-2.html#cb55-21"></a>    )</span>
-<span id="cb55-22"><a href="Chemometrics-2.html#cb55-22"></a></span>
-<span id="cb55-23"><a href="Chemometrics-2.html#cb55-23"></a><span class="kw">library</span>(ggrepel)</span>
-<span id="cb55-24"><a href="Chemometrics-2.html#cb55-24"></a></span>
-<span id="cb55-25"><a href="Chemometrics-2.html#cb55-25"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> AK_lakes_analyzed, <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>)) <span class="op">+</span></span>
-<span id="cb55-26"><a href="Chemometrics-2.html#cb55-26"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> park), <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">4</span>, <span class="dt">alpha =</span> <span class="fl">0.8</span>) <span class="op">+</span></span>
-<span id="cb55-27"><a href="Chemometrics-2.html#cb55-27"></a><span class="st">    </span><span class="kw">geom_label_repel</span>(<span class="kw">aes</span>(<span class="dt">label =</span> lake), <span class="dt">alpha =</span> <span class="fl">0.5</span>) <span class="op">+</span></span>
-<span id="cb55-28"><a href="Chemometrics-2.html#cb55-28"></a><span class="st">    </span><span class="kw">theme_classic</span>()</span></code></pre></div>
+<p>We can run and visualize principal components analyses using the <code>runMatrixAnalysis()</code> function as in the example below:</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="Chemometrics-2.html#cb55-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<span id="cb55-2"><a href="Chemometrics-2.html#cb55-2"></a>AK_lakes &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
+<span id="cb55-3"><a href="Chemometrics-2.html#cb55-3"></a><span class="kw">head</span>(AK_lakes)</span>
+<span id="cb55-4"><a href="Chemometrics-2.html#cb55-4"></a><span class="co">## # A tibble: 6 x 7</span></span>
+<span id="cb55-5"><a href="Chemometrics-2.html#cb55-5"></a><span class="co">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
+<span id="cb55-6"><a href="Chemometrics-2.html#cb55-6"></a><span class="co">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb55-7"><a href="Chemometrics-2.html#cb55-7"></a><span class="co">## 1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
+<span id="cb55-8"><a href="Chemometrics-2.html#cb55-8"></a><span class="co">## 2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
+<span id="cb55-9"><a href="Chemometrics-2.html#cb55-9"></a><span class="co">## 3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
+<span id="cb55-10"><a href="Chemometrics-2.html#cb55-10"></a><span class="co">## 4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
+<span id="cb55-11"><a href="Chemometrics-2.html#cb55-11"></a><span class="co">## 5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
+<span id="cb55-12"><a href="Chemometrics-2.html#cb55-12"></a><span class="co">## 6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free</span></span>
+<span id="cb55-13"><a href="Chemometrics-2.html#cb55-13"></a></span>
+<span id="cb55-14"><a href="Chemometrics-2.html#cb55-14"></a>AK_lakes_pca &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb55-15"><a href="Chemometrics-2.html#cb55-15"></a>    <span class="dt">data =</span> AK_lakes,</span>
+<span id="cb55-16"><a href="Chemometrics-2.html#cb55-16"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb55-17"><a href="Chemometrics-2.html#cb55-17"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb55-18"><a href="Chemometrics-2.html#cb55-18"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb55-19"><a href="Chemometrics-2.html#cb55-19"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb55-20"><a href="Chemometrics-2.html#cb55-20"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb55-21"><a href="Chemometrics-2.html#cb55-21"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb55-22"><a href="Chemometrics-2.html#cb55-22"></a>)</span>
+<span id="cb55-23"><a href="Chemometrics-2.html#cb55-23"></a></span>
+<span id="cb55-24"><a href="Chemometrics-2.html#cb55-24"></a><span class="kw">library</span>(ggrepel)</span>
+<span id="cb55-25"><a href="Chemometrics-2.html#cb55-25"></a></span>
+<span id="cb55-26"><a href="Chemometrics-2.html#cb55-26"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> AK_lakes_pca, <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>)) <span class="op">+</span></span>
+<span id="cb55-27"><a href="Chemometrics-2.html#cb55-27"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> park), <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">4</span>, <span class="dt">alpha =</span> <span class="fl">0.8</span>) <span class="op">+</span></span>
+<span id="cb55-28"><a href="Chemometrics-2.html#cb55-28"></a><span class="st">    </span><span class="kw">geom_label_repel</span>(<span class="kw">aes</span>(<span class="dt">label =</span> lake), <span class="dt">alpha =</span> <span class="fl">0.5</span>) <span class="op">+</span></span>
+<span id="cb55-29"><a href="Chemometrics-2.html#cb55-29"></a><span class="st">    </span><span class="kw">theme_classic</span>()</span></code></pre></div>
 <p><img src="bio723-book_files/figure-html/unnamed-chunk-91-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>It is possible that you will want access to the information that creates the ordination plot as well as the the percent variances explained by each of the principal components. These can be obtained using <code>analysis = "pca-ord"</code> and <code>analysis = "pca-dim</code>. See below:</p>
+<p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
+<p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
+</div>
+<div id="drivers-of-pca-dimensions" class="section level2">
+<h2><span class="header-section-number">12.2</span> Drivers of PCA dimensions</h2>
+<p>Let’s look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let’s look at an example. We can obtain the ordination plot information using <code>runMatrixAnalysis()</code> with <code>analysis = "pca-ord"</code>:</p>
 <pre><code>## # A tibble: 6 x 3
-##    Dim.1  Dim.2 sample_unique_ID         
-##    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;                    
-## 1  0.395  0.400 atomic_mass_rounded      
-## 2  0.840 -0.365 melting_point_C          
-## 3  0.908 -0.262 boiling_point_C          
-## 4  0.746 -0.215 density_g_per_mL         
-## 5 -0.471 -0.629 electronegativity_pauling
-## 6 -0.743 -0.456 first_ionization_poten_eV</code></pre>
-<p>We can now visualize the ordination plot using our standard ggplot plotting techniques:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="Chemometrics-2.html#cb57-1"></a><span class="kw">library</span>(ggforce) <span class="co"># Gives access to geom_circle</span></span>
-<span id="cb57-2"><a href="Chemometrics-2.html#cb57-2"></a><span class="kw">ggplot</span>(per_small_pca_ord) <span class="op">+</span></span>
-<span id="cb57-3"><a href="Chemometrics-2.html#cb57-3"></a><span class="st">    </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="dv">0</span>, <span class="dt">y =</span> <span class="dv">0</span>, <span class="dt">xend =</span> Dim<span class="fl">.1</span>, <span class="dt">yend =</span> Dim<span class="fl">.2</span>), <span class="dt">size =</span> <span class="dv">1</span>) <span class="op">+</span></span>
-<span id="cb57-4"><a href="Chemometrics-2.html#cb57-4"></a><span class="st">    </span><span class="kw">geom_circle</span>(<span class="kw">aes</span>(<span class="dt">x0 =</span> <span class="dv">0</span>, <span class="dt">y0 =</span> <span class="dv">0</span>, <span class="dt">r =</span> <span class="dv">1</span>))</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-93-1.png" width="576" /></p>
-<p>We also can access information about the how much of the variance in the dataset is explained by each principal component:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="Chemometrics-2.html#cb58-1"></a>per_small &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv&quot;</span>)</span>
-<span id="cb58-2"><a href="Chemometrics-2.html#cb58-2"></a></span>
-<span id="cb58-3"><a href="Chemometrics-2.html#cb58-3"></a>per_small_pca_dim &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb58-4"><a href="Chemometrics-2.html#cb58-4"></a>                                </span>
-<span id="cb58-5"><a href="Chemometrics-2.html#cb58-5"></a>        <span class="dt">data =</span> per_small,</span>
-<span id="cb58-6"><a href="Chemometrics-2.html#cb58-6"></a></span>
-<span id="cb58-7"><a href="Chemometrics-2.html#cb58-7"></a>        <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca-dim&quot;</span>),</span>
-<span id="cb58-8"><a href="Chemometrics-2.html#cb58-8"></a></span>
-<span id="cb58-9"><a href="Chemometrics-2.html#cb58-9"></a>        <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb58-10"><a href="Chemometrics-2.html#cb58-10"></a>        <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb58-11"><a href="Chemometrics-2.html#cb58-11"></a>        </span>
-<span id="cb58-12"><a href="Chemometrics-2.html#cb58-12"></a>        <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;atomic_mass_rounded&quot;</span>, <span class="st">&quot;melting_point_C&quot;</span>, <span class="st">&quot;boiling_point_C&quot;</span>, <span class="st">&quot;density_g_per_mL&quot;</span>, <span class="st">&quot;electronegativity_pauling&quot;</span>, <span class="st">&quot;first_ionization_poten_eV&quot;</span>, <span class="st">&quot;second_ionization_poten_eV&quot;</span>, <span class="st">&quot;third_ionization_poten_eV&quot;</span>, <span class="st">&quot;electron_affinity_eV&quot;</span>, <span class="st">&quot;atomic_radius_ang&quot;</span>, <span class="st">&quot;ionic_radius_ang&quot;</span>, <span class="st">&quot;covalent_radius_ang&quot;</span>, <span class="st">&quot;atomic_volume_cm3_per_mol&quot;</span>, <span class="st">&quot;electrical_conductivity_mho_per_cm&quot;</span>, <span class="st">&quot;specific_heat_J_per_g_K&quot;</span>, <span class="st">&quot;heat_of_fusion_kJ_per_mol&quot;</span>, <span class="st">&quot;heat_of_vaporization_kJ_per_mol&quot;</span>, <span class="st">&quot;thermal_conductivity_W_per_m_K&quot;</span>, <span class="st">&quot;polarizability_A_cubed&quot;</span>, <span class="st">&quot;heat_atomization_kJ_per_mol&quot;</span>),</span>
-<span id="cb58-13"><a href="Chemometrics-2.html#cb58-13"></a>        </span>
-<span id="cb58-14"><a href="Chemometrics-2.html#cb58-14"></a>        <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
-<span id="cb58-15"><a href="Chemometrics-2.html#cb58-15"></a></span>
-<span id="cb58-16"><a href="Chemometrics-2.html#cb58-16"></a>        <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;atomic_number&quot;</span>, <span class="st">&quot;atomic_symbol&quot;</span>, <span class="st">&quot;group_number&quot;</span>, <span class="st">&quot;period&quot;</span>, <span class="st">&quot;state_at_RT&quot;</span>)</span>
-<span id="cb58-17"><a href="Chemometrics-2.html#cb58-17"></a></span>
-<span id="cb58-18"><a href="Chemometrics-2.html#cb58-18"></a>    )</span>
-<span id="cb58-19"><a href="Chemometrics-2.html#cb58-19"></a><span class="kw">head</span>(per_small_pca_dim)</span>
-<span id="cb58-20"><a href="Chemometrics-2.html#cb58-20"></a><span class="co">## # A tibble: 6 x 2</span></span>
-<span id="cb58-21"><a href="Chemometrics-2.html#cb58-21"></a><span class="co">##   percent_variance_explained principal_component</span></span>
-<span id="cb58-22"><a href="Chemometrics-2.html#cb58-22"></a><span class="co">##                        &lt;dbl&gt;               &lt;dbl&gt;</span></span>
-<span id="cb58-23"><a href="Chemometrics-2.html#cb58-23"></a><span class="co">## 1                      33.1                    1</span></span>
-<span id="cb58-24"><a href="Chemometrics-2.html#cb58-24"></a><span class="co">## 2                      23.6                    2</span></span>
-<span id="cb58-25"><a href="Chemometrics-2.html#cb58-25"></a><span class="co">## 3                      12.0                    3</span></span>
-<span id="cb58-26"><a href="Chemometrics-2.html#cb58-26"></a><span class="co">## 4                       8.98                   4</span></span>
-<span id="cb58-27"><a href="Chemometrics-2.html#cb58-27"></a><span class="co">## 5                       4.50                   5</span></span>
-<span id="cb58-28"><a href="Chemometrics-2.html#cb58-28"></a><span class="co">## 6                       4.07                   6</span></span></code></pre></div>
+##   analyte      Dim.1   Dim.2
+##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;
+## 1 water_temp 0.0769  -0.267 
+## 2 pH         0.704    0.0190
+## 3 C          0.297   -0.248 
+## 4 N          0.00446  0.732 
+## 5 P          0.485   -0.0817
+## 6 Cl         0.978    0.0152</code></pre>
+<p>We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of <code>geom_label_repel()</code> and <code>filter()</code> to label certain segments in the ordination plot. You do not need to use <code>geom_label_repel()</code>, you could use the built in <code>geom_label()</code>, but <code>geom_label_repel()</code> can make labelling your segments easier.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="Chemometrics-2.html#cb57-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<span id="cb57-2"><a href="Chemometrics-2.html#cb57-2"></a>AK_lakes_pca_ord &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb57-3"><a href="Chemometrics-2.html#cb57-3"></a>    <span class="dt">data =</span> AK_lakes,</span>
+<span id="cb57-4"><a href="Chemometrics-2.html#cb57-4"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca-ord&quot;</span>),</span>
+<span id="cb57-5"><a href="Chemometrics-2.html#cb57-5"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb57-6"><a href="Chemometrics-2.html#cb57-6"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb57-7"><a href="Chemometrics-2.html#cb57-7"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb57-8"><a href="Chemometrics-2.html#cb57-8"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb57-9"><a href="Chemometrics-2.html#cb57-9"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb57-10"><a href="Chemometrics-2.html#cb57-10"></a>)</span>
+<span id="cb57-11"><a href="Chemometrics-2.html#cb57-11"></a></span>
+<span id="cb57-12"><a href="Chemometrics-2.html#cb57-12"></a><span class="kw">library</span>(ggforce) <span class="co"># Gives access to geom_circle</span></span>
+<span id="cb57-13"><a href="Chemometrics-2.html#cb57-13"></a><span class="kw">library</span>(ggrepel) <span class="co"># Gives access to geom_label_repel</span></span>
+<span id="cb57-14"><a href="Chemometrics-2.html#cb57-14"></a><span class="kw">head</span>(AK_lakes_pca_ord)</span>
+<span id="cb57-15"><a href="Chemometrics-2.html#cb57-15"></a><span class="co">## # A tibble: 6 x 3</span></span>
+<span id="cb57-16"><a href="Chemometrics-2.html#cb57-16"></a><span class="co">##   analyte      Dim.1   Dim.2</span></span>
+<span id="cb57-17"><a href="Chemometrics-2.html#cb57-17"></a><span class="co">##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb57-18"><a href="Chemometrics-2.html#cb57-18"></a><span class="co">## 1 water_temp 0.0769  -0.267 </span></span>
+<span id="cb57-19"><a href="Chemometrics-2.html#cb57-19"></a><span class="co">## 2 pH         0.704    0.0190</span></span>
+<span id="cb57-20"><a href="Chemometrics-2.html#cb57-20"></a><span class="co">## 3 C          0.297   -0.248 </span></span>
+<span id="cb57-21"><a href="Chemometrics-2.html#cb57-21"></a><span class="co">## 4 N          0.00446  0.732 </span></span>
+<span id="cb57-22"><a href="Chemometrics-2.html#cb57-22"></a><span class="co">## 5 P          0.485   -0.0817</span></span>
+<span id="cb57-23"><a href="Chemometrics-2.html#cb57-23"></a><span class="co">## 6 Cl         0.978    0.0152</span></span>
+<span id="cb57-24"><a href="Chemometrics-2.html#cb57-24"></a><span class="kw">ggplot</span>(AK_lakes_pca_ord) <span class="op">+</span></span>
+<span id="cb57-25"><a href="Chemometrics-2.html#cb57-25"></a><span class="st">    </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="dv">0</span>, <span class="dt">y =</span> <span class="dv">0</span>, <span class="dt">xend =</span> Dim<span class="fl">.1</span>, <span class="dt">yend =</span> Dim<span class="fl">.2</span>, <span class="dt">color =</span> analyte), <span class="dt">size =</span> <span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb57-26"><a href="Chemometrics-2.html#cb57-26"></a><span class="st">    </span><span class="kw">geom_circle</span>(<span class="kw">aes</span>(<span class="dt">x0 =</span> <span class="dv">0</span>, <span class="dt">y0 =</span> <span class="dv">0</span>, <span class="dt">r =</span> <span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb57-27"><a href="Chemometrics-2.html#cb57-27"></a><span class="st">  </span><span class="kw">geom_label_repel</span>(</span>
+<span id="cb57-28"><a href="Chemometrics-2.html#cb57-28"></a>    <span class="dt">data =</span> <span class="kw">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.1</span> <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.9</span>, Dim<span class="fl">.2</span> <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.1</span>, Dim<span class="fl">.2</span> <span class="op">&gt;</span><span class="st"> </span><span class="fl">-0.1</span>),</span>
+<span id="cb57-29"><a href="Chemometrics-2.html#cb57-29"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">label =</span> analyte), <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
+<span id="cb57-30"><a href="Chemometrics-2.html#cb57-30"></a>  ) <span class="op">+</span></span>
+<span id="cb57-31"><a href="Chemometrics-2.html#cb57-31"></a><span class="st">  </span><span class="kw">geom_label_repel</span>(</span>
+<span id="cb57-32"><a href="Chemometrics-2.html#cb57-32"></a>    <span class="dt">data =</span> <span class="kw">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.2</span> <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>),</span>
+<span id="cb57-33"><a href="Chemometrics-2.html#cb57-33"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">label =</span> analyte), <span class="dt">direction =</span> <span class="st">&quot;y&quot;</span>, <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
+<span id="cb57-34"><a href="Chemometrics-2.html#cb57-34"></a>  ) <span class="op">+</span></span>
+<span id="cb57-35"><a href="Chemometrics-2.html#cb57-35"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="fl">1.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="fl">1.5</span>)) <span class="op">+</span></span>
+<span id="cb57-36"><a href="Chemometrics-2.html#cb57-36"></a><span class="st">  </span><span class="kw">theme_bw</span>()</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-93-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.</p>
+</div>
+<div id="comparing-principal-components" class="section level2">
+<h2><span class="header-section-number">12.3</span> Comparing principal components</h2>
+<p>We also can access information about the how much of the variance in the data set is explained by each principal component:</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="Chemometrics-2.html#cb58-1"></a>AK_lakes_pca_ord &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb58-2"><a href="Chemometrics-2.html#cb58-2"></a>    <span class="dt">data =</span> AK_lakes,</span>
+<span id="cb58-3"><a href="Chemometrics-2.html#cb58-3"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca-dim&quot;</span>),</span>
+<span id="cb58-4"><a href="Chemometrics-2.html#cb58-4"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb58-5"><a href="Chemometrics-2.html#cb58-5"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb58-6"><a href="Chemometrics-2.html#cb58-6"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb58-7"><a href="Chemometrics-2.html#cb58-7"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb58-8"><a href="Chemometrics-2.html#cb58-8"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb58-9"><a href="Chemometrics-2.html#cb58-9"></a>)</span>
+<span id="cb58-10"><a href="Chemometrics-2.html#cb58-10"></a><span class="kw">head</span>(AK_lakes_pca_ord)</span>
+<span id="cb58-11"><a href="Chemometrics-2.html#cb58-11"></a><span class="co">## # A tibble: 6 x 2</span></span>
+<span id="cb58-12"><a href="Chemometrics-2.html#cb58-12"></a><span class="co">##   principal_component percent_variance_explained</span></span>
+<span id="cb58-13"><a href="Chemometrics-2.html#cb58-13"></a><span class="co">##                 &lt;dbl&gt;                      &lt;dbl&gt;</span></span>
+<span id="cb58-14"><a href="Chemometrics-2.html#cb58-14"></a><span class="co">## 1                   1                      48.8 </span></span>
+<span id="cb58-15"><a href="Chemometrics-2.html#cb58-15"></a><span class="co">## 2                   2                      18.6 </span></span>
+<span id="cb58-16"><a href="Chemometrics-2.html#cb58-16"></a><span class="co">## 3                   3                      11.6 </span></span>
+<span id="cb58-17"><a href="Chemometrics-2.html#cb58-17"></a><span class="co">## 4                   4                       7.88</span></span>
+<span id="cb58-18"><a href="Chemometrics-2.html#cb58-18"></a><span class="co">## 5                   5                       4.68</span></span>
+<span id="cb58-19"><a href="Chemometrics-2.html#cb58-19"></a><span class="co">## 6                   6                       3.33</span></span></code></pre></div>
 <p>And we can now plot that using ggplot:</p>
 <div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="Chemometrics-2.html#cb59-1"></a><span class="kw">ggplot</span>(</span>
-<span id="cb59-2"><a href="Chemometrics-2.html#cb59-2"></a>  <span class="dt">data =</span> per_small_pca_dim, </span>
+<span id="cb59-2"><a href="Chemometrics-2.html#cb59-2"></a>  <span class="dt">data =</span> AK_lakes_pca_ord, </span>
 <span id="cb59-3"><a href="Chemometrics-2.html#cb59-3"></a>  <span class="kw">aes</span>(<span class="dt">x =</span> principal_component, <span class="dt">y =</span> percent_variance_explained)</span>
 <span id="cb59-4"><a href="Chemometrics-2.html#cb59-4"></a>) <span class="op">+</span></span>
 <span id="cb59-5"><a href="Chemometrics-2.html#cb59-5"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
@@ -341,6 +381,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb59-7"><a href="Chemometrics-2.html#cb59-7"></a><span class="st">  </span><span class="kw">theme_bw</span>()</span></code></pre></div>
 <p><img src="bio723-book_files/figure-html/unnamed-chunk-95-1.png" width="288" style="display: block; margin: auto;" /></p>
 <p>Cool!</p>
+</div>
 </div>
             </section>
 

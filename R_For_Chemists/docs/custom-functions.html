@@ -216,7 +216,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="Chemometrics-1.html"><a href="Chemometrics-1.html"><i class="fa fa-check"></i><b>10</b> Chemometrics 1</a></li>
 <li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
-<li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a></li>
+<li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a><ul>
+<li class="chapter" data-level="12.1" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html#pca"><i class="fa fa-check"></i><b>12.1</b> PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html#drivers-of-pca-dimensions"><i class="fa fa-check"></i><b>12.2</b> Drivers of PCA dimensions</a></li>
+<li class="chapter" data-level="12.3" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html#comparing-principal-components"><i class="fa fa-check"></i><b>12.3</b> Comparing principal components</a></li>
+</ul></li>
 <li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a><ul>
 <li class="chapter" data-level="13.1" data-path="Exercises-5.html"><a href="Exercises-5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
 </ul></li>
@@ -255,33 +259,33 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">B</span> Custom functions</h1>
 <div id="readcsv" class="section level2">
 <h2><span class="header-section-number">B.1</span> readCSV</h2>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="custom-functions.html#cb65-1"></a>readCSV &lt;-<span class="st"> </span><span class="cf">function</span>() { <span class="kw">return</span>(readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">file.choose</span>())) }</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="custom-functions.html#cb68-1"></a>readCSV &lt;-<span class="st"> </span><span class="cf">function</span>() { <span class="kw">return</span>(readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">file.choose</span>())) }</span></code></pre></div>
 </div>
 <div id="runmatrixanalysis" class="section level2">
 <h2><span class="header-section-number">B.2</span> runMatrixAnalysis</h2>
 <div id="once-you-have-activated-runmatrixanalysis-in-your-r-session-see-below-you-can-use-the-function-by-filling-out-and-executing-this-template" class="section level3">
 <h3><span class="header-section-number">B.2.1</span> Once you have activated <code>runMatrixAnalysis</code> in your R session (see below), you can use the function by filling out and executing this template:</h3>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="custom-functions.html#cb66-1"></a></span>
-<span id="cb66-2"><a href="custom-functions.html#cb66-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb66-3"><a href="custom-functions.html#cb66-3"></a>                                </span>
-<span id="cb66-4"><a href="custom-functions.html#cb66-4"></a>    <span class="dt">data =</span> <span class="ot">NULL</span>,</span>
-<span id="cb66-5"><a href="custom-functions.html#cb66-5"></a></span>
-<span id="cb66-6"><a href="custom-functions.html#cb66-6"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</span>
-<span id="cb66-7"><a href="custom-functions.html#cb66-7"></a></span>
-<span id="cb66-8"><a href="custom-functions.html#cb66-8"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb66-9"><a href="custom-functions.html#cb66-9"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb66-10"><a href="custom-functions.html#cb66-10"></a>    </span>
-<span id="cb66-11"><a href="custom-functions.html#cb66-11"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</span>
-<span id="cb66-12"><a href="custom-functions.html#cb66-12"></a>    </span>
-<span id="cb66-13"><a href="custom-functions.html#cb66-13"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
-<span id="cb66-14"><a href="custom-functions.html#cb66-14"></a></span>
-<span id="cb66-15"><a href="custom-functions.html#cb66-15"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></span>
-<span id="cb66-16"><a href="custom-functions.html#cb66-16"></a></span>
-<span id="cb66-17"><a href="custom-functions.html#cb66-17"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="custom-functions.html#cb69-1"></a></span>
+<span id="cb69-2"><a href="custom-functions.html#cb69-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb69-3"><a href="custom-functions.html#cb69-3"></a>                                </span>
+<span id="cb69-4"><a href="custom-functions.html#cb69-4"></a>    <span class="dt">data =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-5"><a href="custom-functions.html#cb69-5"></a></span>
+<span id="cb69-6"><a href="custom-functions.html#cb69-6"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb69-7"><a href="custom-functions.html#cb69-7"></a></span>
+<span id="cb69-8"><a href="custom-functions.html#cb69-8"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-9"><a href="custom-functions.html#cb69-9"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-10"><a href="custom-functions.html#cb69-10"></a>    </span>
+<span id="cb69-11"><a href="custom-functions.html#cb69-11"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-12"><a href="custom-functions.html#cb69-12"></a>    </span>
+<span id="cb69-13"><a href="custom-functions.html#cb69-13"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-14"><a href="custom-functions.html#cb69-14"></a></span>
+<span id="cb69-15"><a href="custom-functions.html#cb69-15"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></span>
+<span id="cb69-16"><a href="custom-functions.html#cb69-16"></a></span>
+<span id="cb69-17"><a href="custom-functions.html#cb69-17"></a>)</span></code></pre></div>
 </div>
 <div id="to-activate-runmatrixanalysis-in-your-session-run-the-following-in-your-console" class="section level3">
 <h3><span class="header-section-number">B.2.2</span> To activate <code>runMatrixAnalysis</code> in your session, run the following in your console:</h3>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="custom-functions.html#cb67-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="custom-functions.html#cb70-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
