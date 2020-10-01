@@ -1123,6 +1123,7 @@ In the example above, the three dimensional space can be reduced to a two dimens
 We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below:
 
 ```{r, message = FALSE, fig.align = "center"}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 head(AK_lakes)
 
@@ -1144,9 +1145,13 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
 	theme_classic()
 ```
 
+Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
+
+Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that's the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?
+
 ## Drivers of PCA dimensions
 
-You will also want access to the information about which analytes are major contributors to each principal component. This can be determined using an ordination plot. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca-ord"`:
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca-ord"`:
 
 ```{r, echo = FALSE, message = FALSE}
 AK_lakes_pca_ord <- runMatrixAnalysis(
@@ -1158,41 +1163,46 @@ AK_lakes_pca_ord <- runMatrixAnalysis(
 	columns_w_additional_analyte_info = "element_type",
 	columns_w_sample_ID_info = c("lake", "park")
 )
-head(per_small_pca_ord)
+head(AK_lakes_pca_ord)
 ```
 
-We can now visualize the ordination plot using our standard ggplot plotting techniques:
+We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
 
-```{r, fig.align = "center", fig.height = 2, fig.width = 3}
+```{r, fig.align = "center", fig.height = 3, fig.width = 4}
 library(ggforce) # Gives access to geom_circle
-ggplot(per_small_pca_ord) +
-	geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2), size = 1) +
+library(ggrepel) # Gives access to geom_label_repel
+ggplot(AK_lakes_pca_ord) +
+	geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
 	geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.1 > 0.9, Dim.2 < 0.1, Dim.2 > -0.1), 
+    aes(x = Dim.1, y = Dim.2, label = analyte), xlim = c(1,1.5)
+  ) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.2 > 0.5), 
+    aes(x = Dim.1, y = Dim.2, label = analyte), direction = "y", ylim = c(1,1.5)
+  ) +
+  coord_cartesian(xlim = c(-1,1.5), ylim = c(-1,1.5)) +
   theme_bw()
 ```
 
-We also can access information about the how much of the variance in the dataset is explained by each principal component:
+Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
+
+## Comparing principal components
+
+We also can access information about the how much of the variance in the data set is explained by each principal component:
 
 ```{r, message = FALSE}
-per_small <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
-
-per_small_pca_dim <- runMatrixAnalysis(
-                                
-	    data = per_small,
-
-	    analysis = c("pca-dim"),
-
-	    column_w_names_of_multiple_analytes = NULL,
-	    column_w_values_for_multiple_analytes = NULL,
-	    
-	    columns_w_values_for_single_analyte = c("atomic_mass_rounded", "melting_point_C", "boiling_point_C", "density_g_per_mL", "electronegativity_pauling", "first_ionization_poten_eV", "second_ionization_poten_eV", "third_ionization_poten_eV", "electron_affinity_eV", "atomic_radius_ang", "ionic_radius_ang", "covalent_radius_ang", "atomic_volume_cm3_per_mol", "electrical_conductivity_mho_per_cm", "specific_heat_J_per_g_K", "heat_of_fusion_kJ_per_mol", "heat_of_vaporization_kJ_per_mol", "thermal_conductivity_W_per_m_K", "polarizability_A_cubed", "heat_atomization_kJ_per_mol"),
-	    
-	    columns_w_additional_analyte_info = NULL,
-
-	    columns_w_sample_ID_info = c("atomic_number", "atomic_symbol", "group_number", "period", "state_at_RT")
-
-	)
-head(per_small_pca_dim)
+AK_lakes_pca_ord <- runMatrixAnalysis(
+	data = AK_lakes,
+	analysis = c("pca-dim"),
+	column_w_names_of_multiple_analytes = "element",
+	column_w_values_for_multiple_analytes = "mg_per_L",
+	columns_w_values_for_single_analyte = c("water_temp", "pH"),
+	columns_w_additional_analyte_info = "element_type",
+	columns_w_sample_ID_info = c("lake", "park")
+)
+head(AK_lakes_pca_ord)
 ```
 
 
@@ -1201,7 +1211,7 @@ And we can now plot that using ggplot:
 
 ```{r, fig.height = 2.5, fig.width = 3, fig.align = "center"}
 ggplot(
-  data = per_small_pca_dim, 
+  data = AK_lakes_pca_ord, 
   aes(x = principal_component, y = percent_variance_explained)
 ) +
   geom_line() +

@@ -190,6 +190,7 @@
                         clustering$principal_component <- names(coords)
                         clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
                         colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                        clustering <- select(clustering, principal_component, percent_variance_explained)
                         return(clustering)
                         stop("Returning eigenvalues.")
                     }
