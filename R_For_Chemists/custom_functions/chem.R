@@ -187,8 +187,6 @@
 
                 # Run PCA, if requested
 
-                    as.data.frame(matrix)
-
                     if( analysis == "pca" ) {
                         coords <- FactoMineR::PCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
                         clustering <- as_tibble(coords)

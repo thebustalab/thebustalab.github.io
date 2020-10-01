@@ -223,6 +223,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a><ul>
 <li class="chapter" data-level="13.1" data-path="Exercises-5.html"><a href="Exercises-5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
+<li class="chapter" data-level="13.2" data-path="Exercises-5.html"><a href="Exercises-5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>13.2</b> Option 2: Grape vine varieties</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
@@ -258,7 +259,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="Chemometrics_1" class="section level1">
 <h1><span class="header-section-number">Chapter 10</span> Chemometrics 1</h1>
 <p>So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use <code>runMatrixAnalysis()</code>, a function that you can load into your R Session by running the following command:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="Chemometrics-1.html#cb47-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="Chemometrics-1.html#cb47-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
 <p>In order for <code>runMatrixAnalysis()</code> to work, you will also need to install <code>ape</code> and <code>ggtree</code>. Use the code below to do that:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="Chemometrics-1.html#cb48-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;ape&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org&quot;</span>, <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span>
 <span id="cb48-2"><a href="Chemometrics-1.html#cb48-2"></a></span>
@@ -287,7 +288,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>We can see that this dataset is comprised of measuring various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
 <p><img src="http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
 <p>With this in mind, let’s try out our template:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="Chemometrics-1.html#cb50-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">::</span><span class="kw">knit_global</span>())</span>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="Chemometrics-1.html#cb50-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">::</span><span class="kw">knit_global</span>())</span>
 <span id="cb50-2"><a href="Chemometrics-1.html#cb50-2"></a>AK_lakes_clustered &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
 <span id="cb50-3"><a href="Chemometrics-1.html#cb50-3"></a>                                </span>
 <span id="cb50-4"><a href="Chemometrics-1.html#cb50-4"></a>    <span class="dt">data =</span> AK_lakes,</span>

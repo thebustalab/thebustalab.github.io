@@ -78,13 +78,13 @@ knitr::include_graphics('http://thebustalab.github.io/phylochemistry/figures/rst
 
 The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.
 
-```{r}
+```{r, message = FALSE}
 head(Indometh)
 ```
 
 Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin dataset in a basic way.
 
-```{r}
+```{r, message = FALSE}
 plot(Indometh)
 ```
 
@@ -94,12 +94,12 @@ If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and th
 
 For us to run our analyses, we need to install a set of add-on functions that expand R's capabilities. These functions are collected in something called the `tidyverse`, a very well-known and widely-used R package developed by Hadley Wickham. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type `install.packages("tidyverse", repos = "http://cran.us.r-project.org")` to install the tidyverse. RSudio might ask you: "Do you want to install from sources the packages which need compilation? (Yes/no/cancel)", for now, type `no` and press enter.
 
-```{r}
+```{r, message = FALSE}
 install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 ```
 
 Let's make sure your version of the `tidyverse` is installed correctly. To do this, we will load the `tidyverse` library/package inside of an R session. We can do this using `library(tidyverse)`. Let's try it:
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 ```
 
@@ -118,13 +118,13 @@ Throughout your time with R, you will probably want help. I ceratinly do. You ca
 ### Syntax
 
 Throughout this book, we'll use this `<notation>` to indicate a place where the requested item that corresponds to your situation. For example, if I am instructed to run this command: `print("<your_name_here>")`, I would type:
-```{r}
+```{r, message = FALSE}
 print("Luke")
 ```
 
 Computers are very powerful but can be dumb at times. They are not very good with unexpected characters - they are often particularly sensitive when it comes to spaces ` `, slashes `\` `/`, equal signs `=` (vs. `==`), and quotes `"`. This book will try to warn you when syntax issues may arise. To try and prevent issues, this book will also use snake case (see the image below) - consider doing the same to avoid problems!
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+```{r, message = FALSE, fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr::include_graphics('http://lucasbusta.github.io/phylochemistry/figures/in_that_case.png', dpi = NA)
 ```
 
@@ -142,7 +142,7 @@ You can quickly find paths to files via the following:
 
 On either operating system, if you don't want to type paths into your command line, another option is to define the following function within your R Session. You can do that by pasting the line below into your R Console and pressing enter.
 
-```{r}
+```{r, message = FALSE}
 readCSV <- function() { return(readr::read_csv(file.choose())) }
 ```
 
@@ -177,19 +177,19 @@ algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample
 ```
 
 Now we have an object called `algae_chemistry`. We can examine the contents of that object by typing its name. For example:
-```{r}
+```{r, message = FALSE}
 algae_chemistry
 ```
 
 Cool! However, this is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_chemistry` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_chemistry` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
 
-```{r}
+```{r, message = FALSE}
 filter(algae_chemistry, chemical_species == "FAs")
 ```
 
 Cool! Now it's just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let's write this new, smaller dataset into a new object. For that we use `<-`, remember?
 
-```{r}
+```{r, message = FALSE}
 algae_data_small <- filter(algae_chemistry, chemical_species == "FAs")
 ```
 
@@ -216,7 +216,7 @@ There are three steps to setting up a ggplot:
 
 We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
-```{r}
+```{r, message = FALSE}
 ggplot(data = algae_chemistry_small)
 ```
 
@@ -224,7 +224,7 @@ ggplot(data = algae_chemistry_small)
 
 This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
 
-```{r}
+```{r, message = FALSE}
 ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance))
 ```
 
@@ -232,7 +232,7 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance))
 
 Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Again, use `aes()` to map your variables onto the geometric features of the shapes. Let's try it:
 
-```{r}
+```{r, message = FALSE}
 ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime))
 ```
@@ -243,14 +243,14 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 
 In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. Here's an example:
 
-```{r}
+```{r, message = FALSE}
 ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
-```{r}
+```{r, message = FALSE}
 ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 	geom_point(aes(size = harvesting_regime), color = "black")
 ```
@@ -997,17 +997,17 @@ You have learned many things in this course so far. `filter()`, `ggplot()`, and 
 
 So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use `runMatrixAnalysis()`, a function that you can load into your R Session by running the following command:
 
-```{r}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 ```
 
-```{r, echo = FALSE}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R", local = knitr::knit_global())
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R", local = knitr::knit_global())
 ```
 
 In order for `runMatrixAnalysis()` to work, you will also need to install `ape` and `ggtree`. Use the code below to do that:
 
-```{r eval = FALSE}
+```{r, eval = FALSE, message = FALSE}
 install.packages("ape", repos = "https://cloud.r-project.org", quiet = FALSE)
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -1018,7 +1018,7 @@ BiocManager::install("ggtree")
 
 With the requisite packages installed, we can use the template for `runMatrixAnalysis()` to begin our command. In order to use the template, it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaksa lakes data set:
 
-```{r message = FALSE}
+```{r, message = FALSE}
 library(tidyverse)
 AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 AK_lakes
@@ -1032,8 +1032,8 @@ knitr::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/run
 
 With this in mind, let's try out our template:
 
-```{r}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R", local = knitr::knit_global())
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R", local = knitr::knit_global())
 AK_lakes_clustered <- runMatrixAnalysis(
                                 
     data = AK_lakes,
@@ -1277,18 +1277,18 @@ This first option is to work with a dataset describing metabolomics data (i.e. a
 
 1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the data set will be available as `ckd_data`.
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 ```
 2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
 3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca=ord"`).
+4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
 5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
 6. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
 
-```{r, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center", echo = FALSE}
+```{r, eval = FALSE, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center", echo = FALSE}
 library(tidyverse)
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
 
 pca <- runMatrixAnalysis(
@@ -1316,9 +1316,6 @@ ggplot(pca) +
 
 ## The first dimension
 
-```
-```{r, echo = FALSE}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 pca_ord <- runMatrixAnalysis(
   data = metabolomics_data,
   analysis = "pca-ord",
@@ -1344,17 +1341,17 @@ This second option is to work with a dataset describing metabolomics data (i.e. 
 
 1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the dataset will be available as `wine_grape_data`.
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 ```
 2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
-3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca=ord"`).
-5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-6. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
+3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
+5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+6. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
 
-```{r}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
+```{r, message = FALSE, echo = FALSE, eval = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 
 head(wine_grape_data)
 
@@ -1376,6 +1373,22 @@ ggplot(
 ) + 
   geom_point(shape = 21, size = 5) +
   scale_fill_manual(values = c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00"))
+
+wine_grape_data_pca_ord <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca-ord",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment")
+)
+
+head(wine_grape_data_pca_ord)
+
+ggplot() +
+  geom_segment(data = wine_grape_data_pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label(data = filter(wine_grape_data_pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
 ```
 
 # (APPENDIX) Appendix {-}
@@ -1452,13 +1465,32 @@ runMatrixAnalysis(
 
 ### To activate `runMatrixAnalysis` in your session, run the following in your console:
 
-```{r}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 ```
 
-```{r, echo = FALSE}
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R", local = knitr::knit_global())
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R", local = knitr::knit_global())
 ```
+
+Once you do this you will also gain access to the following automatically. This means you can use the following objects in your R Scripts without using readCSV - they are already loaded.
+
+`algae_data`
+
+`alaska_lake_data`
+
+`solvents`
+
+`periodic_table`
+
+`periodic_table_small`
+
+`NY_trees`
+
+`ckd_data`
+
+`wine_grape_data`
+
 
 # FAQ
 
