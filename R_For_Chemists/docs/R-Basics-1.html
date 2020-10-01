@@ -53,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -64,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -80,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  { background-color: #f8f8f8; }
+  {  background-color: #f8f8f8; }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ef2929; } /* Alert */
 code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
@@ -215,6 +217,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="Chemometrics-1.html"><a href="Chemometrics-1.html"><i class="fa fa-check"></i><b>10</b> Chemometrics 1</a></li>
 <li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
 <li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a></li>
+<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
 <li class="chapter" data-level="B" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>B</b> Custom functions</a><ul>
@@ -257,10 +260,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="syntax" class="section level3">
 <h3><span class="header-section-number">3.1.2</span> Syntax</h3>
-<p>Throughout this book, we’ll use this <code>&lt;notation&gt;</code> to indicate a place where the requested item that corresponds to your situation. For example, if I am instructed to run this command: <code>print(&quot;&lt;your_name_here&gt;&quot;)</code>, I would type:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">print</span>(<span class="st">&quot;Luke&quot;</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">## [1] &quot;Luke&quot;</span></a></code></pre></div>
-<p>Computers are very powerful but can be dumb at times. They are not very good with unexpected characters - they are often particularly sensitive when it comes to spaces <code></code>, slashes <code>\</code> <code>/</code>, equal signs <code>=</code> (vs. <code>==</code>), and quotes <code>&quot;</code>. This book will try to warn you when syntax issues may arise. To try and prevent issues, this book will also use snake case (see the image below) - consider doing the same to avoid problems!</p>
+<p>Throughout this book, we’ll use this <code>&lt;notation&gt;</code> to indicate a place where the requested item that corresponds to your situation. For example, if I am instructed to run this command: <code>print("&lt;your_name_here&gt;")</code>, I would type:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="R-Basics-1.html#cb5-1"></a><span class="kw">print</span>(<span class="st">&quot;Luke&quot;</span>)</span>
+<span id="cb5-2"><a href="R-Basics-1.html#cb5-2"></a><span class="co">## [1] &quot;Luke&quot;</span></span></code></pre></div>
+<p>Computers are very powerful but can be dumb at times. They are not very good with unexpected characters - they are often particularly sensitive when it comes to spaces <code></code>, slashes <code>\</code> <code>/</code>, equal signs <code>=</code> (vs. <code>==</code>), and quotes <code>"</code>. This book will try to warn you when syntax issues may arise. To try and prevent issues, this book will also use snake case (see the image below) - consider doing the same to avoid problems!</p>
 <p><img src="http://lucasbusta.github.io/phylochemistry/figures/in_that_case.png" style="display: block; margin: auto;" /></p>
 </div>
 <div id="paths" class="section level3">
@@ -276,7 +279,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li>On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click “Copy As Path”</li>
 </ul>
 <p>On either operating system, if you don’t want to type paths into your command line, another option is to define the following function within your R Session. You can do that by pasting the line below into your R Console and pressing enter.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">readCSV &lt;-<span class="st"> </span><span class="cf">function</span>() { <span class="kw">return</span>(readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">file.choose</span>())) }</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="R-Basics-1.html#cb6-1"></a>readCSV &lt;-<span class="st"> </span><span class="cf">function</span>() { <span class="kw">return</span>(readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="kw">file.choose</span>())) }</span></code></pre></div>
 <p>Once that is done, you can use the command <code>readCSV()</code> to open up a navigation window and select your file that way. Cool!</p>
 </div>
 </div>
@@ -288,73 +291,73 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li>A function begins and ends with parentheses: <code>this_is_a_function()</code></li>
 <li>The stuff inside the parentheses are the details of how you want the function to perform its action: <code>run_this_analysis(on_this_data)</code></li>
 </ul>
-<p>Let’s illustrate this with an example. We’re going to use a function from the <code>tidyverse</code> called <code>read_csv</code>. This means we need to first load the <code>tidyverse</code>. We’ll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We’re going to import that tidied version (not the original, untidied version) using the <code>read_csv</code> command. We’ll run <code>read_csv(&quot;&lt;path_to_your_data&gt;&quot;)</code>. Note the use of QUOTES <code>&quot;&quot;</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">## # A tibble: 180 x 5</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">##    replicate algae_strain harvesting_regime chemical_species      abundance</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">##  1         1 Tsv1         Heavy             FAs                       520. </span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">##  2         1 Tsv1         Heavy             saturated_Fas             123. </span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">##  3         1 Tsv1         Heavy             omega_3_polyunsatura…     186. </span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">##  4         1 Tsv1         Heavy             monounsaturated_Fas        28.4</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">##  5         1 Tsv1         Heavy             polyunsaturated_Fas       369. </span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">##  6         1 Tsv1         Heavy             omega_6_polyunsatura…     183. </span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">##  7         1 Tsv1         Heavy             lysine                     84.1</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">##  8         1 Tsv1         Heavy             methionine                 24.1</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">##  9         1 Tsv1         Heavy             essential_Aas             692. </span></a>
-<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">## 10         1 Tsv1         Heavy             non_essential_Aas         919. </span></a>
-<a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">## # … with 170 more rows</span></a></code></pre></div>
+<p>Let’s illustrate this with an example. We’re going to use a function from the <code>tidyverse</code> called <code>read_csv</code>. This means we need to first load the <code>tidyverse</code>. We’ll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We’re going to import that tidied version (not the original, untidied version) using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="R-Basics-1.html#cb7-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb7-2"><a href="R-Basics-1.html#cb7-2"></a><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
+<span id="cb7-3"><a href="R-Basics-1.html#cb7-3"></a><span class="co">## # A tibble: 180 x 5</span></span>
+<span id="cb7-4"><a href="R-Basics-1.html#cb7-4"></a><span class="co">##    replicate algae_strain harvesting_regime chemical_species      abundance</span></span>
+<span id="cb7-5"><a href="R-Basics-1.html#cb7-5"></a><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                     &lt;dbl&gt;</span></span>
+<span id="cb7-6"><a href="R-Basics-1.html#cb7-6"></a><span class="co">##  1         1 Tsv1         Heavy             FAs                       520. </span></span>
+<span id="cb7-7"><a href="R-Basics-1.html#cb7-7"></a><span class="co">##  2         1 Tsv1         Heavy             saturated_Fas             123. </span></span>
+<span id="cb7-8"><a href="R-Basics-1.html#cb7-8"></a><span class="co">##  3         1 Tsv1         Heavy             omega_3_polyunsatura…     186. </span></span>
+<span id="cb7-9"><a href="R-Basics-1.html#cb7-9"></a><span class="co">##  4         1 Tsv1         Heavy             monounsaturated_Fas        28.4</span></span>
+<span id="cb7-10"><a href="R-Basics-1.html#cb7-10"></a><span class="co">##  5         1 Tsv1         Heavy             polyunsaturated_Fas       369. </span></span>
+<span id="cb7-11"><a href="R-Basics-1.html#cb7-11"></a><span class="co">##  6         1 Tsv1         Heavy             omega_6_polyunsatura…     183. </span></span>
+<span id="cb7-12"><a href="R-Basics-1.html#cb7-12"></a><span class="co">##  7         1 Tsv1         Heavy             lysine                     84.1</span></span>
+<span id="cb7-13"><a href="R-Basics-1.html#cb7-13"></a><span class="co">##  8         1 Tsv1         Heavy             methionine                 24.1</span></span>
+<span id="cb7-14"><a href="R-Basics-1.html#cb7-14"></a><span class="co">##  9         1 Tsv1         Heavy             essential_Aas             692. </span></span>
+<span id="cb7-15"><a href="R-Basics-1.html#cb7-15"></a><span class="co">## 10         1 Tsv1         Heavy             non_essential_Aas         919. </span></span>
+<span id="cb7-16"><a href="R-Basics-1.html#cb7-16"></a><span class="co">## # … with 170 more rows</span></span></code></pre></div>
 <p>** Note, we also could have imported this data by using <code>readCSV()</code> and then navigating to and selecting our file.</p>
 </div>
 <div id="objects" class="section level2">
 <h2><span class="header-section-number">3.3</span> Objects</h2>
 <p>You can think of objects as if they were “files” inside an R session where information can be stored. Let’s try making an object. All we have to do is use <code>&lt;-</code> to send the information from our <code>read_csv</code> command into a new object. This will create the object. See the example below.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">algae_chemistry &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co"># Alternative:</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co"># algae_chemistry &lt;- readCSV()</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="R-Basics-1.html#cb8-1"></a>algae_chemistry &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
+<span id="cb8-2"><a href="R-Basics-1.html#cb8-2"></a></span>
+<span id="cb8-3"><a href="R-Basics-1.html#cb8-3"></a><span class="co"># Alternative:</span></span>
+<span id="cb8-4"><a href="R-Basics-1.html#cb8-4"></a><span class="co"># algae_chemistry &lt;- readCSV()</span></span></code></pre></div>
 <p>Now we have an object called <code>algae_chemistry</code>. We can examine the contents of that object by typing its name. For example:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">algae_chemistry</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">## # A tibble: 180 x 5</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">##    replicate algae_strain harvesting_regime chemical_species      abundance</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">##  1         1 Tsv1         Heavy             FAs                       520. </span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">##  2         1 Tsv1         Heavy             saturated_Fas             123. </span></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">##  3         1 Tsv1         Heavy             omega_3_polyunsatura…     186. </span></a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">##  4         1 Tsv1         Heavy             monounsaturated_Fas        28.4</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">##  5         1 Tsv1         Heavy             polyunsaturated_Fas       369. </span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">##  6         1 Tsv1         Heavy             omega_6_polyunsatura…     183. </span></a>
-<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">##  7         1 Tsv1         Heavy             lysine                     84.1</span></a>
-<a class="sourceLine" id="cb9-12" data-line-number="12"><span class="co">##  8         1 Tsv1         Heavy             methionine                 24.1</span></a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="co">##  9         1 Tsv1         Heavy             essential_Aas             692. </span></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">## 10         1 Tsv1         Heavy             non_essential_Aas         919. </span></a>
-<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="co">## # … with 170 more rows</span></a></code></pre></div>
-<p>Cool! However, this is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let’s use another <code>tidyverse</code> command called <code>filter</code> to filter the <code>algae_chemistry</code> object. We will need to tell the filter command what to filter out using “logical predicates” (things like equal to: <code>==</code>, less than: <code>&lt;</code>, greater than: <code>&gt;</code>, greater-than-or-equal-to: <code>&lt;=</code>, etc.). Let’s filter <code>algae_chemistry</code> so that only rows where the <code>chemical_species</code> is equal to <code>FAs</code> (fatty acids) is preserved. This will look like <code>chemical_species == &quot;FAs&quot;</code>. Here we go:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">filter</span>(algae_chemistry, chemical_species <span class="op">==</span><span class="st"> &quot;FAs&quot;</span>)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">## # A tibble: 18 x 5</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">##    replicate algae_strain harvesting_regime chemical_species abundance</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">##  1         1 Tsv1         Heavy             FAs                   520.</span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">##  2         2 Tsv1         Heavy             FAs                   450.</span></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">##  3         3 Tsv1         Heavy             FAs                   514.</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">##  4         1 Tsv1         Light             FAs                   580.</span></a>
-<a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">##  5         2 Tsv1         Light             FAs                   535.</span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">##  6         3 Tsv1         Light             FAs                   513.</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">##  7         1 Tsv2         Heavy             FAs                   373.</span></a>
-<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">##  8         2 Tsv2         Heavy             FAs                   409.</span></a>
-<a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">##  9         3 Tsv2         Heavy             FAs                   390.</span></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">## 10         1 Tsv2         Light             FAs                   490.</span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">## 11         2 Tsv2         Light             FAs                   541.</span></a>
-<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">## 12         3 Tsv2         Light             FAs                   461.</span></a>
-<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">## 13         1 Tsv11        Heavy             FAs                   474.</span></a>
-<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">## 14         2 Tsv11        Heavy             FAs                   331.</span></a>
-<a class="sourceLine" id="cb10-19" data-line-number="19"><span class="co">## 15         3 Tsv11        Heavy             FAs                   530.</span></a>
-<a class="sourceLine" id="cb10-20" data-line-number="20"><span class="co">## 16         1 Tsv11        Light             FAs                   526.</span></a>
-<a class="sourceLine" id="cb10-21" data-line-number="21"><span class="co">## 17         2 Tsv11        Light             FAs                   514.</span></a>
-<a class="sourceLine" id="cb10-22" data-line-number="22"><span class="co">## 18         3 Tsv11        Light             FAs                   544.</span></a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="R-Basics-1.html#cb9-1"></a>algae_chemistry</span>
+<span id="cb9-2"><a href="R-Basics-1.html#cb9-2"></a><span class="co">## # A tibble: 180 x 5</span></span>
+<span id="cb9-3"><a href="R-Basics-1.html#cb9-3"></a><span class="co">##    replicate algae_strain harvesting_regime chemical_species      abundance</span></span>
+<span id="cb9-4"><a href="R-Basics-1.html#cb9-4"></a><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                     &lt;dbl&gt;</span></span>
+<span id="cb9-5"><a href="R-Basics-1.html#cb9-5"></a><span class="co">##  1         1 Tsv1         Heavy             FAs                       520. </span></span>
+<span id="cb9-6"><a href="R-Basics-1.html#cb9-6"></a><span class="co">##  2         1 Tsv1         Heavy             saturated_Fas             123. </span></span>
+<span id="cb9-7"><a href="R-Basics-1.html#cb9-7"></a><span class="co">##  3         1 Tsv1         Heavy             omega_3_polyunsatura…     186. </span></span>
+<span id="cb9-8"><a href="R-Basics-1.html#cb9-8"></a><span class="co">##  4         1 Tsv1         Heavy             monounsaturated_Fas        28.4</span></span>
+<span id="cb9-9"><a href="R-Basics-1.html#cb9-9"></a><span class="co">##  5         1 Tsv1         Heavy             polyunsaturated_Fas       369. </span></span>
+<span id="cb9-10"><a href="R-Basics-1.html#cb9-10"></a><span class="co">##  6         1 Tsv1         Heavy             omega_6_polyunsatura…     183. </span></span>
+<span id="cb9-11"><a href="R-Basics-1.html#cb9-11"></a><span class="co">##  7         1 Tsv1         Heavy             lysine                     84.1</span></span>
+<span id="cb9-12"><a href="R-Basics-1.html#cb9-12"></a><span class="co">##  8         1 Tsv1         Heavy             methionine                 24.1</span></span>
+<span id="cb9-13"><a href="R-Basics-1.html#cb9-13"></a><span class="co">##  9         1 Tsv1         Heavy             essential_Aas             692. </span></span>
+<span id="cb9-14"><a href="R-Basics-1.html#cb9-14"></a><span class="co">## 10         1 Tsv1         Heavy             non_essential_Aas         919. </span></span>
+<span id="cb9-15"><a href="R-Basics-1.html#cb9-15"></a><span class="co">## # … with 170 more rows</span></span></code></pre></div>
+<p>Cool! However, this is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let’s use another <code>tidyverse</code> command called <code>filter</code> to filter the <code>algae_chemistry</code> object. We will need to tell the filter command what to filter out using “logical predicates” (things like equal to: <code>==</code>, less than: <code>&lt;</code>, greater than: <code>&gt;</code>, greater-than-or-equal-to: <code>&lt;=</code>, etc.). Let’s filter <code>algae_chemistry</code> so that only rows where the <code>chemical_species</code> is equal to <code>FAs</code> (fatty acids) is preserved. This will look like <code>chemical_species == "FAs"</code>. Here we go:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="R-Basics-1.html#cb10-1"></a><span class="kw">filter</span>(algae_chemistry, chemical_species <span class="op">==</span><span class="st"> &quot;FAs&quot;</span>)</span>
+<span id="cb10-2"><a href="R-Basics-1.html#cb10-2"></a><span class="co">## # A tibble: 18 x 5</span></span>
+<span id="cb10-3"><a href="R-Basics-1.html#cb10-3"></a><span class="co">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
+<span id="cb10-4"><a href="R-Basics-1.html#cb10-4"></a><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
+<span id="cb10-5"><a href="R-Basics-1.html#cb10-5"></a><span class="co">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
+<span id="cb10-6"><a href="R-Basics-1.html#cb10-6"></a><span class="co">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
+<span id="cb10-7"><a href="R-Basics-1.html#cb10-7"></a><span class="co">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
+<span id="cb10-8"><a href="R-Basics-1.html#cb10-8"></a><span class="co">##  4         1 Tsv1         Light             FAs                   580.</span></span>
+<span id="cb10-9"><a href="R-Basics-1.html#cb10-9"></a><span class="co">##  5         2 Tsv1         Light             FAs                   535.</span></span>
+<span id="cb10-10"><a href="R-Basics-1.html#cb10-10"></a><span class="co">##  6         3 Tsv1         Light             FAs                   513.</span></span>
+<span id="cb10-11"><a href="R-Basics-1.html#cb10-11"></a><span class="co">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
+<span id="cb10-12"><a href="R-Basics-1.html#cb10-12"></a><span class="co">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
+<span id="cb10-13"><a href="R-Basics-1.html#cb10-13"></a><span class="co">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
+<span id="cb10-14"><a href="R-Basics-1.html#cb10-14"></a><span class="co">## 10         1 Tsv2         Light             FAs                   490.</span></span>
+<span id="cb10-15"><a href="R-Basics-1.html#cb10-15"></a><span class="co">## 11         2 Tsv2         Light             FAs                   541.</span></span>
+<span id="cb10-16"><a href="R-Basics-1.html#cb10-16"></a><span class="co">## 12         3 Tsv2         Light             FAs                   461.</span></span>
+<span id="cb10-17"><a href="R-Basics-1.html#cb10-17"></a><span class="co">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
+<span id="cb10-18"><a href="R-Basics-1.html#cb10-18"></a><span class="co">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
+<span id="cb10-19"><a href="R-Basics-1.html#cb10-19"></a><span class="co">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
+<span id="cb10-20"><a href="R-Basics-1.html#cb10-20"></a><span class="co">## 16         1 Tsv11        Light             FAs                   526.</span></span>
+<span id="cb10-21"><a href="R-Basics-1.html#cb10-21"></a><span class="co">## 17         2 Tsv11        Light             FAs                   514.</span></span>
+<span id="cb10-22"><a href="R-Basics-1.html#cb10-22"></a><span class="co">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
 <p>Cool! Now it’s just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let’s write this new, smaller dataset into a new object. For that we use <code>&lt;-</code>, remember?</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">algae_data_small &lt;-<span class="st"> </span><span class="kw">filter</span>(algae_chemistry, chemical_species <span class="op">==</span><span class="st"> &quot;FAs&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="R-Basics-1.html#cb11-1"></a>algae_data_small &lt;-<span class="st"> </span><span class="kw">filter</span>(algae_chemistry, chemical_species <span class="op">==</span><span class="st"> &quot;FAs&quot;</span>)</span></code></pre></div>
 <p>Now we have a nice, small table that we can use to practice data visualization. We’ll do that in the next chapter.</p>
 </div>
 </div>

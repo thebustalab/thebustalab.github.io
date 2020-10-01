@@ -53,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -64,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -80,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  { background-color: #f8f8f8; }
+  {  background-color: #f8f8f8; }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ef2929; } /* Alert */
 code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
@@ -215,6 +217,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="Chemometrics-1.html"><a href="Chemometrics-1.html"><i class="fa fa-check"></i><b>10</b> Chemometrics 1</a></li>
 <li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
 <li class="chapter" data-level="12" data-path="Chemometrics-2.html"><a href="Chemometrics-2.html"><i class="fa fa-check"></i><b>12</b> Chemometrics 2</a></li>
+<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a></li>
 <li class="chapter" data-level="B" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>B</b> Custom functions</a><ul>
@@ -278,38 +281,38 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.</p>
 <p><img src="http://thebustalab.github.io/phylochemistry/figures/rstudio_components.png" style="display: block; margin: auto;" /></p>
 <p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indometh)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">head</span>(Indometh)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="co">## # A tibble: 6 x 3</span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">##   Subject  time  conc</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">##   &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="co">## 1 1        0.25  1.5 </span></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co">## 2 1        0.5   0.94</span></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co">## 3 1        0.75  0.78</span></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="co">## 4 1        1     0.48</span></a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="co">## 5 1        1.25  0.37</span></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co">## 6 1        2     0.19</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="installation.html#cb1-1"></a><span class="kw">head</span>(Indometh)</span>
+<span id="cb1-2"><a href="installation.html#cb1-2"></a><span class="co">## # A tibble: 6 x 3</span></span>
+<span id="cb1-3"><a href="installation.html#cb1-3"></a><span class="co">##   Subject  time  conc</span></span>
+<span id="cb1-4"><a href="installation.html#cb1-4"></a><span class="co">##   &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb1-5"><a href="installation.html#cb1-5"></a><span class="co">## 1 1        0.25  1.5 </span></span>
+<span id="cb1-6"><a href="installation.html#cb1-6"></a><span class="co">## 2 1        0.5   0.94</span></span>
+<span id="cb1-7"><a href="installation.html#cb1-7"></a><span class="co">## 3 1        0.75  0.78</span></span>
+<span id="cb1-8"><a href="installation.html#cb1-8"></a><span class="co">## 4 1        1     0.48</span></span>
+<span id="cb1-9"><a href="installation.html#cb1-9"></a><span class="co">## 5 1        1.25  0.37</span></span>
+<span id="cb1-10"><a href="installation.html#cb1-10"></a><span class="co">## 6 1        2     0.19</span></span></code></pre></div>
 <p>Next, type <code>plot(Indometh)</code> into the R Console. This will plot the indomethacin dataset in a basic way.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">plot</span>(Indometh)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="installation.html#cb2-1"></a><span class="kw">plot</span>(Indometh)</span></code></pre></div>
 <p><img src="bio723-book_files/figure-html/unnamed-chunk-4-1.png" width="576" /></p>
 <p>If both the above commands (<code>head(Indometh)</code> and <code>plot(Indometh)</code>) worked and there were no error messages during installation, then you should be ready to proceed.</p>
 </div>
 <div id="installing-the-tidyverse" class="section level2">
 <h2><span class="header-section-number">2.4</span> Installing the <code>tidyverse</code></h2>
-<p>For us to run our analyses, we need to install a set of add-on functions that expand R’s capabilities. These functions are collected in something called the <code>tidyverse</code>, a very well-known and widely-used R package developed by Hadley Wickham. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type <code>install.packages(&quot;tidyverse&quot;, repos = &quot;http://cran.us.r-project.org&quot;)</code> to install the tidyverse. RSudio might ask you: “Do you want to install from sources the packages which need compilation? (Yes/no/cancel)”, for now, type <code>no</code> and press enter.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;http://cran.us.r-project.org&quot;</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">## </span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">## The downloaded binary packages are in</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">##  /var/folders/d4/m9ll00q10hdd6kz0vk9q0nx80000gn/T//RtmpExJdaJ/downloaded_packages</span></a></code></pre></div>
+<p>For us to run our analyses, we need to install a set of add-on functions that expand R’s capabilities. These functions are collected in something called the <code>tidyverse</code>, a very well-known and widely-used R package developed by Hadley Wickham. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type <code>install.packages("tidyverse", repos = "http://cran.us.r-project.org")</code> to install the tidyverse. RSudio might ask you: “Do you want to install from sources the packages which need compilation? (Yes/no/cancel)”, for now, type <code>no</code> and press enter.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="installation.html#cb3-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;http://cran.us.r-project.org&quot;</span>)</span>
+<span id="cb3-2"><a href="installation.html#cb3-2"></a><span class="co">## </span></span>
+<span id="cb3-3"><a href="installation.html#cb3-3"></a><span class="co">## The downloaded binary packages are in</span></span>
+<span id="cb3-4"><a href="installation.html#cb3-4"></a><span class="co">##  /var/folders/d4/m9ll00q10hdd6kz0vk9q0nx80000gn/T//RtmpExJdaJ/downloaded_packages</span></span></code></pre></div>
 <p>Let’s make sure your version of the <code>tidyverse</code> is installed correctly. To do this, we will load the <code>tidyverse</code> library/package inside of an R session. We can do this using <code>library(tidyverse)</code>. Let’s try it:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">## ✓ tibble  2.1.3     ✓ dplyr   0.8.4</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">## ✓ tidyr   1.0.2     ✓ stringr 1.4.0</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">## ✓ readr   1.3.1     ✓ forcats 0.4.0</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">## x dplyr::filter() masks stats::filter()</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">## x dplyr::lag()    masks stats::lag()</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="installation.html#cb4-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb4-2"><a href="installation.html#cb4-2"></a><span class="co">## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</span></span>
+<span id="cb4-3"><a href="installation.html#cb4-3"></a><span class="co">## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3</span></span>
+<span id="cb4-4"><a href="installation.html#cb4-4"></a><span class="co">## ✓ tibble  2.1.3     ✓ dplyr   0.8.4</span></span>
+<span id="cb4-5"><a href="installation.html#cb4-5"></a><span class="co">## ✓ tidyr   1.0.2     ✓ stringr 1.4.0</span></span>
+<span id="cb4-6"><a href="installation.html#cb4-6"></a><span class="co">## ✓ readr   1.3.1     ✓ forcats 0.4.0</span></span>
+<span id="cb4-7"><a href="installation.html#cb4-7"></a><span class="co">## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──</span></span>
+<span id="cb4-8"><a href="installation.html#cb4-8"></a><span class="co">## x dplyr::filter() masks stats::filter()</span></span>
+<span id="cb4-9"><a href="installation.html#cb4-9"></a><span class="co">## x dplyr::lag()    masks stats::lag()</span></span></code></pre></div>
 <p>If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the <code>tidyverse</code>. If this still fails, please contact me.</p>
 </div>
 </div>

@@ -199,7 +199,7 @@ Now we have a nice, small table that we can use to practice data visualization. 
 
 For visualization, we're going to use `ggplot2` - a powerful set of commands for plot generation. Let's make sure we've got our data from the last chapter active in our current session:
 
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 algae_chemistry_small <- filter(algae_chemistry, chemical_species == "FAs")
@@ -287,7 +287,7 @@ In this set of exercises we're going to practice importing, filtering, and plott
 
 Import the algae chemistry data. Remember that `read_csv()` is part of the `tidyverse`, so that library needs to be loaded into your `R` session. Also remember that another option is to paste and run `readCSV <- function() { return(readr::read_csv(file.choose())) }` in your R Console, which then gives you access to the function `readCSV()`. That command doesn't require an input path, so you don't need to mess around with slashes and quotes. If you need examples of how to import data, please see the [R Basics 1](#R_Basics_1) section of this book.
 
-```{r, include = FALSE}
+```{r, include = FALSE, message = FALSE}
 library(tidyverse)
 read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 ```
@@ -455,7 +455,7 @@ What advantages does this one extra line provide over what you had to do in ques
 
 Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises.
 
-```{r, include = FALSE}
+```{r, include = FALSE, message = FALSE}
 data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 ```
 
@@ -1136,7 +1136,7 @@ ggplot(data = AK_lakes_analyzed, aes(x = Dim.1, y = Dim.2)) +
 
 It is possible that you will want access to the information that creates the ordination plot as well as the the percent variances explained by each of the principal components. These can be obtained using `analysis = "pca-ord"` and `analysis = "pca-dim`. See below:
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
 per_small <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
 
@@ -1163,7 +1163,7 @@ ggplot(per_small_pca_ord) +
 
 We also can access information about the how much of the variance in the dataset is explained by each principal component:
 
-```{r}
+```{r, message = FALSE}
 per_small <- read_csv("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
 
 per_small_pca_dim <- runMatrixAnalysis(
@@ -1205,20 +1205,22 @@ Cool!
 
 # Exercises 5 {#Exercises_5}
 
-```{r, echo = FALSE}
-data <- read_csv("/Users/lucasbusta/Desktop/9z7ncwvxnz-1/labelled.csv")
+```{r, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center"}
+library(tidyverse)
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/runMatrixAnalysis.R")
+metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
 
 pca <- runMatrixAnalysis(
-  data = data,
+  data = metabolomics_data,
   analysis = "pca",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(data)[3:124],
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
   columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(data)[1:2]
+  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
 )
 
-pca$Label <- factor(pca$Label)
+pca$Label <- factor(pca$patient_status)
 
 ggplot(pca) +
   geom_point(
