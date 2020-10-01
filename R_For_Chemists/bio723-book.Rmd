@@ -1440,3 +1440,6 @@ ggplot(mdata_windgroup_analyzed) +
   geom_point(aes(x = Dim.1, y = Dim.2, fill = WINDSPEED, size = TEMPERATURE), shape = 21) +
   theme_classic()
 ```
+
+<!--chapter:end:index.Rmd-->
+
