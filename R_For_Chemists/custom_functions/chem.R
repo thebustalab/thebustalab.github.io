@@ -49,7 +49,7 @@
 
                                     columns_w_values_for_single_analyte,
 
-                                    columns_w_additional_analyte_info,
+                                    columns_w_additional_analyte_info = NULL,
 
                                     columns_w_sample_ID_info
 
@@ -181,7 +181,10 @@
                 # Run hclust, if requested
 
                     if( analysis == "hclust" ) {
-                        clustering <- ggtree::fortify(ape::as.phylo(stats::hclust(stats::dist(matrix))))
+
+                        phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
+
+                        clustering <- ggtree::fortify(phylo)
                         clustering$sample_unique_ID <- clustering$label 
                     }
 
@@ -240,8 +243,76 @@
                     )
                     clustering
 
+                # Annotate internal branches if tree output
+
+                    if( analysis == "hclust" ) {
+                        for( node in filter(clustering, isTip == FALSE)$node ) {
+                            for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
+                                descends <- clustering[clustering$node %in% descendants(phylo, node),]
+                                if ( table(duplicated(descends[,colnames(descends) == sample_property]))[1] == 1 ) {
+                                    clustering[
+                                        which(clustering$node == node),
+                                        which(colnames(clustering) == sample_property)
+                                    ] <- descends[,colnames(descends) == sample_property][1,1]
+                                }
+                            }
+                        }
+                    }
+
             # Return results
 
                 return( clustering )
 
+        }
+
+##### descendants
+
+    descendants <- function (phy, node, type = "t", ignore.tip = TRUE, labels = FALSE) {
+            
+            if (inherits(phy, "phylo")) {
+                edge <- phy$edge
+            }
+            else {
+                if (!is.matrix(phy)) {
+                    stop("'phy' must be of classes 'phylo' or 'matrix'")
+                }
+                else {
+                    edge <- phy
+                    labels <- FALSE
+                }
+            }
+            if (length(node) > 1) 
+                stop("'node' must be vector of length 1")
+            type <- match.arg(type, c("all", "daughter", "internal", 
+                "terminal"))
+            tips <- setdiff(edge[, 2], edge[, 1])
+            if (node <= max(tips)) {
+                if (ignore.tip) {
+                    x <- node
+                }
+                else {
+                    stop("node ", node, " is not an internal node")
+                }
+            }
+            else {
+                x <- edge[edge[, 1] == node, 2]
+                if (type %in% c("internal", "terminal", "all")) {
+                    repeat {
+                        xx <- x
+                        x <- sort(unique(c(x, edge[, 2][edge[, 1] %in% 
+                          x])))
+                        if (identical(x, xx)) 
+                          break
+                    }
+                    if (type == "internal") 
+                        x <- setdiff(x, tips)
+                }
+            }
+            if (type == "terminal") {
+                x <- intersect(x, tips)
+                if (labels) {
+                    x <- phy$tip.label[x]
+                }
+            }
+            x
         }

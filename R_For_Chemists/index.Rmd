@@ -1449,14 +1449,12 @@ runMatrixAnalysis(
 								
 	data = NULL,
 
-	analysis = c("hclust", "pca"),
+	analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
 
 	column_w_names_of_multiple_analytes = NULL,
   	column_w_values_for_multiple_analytes = NULL,
     
   	columns_w_values_for_single_analyte = NULL,
-    
-  	columns_w_additional_analyte_info = NULL,
 
   	columns_w_sample_ID_info = NULL
 
