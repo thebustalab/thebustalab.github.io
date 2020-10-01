@@ -1203,6 +1203,34 @@ ggplot(
 Cool!
 
 
+# Exercises 5 {#Exercises_5}
+
+```{r, echo = FALSE}
+data <- read_csv("/Users/lucasbusta/Desktop/9z7ncwvxnz-1/labelled.csv")
+
+pca <- runMatrixAnalysis(
+  data = data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(data)[3:124],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(data)[1:2]
+)
+
+pca$Label <- factor(pca$Label)
+
+ggplot(pca) +
+  geom_point(
+    aes(x = Dim.1, y = Dim.2, fill = patient_status),
+    shape = 21, size = 5, alpha = 0.8
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 16)
+  )
+```
+
 # (APPENDIX) Appendix {-}
 
 # Functions
