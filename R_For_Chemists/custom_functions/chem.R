@@ -51,7 +51,9 @@
 
                                     columns_w_additional_analyte_info = NULL,
 
-                                    columns_w_sample_ID_info
+                                    columns_w_sample_ID_info,
+
+                                    transpose = FALSE
 
                                 ) {
 
@@ -182,10 +184,22 @@
 
                     if( analysis == "hclust" ) {
 
-                        phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
+                        if( transpose == TRUE ) {
 
-                        clustering <- ggtree::fortify(phylo)
-                        clustering$sample_unique_ID <- clustering$label 
+                            phylo <- ape::as.phylo(stats::hclust(stats::dist(t(matrix))))
+                            clustering <- ggtree::fortify(phylo)
+                            clustering$sample_unique_ID <- clustering$label
+
+                            return(clustering)
+                            stop("Returning transposed cluster output")
+
+                        } else {
+
+                            phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
+                            clustering <- ggtree::fortify(phylo)
+                            clustering$sample_unique_ID <- clustering$label
+
+                        }
                     }
 
                 # Run PCA, if requested
