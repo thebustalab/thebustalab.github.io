@@ -191,7 +191,7 @@
                             clustering$sample_unique_ID <- clustering$label
 
                             return(clustering)
-                            stop("Returning transposed cluster output")
+                            stop("Returning transposed cluster output. Make sure all your ")
 
                         } else {
 
