@@ -11,7 +11,7 @@
     solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv")
     periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
     periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
-    NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
+    # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
     ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
     wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
 
@@ -187,28 +187,33 @@
 
                 # Replace NAs with colmeans
 
-                    if( any(is.na(matrix)) ) {
-                        
-                        cat(paste0("Replacing NAs in your data with ", na_replacement))
+                    if( na_replacement[1] == "none") {
 
-                            for( column in 1:dim(matrix)[2]) {
-                                
-                                if( any(is.na(matrix[,column])) ) {
+                    } else {
 
-                                    if( na_replacement == "mean" ) {
-                                        replacement <- mean(matrix[,column])
-                                    }
-                                    if( na_replacement == "zero" ) {
-                                        replacement <- 0
-                                    }
-                                    if( !any(na_replacement %in% c("mean", "zero")) ) {
-                                        stop("Your data contains NAs. Please specify how to deal with them using na_replacement.")
-                                    }
+                        if( any(is.na(matrix)) ) {
+                            
+                            cat(paste0("Replacing NAs in your data with ", na_replacement))
+
+                                for( column in 1:dim(matrix)[2]) {
                                     
-                                    matrix[,column][is.na(matrix[,column])] <- replacement
+                                    if( any(is.na(matrix[,column])) ) {
 
-                                } else {}
-                            }
+                                        if( na_replacement == "mean" ) {
+                                            replacement <- mean(matrix[,column])
+                                        }
+                                        if( na_replacement == "zero" ) {
+                                            replacement <- 0
+                                        }
+                                        if( !any(na_replacement %in% c("mean", "zero")) ) {
+                                            stop("Your data contains NAs. Please specify how to deal with them using na_replacement.")
+                                        }
+                                        
+                                        matrix[,column][is.na(matrix[,column])] <- replacement
+
+                                    } else {}
+                                }
+                        }
                     }
 
                     if( transpose == TRUE ) {
