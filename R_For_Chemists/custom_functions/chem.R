@@ -187,10 +187,6 @@
 
                 # Replace NAs with colmeans
 
-                    if( na_replacement == "none" ) {
-                        cat("Skipping NA replacement")
-                    }
-
                     if( any(is.na(matrix)) ) {
                         
                         cat(paste0("Replacing NAs in your data with ", na_replacement))
