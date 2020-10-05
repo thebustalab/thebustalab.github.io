@@ -188,12 +188,12 @@
                 # Replace NAs with colmeans
 
                     if( na_replacement[1] == "none") {
-
+                        cat("Not replacing any NAs in your data set \n")
                     } else {
 
                         if( any(is.na(matrix)) ) {
                             
-                            cat(paste0("Replacing NAs in your data with ", na_replacement))
+                            cat(paste0("Replacing NAs in your data with ", na_replacement), "\n")
 
                                 for( column in 1:dim(matrix)[2]) {
                                     
@@ -206,7 +206,7 @@
                                             replacement <- 0
                                         }
                                         if( !any(na_replacement %in% c("mean", "zero")) ) {
-                                            stop("Your data contains NAs. Please specify how to deal with them using na_replacement.")
+                                            stop("Your data contains NAs. Please specify how to deal with them using na_replacement. \n")
                                         }
                                         
                                         matrix[,column][is.na(matrix[,column])] <- replacement
