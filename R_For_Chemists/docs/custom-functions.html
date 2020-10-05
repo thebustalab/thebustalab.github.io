@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-10-01" />
+<meta name="date" content="2020-10-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -230,8 +230,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="B" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>B</b> Custom functions</a><ul>
 <li class="chapter" data-level="B.1" data-path="custom-functions.html"><a href="custom-functions.html#readcsv"><i class="fa fa-check"></i><b>B.1</b> readCSV</a></li>
 <li class="chapter" data-level="B.2" data-path="custom-functions.html"><a href="custom-functions.html#runmatrixanalysis"><i class="fa fa-check"></i><b>B.2</b> runMatrixAnalysis</a><ul>
-<li class="chapter" data-level="B.2.1" data-path="custom-functions.html"><a href="custom-functions.html#once-you-have-activated-runmatrixanalysis-in-your-r-session-see-below-you-can-use-the-function-by-filling-out-and-executing-this-template"><i class="fa fa-check"></i><b>B.2.1</b> Once you have activated <code>runMatrixAnalysis</code> in your R session (see below), you can use the function by filling out and executing this template:</a></li>
-<li class="chapter" data-level="B.2.2" data-path="custom-functions.html"><a href="custom-functions.html#to-activate-runmatrixanalysis-in-your-session-run-the-following-in-your-console"><i class="fa fa-check"></i><b>B.2.2</b> To activate <code>runMatrixAnalysis</code> in your session, run the following in your console:</a></li>
+<li class="chapter" data-level="B.2.1" data-path="custom-functions.html"><a href="custom-functions.html#basic-runmatrixanalysis-template."><i class="fa fa-check"></i><b>B.2.1</b> Basic <code>runMatrixAnalysis()</code> template.</a></li>
+<li class="chapter" data-level="B.2.2" data-path="custom-functions.html"><a href="custom-functions.html#activating-runmatrixanalysis"><i class="fa fa-check"></i><b>B.2.2</b> Activating <code>runMatrixAnalysis</code></a></li>
+<li class="chapter" data-level="B.2.3" data-path="custom-functions.html"><a href="custom-functions.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>B.2.3</b> Advanced <code>runMatrixAnalysis()</code> template</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="C" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>C</b> FAQ</a><ul>
@@ -264,28 +265,28 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="runmatrixanalysis" class="section level2">
 <h2><span class="header-section-number">B.2</span> runMatrixAnalysis</h2>
-<div id="once-you-have-activated-runmatrixanalysis-in-your-r-session-see-below-you-can-use-the-function-by-filling-out-and-executing-this-template" class="section level3">
-<h3><span class="header-section-number">B.2.1</span> Once you have activated <code>runMatrixAnalysis</code> in your R session (see below), you can use the function by filling out and executing this template:</h3>
+<div id="basic-runmatrixanalysis-template." class="section level3">
+<h3><span class="header-section-number">B.2.1</span> Basic <code>runMatrixAnalysis()</code> template.</h3>
+<p>Once you have activated <code>runMatrixAnalysis</code> in your R session (see below), you can use the function by filling out and executing the basic template below. There is also an advanced template further down the page.</p>
 <div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="custom-functions.html#cb66-1"></a></span>
 <span id="cb66-2"><a href="custom-functions.html#cb66-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
 <span id="cb66-3"><a href="custom-functions.html#cb66-3"></a>                                </span>
 <span id="cb66-4"><a href="custom-functions.html#cb66-4"></a>    <span class="dt">data =</span> <span class="ot">NULL</span>,</span>
 <span id="cb66-5"><a href="custom-functions.html#cb66-5"></a></span>
-<span id="cb66-6"><a href="custom-functions.html#cb66-6"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb66-6"><a href="custom-functions.html#cb66-6"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
 <span id="cb66-7"><a href="custom-functions.html#cb66-7"></a></span>
 <span id="cb66-8"><a href="custom-functions.html#cb66-8"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
 <span id="cb66-9"><a href="custom-functions.html#cb66-9"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
 <span id="cb66-10"><a href="custom-functions.html#cb66-10"></a>    </span>
 <span id="cb66-11"><a href="custom-functions.html#cb66-11"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</span>
-<span id="cb66-12"><a href="custom-functions.html#cb66-12"></a>    </span>
-<span id="cb66-13"><a href="custom-functions.html#cb66-13"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb66-12"><a href="custom-functions.html#cb66-12"></a></span>
+<span id="cb66-13"><a href="custom-functions.html#cb66-13"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></span>
 <span id="cb66-14"><a href="custom-functions.html#cb66-14"></a></span>
-<span id="cb66-15"><a href="custom-functions.html#cb66-15"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></span>
-<span id="cb66-16"><a href="custom-functions.html#cb66-16"></a></span>
-<span id="cb66-17"><a href="custom-functions.html#cb66-17"></a>)</span></code></pre></div>
+<span id="cb66-15"><a href="custom-functions.html#cb66-15"></a>)</span></code></pre></div>
 </div>
-<div id="to-activate-runmatrixanalysis-in-your-session-run-the-following-in-your-console" class="section level3">
-<h3><span class="header-section-number">B.2.2</span> To activate <code>runMatrixAnalysis</code> in your session, run the following in your console:</h3>
+<div id="activating-runmatrixanalysis" class="section level3">
+<h3><span class="header-section-number">B.2.2</span> Activating <code>runMatrixAnalysis</code></h3>
+<p>To activate in your session, run the following in your console:</p>
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="custom-functions.html#cb67-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
 <p>Once you do this you will also gain access to the following automatically. This means you can use the following objects in your R Scripts without using readCSV - they are already loaded.</p>
 <p><code>algae_data</code></p>
@@ -296,6 +297,22 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><code>NY_trees</code></p>
 <p><code>ckd_data</code></p>
 <p><code>wine_grape_data</code></p>
+</div>
+<div id="advanced-runmatrixanalysis-template" class="section level3">
+<h3><span class="header-section-number">B.2.3</span> Advanced <code>runMatrixAnalysis()</code> template</h3>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="custom-functions.html#cb68-1"></a></span>
+<span id="cb68-2"><a href="custom-functions.html#cb68-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb68-3"><a href="custom-functions.html#cb68-3"></a>  <span class="dt">data =</span> <span class="ot">NULL</span>,</span>
+<span id="cb68-4"><a href="custom-functions.html#cb68-4"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
+<span id="cb68-5"><a href="custom-functions.html#cb68-5"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb68-6"><a href="custom-functions.html#cb68-6"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb68-7"><a href="custom-functions.html#cb68-7"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</span>
+<span id="cb68-8"><a href="custom-functions.html#cb68-8"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb68-9"><a href="custom-functions.html#cb68-9"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb68-10"><a href="custom-functions.html#cb68-10"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb68-11"><a href="custom-functions.html#cb68-11"></a>  <span class="dt">kmeans =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb68-12"><a href="custom-functions.html#cb68-12"></a>  <span class="dt">na_replacement =</span> <span class="kw">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;zero&quot;</span>)</span>
+<span id="cb68-13"><a href="custom-functions.html#cb68-13"></a>)</span></code></pre></div>
 </div>
 </div>
 </div>

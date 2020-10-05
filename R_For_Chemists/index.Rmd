@@ -1441,7 +1441,9 @@ readCSV <- function() { return(readr::read_csv(file.choose())) }
 
 ## runMatrixAnalysis
 
-### Once you have activated `runMatrixAnalysis` in your R session (see below), you can use the function by filling out and executing this template:
+### Basic `runMatrixAnalysis()` template.
+
+Once you have activated `runMatrixAnalysis` in your R session (see below), you can use the function by filling out and executing the basic template below. There is also an advanced template further down the page.
 
 ```{r, eval = FALSE}
 
@@ -1461,7 +1463,9 @@ runMatrixAnalysis(
 )
 ```
 
-### To activate `runMatrixAnalysis` in your session, run the following in your console:
+### Activating `runMatrixAnalysis`
+
+To activate in your session, run the following in your console:
 
 ```{r, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
@@ -1489,6 +1493,23 @@ Once you do this you will also gain access to the following automatically. This 
 
 `wine_grape_data`
 
+### Advanced `runMatrixAnalysis()` template
+
+```{r, eval = FALSE}
+
+runMatrixAnalysis(
+  data = NULL,
+  analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = NULL,
+  transpose = FALSE,
+  kmeans = FALSE,
+  na_replacement = c("none", "mean", "zero")
+)
+```
 
 # FAQ
 

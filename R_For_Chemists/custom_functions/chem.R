@@ -21,6 +21,10 @@
 
     readCSV <- function() { return(readr::read_csv(file.choose())) }
 
+####kMeans
+
+    kMeans <- function()
+
 
 #### runMatrixAnalysis
 
@@ -53,7 +57,11 @@
 
                                     columns_w_sample_ID_info,
 
-                                    transpose = FALSE
+                                    transpose = FALSE,
+
+                                    kmeans = FALSE,
+
+                                    na_replacement = c("none", "mean", "zero")
 
                                 ) {
 
@@ -180,6 +188,36 @@
                     matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
                     rownames(matrix) <- data_wide$sample_unique_ID
 
+                # Replace NAs with colmeans
+
+                    if( na_replacement == "none" ) {
+                        cat("Skipping NA replacement")
+                    }
+
+                    if( any(is.na(matrix)) ) {
+                        
+                        cat(paste0("Replacing NAs in your data with ", na_replacement))
+
+                            for( column in 1:dim(matrix)[2]) {
+                                
+                                if( any(is.na(matrix[,column])) ) {
+
+                                    if( na_replacement == "mean" ) {
+                                        replacement <- mean(matrix[,column])
+                                    }
+                                    if( na_replacement == "zero" ) {
+                                        replacement <- 0
+                                    }
+                                    if( !any(na_replacement %in% c("mean", "zero")) ) {
+                                        stop("Your data contains NAs. Please specify how to deal with them using na_replacement.")
+                                    }
+                                    
+                                    matrix[,column][is.na(matrix[,column])] <- replacement
+
+                                } else {}
+                            }
+                    }
+
                 # Run hclust, if requested
 
                     if( analysis == "hclust" ) {
@@ -191,7 +229,7 @@
                             clustering$sample_unique_ID <- clustering$label
 
                             return(clustering)
-                            stop("Returning transposed cluster output. Make sure all your ")
+                            stop("Returning transposed cluster output. Make sure all your variables have the same units!")
 
                         } else {
 
@@ -232,6 +270,32 @@
                         clustering <- select(clustering, principal_component, percent_variance_explained)
                         return(clustering)
                         stop("Returning eigenvalues.")
+                    }
+
+                # Run kMeans, if requested
+
+                    if( kmeans == TRUE ) {
+
+                        kmeans_results <- list()
+                        for( i in 1:(dim(matrix)[1]-1) ) {
+                            kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
+                        }
+                        kmeans_results <- do.call(rbind, kmeans_results)
+                        kmeans_results
+
+                        angles <- list()
+                        for( i in 1:(length(kmeans_results)-2) ) {
+                            slope_1 <- kmeans_results[i+1] - kmeans_results[i]
+                            slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
+                            angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
+                        }
+                        angles <- do.call(rbind, angles)
+
+                        cluster_number <- which(angles == min(angles)) + 1
+
+                        kmeans_clusters <- stats::kmeans(x = matrix, centers = cluster_number, nstart = 25, iter.max = 1000)$cluster
+                        kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = kmeans_clusters))
+                        clustering$kmeans_cluster <- kmeans_clusters$kmeans_cluster[match(clustering$sample_unique_ID, kmeans_clusters$sample_unique_ID)]
                     }
                     
                 # Add back annotations to the output
