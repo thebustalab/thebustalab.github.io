@@ -21,11 +21,6 @@
 
     readCSV <- function() { return(readr::read_csv(file.choose())) }
 
-####kMeans
-
-    kMeans <- function()
-
-
 #### runMatrixAnalysis
 
     #' Runs a matrix analysis (clustering, kmeans, pca).
@@ -61,7 +56,9 @@
 
                                     kmeans = FALSE,
 
-                                    na_replacement = c("none", "mean", "zero")
+                                    na_replacement = c("none", "mean", "zero"),
+
+                                    ...
 
                                 ) {
 
@@ -218,26 +215,18 @@
                             }
                     }
 
+                    if( transpose == TRUE ) {
+
+                        matrix <- t(matrix)
+
+                    }
+
                 # Run hclust, if requested
 
                     if( analysis == "hclust" ) {
-
-                        if( transpose == TRUE ) {
-
-                            phylo <- ape::as.phylo(stats::hclust(stats::dist(t(matrix))))
-                            clustering <- ggtree::fortify(phylo)
-                            clustering$sample_unique_ID <- clustering$label
-
-                            return(clustering)
-                            stop("Returning transposed cluster output. Make sure all your variables have the same units!")
-
-                        } else {
-
-                            phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
-                            clustering <- ggtree::fortify(phylo)
-                            clustering$sample_unique_ID <- clustering$label
-
-                        }
+                        phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
+                        clustering <- ggtree::fortify(phylo)
+                        clustering$sample_unique_ID <- clustering$label
                     }
 
                 # Run PCA, if requested
@@ -294,8 +283,15 @@
                         cluster_number <- which(angles == min(angles)) + 1
 
                         kmeans_clusters <- stats::kmeans(x = matrix, centers = cluster_number, nstart = 25, iter.max = 1000)$cluster
-                        kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = kmeans_clusters))
+                        kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = paste0("cluster_", kmeans_clusters)))
                         clustering$kmeans_cluster <- kmeans_clusters$kmeans_cluster[match(clustering$sample_unique_ID, kmeans_clusters$sample_unique_ID)]
+                    }
+
+                # Return without annotations if transpose = TRUE
+
+                    if( transpose == TRUE ) {
+                        return(clustering)
+                        stop("Returning transposed cluster output. Make sure all your variables have the same units!")
                     }
                     
                 # Add back annotations to the output
