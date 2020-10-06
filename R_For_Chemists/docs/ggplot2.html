@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 13 Exercises 5 | R For Chemists</title>
+  <title>Chapter 4 ggplot2 | R For Chemists</title>
   <meta name="description" content="Textbook R For Chemists." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 13 Exercises 5 | R For Chemists" />
+  <meta property="og:title" content="Chapter 4 ggplot2 | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 13 Exercises 5 | R For Chemists" />
+  <meta name="twitter:title" content="Chapter 4 ggplot2 | R For Chemists" />
   
   <meta name="twitter:description" content="Textbook R For Chemists." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="PCA.html"/>
-<link rel="next" href="k-means.html"/>
+<link rel="prev" href="R-Basics.html"/>
+<link rel="next" href="Exercises-1.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -252,72 +252,87 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="Exercises_5" class="section level1">
-<h1><span class="header-section-number">Chapter 13</span> Exercises 5</h1>
-<p>In this set of exercises you will choose to complete one of the following options. For either option please note the following:</p>
-<ol style="list-style-type: decimal">
-<li><p>Refer to Chapter 12 for help with PCA and ordination plots.</p></li>
-<li><p>The data sets and the <code>runMatrixAnalysis()</code> function can all be loaded into your R Session by running the command below:</p></li>
-</ol>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="Exercises-5.html#cb60-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
-<li>When you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code>colnames()</code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</li>
-</ol>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="Exercises-5.html#cb61-1"></a>pts &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv&quot;</span>)</span>
-<span id="cb61-2"><a href="Exercises-5.html#cb61-2"></a><span class="kw">colnames</span>(pts)[<span class="dv">10</span><span class="op">:</span><span class="dv">20</span>]</span>
-<span id="cb61-3"><a href="Exercises-5.html#cb61-3"></a><span class="co">##  [1] &quot;electronegativity_pauling&quot;         </span></span>
-<span id="cb61-4"><a href="Exercises-5.html#cb61-4"></a><span class="co">##  [2] &quot;first_ionization_poten_eV&quot;         </span></span>
-<span id="cb61-5"><a href="Exercises-5.html#cb61-5"></a><span class="co">##  [3] &quot;second_ionization_poten_eV&quot;        </span></span>
-<span id="cb61-6"><a href="Exercises-5.html#cb61-6"></a><span class="co">##  [4] &quot;third_ionization_poten_eV&quot;         </span></span>
-<span id="cb61-7"><a href="Exercises-5.html#cb61-7"></a><span class="co">##  [5] &quot;electron_affinity_eV&quot;              </span></span>
-<span id="cb61-8"><a href="Exercises-5.html#cb61-8"></a><span class="co">##  [6] &quot;atomic_radius_ang&quot;                 </span></span>
-<span id="cb61-9"><a href="Exercises-5.html#cb61-9"></a><span class="co">##  [7] &quot;ionic_radius_ang&quot;                  </span></span>
-<span id="cb61-10"><a href="Exercises-5.html#cb61-10"></a><span class="co">##  [8] &quot;covalent_radius_ang&quot;               </span></span>
-<span id="cb61-11"><a href="Exercises-5.html#cb61-11"></a><span class="co">##  [9] &quot;atomic_volume_cm3_per_mol&quot;         </span></span>
-<span id="cb61-12"><a href="Exercises-5.html#cb61-12"></a><span class="co">## [10] &quot;electrical_conductivity_mho_per_cm&quot;</span></span>
-<span id="cb61-13"><a href="Exercises-5.html#cb61-13"></a><span class="co">## [11] &quot;specific_heat_J_per_g_K&quot;</span></span></code></pre></div>
-<p>We can use that command in the template, as in the example below. With the notation <code>colnames(pts)[c(5:7,9:25)]</code>, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run <code>c(5:7,9:25)</code> in the console, and what happens when you run <code>colnames(pts)[c(5:7,9:25)]</code> in the console). With the notation <code>colnames(pts)[c(1:4, 8)]</code> we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run <code>c(1:4, 8)</code> in the console, and what happens when you run <code>colnames(pts)[c(1:4, 8)]</code> in the console).</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="Exercises-5.html#cb62-1"></a>pca &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb62-2"><a href="Exercises-5.html#cb62-2"></a>  <span class="dt">data =</span> pts,</span>
-<span id="cb62-3"><a href="Exercises-5.html#cb62-3"></a>  <span class="dt">analysis =</span> <span class="st">&quot;pca&quot;</span>,</span>
-<span id="cb62-4"><a href="Exercises-5.html#cb62-4"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb62-5"><a href="Exercises-5.html#cb62-5"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb62-6"><a href="Exercises-5.html#cb62-6"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(pts)[<span class="kw">c</span>(<span class="dv">5</span><span class="op">:</span><span class="dv">7</span>,<span class="dv">9</span><span class="op">:</span><span class="dv">25</span>)],</span>
-<span id="cb62-7"><a href="Exercises-5.html#cb62-7"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
-<span id="cb62-8"><a href="Exercises-5.html#cb62-8"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">colnames</span>(pts)[<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">8</span>)]</span>
-<span id="cb62-9"><a href="Exercises-5.html#cb62-9"></a>)</span></code></pre></div>
-<p>Use the two suggestions above to help you complete one of the two options below.</p>
-<div id="option-1-human-metabolomics." class="section level2">
-<h2><span class="header-section-number">13.1</span> Option 1: Human metabolomics.</h2>
-<p>This first option is to work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:</p>
-<ol style="list-style-type: decimal">
-<li>Obtain the data and the latest version of <code>runMatrixAnalysis()</code> by running the following in your R console. Once you do that, the data set will be available as <code>ckd_data</code>.</li>
-</ol>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="Exercises-5.html#cb63-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>Run a PCA analysis of the data (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
-<li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.</li>
-<li>Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca-ord"</code>).</li>
-<li>Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.</li>
-<li>Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.</li>
-</ol>
+<div id="ggplot2" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> ggplot2</h1>
+<p>For visualization, we’re going to use <code>ggplot2</code> - a powerful set of commands for plot generation. Let’s make sure we’ve got our data from the last chapter active in our current session:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="ggplot2.html#cb12-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb12-2"><a href="ggplot2.html#cb12-2"></a>algae_chemistry &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
+<span id="cb12-3"><a href="ggplot2.html#cb12-3"></a>algae_chemistry_small &lt;-<span class="st"> </span><span class="kw">filter</span>(algae_chemistry, chemical_species <span class="op">==</span><span class="st"> &quot;FAs&quot;</span>)</span>
+<span id="cb12-4"><a href="ggplot2.html#cb12-4"></a>algae_chemistry_small</span>
+<span id="cb12-5"><a href="ggplot2.html#cb12-5"></a><span class="co">## # A tibble: 18 x 5</span></span>
+<span id="cb12-6"><a href="ggplot2.html#cb12-6"></a><span class="co">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
+<span id="cb12-7"><a href="ggplot2.html#cb12-7"></a><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
+<span id="cb12-8"><a href="ggplot2.html#cb12-8"></a><span class="co">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
+<span id="cb12-9"><a href="ggplot2.html#cb12-9"></a><span class="co">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
+<span id="cb12-10"><a href="ggplot2.html#cb12-10"></a><span class="co">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
+<span id="cb12-11"><a href="ggplot2.html#cb12-11"></a><span class="co">##  4         1 Tsv1         Light             FAs                   580.</span></span>
+<span id="cb12-12"><a href="ggplot2.html#cb12-12"></a><span class="co">##  5         2 Tsv1         Light             FAs                   535.</span></span>
+<span id="cb12-13"><a href="ggplot2.html#cb12-13"></a><span class="co">##  6         3 Tsv1         Light             FAs                   513.</span></span>
+<span id="cb12-14"><a href="ggplot2.html#cb12-14"></a><span class="co">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
+<span id="cb12-15"><a href="ggplot2.html#cb12-15"></a><span class="co">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
+<span id="cb12-16"><a href="ggplot2.html#cb12-16"></a><span class="co">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
+<span id="cb12-17"><a href="ggplot2.html#cb12-17"></a><span class="co">## 10         1 Tsv2         Light             FAs                   490.</span></span>
+<span id="cb12-18"><a href="ggplot2.html#cb12-18"></a><span class="co">## 11         2 Tsv2         Light             FAs                   541.</span></span>
+<span id="cb12-19"><a href="ggplot2.html#cb12-19"></a><span class="co">## 12         3 Tsv2         Light             FAs                   461.</span></span>
+<span id="cb12-20"><a href="ggplot2.html#cb12-20"></a><span class="co">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
+<span id="cb12-21"><a href="ggplot2.html#cb12-21"></a><span class="co">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
+<span id="cb12-22"><a href="ggplot2.html#cb12-22"></a><span class="co">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
+<span id="cb12-23"><a href="ggplot2.html#cb12-23"></a><span class="co">## 16         1 Tsv11        Light             FAs                   526.</span></span>
+<span id="cb12-24"><a href="ggplot2.html#cb12-24"></a><span class="co">## 17         2 Tsv11        Light             FAs                   514.</span></span>
+<span id="cb12-25"><a href="ggplot2.html#cb12-25"></a><span class="co">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
+<p>Great! Looks like we’re ready to go.</p>
+<div id="setting-up-a-ggplot" class="section level2">
+<h2><span class="header-section-number">4.1</span> Setting up a ggplot</h2>
+<p>There are three steps to setting up a ggplot:</p>
+<div id="step-1-define-the-data-you-want-to-use." class="section level3">
+<h3><span class="header-section-number">4.1.1</span> Step 1: Define the data you want to use.</h3>
+<p>We do this using the ggplot function’s data argument. When we run that line, it just shows a grey plot space. Why is this? It’s because all we’ve done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven’t explained how to represent features of the data using ink.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="ggplot2.html#cb13-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_small)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-16-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
-<div id="option-2-grape-vine-varieties" class="section level2">
-<h2><span class="header-section-number">13.2</span> Option 2: Grape vine varieties</h2>
-<p>This second option is to work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:</p>
-<ol style="list-style-type: decimal">
-<li>Obtain the data and the latest version of <code>runMatrixAnalysis()</code> by running the following in your R console. Once you do that, the dataset will be available as <code>wine_grape_data</code>.</li>
-</ol>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="Exercises-5.html#cb64-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>Run a PCA analysis of the data (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
-<li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.</li>
-<li>Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca-ord"</code>).</li>
-<li>Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.</li>
-<li>Bingo! These analytes are associated with those varieites and could be biomarkers for such.</li>
-</ol>
+<div id="step-2-define-how-your-variables-map-onto-the-axes." class="section level3">
+<h3><span class="header-section-number">4.1.2</span> Step 2: Define how your variables map onto the axes.</h3>
+<p>This is called aesthetic mapping and is done with the <code>aes()</code> function. <code>aes()</code> should be placed inside the <code>ggplot</code> command. Now when we run it, we get our axes!</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="ggplot2.html#cb14-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_small, <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance))</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-17-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+<div id="step-3-use-geometric-shapes-to-represent-other-variables-in-your-data." class="section level3">
+<h3><span class="header-section-number">4.1.3</span> Step 3: Use geometric shapes to represent other variables in your data.</h3>
+<p>Map your variables onto the geometric features of the shapes. To define which shape should be used, use a <code>geom_*</code> command. Some options are, for example, <code>geom_point()</code>, <code>geom_boxplot()</code>, and <code>geom_violin()</code>. These functions should be added to your plot using the <code>+</code> sign. We can use a new line to keep the code from getting too wide, just make sure the <code>+</code> sign is at the end fo the top line. Again, use <code>aes()</code> to map your variables onto the geometric features of the shapes. Let’s try it:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="ggplot2.html#cb15-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_small, <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb15-2"><a href="ggplot2.html#cb15-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> harvesting_regime))</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-18-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="geoms" class="section level2">
+<h2><span class="header-section-number">4.2</span> Geoms</h2>
+<div id="modifying-geoms" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Modifying geoms</h3>
+<p>In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. Here’s an example:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="ggplot2.html#cb16-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_small, <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb16-2"><a href="ggplot2.html#cb16-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> harvesting_regime), <span class="dt">size =</span> <span class="dv">5</span>)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-19-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>One powerful aspect of <code>ggplot</code> is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="ggplot2.html#cb17-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_small, <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span></span>
+<span id="cb17-2"><a href="ggplot2.html#cb17-2"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">size =</span> harvesting_regime), <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-20-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>** Important note: Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black”.</p>
+</div>
+<div id="using-multiple-geoms" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> Using multiple geoms</h3>
+<p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="ggplot2.html#cb18-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_small, <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb18-2"><a href="ggplot2.html#cb18-2"></a><span class="st">  </span><span class="kw">geom_violin</span>() <span class="op">+</span></span>
+<span id="cb18-3"><a href="ggplot2.html#cb18-3"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> harvesting_regime), <span class="dt">size =</span> <span class="dv">5</span>)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-21-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="ggplot2.html#cb19-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> algae_chemistry_small, <span class="kw">aes</span>(<span class="dt">x =</span> algae_strain, <span class="dt">y =</span> abundance)) <span class="op">+</span></span>
+<span id="cb19-2"><a href="ggplot2.html#cb19-2"></a><span class="st">    </span><span class="kw">geom_violin</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> algae_strain)) <span class="op">+</span></span>
+<span id="cb19-3"><a href="ggplot2.html#cb19-3"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> harvesting_regime, <span class="dt">size =</span> replicate))</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-22-1.png" width="576" style="display: block; margin: auto;" /></p>
 <!-- end -->
-<!-- start k-means -->
+<!-- start Exercises 1 -->
+</div>
 </div>
 </div>
             </section>
@@ -325,8 +340,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="PCA.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="k-means.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="R-Basics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="Exercises-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

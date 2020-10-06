@@ -1710,12 +1710,19 @@ ggplot(mdata_windgroup_analyzed) +
 
 # Additional Functions
 
-```{r}
-## Built-in R database "Motor Trend Car Road Tests (mtcars)"
+Here are a few additional functions you may need.
+
+```{r, message = FALSE}
+## Let's load our CHEM5725 environment
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+
+## Let's work with the built-in R database "Motor Trend Car Road Tests (mtcars)"
 library(dplyr)
 data(mtcars)  # load the data
 head(mtcars,6)  # view the first 6 rows
 ?mtcars  # view the "help" with details on variables
+
+## Now let's look at a few new functions:
 
 # mutate function ------------------------------
 # Add a column "kilometers per liter (klp)" and calculate using mpg
@@ -1735,7 +1742,9 @@ efficiency <- mutate(mtcars,fuel_efficient = case_when(
 # Common with survey data when a subset of the population
 # is used to estimate the whole population. A weight is
 # applied to "scale up" the survey size.
-population_estimate <- summarize(data, utility = weighted.mean(utility,weight))
+
+# population_estimate <- summarize(data, utility = weighted.mean(utility,weight))
+population_estimate <- summarize(data, COSTELEC = weighted.mean(COSTELEC,HHWT))
 
 # Review of filter, group_by, summarize, and %>%
 # How many cars with 8 cylinders have automatic transmissions?

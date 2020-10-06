@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-10-05" />
+<meta name="date" content="2020-10-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -145,15 +145,15 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2" data-path="R-Basics.html"><a href="R-Basics.html#functions"><i class="fa fa-check"></i><b>3.2</b> Functions</a></li>
 <li class="chapter" data-level="3.3" data-path="R-Basics.html"><a href="R-Basics.html#objects"><i class="fa fa-check"></i><b>3.3</b> Objects</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="Visualization-1.html"><a href="Visualization-1.html"><i class="fa fa-check"></i><b>4</b> Visualization 1</a><ul>
-<li class="chapter" data-level="4.1" data-path="Visualization-1.html"><a href="Visualization-1.html#setting-up-a-ggplot"><i class="fa fa-check"></i><b>4.1</b> Setting up a ggplot</a><ul>
-<li class="chapter" data-level="4.1.1" data-path="Visualization-1.html"><a href="Visualization-1.html#step-1-define-the-data-you-want-to-use."><i class="fa fa-check"></i><b>4.1.1</b> Step 1: Define the data you want to use.</a></li>
-<li class="chapter" data-level="4.1.2" data-path="Visualization-1.html"><a href="Visualization-1.html#step-2-define-how-your-variables-map-onto-the-axes."><i class="fa fa-check"></i><b>4.1.2</b> Step 2: Define how your variables map onto the axes.</a></li>
-<li class="chapter" data-level="4.1.3" data-path="Visualization-1.html"><a href="Visualization-1.html#step-3-use-geometric-shapes-to-represent-other-variables-in-your-data."><i class="fa fa-check"></i><b>4.1.3</b> Step 3: Use geometric shapes to represent other variables in your data.</a></li>
+<li class="chapter" data-level="4" data-path="ggplot2.html"><a href="ggplot2.html"><i class="fa fa-check"></i><b>4</b> ggplot2</a><ul>
+<li class="chapter" data-level="4.1" data-path="ggplot2.html"><a href="ggplot2.html#setting-up-a-ggplot"><i class="fa fa-check"></i><b>4.1</b> Setting up a ggplot</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="ggplot2.html"><a href="ggplot2.html#step-1-define-the-data-you-want-to-use."><i class="fa fa-check"></i><b>4.1.1</b> Step 1: Define the data you want to use.</a></li>
+<li class="chapter" data-level="4.1.2" data-path="ggplot2.html"><a href="ggplot2.html#step-2-define-how-your-variables-map-onto-the-axes."><i class="fa fa-check"></i><b>4.1.2</b> Step 2: Define how your variables map onto the axes.</a></li>
+<li class="chapter" data-level="4.1.3" data-path="ggplot2.html"><a href="ggplot2.html#step-3-use-geometric-shapes-to-represent-other-variables-in-your-data."><i class="fa fa-check"></i><b>4.1.3</b> Step 3: Use geometric shapes to represent other variables in your data.</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="Visualization-1.html"><a href="Visualization-1.html#geoms"><i class="fa fa-check"></i><b>4.2</b> Geoms</a><ul>
-<li class="chapter" data-level="4.2.1" data-path="Visualization-1.html"><a href="Visualization-1.html#modifying-geoms"><i class="fa fa-check"></i><b>4.2.1</b> Modifying geoms</a></li>
-<li class="chapter" data-level="4.2.2" data-path="Visualization-1.html"><a href="Visualization-1.html#using-multiple-geoms"><i class="fa fa-check"></i><b>4.2.2</b> Using multiple geoms</a></li>
+<li class="chapter" data-level="4.2" data-path="ggplot2.html"><a href="ggplot2.html#geoms"><i class="fa fa-check"></i><b>4.2</b> Geoms</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="ggplot2.html"><a href="ggplot2.html#modifying-geoms"><i class="fa fa-check"></i><b>4.2.1</b> Modifying geoms</a></li>
+<li class="chapter" data-level="4.2.2" data-path="ggplot2.html"><a href="ggplot2.html#using-multiple-geoms"><i class="fa fa-check"></i><b>4.2.2</b> Using multiple geoms</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="Exercises-1.html"><a href="Exercises-1.html"><i class="fa fa-check"></i><b>5</b> Exercises 1</a><ul>
@@ -234,6 +234,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="C.2" data-path="faq.html"><a href="faq.html#order-categorical-axes"><i class="fa fa-check"></i><b>C.2</b> Order categorical axes</a></li>
 </ul></li>
 <li class="chapter" data-level="D" data-path="pca-and-big-data.html"><a href="pca-and-big-data.html"><i class="fa fa-check"></i><b>D</b> PCA and Big Data</a></li>
+<li class="chapter" data-level="E" data-path="additional-functions.html"><a href="additional-functions.html"><i class="fa fa-check"></i><b>E</b> Additional Functions</a></li>
 </ul>
 
       </nav>
@@ -319,7 +320,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb68-51"><a href="faq.html#cb68-51"></a>           <span class="kw">aes</span>(<span class="dt">x =</span> status, <span class="dt">y =</span> tree_height, <span class="dt">fill =</span> status), <span class="dt">stroke =</span> <span class="fl">1.5</span>, <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span><span class="st"> </span></span>
 <span id="cb68-52"><a href="faq.html#cb68-52"></a><span class="kw">theme_bw</span>() <span class="op">+</span></span>
 <span id="cb68-53"><a href="faq.html#cb68-53"></a><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> status_color)</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-108-1.png" width="576" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-108-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>But what if we want the order on the x-axis to be from worst <code>status</code> to best? We need to make the <code>status</code> column into factors (a list of characters that has an order other than alphabetical). Here’s how:</p>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="faq.html#cb69-1"></a>tree_data_status_summary<span class="op">$</span>status &lt;-<span class="st"> </span><span class="kw">factor</span>(tree_data_status_summary<span class="op">$</span>status, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)) <span class="co"># note that we specify the order we want right here in &quot;levels&quot;...</span></span>
 <span id="cb69-2"><a href="faq.html#cb69-2"></a></span>
@@ -332,7 +333,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb69-9"><a href="faq.html#cb69-9"></a>           <span class="kw">aes</span>(<span class="dt">x =</span> status, <span class="dt">y =</span> tree_height, <span class="dt">fill =</span> status), <span class="dt">stroke =</span> <span class="fl">1.5</span>, <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span><span class="st"> </span></span>
 <span id="cb69-10"><a href="faq.html#cb69-10"></a><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span></span>
 <span id="cb69-11"><a href="faq.html#cb69-11"></a><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> status_color)</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-109-1.png" width="576" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-109-1.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 </div>
             </section>
