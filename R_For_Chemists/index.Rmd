@@ -1743,8 +1743,7 @@ efficiency <- mutate(mtcars,fuel_efficient = case_when(
 # is used to estimate the whole population. A weight is
 # applied to "scale up" the survey size.
 
-# population_estimate <- summarize(data, utility = weighted.mean(utility,weight))
-population_estimate <- summarize(data, COSTELEC = weighted.mean(COSTELEC,HHWT))
+# population_estimate <- summarize(<data>, <utility> = weighted.mean(<utility>,<weight>))
 
 # Review of filter, group_by, summarize, and %>%
 # How many cars with 8 cylinders have automatic transmissions?

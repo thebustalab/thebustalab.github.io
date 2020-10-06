@@ -294,20 +294,19 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb74-37"><a href="additional-functions.html#cb74-37"></a><span class="co"># is used to estimate the whole population. A weight is</span></span>
 <span id="cb74-38"><a href="additional-functions.html#cb74-38"></a><span class="co"># applied to &quot;scale up&quot; the survey size.</span></span>
 <span id="cb74-39"><a href="additional-functions.html#cb74-39"></a></span>
-<span id="cb74-40"><a href="additional-functions.html#cb74-40"></a><span class="co"># population_estimate &lt;- summarize(data, utility = weighted.mean(utility,weight))</span></span>
-<span id="cb74-41"><a href="additional-functions.html#cb74-41"></a>population_estimate &lt;-<span class="st"> </span><span class="kw">summarize</span>(data, <span class="dt">COSTELEC =</span> <span class="kw">weighted.mean</span>(COSTELEC,HHWT))</span>
-<span id="cb74-42"><a href="additional-functions.html#cb74-42"></a></span>
-<span id="cb74-43"><a href="additional-functions.html#cb74-43"></a><span class="co"># Review of filter, group_by, summarize, and %&gt;%</span></span>
-<span id="cb74-44"><a href="additional-functions.html#cb74-44"></a><span class="co"># How many cars with 8 cylinders have automatic transmissions?</span></span>
-<span id="cb74-45"><a href="additional-functions.html#cb74-45"></a>mtcars <span class="op">%&gt;%</span></span>
-<span id="cb74-46"><a href="additional-functions.html#cb74-46"></a><span class="st">  </span><span class="kw">filter</span>(cyl <span class="op">&gt;</span><span class="st"> </span><span class="dv">6</span>) <span class="op">%&gt;%</span></span>
-<span id="cb74-47"><a href="additional-functions.html#cb74-47"></a><span class="st">  </span><span class="kw">group_by</span>(am) <span class="op">%&gt;%</span></span>
-<span id="cb74-48"><a href="additional-functions.html#cb74-48"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>())</span>
-<span id="cb74-49"><a href="additional-functions.html#cb74-49"></a><span class="co">## # A tibble: 2 x 2</span></span>
-<span id="cb74-50"><a href="additional-functions.html#cb74-50"></a><span class="co">##      am     n</span></span>
-<span id="cb74-51"><a href="additional-functions.html#cb74-51"></a><span class="co">##   &lt;dbl&gt; &lt;int&gt;</span></span>
-<span id="cb74-52"><a href="additional-functions.html#cb74-52"></a><span class="co">## 1     0    12</span></span>
-<span id="cb74-53"><a href="additional-functions.html#cb74-53"></a><span class="co">## 2     1     2</span></span></code></pre></div>
+<span id="cb74-40"><a href="additional-functions.html#cb74-40"></a><span class="co"># population_estimate &lt;- summarize(&lt;data&gt;, &lt;utility&gt; = weighted.mean(&lt;utility&gt;,&lt;weight&gt;))</span></span>
+<span id="cb74-41"><a href="additional-functions.html#cb74-41"></a></span>
+<span id="cb74-42"><a href="additional-functions.html#cb74-42"></a><span class="co"># Review of filter, group_by, summarize, and %&gt;%</span></span>
+<span id="cb74-43"><a href="additional-functions.html#cb74-43"></a><span class="co"># How many cars with 8 cylinders have automatic transmissions?</span></span>
+<span id="cb74-44"><a href="additional-functions.html#cb74-44"></a>mtcars <span class="op">%&gt;%</span></span>
+<span id="cb74-45"><a href="additional-functions.html#cb74-45"></a><span class="st">  </span><span class="kw">filter</span>(cyl <span class="op">&gt;</span><span class="st"> </span><span class="dv">6</span>) <span class="op">%&gt;%</span></span>
+<span id="cb74-46"><a href="additional-functions.html#cb74-46"></a><span class="st">  </span><span class="kw">group_by</span>(am) <span class="op">%&gt;%</span></span>
+<span id="cb74-47"><a href="additional-functions.html#cb74-47"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>())</span>
+<span id="cb74-48"><a href="additional-functions.html#cb74-48"></a><span class="co">## # A tibble: 2 x 2</span></span>
+<span id="cb74-49"><a href="additional-functions.html#cb74-49"></a><span class="co">##      am     n</span></span>
+<span id="cb74-50"><a href="additional-functions.html#cb74-50"></a><span class="co">##   &lt;dbl&gt; &lt;int&gt;</span></span>
+<span id="cb74-51"><a href="additional-functions.html#cb74-51"></a><span class="co">## 1     0    12</span></span>
+<span id="cb74-52"><a href="additional-functions.html#cb74-52"></a><span class="co">## 2     1     2</span></span></code></pre></div>
 <!-- end -->
 
 </div>
