@@ -1,0 +1,1750 @@
+--- 
+title: "R For Chemists"
+author: "Lucas Busta"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+always_allow_html: yes
+output:
+  bookdown::gitbook:
+    highlight: tango
+    df_print: tibble
+    css: style.css
+    config:
+      toc:
+        collapse: section
+      fontsettings:
+        theme: white
+        family: sans
+        size: 2 
+      toolbar:
+        position: fixed     
+documentclass: book
+bibliography: [bio723-book.bib]
+biblio-style: apalike
+link-citations: yes
+description: "Textbook R For Chemists."
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE, 
+                      warning = FALSE, comment="##", cache = TRUE,
+                      fig.width = 6, fig.height = 4, #results = "hide",
+                      collapse=TRUE, results='markup', max.print=6,
+                      fig.align = "center")
+  
+options(pillar.sigfig = 3)
+```
+
+<!--
+setwd("/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/")
+bookdown::render_book("index.Rmd")
+-->
+
+<!-- start Introduction--> 
+# Introduction
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/R_For_Chemists_logo.jpg', dpi = NA)
+```
+
+<!-- end -->
+
+<!-- start Installation-->
+# Installation
+
+## Installing `R`
+
+R is the computing language we will use to run our chemometric analyses and produce high quality plots. If you already have R installed, you can go straight to installing RStudio. If not, follow these steps to install R:
+
+1. Go to https://cran.r-project.org/
+2. Click on "Download R for \<your operating system\>" (see footnote), depending on your operating system you will select "Download R for Linux", "Download R for (Mac) OS X", or "Download R for Windows".
+
+footnote: We will use \<this notation\> quite a bit. It indicates a place where you should insert information, data, or something similar that corresponds to your particular situation. In this example it means insert "your operating system", i.e. Linux, (Mac) OS X, or Windows.
+
+3. For Mac: download the .pkg file for the latest release. As of 8/31/2020, this is R-4.0.2.pkg. For PC: click "install R for the first time", then click "Download R 4.0.2 for Windows".
+
+4. After the executable finishes downloading (in Windows, it is a file with .exe extension; for Mac, it is a .dmg file or a .dmg inside a .pkg file), open the file as an administrator, and follow the installation instructions. R should install without any problems. You can click OK for all of the windows that pop-up during installation, and choose a "regular" installation (if given the choice). 
+
+If you have trouble installing R please google "Install R Mac" or "Install R PC" and following one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.
+
+## Installing `RStudio`
+
+Once we install R, we can install RStudio, which is essentially a convenient way of interacting with R. Some people do not like RStudio and prefer to interact with R directly. This is fine, but many beginning R users find RStudio helpful, so I recommend it. Follow these steps to install RStudio:
+
+1. Go to https://rstudio.com/
+2. Click "DOWNLOAD" at the top of the page.
+3. Click the "DOWNLOAD" button that corresponds to RStudio Desktop with the free Open Source License.
+4. The page may automatically detect which operating system you are using and recommend a version for you. If it does, download that file (.exe for PC or .dmg for Mac). If not, scroll down to the "All Installers" section and download the file that is right for you. Open the file as an administrator, and follow the installation instructions. RStudio should install without any problems. You can click OK for all of the windows that pop-up during installation, and choose a "regular" installation (if given the choice). 
+
+If you have trouble installing RStudio please google "Install RStudio Mac" or "Install RStudio PC" and following one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.
+
+## Verifying installations
+
+Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr::include_graphics('http://thebustalab.github.io/phylochemistry/figures/rstudio_components.png', dpi = NA)
+```
+
+The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.
+
+```{r, message = FALSE}
+head(Indometh)
+```
+
+Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin dataset in a basic way.
+
+```{r, message = FALSE}
+plot(Indometh)
+```
+
+If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
+
+## Installing the `tidyverse`
+
+For us to run our analyses, we need to install a set of add-on functions that expand R's capabilities. These functions are collected in something called the `tidyverse`, a very well-known and widely-used R package developed by Hadley Wickham. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type `install.packages("tidyverse", repos = "http://cran.us.r-project.org")` to install the tidyverse. RSudio might ask you: "Do you want to install from sources the packages which need compilation? (Yes/no/cancel)", for now, type `no` and press enter.
+
+```{r, message = FALSE}
+install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+```
+
+Let's make sure your version of the `tidyverse` is installed correctly. To do this, we will load the `tidyverse` library/package inside of an R session. We can do this using `library(tidyverse)`. Let's try it:
+```{r, message = FALSE}
+library(tidyverse)
+```
+
+If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the `tidyverse`. If this still fails, please contact me.
+
+<!-- end -->
+
+<!-- start R Basics -->
+# R Basics {#R_Basics}
+
+Now that we've got R, RStudio, and the `tidyverse` installed, we're going to look at a few core concepts in R.
+
+## Before we start...
+
+### Help
+
+Throughout your time with R, you will probably want help. I ceratinly do. You can use a question mark `?` to get help with many different concepts. You can just put it in front of the thing you want help with. We'll see an example in just a minute...
+
+### Syntax
+
+Throughout this book, we'll use this `<notation>` to indicate a place where the requested item that corresponds to your situation. For example, if I am instructed to run this command: `print("<your_name_here>")`, I would type:
+```{r, message = FALSE}
+print("Luke")
+```
+
+Computers are very powerful but can be dumb at times. They are not very good with unexpected characters - they are often particularly sensitive when it comes to spaces ` `, slashes `\` `/`, equal signs `=` (vs. `==`), and quotes `"`. This book will try to warn you when syntax issues may arise. To try and prevent issues, this book will also use snake case (see the image below) - consider doing the same to avoid problems!
+
+```{r, message = FALSE, fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr::include_graphics('http://lucasbusta.github.io/phylochemistry/figures/in_that_case.png', dpi = NA)
+```
+
+### Paths
+
+To analyze data on your own computer, you will need to know the "path" to your data. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
+
+* On Mac: `/Users/lucasbusta/Documents/sample_data_set.csv` (note the forward slashes!)
+* On PC: `C:\My Computer\Documents\sample_data_set.csv` (note the backward slashes!)
+
+You can quickly find paths to files via the following:
+
+* On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
+* On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
+
+On either operating system, if you don't want to type paths into your command line, another option is to define the following function within your R Session. You can do that by pasting the line below into your R Console and pressing enter.
+
+```{r, message = FALSE}
+readCSV <- function() { return(readr::read_csv(file.choose())) }
+```
+
+Once that is done, you can use the command `readCSV()` to open up a navigation window and select your file that way. Cool!
+
+## Functions
+
+Ok, we've got some bookkeeping out of the way. Let's get down to working with data! For this we need functions:
+
+* A function is a command that tells R to perform an action!
+* A function begins and ends with parentheses: `this_is_a_function()`
+* The stuff inside the parentheses are the details of how you want the function to perform its action: `run_this_analysis(on_this_data)`
+
+Let's illustrate this with an example. We're going to use a function from the `tidyverse` called `read_csv`. This means we need to first load the `tidyverse`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
+
+```{r, message = FALSE}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+```
+
+** Note, we also could have imported this data by using `readCSV()` and then navigating to and selecting our file.
+
+## Objects
+
+You can think of objects as if they were "files" inside an R session where information can be stored. Let's try making an object. All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
+
+```{r, message = FALSE}
+algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+
+# Alternative:
+# algae_chemistry <- readCSV()
+```
+
+Now we have an object called `algae_chemistry`. We can examine the contents of that object by typing its name. For example:
+```{r, message = FALSE}
+algae_chemistry
+```
+
+Cool! However, this is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_chemistry` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_chemistry` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
+
+```{r, message = FALSE}
+filter(algae_chemistry, chemical_species == "FAs")
+```
+
+Cool! Now it's just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let's write this new, smaller dataset into a new object. For that we use `<-`, remember?
+
+```{r, message = FALSE}
+algae_data_small <- filter(algae_chemistry, chemical_species == "FAs")
+```
+
+Now we have a nice, small table that we can use to practice data visualization. We'll do that in the next chapter.
+<!-- end -->
+
+<!-- start ggplot2 -->
+# ggplot2 {#ggplot2}
+
+For visualization, we're going to use `ggplot2` - a powerful set of commands for plot generation. Let's make sure we've got our data from the last chapter active in our current session:
+
+```{r, message = FALSE}
+library(tidyverse)
+algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+algae_chemistry_small <- filter(algae_chemistry, chemical_species == "FAs")
+algae_chemistry_small
+```
+
+Great! Looks like we're ready to go.
+
+## Setting up a ggplot
+
+There are three steps to setting up a ggplot:
+
+### Step 1: Define the data you want to use.
+
+We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
+
+```{r, message = FALSE}
+ggplot(data = algae_chemistry_small)
+```
+
+### Step 2: Define how your variables map onto the axes.
+
+This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
+
+```{r, message = FALSE}
+ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance))
+```
+
+### Step 3: Use geometric shapes to represent other variables in your data.
+
+Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Again, use `aes()` to map your variables onto the geometric features of the shapes. Let's try it:
+
+```{r, message = FALSE}
+ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
+  geom_point(aes(color = harvesting_regime))
+```
+
+## Geoms
+
+### Modifying geoms
+
+In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. Here's an example:
+
+```{r, message = FALSE}
+ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
+  geom_point(aes(color = harvesting_regime), size = 5)
+```
+
+One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
+
+```{r, message = FALSE}
+ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
+	geom_point(aes(size = harvesting_regime), color = "black")
+```
+
+** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
+
+### Using multiple geoms
+
+We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
+
+```{r}
+ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
+  geom_violin() +
+  geom_point(aes(color = harvesting_regime), size = 5)
+```
+
+As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
+
+```{r}
+ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
+	geom_violin(aes(fill = algae_strain)) +
+  geom_point(aes(color = harvesting_regime, size = replicate))
+```
+
+<!-- end -->
+
+<!-- start Exercises 1 -->
+# Exercises 1 {#Exercises_1}
+
+In this set of exercises we're going to practice importing, filtering, and plotting data. We're going to work with two datasets: (i) [algae_chemistry_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv) and (ii) [alaska_lake_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv). By clicking on those links you can download each dataset.
+
+**For these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like [here](https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R). If you have any questions please let me know**
+
+## Part 1: Algae Chemistry Dataset
+
+### Question 1: Importing data
+
+Import the algae chemistry data. Remember that `read_csv()` is part of the `tidyverse`, so that library needs to be loaded into your `R` session. Also remember that another option is to paste and run `readCSV <- function() { return(readr::read_csv(file.choose())) }` in your R Console, which then gives you access to the function `readCSV()`. That command doesn't require an input path, so you don't need to mess around with slashes and quotes. If you need examples of how to import data, please see the [R Basics](#R_Basics) section of this book.
+
+```{r, include = FALSE, message = FALSE}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+```
+
+### Question 2: Dataset dimensions
+
+How many rows and columns does the algae chemistry dataset have? (hint: when you display the dataset on your screen by typing its name into the console, dimensions are also displayed). Write the answer to this question in your R Script right below the code you use to find the answer.
+
+```{r, include = FALSE}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+# 180 x 5
+```
+
+### Question 3: Objects
+
+Import the algae chemistry data and send it into a new object called `algae_chemistry_data`. Remember about `<-`. See the [R Basics](#R_Basics) section of this book if you need help.
+
+```{r, include = FALSE}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+```
+
+### Question 4: Filtering
+
+#### A
+
+Now that you have the algae data imported and stored in an object called `algae_chemistry_data`, filter the data so that only entries are shown for which the `chemical_species` is "FAs". What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+
+```{r, include = FALSE}
+filter(algae_chemistry_data, chemical_species == "FAs")
+# 18 x 5
+```
+
+
+#### B
+
+Now filter the dataset so that only entries for the `algae_strain` "Tsv1" are shown. What are the dimensions of the resulting dataset?
+
+```{r, include = FALSE}
+filter(algae_chemistry_data, algae_strain == "Tsv1")
+# 60 x 5
+```
+
+#### C
+
+Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that `>` can be used in the filter command instead of `==`, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?
+
+```{r, include = FALSE}
+filter(algae_chemistry_data, abundance > 250)
+# 71 x 5
+```
+
+### Question 5: Plotting
+
+Make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axis. Remember about `aes()`. Use points (`geom_point()`) to represent each compound. You don't need to color the points. If you need a refresher on how to make a ggplot, please refer to the chapter on [ggplot2](#ggplot2).
+
+Which algae strain has the most abundant compound out of all the compounds in the dataset?
+
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = algae_strain, y = abundance)) + 
+  geom_point()
+#Tsv2
+```
+
+### Question 6: Plotting
+
+Make a ggplot that has `abundance` on the x axis and `chemical_species` on the y axis. Use points to represent each compound. You don't need to color the points.
+
+Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)
+
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) + 
+  geom_point()
+#non_essential_Aas and essential_Aas
+```
+
+### Question 7: Filtering and plotting
+
+I am going to show you an example of how you can filter and plot at the same time:
+
+```{r}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_chemistry_data, chemical_species == "essential_Aas"), aes(x = algae_strain, y = abundance)) +
+  geom_point()
+```
+
+Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
+
+```{r, include = FALSE}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_chemistry_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) +
+  geom_point(aes(color = harvesting_regime), size = 5)
+# light harvesting
+```
+
+### Question 8: Filtering and plotting
+
+Use a combination of filtering and plotting to show the abundance of the different chemical species in just the `algae_strain` called "Tsv1". Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.
+
+```{r, include = FALSE}
+library(tidyverse)
+algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime, size = replicate))
+# light harvesting
+```
+
+### Question 9: Open-ended plotting
+
+Make a plot that checks to see which `chemical_species` were more abundant under light as opposed to heavy `harvesting_regime` in all three replicates. Use filtered data so that just one `algae_strain` is shown, an x and a y axis, and points to represent the measurements. Make the points `size = 5` and also set the point's `alpha = 0.6`. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.
+
+```{r, include = FALSE}
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
+```
+
+```{r, include = FALSE}
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv2"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
+```
+
+```{r, include = FALSE}
+ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv11"), aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
+```
+
+### Question 10: A peek at what's to come...
+
+Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
+
+```{r, eval = FALSE} 
+ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) +
+  geom_point(aes(<some things>), <some here too>) +
+  facet_grid(.~algae_strain)
+```
+
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
+  facet_grid(.~algae_strain)
+```
+
+Also try, instead of `facet_grid(.~algae_strain)`, `facet_grid(algae_strain~.)` at the end of you plot command. (note the swap in the position of the `.~` relative to `algae_strain`). This means your code should look something like:
+
+```{r, eval = FALSE} 
+ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) +
+  geom_point(aes(<some things>), <some here too>) +
+  facet_grid(algae_strain~.)
+```
+
+```{r, include = FALSE}
+ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +
+  geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
+  facet_grid(algae_strain~.)
+```
+
+What advantages does this one extra line provide over what you had to do in question 9?
+
+## Part 2: Alaska Lakes Dataset
+
+### Question 1: Importing Data
+
+Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises.
+
+```{r, include = FALSE, message = FALSE}
+data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+```
+
+### Question 2: Objects
+
+How many variables are in the Alaska lakes dataset?
+
+```{r, include = FALSE}
+data
+# 220 x 7
+```
+
+### Question 3: Filtering
+
+Filter the data set so only meausurements of free elements are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset?
+
+```{r, include = FALSE}
+filter(data, element_type == "free")
+# 160 x 7
+```
+
+### Question 4: Plotting
+
+Make a plot that shows the water temperatures of each lake. Don't worry if you get a warning message from R about "missing values". Which is the hottest lake? The coolest?
+
+```{r, include = FALSE}
+ggplot(data, aes(x = lake, y = water_temp)) + geom_point() + coord_flip()
+# Lava Lake
+# Desperation Lake
+```
+
+### Question 5: Plotting
+
+Make a plot that shows the water temperature of each lake. The x axis should be `park`, the y axis `water temp`. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?
+
+```{r, include = FALSE}
+ggplot(data, aes(x = park, y = water_temp)) + 
+  geom_violin() +
+  geom_point(aes(color = water_temp), size = 5)
+# GAAR
+```
+
+### Question 6: Filtering and Plotting
+
+From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from `park == "NOAT"` are shown (note the double equals sign and the quotes around NOAT...). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.
+
+```{r, include = FALSE}
+ggplot(filter(data, park == "NOAT"), aes(x = lake, y = water_temp)) + 
+  geom_point()
+# Lake Narvakrak
+```
+
+### Question 7: Filtering and Plotting
+
+Make a plot that shows which lake has the highest abundance of sulfur.
+
+```{r, include = FALSE}
+ggplot(filter(data, element == "S"), aes(x = lake, y = mg_per_L)) + 
+  geom_point()
+```
+
+### Question 8: Open-ended Plotting
+
+Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly. Here is an example:
+
+```{r}
+library(tidyverse)
+lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+ggplot(data = filter(lake_data, lake == "Lake_Narvakrak"), aes(x = lake, y = mg_per_L)) +
+  geom_point(shape = 21, size = 10, color = "black", fill = "green")
+```
+
+Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
+
+```{r, include = FALSE}
+ggplot(filter(data, element == "C"), aes(x = park, y = mg_per_L)) + 
+  geom_point(shape = 21, size = 10, aes(fill = park), color = "black")
+```
+
+When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
+<!-- end -->
+
+<!-- start geoms, facets, scales, themes -->
+# geoms, facets, scales, themes {#geoms_facets_scales_themes}
+
+We've looked at how to import data, filter data, and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use this [solvents dataset](https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv).
+
+## Geoms
+
+I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
+
+```{r}
+library(tidyverse)
+solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv")
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point()
+```
+
+Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the center color and the border color, respectively.
+
+```{r}
+library(tidyverse)
+algae <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae, harvesting_regime == "Heavy"), aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black", size = 1)
+```
+
+These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
+
+There is a [handy cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+
+## Facets
+
+As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
+
+Here, we can facet in the horizontal direction:
+```{r}
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(.~replicate)
+```
+
+We can facet in the vertical direction:
+```{r}
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(replicate~.)
+```
+
+And we can do both at the same time:
+```{r}
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(harvesting_regime~replicate)
+```
+  
+Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
+
+## Scales
+
+Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
+
+```{r}
+ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(harvesting_regime~replicate) +
+  scale_fill_gradient(low = "white", high = "black") +
+  theme_classic()
+```
+  
+  
+## Themes
+  
+So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
+
+### Complete themes
+
+`ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_classic()
+```
+
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_dark()
+```
+  
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_void()
+```
+
+### Theme components
+
+You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme(
+    text = element_text(size = 20, color = "black")
+  )
+```
+
+Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth(color = "#4daf4a") +
+  scale_x_continuous(name = "Boiling Point", breaks = seq(0,200,25), limits = c(30,210)) +
+  scale_y_continuous(name = "Vapor Pressure", breaks = seq(0,600,50)) +
+  geom_point(color = "#377eb8", size = 4, alpha = 0.6) +
+  theme_bw() +
+  theme(
+    axis.text = element_text(color = "black"),
+    text = element_text(size = 20, color = "black")
+  )
+```
+<!-- end -->
+
+<!-- start Exercises 2 -->
+# Exercises 2 {#Exercises_2}
+
+In this set of exercises we're going to practice making more plots using the [solvents dataset](https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv). Since you are now familiar with importing, filtering, and plotting data, the prompts are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in [R Basics 2](#geoms_facets_scales_themes). This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this materal.** Don't forget about the ggplot cheat sheet.
+
+As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like [here](https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R). If you have any questions please let me know.
+
+## Question 1
+
+Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted.
+
+note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized. *Defend* your ideas with argument!
+
+## Question 2
+
+Create two plots that are identical except that one uses the `scales = "free"` feature of `facet_grid` while the other does not (i.e. one should use `facet_grid(<things>)`, whiel the other uses `facet_grid(<things>, scales = "free")`). Write a single caption that describes *both* plots, highlighting the advantages provided by each plot over the other.
+
+## Question 3
+
+Create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
+
+## Question 4
+
+Make a plot that has five aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the five mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape).
+
+## Question 5
+
+Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as `theme_classic()`, rather, manually modify components of the theme using `theme()`). This means that inside your `theme()` command, there should be three arguments separated by commas.
+<!-- end -->
+
+<!-- start summary statistics -->
+# Summary Statistics {#summary_statistics}
+
+## Summary statistics
+
+So far, we have been importing and plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the [NY Trees](https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv) dataset.
+
+The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
+
+```{r}
+library(tidyverse)
+ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
+ny_trees
+```
+
+More than 300,000 observations of 14 variables! That's 4.2M datapoints! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
+
+Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. Also, keep in mind that a single column of a dataset can be accessed using `$`. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
+
+```{r}
+mean(ny_trees$tree_height)
+sd(ny_trees$tree_height)
+```
+
+Great! But how to do this for each species? We need to divide up the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics. Please note that both `group_by()` and `summarize()` require `.data = ` as an argument, as opposed to `data = `, which we have been using up to this point.
+
+```{r}
+ny_trees_by_spc <- group_by(.data = ny_trees, spc_latin)
+summarize(.data = ny_trees_by_spc, mean_height = mean(tree_height))
+```
+
+Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
+
+```{r}
+ny_trees_by_spc <- group_by(.data = ny_trees, spc_latin)
+ny_trees_by_spc_summ <- summarize(.data = ny_trees_by_spc, mean_height = mean(tree_height), stdev_height = sd(tree_height))
+ny_trees_by_spc_summ
+```
+
+Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax`. Note that in this case, if we map spc_latin to the x axis, the x axis tick labels will have long names that will overlap in our plot. In the past we have avoided this by swapping the mappings of x and y in out plots. Here, this gets a bit tedious since we will have to change ymin and ymax as well. Instead of all this, we can just add `coord_flip()` to our plot, which will swap x and y axes automatically. Also, note that in the aesthetic mappings for `ymin` and `ymax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
+
+```{r}
+ggplot(data = ny_trees_by_spc_summ) +
+  geom_pointrange(
+      aes(
+        x = spc_latin,
+        y = mean_height,
+        ymin = mean_height - stdev_height,
+        ymax = mean_height + stdev_height
+      )
+    ) +
+    coord_flip()
+```
+
+Cool! Just like that we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out.
+
+```{r}
+ny_trees_by_spc_boro <- group_by(.data = ny_trees, spc_latin, boroname)
+ny_trees_by_spc_boro_summ <- summarize(.data = ny_trees_by_spc_boro, mean_diam = mean(tree_diameter), stdev_diam = sd(tree_diameter))
+ny_trees_by_spc_boro_summ
+```
+
+Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let's map boroname to x and facet over tree species, which used to be on x. We'll also manually modify the theme element `strip.text.y` to get the species names in a readable position.
+
+```{r}
+ggplot(data = ny_trees_by_spc_boro_summ) +
+  geom_pointrange(
+    aes(
+      x = boroname,
+      y = mean_diam,
+      ymin = mean_diam-stdev_diam,
+      ymax = mean_diam+stdev_diam
+    )
+  ) +
+  facet_grid(spc_latin~.) +
+  coord_flip() +
+  theme(
+    strip.text.y = element_text(angle = 0)
+  )
+```
+
+Excellent! And if we really want to go for something pretty:
+
+```{r fig.height = 10}
+library(RColorBrewer)
+ggplot(data = ny_trees_by_spc_boro_summ) +
+  geom_pointrange(
+    aes(
+      x = boroname,
+      y = mean_diam,
+      ymin = mean_diam-stdev_diam,
+      ymax = mean_diam+stdev_diam,
+      fill = spc_latin
+    ), color = "black", shape = 21
+  ) +
+  labs(
+    x = "Borough", 
+    y = "Trunk diameter",
+    caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
+  ) +
+  facet_grid(spc_latin~.) +
+  guides(fill = "none") +
+  scale_fill_brewer(palette = "Paired") +
+  coord_flip() +
+  theme_bw() +
+  theme(
+    strip.text.y = element_text(angle = 0),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
+
+
+*Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
+
+
+## The pipe (%>%)
+
+When we want to get summary statistics for a dataset, we often end up creating lots of new objects, sometimes with convoluted names. For example, what if we want to know and visualize the average temperature across the lakes in each of the three Alaska parks? We might do something like the below: 
+
+```{r}
+library(tidyverse)
+AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+head(AK_lakes)
+
+AK_lakes_by_park <- group_by(.data = AK_lakes, park)
+
+AK_lakes_by_park_summ <- summarize(.data = AK_lakes_by_park, mean_temperature = mean(water_temp))
+
+ggplot(AK_lakes_by_park_summ) + geom_point(aes(x = park, y = mean_temperature))
+```
+
+In order to do that, we created two new objects `AK_lakes_by_park` and `AK_lakes_by_park_summ`. In big analysis chains, we can end up creating lots of objects with complicated names. There must be a better way! There is. Meet the pipe: `%>%`. It sends the output from one command directly to the next, so we neither need to have each command create a new object, nor do we need to start each command by telling it what data to use. With the pipe, the same analysis as above can be done with the text below. Neat! Easier!
+
+```{r}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv") %>%
+
+group_by(park) %>%
+
+summarize(mean_temperature = mean(water_temp)) %>%
+
+ggplot() + geom_point(aes(x = park, y = mean_temperature))
+```
+
+## Tidy data
+
+When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
+
+```{r}
+library(tidyverse)
+FAs <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/fadb_sample.csv")
+FAs
+```
+
+While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = FAs`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
+
+```{r}
+pivot_longer(data = FAs, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
+```
+
+Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+<!-- end -->
+
+<!-- start Exercises 3 -->
+# Exercises 3 {#Exercises_3}
+
+Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
+
+In this set of exercises we are going to use the [Periodic Table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv) dataset. Please download and import that dataset into R. Then, open a new powerpoint presentation and make seven empty slides. There are seven questions below. Each will direct you to make a particular type of plot. Copy and paste those plots, in order, into the seven slides in your presentation. Paste the code underlying your figure into the "notes" section for that slide (the little space under the slide where you can write notes). If the question also requires some text to answer properly, put that text in the "notes" section as well. When you are done, email that presentation to me, which will comprise your submission for this assignment. Please let me know if you have any questions. Good luck, and have fun!
+
+## Question 1
+
+Make a plot using `geom_point()` that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?
+
+```{r, include = FALSE}
+pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+pt_by_year <- group_by(pt, year_discovered)
+pt_by_year_summ <- summarize(pt_by_year, mean = mean(atomic_mass_rounded))
+ggplot(pt_by_year_summ, aes(x = year_discovered, y = mean)) + geom_point()
+```
+
+## Question 2
+
+The column `state_at_RT` indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in `state_at_RT` (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?
+
+```{r, include = FALSE}
+pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+pt_by_year <- group_by(pt, state_at_RT)
+pt_by_year_summ <- summarize(pt_by_year, mean = mean(first_ionization_poten_eV), sd = sd(first_ionization_poten_eV))
+pt_by_year_summ
+ggplot(pt_by_year_summ, aes(x = state_at_RT, y = mean)) + geom_point()
+```
+
+## Question 3
+
+Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of `crystal_structure`? Make a plot using `geom_pointrange()` that shows the mean and standard deviation of each of these groups. What's up with elements that have a cubic crystal structure?
+
+```{r, include = FALSE}
+pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+pt_by_year <- group_by(filter(pt, atomic_number < 85), crystal_structure)
+pt_by_year_summ <- summarize(pt_by_year, mean = mean(boiling_point_C), sd = sd(boiling_point_C))
+pt_by_year_summ
+ggplot(pt_by_year_summ, 
+      aes(
+        x = crystal_structure, 
+        y = mean,
+        ymin = mean-sd, 
+        ymax = mean+sd)
+      ) +
+  geom_pointrange() +
+  coord_flip()
+```
+
+## Question 4
+
+Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four *periods* in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does "CHON" mean? (not the rock band, though they are also excellent, especially that song that features GoYama)
+
+```{r, include = FALSE}
+pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+pt_by_year <- group_by(filter(pt, atomic_number < 37), period)
+pt_by_year_summ <- summarize(pt_by_year, mean = mean(mg_per_L_in_seawater))
+pt_by_year_summ
+ggplot(pt_by_year_summ, 
+      aes(
+        x = period, 
+        y = mean
+      )) +
+  geom_point()
+```
+
+## Question 5
+
+Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each `group_number`. Use `geom_point()` and `geom_errorbar()` to illustrate the average, minimum, and maximum values for each group number.
+
+```{r, include = FALSE}
+pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+pt_by_year <- group_by(filter(pt, atomic_number < 103 & group_number != 18), group_number)
+pt_by_year_summ <- summarize(
+  pt_by_year,
+  mean = mean(electronegativity_pauling),
+  min = min(electronegativity_pauling),
+  max = max(electronegativity_pauling)
+)
+pt_by_year_summ
+ggplot(pt_by_year_summ, 
+      aes(
+        x = group_number, 
+        y = mean,
+        ymin = min, 
+        ymax = max)
+      ) +
+  geom_point() +
+  geom_errorbar() +
+  coord_flip()
+```
+
+## Question 6
+
+Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by `color`. Now filter out those that have `color == "colorless"`. Of the remaining elements, which has the widest range of specific heats? Use `geom_point()` and `geom_errorbar()` to illustrate the mean and standard deviation of each color's specific heats.
+
+```{r, include = FALSE}
+pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+pt_by_year <- group_by(filter(pt, atomic_number < 85 & color != "colorless"), color)
+pt_by_year_summ <- summarize(
+  pt_by_year,
+  mean = mean(specific_heat_J_per_g_K),
+  sd = sd(specific_heat_J_per_g_K)
+)
+pt_by_year_summ
+ggplot(pt_by_year_summ, 
+      aes(
+        x = color, 
+        y = mean,
+        ymin = mean-sd, 
+        ymax = mean+sd)
+      ) +
+  geom_point() +
+  geom_errorbar() +
+  coord_flip()
+```
+
+## Question 7
+
+You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
+<!-- end -->
+
+<!-- start hierarchical clustering -->
+# Clustering {#Clustering}
+
+So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use `runMatrixAnalysis()`, a function that you can load into your R Session by running the following command:
+
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+```
+
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R", local = knitr::knit_global())
+```
+
+In order for `runMatrixAnalysis()` to work, you will also need to install `ape` and `ggtree`. Use the code below to do that:
+
+```{r, eval = FALSE, message = FALSE}
+install.packages("ape", repos = "https://cloud.r-project.org", quiet = FALSE)
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+install.packages("BiocManager")
+
+BiocManager::install("ggtree")
+```
+
+With the requisite packages installed, we can use the template for `runMatrixAnalysis()` to begin our command. In order to use the template, it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaksa lakes data set:
+
+```{r, message = FALSE}
+library(tidyverse)
+AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+AK_lakes
+```
+
+We can see that this dataset is comprised of measuring various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structure. See the image below for an explanation.
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png', dpi = NA)
+```
+
+With this in mind, let's try out our template:
+
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R", local = knitr::knit_global())
+AK_lakes_clustered <- runMatrixAnalysis(
+                                
+    data = AK_lakes,
+
+    analysis = "hclust",
+
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    
+    columns_w_additional_analyte_info = "element_type",
+
+    columns_w_sample_ID_info = c("lake", "park")
+
+)
+AK_lakes_clustered
+```
+
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+```{r}
+library(ggtree)
+ggtree(tr = AK_lakes_clustered) +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic()
+```
+
+Cool! Though that plot could use some tweaking... let's try:
+
+```{r}
+ggtree(tr = AK_lakes_clustered) +
+		geom_tiplab(aes(label = lake), offset = 10) +
+		geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+		coord_cartesian(xlim = c(0,350))
+```
+ 
+ Very nice!
+<!-- end -->
+
+<!-- start Exercises 4-->
+# Exercises 4 {#Exercises_4}
+
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means 
+[the algae data](https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv), 
+[the Alaska lakes data](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv), 
+[the solvents data](https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv), and [THIS SUBSET of the periodic table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv). You do not need to use the entire periodic table dataset.
+
+Please note that each one of these datasets will be loaded into your R session when you run:
+
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+```
+
+To complete this assignment, put the figure from each cluster analysis in its own slide of a powerpoint presentation, put the underlying code in the corresponding notes section, and send the pptx to me. Let me know if you have any questions!
+
+For this assignment, you may find two things very helpful:
+
+1. Chapter 10. It explains how to use `runMatrixAnalysis()`. Please note that I used some of your feedback in class to make `runMatrixAnalysis()` simpler. Accordingly, in the lecture recording I am explaining a version of that command that is slightly out of date. The book chapter, however, is completely up-to-date.
+
+2. You may find the `colnames()` function useful for this assignment. It will list all the column names in a dataset for you. For example:
+
+```{r message = FALSE}
+mini_per_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+```
+```{r}
+colnames(mini_per_table)
+```
+<!-- end -->
+
+<!-- start principal components analysis-->
+# PCA {#PCA}
+
+There is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA). 
+
+## PCA 
+
+PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr::include_graphics('https://thebustalab.github.io/R_For_Chemists/figures/PCA.png', dpi = NA)
+```
+
+In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
+
+We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below:
+
+```{r, message = FALSE, fig.align = "center"}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+head(AK_lakes)
+
+AK_lakes_pca <- runMatrixAnalysis(
+	data = AK_lakes,
+	analysis = c("pca"),
+	column_w_names_of_multiple_analytes = "element",
+	column_w_values_for_multiple_analytes = "mg_per_L",
+	columns_w_values_for_single_analyte = c("water_temp", "pH"),
+	columns_w_additional_analyte_info = "element_type",
+	columns_w_sample_ID_info = c("lake", "park")
+)
+
+library(ggrepel)
+
+ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
+	geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
+	geom_label_repel(aes(label = lake), alpha = 0.5) +
+	theme_classic()
+```
+
+Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
+
+Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that's the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?
+
+## Drivers of PCA dimensions
+
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca-ord"`:
+
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+AK_lakes_pca_ord <- runMatrixAnalysis(
+	data = AK_lakes,
+	analysis = c("pca-ord"),
+	column_w_names_of_multiple_analytes = "element",
+	column_w_values_for_multiple_analytes = "mg_per_L",
+	columns_w_values_for_single_analyte = c("water_temp", "pH"),
+	columns_w_additional_analyte_info = "element_type",
+	columns_w_sample_ID_info = c("lake", "park")
+)
+head(AK_lakes_pca_ord)
+```
+
+We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
+
+```{r, fig.align = "center", fig.height = 3, fig.width = 4, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+AK_lakes_pca_ord <- runMatrixAnalysis(
+	data = AK_lakes,
+	analysis = c("pca-ord"),
+	column_w_names_of_multiple_analytes = "element",
+	column_w_values_for_multiple_analytes = "mg_per_L",
+	columns_w_values_for_single_analyte = c("water_temp", "pH"),
+	columns_w_additional_analyte_info = "element_type",
+	columns_w_sample_ID_info = c("lake", "park")
+)
+
+library(ggforce) # Gives access to geom_circle
+library(ggrepel) # Gives access to geom_label_repel
+head(AK_lakes_pca_ord)
+ggplot(AK_lakes_pca_ord) +
+	geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
+	geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.1 > 0.9, Dim.2 < 0.1, Dim.2 > -0.1),
+    aes(x = Dim.1, y = Dim.2, label = analyte), xlim = c(1,1.5)
+  ) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.2 > 0.5),
+    aes(x = Dim.1, y = Dim.2, label = analyte), direction = "y", ylim = c(1,1.5)
+  ) +
+  coord_cartesian(xlim = c(-1,1.5), ylim = c(-1,1.5)) +
+  theme_bw()
+```
+
+Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
+
+## Comparing principal components
+
+We also can access information about the how much of the variance in the data set is explained by each principal component:
+
+```{r, message = FALSE}
+AK_lakes_pca_ord <- runMatrixAnalysis(
+	data = AK_lakes,
+	analysis = c("pca-dim"),
+	column_w_names_of_multiple_analytes = "element",
+	column_w_values_for_multiple_analytes = "mg_per_L",
+	columns_w_values_for_single_analyte = c("water_temp", "pH"),
+	columns_w_additional_analyte_info = "element_type",
+	columns_w_sample_ID_info = c("lake", "park")
+)
+head(AK_lakes_pca_ord)
+```
+
+
+And we can now plot that using ggplot:
+
+
+```{r, fig.height = 2.5, fig.width = 3, fig.align = "center"}
+ggplot(
+  data = AK_lakes_pca_ord, 
+  aes(x = principal_component, y = percent_variance_explained)
+) +
+  geom_line() +
+  geom_point() +
+  theme_bw()
+```
+
+
+Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
+<!-- end -->
+
+<!-- start Exercises 5 -->
+# Exercises 5 {#Exercises_5}
+
+In this set of exercises you will choose to complete one of the following options. For either option please note the following:
+
+1. Refer to Chapter 12 for help with PCA and ordination plots.
+
+2. The data sets and the `runMatrixAnalysis()` function can all be loaded into your R Session by running the command below:
+
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+```
+
+3. When you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
+
+```{r, message = FALSE}
+pts <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+colnames(pts)[10:20]
+```
+
+We can use that command in the template, as in the example below. With the notation `colnames(pts)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(pts)[c(5:7,9:25)]` in the console). With the notation `colnames(pts)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(pts)[c(1:4, 8)]` in the console).
+
+```{r, eval = FALSE, message = FALSE}
+pca <- runMatrixAnalysis(
+  data = pts,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(pts)[c(5:7,9:25)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(pts)[c(1:4, 8)]
+)
+```
+
+Use the two suggestions above to help you complete one of the two options below.
+
+## Option 1: Human metabolomics.
+
+This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
+
+1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the data set will be available as `ckd_data`.
+
+```{r, eval = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+```
+2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
+5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+6. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
+
+```{r, eval = FALSE, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center", echo = FALSE}
+library(tidyverse)
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
+
+pca <- runMatrixAnalysis(
+  data = metabolomics_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
+)
+
+pca$Label <- factor(pca$patient_status)
+
+ggplot(pca) +
+  geom_point(
+    aes(x = Dim.1, y = Dim.2, fill = patient_status),
+    shape = 21, size = 5, alpha = 0.8
+  ) +
+  theme_bw() +
+  scale_fill_manual(values = c("#e41a1c", "#377eb8")) +
+  theme(
+    text = element_text(size = 16)
+  )
+
+## The first dimension
+
+pca_ord <- runMatrixAnalysis(
+  data = metabolomics_data,
+  analysis = "pca-ord",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
+)
+
+
+ggplot() +
+  geom_segment(data = pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label(data = filter(pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
+
+## Citrulline
+
+```
+
+## Option 2: Grape vine varieties
+
+This second option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
+
+1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the dataset will be available as `wine_grape_data`.
+
+```{r, eval = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+```
+2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
+5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+6. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
+
+```{r, message = FALSE, echo = FALSE, eval = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+
+head(wine_grape_data)
+
+wine_grape_data_pca <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment")
+)
+
+head(wine_grape_data_pca)
+
+ggplot(
+  wine_grape_data_pca,
+  aes(x = Dim.1, y = Dim.2, fill = cultivar)
+) + 
+  geom_point(shape = 21, size = 5) +
+  scale_fill_manual(values = c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00"))
+
+wine_grape_data_pca_ord <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca-ord",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment")
+)
+
+head(wine_grape_data_pca_ord)
+
+ggplot() +
+  geom_segment(data = wine_grape_data_pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label(data = filter(wine_grape_data_pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
+```
+<!-- end -->
+
+<!-- start k-means -->
+# k-means
+
+```{r, eval = FALSE, echo = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+
+wine <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = TRUE,
+  na_replacement = "zero"
+)
+
+wine
+
+ggplot(data = wine, aes(x = Dim.1, y = Dim.2)) + 
+  geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5) +
+  ggrepel::geom_label_repel(aes(label = sample_unique_ID))
+
+ggtree(wine, aes(color = kmeans_cluster), size = 2) + geom_tiplab() + coord_cartesian(xlim = c(0,50))
+
+wine <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "hclust", 
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = TRUE,
+  na_replacement = "zero",
+)
+
+ggtree(wine, aes(color = kmeans_cluster), size = 2) + geom_tiplab()
+
+wine <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca", 
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = TRUE,
+  na_replacement = "zero",
+)
+
+ggplot(wine, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) + geom_point(shape = 21, size = 5)
+```
+
+<!-- end -->
+
+<!-- start Exercises 6 -->
+
+
+
+<!-- end -->
+
+<!-- start Appendix -->
+# (APPENDIX) Appendix {-}
+
+# Functions
+
+`head()` (base function)
+
+`install.packages()` (base function)
+
+`tidyverse::read_csv()` (a readr function - part of the tidyverse)
+
+`plot()` (base function)
+
+`read.csv()` (base function)
+
+`dplyr::filter()` (a dplyr function - part of the tidyverse)
+
+`ggplot2::ggplot()`(a ggplot2 function - part of the tidyverse)
+
+`ggplot2::aes()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::geom_*()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::facet_grid()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::scale_*_*()` (a ggplot2 function - part of the tidyverse)
+
+`ggplot2::theme_*()` (a ggplot2 function - part of the tidyverse)
+
+`mean()` (base function)
+
+`sd()` (base function)
+
+`dplyr::group_by()` (a dplyr function - part of the tidyverse)
+
+`dplyr::summarize()` (a dplyr function - part of the tidyverse)
+
+`ggplot2::coord_flip()` (a ggplot2 function - part of the tidyverse)
+
+`tidyr::pivot_longer()` (a tidyr function - part of the tidyverse)
+
+# Custom functions {#custom_functions}
+
+## Activating custom functions
+
+To activate in your session, run the following in your console:
+
+```{r, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+```
+
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R", local = knitr::knit_global())
+```
+
+Once this is run the following will available in your R environment:
+
+`algae_data`
+
+`alaska_lake_data`
+
+`solvents`
+
+`periodic_table`
+
+`periodic_table_small`
+
+`ckd_data`
+
+`wine_grape_data`
+
+-note that this does not give access to `NY_trees`.
+
+`readCSV`
+
+`runMatrixAnalysis`
+
+If you want to look at any of the datasets in Excel, please consider writing the file to your hard drive using `write_csv`. Use `?write_csv` to see how the command works.
+
+## Basic `runMatrixAnalysis()` template
+
+Once you have activated `runMatrixAnalysis` in your R session (see above), you can use the function by filling out and executing the basic template below. There is also an advanced template further down the page.
+
+```{r, eval = FALSE}
+
+runMatrixAnalysis(
+                
+  data = NULL,
+
+  analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
+
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+    
+  columns_w_values_for_single_analyte = NULL,
+
+  columns_w_sample_ID_info = NULL
+
+)
+```
+
+## Advanced `runMatrixAnalysis()` template
+
+```{r, eval = FALSE}
+
+runMatrixAnalysis(
+  data = NULL,
+  analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = NULL,
+  transpose = FALSE,
+  kmeans = FALSE,
+  na_replacement = c("none", "mean", "zero")
+)
+```
+
+# FAQ
+
+## Filtering
+
+`dplyr::filter(<data>, <variable> < 18)` ## less than 18
+
+`dplyr::filter(<data>, <variable> <= 18)` ## less than or equal to 18
+
+`dplyr::filter(<data>, <variable> > 18)` ## greater than 18
+
+`dplyr::filter(<data>, <variable> >= 18)` ## greater than or equal to 18
+
+`dplyr::filter(<data>, <variable> == 18)` ## equals than 18
+
+`dplyr::filter(<data>, <variable> != 18)` ## not equal to 18
+
+`dplyr::filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
+
+## Order categorical axes
+
+Under normal plotting scenario:
+
+```{r, message = FALSE}
+library(tidyverse)
+NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
+NY_trees
+
+tree_data_status <- group_by(.data = NY_trees, status)
+tree_data_status
+
+tree_data_status_summary <- summarize(.data = tree_data_status, mean_height = mean(tree_height), stdev_height = sd(tree_height))
+
+status_color <- c("red","darkorange","gold","darkgreen")
+names(status_color) <- c("Dead", "Poor", "Good", "Excellent")
+
+ggplot(data = tree_data_status_summary) + 
+geom_pointrange(aes(x = status, 
+                    y = mean_height, 
+                    ymin = mean_height -stdev_height, 
+                    ymax = mean_height + stdev_height), color = "navy") +
+geom_point(data = filter(NY_trees, tree_height > 150),
+           aes(x = status, y = tree_height, fill = status), stroke = 1.5, shape = 21, size = 5) + 
+theme_bw() +
+scale_fill_manual(values = status_color)
+```
+
+But what if we want the order on the x-axis to be from worst `status` to best? We need to make the `status` column into factors (a list of characters that has an order other than alphabetical). Here's how:
+
+```{r}
+tree_data_status_summary$status <- factor(tree_data_status_summary$status, levels = c("Dead", "Poor", "Good", "Excellent")) # note that we specify the order we want right here in "levels"...
+
+ggplot(data = tree_data_status_summary) + 
+geom_pointrange(aes(x = status, 
+                    y = mean_height, 
+                    ymin = mean_height -stdev_height, 
+                    ymax = mean_height + stdev_height), color = "navy") +
+geom_point(data = filter(NY_trees, tree_height > 150),
+           aes(x = status, y = tree_height, fill = status), stroke = 1.5, shape = 21, size = 5) + 
+theme_bw() + 
+scale_fill_manual(values = status_color)
+```
+
+
+# PCA and Big Data
+
+In this course it is possible that you will want to run a clustering or PCA analysis on a data set with hundreds of thousands of observations (like NY_trees, for example). This is not always straightforward, since looking at a dendrogram or a scatter plot with hundreds of thousands of points is not always fruitful. Consider the meteorological dataset below.
+
+```{r, message = FALSE}
+mdata <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv")
+dim(mdata)
+```
+
+Nearly a quarter million observations! However, that does not mean that you cannot use those analyses on such a dataset. Consider just running the PCA or cluster analysis on a summary of the dataset. You can even create your own groups by which to summarize directly from large continuous variables in your dataset. In the example below, a new categorical variable `WIND_GROUP` is created by binning the observations according to `WINDSPEED` into 20 groups. This is accomplished using the `cut()` command.
+
+```{r}
+mdata <- mdata[!is.na(mdata$WINDSPEED),]
+mdata$WIND_GROUP <- as.numeric(cut(mdata$WINDSPEED, breaks = 20))
+```
+
+Cool! Now we can `group_by()` and `summarize()` on `WIND_GROUP`:
+
+```{r}
+mdata_windgroup <- group_by(mdata, WIND_GROUP) %>%
+  summarize(
+    TEMPERATURE = mean(TEMPERATURE, na.rm = TRUE),
+    TEMPERATURE_DELTA = mean(TEMPERATURE_DELTA, na.rm = TRUE),
+    RELATIVE_HUMIDITY = mean(RELATIVE_HUMIDITY, na.rm = TRUE),
+    SOLAR_RADIATION = mean(SOLAR_RADIATION, na.rm = TRUE),
+    OZONE = mean(OZONE, na.rm = TRUE),
+    PRECIPITATION = mean(PRECIPITATION, na.rm = TRUE),
+    WINDSPEED = mean(WINDSPEED, na.rm = TRUE),
+    SHELTER_TEMPERATURE = mean(SHELTER_TEMPERATURE, na.rm = TRUE),
+    WIND_DIRECTION = mean(WIND_DIRECTION, na.rm = TRUE),
+    WINDSPEED_SCALAR = mean(WINDSPEED_SCALAR, na.rm = TRUE),
+    FLOW_RATE = mean(FLOW_RATE, na.rm = TRUE),
+    WETNESS = mean(WETNESS, na.rm = TRUE),
+  )
+mdata_windgroup
+```
+
+With that done, we can run matrix analyses on the summarized data, using our new `WIND_GROUP` variable as the sample ID, and plot the results!
+
+```{r loadRunMatrixAnalysis}
+mdata_windgroup_analyzed <- runMatrixAnalysis(
+  data = mdata_windgroup,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = c("TEMPERATURE", "TEMPERATURE_DELTA", "RELATIVE_HUMIDITY", "SOLAR_RADIATION", "OZONE", "PRECIPITATION", "WINDSPEED", "SHELTER_TEMPERATURE", "WIND_DIRECTION", "WINDSPEED_SCALAR", "FLOW_RATE", "WETNESS"),
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("WIND_GROUP")
+)
+
+ggplot(mdata_windgroup_analyzed) + 
+  geom_point(aes(x = Dim.1, y = Dim.2, fill = WINDSPEED, size = TEMPERATURE), shape = 21) +
+  theme_classic()
+```
+
+# Additional Functions
+
+```{r}
+## Built-in R database "Motor Trend Car Road Tests (mtcars)"
+library(dplyr)
+data(mtcars)  # load the data
+head(mtcars,6)  # view the first 6 rows
+?mtcars  # view the "help" with details on variables
+
+# mutate function ------------------------------
+# Add a column "kilometers per liter (klp)" and calculate using mpg
+EUROPE_mtcars <- mutate(mtcars,kpl = mpg*0.4251)
+
+# %in% operator --------------------------------
+# Find cars in the horsepower mid-range
+mid_strength <- filter(mtcars,hp %in% 100:200)
+
+# case_when() function -------------------------
+# Classify the fuel efficiency of 
+efficiency <- mutate(mtcars,fuel_efficient = case_when(
+                     mpg <= 15 ~ "Bad", mpg > 15 & mpg < 25 ~ "ok", mpg >= 25 ~ "Good"))
+
+# weighted.mean() ------------------------------
+# In cases when the a variable of weights are provided.
+# Common with survey data when a subset of the population
+# is used to estimate the whole population. A weight is
+# applied to "scale up" the survey size.
+population_estimate <- summarize(data, utility = weighted.mean(utility,weight))
+
+# Review of filter, group_by, summarize, and %>%
+# How many cars with 8 cylinders have automatic transmissions?
+mtcars %>%
+  filter(cyl > 6) %>%
+  group_by(am) %>%
+  summarize(n = n())
+```
+<!-- end -->
+
+<!--chapter:end:index.Rmd-->
+
