@@ -14,6 +14,7 @@
     # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
     ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
     wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
+    data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
 
 #### readCSV
 
@@ -43,14 +44,14 @@
 
                                     analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
                                     
-                                    column_w_names_of_multiple_analytes,
-                                    column_w_values_for_multiple_analytes,
+                                    column_w_names_of_multiple_analytes = NULL,
+                                    column_w_values_for_multiple_analytes = NULL,
 
-                                    columns_w_values_for_single_analyte,
+                                    columns_w_values_for_single_analyte = NULL,
 
                                     columns_w_additional_analyte_info = NULL,
 
-                                    columns_w_sample_ID_info,
+                                    columns_w_sample_ID_info = NULL,
 
                                     transpose = FALSE,
 
@@ -140,6 +141,7 @@
                 if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
                     data_wide <- analyte_annotation_free_data
                     analyte_columns <- columns_w_values_for_single_analyte
+                    data_wide <- unique(data_wide)
                 }
 
             # If pivoting required, pivot_wider any long-style data
