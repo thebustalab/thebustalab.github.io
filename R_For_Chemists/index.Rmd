@@ -1476,41 +1476,237 @@ ggplot(wine, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) + geom_point(shap
 
 # Functions
 
-`head()` (base function)
+Here are functions that we will cover in this class, though you should definitely use the internet as a source of other functions to meet your needs!
 
-`install.packages()` (base function)
+## Libraries and packages
 
-`tidyverse::read_csv()` (a readr function - part of the tidyverse)
+### `install.packages()` 
 
-`plot()` (base function)
+(base function) Use it to install a package! For example:
+```{r, message = FALSE, eval = FALSE}
+install.packages("tidyverse")
+```
 
-`read.csv()` (base function)
+## Operators
 
-`dplyr::filter()` (a dplyr function - part of the tidyverse)
+### `%in%` 
 
-`ggplot2::ggplot()`(a ggplot2 function - part of the tidyverse)
+(base function). Use it to find An example:
 
-`ggplot2::aes()` (a ggplot2 function - part of the tidyverse)
+```{r}
+# Find cars in the horsepower mid-range
+mid_strength <- filter(mtcars,hp %in% 100:200)
+```
 
-`ggplot2::geom_*()` (a ggplot2 function - part of the tidyverse)
+### < 
 
-`ggplot2::facet_grid()` (a ggplot2 function - part of the tidyverse)
+"less than"
 
-`ggplot2::scale_*_*()` (a ggplot2 function - part of the tidyverse)
+### <=
 
-`ggplot2::theme_*()` (a ggplot2 function - part of the tidyverse)
+"less than or equal to"
 
-`mean()` (base function)
+### > 
 
-`sd()` (base function)
+"greater than"
 
-`dplyr::group_by()` (a dplyr function - part of the tidyverse)
+### >=
 
-`dplyr::summarize()` (a dplyr function - part of the tidyverse)
+"greater than or equal to"
 
-`ggplot2::coord_flip()` (a ggplot2 function - part of the tidyverse)
+### ==
 
-`tidyr::pivot_longer()` (a tidyr function - part of the tidyverse)
+"equal to"
+
+### !=
+
+"not equal to"
+
+### | 
+
+"or"
+
+## Data wrangling
+
+### `tidyverse::read_csv()`
+
+(a readr function - part of the tidyverse) Use it to read .csv files.
+
+### `read.csv()`
+
+(base function) Use it to read .csv files (though please consider the newer `read_csv` instead).
+
+### `readCSV()`
+
+(custom function) Use it to interactively read in files.
+
+### `head()`
+
+(base function) Use it to see just the first few lines of a dataframe:
+```{r}
+head(algae_chemistry_data)
+```
+
+### `dplyr::filter()` (a dplyr function - part of the tidyverse) Use it to filter your data.
+
+### `dplyr::mutate()` (a dplyr function - part of the tidyverse). An example:
+
+```{r, message = FALSE}
+# Add a column "kilometers per liter (klp)" and calculate using mpg
+EUROPE_mtcars <- mutate(mtcars,kpl = mpg*0.4251)
+```
+
+### `dplyr::case_when()` (a dplyr function - part of the tidyverse)
+
+```{r}
+# Classify the fuel efficiency of the cars in the mtcars data set
+efficiency <- mutate(
+  mtcars,
+  fuel_efficient = case_when(
+    mpg <= 15 ~ "Bad",
+    mpg > 15 & mpg < 25 ~ "ok", 
+    mpg >= 25 ~ "Good"
+  )
+)
+efficiency
+```
+
+### `tidyr::pivot_longer()`
+
+(a tidyr function - part of the tidyverse)
+
+### `dplyr::group_by()`
+
+(a dplyr function - part of the tidyverse)
+
+### `dplyr::summarize()`
+
+(a dplyr function - part of the tidyverse)
+
+### `%>%`
+
+(a magrittr function - part of the tidyverse) Use it to send the output of one command directly to the next.
+
+```{r}
+# How many cars with 8 cylinders have automatic transmissions?
+mtcars %>%
+  filter(cyl > 6) %>%
+  group_by(am) %>%
+  summarize(n = n())
+```
+
+## Plotting
+
+### `plot()`
+
+(base function) Use it to create rudimentary plots of some data objects.
+
+### `ggplot2::ggplot()`
+
+(a ggplot2 function - part of the tidyverse) Use it to plot your data.
+
+### `ggplot2::aes()`
+
+(a ggplot2 function - part of the tidyverse)
+
+### `ggplot2::geom_*()`
+
+(a ggplot2 function - part of the tidyverse)
+
+### `ggplot2::facet_grid()`
+
+(a ggplot2 function - part of the tidyverse)
+
+### `ggplot2::scale_*_*()`
+
+(a ggplot2 function - part of the tidyverse)
+
+### `ggplot2::theme_*()`
+
+(a ggplot2 function - part of the tidyverse)
+
+### `ggplot2::coord_flip()`
+
+(a ggplot2 function - part of the tidyverse)
+
+## Statistics
+
+### `mean()`
+
+(base function)
+
+### `sd()`
+
+(base function)
+
+### `table()`
+
+(base function) Use it to calculate the number of items in a category
+
+For example, how many bound versus unbound elements are there in the alaksa_lakes_data?
+
+```{r, message = FALSE}
+## Let's load our CHEM5725 environment
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+
+## Let's just look at one lake so that there aren't duplicate elements
+DML <- dplyr::filter(alaska_lake_data, lake == "Devil_Mountain_Lake")
+table(DML$element_type)
+```
+
+We can access each element separately:
+```{r}
+table(DML$element_type)[1]
+```
+
+```{r}
+table(DML$element_type)[2]
+```
+
+So, if we want to calculate percent free elements:
+```{r}
+table(DML$element_type)[2] / sum(table(DML$element_type)) * 100
+```
+
+### `stats::weighted.mean()`
+
+Suppose we want to calculate mean abundance of pyruvate in patients with kidney disease versus patients that are healthy.
+
+First, let's just make the data set smaller and easier to see:
+```{r}
+ckd_data_pyruvate <- ckd_data[,1:3]
+ckd_data_pyruvate
+```    
+
+Now, what is the number of healthy and sick patients in the dataset?
+
+```{r}
+table(ckd_data_pyruvate$patient_status)
+```
+
+This means that the weights should be 37/(37+56) and 56/(37+56)
+
+Now, let's assign those weights to each column:
+
+```{r}
+ckd_data_pyruvate <- mutate(
+  ckd_data_pyruvate, 
+  weight = case_when(
+    patient_status == "healthy" ~ 56/(37+56), patient_status == "kidney_disease" ~ 37/(37+56)
+  )
+)
+ckd_data_pyruvate
+```
+
+Now we can calculate the weighted mean:
+
+```{r}
+group_by(ckd_data_pyruvate, patient_status) %>%
+  summarize(
+    weighted_mean_pyruvate = weighted.mean(Pyruvate, weight)
+  )
+```
+<!-- end -->
 
 # Custom functions {#custom_functions}
 
@@ -1707,49 +1903,3 @@ ggplot(mdata_windgroup_analyzed) +
   geom_point(aes(x = Dim.1, y = Dim.2, fill = WINDSPEED, size = TEMPERATURE), shape = 21) +
   theme_classic()
 ```
-
-# Additional Functions
-
-Here are a few additional functions you may need.
-
-```{r, message = FALSE}
-## Let's load our CHEM5725 environment
-source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
-
-## Let's work with the built-in R database "Motor Trend Car Road Tests (mtcars)"
-library(dplyr)
-data(mtcars)  # load the data
-head(mtcars,6)  # view the first 6 rows
-?mtcars  # view the "help" with details on variables
-
-## Now let's look at a few new functions:
-
-# mutate function ------------------------------
-# Add a column "kilometers per liter (klp)" and calculate using mpg
-EUROPE_mtcars <- mutate(mtcars,kpl = mpg*0.4251)
-
-# %in% operator --------------------------------
-# Find cars in the horsepower mid-range
-mid_strength <- filter(mtcars,hp %in% 100:200)
-
-# case_when() function -------------------------
-# Classify the fuel efficiency of 
-efficiency <- mutate(mtcars,fuel_efficient = case_when(
-                     mpg <= 15 ~ "Bad", mpg > 15 & mpg < 25 ~ "ok", mpg >= 25 ~ "Good"))
-
-# weighted.mean() ------------------------------
-# In cases when the a variable of weights are provided.
-# Common with survey data when a subset of the population
-# is used to estimate the whole population. A weight is
-# applied to "scale up" the survey size.
-
-# population_estimate <- summarize(<data>, <utility> = weighted.mean(<utility>,<weight>))
-
-# Review of filter, group_by, summarize, and %>%
-# How many cars with 8 cylinders have automatic transmissions?
-mtcars %>%
-  filter(cyl > 6) %>%
-  group_by(am) %>%
-  summarize(n = n())
-```
-<!-- end -->
