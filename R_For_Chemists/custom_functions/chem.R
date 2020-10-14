@@ -202,7 +202,7 @@
                                     if( any(is.na(matrix[,column])) ) {
 
                                         if( na_replacement == "mean" ) {
-                                            replacement <- mean(matrix[,column])
+                                            replacement <- mean(matrix[,column], na.rm = TRUE)
                                         }
                                         if( na_replacement == "zero" ) {
                                             replacement <- 0
@@ -269,6 +269,12 @@
                     if( kmeans[1] == "none" ) {}
 
                     if( kmeans[1] != "none" ) {
+
+                        ## Check for NAs
+
+                            if( any(is.na(matrix)) == TRUE ) {
+                                stop("kmeans cannot handle NA. Please choose an option for na_replacement.")
+                            }
 
                         ## Run k-means
                             kmeans_results <- list()
