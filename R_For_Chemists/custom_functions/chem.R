@@ -55,7 +55,7 @@
 
                                     transpose = FALSE,
 
-                                    kmeans = FALSE,
+                                    kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
 
                                     na_replacement = c("none", "mean", "zero"),
 
@@ -266,28 +266,57 @@
 
                 # Run kMeans, if requested
 
-                    if( kmeans == TRUE ) {
+                    if( kmeans[1] == "none" ) {}
 
-                        kmeans_results <- list()
-                        for( i in 1:(dim(matrix)[1]-1) ) {
-                            kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
-                        }
-                        kmeans_results <- do.call(rbind, kmeans_results)
-                        kmeans_results
+                    if( kmeans[1] != "none" ) {
 
-                        angles <- list()
-                        for( i in 1:(length(kmeans_results)-2) ) {
-                            slope_1 <- kmeans_results[i+1] - kmeans_results[i]
-                            slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
-                            angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
-                        }
-                        angles <- do.call(rbind, angles)
+                        ## Run k-means
+                            kmeans_results <- list()
+                            for( i in 1:(dim(matrix)[1]-1) ) {
+                                kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
+                            }
+                            kmeans_results <- do.call(rbind, kmeans_results)
+                            kmeans_results
 
-                        cluster_number <- which(angles == min(angles)) + 1
+                        ## If auto, determine sharpest angle and return clusters
 
-                        kmeans_clusters <- stats::kmeans(x = matrix, centers = cluster_number, nstart = 25, iter.max = 1000)$cluster
-                        kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = paste0("cluster_", kmeans_clusters)))
-                        clustering$kmeans_cluster <- kmeans_clusters$kmeans_cluster[match(clustering$sample_unique_ID, kmeans_clusters$sample_unique_ID)]
+                            if( kmeans[1] == "auto" ) {
+                                angles <- list()
+                                for( i in 1:(length(kmeans_results)-2) ) {
+                                    slope_1 <- kmeans_results[i+1] - kmeans_results[i]
+                                    slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
+                                    angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
+                                }
+                                angles <- do.call(rbind, angles)
+
+                                cluster_number <- which(angles == min(angles)) + 1
+
+                                kmeans_clusters <- stats::kmeans(x = matrix, centers = cluster_number, nstart = 25, iter.max = 1000)$cluster
+                            }
+
+                        ## If scree, return raw results
+
+                            if( kmeans[1] == "elbow" ) {
+                                results <- as_tibble(data.frame(
+                                    cluster_number = seq(1, dim(kmeans_results)[1], 1),
+                                    variance_within_cluster = kmeans_results
+                                ))
+                                return( results )
+                                stop("Returning elbow plot.")
+                            }
+
+                        ## If a number, return that many clusters
+
+                            if( !kmeans[1] %in% c("auto", "elbow") ) {
+                                if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', or a number.")}
+                                kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(kmeans[1]), nstart = 25, iter.max = 1000)$cluster
+                            }
+
+                        ## Bind kmeans cluster numbers to output
+
+                            kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = paste0("cluster_", kmeans_clusters)))
+                            clustering$kmeans_cluster <- kmeans_clusters$kmeans_cluster[match(clustering$sample_unique_ID, kmeans_clusters$sample_unique_ID)]
+
                     }
 
                 # Return without annotations if transpose = TRUE
