@@ -191,7 +191,14 @@
 
                     if( na_replacement[1] == "none") {
                         cat("Not replacing any NAs in your data set \n")
-                    } else {
+                    }
+                    if( na_replacement[1] == "drop" ) {
+                        cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
+                        cat(names(which(apply(is.na(matrix), 2, any))))
+                        cat("\n")
+                        matrix <- matrix[,!apply(is.na(matrix), 2, any)]
+                    }
+                    if( na_replacement[1] %in% c("zero", "mean") ) {
 
                         if( any(is.na(matrix)) ) {
                             
