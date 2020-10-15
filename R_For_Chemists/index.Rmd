@@ -1614,10 +1614,8 @@ Put your answers to the following questions into a powerpoint file - the plots i
 
 Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
-
-wine_grape_data
 
 runMatrixAnalysis(
   data = wine_grape_data,
@@ -1640,7 +1638,7 @@ ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape
 
 Modify your code from Question 1 so that only two clusters are generated. Plot the results. Install ggforce (`install.packages(ggforce)`), then load that package (`library(ggforce)`), and use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
 
 runMatrixAnalysis(
@@ -1667,7 +1665,7 @@ ggplot(aes(x = Dim.1, y = Dim.2)) +
 
 Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
 library(ggrepel)
 runMatrixAnalysis(
@@ -1695,7 +1693,7 @@ ggplot() +
 
 Modify your code from Question 2 so that three clusters are generated. Plot the results. Install ggforce (`install.packages(ggforce)`), then load that package (`library(ggforce)`), and use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, bewteen dry and well-watered conditions?
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
 
 da <- runMatrixAnalysis(
@@ -1723,7 +1721,7 @@ plot0
 
 Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create three groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances bewteen nodes and tips, the y-axis is meaningless).
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
 
 dat <- runMatrixAnalysis(
@@ -1754,7 +1752,7 @@ Google "Quercetin". What kind of compound is it? Use the clusters created by the
 
 Does one cluster have a large amount of variation in Quercetin abundance? How can this be? Aren't all the samples (i.e. grape varieties) in that cluster are closely related in terms of their chemistry?
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 plot2 <- dat %>%
   group_by(kmeans_cluster) %>%
   summarize(mean = mean(Quercetin), sd = sd(Quercetin)) %>%
@@ -1767,34 +1765,39 @@ plot2 <- dat %>%
 
 Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 cowplot::plot_grid(plot1, plot2)
 ```
 
-
 ## Challenge (optional)
 
-Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. Make your combined plot as attractive as possible! Use each of the following:
+Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
 
 `align = TRUE` inside `geom_tiplab()`
+
 `nrow = 1` inside `plot_grid()`
+
 `rel_widths = <your_choice>` inside `plot_grid()`
+
 `name = <your_choice>` inside `scale_*_*`
+
 `label = kmeans_cluster` inside `geom_mark_ellipse()`
-`breaks = <your_choice>` inside `scale_x_continuous()` or `scale_y_continuous()`
+
+`breaks = <your_choice>` inside `scale_x_continuous()` or `scale_y_continuous()` (as an example, `breaks = seq(0,10,1)`)
 
 Also, consider using:
 
 `guides(fill = "none", color = "none")`
 
-Install the RColorBrewer package, and use the color scheme `Set1`:
+Install the RColorBrewer package, and use one of its color schemes. As an example with the color scheme `Set1`:
 
 `scale_fill_brewer(palette = "Set1", na.value = "grey")`
+
 `scale_color_brewer(palette = "Set1", na.value = "grey")`
 
 Save your plot as a png using `ggsave()`.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 library(RColorBrewer)
 
 plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +

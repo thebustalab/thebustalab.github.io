@@ -222,7 +222,16 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="13.2" data-path="Exercises-5.html"><a href="Exercises-5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>13.2</b> Option 2: Grape vine varieties</a></li>
 </ul></li>
 <li class="chapter" data-level="14" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>14</b> k-means</a></li>
-<li class="chapter" data-level="15" data-path="Exercises-6.html"><a href="Exercises-6.html"><i class="fa fa-check"></i><b>15</b> Exercises 6</a></li>
+<li class="chapter" data-level="15" data-path="Exercises-6.html"><a href="Exercises-6.html"><i class="fa fa-check"></i><b>15</b> Exercises 6</a><ul>
+<li class="chapter" data-level="15.1" data-path="Exercises-6.html"><a href="Exercises-6.html#question-1-2"><i class="fa fa-check"></i><b>15.1</b> Question 1</a></li>
+<li class="chapter" data-level="15.2" data-path="Exercises-6.html"><a href="Exercises-6.html#question-2-2"><i class="fa fa-check"></i><b>15.2</b> Question 2</a></li>
+<li class="chapter" data-level="15.3" data-path="Exercises-6.html"><a href="Exercises-6.html#question-3-2"><i class="fa fa-check"></i><b>15.3</b> Question 3</a></li>
+<li class="chapter" data-level="15.4" data-path="Exercises-6.html"><a href="Exercises-6.html#question-4-2"><i class="fa fa-check"></i><b>15.4</b> Question 4</a></li>
+<li class="chapter" data-level="15.5" data-path="Exercises-6.html"><a href="Exercises-6.html#question-5-2"><i class="fa fa-check"></i><b>15.5</b> Question 5</a></li>
+<li class="chapter" data-level="15.6" data-path="Exercises-6.html"><a href="Exercises-6.html#question-6-1"><i class="fa fa-check"></i><b>15.6</b> Question 6</a></li>
+<li class="chapter" data-level="15.7" data-path="Exercises-6.html"><a href="Exercises-6.html#question-7-1"><i class="fa fa-check"></i><b>15.7</b> Question 7</a></li>
+<li class="chapter" data-level="15.8" data-path="Exercises-6.html"><a href="Exercises-6.html#challenge-optional"><i class="fa fa-check"></i><b>15.8</b> Challenge (optional)</a></li>
+</ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a><ul>
 <li class="chapter" data-level="A.1" data-path="functions-1.html"><a href="functions-1.html#libraries-and-packages"><i class="fa fa-check"></i><b>A.1</b> Libraries and packages</a><ul>
@@ -297,9 +306,57 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="Exercises_6" class="section level1">
 <h1><span class="header-section-number">Chapter 15</span> Exercises 6</h1>
-<p>asdf</p>
+<p>Use the wine grapes dataset (it’s stored as <code>wine_grape_data</code> after you run the <code>source(...)</code> command).</p>
+<p>Put your answers to the following questions into a powerpoint file - the plots in the slide, and the code in the notes section. Please email me the powerpoint file and let me know if you have any questions. Good luck and have fun!</p>
+<div id="question-1-2" class="section level2">
+<h2><span class="header-section-number">15.1</span> Question 1</h2>
+<p>Run a principal components analysis on the dataset. Use <code>na_replacement = "drop"</code> (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting <code>kmeans = "auto"</code>. Make scatter plot of the results. How many clusters does kmeans recommend?</p>
+</div>
+<div id="question-2-2" class="section level2">
+<h2><span class="header-section-number">15.2</span> Question 2</h2>
+<p>Modify your code from Question 1 so that only two clusters are generated. Plot the results. Install ggforce (<code>install.packages(ggforce)</code>), then load that package (<code>library(ggforce)</code>), and use <code>geom_mark_ellipse</code> to highlight each cluster in your plot (note that the <code>fill</code> aesthetic is required to mark groups). Which varieties are put into each of the two clusters?</p>
+</div>
+<div id="question-3-2" class="section level2">
+<h2><span class="header-section-number">15.3</span> Question 3</h2>
+<p>Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?</p>
+</div>
+<div id="question-4-2" class="section level2">
+<h2><span class="header-section-number">15.4</span> Question 4</h2>
+<p>Modify your code from Question 2 so that three clusters are generated. Plot the results. Install ggforce (<code>install.packages(ggforce)</code>), then load that package (<code>library(ggforce)</code>), and use <code>geom_mark_ellipse</code> to highlight each cluster in your plot (note that the <code>fill</code> aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, bewteen dry and well-watered conditions?</p>
+</div>
+<div id="question-5-2" class="section level2">
+<h2><span class="header-section-number">15.5</span> Question 5</h2>
+<p>Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create three groups, and also continue using <code>na_replacement = "drop"</code>. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances bewteen nodes and tips, the y-axis is meaningless).</p>
+</div>
+<div id="question-6-1" class="section level2">
+<h2><span class="header-section-number">15.6</span> Question 6</h2>
+<p>Google “Quercetin”. What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using <code>geom_pointrange</code> and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, <code>theme_classic()</code>).</p>
+<p>Does one cluster have a large amount of variation in Quercetin abundance? How can this be? Aren’t all the samples (i.e. grape varieties) in that cluster are closely related in terms of their chemistry?</p>
+</div>
+<div id="question-7-1" class="section level2">
+<h2><span class="header-section-number">15.7</span> Question 7</h2>
+<p>Use <code>cowplot::plot_grid</code> to display your plots from questions 4 and 5 next to each other.</p>
+</div>
+<div id="challenge-optional" class="section level2">
+<h2><span class="header-section-number">15.8</span> Challenge (optional)</h2>
+<p>Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. <strong>Make your combined plot as attractive as possible!</strong> Use each of the following:</p>
+<p><code>align = TRUE</code> inside <code>geom_tiplab()</code></p>
+<p><code>nrow = 1</code> inside <code>plot_grid()</code></p>
+<p><code>rel_widths = &lt;your_choice&gt;</code> inside <code>plot_grid()</code></p>
+<p><code>name = &lt;your_choice&gt;</code> inside <code>scale_*_*</code></p>
+<p><code>label = kmeans_cluster</code> inside <code>geom_mark_ellipse()</code></p>
+<p><code>breaks = &lt;your_choice&gt;</code> inside <code>scale_x_continuous()</code> or <code>scale_y_continuous()</code> (as an example, <code>breaks = seq(0,10,1)</code>)</p>
+<p>Also, consider using:</p>
+<p><code>guides(fill = "none", color = "none")</code></p>
+<p>Install the RColorBrewer package, and use one of its color schemes. As an example with the color scheme <code>Set1</code>:</p>
+<p><code>scale_fill_brewer(palette = "Set1", na.value = "grey")</code></p>
+<p><code>scale_color_brewer(palette = "Set1", na.value = "grey")</code></p>
+<p>Save your plot as a png using <code>ggsave()</code>.</p>
+<p>Maybe something like this:</p>
+<p><img src="http://thebustalab.github.io/R_For_Chemists/figures/Ex6Challenge.png" style="display: block; margin: auto;" /></p>
 <!-- end -->
 <!-- start Appendix -->
+</div>
 </div>
 
 
