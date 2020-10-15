@@ -57,7 +57,7 @@
 
                                     kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
 
-                                    na_replacement = c("none", "mean", "zero"),
+                                    na_replacement = c("none", "mean", "zero", "drop"),
 
                                     ...
 
