@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-10-07" />
+<meta name="date" content="2020-10-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -222,6 +222,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="13.2" data-path="Exercises-5.html"><a href="Exercises-5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>13.2</b> Option 2: Grape vine varieties</a></li>
 </ul></li>
 <li class="chapter" data-level="14" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>14</b> k-means</a></li>
+<li class="chapter" data-level="15" data-path="Exercises-6.html"><a href="Exercises-6.html"><i class="fa fa-check"></i><b>15</b> Exercises 6</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a><ul>
 <li class="chapter" data-level="A.1" data-path="functions-1.html"><a href="functions-1.html#libraries-and-packages"><i class="fa fa-check"></i><b>A.1</b> Libraries and packages</a><ul>
@@ -326,7 +327,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>We can see that this dataset is comprised of measuring various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
 <p><img src="http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
 <p>With this in mind, let’s try out our template:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="Clustering.html#cb50-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">::</span><span class="kw">knit_global</span>())</span>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="Clustering.html#cb50-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">:::</span><span class="kw">knit_global</span>())</span>
 <span id="cb50-2"><a href="Clustering.html#cb50-2"></a>AK_lakes_clustered &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
 <span id="cb50-3"><a href="Clustering.html#cb50-3"></a>                                </span>
 <span id="cb50-4"><a href="Clustering.html#cb50-4"></a>    <span class="dt">data =</span> AK_lakes,</span>

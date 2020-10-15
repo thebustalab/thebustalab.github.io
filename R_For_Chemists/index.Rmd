@@ -1538,7 +1538,8 @@ ggplot() +
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
-```{r}
+```{r, fig.width = 8, fig.height = 4, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 solvents_clustered <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
@@ -1548,22 +1549,23 @@ solvents_clustered <- runMatrixAnalysis(
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
   transpose = FALSE,
-  kmeans = 3,
+  kmeans = 4,
   na_replacement = "drop"
 )
 
-colors <- c("maroon", "gold", "grey")
+colors <- c("maroon", "gold", "grey", "white")
 
 pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
-  geom_point(shape = 21, size = 2) +
   geom_mark_ellipse(
     aes(label = kmeans_cluster), 
-    alpha = 0.3, label.lineheight = 0.2) +
+    alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
+  geom_point(shape = 21, size = 2) +
   theme_classic() +
-  scale_x_continuous(name = "PCA dimension 1", breaks = seq(-6,6,1)) +
-  scale_y_continuous(name = "PCA dimension 2", breaks = seq(-6,6,1)) +
+  guides(fill = "none") +
+  scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
+  scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
   scale_fill_manual(values = colors) +
-  coord_cartesian(xlim = c(-7,7), ylim = c(-6,6))
+  coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
 
 solvents_clustered_summary <- solvents_clustered %>%
   group_by(kmeans_cluster) %>%
@@ -1573,12 +1575,12 @@ bar_plot <- ggplot() +
   geom_violin(
     data = solvents_clustered,
     aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
-    size = 1, color = "black", alpha = 0.6
+    size = 0.5, color = "black", alpha = 0.6, width = 0.5
   ) +
   geom_crossbar(
     data = solvents_clustered_summary,
     aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
-    color = "black"
+    color = "black", width = 0.5
   ) +
   geom_point(
     data = solvents_clustered,
@@ -1588,8 +1590,10 @@ bar_plot <- ggplot() +
   scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
   scale_x_discrete(name = "Cluster") +
   scale_fill_manual(values = colors) +
-  theme_linedraw() +
-  coord_flip()
+  theme_classic() +
+  coord_flip() +
+  guides(fill = "none") +
+  theme(legend.position = "bottom")
 
 cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 ```

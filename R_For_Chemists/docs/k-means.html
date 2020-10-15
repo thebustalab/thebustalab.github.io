@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-10-07" />
+<meta name="date" content="2020-10-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="Exercises-5.html"/>
-<link rel="next" href="functions-1.html"/>
+<link rel="next" href="Exercises-6.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -222,6 +222,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="13.2" data-path="Exercises-5.html"><a href="Exercises-5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>13.2</b> Option 2: Grape vine varieties</a></li>
 </ul></li>
 <li class="chapter" data-level="14" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>14</b> k-means</a></li>
+<li class="chapter" data-level="15" data-path="Exercises-6.html"><a href="Exercises-6.html"><i class="fa fa-check"></i><b>15</b> Exercises 6</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>A</b> Functions</a><ul>
 <li class="chapter" data-level="A.1" data-path="functions-1.html"><a href="functions-1.html#libraries-and-packages"><i class="fa fa-check"></i><b>A.1</b> Libraries and packages</a><ul>
@@ -296,21 +297,223 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="k-means" class="section level1">
 <h1><span class="header-section-number">Chapter 14</span> k-means</h1>
+<p>k-means can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in <strong>A</strong> below:</p>
+<p><img src="http://thebustalab.github.io/phylochemistry/figures/kmeans.png" style="display: block; margin: auto;" /></p>
+<p>One we know within-group variances, we find the “elbow” point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in <strong>B</strong> and <strong>C</strong>.)</p>
+<p>Let’s try k-means using <code>runMatrixAnalysis</code>. We can use it in conjunction with <code>analysis = "pca"</code> or <code>analysis = "hclust"</code>. Let’s do PCA first. To include k-means, we can just set <code>kmeans = "auto"</code>. It’s important to note that kmeans cannot handle NAs. We must set something for the <code>na_replacement</code> argument. One solution is to ignore variables that have NAs for some values, which can be done by setting <code>na_replacement = "drop"</code>.</p>
+<p>With <code>kmeans = "auto"</code> and <code>na_replacement = "drop"</code>, we can now run our analyssis. The output now has an additional column called <code>kmeans_cluster</code>, which indicates what cluster each sample is in:</p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="k-means.html#cb65-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<span id="cb65-2"><a href="k-means.html#cb65-2"></a></span>
+<span id="cb65-3"><a href="k-means.html#cb65-3"></a>solvents_pca_kmeans &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb65-4"><a href="k-means.html#cb65-4"></a>  <span class="dt">data =</span> solvents,</span>
+<span id="cb65-5"><a href="k-means.html#cb65-5"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb65-6"><a href="k-means.html#cb65-6"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb65-7"><a href="k-means.html#cb65-7"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb65-8"><a href="k-means.html#cb65-8"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(solvents)[<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">7</span><span class="op">:</span><span class="dv">9</span>, <span class="dv">11</span><span class="op">:</span><span class="dv">12</span>)],</span>
+<span id="cb65-9"><a href="k-means.html#cb65-9"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb65-10"><a href="k-means.html#cb65-10"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;solvent&quot;</span>, <span class="st">&quot;formula&quot;</span>, <span class="st">&quot;miscible_with_water&quot;</span>, <span class="st">&quot;CAS_number&quot;</span>, <span class="st">&quot;category&quot;</span>),</span>
+<span id="cb65-11"><a href="k-means.html#cb65-11"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb65-12"><a href="k-means.html#cb65-12"></a>  <span class="dt">kmeans =</span> <span class="st">&quot;auto&quot;</span>,</span>
+<span id="cb65-13"><a href="k-means.html#cb65-13"></a>  <span class="dt">na_replacement =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb65-14"><a href="k-means.html#cb65-14"></a>)</span>
+<span id="cb65-15"><a href="k-means.html#cb65-15"></a><span class="co">## Dropping any variables in your dataset that have NA as a value.</span></span>
+<span id="cb65-16"><a href="k-means.html#cb65-16"></a><span class="co">## Variables dropped:</span></span>
+<span id="cb65-17"><a href="k-means.html#cb65-17"></a><span class="co">## solubility_in_water vapor_pressure</span></span>
+<span id="cb65-18"><a href="k-means.html#cb65-18"></a></span>
+<span id="cb65-19"><a href="k-means.html#cb65-19"></a>solvents_pca_kmeans</span>
+<span id="cb65-20"><a href="k-means.html#cb65-20"></a><span class="co">## # A tibble: 32 x 15</span></span>
+<span id="cb65-21"><a href="k-means.html#cb65-21"></a><span class="co">##    solvent formula miscible_with_w… CAS_number category sample_unique_ID</span></span>
+<span id="cb65-22"><a href="k-means.html#cb65-22"></a><span class="co">##    &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;            &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;           </span></span>
+<span id="cb65-23"><a href="k-means.html#cb65-23"></a><span class="co">##  1 acetic… C2H4O2  TRUE             64-19-7    oxygen-… acetic_acid_C2H…</span></span>
+<span id="cb65-24"><a href="k-means.html#cb65-24"></a><span class="co">##  2 acetone C3H6O   TRUE             67-64-1    oxygen-… acetone_C3H6O_ …</span></span>
+<span id="cb65-25"><a href="k-means.html#cb65-25"></a><span class="co">##  3 aceton… C2H3N   TRUE             75-05-8    nitroge… acetonitrile_C2…</span></span>
+<span id="cb65-26"><a href="k-means.html#cb65-26"></a><span class="co">##  4 benzene C6H6    FALSE            71-43-2    hydroca… benzene_C6H6_FA…</span></span>
+<span id="cb65-27"><a href="k-means.html#cb65-27"></a><span class="co">##  5 benzon… C7H5N   FALSE            100-47-0   nitroge… benzonitrile_C7…</span></span>
+<span id="cb65-28"><a href="k-means.html#cb65-28"></a><span class="co">##  6 1-buta… C4H10O  FALSE            71-36-3    alcohol  1-butanol_C4H10…</span></span>
+<span id="cb65-29"><a href="k-means.html#cb65-29"></a><span class="co">##  7 2-buta… C4H8O   FALSE            78-93-3    oxygen-… 2-butanone_C4H8…</span></span>
+<span id="cb65-30"><a href="k-means.html#cb65-30"></a><span class="co">##  8 carbon… CS2     FALSE            75-15-0    sulfide  carbon_disulfid…</span></span>
+<span id="cb65-31"><a href="k-means.html#cb65-31"></a><span class="co">##  9 carbon… CCl4    FALSE            56-23-5    chlorin… carbon_tetrachl…</span></span>
+<span id="cb65-32"><a href="k-means.html#cb65-32"></a><span class="co">## 10 chloro… C6H5Cl  FALSE            108-90-7   chlorin… chlorobenzene_C…</span></span>
+<span id="cb65-33"><a href="k-means.html#cb65-33"></a><span class="co">## # … with 22 more rows, and 9 more variables: Dim.1 &lt;dbl&gt;, Dim.2 &lt;dbl&gt;,</span></span>
+<span id="cb65-34"><a href="k-means.html#cb65-34"></a><span class="co">## #   kmeans_cluster &lt;fct&gt;, boiling_point &lt;dbl&gt;, melting_point &lt;dbl&gt;,</span></span>
+<span id="cb65-35"><a href="k-means.html#cb65-35"></a><span class="co">## #   density &lt;dbl&gt;, relative_polarity &lt;dbl&gt;, formula_weight &lt;dbl&gt;,</span></span>
+<span id="cb65-36"><a href="k-means.html#cb65-36"></a><span class="co">## #   refractive_index &lt;dbl&gt;</span></span></code></pre></div>
+<p>We can plot the results and color them according to the group that kmeans suggested:</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="k-means.html#cb66-1"></a><span class="kw">ggplot</span>(solvents_pca_kmeans) <span class="op">+</span></span>
+<span id="cb66-2"><a href="k-means.html#cb66-2"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> kmeans_cluster), <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span>)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-105-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let’s look at the elbow plot itself. For this, we can just set <code>kmeans = "elbow"</code>:</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="k-means.html#cb67-1"></a>solvents_pca_kmeans_elbow &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb67-2"><a href="k-means.html#cb67-2"></a>  <span class="dt">data =</span> solvents,</span>
+<span id="cb67-3"><a href="k-means.html#cb67-3"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb67-4"><a href="k-means.html#cb67-4"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb67-5"><a href="k-means.html#cb67-5"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb67-6"><a href="k-means.html#cb67-6"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(solvents)[<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">7</span><span class="op">:</span><span class="dv">9</span>, <span class="dv">11</span><span class="op">:</span><span class="dv">12</span>)],</span>
+<span id="cb67-7"><a href="k-means.html#cb67-7"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb67-8"><a href="k-means.html#cb67-8"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;solvent&quot;</span>, <span class="st">&quot;formula&quot;</span>, <span class="st">&quot;miscible_with_water&quot;</span>, <span class="st">&quot;CAS_number&quot;</span>, <span class="st">&quot;category&quot;</span>),</span>
+<span id="cb67-9"><a href="k-means.html#cb67-9"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb67-10"><a href="k-means.html#cb67-10"></a>  <span class="dt">kmeans =</span> <span class="st">&quot;elbow&quot;</span>,</span>
+<span id="cb67-11"><a href="k-means.html#cb67-11"></a>  <span class="dt">na_replacement =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb67-12"><a href="k-means.html#cb67-12"></a>)</span>
+<span id="cb67-13"><a href="k-means.html#cb67-13"></a><span class="co">## Dropping any variables in your dataset that have NA as a value.</span></span>
+<span id="cb67-14"><a href="k-means.html#cb67-14"></a><span class="co">## Variables dropped:</span></span>
+<span id="cb67-15"><a href="k-means.html#cb67-15"></a><span class="co">## solubility_in_water vapor_pressure</span></span>
+<span id="cb67-16"><a href="k-means.html#cb67-16"></a></span>
+<span id="cb67-17"><a href="k-means.html#cb67-17"></a>solvents_pca_kmeans_elbow</span>
+<span id="cb67-18"><a href="k-means.html#cb67-18"></a><span class="co">## # A tibble: 31 x 2</span></span>
+<span id="cb67-19"><a href="k-means.html#cb67-19"></a><span class="co">##    cluster_number variance_within_cluster</span></span>
+<span id="cb67-20"><a href="k-means.html#cb67-20"></a><span class="co">##             &lt;dbl&gt;                   &lt;dbl&gt;</span></span>
+<span id="cb67-21"><a href="k-means.html#cb67-21"></a><span class="co">##  1              1                 142804.</span></span>
+<span id="cb67-22"><a href="k-means.html#cb67-22"></a><span class="co">##  2              2                  67355.</span></span>
+<span id="cb67-23"><a href="k-means.html#cb67-23"></a><span class="co">##  3              3                  49545.</span></span>
+<span id="cb67-24"><a href="k-means.html#cb67-24"></a><span class="co">##  4              4                  38964.</span></span>
+<span id="cb67-25"><a href="k-means.html#cb67-25"></a><span class="co">##  5              5                  30702.</span></span>
+<span id="cb67-26"><a href="k-means.html#cb67-26"></a><span class="co">##  6              6                  25212.</span></span>
+<span id="cb67-27"><a href="k-means.html#cb67-27"></a><span class="co">##  7              7                  20188.</span></span>
+<span id="cb67-28"><a href="k-means.html#cb67-28"></a><span class="co">##  8              8                  16508.</span></span>
+<span id="cb67-29"><a href="k-means.html#cb67-29"></a><span class="co">##  9              9                  14428.</span></span>
+<span id="cb67-30"><a href="k-means.html#cb67-30"></a><span class="co">## 10             10                  12265.</span></span>
+<span id="cb67-31"><a href="k-means.html#cb67-31"></a><span class="co">## # … with 21 more rows</span></span></code></pre></div>
+<p>This gives us the maximum variance within a cluster for each number of clusters. Let’s plot that:</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="k-means.html#cb68-1"></a><span class="kw">ggplot</span>(</span>
+<span id="cb68-2"><a href="k-means.html#cb68-2"></a>  solvents_pca_kmeans_elbow,</span>
+<span id="cb68-3"><a href="k-means.html#cb68-3"></a>  <span class="kw">aes</span>(<span class="dt">x =</span> cluster_number, <span class="dt">y =</span> variance_within_cluster)</span>
+<span id="cb68-4"><a href="k-means.html#cb68-4"></a>) <span class="op">+</span></span>
+<span id="cb68-5"><a href="k-means.html#cb68-5"></a><span class="st">  </span><span class="kw">geom_col</span>() <span class="op">+</span></span>
+<span id="cb68-6"><a href="k-means.html#cb68-6"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb68-7"><a href="k-means.html#cb68-7"></a><span class="st">  </span><span class="kw">geom_line</span>()</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-107-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Hmm, it looks like there aren’t any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set <code>kmeans = 3</code> if we want two clusters in the output. Below, let’s do just that. Let’s also plot the results and use <code>geom_mark_ellipse</code> from the <code>ggforce</code> package.</p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="k-means.html#cb69-1"></a><span class="kw">library</span>(ggforce)</span>
+<span id="cb69-2"><a href="k-means.html#cb69-2"></a></span>
+<span id="cb69-3"><a href="k-means.html#cb69-3"></a><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb69-4"><a href="k-means.html#cb69-4"></a>  <span class="dt">data =</span> solvents,</span>
+<span id="cb69-5"><a href="k-means.html#cb69-5"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb69-6"><a href="k-means.html#cb69-6"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-7"><a href="k-means.html#cb69-7"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-8"><a href="k-means.html#cb69-8"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(solvents)[<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">7</span><span class="op">:</span><span class="dv">9</span>, <span class="dv">11</span><span class="op">:</span><span class="dv">12</span>)],</span>
+<span id="cb69-9"><a href="k-means.html#cb69-9"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb69-10"><a href="k-means.html#cb69-10"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;solvent&quot;</span>, <span class="st">&quot;formula&quot;</span>, <span class="st">&quot;miscible_with_water&quot;</span>, <span class="st">&quot;CAS_number&quot;</span>, <span class="st">&quot;category&quot;</span>),</span>
+<span id="cb69-11"><a href="k-means.html#cb69-11"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb69-12"><a href="k-means.html#cb69-12"></a>  <span class="dt">kmeans =</span> <span class="dv">3</span>,</span>
+<span id="cb69-13"><a href="k-means.html#cb69-13"></a>  <span class="dt">na_replacement =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb69-14"><a href="k-means.html#cb69-14"></a>) <span class="op">%&gt;%</span></span>
+<span id="cb69-15"><a href="k-means.html#cb69-15"></a></span>
+<span id="cb69-16"><a href="k-means.html#cb69-16"></a><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> kmeans_cluster)) <span class="op">+</span></span>
+<span id="cb69-17"><a href="k-means.html#cb69-17"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">5</span>) <span class="op">+</span></span>
+<span id="cb69-18"><a href="k-means.html#cb69-18"></a><span class="st">  </span><span class="kw">geom_mark_ellipse</span>(<span class="kw">aes</span>(<span class="dt">label =</span> kmeans_cluster), <span class="dt">alpha =</span> <span class="fl">0.2</span>) <span class="op">+</span></span>
+<span id="cb69-19"><a href="k-means.html#cb69-19"></a><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></span>
+<span id="cb69-20"><a href="k-means.html#cb69-20"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">4</span>,<span class="dv">4</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">4</span>,<span class="dv">4</span>))</span>
+<span id="cb69-21"><a href="k-means.html#cb69-21"></a><span class="co">## Dropping any variables in your dataset that have NA as a value.</span></span>
+<span id="cb69-22"><a href="k-means.html#cb69-22"></a><span class="co">## Variables dropped:</span></span>
+<span id="cb69-23"><a href="k-means.html#cb69-23"></a><span class="co">## solubility_in_water vapor_pressure</span></span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-108-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Cool!</p>
+<p>One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="k-means.html#cb70-1"></a>solvents_clustered &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb70-2"><a href="k-means.html#cb70-2"></a>  <span class="dt">data =</span> solvents,</span>
+<span id="cb70-3"><a href="k-means.html#cb70-3"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb70-4"><a href="k-means.html#cb70-4"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb70-5"><a href="k-means.html#cb70-5"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb70-6"><a href="k-means.html#cb70-6"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(solvents)[<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">7</span><span class="op">:</span><span class="dv">9</span>, <span class="dv">11</span><span class="op">:</span><span class="dv">12</span>)],</span>
+<span id="cb70-7"><a href="k-means.html#cb70-7"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb70-8"><a href="k-means.html#cb70-8"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;solvent&quot;</span>, <span class="st">&quot;formula&quot;</span>, <span class="st">&quot;miscible_with_water&quot;</span>, <span class="st">&quot;CAS_number&quot;</span>, <span class="st">&quot;category&quot;</span>),</span>
+<span id="cb70-9"><a href="k-means.html#cb70-9"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb70-10"><a href="k-means.html#cb70-10"></a>  <span class="dt">kmeans =</span> <span class="dv">2</span>,</span>
+<span id="cb70-11"><a href="k-means.html#cb70-11"></a>  <span class="dt">na_replacement =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb70-12"><a href="k-means.html#cb70-12"></a>)</span>
+<span id="cb70-13"><a href="k-means.html#cb70-13"></a><span class="co">## Dropping any variables in your dataset that have NA as a value.</span></span>
+<span id="cb70-14"><a href="k-means.html#cb70-14"></a><span class="co">## Variables dropped:</span></span>
+<span id="cb70-15"><a href="k-means.html#cb70-15"></a><span class="co">## solubility_in_water vapor_pressure</span></span>
+<span id="cb70-16"><a href="k-means.html#cb70-16"></a></span>
+<span id="cb70-17"><a href="k-means.html#cb70-17"></a>solvents_clustered_summary &lt;-<span class="st"> </span>solvents_clustered <span class="op">%&gt;%</span></span>
+<span id="cb70-18"><a href="k-means.html#cb70-18"></a><span class="st">  </span><span class="kw">group_by</span>(kmeans_cluster) <span class="op">%&gt;%</span></span>
+<span id="cb70-19"><a href="k-means.html#cb70-19"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">mean_bp =</span> <span class="kw">mean</span>(boiling_point))</span>
+<span id="cb70-20"><a href="k-means.html#cb70-20"></a></span>
+<span id="cb70-21"><a href="k-means.html#cb70-21"></a><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb70-22"><a href="k-means.html#cb70-22"></a><span class="st">  </span><span class="kw">geom_col</span>(</span>
+<span id="cb70-23"><a href="k-means.html#cb70-23"></a>    <span class="dt">data =</span> solvents_clustered_summary,</span>
+<span id="cb70-24"><a href="k-means.html#cb70-24"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> kmeans_cluster, <span class="dt">y =</span> mean_bp),</span>
+<span id="cb70-25"><a href="k-means.html#cb70-25"></a>    <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;white&quot;</span></span>
+<span id="cb70-26"><a href="k-means.html#cb70-26"></a>  ) <span class="op">+</span></span>
+<span id="cb70-27"><a href="k-means.html#cb70-27"></a><span class="st">  </span><span class="kw">geom_point</span>(</span>
+<span id="cb70-28"><a href="k-means.html#cb70-28"></a>    <span class="dt">data =</span> solvents_clustered,</span>
+<span id="cb70-29"><a href="k-means.html#cb70-29"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> kmeans_cluster, <span class="dt">y =</span> boiling_point)</span>
+<span id="cb70-30"><a href="k-means.html#cb70-30"></a>  )</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-109-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it’s possible that we’ll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the <code>plot_grid</code> function from the <code>cowplot</code> package. Let’s check it out:</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="k-means.html#cb71-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<span id="cb71-2"><a href="k-means.html#cb71-2"></a>solvents_clustered &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb71-3"><a href="k-means.html#cb71-3"></a>  <span class="dt">data =</span> solvents,</span>
+<span id="cb71-4"><a href="k-means.html#cb71-4"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb71-5"><a href="k-means.html#cb71-5"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb71-6"><a href="k-means.html#cb71-6"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb71-7"><a href="k-means.html#cb71-7"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">colnames</span>(solvents)[<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">7</span><span class="op">:</span><span class="dv">9</span>, <span class="dv">11</span><span class="op">:</span><span class="dv">12</span>)],</span>
+<span id="cb71-8"><a href="k-means.html#cb71-8"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb71-9"><a href="k-means.html#cb71-9"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;solvent&quot;</span>, <span class="st">&quot;formula&quot;</span>, <span class="st">&quot;miscible_with_water&quot;</span>, <span class="st">&quot;CAS_number&quot;</span>, <span class="st">&quot;category&quot;</span>),</span>
+<span id="cb71-10"><a href="k-means.html#cb71-10"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb71-11"><a href="k-means.html#cb71-11"></a>  <span class="dt">kmeans =</span> <span class="dv">4</span>,</span>
+<span id="cb71-12"><a href="k-means.html#cb71-12"></a>  <span class="dt">na_replacement =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb71-13"><a href="k-means.html#cb71-13"></a>)</span>
+<span id="cb71-14"><a href="k-means.html#cb71-14"></a><span class="co">## Dropping any variables in your dataset that have NA as a value.</span></span>
+<span id="cb71-15"><a href="k-means.html#cb71-15"></a><span class="co">## Variables dropped:</span></span>
+<span id="cb71-16"><a href="k-means.html#cb71-16"></a><span class="co">## solubility_in_water vapor_pressure</span></span>
+<span id="cb71-17"><a href="k-means.html#cb71-17"></a></span>
+<span id="cb71-18"><a href="k-means.html#cb71-18"></a>colors &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;maroon&quot;</span>, <span class="st">&quot;gold&quot;</span>, <span class="st">&quot;grey&quot;</span>, <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb71-19"><a href="k-means.html#cb71-19"></a></span>
+<span id="cb71-20"><a href="k-means.html#cb71-20"></a>pca_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>( <span class="dt">data =</span> solvents_clustered, <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> kmeans_cluster) ) <span class="op">+</span></span>
+<span id="cb71-21"><a href="k-means.html#cb71-21"></a><span class="st">  </span><span class="kw">geom_mark_ellipse</span>(</span>
+<span id="cb71-22"><a href="k-means.html#cb71-22"></a>    <span class="kw">aes</span>(<span class="dt">label =</span> kmeans_cluster), </span>
+<span id="cb71-23"><a href="k-means.html#cb71-23"></a>    <span class="dt">alpha =</span> <span class="fl">0.5</span>, <span class="dt">label.lineheight =</span> <span class="fl">0.2</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span></span>
+<span id="cb71-24"><a href="k-means.html#cb71-24"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span></span>
+<span id="cb71-25"><a href="k-means.html#cb71-25"></a><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></span>
+<span id="cb71-26"><a href="k-means.html#cb71-26"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span></span>
+<span id="cb71-27"><a href="k-means.html#cb71-27"></a><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">name =</span> <span class="st">&quot;PCA dimension 1&quot;</span>, <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="op">-</span><span class="dv">8</span>,<span class="dv">8</span>,<span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb71-28"><a href="k-means.html#cb71-28"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">name =</span> <span class="st">&quot;PCA dimension 2&quot;</span>, <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="op">-</span><span class="dv">7</span>,<span class="dv">7</span>,<span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb71-29"><a href="k-means.html#cb71-29"></a><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> colors) <span class="op">+</span></span>
+<span id="cb71-30"><a href="k-means.html#cb71-30"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">8</span>,<span class="dv">8</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">7</span>,<span class="dv">7</span>))</span>
+<span id="cb71-31"><a href="k-means.html#cb71-31"></a></span>
+<span id="cb71-32"><a href="k-means.html#cb71-32"></a>solvents_clustered_summary &lt;-<span class="st"> </span>solvents_clustered <span class="op">%&gt;%</span></span>
+<span id="cb71-33"><a href="k-means.html#cb71-33"></a><span class="st">  </span><span class="kw">group_by</span>(kmeans_cluster) <span class="op">%&gt;%</span></span>
+<span id="cb71-34"><a href="k-means.html#cb71-34"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">mean_bp =</span> <span class="kw">mean</span>(boiling_point))</span>
+<span id="cb71-35"><a href="k-means.html#cb71-35"></a></span>
+<span id="cb71-36"><a href="k-means.html#cb71-36"></a>bar_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb71-37"><a href="k-means.html#cb71-37"></a><span class="st">  </span><span class="kw">geom_violin</span>(</span>
+<span id="cb71-38"><a href="k-means.html#cb71-38"></a>    <span class="dt">data =</span> solvents_clustered,</span>
+<span id="cb71-39"><a href="k-means.html#cb71-39"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> kmeans_cluster, <span class="dt">y =</span> boiling_point, <span class="dt">fill =</span> kmeans_cluster),</span>
+<span id="cb71-40"><a href="k-means.html#cb71-40"></a>    <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span>, <span class="dt">width =</span> <span class="fl">0.5</span></span>
+<span id="cb71-41"><a href="k-means.html#cb71-41"></a>  ) <span class="op">+</span></span>
+<span id="cb71-42"><a href="k-means.html#cb71-42"></a><span class="st">  </span><span class="kw">geom_crossbar</span>(</span>
+<span id="cb71-43"><a href="k-means.html#cb71-43"></a>    <span class="dt">data =</span> solvents_clustered_summary,</span>
+<span id="cb71-44"><a href="k-means.html#cb71-44"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> kmeans_cluster, <span class="dt">y =</span> mean_bp, <span class="dt">ymin =</span> mean_bp, <span class="dt">ymax =</span> mean_bp),</span>
+<span id="cb71-45"><a href="k-means.html#cb71-45"></a>    <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">width =</span> <span class="fl">0.5</span></span>
+<span id="cb71-46"><a href="k-means.html#cb71-46"></a>  ) <span class="op">+</span></span>
+<span id="cb71-47"><a href="k-means.html#cb71-47"></a><span class="st">  </span><span class="kw">geom_point</span>(</span>
+<span id="cb71-48"><a href="k-means.html#cb71-48"></a>    <span class="dt">data =</span> solvents_clustered,</span>
+<span id="cb71-49"><a href="k-means.html#cb71-49"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> kmeans_cluster, <span class="dt">y =</span> boiling_point),</span>
+<span id="cb71-50"><a href="k-means.html#cb71-50"></a>    <span class="dt">size =</span> <span class="dv">2</span>, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span></span>
+<span id="cb71-51"><a href="k-means.html#cb71-51"></a>  ) <span class="op">+</span></span>
+<span id="cb71-52"><a href="k-means.html#cb71-52"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">name =</span> <span class="st">&quot;Boiling point&quot;</span>, <span class="dt">breaks =</span> <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">250</span>,<span class="dv">20</span>)) <span class="op">+</span></span>
+<span id="cb71-53"><a href="k-means.html#cb71-53"></a><span class="st">  </span><span class="kw">scale_x_discrete</span>(<span class="dt">name =</span> <span class="st">&quot;Cluster&quot;</span>) <span class="op">+</span></span>
+<span id="cb71-54"><a href="k-means.html#cb71-54"></a><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> colors) <span class="op">+</span></span>
+<span id="cb71-55"><a href="k-means.html#cb71-55"></a><span class="st">  </span><span class="kw">theme_classic</span>() <span class="op">+</span></span>
+<span id="cb71-56"><a href="k-means.html#cb71-56"></a><span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span></span>
+<span id="cb71-57"><a href="k-means.html#cb71-57"></a><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill =</span> <span class="st">&quot;none&quot;</span>) <span class="op">+</span></span>
+<span id="cb71-58"><a href="k-means.html#cb71-58"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</span>
+<span id="cb71-59"><a href="k-means.html#cb71-59"></a></span>
+<span id="cb71-60"><a href="k-means.html#cb71-60"></a>cowplot<span class="op">::</span><span class="kw">plot_grid</span>(pca_plot, bar_plot, <span class="dt">align =</span> <span class="st">&quot;h&quot;</span>, <span class="dt">axis =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">labels =</span> <span class="st">&quot;AUTO&quot;</span>)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-110-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Now we are really rockin!!</p>
 <!-- end -->
 <!-- start Exercises 6 -->
-<!-- end -->
-<!-- start Appendix -->
 </div>
-
-
-
             </section>
 
           </div>
         </div>
       </div>
 <a href="Exercises-5.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="functions-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="Exercises-6.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
