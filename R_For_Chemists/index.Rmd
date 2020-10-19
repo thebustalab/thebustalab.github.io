@@ -1477,7 +1477,7 @@ ggplot(
   geom_line()
 ```
 
-Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want two clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse` from the `ggforce` package.
+Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse` from the `ggforce` package.
 
 ```{r, message = FALSE}
 library(ggforce)
@@ -1910,9 +1910,9 @@ mid_strength <- filter(mtcars,hp %in% 100:200)
 
 ## Data wrangling
 
-### `tidyverse::read_csv()`
+### `read_csv()`
 
-(a readr function - part of the tidyverse) Use it to read .csv files.
+(a `readr` function - part of the tidyverse) Use it to read .csv files.
 
 ### `read.csv()`
 
@@ -1929,16 +1929,22 @@ mid_strength <- filter(mtcars,hp %in% 100:200)
 head(algae_chemistry_data)
 ```
 
-### `dplyr::filter()` (a dplyr function - part of the tidyverse) Use it to filter your data.
+### `filter()`
 
-### `dplyr::mutate()` (a dplyr function - part of the tidyverse). An example:
+(a `dplyr` function - part of the tidyverse) Use it to filter your data.
+
+### `mutate()`
+
+(a `dplyr` function - part of the tidyverse). An example:
 
 ```{r, message = FALSE}
 # Add a column "kilometers per liter (klp)" and calculate using mpg
 EUROPE_mtcars <- mutate(mtcars,kpl = mpg*0.4251)
 ```
 
-### `dplyr::case_when()` (a dplyr function - part of the tidyverse)
+### `case_when()`
+
+(a `dplyr` function - part of the tidyverse)
 
 ```{r}
 # Classify the fuel efficiency of the cars in the mtcars data set
@@ -1953,17 +1959,17 @@ efficiency <- mutate(
 efficiency
 ```
 
-### `tidyr::pivot_longer()`
+### `pivot_longer()`
 
-(a tidyr function - part of the tidyverse)
+(a `tidyr` function - part of the tidyverse)
 
-### `dplyr::group_by()`
+### `group_by()`
 
-(a dplyr function - part of the tidyverse)
+(a `dplyr` function - part of the tidyverse)
 
-### `dplyr::summarize()`
+### `summarize()`
 
-(a dplyr function - part of the tidyverse)
+(a `dplyr` function - part of the tidyverse)
 
 ### `%>%`
 
@@ -2050,7 +2056,9 @@ So, if we want to calculate percent free elements:
 table(DML$element_type)[2] / sum(table(DML$element_type)) * 100
 ```
 
-### `stats::weighted.mean()`
+### `weighted.mean()`
+
+(from the `stats` package)
 
 Suppose we want to calculate mean abundance of pyruvate in patients with kidney disease versus patients that are healthy.
 
@@ -2088,6 +2096,37 @@ group_by(ckd_data_pyruvate, patient_status) %>%
     weighted_mean_pyruvate = weighted.mean(Pyruvate, weight)
   )
 ```
+
+## t.test()
+```{r}
+  algae_data_filtered <- filter(
+    algae_data, 
+    algae_strain == "Tsv1" 
+    &
+    chemical_species == "omega_3_polyunsaturated_Fas"
+  )
+  t.test(
+    algae_data_filtered$abundance
+    ~
+    algae_data_filtered$harvesting_regime
+  )
+```
+  
+## anova()
+```{r}
+  algae_data_filtered <- filter(
+    algae_data, 
+    harvesting_regime == "Heavy" 
+    & chemical_species == "omega_3_polyunsaturated_Fas"
+  )
+  aov_results <- aov(
+    algae_data_filtered$abundance
+    ~
+    algae_data_filtered$algae_strain
+  )
+  summary(aov_results)
+  TukeyHSD(aov_results)
+``` 
 
 
 # Custom functions {#custom_functions}
@@ -2155,13 +2194,13 @@ runMatrixAnalysis(
 ```{r, eval = FALSE}
 
 runMatrixAnalysis(
-  data = NULL,
-  analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = NULL,
+  data = NULL, # the data set to work on
+  analysis = c("hclust", "pca", "pca-ord", "pca-dim"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = NULL, # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = NULL, # a column with information about the sample (i.e. contents from the test tube's label)
   transpose = FALSE,
   kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
   na_replacement = c("none", "mean", "zero", "drop")
