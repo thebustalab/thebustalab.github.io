@@ -365,7 +365,7 @@
                 # Annotate internal branches if tree output
 
                     if( analysis == "hclust" ) {
-                        for( node in filter(clustering, isTip == FALSE)$node ) {
+                        for( node in dplyr::filter(clustering, isTip == FALSE)$node ) {
                             for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
                                 descends <- clustering[clustering$node %in% descendants(phylo, node),]
                                 if ( table(duplicated(descends[,colnames(descends) == sample_property]))[1] == 1 ) {
