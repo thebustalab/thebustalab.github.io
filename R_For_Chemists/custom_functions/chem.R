@@ -18,7 +18,7 @@
 
 #### readCSV
 
-    #'
+    #'asdf
 
     readCSV <- function() { return(readr::read_csv(file.choose())) }
 
@@ -436,150 +436,404 @@
             x
         }
 
-
 ### HSD.test
 
-        HSD.test <- function (y, trt, DFerror, MSerror, alpha = 0.05, group = TRUE, 
-            main = NULL, unbalanced = FALSE, console = FALSE) 
-        {
-            name.y <- paste(deparse(substitute(y)))
-            name.t <- paste(deparse(substitute(trt)))
+    HSD.test <- function (y, trt, DFerror, MSerror, alpha = 0.05, group = TRUE, 
+        main = NULL, unbalanced = FALSE, console = FALSE) 
+    {
+        name.y <- paste(deparse(substitute(y)))
+        name.t <- paste(deparse(substitute(trt)))
+        if (is.null(main)) 
+            main <- paste(name.y, "~", name.t)
+        clase <- c("aov", "lm")
+        if ("aov" %in% class(y) | "lm" %in% class(y)) {
             if (is.null(main)) 
-                main <- paste(name.y, "~", name.t)
-            clase <- c("aov", "lm")
-            if ("aov" %in% class(y) | "lm" %in% class(y)) {
-                if (is.null(main)) 
-                    main <- y$call
-                A <- y$model
-                DFerror <- df.residual(y)
-                MSerror <- deviance(y)/DFerror
-                y <- A[, 1]
-                ipch <- pmatch(trt, names(A))
-                nipch <- length(ipch)
-                for (i in 1:nipch) {
-                    if (is.na(ipch[i])) 
-                        return(if (console) cat("Name: ", trt, "\n", 
-                          names(A)[-1], "\n"))
-                }
-                name.t <- names(A)[ipch][1]
-                trt <- A[, ipch]
-                if (nipch > 1) {
-                    trt <- A[, ipch[1]]
-                    for (i in 2:nipch) {
-                        name.t <- paste(name.t, names(A)[ipch][i], sep = ":")
-                        trt <- paste(trt, A[, ipch[i]], sep = ":")
-                    }
-                }
-                name.y <- names(A)[1]
+                main <- y$call
+            A <- y$model
+            DFerror <- df.residual(y)
+            MSerror <- deviance(y)/DFerror
+            y <- A[, 1]
+            ipch <- pmatch(trt, names(A))
+            nipch <- length(ipch)
+            for (i in 1:nipch) {
+                if (is.na(ipch[i])) 
+                    return(if (console) cat("Name: ", trt, "\n", 
+                      names(A)[-1], "\n"))
             }
-            junto <- subset(data.frame(y, trt), is.na(y) == FALSE)
-            Mean <- mean(junto[, 1])
-            CV <- sqrt(MSerror) * 100/Mean
-            medians <- tapply.stat(junto[, 1], junto[, 2], stat = "median")
-            for (i in c(1, 5, 2:4)) {
-                x <- tapply.stat(junto[, 1], junto[, 2], function(x) quantile(x)[i])
-                medians <- cbind(medians, x[, 2])
-            }
-            medians <- medians[, 3:7]
-            names(medians) <- c("Min", "Max", "Q25", "Q50", "Q75")
-            means <- tapply.stat(junto[, 1], junto[, 2], stat = "mean")
-            sds <- tapply.stat(junto[, 1], junto[, 2], stat = "sd")
-            nn <- tapply.stat(junto[, 1], junto[, 2], stat = "length")
-            means <- data.frame(means, std = sds[, 2], r = nn[, 2], medians)
-            names(means)[1:2] <- c(name.t, name.y)
-            ntr <- nrow(means)
-            Tprob <- qtukey(1 - alpha, ntr, DFerror)
-            nr <- unique(nn[, 2])
-            nr1 <- 1/mean(1/nn[, 2])
-            if (console) {
-                cat("\nStudy:", main)
-                cat("\n\nHSD Test for", name.y, "\n")
-                cat("\nMean Square Error: ", MSerror, "\n\n")
-                cat(paste(name.t, ",", sep = ""), " means\n\n")
-                print(data.frame(row.names = means[, 1], means[, 2:6]))
-                cat("\nAlpha:", alpha, "; DF Error:", DFerror, "\n")
-                cat("Critical Value of Studentized Range:", Tprob, "\n")
-            }
-            HSD <- Tprob * sqrt(MSerror/nr)
-            statistics <- data.frame(MSerror = MSerror, Df = DFerror, 
-                Mean = Mean, CV = CV, MSD = HSD)
-            if (group & length(nr) == 1 & console) 
-                cat("\nMinimun Significant Difference:", HSD, "\n")
-            if (group & length(nr) != 1 & console) 
-                cat("\nGroups according to probability of means differences and alpha level(", 
-                    alpha, ")\n")
-            if (length(nr) != 1) 
-                statistics <- data.frame(MSerror = MSerror, Df = DFerror, 
-                    Mean = Mean, CV = CV)
-            comb <- utils::combn(ntr, 2)
-            nn <- ncol(comb)
-            dif <- rep(0, nn)
-            sig <- NULL
-            LCL <- dif
-            UCL <- dif
-            pvalue <- rep(0, nn)
-            for (k in 1:nn) {
-                i <- comb[1, k]
-                j <- comb[2, k]
-                dif[k] <- means[i, 2] - means[j, 2]
-                sdtdif <- sqrt(MSerror * 0.5 * (1/means[i, 4] + 1/means[j, 
-                    4]))
-                if (unbalanced) 
-                    sdtdif <- sqrt(MSerror/nr1)
-                pvalue[k] <- round(1 - ptukey(abs(dif[k])/sdtdif, ntr, 
-                    DFerror), 4)
-                LCL[k] <- dif[k] - Tprob * sdtdif
-                UCL[k] <- dif[k] + Tprob * sdtdif
-                sig[k] <- " "
-                if (pvalue[k] <= 0.001) 
-                    sig[k] <- "***"
-                else if (pvalue[k] <= 0.01) 
-                    sig[k] <- "**"
-                else if (pvalue[k] <= 0.05) 
-                    sig[k] <- "*"
-                else if (pvalue[k] <= 0.1) 
-                    sig[k] <- "."
-            }
-            if (!group) {
-                tr.i <- means[comb[1, ], 1]
-                tr.j <- means[comb[2, ], 1]
-                comparison <- data.frame(difference = dif, pvalue = pvalue, 
-                    signif. = sig, LCL, UCL)
-                rownames(comparison) <- paste(tr.i, tr.j, sep = " - ")
-                if (console) {
-                    cat("\nComparison between treatments means\n\n")
-                    print(comparison)
-                }
-                groups = NULL
-            }
-            if (group) {
-                comparison = NULL
-                Q <- matrix(1, ncol = ntr, nrow = ntr)
-                p <- pvalue
-                k <- 0
-                for (i in 1:(ntr - 1)) {
-                    for (j in (i + 1):ntr) {
-                        k <- k + 1
-                        Q[i, j] <- p[k]
-                        Q[j, i] <- p[k]
-                    }
-                }
-                groups <- orderPvalue(means[, 1], means[, 2], alpha, 
-                    Q, console)
-                names(groups)[1] <- name.y
-                if (console) {
-                    cat("\nTreatments with the same letter are not significantly different.\n\n")
-                    print(groups)
+            name.t <- names(A)[ipch][1]
+            trt <- A[, ipch]
+            if (nipch > 1) {
+                trt <- A[, ipch[1]]
+                for (i in 2:nipch) {
+                    name.t <- paste(name.t, names(A)[ipch][i], sep = ":")
+                    trt <- paste(trt, A[, ipch[i]], sep = ":")
                 }
             }
-            parameters <- data.frame(test = "Tukey", name.t = name.t, 
-                ntr = ntr, StudentizedRange = Tprob, alpha = alpha)
-            rownames(parameters) <- " "
-            rownames(statistics) <- " "
-            rownames(means) <- means[, 1]
-            means <- means[, -1]
-            output <- list(statistics = statistics, parameters = parameters, 
-                means = means, comparison = comparison, groups = groups)
-            class(output) <- "group"
-            invisible(output)
+            name.y <- names(A)[1]
         }
+        junto <- subset(data.frame(y, trt), is.na(y) == FALSE)
+        Mean <- mean(junto[, 1])
+        CV <- sqrt(MSerror) * 100/Mean
+        medians <- tapply.stat(junto[, 1], junto[, 2], stat = "median")
+        for (i in c(1, 5, 2:4)) {
+            x <- tapply.stat(junto[, 1], junto[, 2], function(x) quantile(x)[i])
+            medians <- cbind(medians, x[, 2])
+        }
+        medians <- medians[, 3:7]
+        names(medians) <- c("Min", "Max", "Q25", "Q50", "Q75")
+        means <- tapply.stat(junto[, 1], junto[, 2], stat = "mean")
+        sds <- tapply.stat(junto[, 1], junto[, 2], stat = "sd")
+        nn <- tapply.stat(junto[, 1], junto[, 2], stat = "length")
+        means <- data.frame(means, std = sds[, 2], r = nn[, 2], medians)
+        names(means)[1:2] <- c(name.t, name.y)
+        ntr <- nrow(means)
+        Tprob <- qtukey(1 - alpha, ntr, DFerror)
+        nr <- unique(nn[, 2])
+        nr1 <- 1/mean(1/nn[, 2])
+        if (console) {
+            cat("\nStudy:", main)
+            cat("\n\nHSD Test for", name.y, "\n")
+            cat("\nMean Square Error: ", MSerror, "\n\n")
+            cat(paste(name.t, ",", sep = ""), " means\n\n")
+            print(data.frame(row.names = means[, 1], means[, 2:6]))
+            cat("\nAlpha:", alpha, "; DF Error:", DFerror, "\n")
+            cat("Critical Value of Studentized Range:", Tprob, "\n")
+        }
+        HSD <- Tprob * sqrt(MSerror/nr)
+        statistics <- data.frame(MSerror = MSerror, Df = DFerror, 
+            Mean = Mean, CV = CV, MSD = HSD)
+        if (group & length(nr) == 1 & console) 
+            cat("\nMinimun Significant Difference:", HSD, "\n")
+        if (group & length(nr) != 1 & console) 
+            cat("\nGroups according to probability of means differences and alpha level(", 
+                alpha, ")\n")
+        if (length(nr) != 1) 
+            statistics <- data.frame(MSerror = MSerror, Df = DFerror, 
+                Mean = Mean, CV = CV)
+        comb <- utils::combn(ntr, 2)
+        nn <- ncol(comb)
+        dif <- rep(0, nn)
+        sig <- NULL
+        LCL <- dif
+        UCL <- dif
+        pvalue <- rep(0, nn)
+        for (k in 1:nn) {
+            i <- comb[1, k]
+            j <- comb[2, k]
+            dif[k] <- means[i, 2] - means[j, 2]
+            sdtdif <- sqrt(MSerror * 0.5 * (1/means[i, 4] + 1/means[j, 
+                4]))
+            if (unbalanced) 
+                sdtdif <- sqrt(MSerror/nr1)
+            pvalue[k] <- round(1 - ptukey(abs(dif[k])/sdtdif, ntr, 
+                DFerror), 4)
+            LCL[k] <- dif[k] - Tprob * sdtdif
+            UCL[k] <- dif[k] + Tprob * sdtdif
+            sig[k] <- " "
+            if (pvalue[k] <= 0.001) 
+                sig[k] <- "***"
+            else if (pvalue[k] <= 0.01) 
+                sig[k] <- "**"
+            else if (pvalue[k] <= 0.05) 
+                sig[k] <- "*"
+            else if (pvalue[k] <= 0.1) 
+                sig[k] <- "."
+        }
+        if (!group) {
+            tr.i <- means[comb[1, ], 1]
+            tr.j <- means[comb[2, ], 1]
+            comparison <- data.frame(difference = dif, pvalue = pvalue, 
+                signif. = sig, LCL, UCL)
+            rownames(comparison) <- paste(tr.i, tr.j, sep = " - ")
+            if (console) {
+                cat("\nComparison between treatments means\n\n")
+                print(comparison)
+            }
+            groups = NULL
+        }
+        if (group) {
+            comparison = NULL
+            Q <- matrix(1, ncol = ntr, nrow = ntr)
+            p <- pvalue
+            k <- 0
+            for (i in 1:(ntr - 1)) {
+                for (j in (i + 1):ntr) {
+                    k <- k + 1
+                    Q[i, j] <- p[k]
+                    Q[j, i] <- p[k]
+                }
+            }
+            groups <- orderPvalue(means[, 1], means[, 2], alpha, 
+                Q, console)
+            names(groups)[1] <- name.y
+            if (console) {
+                cat("\nTreatments with the same letter are not significantly different.\n\n")
+                print(groups)
+            }
+        }
+        parameters <- data.frame(test = "Tukey", name.t = name.t, 
+            ntr = ntr, StudentizedRange = Tprob, alpha = alpha)
+        rownames(parameters) <- " "
+        rownames(statistics) <- " "
+        rownames(means) <- means[, 1]
+        means <- means[, -1]
+        output <- list(statistics = statistics, parameters = parameters, 
+            means = means, comparison = comparison, groups = groups)
+        class(output) <- "group"
+        invisible(output)
+    }
+
+### testForGroupDifferences
+    
+    testForGroupDifferences <- function(
+                data,
+                column_denoting_sample_groups,
+                columns_with_single_analyte_values,
+                output = c("annotate_input"),
+                alpha = 0.05
+
+        ) {
+
+            ## run t test if two samples, anova if more
+
+            ## check all test assumptions
+
+            ## Extract columns and plot what is to be analyzed
+
+                cols <- c(
+                    which(colnames(data) == column_denoting_sample_groups), 
+                    which(colnames(data) %in% columns_with_single_analyte_values)
+                )
+                test_data <- unique(data[,cols])
+                test_data <- as.data.frame(test_data)
+                test_data[,1] <- factor(test_data[,1])
+                test_data <- as_tibble(test_data)
+                plot_data <- pivot_longer(test_data, 2:dim(test_data)[2], names_to = "variable", values_to = "value")
+                print(
+                    ggplot(drop_na(plot_data), 
+                        aes_string(
+                            x = column_denoting_sample_groups
+                        )
+                    ) + 
+                    facet_grid(variable~., scales = "free_y") +
+                    geom_boxplot(aes(y = value)) +
+                    geom_point(aes(y = value)) +
+                    theme(strip.text.y = element_text(angle = 0))
+                )
+
+            ## Run aov and tukey, combine results
+            
+                if( length(columns_with_single_analyte_values) == 1 ) {
+                    
+                    cat("Running ANOVA...\n")
+                    aov_results <- aov(unlist(test_data[, 2])~unlist(test_data[, 1]))
+                    p_aov_f_value <- summary(aov_results)[[1]]$`Pr(>F)`[1]
+                    cat(paste0("p-value = ", format(p_aov_f_value, scientific = FALSE), "\n"))
+
+                    cat("Running TukeyHSD tests...\n")
+                    tukey_groups <- HSD.test(aov_results, "unlist(test_data[, 1]", group = TRUE, alpha = alpha)
+                    combined_results <- data.frame(cbind(rownames(tukey_groups$groups), as.character(tukey_groups$groups[, 2])))
+                    colnames(combined_results) <- c("x", "group")
+
+                    if( output == "annotate_input" ) {
+                        data$runStatisticalTestGroups <- 
+                            combined_results$group[
+                                match(
+                                    unlist(data[,colnames(data) == column_denoting_sample_groups]),
+                                    combined_results$x
+                                )
+                            ]
+                        if( length(columns_with_single_analyte_values) == 1 ) {
+                            colnames(data)[colnames(data) == "runStatisticalTestGroups"] <- "ANOVA_group"
+                        }
+                        # if( length(columns_with_single_analyte_values) > 1 ) {
+                        #   colnames(data)[colnames(data) == "runStatisticalTestGroups"] <- "MANOVA_group"
+                        # }
+                    }
+                    data <- select(data, ANOVA_group, 1:dim(data)[2])
+                    colnames(data)[1] <- paste0("ANOVA_group", "_", columns_with_single_analyte_values)
+                    cat("Returning input data with ANOVA_groups\n")
+                    data <- as.data.frame(data)
+                    data[,which(colnames(data) == column_denoting_sample_groups)] <- factor(data[,which(colnames(data) == column_denoting_sample_groups)])
+                    data <- as_tibble(data)
+                    return( data )
+                }
+
+                if( length(columns_with_single_analyte_values) > 1 ) {
+                    
+                    cat("Running MANOVA...\n")
+                    aov_results <- eval(
+                        parse(
+                            text = paste0(
+                                "manova(cbind(",
+                                paste(columns_with_single_analyte_values, collapse=", "),
+                                ")~",
+                                column_denoting_sample_groups,
+                                ", data = test_data)"
+                            )
+                        )
+                    )
+                    p_aov_f_value <- summary(aov_results)$stats[1,6]
+                    
+                    # cat("Running ANOVAs...\n")
+                    # cat("Running TukeyHSD tests...\n")
+                    # p_aov_f_values <- list()
+                    # for( variable in 1:length(columns_with_single_analyte_values) ) {
+
+                    #   aov_results <- aov(unlist(test_data[, variable+1])~unlist(test_data[, 1]))
+                    #   p_aov_f_value <- summary(aov_results)[[1]]$`Pr(>F)`[1]
+                    #   # cat(paste0("p-value = ", p_aov_f_value, "\n"))
+                    #   p_aov_f_values[[variable]] <- p_aov_f_value
+
+                    #   tukey_groups <- agricolae::HSD.test(aov_results, "unlist(test_data[, 1]", group = TRUE)
+                    #   combined_results <- data.frame(cbind(rownames(tukey_groups$groups), as.character(tukey_groups$groups[, 2])))
+                    #   colnames(combined_results) <- c("x", "group")
+
+                    # }
+                    
+                    test_data_long <- pivot_longer(test_data, cols = 2:dim(test_data)[2], names_to = "variable", values_to = "value")
+                    test_data_long <- group_by(test_data_long, variable)
+                    multi_anova_result <- eval(parse(text = paste0(
+                        "anova_test(test_data_long, value ~ ",
+                        column_denoting_sample_groups,
+                        ")"
+                    )))
+
+                    n_vars <- length(columns_with_single_analyte_values)
+
+                    multi_anova_result <- mutate(multi_anova_result, alpha = 0.05/n_vars)
+                    multi_anova_result <- mutate(multi_anova_result, adj_sig = 
+                        case_when(
+                            # p < 0.001/n_vars ~ "***",
+                            # p > 0.001/n_vars & p < 0.01/n_vars ~ "**",
+                            p < 0.05/n_vars ~ "*",
+                            p > 0.05/n_vars ~ ""
+                        )
+                    )
+                    
+                    cat(paste0("p-value = ", format(p_aov_f_value, scientific = FALSE), "\n"))
+                    cat(paste0("corrected alpha = ", 0.05/n_vars, "\n"))
+                    
+                    output <- multi_anova_result[,c(1,5,6,9,10)]
+                    colnames(output) <- c("variable", "ANOVA_F", "ANOVA_p", "adj_alpha", "adj_signif")
+                    cat("Returning results of multiple ANOVAs\n")
+                    return(output)
+                    # cat("Running TukeyHSD tests...\n")
+                    # eval(parse(text = paste0(
+                    #   "tukey_hsd(test_data_long, value ~ ",
+                    #   column_denoting_sample_groups,
+                    #   ")"
+                    # )))
+                    # tukey_groups <- agricolae::HSD.test(aov_results, "category", group = TRUE)
+                    # combined_results <- data.frame(cbind(rownames(tukey_groups$groups), as.character(tukey_groups$groups[, 2])))
+                    # colnames(combined_results) <- c("x", "group")
+                }
+
+            ## Multiple possible outputs
+
+            # aov_results_framed <- data.frame(
+            #       metric = "p_aov_f_value",
+            #       p_value = p_aov_f_value
+            #   )
+
+            #   tukey_results <- TukeyHSD(aov_results)[[1]][,4]
+            #   gsub(".*-", "", names(tukey_results))
+            #   gsub("", "-.*$", names(tukey_results))
+
+            #   tukey_results_framed <- data.frame(
+            #       metric = names(tukey_results),
+            #       p_value = tukey_results,
+            #       row.names = NULL
+            #   )
+
+            #   combined_results <- rbind(aov_results_framed, tukey_results_framed)
+
+            # ## Assign significance stars
+
+            #   combined_results <- mutate(combined_results, significance = 
+            #       case_when(
+            #           p_value < 0.001 ~ "***",
+            #           p_value > 0.001 & p_value < 0.01 ~ "**",
+            #           p_value > 0.01 & p_value < 0.05 ~ "*",
+            #           p_value > 0.05 ~ ""
+            #       )
+            #   )
+
+    }
+
+### tapply.stat
+
+    tapply.stat <- function (y, x, stat = "mean") 
+        {
+            k <- 0
+            numerico <- NULL
+            if (is.null(ncol(x))) {
+                if (is.numeric(x)) {
+                    k <- 1
+                    numerico[1] <- 1
+                }
+            }
+            else {
+                ncolx <- ncol(x)
+                for (i in 1:ncolx) {
+                    if (is.numeric(x[, i])) {
+                        k <- k + 1
+                        numerico[k] <- i
+                    }
+                }
+            }
+            cx <- deparse(substitute(x))
+    cy <- deparse(substitute(y))
+    x <- data.frame(c1 = 1, x)
+    y <- data.frame(v1 = 1, y)
+    nx <- ncol(x)
+    ny <- ncol(y)
+    namex <- names(x)
+    namey <- names(y)
+    if (nx == 2) 
+        namex <- c("c1", cx)
+    if (ny == 2) 
+        namey <- c("v1", cy)
+    namexy <- c(namex, namey)
+    for (i in 1:nx) {
+        x[, i] <- as.character(x[, i])
+    }
+    z <- NULL
+    for (i in 1:nx) {
+        z <- paste(z, x[, i], sep = "&")
+    }
+    w <- NULL
+    for (i in 1:ny) {
+        m <- tapply(y[, i], z, stat)
+        m <- as.matrix(m)
+        w <- cbind(w, m)
+    }
+    nw <- nrow(w)
+    c <- rownames(w)
+    v <- rep("", nw * nx)
+    dim(v) <- c(nw, nx)
+    for (i in 1:nw) {
+        for (j in 1:nx) {
+            v[i, j] <- strsplit(c[i], "&")[[1]][j + 1]
+        }
+    }
+    rownames(w) <- NULL
+    junto <- data.frame(v[, -1], w)
+    junto <- junto[, -nx]
+    names(junto) <- namexy[c(-1, -(nx + 1))]
+    if (k == 1 & nx == 2) {
+        junto[, numerico[1]] <- as.character(junto[, numerico[1]])
+        junto[, numerico[1]] <- as.numeric(junto[, numerico[1]])
+        junto <- junto[order(junto[, 1]), ]
+    }
+    if (k > 0 & nx > 2) {
+        for (i in 1:k) {
+            junto[, numerico[i]] <- as.character(junto[, numerico[i]])
+            junto[, numerico[i]] <- as.numeric(junto[, numerico[i]])
+        }
+        junto <- junto[do.call("order", c(junto[, 1:(nx - 1)])), 
+            ]
+    }
+    rownames(junto) <- 1:(nrow(junto))
+    return(junto)
+}
