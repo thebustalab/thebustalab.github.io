@@ -15,6 +15,7 @@
     ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
     wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
     data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
+    hawaii_aquifer_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv")
 
 #### readCSV
 
@@ -39,28 +40,18 @@
     #' runMatrixAnalysis
 
         runMatrixAnalysis <-    function(
-                                
                                     data,
-
                                     analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
-                                    
                                     column_w_names_of_multiple_analytes = NULL,
                                     column_w_values_for_multiple_analytes = NULL,
-
                                     columns_w_values_for_single_analyte = NULL,
-
                                     columns_w_additional_analyte_info = NULL,
-
                                     columns_w_sample_ID_info = NULL,
-
                                     transpose = FALSE,
-
                                     kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
-
                                     na_replacement = c("none", "mean", "zero", "drop"),
-
+                                    output_format = c("wide", "long"),
                                     ...
-
                                 ) {
 
             # Check that column names are spelled correctly
@@ -380,6 +371,15 @@
 
             # Return results
 
+                if( output_format[1] == "long" ) {
+                    clustering <- pivot_longer(
+                        clustering,
+                        cols = c(which(colnames(clustering) == analyte_columns[1]): dim(clustering)[2]),
+                        names_to = "analyte_name", 
+                        values_to = "value"
+                    )
+                }
+
                 return( clustering )
 
         }
@@ -587,21 +587,211 @@
     
     testForGroupDifferences <- function(
                 data,
-                column_denoting_sample_groups,
-                columns_with_single_analyte_values,
-                output = c("annotate_input"),
+                column_w_names_of_multiple_analytes = NULL,
+                column_w_values_for_multiple_analytes = NULL,
+                columns_w_values_for_single_analyte = NULL,
+                columns_w_additional_analyte_info = NULL,
+                # columns_w_sample_ID_info = NULL,
+                column_denoting_group_names,
+                # columns_with_single_analyte_values,
+                # output = c("annotate_input"),
                 alpha = 0.05
-
         ) {
+
+            # Remove analyte annotation columns before pivoting
+
+            #     if( length(columns_w_additional_analyte_info) > 0 ) {
+            #         analyte_annotation_free_data <- data[,-match(columns_w_additional_analyte_info, colnames(data))]
+            #     } else {
+            #         analyte_annotation_free_data <- data
+            #     }
+
+            # # If no pivot required, skip pivoting
+
+            #     if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
+            #         data_wide <- analyte_annotation_free_data
+            #         analyte_columns <- columns_w_values_for_single_analyte
+            #         data_wide <- unique(data_wide)
+            #     }
+
+            # # If pivoting required, pivot_wider any long-style data
+
+            #     if( length(column_w_names_of_multiple_analytes) == 1 ) {
+            #         data_wide <- pivot_wider(
+            #             analyte_annotation_free_data,
+            #             names_from = all_of(column_w_names_of_multiple_analytes),
+            #             values_from = all_of(column_w_values_for_multiple_analytes)
+            #         )
+            #         analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
+            #         analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
+            #         names(analyte_columns) <- NULL
+            #     }
+
+            ## Get number of analysis entities
+
+                groups <- as.data.frame(unique(data_wide[,colnames(data_wide) == column_denoting_group_names]))
+                names(groups) <- NULL
+                cat(paste0("Groups are: ", paste(groups, collapse=", "), "\n"))
+                n_groups <- dim(groups)[1]
+                cat(paste0("Number of groups is: ", n_groups, "\n"))
+
+                variables <- analyte_columns
+                names(variables) <- NULL
+                cat(paste0("Variables are: ", paste(variables, collapse=", "), "\n"))
+                n_variables <- length(variables)
+                cat(paste0("Number of variables is: ", n_variables), "\n")
+
+                # if( n_variables > n_groups ) {
+                #     stop("Filter your data or adjust the input so the number of groups is >= the number of variables")
+                # }
 
             ## run t test if two samples, anova if more
 
             ## check all test assumptions
 
+            ## Run ANOVA(s) and generate output with pvalues, adjusted alpha, and significance
+
+                anova_p_values <- list()
+                cat("Running ANOVA(s)...\n")
+                for( variable in 1:n_variables ) {
+                    
+                    aov_results <- suppressMessages(eval(
+                        parse(
+                            text = paste0(
+                                "aov(formula = ",
+                                variables[variable],
+                                " ~ ",
+                                column_denoting_group_names,
+                                ", data = data_wide)"
+                            )
+                        )
+                    ))
+
+                    aov_results <- eval(
+                        parse(
+                            text = paste0(
+                                "kruskal.test(data_wide$",
+                                variables[variable],
+                                " ~ as.factor(data_wide$",
+                                column_denoting_group_names,
+                                "))"
+                            )
+                        )
+                    )
+
+                    # y$call # command
+                    y$call <- paste0(
+                                "aov(formula = ",
+                                variables[variable],
+                                " ~ ",
+                                column_denoting_group_names,
+                                ", data = data_wide)"
+                            )
+
+                    # y$model # values used
+                    y$model <- attr(aov_results, "args")$model$model
+
+                    ##OK
+                    # df.residual(y) #Degrees of freedom in the residuals
+                    y$dfResidual <- aov_results$DFd
+
+
+                    # deviance(y) # Sum of squares of the residuals
+
+                    
+                    out <- agricolae::HSD.test(aov_results, column_denoting_group_names)
+                    out
+
+                    anova_p_values[[variable]] <- as.data.frame(aov_results)$p
+                }
+                anova_p_values <- do.call(rbind, anova_p_values)
+
+                anova_output <- as_tibble(data.frame(
+                    anova_group = variables,
+                    anova_p_value = anova_p_values,
+                    anova_adjusted_alpha = 0.05/n_variables
+                ))
+
+                filter(asdf, analyte_name %in% c("Alanine_2TMS")) %>%
+                    # group_by(analyte_name) %>%
+                    tukey_hsd(value~cultivar, detailed = TRUE)
+
+                filter(asdf, analyte_name == "Alanine_3TMS") %>%
+                    ggplot(aes(x = cultivar, y = value)) + geom_point()
+                
+                anova_output <- mutate(anova_output, significance = 
+                        case_when(
+                            anova_p_value < 0.05/n_variables ~ "*",
+                            anova_p_value > 0.05/n_variables ~ ""
+                        )
+                    )
+
+            ## Run all TukeyHSDs
+                    
+                cat("Running TukeyHSD tests...\n")
+                p_aov_f_values <- list()
+                
+                for( variable in 1:length(columns_with_single_analyte_values) ) {
+
+                  aov_results <- aov(unlist(test_data[, variable+1])~unlist(test_data[, 1]))
+                  p_aov_f_value <- summary(aov_results)[[1]]$`Pr(>F)`[1]
+                  # cat(paste0("p-value = ", p_aov_f_value, "\n"))
+                  p_aov_f_values[[variable]] <- p_aov_f_value
+
+                  tukey_groups <- agricolae::HSD.test(aov_results, "unlist(test_data[, 1]", group = TRUE)
+                  combined_results <- data.frame(cbind(rownames(tukey_groups$groups), as.character(tukey_groups$groups[, 2])))
+                  colnames(combined_results) <- c("x", "group")
+
+                }
+
+
+                    
+                    
+                    
+                    test_data_long <- pivot_longer(test_data, cols = 2:dim(test_data)[2], names_to = "variable", values_to = "value")
+                    test_data_long <- group_by(test_data_long, variable)
+                    multi_anova_result <- eval(parse(text = paste0(
+                        "anova_test(test_data_long, value ~ ",
+                        column_denoting_sample_groups,
+                        ")"
+                    )))
+
+                    n_vars <- length(columns_with_single_analyte_values)
+
+                    multi_anova_result <- mutate(multi_anova_result, alpha = 0.05/n_vars)
+                    multi_anova_result <- mutate(multi_anova_result, adj_sig = 
+                        case_when(
+                            # p < 0.001/n_vars ~ "***",
+                            # p > 0.001/n_vars & p < 0.01/n_vars ~ "**",
+                            p < 0.05/n_vars ~ "*",
+                            p > 0.05/n_vars ~ ""
+                        )
+                    )
+                    
+                    cat(paste0("p-value = ", format(p_aov_f_value, scientific = FALSE), "\n"))
+                    cat(paste0("corrected alpha = ", 0.05/n_vars, "\n"))
+                    
+                    output <- multi_anova_result[,c(1,5,6,9,10)]
+                    colnames(output) <- c("variable", "ANOVA_F", "ANOVA_p", "adj_alpha", "adj_signif")
+                    cat("Returning results of multiple ANOVAs\n")
+                    return(output)
+                    # cat("Running TukeyHSD tests...\n")
+                    # eval(parse(text = paste0(
+                    #   "tukey_hsd(test_data_long, value ~ ",
+                    #   column_denoting_sample_groups,
+                    #   ")"
+                    # )))
+                    # tukey_groups <- agricolae::HSD.test(aov_results, "category", group = TRUE)
+                    # combined_results <- data.frame(cbind(rownames(tukey_groups$groups), as.character(tukey_groups$groups[, 2])))
+                    # colnames(combined_results) <- c("x", "group")
+                }
+
+
+
             ## Extract columns and plot what is to be analyzed
 
                 cols <- c(
-                    which(colnames(data) == column_denoting_sample_groups), 
+                    which(colnames(data) == column_denoting_group_names), 
                     which(colnames(data) %in% columns_with_single_analyte_values)
                 )
                 test_data <- unique(data[,cols])
@@ -609,16 +799,13 @@
                 test_data[,1] <- factor(test_data[,1])
                 test_data <- as_tibble(test_data)
                 plot_data <- pivot_longer(test_data, 2:dim(test_data)[2], names_to = "variable", values_to = "value")
+                colnames(plot_data)[1] <- "sample_group"
                 print(
-                    ggplot(drop_na(plot_data), 
-                        aes_string(
-                            x = column_denoting_sample_groups
-                        )
-                    ) + 
-                    facet_grid(variable~., scales = "free_y") +
-                    geom_boxplot(aes(y = value)) +
-                    geom_point(aes(y = value)) +
-                    theme(strip.text.y = element_text(angle = 0))
+                    ggplot(drop_na(plot_data), aes(x = sample_group, y = value)) + 
+                        geom_boxplot() +
+                        geom_point() +
+                        facet_grid(variable~., scales = "free_y") +
+                        theme(strip.text.y = element_text(angle = 0))
                 )
 
             ## Run aov and tukey, combine results
@@ -659,75 +846,7 @@
                     return( data )
                 }
 
-                if( length(columns_with_single_analyte_values) > 1 ) {
-                    
-                    cat("Running MANOVA...\n")
-                    aov_results <- eval(
-                        parse(
-                            text = paste0(
-                                "manova(cbind(",
-                                paste(columns_with_single_analyte_values, collapse=", "),
-                                ")~",
-                                column_denoting_sample_groups,
-                                ", data = test_data)"
-                            )
-                        )
-                    )
-                    p_aov_f_value <- summary(aov_results)$stats[1,6]
-                    
-                    # cat("Running ANOVAs...\n")
-                    # cat("Running TukeyHSD tests...\n")
-                    # p_aov_f_values <- list()
-                    # for( variable in 1:length(columns_with_single_analyte_values) ) {
-
-                    #   aov_results <- aov(unlist(test_data[, variable+1])~unlist(test_data[, 1]))
-                    #   p_aov_f_value <- summary(aov_results)[[1]]$`Pr(>F)`[1]
-                    #   # cat(paste0("p-value = ", p_aov_f_value, "\n"))
-                    #   p_aov_f_values[[variable]] <- p_aov_f_value
-
-                    #   tukey_groups <- agricolae::HSD.test(aov_results, "unlist(test_data[, 1]", group = TRUE)
-                    #   combined_results <- data.frame(cbind(rownames(tukey_groups$groups), as.character(tukey_groups$groups[, 2])))
-                    #   colnames(combined_results) <- c("x", "group")
-
-                    # }
-                    
-                    test_data_long <- pivot_longer(test_data, cols = 2:dim(test_data)[2], names_to = "variable", values_to = "value")
-                    test_data_long <- group_by(test_data_long, variable)
-                    multi_anova_result <- eval(parse(text = paste0(
-                        "anova_test(test_data_long, value ~ ",
-                        column_denoting_sample_groups,
-                        ")"
-                    )))
-
-                    n_vars <- length(columns_with_single_analyte_values)
-
-                    multi_anova_result <- mutate(multi_anova_result, alpha = 0.05/n_vars)
-                    multi_anova_result <- mutate(multi_anova_result, adj_sig = 
-                        case_when(
-                            # p < 0.001/n_vars ~ "***",
-                            # p > 0.001/n_vars & p < 0.01/n_vars ~ "**",
-                            p < 0.05/n_vars ~ "*",
-                            p > 0.05/n_vars ~ ""
-                        )
-                    )
-                    
-                    cat(paste0("p-value = ", format(p_aov_f_value, scientific = FALSE), "\n"))
-                    cat(paste0("corrected alpha = ", 0.05/n_vars, "\n"))
-                    
-                    output <- multi_anova_result[,c(1,5,6,9,10)]
-                    colnames(output) <- c("variable", "ANOVA_F", "ANOVA_p", "adj_alpha", "adj_signif")
-                    cat("Returning results of multiple ANOVAs\n")
-                    return(output)
-                    # cat("Running TukeyHSD tests...\n")
-                    # eval(parse(text = paste0(
-                    #   "tukey_hsd(test_data_long, value ~ ",
-                    #   column_denoting_sample_groups,
-                    #   ")"
-                    # )))
-                    # tukey_groups <- agricolae::HSD.test(aov_results, "category", group = TRUE)
-                    # combined_results <- data.frame(cbind(rownames(tukey_groups$groups), as.character(tukey_groups$groups[, 2])))
-                    # colnames(combined_results) <- c("x", "group")
-                }
+                
 
             ## Multiple possible outputs
 
