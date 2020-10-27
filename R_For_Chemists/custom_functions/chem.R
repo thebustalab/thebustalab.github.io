@@ -384,7 +384,7 @@
 
         }
 
-##### descendants
+#### descendants
 
     descendants <- function (phy, node, type = "t", ignore.tip = TRUE, labels = FALSE) {
             
@@ -436,7 +436,7 @@
             x
         }
 
-##### tukey_groups
+#### tukey_groups
 
     tukey_groups <- function(data, formula) {
         
@@ -619,27 +619,27 @@
                         Q[j, i] <- p[k]
                     }
         }
-        groups <- orderPvalue(means[, 1], means[, 2], alpha, 
-            Q, console)
-        names(groups)[1] <- name.y
-        if (console) {
-            cat("\nTreatments with the same letter are not significantly different.\n\n")
-            print(groups)
+            groups <- orderPvalue(means[, 1], means[, 2], alpha, 
+                Q, console)
+            names(groups)[1] <- name.y
+            if (console) {
+                cat("\nTreatments with the same letter are not significantly different.\n\n")
+                print(groups)
+            }
         }
+        parameters <- data.frame(test = "Tukey", name.t = name.t, 
+            ntr = ntr, StudentizedRange = Tprob, alpha = alpha)
+        rownames(parameters) <- " "
+        rownames(statistics) <- " "
+        rownames(means) <- means[, 1]
+        means <- means[, -1]
+        output <- list(statistics = statistics, parameters = parameters, 
+            means = means, comparison = comparison, groups = groups)
+        class(output) <- "group"
+        invisible(output)
     }
-    parameters <- data.frame(test = "Tukey", name.t = name.t, 
-        ntr = ntr, StudentizedRange = Tprob, alpha = alpha)
-    rownames(parameters) <- " "
-    rownames(statistics) <- " "
-    rownames(means) <- means[, 1]
-    means <- means[, -1]
-    output <- list(statistics = statistics, parameters = parameters, 
-        means = means, comparison = comparison, groups = groups)
-    class(output) <- "group"
-    invisible(output)
-}
 
-##### orderPvalue
+#### orderPvalue
 
     orderPvalue <- function (treatment, means, alpha, pvalue, console) 
         {
