@@ -1,4 +1,4 @@
-aquifer_3ode,well_name,longitude,latitude,analyte,abundance
+aquifer_code,well_name,longitude,latitude,analyte,abundance
 aquifer_1,Alewa_Heights_Spring,NA,NA,SiO2,11
 aquifer_1,Alewa_Heights_Spring,NA,NA,Cl,20
 aquifer_1,Alewa_Heights_Spring,NA,NA,Mg,7.6
