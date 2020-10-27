@@ -2426,3 +2426,6 @@ ggplot(mdata_windgroup_analyzed) +
 ```
 
 <!-- end -->
+
+<!--chapter:end:index.Rmd-->
+
