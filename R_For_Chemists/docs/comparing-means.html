@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 16 comparing means | R For Chemists</title>
+  <meta name="description" content="Textbook R For Chemists." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 16 comparing means | R For Chemists" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Textbook R For Chemists." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 16 comparing means | R For Chemists" />
+  
+  <meta name="twitter:description" content="Textbook R For Chemists." />
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2020-10-26" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="Exercises-6.html"/>
+<link rel="next" href="datasets.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installation</a><ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-r"><i class="fa fa-check"></i><b>2.1</b> Installing <code>R</code></a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
+<li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
+<li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="R-Basics.html"><a href="R-Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a><ul>
+<li class="chapter" data-level="3.1" data-path="R-Basics.html"><a href="R-Basics.html#before-we-start"><i class="fa fa-check"></i><b>3.1</b> Before we start…</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="R-Basics.html"><a href="R-Basics.html#help"><i class="fa fa-check"></i><b>3.1.1</b> Help</a></li>
+<li class="chapter" data-level="3.1.2" data-path="R-Basics.html"><a href="R-Basics.html#syntax"><i class="fa fa-check"></i><b>3.1.2</b> Syntax</a></li>
+<li class="chapter" data-level="3.1.3" data-path="R-Basics.html"><a href="R-Basics.html#paths"><i class="fa fa-check"></i><b>3.1.3</b> Paths</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="R-Basics.html"><a href="R-Basics.html#functions"><i class="fa fa-check"></i><b>3.2</b> Functions</a></li>
+<li class="chapter" data-level="3.3" data-path="R-Basics.html"><a href="R-Basics.html#objects"><i class="fa fa-check"></i><b>3.3</b> Objects</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="ggplot2.html"><a href="ggplot2.html"><i class="fa fa-check"></i><b>4</b> ggplot2</a><ul>
+<li class="chapter" data-level="4.1" data-path="ggplot2.html"><a href="ggplot2.html#setting-up-a-ggplot"><i class="fa fa-check"></i><b>4.1</b> Setting up a ggplot</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="ggplot2.html"><a href="ggplot2.html#step-1-define-the-data-you-want-to-use."><i class="fa fa-check"></i><b>4.1.1</b> Step 1: Define the data you want to use.</a></li>
+<li class="chapter" data-level="4.1.2" data-path="ggplot2.html"><a href="ggplot2.html#step-2-define-how-your-variables-map-onto-the-axes."><i class="fa fa-check"></i><b>4.1.2</b> Step 2: Define how your variables map onto the axes.</a></li>
+<li class="chapter" data-level="4.1.3" data-path="ggplot2.html"><a href="ggplot2.html#step-3-use-geometric-shapes-to-represent-other-variables-in-your-data."><i class="fa fa-check"></i><b>4.1.3</b> Step 3: Use geometric shapes to represent other variables in your data.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="ggplot2.html"><a href="ggplot2.html#geoms"><i class="fa fa-check"></i><b>4.2</b> Geoms</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="ggplot2.html"><a href="ggplot2.html#modifying-geoms"><i class="fa fa-check"></i><b>4.2.1</b> Modifying geoms</a></li>
+<li class="chapter" data-level="4.2.2" data-path="ggplot2.html"><a href="ggplot2.html#using-multiple-geoms"><i class="fa fa-check"></i><b>4.2.2</b> Using multiple geoms</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Exercises-1.html"><a href="Exercises-1.html"><i class="fa fa-check"></i><b>5</b> Exercises 1</a><ul>
+<li class="chapter" data-level="5.1" data-path="Exercises-1.html"><a href="Exercises-1.html#part-1-algae-chemistry-dataset"><i class="fa fa-check"></i><b>5.1</b> Part 1: Algae Chemistry Dataset</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="Exercises-1.html"><a href="Exercises-1.html#question-1-importing-data"><i class="fa fa-check"></i><b>5.1.1</b> Question 1: Importing data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="Exercises-1.html"><a href="Exercises-1.html#question-2-dataset-dimensions"><i class="fa fa-check"></i><b>5.1.2</b> Question 2: Dataset dimensions</a></li>
+<li class="chapter" data-level="5.1.3" data-path="Exercises-1.html"><a href="Exercises-1.html#question-3-objects"><i class="fa fa-check"></i><b>5.1.3</b> Question 3: Objects</a></li>
+<li class="chapter" data-level="5.1.4" data-path="Exercises-1.html"><a href="Exercises-1.html#question-4-filtering"><i class="fa fa-check"></i><b>5.1.4</b> Question 4: Filtering</a></li>
+<li class="chapter" data-level="5.1.5" data-path="Exercises-1.html"><a href="Exercises-1.html#question-5-plotting"><i class="fa fa-check"></i><b>5.1.5</b> Question 5: Plotting</a></li>
+<li class="chapter" data-level="5.1.6" data-path="Exercises-1.html"><a href="Exercises-1.html#question-6-plotting"><i class="fa fa-check"></i><b>5.1.6</b> Question 6: Plotting</a></li>
+<li class="chapter" data-level="5.1.7" data-path="Exercises-1.html"><a href="Exercises-1.html#question-7-filtering-and-plotting"><i class="fa fa-check"></i><b>5.1.7</b> Question 7: Filtering and plotting</a></li>
+<li class="chapter" data-level="5.1.8" data-path="Exercises-1.html"><a href="Exercises-1.html#question-8-filtering-and-plotting"><i class="fa fa-check"></i><b>5.1.8</b> Question 8: Filtering and plotting</a></li>
+<li class="chapter" data-level="5.1.9" data-path="Exercises-1.html"><a href="Exercises-1.html#question-9-open-ended-plotting"><i class="fa fa-check"></i><b>5.1.9</b> Question 9: Open-ended plotting</a></li>
+<li class="chapter" data-level="5.1.10" data-path="Exercises-1.html"><a href="Exercises-1.html#question-10-a-peek-at-whats-to-come"><i class="fa fa-check"></i><b>5.1.10</b> Question 10: A peek at what’s to come…</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="Exercises-1.html"><a href="Exercises-1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>5.2</b> Part 2: Alaska Lakes Dataset</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="Exercises-1.html"><a href="Exercises-1.html#question-1-importing-data-1"><i class="fa fa-check"></i><b>5.2.1</b> Question 1: Importing Data</a></li>
+<li class="chapter" data-level="5.2.2" data-path="Exercises-1.html"><a href="Exercises-1.html#question-2-objects"><i class="fa fa-check"></i><b>5.2.2</b> Question 2: Objects</a></li>
+<li class="chapter" data-level="5.2.3" data-path="Exercises-1.html"><a href="Exercises-1.html#question-3-filtering"><i class="fa fa-check"></i><b>5.2.3</b> Question 3: Filtering</a></li>
+<li class="chapter" data-level="5.2.4" data-path="Exercises-1.html"><a href="Exercises-1.html#question-4-plotting"><i class="fa fa-check"></i><b>5.2.4</b> Question 4: Plotting</a></li>
+<li class="chapter" data-level="5.2.5" data-path="Exercises-1.html"><a href="Exercises-1.html#question-5-plotting-1"><i class="fa fa-check"></i><b>5.2.5</b> Question 5: Plotting</a></li>
+<li class="chapter" data-level="5.2.6" data-path="Exercises-1.html"><a href="Exercises-1.html#question-6-filtering-and-plotting"><i class="fa fa-check"></i><b>5.2.6</b> Question 6: Filtering and Plotting</a></li>
+<li class="chapter" data-level="5.2.7" data-path="Exercises-1.html"><a href="Exercises-1.html#question-7-filtering-and-plotting-1"><i class="fa fa-check"></i><b>5.2.7</b> Question 7: Filtering and Plotting</a></li>
+<li class="chapter" data-level="5.2.8" data-path="Exercises-1.html"><a href="Exercises-1.html#question-8-open-ended-plotting"><i class="fa fa-check"></i><b>5.2.8</b> Question 8: Open-ended Plotting</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
+<li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
+<li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
+<li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="Exercises-2.html"><a href="Exercises-2.html"><i class="fa fa-check"></i><b>7</b> Exercises 2</a><ul>
+<li class="chapter" data-level="7.1" data-path="Exercises-2.html"><a href="Exercises-2.html#question-1"><i class="fa fa-check"></i><b>7.1</b> Question 1</a></li>
+<li class="chapter" data-level="7.2" data-path="Exercises-2.html"><a href="Exercises-2.html#question-2"><i class="fa fa-check"></i><b>7.2</b> Question 2</a></li>
+<li class="chapter" data-level="7.3" data-path="Exercises-2.html"><a href="Exercises-2.html#question-3"><i class="fa fa-check"></i><b>7.3</b> Question 3</a></li>
+<li class="chapter" data-level="7.4" data-path="Exercises-2.html"><a href="Exercises-2.html#question-4"><i class="fa fa-check"></i><b>7.4</b> Question 4</a></li>
+<li class="chapter" data-level="7.5" data-path="Exercises-2.html"><a href="Exercises-2.html#question-5"><i class="fa fa-check"></i><b>7.5</b> Question 5</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="summary-statistics.html"><a href="summary-statistics.html"><i class="fa fa-check"></i><b>8</b> Summary Statistics</a><ul>
+<li class="chapter" data-level="8.1" data-path="summary-statistics.html"><a href="summary-statistics.html#summary-statistics"><i class="fa fa-check"></i><b>8.1</b> Summary statistics</a></li>
+<li class="chapter" data-level="8.2" data-path="summary-statistics.html"><a href="summary-statistics.html#the-pipe"><i class="fa fa-check"></i><b>8.2</b> The pipe (%&gt;%)</a></li>
+<li class="chapter" data-level="8.3" data-path="summary-statistics.html"><a href="summary-statistics.html#tidy-data"><i class="fa fa-check"></i><b>8.3</b> Tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="Exercises-3.html"><a href="Exercises-3.html"><i class="fa fa-check"></i><b>9</b> Exercises 3</a><ul>
+<li class="chapter" data-level="9.1" data-path="Exercises-3.html"><a href="Exercises-3.html#question-1-1"><i class="fa fa-check"></i><b>9.1</b> Question 1</a></li>
+<li class="chapter" data-level="9.2" data-path="Exercises-3.html"><a href="Exercises-3.html#question-2-1"><i class="fa fa-check"></i><b>9.2</b> Question 2</a></li>
+<li class="chapter" data-level="9.3" data-path="Exercises-3.html"><a href="Exercises-3.html#question-3-1"><i class="fa fa-check"></i><b>9.3</b> Question 3</a></li>
+<li class="chapter" data-level="9.4" data-path="Exercises-3.html"><a href="Exercises-3.html#question-4-1"><i class="fa fa-check"></i><b>9.4</b> Question 4</a></li>
+<li class="chapter" data-level="9.5" data-path="Exercises-3.html"><a href="Exercises-3.html#question-5-1"><i class="fa fa-check"></i><b>9.5</b> Question 5</a></li>
+<li class="chapter" data-level="9.6" data-path="Exercises-3.html"><a href="Exercises-3.html#question-6"><i class="fa fa-check"></i><b>9.6</b> Question 6</a></li>
+<li class="chapter" data-level="9.7" data-path="Exercises-3.html"><a href="Exercises-3.html#question-7"><i class="fa fa-check"></i><b>9.7</b> Question 7</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="Clustering.html"><a href="Clustering.html"><i class="fa fa-check"></i><b>10</b> Clustering</a></li>
+<li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
+<li class="chapter" data-level="12" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>12</b> PCA</a><ul>
+<li class="chapter" data-level="12.1" data-path="PCA.html"><a href="PCA.html#pca"><i class="fa fa-check"></i><b>12.1</b> PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="PCA.html"><a href="PCA.html#drivers-of-pca-dimensions"><i class="fa fa-check"></i><b>12.2</b> Drivers of PCA dimensions</a></li>
+<li class="chapter" data-level="12.3" data-path="PCA.html"><a href="PCA.html#comparing-principal-components"><i class="fa fa-check"></i><b>12.3</b> Comparing principal components</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a><ul>
+<li class="chapter" data-level="13.1" data-path="Exercises-5.html"><a href="Exercises-5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
+<li class="chapter" data-level="13.2" data-path="Exercises-5.html"><a href="Exercises-5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>13.2</b> Option 2: Grape vine varieties</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>14</b> k-means</a></li>
+<li class="chapter" data-level="15" data-path="Exercises-6.html"><a href="Exercises-6.html"><i class="fa fa-check"></i><b>15</b> Exercises 6</a><ul>
+<li class="chapter" data-level="15.1" data-path="Exercises-6.html"><a href="Exercises-6.html#question-1-2"><i class="fa fa-check"></i><b>15.1</b> Question 1</a></li>
+<li class="chapter" data-level="15.2" data-path="Exercises-6.html"><a href="Exercises-6.html#question-2-2"><i class="fa fa-check"></i><b>15.2</b> Question 2</a></li>
+<li class="chapter" data-level="15.3" data-path="Exercises-6.html"><a href="Exercises-6.html#question-3-2"><i class="fa fa-check"></i><b>15.3</b> Question 3</a></li>
+<li class="chapter" data-level="15.4" data-path="Exercises-6.html"><a href="Exercises-6.html#question-4-2"><i class="fa fa-check"></i><b>15.4</b> Question 4</a></li>
+<li class="chapter" data-level="15.5" data-path="Exercises-6.html"><a href="Exercises-6.html#question-5-2"><i class="fa fa-check"></i><b>15.5</b> Question 5</a></li>
+<li class="chapter" data-level="15.6" data-path="Exercises-6.html"><a href="Exercises-6.html#question-6-1"><i class="fa fa-check"></i><b>15.6</b> Question 6</a></li>
+<li class="chapter" data-level="15.7" data-path="Exercises-6.html"><a href="Exercises-6.html#question-7-1"><i class="fa fa-check"></i><b>15.7</b> Question 7</a></li>
+<li class="chapter" data-level="15.8" data-path="Exercises-6.html"><a href="Exercises-6.html#challenge-optional"><i class="fa fa-check"></i><b>15.8</b> Challenge (optional)</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>16</b> comparing means</a><ul>
+<li class="chapter" data-level="16.1" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>16.1</b> two means</a></li>
+<li class="chapter" data-level="16.2" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>16.2</b> more than two means</a><ul>
+<li class="chapter" data-level="16.2.1" data-path="comparing-means.html"><a href="comparing-means.html#anova"><i class="fa fa-check"></i><b>16.2.1</b> ANOVA</a></li>
+<li class="chapter" data-level="16.2.2" data-path="comparing-means.html"><a href="comparing-means.html#tukeys-hsd"><i class="fa fa-check"></i><b>16.2.2</b> Tukey’s HSD</a></li>
+</ul></li>
+<li class="chapter" data-level="16.3" data-path="comparing-means.html"><a href="comparing-means.html#further-reading"><i class="fa fa-check"></i><b>16.3</b> Further reading</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="datasets.html"><a href="datasets.html"><i class="fa fa-check"></i><b>A</b> Datasets</a><ul>
+<li class="chapter" data-level="A.1" data-path="datasets.html"><a href="datasets.html#hawaii_aquifers"><i class="fa fa-check"></i><b>A.1</b> hawaii_aquifers</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>B</b> Functions</a><ul>
+<li class="chapter" data-level="B.1" data-path="functions-1.html"><a href="functions-1.html#libraries-and-packages"><i class="fa fa-check"></i><b>B.1</b> Libraries and packages</a><ul>
+<li class="chapter" data-level="B.1.1" data-path="functions-1.html"><a href="functions-1.html#install.packages"><i class="fa fa-check"></i><b>B.1.1</b> <code>install.packages()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.2" data-path="functions-1.html"><a href="functions-1.html#operators"><i class="fa fa-check"></i><b>B.2</b> Operators</a><ul>
+<li class="chapter" data-level="B.2.1" data-path="functions-1.html"><a href="functions-1.html#in"><i class="fa fa-check"></i><b>B.2.1</b> <code>%in%</code></a></li>
+<li class="chapter" data-level="B.2.2" data-path="functions-1.html"><a href="functions-1.html#section"><i class="fa fa-check"></i><b>B.2.2</b> &lt;</a></li>
+<li class="chapter" data-level="B.2.3" data-path="functions-1.html"><a href="functions-1.html#section-1"><i class="fa fa-check"></i><b>B.2.3</b> &lt;=</a></li>
+<li class="chapter" data-level="B.2.4" data-path="functions-1.html"><a href="functions-1.html#section-2"><i class="fa fa-check"></i><b>B.2.4</b> &gt;</a></li>
+<li class="chapter" data-level="B.2.5" data-path="functions-1.html"><a href="functions-1.html#section-3"><i class="fa fa-check"></i><b>B.2.5</b> &gt;=</a></li>
+<li class="chapter" data-level="B.2.6" data-path="functions-1.html"><a href="functions-1.html#section-4"><i class="fa fa-check"></i><b>B.2.6</b> ==</a></li>
+<li class="chapter" data-level="B.2.7" data-path="functions-1.html"><a href="functions-1.html#section-5"><i class="fa fa-check"></i><b>B.2.7</b> !=</a></li>
+<li class="chapter" data-level="B.2.8" data-path="functions-1.html"><a href="functions-1.html#section-6"><i class="fa fa-check"></i><b>B.2.8</b> |</a></li>
+</ul></li>
+<li class="chapter" data-level="B.3" data-path="functions-1.html"><a href="functions-1.html#data-wrangling"><i class="fa fa-check"></i><b>B.3</b> Data wrangling</a><ul>
+<li class="chapter" data-level="B.3.1" data-path="functions-1.html"><a href="functions-1.html#read_csv"><i class="fa fa-check"></i><b>B.3.1</b> <code>read_csv()</code></a></li>
+<li class="chapter" data-level="B.3.2" data-path="functions-1.html"><a href="functions-1.html#read.csv"><i class="fa fa-check"></i><b>B.3.2</b> <code>read.csv()</code></a></li>
+<li class="chapter" data-level="B.3.3" data-path="functions-1.html"><a href="functions-1.html#readcsv"><i class="fa fa-check"></i><b>B.3.3</b> <code>readCSV()</code></a></li>
+<li class="chapter" data-level="B.3.4" data-path="functions-1.html"><a href="functions-1.html#head"><i class="fa fa-check"></i><b>B.3.4</b> <code>head()</code></a></li>
+<li class="chapter" data-level="B.3.5" data-path="functions-1.html"><a href="functions-1.html#filter"><i class="fa fa-check"></i><b>B.3.5</b> <code>filter()</code></a></li>
+<li class="chapter" data-level="B.3.6" data-path="functions-1.html"><a href="functions-1.html#mutate"><i class="fa fa-check"></i><b>B.3.6</b> <code>mutate()</code></a></li>
+<li class="chapter" data-level="B.3.7" data-path="functions-1.html"><a href="functions-1.html#case_when"><i class="fa fa-check"></i><b>B.3.7</b> <code>case_when()</code></a></li>
+<li class="chapter" data-level="B.3.8" data-path="functions-1.html"><a href="functions-1.html#pivot_longer"><i class="fa fa-check"></i><b>B.3.8</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="B.3.9" data-path="functions-1.html"><a href="functions-1.html#group_by"><i class="fa fa-check"></i><b>B.3.9</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="B.3.10" data-path="functions-1.html"><a href="functions-1.html#summarize"><i class="fa fa-check"></i><b>B.3.10</b> <code>summarize()</code></a></li>
+<li class="chapter" data-level="B.3.11" data-path="functions-1.html"><a href="functions-1.html#section-7"><i class="fa fa-check"></i><b>B.3.11</b> <code>%&gt;%</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.4" data-path="functions-1.html"><a href="functions-1.html#plotting"><i class="fa fa-check"></i><b>B.4</b> Plotting</a><ul>
+<li class="chapter" data-level="B.4.1" data-path="functions-1.html"><a href="functions-1.html#plot"><i class="fa fa-check"></i><b>B.4.1</b> <code>plot()</code></a></li>
+<li class="chapter" data-level="B.4.2" data-path="functions-1.html"><a href="functions-1.html#ggplot2ggplot"><i class="fa fa-check"></i><b>B.4.2</b> <code>ggplot2::ggplot()</code></a></li>
+<li class="chapter" data-level="B.4.3" data-path="functions-1.html"><a href="functions-1.html#ggplot2aes"><i class="fa fa-check"></i><b>B.4.3</b> <code>ggplot2::aes()</code></a></li>
+<li class="chapter" data-level="B.4.4" data-path="functions-1.html"><a href="functions-1.html#ggplot2geom_"><i class="fa fa-check"></i><b>B.4.4</b> <code>ggplot2::geom_*()</code></a></li>
+<li class="chapter" data-level="B.4.5" data-path="functions-1.html"><a href="functions-1.html#ggplot2facet_grid"><i class="fa fa-check"></i><b>B.4.5</b> <code>ggplot2::facet_grid()</code></a></li>
+<li class="chapter" data-level="B.4.6" data-path="functions-1.html"><a href="functions-1.html#ggplot2scale__"><i class="fa fa-check"></i><b>B.4.6</b> <code>ggplot2::scale_*_*()</code></a></li>
+<li class="chapter" data-level="B.4.7" data-path="functions-1.html"><a href="functions-1.html#ggplot2theme_"><i class="fa fa-check"></i><b>B.4.7</b> <code>ggplot2::theme_*()</code></a></li>
+<li class="chapter" data-level="B.4.8" data-path="functions-1.html"><a href="functions-1.html#ggplot2coord_flip"><i class="fa fa-check"></i><b>B.4.8</b> <code>ggplot2::coord_flip()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.5" data-path="functions-1.html"><a href="functions-1.html#statistics"><i class="fa fa-check"></i><b>B.5</b> Statistics</a><ul>
+<li class="chapter" data-level="B.5.1" data-path="functions-1.html"><a href="functions-1.html#mean"><i class="fa fa-check"></i><b>B.5.1</b> <code>mean()</code></a></li>
+<li class="chapter" data-level="B.5.2" data-path="functions-1.html"><a href="functions-1.html#sd"><i class="fa fa-check"></i><b>B.5.2</b> <code>sd()</code></a></li>
+<li class="chapter" data-level="B.5.3" data-path="functions-1.html"><a href="functions-1.html#table"><i class="fa fa-check"></i><b>B.5.3</b> <code>table()</code></a></li>
+<li class="chapter" data-level="B.5.4" data-path="functions-1.html"><a href="functions-1.html#weighted.mean"><i class="fa fa-check"></i><b>B.5.4</b> <code>weighted.mean()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.6" data-path="functions-1.html"><a href="functions-1.html#t.test"><i class="fa fa-check"></i><b>B.6</b> t.test()</a></li>
+<li class="chapter" data-level="B.7" data-path="functions-1.html"><a href="functions-1.html#anova-1"><i class="fa fa-check"></i><b>B.7</b> anova()</a></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>C</b> Custom functions</a><ul>
+<li class="chapter" data-level="C.1" data-path="custom-functions.html"><a href="custom-functions.html#activating-custom-functions"><i class="fa fa-check"></i><b>C.1</b> Activating custom functions</a></li>
+<li class="chapter" data-level="C.2" data-path="custom-functions.html"><a href="custom-functions.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>C.2</b> Basic <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="C.3" data-path="custom-functions.html"><a href="custom-functions.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>C.3</b> Advanced <code>runMatrixAnalysis()</code> template</a></li>
+</ul></li>
+<li class="chapter" data-level="D" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>D</b> FAQ</a><ul>
+<li class="chapter" data-level="D.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>D.1</b> Filtering</a></li>
+<li class="chapter" data-level="D.2" data-path="faq.html"><a href="faq.html#order-categorical-axes"><i class="fa fa-check"></i><b>D.2</b> Order categorical axes</a></li>
+</ul></li>
+<li class="chapter" data-level="E" data-path="pca-and-big-data.html"><a href="pca-and-big-data.html"><i class="fa fa-check"></i><b>E</b> PCA and Big Data</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R For Chemists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="comparing-means" class="section level1">
+<h1><span class="header-section-number">Chapter 16</span> comparing means</h1>
+<p>Often, we want to know if our study subjects contain different amounts of certain analytes. For example, “Does this lake over here contain more potassium than that lake over there?” For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.</p>
+<p>To run these statistical analyses, we will use the R package <code>rstatix</code>. Please install it with <code>install.packages("rstatix")</code>. Load it into your R session using <code>library(rstatix)</code>.</p>
+<pre><code>## 
+## Attaching package: &#39;rstatix&#39;
+## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<div id="two-means" class="section level2">
+<h2><span class="header-section-number">16.1</span> two means</h2>
+<p>When there are just two means, we can use a t-test. In R, we will use the function <code>t_test()</code>, which is pipe-friendly. We can send it the data we want to run the test on and we just need to give it the formula it should use.</p>
+<p>Let’s use the <code>hawaii_aquifers</code> data as an example. Suppose we want to know if there is a difference in the amount of potassium in the two aquifers. Let’s first plot the data:</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="comparing-means.html#cb73-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<span id="cb73-2"><a href="comparing-means.html#cb73-2"></a>hawaii_aquifers <span class="op">%&gt;%</span></span>
+<span id="cb73-3"><a href="comparing-means.html#cb73-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(analyte <span class="op">==</span><span class="st"> &quot;K&quot;</span> <span class="op">&amp;</span><span class="st"> </span>aquifer_code <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;aquifer_1&quot;</span>, <span class="st">&quot;aquifer_2&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb73-4"><a href="comparing-means.html#cb73-4"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> aquifer_code, <span class="dt">y =</span> abundance)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-121-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Based on these distributions, it looks like there might be! Let’s run a t-test. We need to tell R <code>t_test(y~x)</code>, where y is the dependant variable, and x is the independent variable:</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="comparing-means.html#cb74-1"></a>hawaii_aquifers <span class="op">%&gt;%</span></span>
+<span id="cb74-2"><a href="comparing-means.html#cb74-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(analyte <span class="op">==</span><span class="st"> &quot;K&quot;</span> <span class="op">&amp;</span><span class="st"> </span>aquifer_code <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;aquifer_1&quot;</span>, <span class="st">&quot;aquifer_2&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb74-3"><a href="comparing-means.html#cb74-3"></a><span class="st">  </span><span class="kw">t_test</span>(abundance <span class="op">~</span><span class="st"> </span>aquifer_code)</span>
+<span id="cb74-4"><a href="comparing-means.html#cb74-4"></a><span class="co">## # A tibble: 1 x 8</span></span>
+<span id="cb74-5"><a href="comparing-means.html#cb74-5"></a><span class="co">##   .y.       group1    group2       n1    n2 statistic    df       p</span></span>
+<span id="cb74-6"><a href="comparing-means.html#cb74-6"></a><span class="co">##   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb74-7"><a href="comparing-means.html#cb74-7"></a><span class="co">## 1 abundance aquifer_1 aquifer_2    12     6     -3.23  12.2 0.00712</span></span></code></pre></div>
+<p>A p-value of 0.00712. This is below the cut-off value (alpha) of 0.05 - so, this means that there is a significant difference between these means!</p>
+</div>
+<div id="more-than-two-means" class="section level2">
+<h2><span class="header-section-number">16.2</span> more than two means</h2>
+<p>In the previous section we compared two means. What if we want to compare means from more than two study subjects? We need to invoke a two-step process - first, an analysis of variance (ANOVA), followed by Tukey’s honest significant difference tests (Tukey’s HSD). Let’s look at each in turn. We will again suppose we want to know if there is a difference in the amount of potassium in the aquifers, but this time we are not just interested in two aquifers, but rather all of them. Let’s plot the data:</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="comparing-means.html#cb75-1"></a>K_data &lt;-<span class="st"> </span>hawaii_aquifers <span class="op">%&gt;%</span></span>
+<span id="cb75-2"><a href="comparing-means.html#cb75-2"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(analyte <span class="op">==</span><span class="st"> &quot;K&quot;</span>)</span>
+<span id="cb75-3"><a href="comparing-means.html#cb75-3"></a></span>
+<span id="cb75-4"><a href="comparing-means.html#cb75-4"></a>K_data</span>
+<span id="cb75-5"><a href="comparing-means.html#cb75-5"></a><span class="co">## # A tibble: 110 x 6</span></span>
+<span id="cb75-6"><a href="comparing-means.html#cb75-6"></a><span class="co">##    aquifer_code well_name              longitude latitude analyte abundance</span></span>
+<span id="cb75-7"><a href="comparing-means.html#cb75-7"></a><span class="co">##    &lt;chr&gt;        &lt;chr&gt;                      &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;</span></span>
+<span id="cb75-8"><a href="comparing-means.html#cb75-8"></a><span class="co">##  1 aquifer_1    Alewa_Heights_Spring         NA      NA   K             0.6</span></span>
+<span id="cb75-9"><a href="comparing-means.html#cb75-9"></a><span class="co">##  2 aquifer_1    Beretania_High_Service       NA      NA   K             3.1</span></span>
+<span id="cb75-10"><a href="comparing-means.html#cb75-10"></a><span class="co">##  3 aquifer_1    Beretania_Low_Service        NA      NA   K             3.6</span></span>
+<span id="cb75-11"><a href="comparing-means.html#cb75-11"></a><span class="co">##  4 aquifer_1    Kuliouou_Well              -158.     21.3 K             3.9</span></span>
+<span id="cb75-12"><a href="comparing-means.html#cb75-12"></a><span class="co">##  5 aquifer_1    Manoa_Well_II              -158.     21.3 K             0.6</span></span>
+<span id="cb75-13"><a href="comparing-means.html#cb75-13"></a><span class="co">##  6 aquifer_1    Moanalua_Wells_Pump_1      -158.     21.4 K             2.9</span></span>
+<span id="cb75-14"><a href="comparing-means.html#cb75-14"></a><span class="co">##  7 aquifer_1    Moanalua_Wells_Pump_2      -158.     21.4 K             2.8</span></span>
+<span id="cb75-15"><a href="comparing-means.html#cb75-15"></a><span class="co">##  8 aquifer_1    Moanalua_Wells_Pump_3      -158.     21.4 K             3.4</span></span>
+<span id="cb75-16"><a href="comparing-means.html#cb75-16"></a><span class="co">##  9 aquifer_1    Nuuanu_Aerator_Well        -158.     21.4 K             0.4</span></span>
+<span id="cb75-17"><a href="comparing-means.html#cb75-17"></a><span class="co">## 10 aquifer_1    Palolo_Tunnel              -158.     21.3 K             0.7</span></span>
+<span id="cb75-18"><a href="comparing-means.html#cb75-18"></a><span class="co">## # … with 100 more rows</span></span>
+<span id="cb75-19"><a href="comparing-means.html#cb75-19"></a></span>
+<span id="cb75-20"><a href="comparing-means.html#cb75-20"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> K_data, <span class="kw">aes</span>(<span class="dt">x =</span> aquifer_code, <span class="dt">y =</span> abundance)) <span class="op">+</span></span>
+<span id="cb75-21"><a href="comparing-means.html#cb75-21"></a><span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span></span>
+<span id="cb75-22"><a href="comparing-means.html#cb75-22"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span>, <span class="dt">size =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-123-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div id="anova" class="section level3">
+<h3><span class="header-section-number">16.2.1</span> ANOVA</h3>
+<p>We will use the <code>anova_test</code> function from the package <code>rstatix</code>. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="comparing-means.html#cb76-1"></a><span class="kw">anova_test</span>(<span class="dt">data =</span> K_data, <span class="dt">formula =</span> abundance <span class="op">~</span><span class="st"> </span>aquifer_code)</span>
+<span id="cb76-2"><a href="comparing-means.html#cb76-2"></a><span class="co">## Coefficient covariances computed by hccm()</span></span>
+<span id="cb76-3"><a href="comparing-means.html#cb76-3"></a><span class="co">## # A tibble: 1 x 7</span></span>
+<span id="cb76-4"><a href="comparing-means.html#cb76-4"></a><span class="co">##   Effect         DFn   DFd     F        p `p&lt;.05`   ges</span></span>
+<span id="cb76-5"><a href="comparing-means.html#cb76-5"></a><span class="co">##   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span></span>
+<span id="cb76-6"><a href="comparing-means.html#cb76-6"></a><span class="co">## 1 aquifer_code     9   100  10.0 7.72e-11 *       0.474</span></span></code></pre></div>
+<p>A p-value of 7.7e-11! There are definitely some significant differences among this group. In the next section we’ll look at how to determine which means are different from one another.</p>
+</div>
+<div id="tukeys-hsd" class="section level3">
+<h3><span class="header-section-number">16.2.2</span> Tukey’s HSD</h3>
+<p>Tukey’s Honest Significant Difference (implemented using <code>tukey_hsd</code>) will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="comparing-means.html#cb77-1"></a><span class="kw">tukey_hsd</span>(<span class="dt">x =</span> K_data, <span class="dt">formula =</span> abundance <span class="op">~</span><span class="st"> </span>aquifer_code)</span>
+<span id="cb77-2"><a href="comparing-means.html#cb77-2"></a><span class="co">## # A tibble: 45 x 9</span></span>
+<span id="cb77-3"><a href="comparing-means.html#cb77-3"></a><span class="co">##    term  group1 group2 null.value estimate conf.low conf.high   p.adj</span></span>
+<span id="cb77-4"><a href="comparing-means.html#cb77-4"></a><span class="co">##    &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb77-5"><a href="comparing-means.html#cb77-5"></a><span class="co">##  1 aqui… aquif… aquif…          0  0.00357   -2.00      2.01  1.00e+0</span></span>
+<span id="cb77-6"><a href="comparing-means.html#cb77-6"></a><span class="co">##  2 aqui… aquif… aquif…          0  1.44      -0.668     3.55  4.56e-1</span></span>
+<span id="cb77-7"><a href="comparing-means.html#cb77-7"></a><span class="co">##  3 aqui… aquif… aquif…          0  0.375     -2.35      3.10  1.00e+0</span></span>
+<span id="cb77-8"><a href="comparing-means.html#cb77-8"></a><span class="co">##  4 aqui… aquif… aquif…          0 -1.15      -2.75      0.437 3.68e-1</span></span>
+<span id="cb77-9"><a href="comparing-means.html#cb77-9"></a><span class="co">##  5 aqui… aquif… aquif…          0 -0.845     -3.09      1.40  9.68e-1</span></span>
+<span id="cb77-10"><a href="comparing-means.html#cb77-10"></a><span class="co">##  6 aqui… aquif… aquif…          0  1.98       0.261     3.71  1.15e-2</span></span>
+<span id="cb77-11"><a href="comparing-means.html#cb77-11"></a><span class="co">##  7 aqui… aquif… aquif…          0  2.70       0.837     4.56  3.56e-4</span></span>
+<span id="cb77-12"><a href="comparing-means.html#cb77-12"></a><span class="co">##  8 aqui… aquif… aquif…          0 -0.125     -2.85      2.60  1.00e+0</span></span>
+<span id="cb77-13"><a href="comparing-means.html#cb77-13"></a><span class="co">##  9 aqui… aquif… aquif…          0 -0.378     -1.78      1.03  9.97e-1</span></span>
+<span id="cb77-14"><a href="comparing-means.html#cb77-14"></a><span class="co">## 10 aqui… aquif… aquif…          0  1.44      -0.910     3.79  6.13e-1</span></span>
+<span id="cb77-15"><a href="comparing-means.html#cb77-15"></a><span class="co">## # … with 35 more rows, and 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
+<p>We can also determine groups that our data fall into based on the results from the Tukey test:</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="comparing-means.html#cb78-1"></a>groups_based_on_tukey &lt;-<span class="st"> </span><span class="kw">tukey_groups</span>(<span class="dt">data =</span> K_data, <span class="dt">formula =</span> abundance <span class="op">~</span><span class="st"> </span>aquifer_code)</span>
+<span id="cb78-2"><a href="comparing-means.html#cb78-2"></a>groups_based_on_tukey</span>
+<span id="cb78-3"><a href="comparing-means.html#cb78-3"></a><span class="co">## # A tibble: 10 x 2</span></span>
+<span id="cb78-4"><a href="comparing-means.html#cb78-4"></a><span class="co">##    treatment  group</span></span>
+<span id="cb78-5"><a href="comparing-means.html#cb78-5"></a><span class="co">##    &lt;fct&gt;      &lt;fct&gt;</span></span>
+<span id="cb78-6"><a href="comparing-means.html#cb78-6"></a><span class="co">##  1 aquifer_7  a    </span></span>
+<span id="cb78-7"><a href="comparing-means.html#cb78-7"></a><span class="co">##  2 aquifer_6  ab   </span></span>
+<span id="cb78-8"><a href="comparing-means.html#cb78-8"></a><span class="co">##  3 aquifer_2  abc  </span></span>
+<span id="cb78-9"><a href="comparing-means.html#cb78-9"></a><span class="co">##  4 aquifer_3  abcd </span></span>
+<span id="cb78-10"><a href="comparing-means.html#cb78-10"></a><span class="co">##  5 aquifer_10 bcd  </span></span>
+<span id="cb78-11"><a href="comparing-means.html#cb78-11"></a><span class="co">##  6 aquifer_1  cd   </span></span>
+<span id="cb78-12"><a href="comparing-means.html#cb78-12"></a><span class="co">##  7 aquifer_8  cd   </span></span>
+<span id="cb78-13"><a href="comparing-means.html#cb78-13"></a><span class="co">##  8 aquifer_9  cd   </span></span>
+<span id="cb78-14"><a href="comparing-means.html#cb78-14"></a><span class="co">##  9 aquifer_5  cd   </span></span>
+<span id="cb78-15"><a href="comparing-means.html#cb78-15"></a><span class="co">## 10 aquifer_4  d</span></span></code></pre></div>
+<p>We can use the output from <code>tukey_groups</code> to annotate our plot:</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="comparing-means.html#cb79-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> K_data, <span class="kw">aes</span>(<span class="dt">x =</span> aquifer_code, <span class="dt">y =</span> abundance)) <span class="op">+</span></span>
+<span id="cb79-2"><a href="comparing-means.html#cb79-2"></a><span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span></span>
+<span id="cb79-3"><a href="comparing-means.html#cb79-3"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span>, <span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span></span>
+<span id="cb79-4"><a href="comparing-means.html#cb79-4"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> groups_based_on_tukey, <span class="kw">aes</span>(<span class="dt">x =</span> treatment, <span class="dt">y =</span> <span class="dv">9</span>, <span class="dt">label =</span> group))</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-127-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Excellent! This plot shows us, using the letters above each aquifer, which means are the same and which are different. If a letter is shared among the labels above two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
+</div>
+</div>
+<div id="further-reading" class="section level2">
+<h2><span class="header-section-number">16.3</span> Further reading</h2>
+<p>For more on this topic, please check out <a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">this website</a></p>
+<!-- end -->
+<!-- start Appendix -->
+</div>
+</div>
+
+
+
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="Exercises-6.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="datasets.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "fixed"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

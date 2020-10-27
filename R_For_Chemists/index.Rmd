@@ -1860,16 +1860,20 @@ Often, we want to know if our study subjects contain different amounts of certai
 
 To run these statistical analyses, we will use the R package `rstatix`. Please install it with `install.packages("rstatix")`. Load it into your R session using `library(rstatix)`.
 
+```{r, echo = FALSE}
+library(rstatix)
+```
+
 ## two means
 
 When there are just two means, we can use a t-test. In R, we will use the function `t_test()`, which is pipe-friendly. We can send it the data we want to run the test on and we just need to give it the formula it should use. 
 
 Let's use the `hawaii_aquifers` data as an example. Suppose we want to know if there is a difference in the amount of potassium in the two aquifers. Let's first plot the data:
 
-```{r}
+```{r, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 hawaii_aquifers %>%
-  dplyr::filter(analyte == "K" & aquifer_code %in% c("aquifer_a", "aquifer_b")) %>%
+  dplyr::filter(analyte == "K" & aquifer_code %in% c("aquifer_1", "aquifer_2")) %>%
   ggplot(aes(x = aquifer_code, y = abundance)) + geom_boxplot()
 ```
 
@@ -1877,7 +1881,7 @@ Based on these distributions, it looks like there might be! Let's run a t-test. 
 
 ```{r}
 hawaii_aquifers %>%
-  dplyr::filter(analyte == "K" & aquifer_code %in% c("aquifer_a", "aquifer_b")) %>%
+  dplyr::filter(analyte == "K" & aquifer_code %in% c("aquifer_1", "aquifer_2")) %>%
   t_test(abundance ~ aquifer_code)
 ```
 
@@ -1932,10 +1936,11 @@ ggplot(data = K_data, aes(x = aquifer_code, y = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(x = treatment, y = 9, label = group))
 ```
 
-### Further reading
+Excellent! This plot shows us, using the letters above each aquifer, which means are the same and which are different. If a letter is shared among the labels above two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
+
+## Further reading
 
 For more on this topic, please check out [this website](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
-
 
 <!-- end -->
 
