@@ -264,9 +264,9 @@
 
                 # Run kMeans, if requested
 
-                    if( kmeans[1] == "none" ) {}
+                    if( kmeans[1] %in% c("none", FALSE) ) {}
 
-                    if( kmeans[1] != "none" ) {
+                    if( !kmeans[1] %in% c("none", FALSE) ) {
 
                         ## Check for NAs
 
