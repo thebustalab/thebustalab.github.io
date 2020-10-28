@@ -1860,7 +1860,7 @@ Often, we want to know if our study subjects contain different amounts of certai
 
 To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 library(rstatix)
 library(agricolae)
@@ -1873,7 +1873,7 @@ When we are comparing two means, we need to first determine what kind of statist
 
 We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
 
-```{r}
+```{r, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 K_data <- hawaii_aquifers %>%
   dplyr::filter(analyte == "K")
@@ -1995,7 +1995,7 @@ K_data %>%
 
 Using the output from our tukey test, we can determine which means are similar. We can do this using the p_groups function:
 
-```{r}
+```{r, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 groups_based_on_tukey <- K_data %>%
   tukey_hsd(abundance ~ aquifer_code) %>%
