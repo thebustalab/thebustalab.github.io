@@ -445,9 +445,9 @@
         names(p) <- paste(data$group1, data$group2, sep = "-")
 
         output <- data.frame(
-            treatment = names(multcompLetters(data)$Letters),
-            group = multcompLetters(data)$Letters,
-            spaced_group = multcompLetters(data)$monospacedLetters
+            treatment = names(multcompLetters(p)$Letters),
+            group = multcompLetters(p)$Letters,
+            spaced_group = multcompLetters(p)$monospacedLetters
         )
         return(output)
     }
