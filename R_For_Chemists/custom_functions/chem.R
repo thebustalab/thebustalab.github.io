@@ -3,6 +3,7 @@
     library(tidyverse)
     library(ape)
     library(ggtree)
+    library(rstatix)
 
 #### datasets
     
@@ -436,60 +437,19 @@
             x
         }
 
-#### tukey_groups
+#### p_groups
 
-    tukey_groups <- function(data, formula) {
+    p_groups <- function(data) {
         
-        # unique_groups <- unique(c(unique(data$group1), unique(data$group2)))
-
-        # output <- data.frame( group = unique_groups, tukey_group = "-" )
-        # output$tukey_group <- as.character(output$tukey_group)
-        
-        # for( i in 1:length(unique_groups) ) {
-            
-        #     groups_in_this_tukey_group <- c(
-        #         unique_groups[i],
-        #         c(
-        #             dplyr::filter(data, group1 == unique_groups[i] & p.adj.signif == "ns")$group2,
-        #             dplyr::filter(data, group2 == unique_groups[i] & p.adj.signif == "ns")$group1
-        #         )
-        #     )
-            
-        #     output$tukey_group[output$group %in% groups_in_this_tukey_group] <- paste0(
-        #         output$tukey_group[output$group %in% groups_in_this_tukey_group],
-        #         LETTERS[i]
-        #     )
-
-        # }
-
-        # output$tukey_group <- gsub("-", "", output$tukey_group)
-        # # output$tukey_group <- LETTERS[as.numeric(as.factor(output$tukey_group))]
-
-        # return(output)
-
-        grouping_output <- eval(
-            parse(
-                text = paste0(
-                    "agricolae::HSD.test(aov(",
-                    # gsub(" ", "", gsub("~.*$", "", formula)),
-                    as.character(formula)[2],
-                    "~",
-                    # gsub(" ", "", gsub(".*~", "", formula)),
-                    as.character(formula)[3],
-                    ", data = data), trt = '",
-                    # gsub(" ", "", gsub(".*~", "", formula)),
-                    as.character(formula)[3],
-                    "')$groups"
-                )
-            )
-        )
+        p <- data$p.adj
+        names(p) <- paste(data$group1, data$group2, sep = "-")
 
         output <- data.frame(
-            treatment = rownames(grouping_output),
-            group = grouping_output$groups
+            treatment = names(multcompLetters(data)$Letters),
+            group = multcompLetters(data)$Letters,
+            spaced_group = multcompLetters(data)$monospacedLetters
         )
         return(output)
-
     }
 
 #### HSD.test
