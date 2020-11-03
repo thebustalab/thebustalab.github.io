@@ -18,6 +18,7 @@
     data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
     hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv")
     beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv")
+    hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv")
 
 #### readCSV
 
@@ -29,14 +30,15 @@
 
     #' Runs a matrix analysis (clustering, kmeans, pca).
     #'
-    #' @param data The data.frame or tibble to use.
-    #' @param analysis  
-    #' @param column_w_names_of_multiple_analytes
+    #' @param data The data frame or tibble to analyze
+    #' @param analysis The type of analysis to run. Can be one of: "hclust" (heirarchical clustering), "pca" (principal components analysis), "pca-ord" (principal components analysis ordination plot), or "pca-dim" (principal components scree plot)
+    #' @param column_w_names_of_multiple_analytes  
     #' @param column_w_values_for_multiple_analytes
-    #' @param columns_w_values_for_single_analyte
     #' @param columns_w_additional_analyte_info
-    #' @param columns_for_sample_unique_ID
-    #' @param columns_w_sample_annotation_info
+    #' @param columns_w_sample_ID_info
+    #' @param kmeans
+    #' @param na_replacement
+    #' @param output_format
     #' @examples
     #' @export
     #' runMatrixAnalysis

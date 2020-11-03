@@ -2060,6 +2060,132 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 
 <!-- end -->
 
+<!-- start Exam -->
+
+# Exam
+
+For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. The person that previously worked in your postion, Mr. Porter, recently completed two chemical analyses of the major ingredients your Fireside Brewing uses. However, Mr. Porter didn't have time to finish analyzing the data that was collected.
+
+At Fireside Brewing, your boss is Mrs. Amber, a friendly woman who has worked in the brewing industry for decades and is a certified cicerone (a professional beer taster). As an expert taster, she is familiar with all the classes of compounds in beer ingredients and their corresponding flavors, but she is not an expert in chemistry or data analysis.
+
+For your first task in this new position, Mrs. Amber wants you to finish analyzing Mr. Porter's data. Mrs. Amber has not given you specific instructions on how to analyze the data, rather, she has a set of specific questions that she wants answered to improve Fireside Brewing. Mr. Porter left some notes about how to perform the analyses, but, since he was close to retirement and spent too much time riding his bicycle and drinking beer, the notes are not complete. Use Mr. Porter's notes to help you answer the questions below.
+
+**Answer each question with both at least one high quality plot that provides a visual answer and a caption that provides a written answer. If a question necessitates an answer that is difficult to show with a plot (for example, a single p value), include that answer in the caption.**
+
+*note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
+
+## Data set 1: barley, corn, hops
+
+### Question 1:
+
+Mrs Amber: *We are having problems with our Pale Ale. Its flavor is not consistent from batch to bath. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the major types of ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?*
+
+```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
+beer_components %>%
+    group_by(ingredient, analyte_class) %>%
+    summarize(mean_abundance = mean(abundance), stdev = sd(abundance)) %>%
+    ggplot(aes(x = analyte_class, y = mean_abundance)) + 
+      geom_point() +
+      geom_errorbar(aes(ymin = mean_abundance - stdev, ymax = mean_abundance + stdev), width = 0.5) +
+      facet_grid(.~ingredient) +
+      coord_flip() +
+      scale_y_continuous(limits = c(-5000, 7000), breaks = seq(-4000, 5000, 3000)) +
+      theme_linedraw()
+```
+
+### Question 2:
+
+Mrs. Amber: *We are experimenting with a new beer that uses a 1:1:1 mixture of all the hop products that we use (hops, hop oil, and hop extract). I want to try to predict what type of flavor profile this beer might have. Considering Mr. Porter's data for each of those three ingredients all together, what four analyte classes have the highest average abundance?*
+
+```{r, echo = FALSE, message = FALSE}
+beer_components %>%
+    filter(ingredient %in% c("hop extract", "hops", "hop oil")) %>%
+    group_by(analyte_class) %>%
+    summarize(mean = mean(abundance)) %>%
+    ggplot(aes(x = analyte_class, y = mean)) +
+      geom_col(aes(fill = analyte_class), color = "black") +
+      geom_text(aes(y = mean + 20, label = floor(mean))) +
+      coord_flip() +
+      theme_linedraw() +
+      scale_y_continuous(expand = c(0,0), limits = c(0,600), name = "Abundance") +
+      scale_x_discrete(name = "Analyte Class") +
+      scale_fill_brewer(palette = "Paired")
+```
+
+### Question 3:
+
+Mrs. Amber: *We are trying to reduce the price of our India Session Ale by replacing its hops with either hop extract or hop oil. Chemically speaking, which is more similar to hops - hop extract, or hop oil?*
+
+```{r, echo = FALSE, message = FALSE}
+some_beer_components <- filter(beer_components, ingredient %in% c("hops", "hop extract", "hop oil"))
+beer_analyzed <- runMatrixAnalysis(
+  data = some_beer_components, # the data set to work on
+  analysis = c("hclust"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = "analyte", # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = "abundance", # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = NULL, # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = c("analyte_class", "analyte_odor"), # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = c("ingredient", "replicate"), # a column with information about the sample (i.e. contents from the test tube's label)
+  transpose = FALSE,
+  kmeans = c("none"),
+  na_replacement = c("none"),
+  output_format = c("long")
+)
+ggtree(beer_analyzed, size = 1) +
+  geom_tiplab(aes(label = ingredient), offset = 2500, align = TRUE, hjust = 1, geom = "label", label.size = 0) +
+  geom_tippoint(aes(fill = ingredient), shape = 21, color = "black", size = 4) +
+  scale_fill_brewer(palette = "Set1") +
+  guides(fill = "none", color = "none") +
+  theme_void() +
+  scale_x_continuous(limits = c(0, 15000))
+```
+
+### Question 4:
+
+Mrs. Amber: *I recently heard a rumor from other cicerones that barley containing significantly more 3-methylbutanal than all other aldehydes leads to a maltier flavor. Statistically speaking, does our barley currently contain significantly more 3-methylbutanal than all other aldehydes?*
+
+```{r, echo = FALSE, message = FALSE}
+beer_components %>%
+  filter(ingredient %in% c("barley")) %>%
+  filter(analyte_class %in% c("Aldehyde")) %>%
+  ggplot(aes(x = analyte, y = abundance)) +
+    geom_boxplot() +
+    geom_point(size = 1, alpha = 1) +
+    coord_flip()
+
+beer_thing <- beer_components %>%
+  filter(ingredient %in% c("barley")) %>%
+  filter(analyte_class %in% c("Aldehyde")) %>%
+  filter(abundance != 0) ### Mr. Porter note
+
+  ggplot() +
+    geom_jitter(
+      data = beer_thing, aes(x = analyte, y = log(abundance), fill = analyte),
+      size = 3, alpha = 0.6, shape = 21, color = "black"
+    ) +
+    geom_text(data = p_data, aes(x = treatment, y = 6, label = group)) +
+    coord_flip() +
+    theme_linedraw() +
+    scale_x_discrete(name = "Analyte") +
+    scale_y_continuous(name = "Abundance (log scale)", breaks = seq(0,10,1))
+
+  p_data <- beer_thing %>%
+  # group_by(analyte) %>%
+  # shapiro_test(abundance)
+  
+  # levene_test(abundance ~ analyte)
+
+  # anova_test(abundance ~ analyte)
+
+  tukey_hsd(abundance ~ analyte) %>%
+  p_groups()
+```
+
+## Data set 2: hops, hops, hops!
+
+<!-- end Exam -->
+
 <!-- start Appendix -->
 # (APPENDIX) Appendix {-}
 
