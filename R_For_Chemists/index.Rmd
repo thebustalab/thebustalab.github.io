@@ -1853,7 +1853,7 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/Ex
 
 <!-- end -->
 
-<!-- start ANOVA -->
+<!-- start Comparing Means -->
 # comparing means
 
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
@@ -1866,6 +1866,12 @@ library(rstatix)
 library(agricolae)
 library(multcompView)
 ```
+
+## The p value
+
+"The p value represents the probability of getting data as extreme as our results if the null hypothesis is true."
+
+In other words - the p value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all.
 
 ## Two means
 

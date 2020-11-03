@@ -17,6 +17,7 @@
     wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
     data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
     hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv")
+    beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv")
 
 #### readCSV
 
