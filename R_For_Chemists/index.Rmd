@@ -2064,8 +2064,6 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 
 <!-- end -->
 
-
-
 <!-- start Appendix -->
 # (APPENDIX) Appendix {-}
 

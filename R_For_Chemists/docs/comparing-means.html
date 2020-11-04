@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-11-03" />
+<meta name="date" content="2020-11-04" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -245,14 +245,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="16.4" data-path="comparing-means.html"><a href="comparing-means.html#further-reading"><i class="fa fa-check"></i><b>16.4</b> Further reading</a></li>
 </ul></li>
 <li class="chapter" data-level="17" data-path="exam.html"><a href="exam.html"><i class="fa fa-check"></i><b>17</b> Exam</a><ul>
-<li class="chapter" data-level="17.1" data-path="exam.html"><a href="exam.html#data-set-1-barley-corn-hops"><i class="fa fa-check"></i><b>17.1</b> Data set 1: barley, corn, hops</a><ul>
+<li class="chapter" data-level="17.1" data-path="exam.html"><a href="exam.html#data-set-1-beer_components"><i class="fa fa-check"></i><b>17.1</b> Data set 1: beer_components</a><ul>
 <li class="chapter" data-level="17.1.1" data-path="exam.html"><a href="exam.html#question-1-3"><i class="fa fa-check"></i><b>17.1.1</b> Question 1:</a></li>
 <li class="chapter" data-level="17.1.2" data-path="exam.html"><a href="exam.html#question-2-3"><i class="fa fa-check"></i><b>17.1.2</b> Question 2:</a></li>
 <li class="chapter" data-level="17.1.3" data-path="exam.html"><a href="exam.html#question-3-3"><i class="fa fa-check"></i><b>17.1.3</b> Question 3:</a></li>
 <li class="chapter" data-level="17.1.4" data-path="exam.html"><a href="exam.html#question-4-3"><i class="fa fa-check"></i><b>17.1.4</b> Question 4:</a></li>
 <li class="chapter" data-level="17.1.5" data-path="exam.html"><a href="exam.html#question-5-3"><i class="fa fa-check"></i><b>17.1.5</b> Question 5:</a></li>
 </ul></li>
-<li class="chapter" data-level="17.2" data-path="exam.html"><a href="exam.html#data-set-2-hops-hops-hops"><i class="fa fa-check"></i><b>17.2</b> Data set 2: hops, hops, hops!</a><ul>
+<li class="chapter" data-level="17.2" data-path="exam.html"><a href="exam.html#data-set-2-hops_components"><i class="fa fa-check"></i><b>17.2</b> Data set 2: hops_components</a><ul>
 <li class="chapter" data-level="17.2.1" data-path="exam.html"><a href="exam.html#question-1-4"><i class="fa fa-check"></i><b>17.2.1</b> Question 1</a></li>
 <li class="chapter" data-level="17.2.2" data-path="exam.html"><a href="exam.html#question-2-4"><i class="fa fa-check"></i><b>17.2.2</b> Question 2:</a></li>
 <li class="chapter" data-level="17.2.3" data-path="exam.html"><a href="exam.html#question-3-4"><i class="fa fa-check"></i><b>17.2.3</b> Question 3:</a></li>
@@ -345,6 +345,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">16.1</span> The p value</h2>
 <p>“The p value represents the probability of getting data as extreme as our results if the null hypothesis is true.”</p>
 <p>In other words - the p value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all.</p>
+<p><img src="http://thebustalab.github.io/R_For_Chemists/figures/stats.png" style="display: block; margin: auto;" /></p>
 </div>
 <div id="two-means" class="section level2">
 <h2><span class="header-section-number">16.2</span> Two means</h2>
@@ -391,14 +392,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb73-20"><a href="comparing-means.html#cb73-20"></a><span class="kw">ggplot</span>(K_data_<span class="dv">1</span>_<span class="dv">2</span>, <span class="kw">aes</span>(<span class="dt">x =</span> aquifer_code, <span class="dt">y =</span> abundance)) <span class="op">+</span></span>
 <span id="cb73-21"><a href="comparing-means.html#cb73-21"></a><span class="st">    </span><span class="kw">geom_boxplot</span>() <span class="op">+</span></span>
 <span id="cb73-22"><a href="comparing-means.html#cb73-22"></a><span class="st">    </span><span class="kw">geom_point</span>()</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-122-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-123-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Are these data normally distributed? Do they have similar variance? Let’s get a first approximation by looking at a plot:</p>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="comparing-means.html#cb74-1"></a>K_data_<span class="dv">1</span>_<span class="dv">2</span> <span class="op">%&gt;%</span></span>
 <span id="cb74-2"><a href="comparing-means.html#cb74-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> abundance)) <span class="op">+</span><span class="st"> </span></span>
 <span id="cb74-3"><a href="comparing-means.html#cb74-3"></a><span class="st">    </span><span class="kw">geom_histogram</span>(<span class="dt">bins =</span> <span class="dv">30</span>) <span class="op">+</span></span>
 <span id="cb74-4"><a href="comparing-means.html#cb74-4"></a><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span>aquifer_code) <span class="op">+</span></span>
 <span id="cb74-5"><a href="comparing-means.html#cb74-5"></a><span class="st">    </span><span class="kw">geom_density</span>(<span class="kw">aes</span>(<span class="dt">y =</span> ..density..<span class="op">*</span><span class="dv">10</span>), <span class="dt">colour =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-123-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-124-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
 <div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="comparing-means.html#cb75-1"></a>K_data_<span class="dv">1</span>_<span class="dv">2</span> <span class="op">%&gt;%</span></span>
 <span id="cb75-2"><a href="comparing-means.html#cb75-2"></a><span class="st">  </span><span class="kw">group_by</span>(aquifer_code) <span class="op">%&gt;%</span><span class="st"> </span></span>
@@ -456,7 +457,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb79-20"><a href="comparing-means.html#cb79-20"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> K_data, <span class="kw">aes</span>(<span class="dt">x =</span> aquifer_code, <span class="dt">y =</span> abundance)) <span class="op">+</span></span>
 <span id="cb79-21"><a href="comparing-means.html#cb79-21"></a><span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span></span>
 <span id="cb79-22"><a href="comparing-means.html#cb79-22"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span>, <span class="dt">size =</span> <span class="dv">3</span>)</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-128-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-129-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Let’s check visually to see if each group is normally distributed and to see if they have roughly equal variance:</p>
 <div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="comparing-means.html#cb80-1"></a>K_data <span class="op">%&gt;%</span></span>
 <span id="cb80-2"><a href="comparing-means.html#cb80-2"></a><span class="st">  </span><span class="kw">group_by</span>(aquifer_code) <span class="op">%&gt;%</span></span>
@@ -464,7 +465,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb80-4"><a href="comparing-means.html#cb80-4"></a><span class="st">    </span><span class="kw">geom_histogram</span>(<span class="dt">bins =</span> <span class="dv">30</span>) <span class="op">+</span></span>
 <span id="cb80-5"><a href="comparing-means.html#cb80-5"></a><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span>aquifer_code) <span class="op">+</span></span>
 <span id="cb80-6"><a href="comparing-means.html#cb80-6"></a><span class="st">    </span><span class="kw">geom_density</span>(<span class="kw">aes</span>(<span class="dt">y =</span> ..density..<span class="op">*</span><span class="dv">10</span>), <span class="dt">colour =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-129-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-130-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let’s check using the Shapiro and Levene tests. Don’t forget: with the Shaprio test, we are looking within each group and so need to <code>group_by()</code>, with the Levene test, we are looking across groups, and so need to provide a <code>y~x</code> formula:</p>
 <div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="comparing-means.html#cb81-1"></a>K_data <span class="op">%&gt;%</span></span>
 <span id="cb81-2"><a href="comparing-means.html#cb81-2"></a><span class="st">  </span><span class="kw">group_by</span>(aquifer_code) <span class="op">%&gt;%</span><span class="st"> </span></span>
@@ -541,7 +542,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb86-2"><a href="comparing-means.html#cb86-2"></a><span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span></span>
 <span id="cb86-3"><a href="comparing-means.html#cb86-3"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span>, <span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span></span>
 <span id="cb86-4"><a href="comparing-means.html#cb86-4"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> groups_based_on_tukey, <span class="kw">aes</span>(<span class="dt">x =</span> treatment, <span class="dt">y =</span> <span class="dv">9</span>, <span class="dt">label =</span> group))</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-135-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-136-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Excellent! This plot shows us, using the letters above each aquifer, which means are the same and which are different. If a letter is shared among the labels above two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
 <div id="kruskal-dunn-tests" class="section level3">
@@ -593,7 +594,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb89-20"><a href="comparing-means.html#cb89-20"></a><span class="st">  </span><span class="kw">geom_boxplot</span>() <span class="op">+</span></span>
 <span id="cb89-21"><a href="comparing-means.html#cb89-21"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="dt">alpha =</span> <span class="fl">0.6</span>, <span class="dt">size =</span> <span class="dv">3</span>) <span class="op">+</span></span>
 <span id="cb89-22"><a href="comparing-means.html#cb89-22"></a><span class="st">  </span><span class="kw">geom_text</span>(<span class="dt">data =</span> groups_based_on_tukey, <span class="kw">aes</span>(<span class="dt">x =</span> treatment, <span class="dt">y =</span> <span class="dv">9</span>, <span class="dt">label =</span> group))</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-138-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-139-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Note that these groupings are different from those generated by ANOVA/Tukey.</p>
 </div>
 </div>
