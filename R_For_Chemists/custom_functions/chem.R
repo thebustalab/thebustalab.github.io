@@ -22,7 +22,7 @@
 
 #### readCSV
 
-    #'asdf
+    #' Interactive selection of a CSV file to read
 
     readCSV <- function() { return(readr::read_csv(file.choose())) }
 
