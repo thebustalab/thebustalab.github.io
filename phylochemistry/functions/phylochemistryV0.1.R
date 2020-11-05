@@ -2431,6 +2431,7 @@
 	            library(tidyverse)
 	            library(DT)
 	            library(RColorBrewer)
+                library(rhandsontable)
 
 	            ## Set up monolists
 
