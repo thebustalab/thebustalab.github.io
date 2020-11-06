@@ -2432,6 +2432,7 @@
 	            library(DT)
 	            library(RColorBrewer)
                 library(rhandsontable)
+                library(plyr)
 
 	            ## Set up monolists
 
