@@ -2141,7 +2141,7 @@ beer_analyzed <- runMatrixAnalysis(
   columns_w_sample_ID_info = c("ingredient", "replicate"), # a column with information about the sample (i.e. contents from the test tube's label)
   transpose = FALSE,
   kmeans = c("none"),
-  na_replacement = c("none"),
+  na_replacement = c("drop"),
   output_format = c("long")
 )
 ggtree(beer_analyzed, size = 1) +
@@ -2199,7 +2199,7 @@ beer_thing <- beer_components %>%
 
 ### Question 5:
 
-Mrs. Pilsner: *When I taste our beers made with hop extract, they don't taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do our different ingredients cluster according to their average chemical composition?*
+Mrs. Pilsner: *When I taste our beers made with hop extract, they don't taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do all our different ingredients cluster according to their average chemical composition?*
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 #asdfasdf group_by_summarize, pca
