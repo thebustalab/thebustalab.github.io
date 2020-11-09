@@ -2067,7 +2067,7 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 <!-- start Exam -->
 # Exam
 
-For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract.
+For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
 
 The person that previously worked in your postion, Mr. Porter, recently completed a chemical analysis of the major ingredients that Fireside Brewing uses. However, Mr. Porter didn't have time to finish analyzing the data that was collected.
 
@@ -2282,9 +2282,9 @@ ggtree(beer_analyzed) +
 
 ### Question 2:
 
-Mrs. Pilsner: *We buy our hops from many different countries of origin. I've always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the flavor profiles of other countries' hops? What chemical(s) largely drive this difference?*
+Mrs. Pilsner: *We buy our hops from many different countries of origin. I've always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the chemical profiles of other countries' hops (as a proxy for flavor profiles)? What chemical(s) largely drive this difference?*
 
-note from Mr. Porter: *note to self... by reducing the dimensionality of the dataset to two dimensions, it should be possible to draw ellipses that encapsulate the "flavor profile" of each country's hops.*
+note from Mr. Porter: *note to self... by reducing the dimensionality of the chemical dataset to two dimensions, it should be possible to draw ellipses that encapsulate the chemical profile (as a proxy for "flavor profile") of each country's hops.*
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 #asdfasdf pca, pca ord
