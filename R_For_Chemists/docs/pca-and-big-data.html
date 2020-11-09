@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-11-04" />
+<meta name="date" content="2020-11-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -186,7 +186,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
 <li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
 <li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
-<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
 <li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
 <li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
 <li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
@@ -340,71 +342,71 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="pca-and-big-data" class="section level1">
 <h1><span class="header-section-number">E</span> PCA and Big Data</h1>
 <p>In this course it is possible that you will want to run a clustering or PCA analysis on a data set with hundreds of thousands of observations (like NY_trees, for example). This is not always straightforward, since looking at a dendrogram or a scatter plot with hundreds of thousands of points is not always fruitful. Consider the meteorological dataset below.</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="pca-and-big-data.html#cb112-1"></a>mdata &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv&quot;</span>)</span>
-<span id="cb112-2"><a href="pca-and-big-data.html#cb112-2"></a><span class="kw">dim</span>(mdata)</span>
-<span id="cb112-3"><a href="pca-and-big-data.html#cb112-3"></a><span class="co">## [1] 234528     15</span></span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="pca-and-big-data.html#cb114-1"></a>mdata &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv&quot;</span>)</span>
+<span id="cb114-2"><a href="pca-and-big-data.html#cb114-2"></a><span class="kw">dim</span>(mdata)</span>
+<span id="cb114-3"><a href="pca-and-big-data.html#cb114-3"></a><span class="co">## [1] 234528     15</span></span></code></pre></div>
 <p>Nearly a quarter million observations! However, that does not mean that you cannot use those analyses on such a dataset. Consider just running the PCA or cluster analysis on a summary of the dataset. You can even create your own groups by which to summarize directly from large continuous variables in your dataset. In the example below, a new categorical variable <code>WIND_GROUP</code> is created by binning the observations according to <code>WINDSPEED</code> into 20 groups. This is accomplished using the <code>cut()</code> command.</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="pca-and-big-data.html#cb113-1"></a>mdata &lt;-<span class="st"> </span>mdata[<span class="op">!</span><span class="kw">is.na</span>(mdata<span class="op">$</span>WINDSPEED),]</span>
-<span id="cb113-2"><a href="pca-and-big-data.html#cb113-2"></a>mdata<span class="op">$</span>WIND_GROUP &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">cut</span>(mdata<span class="op">$</span>WINDSPEED, <span class="dt">breaks =</span> <span class="dv">20</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="pca-and-big-data.html#cb115-1"></a>mdata &lt;-<span class="st"> </span>mdata[<span class="op">!</span><span class="kw">is.na</span>(mdata<span class="op">$</span>WINDSPEED),]</span>
+<span id="cb115-2"><a href="pca-and-big-data.html#cb115-2"></a>mdata<span class="op">$</span>WIND_GROUP &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">cut</span>(mdata<span class="op">$</span>WINDSPEED, <span class="dt">breaks =</span> <span class="dv">20</span>))</span></code></pre></div>
 <p>Cool! Now we can <code>group_by()</code> and <code>summarize()</code> on <code>WIND_GROUP</code>:</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="pca-and-big-data.html#cb114-1"></a>mdata_windgroup &lt;-<span class="st"> </span><span class="kw">group_by</span>(mdata, WIND_GROUP) <span class="op">%&gt;%</span></span>
-<span id="cb114-2"><a href="pca-and-big-data.html#cb114-2"></a><span class="st">  </span><span class="kw">summarize</span>(</span>
-<span id="cb114-3"><a href="pca-and-big-data.html#cb114-3"></a>    <span class="dt">TEMPERATURE =</span> <span class="kw">mean</span>(TEMPERATURE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-4"><a href="pca-and-big-data.html#cb114-4"></a>    <span class="dt">TEMPERATURE_DELTA =</span> <span class="kw">mean</span>(TEMPERATURE_DELTA, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-5"><a href="pca-and-big-data.html#cb114-5"></a>    <span class="dt">RELATIVE_HUMIDITY =</span> <span class="kw">mean</span>(RELATIVE_HUMIDITY, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-6"><a href="pca-and-big-data.html#cb114-6"></a>    <span class="dt">SOLAR_RADIATION =</span> <span class="kw">mean</span>(SOLAR_RADIATION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-7"><a href="pca-and-big-data.html#cb114-7"></a>    <span class="dt">OZONE =</span> <span class="kw">mean</span>(OZONE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-8"><a href="pca-and-big-data.html#cb114-8"></a>    <span class="dt">PRECIPITATION =</span> <span class="kw">mean</span>(PRECIPITATION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-9"><a href="pca-and-big-data.html#cb114-9"></a>    <span class="dt">WINDSPEED =</span> <span class="kw">mean</span>(WINDSPEED, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-10"><a href="pca-and-big-data.html#cb114-10"></a>    <span class="dt">SHELTER_TEMPERATURE =</span> <span class="kw">mean</span>(SHELTER_TEMPERATURE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-11"><a href="pca-and-big-data.html#cb114-11"></a>    <span class="dt">WIND_DIRECTION =</span> <span class="kw">mean</span>(WIND_DIRECTION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-12"><a href="pca-and-big-data.html#cb114-12"></a>    <span class="dt">WINDSPEED_SCALAR =</span> <span class="kw">mean</span>(WINDSPEED_SCALAR, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-13"><a href="pca-and-big-data.html#cb114-13"></a>    <span class="dt">FLOW_RATE =</span> <span class="kw">mean</span>(FLOW_RATE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-14"><a href="pca-and-big-data.html#cb114-14"></a>    <span class="dt">WETNESS =</span> <span class="kw">mean</span>(WETNESS, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
-<span id="cb114-15"><a href="pca-and-big-data.html#cb114-15"></a>  )</span>
-<span id="cb114-16"><a href="pca-and-big-data.html#cb114-16"></a><span class="co">## `summarise()` ungrouping output (override with `.groups` argument)</span></span>
-<span id="cb114-17"><a href="pca-and-big-data.html#cb114-17"></a>mdata_windgroup</span>
-<span id="cb114-18"><a href="pca-and-big-data.html#cb114-18"></a><span class="co">## # A tibble: 20 x 13</span></span>
-<span id="cb114-19"><a href="pca-and-big-data.html#cb114-19"></a><span class="co">##    WIND_GROUP TEMPERATURE TEMPERATURE_DEL… RELATIVE_HUMIDI… SOLAR_RADIATION</span></span>
-<span id="cb114-20"><a href="pca-and-big-data.html#cb114-20"></a><span class="co">##         &lt;dbl&gt;       &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;</span></span>
-<span id="cb114-21"><a href="pca-and-big-data.html#cb114-21"></a><span class="co">##  1          1        6.05           0.251              75.6            138.</span></span>
-<span id="cb114-22"><a href="pca-and-big-data.html#cb114-22"></a><span class="co">##  2          2        4.72           0.124              75.2            143.</span></span>
-<span id="cb114-23"><a href="pca-and-big-data.html#cb114-23"></a><span class="co">##  3          3        4.35           0.146              74.1            131.</span></span>
-<span id="cb114-24"><a href="pca-and-big-data.html#cb114-24"></a><span class="co">##  4          4        4.09           0.175              74.5            118.</span></span>
-<span id="cb114-25"><a href="pca-and-big-data.html#cb114-25"></a><span class="co">##  5          5        3.22           0.103              74.0            113.</span></span>
-<span id="cb114-26"><a href="pca-and-big-data.html#cb114-26"></a><span class="co">##  6          6        3.28           0.0127             73.1            120.</span></span>
-<span id="cb114-27"><a href="pca-and-big-data.html#cb114-27"></a><span class="co">##  7          7        4.10          -0.0685             72.0            138.</span></span>
-<span id="cb114-28"><a href="pca-and-big-data.html#cb114-28"></a><span class="co">##  8          8        4.76          -0.137              70.5            155.</span></span>
-<span id="cb114-29"><a href="pca-and-big-data.html#cb114-29"></a><span class="co">##  9          9        5.16          -0.180              69.0            167.</span></span>
-<span id="cb114-30"><a href="pca-and-big-data.html#cb114-30"></a><span class="co">## 10         10        5.71          -0.199              67.0            184.</span></span>
-<span id="cb114-31"><a href="pca-and-big-data.html#cb114-31"></a><span class="co">## 11         11        6.15          -0.222              64.9            199.</span></span>
-<span id="cb114-32"><a href="pca-and-big-data.html#cb114-32"></a><span class="co">## 12         12        6.32          -0.176              65.9            184.</span></span>
-<span id="cb114-33"><a href="pca-and-big-data.html#cb114-33"></a><span class="co">## 13         13        6.07          -0.176              65.6            181.</span></span>
-<span id="cb114-34"><a href="pca-and-big-data.html#cb114-34"></a><span class="co">## 14         14        7.63          -0.168              66.2            169.</span></span>
-<span id="cb114-35"><a href="pca-and-big-data.html#cb114-35"></a><span class="co">## 15         15        8.57          -0.132              67.6            176.</span></span>
-<span id="cb114-36"><a href="pca-and-big-data.html#cb114-36"></a><span class="co">## 16         16        6.14          -0.193              66.8            218.</span></span>
-<span id="cb114-37"><a href="pca-and-big-data.html#cb114-37"></a><span class="co">## 17         17       12.7           -0.3                51.1            420.</span></span>
-<span id="cb114-38"><a href="pca-and-big-data.html#cb114-38"></a><span class="co">## 18         18        8.23         NaN                  47.3            520.</span></span>
-<span id="cb114-39"><a href="pca-and-big-data.html#cb114-39"></a><span class="co">## 19         19       -1.9            0                  70                3 </span></span>
-<span id="cb114-40"><a href="pca-and-big-data.html#cb114-40"></a><span class="co">## 20         20       -5.9          NaN                  60              249 </span></span>
-<span id="cb114-41"><a href="pca-and-big-data.html#cb114-41"></a><span class="co">## # … with 8 more variables: OZONE &lt;dbl&gt;, PRECIPITATION &lt;dbl&gt;, WINDSPEED &lt;dbl&gt;,</span></span>
-<span id="cb114-42"><a href="pca-and-big-data.html#cb114-42"></a><span class="co">## #   SHELTER_TEMPERATURE &lt;dbl&gt;, WIND_DIRECTION &lt;dbl&gt;, WINDSPEED_SCALAR &lt;dbl&gt;,</span></span>
-<span id="cb114-43"><a href="pca-and-big-data.html#cb114-43"></a><span class="co">## #   FLOW_RATE &lt;dbl&gt;, WETNESS &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="pca-and-big-data.html#cb116-1"></a>mdata_windgroup &lt;-<span class="st"> </span><span class="kw">group_by</span>(mdata, WIND_GROUP) <span class="op">%&gt;%</span></span>
+<span id="cb116-2"><a href="pca-and-big-data.html#cb116-2"></a><span class="st">  </span><span class="kw">summarize</span>(</span>
+<span id="cb116-3"><a href="pca-and-big-data.html#cb116-3"></a>    <span class="dt">TEMPERATURE =</span> <span class="kw">mean</span>(TEMPERATURE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-4"><a href="pca-and-big-data.html#cb116-4"></a>    <span class="dt">TEMPERATURE_DELTA =</span> <span class="kw">mean</span>(TEMPERATURE_DELTA, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-5"><a href="pca-and-big-data.html#cb116-5"></a>    <span class="dt">RELATIVE_HUMIDITY =</span> <span class="kw">mean</span>(RELATIVE_HUMIDITY, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-6"><a href="pca-and-big-data.html#cb116-6"></a>    <span class="dt">SOLAR_RADIATION =</span> <span class="kw">mean</span>(SOLAR_RADIATION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-7"><a href="pca-and-big-data.html#cb116-7"></a>    <span class="dt">OZONE =</span> <span class="kw">mean</span>(OZONE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-8"><a href="pca-and-big-data.html#cb116-8"></a>    <span class="dt">PRECIPITATION =</span> <span class="kw">mean</span>(PRECIPITATION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-9"><a href="pca-and-big-data.html#cb116-9"></a>    <span class="dt">WINDSPEED =</span> <span class="kw">mean</span>(WINDSPEED, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-10"><a href="pca-and-big-data.html#cb116-10"></a>    <span class="dt">SHELTER_TEMPERATURE =</span> <span class="kw">mean</span>(SHELTER_TEMPERATURE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-11"><a href="pca-and-big-data.html#cb116-11"></a>    <span class="dt">WIND_DIRECTION =</span> <span class="kw">mean</span>(WIND_DIRECTION, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-12"><a href="pca-and-big-data.html#cb116-12"></a>    <span class="dt">WINDSPEED_SCALAR =</span> <span class="kw">mean</span>(WINDSPEED_SCALAR, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-13"><a href="pca-and-big-data.html#cb116-13"></a>    <span class="dt">FLOW_RATE =</span> <span class="kw">mean</span>(FLOW_RATE, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-14"><a href="pca-and-big-data.html#cb116-14"></a>    <span class="dt">WETNESS =</span> <span class="kw">mean</span>(WETNESS, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</span>
+<span id="cb116-15"><a href="pca-and-big-data.html#cb116-15"></a>  )</span>
+<span id="cb116-16"><a href="pca-and-big-data.html#cb116-16"></a><span class="co">## `summarise()` ungrouping output (override with `.groups` argument)</span></span>
+<span id="cb116-17"><a href="pca-and-big-data.html#cb116-17"></a>mdata_windgroup</span>
+<span id="cb116-18"><a href="pca-and-big-data.html#cb116-18"></a><span class="co">## # A tibble: 20 x 13</span></span>
+<span id="cb116-19"><a href="pca-and-big-data.html#cb116-19"></a><span class="co">##    WIND_GROUP TEMPERATURE TEMPERATURE_DEL… RELATIVE_HUMIDI… SOLAR_RADIATION</span></span>
+<span id="cb116-20"><a href="pca-and-big-data.html#cb116-20"></a><span class="co">##         &lt;dbl&gt;       &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span id="cb116-21"><a href="pca-and-big-data.html#cb116-21"></a><span class="co">##  1          1        6.05           0.251              75.6            138.</span></span>
+<span id="cb116-22"><a href="pca-and-big-data.html#cb116-22"></a><span class="co">##  2          2        4.72           0.124              75.2            143.</span></span>
+<span id="cb116-23"><a href="pca-and-big-data.html#cb116-23"></a><span class="co">##  3          3        4.35           0.146              74.1            131.</span></span>
+<span id="cb116-24"><a href="pca-and-big-data.html#cb116-24"></a><span class="co">##  4          4        4.09           0.175              74.5            118.</span></span>
+<span id="cb116-25"><a href="pca-and-big-data.html#cb116-25"></a><span class="co">##  5          5        3.22           0.103              74.0            113.</span></span>
+<span id="cb116-26"><a href="pca-and-big-data.html#cb116-26"></a><span class="co">##  6          6        3.28           0.0127             73.1            120.</span></span>
+<span id="cb116-27"><a href="pca-and-big-data.html#cb116-27"></a><span class="co">##  7          7        4.10          -0.0685             72.0            138.</span></span>
+<span id="cb116-28"><a href="pca-and-big-data.html#cb116-28"></a><span class="co">##  8          8        4.76          -0.137              70.5            155.</span></span>
+<span id="cb116-29"><a href="pca-and-big-data.html#cb116-29"></a><span class="co">##  9          9        5.16          -0.180              69.0            167.</span></span>
+<span id="cb116-30"><a href="pca-and-big-data.html#cb116-30"></a><span class="co">## 10         10        5.71          -0.199              67.0            184.</span></span>
+<span id="cb116-31"><a href="pca-and-big-data.html#cb116-31"></a><span class="co">## 11         11        6.15          -0.222              64.9            199.</span></span>
+<span id="cb116-32"><a href="pca-and-big-data.html#cb116-32"></a><span class="co">## 12         12        6.32          -0.176              65.9            184.</span></span>
+<span id="cb116-33"><a href="pca-and-big-data.html#cb116-33"></a><span class="co">## 13         13        6.07          -0.176              65.6            181.</span></span>
+<span id="cb116-34"><a href="pca-and-big-data.html#cb116-34"></a><span class="co">## 14         14        7.63          -0.168              66.2            169.</span></span>
+<span id="cb116-35"><a href="pca-and-big-data.html#cb116-35"></a><span class="co">## 15         15        8.57          -0.132              67.6            176.</span></span>
+<span id="cb116-36"><a href="pca-and-big-data.html#cb116-36"></a><span class="co">## 16         16        6.14          -0.193              66.8            218.</span></span>
+<span id="cb116-37"><a href="pca-and-big-data.html#cb116-37"></a><span class="co">## 17         17       12.7           -0.3                51.1            420.</span></span>
+<span id="cb116-38"><a href="pca-and-big-data.html#cb116-38"></a><span class="co">## 18         18        8.23         NaN                  47.3            520.</span></span>
+<span id="cb116-39"><a href="pca-and-big-data.html#cb116-39"></a><span class="co">## 19         19       -1.9            0                  70                3 </span></span>
+<span id="cb116-40"><a href="pca-and-big-data.html#cb116-40"></a><span class="co">## 20         20       -5.9          NaN                  60              249 </span></span>
+<span id="cb116-41"><a href="pca-and-big-data.html#cb116-41"></a><span class="co">## # … with 8 more variables: OZONE &lt;dbl&gt;, PRECIPITATION &lt;dbl&gt;, WINDSPEED &lt;dbl&gt;,</span></span>
+<span id="cb116-42"><a href="pca-and-big-data.html#cb116-42"></a><span class="co">## #   SHELTER_TEMPERATURE &lt;dbl&gt;, WIND_DIRECTION &lt;dbl&gt;, WINDSPEED_SCALAR &lt;dbl&gt;,</span></span>
+<span id="cb116-43"><a href="pca-and-big-data.html#cb116-43"></a><span class="co">## #   FLOW_RATE &lt;dbl&gt;, WETNESS &lt;dbl&gt;</span></span></code></pre></div>
 <p>With that done, we can run matrix analyses on the summarized data, using our new <code>WIND_GROUP</code> variable as the sample ID, and plot the results!</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="pca-and-big-data.html#cb115-1"></a>mdata_windgroup_analyzed &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb115-2"><a href="pca-and-big-data.html#cb115-2"></a>  <span class="dt">data =</span> mdata_windgroup,</span>
-<span id="cb115-3"><a href="pca-and-big-data.html#cb115-3"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
-<span id="cb115-4"><a href="pca-and-big-data.html#cb115-4"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb115-5"><a href="pca-and-big-data.html#cb115-5"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb115-6"><a href="pca-and-big-data.html#cb115-6"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;TEMPERATURE&quot;</span>, <span class="st">&quot;TEMPERATURE_DELTA&quot;</span>, <span class="st">&quot;RELATIVE_HUMIDITY&quot;</span>, <span class="st">&quot;SOLAR_RADIATION&quot;</span>, <span class="st">&quot;OZONE&quot;</span>, <span class="st">&quot;PRECIPITATION&quot;</span>, <span class="st">&quot;WINDSPEED&quot;</span>, <span class="st">&quot;SHELTER_TEMPERATURE&quot;</span>, <span class="st">&quot;WIND_DIRECTION&quot;</span>, <span class="st">&quot;WINDSPEED_SCALAR&quot;</span>, <span class="st">&quot;FLOW_RATE&quot;</span>, <span class="st">&quot;WETNESS&quot;</span>),</span>
-<span id="cb115-7"><a href="pca-and-big-data.html#cb115-7"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
-<span id="cb115-8"><a href="pca-and-big-data.html#cb115-8"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;WIND_GROUP&quot;</span>)</span>
-<span id="cb115-9"><a href="pca-and-big-data.html#cb115-9"></a>)</span>
-<span id="cb115-10"><a href="pca-and-big-data.html#cb115-10"></a><span class="co">## Not replacing any NAs in your data set</span></span>
-<span id="cb115-11"><a href="pca-and-big-data.html#cb115-11"></a></span>
-<span id="cb115-12"><a href="pca-and-big-data.html#cb115-12"></a><span class="kw">ggplot</span>(mdata_windgroup_analyzed) <span class="op">+</span><span class="st"> </span></span>
-<span id="cb115-13"><a href="pca-and-big-data.html#cb115-13"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> WINDSPEED, <span class="dt">size =</span> TEMPERATURE), <span class="dt">shape =</span> <span class="dv">21</span>) <span class="op">+</span></span>
-<span id="cb115-14"><a href="pca-and-big-data.html#cb115-14"></a><span class="st">  </span><span class="kw">theme_classic</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="pca-and-big-data.html#cb117-1"></a>mdata_windgroup_analyzed &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb117-2"><a href="pca-and-big-data.html#cb117-2"></a>  <span class="dt">data =</span> mdata_windgroup,</span>
+<span id="cb117-3"><a href="pca-and-big-data.html#cb117-3"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb117-4"><a href="pca-and-big-data.html#cb117-4"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb117-5"><a href="pca-and-big-data.html#cb117-5"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb117-6"><a href="pca-and-big-data.html#cb117-6"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;TEMPERATURE&quot;</span>, <span class="st">&quot;TEMPERATURE_DELTA&quot;</span>, <span class="st">&quot;RELATIVE_HUMIDITY&quot;</span>, <span class="st">&quot;SOLAR_RADIATION&quot;</span>, <span class="st">&quot;OZONE&quot;</span>, <span class="st">&quot;PRECIPITATION&quot;</span>, <span class="st">&quot;WINDSPEED&quot;</span>, <span class="st">&quot;SHELTER_TEMPERATURE&quot;</span>, <span class="st">&quot;WIND_DIRECTION&quot;</span>, <span class="st">&quot;WINDSPEED_SCALAR&quot;</span>, <span class="st">&quot;FLOW_RATE&quot;</span>, <span class="st">&quot;WETNESS&quot;</span>),</span>
+<span id="cb117-7"><a href="pca-and-big-data.html#cb117-7"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>,</span>
+<span id="cb117-8"><a href="pca-and-big-data.html#cb117-8"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;WIND_GROUP&quot;</span>)</span>
+<span id="cb117-9"><a href="pca-and-big-data.html#cb117-9"></a>)</span>
+<span id="cb117-10"><a href="pca-and-big-data.html#cb117-10"></a><span class="co">## Not replacing any NAs in your data set</span></span>
+<span id="cb117-11"><a href="pca-and-big-data.html#cb117-11"></a></span>
+<span id="cb117-12"><a href="pca-and-big-data.html#cb117-12"></a><span class="kw">ggplot</span>(mdata_windgroup_analyzed) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb117-13"><a href="pca-and-big-data.html#cb117-13"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">fill =</span> WINDSPEED, <span class="dt">size =</span> TEMPERATURE), <span class="dt">shape =</span> <span class="dv">21</span>) <span class="op">+</span></span>
+<span id="cb117-14"><a href="pca-and-big-data.html#cb117-14"></a><span class="st">  </span><span class="kw">theme_classic</span>()</span></code></pre></div>
 <p><img src="bio723-book_files/figure-html/loadRunMatrixAnalysis-1.png" width="576" style="display: block; margin: auto;" /></p>
 <!-- end -->
 

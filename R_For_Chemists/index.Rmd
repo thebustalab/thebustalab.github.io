@@ -624,7 +624,26 @@ ggplot(data = algae, aes(x = algae_strain, y = chemical_species)) +
   scale_fill_gradient(low = "white", high = "black") +
   theme_classic()
 ```
-  
+
+### RColorBrewer
+
+One particularly useful type of scale are those provided by RColorBrewer:
+
+```{r}
+# install.packages("RColorBrewer")
+
+library(RColorBrewer)
+library(ggplot2)
+
+display.brewer.all()
+
+ggplot(mtcars) +
+  geom_point(
+    aes(x = mpg, y = factor(cyl), fill = factor(carb)), 
+    shape = 21, size = 6
+  ) +
+  scale_fill_brewer(palette = "Set1")
+``` 
   
 ## Themes
   
@@ -1168,7 +1187,7 @@ Let's look at how to access the information about which analytes are major contr
 ```{r, echo = FALSE, message = FALSE}
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 AK_lakes_pca_ord <- runMatrixAnalysis(
-	data = AK_lakes,
+	data = alaska_lake_data,
 	analysis = c("pca-ord"),
 	column_w_names_of_multiple_analytes = "element",
 	column_w_values_for_multiple_analytes = "mg_per_L",

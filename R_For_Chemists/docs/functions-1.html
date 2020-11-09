@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-11-04" />
+<meta name="date" content="2020-11-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -186,7 +186,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
 <li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
 <li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
-<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
 <li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
 <li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
 <li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
@@ -345,7 +347,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="install.packages" class="section level3">
 <h3><span class="header-section-number">B.1.1</span> <code>install.packages()</code></h3>
 <p>(base function) Use it to install a package! For example:</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="functions-1.html#cb91-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="functions-1.html#cb93-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="operators" class="section level2">
@@ -353,8 +355,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="in" class="section level3">
 <h3><span class="header-section-number">B.2.1</span> <code>%in%</code></h3>
 <p>(base function). Use it to find An example:</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="functions-1.html#cb92-1"></a><span class="co"># Find cars in the horsepower mid-range</span></span>
-<span id="cb92-2"><a href="functions-1.html#cb92-2"></a>mid_strength &lt;-<span class="st"> </span><span class="kw">filter</span>(mtcars,hp <span class="op">%in%</span><span class="st"> </span><span class="dv">100</span><span class="op">:</span><span class="dv">200</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="functions-1.html#cb94-1"></a><span class="co"># Find cars in the horsepower mid-range</span></span>
+<span id="cb94-2"><a href="functions-1.html#cb94-2"></a>mid_strength &lt;-<span class="st"> </span><span class="kw">filter</span>(mtcars,hp <span class="op">%in%</span><span class="st"> </span><span class="dv">100</span><span class="op">:</span><span class="dv">200</span>)</span></code></pre></div>
 </div>
 <div id="section" class="section level3">
 <h3><span class="header-section-number">B.2.2</span> &lt;</h3>
@@ -402,16 +404,16 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="head" class="section level3">
 <h3><span class="header-section-number">B.3.4</span> <code>head()</code></h3>
 <p>(base function) Use it to see just the first few lines of a dataframe:</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="functions-1.html#cb93-1"></a><span class="kw">head</span>(algae_chemistry_data)</span>
-<span id="cb93-2"><a href="functions-1.html#cb93-2"></a><span class="co">## # A tibble: 6 x 5</span></span>
-<span id="cb93-3"><a href="functions-1.html#cb93-3"></a><span class="co">##   replicate algae_strain harvesting_regime chemical_species            abundance</span></span>
-<span id="cb93-4"><a href="functions-1.html#cb93-4"></a><span class="co">##       &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                           &lt;dbl&gt;</span></span>
-<span id="cb93-5"><a href="functions-1.html#cb93-5"></a><span class="co">## 1         1 Tsv1         Heavy             FAs                             520. </span></span>
-<span id="cb93-6"><a href="functions-1.html#cb93-6"></a><span class="co">## 2         1 Tsv1         Heavy             saturated_Fas                   123. </span></span>
-<span id="cb93-7"><a href="functions-1.html#cb93-7"></a><span class="co">## 3         1 Tsv1         Heavy             omega_3_polyunsaturated_Fas     186. </span></span>
-<span id="cb93-8"><a href="functions-1.html#cb93-8"></a><span class="co">## 4         1 Tsv1         Heavy             monounsaturated_Fas              28.4</span></span>
-<span id="cb93-9"><a href="functions-1.html#cb93-9"></a><span class="co">## 5         1 Tsv1         Heavy             polyunsaturated_Fas             369. </span></span>
-<span id="cb93-10"><a href="functions-1.html#cb93-10"></a><span class="co">## 6         1 Tsv1         Heavy             omega_6_polyunsaturated_Fas     183.</span></span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="functions-1.html#cb95-1"></a><span class="kw">head</span>(algae_chemistry_data)</span>
+<span id="cb95-2"><a href="functions-1.html#cb95-2"></a><span class="co">## # A tibble: 6 x 5</span></span>
+<span id="cb95-3"><a href="functions-1.html#cb95-3"></a><span class="co">##   replicate algae_strain harvesting_regime chemical_species            abundance</span></span>
+<span id="cb95-4"><a href="functions-1.html#cb95-4"></a><span class="co">##       &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                           &lt;dbl&gt;</span></span>
+<span id="cb95-5"><a href="functions-1.html#cb95-5"></a><span class="co">## 1         1 Tsv1         Heavy             FAs                             520. </span></span>
+<span id="cb95-6"><a href="functions-1.html#cb95-6"></a><span class="co">## 2         1 Tsv1         Heavy             saturated_Fas                   123. </span></span>
+<span id="cb95-7"><a href="functions-1.html#cb95-7"></a><span class="co">## 3         1 Tsv1         Heavy             omega_3_polyunsaturated_Fas     186. </span></span>
+<span id="cb95-8"><a href="functions-1.html#cb95-8"></a><span class="co">## 4         1 Tsv1         Heavy             monounsaturated_Fas              28.4</span></span>
+<span id="cb95-9"><a href="functions-1.html#cb95-9"></a><span class="co">## 5         1 Tsv1         Heavy             polyunsaturated_Fas             369. </span></span>
+<span id="cb95-10"><a href="functions-1.html#cb95-10"></a><span class="co">## 6         1 Tsv1         Heavy             omega_6_polyunsaturated_Fas     183.</span></span></code></pre></div>
 </div>
 <div id="filter" class="section level3">
 <h3><span class="header-section-number">B.3.5</span> <code>filter()</code></h3>
@@ -420,36 +422,36 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="mutate" class="section level3">
 <h3><span class="header-section-number">B.3.6</span> <code>mutate()</code></h3>
 <p>(a <code>dplyr</code> function - part of the tidyverse). An example:</p>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="functions-1.html#cb94-1"></a><span class="co"># Add a column &quot;kilometers per liter (klp)&quot; and calculate using mpg</span></span>
-<span id="cb94-2"><a href="functions-1.html#cb94-2"></a>EUROPE_mtcars &lt;-<span class="st"> </span><span class="kw">mutate</span>(mtcars,<span class="dt">kpl =</span> mpg<span class="op">*</span><span class="fl">0.4251</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="functions-1.html#cb96-1"></a><span class="co"># Add a column &quot;kilometers per liter (klp)&quot; and calculate using mpg</span></span>
+<span id="cb96-2"><a href="functions-1.html#cb96-2"></a>EUROPE_mtcars &lt;-<span class="st"> </span><span class="kw">mutate</span>(mtcars,<span class="dt">kpl =</span> mpg<span class="op">*</span><span class="fl">0.4251</span>)</span></code></pre></div>
 </div>
 <div id="case_when" class="section level3">
 <h3><span class="header-section-number">B.3.7</span> <code>case_when()</code></h3>
 <p>(a <code>dplyr</code> function - part of the tidyverse)</p>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="functions-1.html#cb95-1"></a><span class="co"># Classify the fuel efficiency of the cars in the mtcars data set</span></span>
-<span id="cb95-2"><a href="functions-1.html#cb95-2"></a>efficiency &lt;-<span class="st"> </span><span class="kw">mutate</span>(</span>
-<span id="cb95-3"><a href="functions-1.html#cb95-3"></a>  mtcars,</span>
-<span id="cb95-4"><a href="functions-1.html#cb95-4"></a>  <span class="dt">fuel_efficient =</span> <span class="kw">case_when</span>(</span>
-<span id="cb95-5"><a href="functions-1.html#cb95-5"></a>    mpg <span class="op">&lt;=</span><span class="st"> </span><span class="dv">15</span> <span class="op">~</span><span class="st"> &quot;Bad&quot;</span>,</span>
-<span id="cb95-6"><a href="functions-1.html#cb95-6"></a>    mpg <span class="op">&gt;</span><span class="st"> </span><span class="dv">15</span> <span class="op">&amp;</span><span class="st"> </span>mpg <span class="op">&lt;</span><span class="st"> </span><span class="dv">25</span> <span class="op">~</span><span class="st"> &quot;ok&quot;</span>, </span>
-<span id="cb95-7"><a href="functions-1.html#cb95-7"></a>    mpg <span class="op">&gt;=</span><span class="st"> </span><span class="dv">25</span> <span class="op">~</span><span class="st"> &quot;Good&quot;</span></span>
-<span id="cb95-8"><a href="functions-1.html#cb95-8"></a>  )</span>
-<span id="cb95-9"><a href="functions-1.html#cb95-9"></a>)</span>
-<span id="cb95-10"><a href="functions-1.html#cb95-10"></a>efficiency</span>
-<span id="cb95-11"><a href="functions-1.html#cb95-11"></a><span class="co">## # A tibble: 32 x 12</span></span>
-<span id="cb95-12"><a href="functions-1.html#cb95-12"></a><span class="co">##      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
-<span id="cb95-13"><a href="functions-1.html#cb95-13"></a><span class="co">##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb95-14"><a href="functions-1.html#cb95-14"></a><span class="co">##  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></span>
-<span id="cb95-15"><a href="functions-1.html#cb95-15"></a><span class="co">##  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></span>
-<span id="cb95-16"><a href="functions-1.html#cb95-16"></a><span class="co">##  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></span>
-<span id="cb95-17"><a href="functions-1.html#cb95-17"></a><span class="co">##  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></span>
-<span id="cb95-18"><a href="functions-1.html#cb95-18"></a><span class="co">##  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></span>
-<span id="cb95-19"><a href="functions-1.html#cb95-19"></a><span class="co">##  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></span>
-<span id="cb95-20"><a href="functions-1.html#cb95-20"></a><span class="co">##  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></span>
-<span id="cb95-21"><a href="functions-1.html#cb95-21"></a><span class="co">##  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></span>
-<span id="cb95-22"><a href="functions-1.html#cb95-22"></a><span class="co">##  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></span>
-<span id="cb95-23"><a href="functions-1.html#cb95-23"></a><span class="co">## 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></span>
-<span id="cb95-24"><a href="functions-1.html#cb95-24"></a><span class="co">## # … with 22 more rows, and 1 more variable: fuel_efficient &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="functions-1.html#cb97-1"></a><span class="co"># Classify the fuel efficiency of the cars in the mtcars data set</span></span>
+<span id="cb97-2"><a href="functions-1.html#cb97-2"></a>efficiency &lt;-<span class="st"> </span><span class="kw">mutate</span>(</span>
+<span id="cb97-3"><a href="functions-1.html#cb97-3"></a>  mtcars,</span>
+<span id="cb97-4"><a href="functions-1.html#cb97-4"></a>  <span class="dt">fuel_efficient =</span> <span class="kw">case_when</span>(</span>
+<span id="cb97-5"><a href="functions-1.html#cb97-5"></a>    mpg <span class="op">&lt;=</span><span class="st"> </span><span class="dv">15</span> <span class="op">~</span><span class="st"> &quot;Bad&quot;</span>,</span>
+<span id="cb97-6"><a href="functions-1.html#cb97-6"></a>    mpg <span class="op">&gt;</span><span class="st"> </span><span class="dv">15</span> <span class="op">&amp;</span><span class="st"> </span>mpg <span class="op">&lt;</span><span class="st"> </span><span class="dv">25</span> <span class="op">~</span><span class="st"> &quot;ok&quot;</span>, </span>
+<span id="cb97-7"><a href="functions-1.html#cb97-7"></a>    mpg <span class="op">&gt;=</span><span class="st"> </span><span class="dv">25</span> <span class="op">~</span><span class="st"> &quot;Good&quot;</span></span>
+<span id="cb97-8"><a href="functions-1.html#cb97-8"></a>  )</span>
+<span id="cb97-9"><a href="functions-1.html#cb97-9"></a>)</span>
+<span id="cb97-10"><a href="functions-1.html#cb97-10"></a>efficiency</span>
+<span id="cb97-11"><a href="functions-1.html#cb97-11"></a><span class="co">## # A tibble: 32 x 12</span></span>
+<span id="cb97-12"><a href="functions-1.html#cb97-12"></a><span class="co">##      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span></span>
+<span id="cb97-13"><a href="functions-1.html#cb97-13"></a><span class="co">##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb97-14"><a href="functions-1.html#cb97-14"></a><span class="co">##  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span></span>
+<span id="cb97-15"><a href="functions-1.html#cb97-15"></a><span class="co">##  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span></span>
+<span id="cb97-16"><a href="functions-1.html#cb97-16"></a><span class="co">##  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span></span>
+<span id="cb97-17"><a href="functions-1.html#cb97-17"></a><span class="co">##  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span></span>
+<span id="cb97-18"><a href="functions-1.html#cb97-18"></a><span class="co">##  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span></span>
+<span id="cb97-19"><a href="functions-1.html#cb97-19"></a><span class="co">##  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span></span>
+<span id="cb97-20"><a href="functions-1.html#cb97-20"></a><span class="co">##  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span></span>
+<span id="cb97-21"><a href="functions-1.html#cb97-21"></a><span class="co">##  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span></span>
+<span id="cb97-22"><a href="functions-1.html#cb97-22"></a><span class="co">##  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span></span>
+<span id="cb97-23"><a href="functions-1.html#cb97-23"></a><span class="co">## 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span></span>
+<span id="cb97-24"><a href="functions-1.html#cb97-24"></a><span class="co">## # … with 22 more rows, and 1 more variable: fuel_efficient &lt;chr&gt;</span></span></code></pre></div>
 </div>
 <div id="pivot_longer" class="section level3">
 <h3><span class="header-section-number">B.3.8</span> <code>pivot_longer()</code></h3>
@@ -466,17 +468,17 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="section-7" class="section level3">
 <h3><span class="header-section-number">B.3.11</span> <code>%&gt;%</code></h3>
 <p>(a magrittr function - part of the tidyverse) Use it to send the output of one command directly to the next.</p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="functions-1.html#cb96-1"></a><span class="co"># How many cars with 8 cylinders have automatic transmissions?</span></span>
-<span id="cb96-2"><a href="functions-1.html#cb96-2"></a>mtcars <span class="op">%&gt;%</span></span>
-<span id="cb96-3"><a href="functions-1.html#cb96-3"></a><span class="st">  </span><span class="kw">filter</span>(cyl <span class="op">&gt;</span><span class="st"> </span><span class="dv">6</span>) <span class="op">%&gt;%</span></span>
-<span id="cb96-4"><a href="functions-1.html#cb96-4"></a><span class="st">  </span><span class="kw">group_by</span>(am) <span class="op">%&gt;%</span></span>
-<span id="cb96-5"><a href="functions-1.html#cb96-5"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>())</span>
-<span id="cb96-6"><a href="functions-1.html#cb96-6"></a><span class="co">## `summarise()` ungrouping output (override with `.groups` argument)</span></span>
-<span id="cb96-7"><a href="functions-1.html#cb96-7"></a><span class="co">## # A tibble: 2 x 2</span></span>
-<span id="cb96-8"><a href="functions-1.html#cb96-8"></a><span class="co">##      am     n</span></span>
-<span id="cb96-9"><a href="functions-1.html#cb96-9"></a><span class="co">##   &lt;dbl&gt; &lt;int&gt;</span></span>
-<span id="cb96-10"><a href="functions-1.html#cb96-10"></a><span class="co">## 1     0    12</span></span>
-<span id="cb96-11"><a href="functions-1.html#cb96-11"></a><span class="co">## 2     1     2</span></span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="functions-1.html#cb98-1"></a><span class="co"># How many cars with 8 cylinders have automatic transmissions?</span></span>
+<span id="cb98-2"><a href="functions-1.html#cb98-2"></a>mtcars <span class="op">%&gt;%</span></span>
+<span id="cb98-3"><a href="functions-1.html#cb98-3"></a><span class="st">  </span><span class="kw">filter</span>(cyl <span class="op">&gt;</span><span class="st"> </span><span class="dv">6</span>) <span class="op">%&gt;%</span></span>
+<span id="cb98-4"><a href="functions-1.html#cb98-4"></a><span class="st">  </span><span class="kw">group_by</span>(am) <span class="op">%&gt;%</span></span>
+<span id="cb98-5"><a href="functions-1.html#cb98-5"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n =</span> <span class="kw">n</span>())</span>
+<span id="cb98-6"><a href="functions-1.html#cb98-6"></a><span class="co">## `summarise()` ungrouping output (override with `.groups` argument)</span></span>
+<span id="cb98-7"><a href="functions-1.html#cb98-7"></a><span class="co">## # A tibble: 2 x 2</span></span>
+<span id="cb98-8"><a href="functions-1.html#cb98-8"></a><span class="co">##      am     n</span></span>
+<span id="cb98-9"><a href="functions-1.html#cb98-9"></a><span class="co">##   &lt;dbl&gt; &lt;int&gt;</span></span>
+<span id="cb98-10"><a href="functions-1.html#cb98-10"></a><span class="co">## 1     0    12</span></span>
+<span id="cb98-11"><a href="functions-1.html#cb98-11"></a><span class="co">## 2     1     2</span></span></code></pre></div>
 </div>
 </div>
 <div id="plotting" class="section level2">
@@ -528,143 +530,143 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h3><span class="header-section-number">B.5.3</span> <code>table()</code></h3>
 <p>(base function) Use it to calculate the number of items in a category</p>
 <p>For example, how many bound versus unbound elements are there in the alaksa_lakes_data?</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="functions-1.html#cb97-1"></a><span class="co">## Let&#39;s load our CHEM5725 environment</span></span>
-<span id="cb97-2"><a href="functions-1.html#cb97-2"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
-<span id="cb97-3"><a href="functions-1.html#cb97-3"></a></span>
-<span id="cb97-4"><a href="functions-1.html#cb97-4"></a><span class="co">## Let&#39;s just look at one lake so that there aren&#39;t duplicate elements</span></span>
-<span id="cb97-5"><a href="functions-1.html#cb97-5"></a>DML &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(alaska_lake_data, lake <span class="op">==</span><span class="st"> &quot;Devil_Mountain_Lake&quot;</span>)</span>
-<span id="cb97-6"><a href="functions-1.html#cb97-6"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)</span>
-<span id="cb97-7"><a href="functions-1.html#cb97-7"></a><span class="co">## </span></span>
-<span id="cb97-8"><a href="functions-1.html#cb97-8"></a><span class="co">## bound  free </span></span>
-<span id="cb97-9"><a href="functions-1.html#cb97-9"></a><span class="co">##     3     8</span></span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="functions-1.html#cb99-1"></a><span class="co">## Let&#39;s load our CHEM5725 environment</span></span>
+<span id="cb99-2"><a href="functions-1.html#cb99-2"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<span id="cb99-3"><a href="functions-1.html#cb99-3"></a></span>
+<span id="cb99-4"><a href="functions-1.html#cb99-4"></a><span class="co">## Let&#39;s just look at one lake so that there aren&#39;t duplicate elements</span></span>
+<span id="cb99-5"><a href="functions-1.html#cb99-5"></a>DML &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(alaska_lake_data, lake <span class="op">==</span><span class="st"> &quot;Devil_Mountain_Lake&quot;</span>)</span>
+<span id="cb99-6"><a href="functions-1.html#cb99-6"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)</span>
+<span id="cb99-7"><a href="functions-1.html#cb99-7"></a><span class="co">## </span></span>
+<span id="cb99-8"><a href="functions-1.html#cb99-8"></a><span class="co">## bound  free </span></span>
+<span id="cb99-9"><a href="functions-1.html#cb99-9"></a><span class="co">##     3     8</span></span></code></pre></div>
 <p>We can access each element separately:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="functions-1.html#cb98-1"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)[<span class="dv">1</span>]</span>
-<span id="cb98-2"><a href="functions-1.html#cb98-2"></a><span class="co">## bound </span></span>
-<span id="cb98-3"><a href="functions-1.html#cb98-3"></a><span class="co">##     3</span></span></code></pre></div>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="functions-1.html#cb99-1"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)[<span class="dv">2</span>]</span>
-<span id="cb99-2"><a href="functions-1.html#cb99-2"></a><span class="co">## free </span></span>
-<span id="cb99-3"><a href="functions-1.html#cb99-3"></a><span class="co">##    8</span></span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="functions-1.html#cb100-1"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)[<span class="dv">1</span>]</span>
+<span id="cb100-2"><a href="functions-1.html#cb100-2"></a><span class="co">## bound </span></span>
+<span id="cb100-3"><a href="functions-1.html#cb100-3"></a><span class="co">##     3</span></span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="functions-1.html#cb101-1"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)[<span class="dv">2</span>]</span>
+<span id="cb101-2"><a href="functions-1.html#cb101-2"></a><span class="co">## free </span></span>
+<span id="cb101-3"><a href="functions-1.html#cb101-3"></a><span class="co">##    8</span></span></code></pre></div>
 <p>So, if we want to calculate percent free elements:</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="functions-1.html#cb100-1"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)[<span class="dv">2</span>] <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(<span class="kw">table</span>(DML<span class="op">$</span>element_type)) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></span>
-<span id="cb100-2"><a href="functions-1.html#cb100-2"></a><span class="co">##     free </span></span>
-<span id="cb100-3"><a href="functions-1.html#cb100-3"></a><span class="co">## 72.72727</span></span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="functions-1.html#cb102-1"></a><span class="kw">table</span>(DML<span class="op">$</span>element_type)[<span class="dv">2</span>] <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(<span class="kw">table</span>(DML<span class="op">$</span>element_type)) <span class="op">*</span><span class="st"> </span><span class="dv">100</span></span>
+<span id="cb102-2"><a href="functions-1.html#cb102-2"></a><span class="co">##     free </span></span>
+<span id="cb102-3"><a href="functions-1.html#cb102-3"></a><span class="co">## 72.72727</span></span></code></pre></div>
 </div>
 <div id="weighted.mean" class="section level3">
 <h3><span class="header-section-number">B.5.4</span> <code>weighted.mean()</code></h3>
 <p>(from the <code>stats</code> package)</p>
 <p>Suppose we want to calculate mean abundance of pyruvate in patients with kidney disease versus patients that are healthy.</p>
 <p>First, let’s just make the data set smaller and easier to see:</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="functions-1.html#cb101-1"></a>ckd_data_pyruvate &lt;-<span class="st"> </span>ckd_data[,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</span>
-<span id="cb101-2"><a href="functions-1.html#cb101-2"></a>ckd_data_pyruvate</span>
-<span id="cb101-3"><a href="functions-1.html#cb101-3"></a><span class="co">## # A tibble: 93 x 3</span></span>
-<span id="cb101-4"><a href="functions-1.html#cb101-4"></a><span class="co">##    patient_number patient_status Pyruvate</span></span>
-<span id="cb101-5"><a href="functions-1.html#cb101-5"></a><span class="co">##             &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt;</span></span>
-<span id="cb101-6"><a href="functions-1.html#cb101-6"></a><span class="co">##  1             20 healthy            14.2</span></span>
-<span id="cb101-7"><a href="functions-1.html#cb101-7"></a><span class="co">##  2             24 healthy            14.2</span></span>
-<span id="cb101-8"><a href="functions-1.html#cb101-8"></a><span class="co">##  3             29 healthy            13.9</span></span>
-<span id="cb101-9"><a href="functions-1.html#cb101-9"></a><span class="co">##  4             52 healthy            13.8</span></span>
-<span id="cb101-10"><a href="functions-1.html#cb101-10"></a><span class="co">##  5             54 healthy            13.7</span></span>
-<span id="cb101-11"><a href="functions-1.html#cb101-11"></a><span class="co">##  6             56 healthy            13.4</span></span>
-<span id="cb101-12"><a href="functions-1.html#cb101-12"></a><span class="co">##  7             57 healthy            13.6</span></span>
-<span id="cb101-13"><a href="functions-1.html#cb101-13"></a><span class="co">##  8             58 healthy            13.7</span></span>
-<span id="cb101-14"><a href="functions-1.html#cb101-14"></a><span class="co">##  9             59 healthy            14.5</span></span>
-<span id="cb101-15"><a href="functions-1.html#cb101-15"></a><span class="co">## 10             60 healthy            13.6</span></span>
-<span id="cb101-16"><a href="functions-1.html#cb101-16"></a><span class="co">## # … with 83 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="functions-1.html#cb103-1"></a>ckd_data_pyruvate &lt;-<span class="st"> </span>ckd_data[,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</span>
+<span id="cb103-2"><a href="functions-1.html#cb103-2"></a>ckd_data_pyruvate</span>
+<span id="cb103-3"><a href="functions-1.html#cb103-3"></a><span class="co">## # A tibble: 93 x 3</span></span>
+<span id="cb103-4"><a href="functions-1.html#cb103-4"></a><span class="co">##    patient_number patient_status Pyruvate</span></span>
+<span id="cb103-5"><a href="functions-1.html#cb103-5"></a><span class="co">##             &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt;</span></span>
+<span id="cb103-6"><a href="functions-1.html#cb103-6"></a><span class="co">##  1             20 healthy            14.2</span></span>
+<span id="cb103-7"><a href="functions-1.html#cb103-7"></a><span class="co">##  2             24 healthy            14.2</span></span>
+<span id="cb103-8"><a href="functions-1.html#cb103-8"></a><span class="co">##  3             29 healthy            13.9</span></span>
+<span id="cb103-9"><a href="functions-1.html#cb103-9"></a><span class="co">##  4             52 healthy            13.8</span></span>
+<span id="cb103-10"><a href="functions-1.html#cb103-10"></a><span class="co">##  5             54 healthy            13.7</span></span>
+<span id="cb103-11"><a href="functions-1.html#cb103-11"></a><span class="co">##  6             56 healthy            13.4</span></span>
+<span id="cb103-12"><a href="functions-1.html#cb103-12"></a><span class="co">##  7             57 healthy            13.6</span></span>
+<span id="cb103-13"><a href="functions-1.html#cb103-13"></a><span class="co">##  8             58 healthy            13.7</span></span>
+<span id="cb103-14"><a href="functions-1.html#cb103-14"></a><span class="co">##  9             59 healthy            14.5</span></span>
+<span id="cb103-15"><a href="functions-1.html#cb103-15"></a><span class="co">## 10             60 healthy            13.6</span></span>
+<span id="cb103-16"><a href="functions-1.html#cb103-16"></a><span class="co">## # … with 83 more rows</span></span></code></pre></div>
 <p>Now, what is the number of healthy and sick patients in the dataset?</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="functions-1.html#cb102-1"></a><span class="kw">table</span>(ckd_data_pyruvate<span class="op">$</span>patient_status)</span>
-<span id="cb102-2"><a href="functions-1.html#cb102-2"></a><span class="co">## </span></span>
-<span id="cb102-3"><a href="functions-1.html#cb102-3"></a><span class="co">##        healthy kidney_disease </span></span>
-<span id="cb102-4"><a href="functions-1.html#cb102-4"></a><span class="co">##             37             56</span></span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="functions-1.html#cb104-1"></a><span class="kw">table</span>(ckd_data_pyruvate<span class="op">$</span>patient_status)</span>
+<span id="cb104-2"><a href="functions-1.html#cb104-2"></a><span class="co">## </span></span>
+<span id="cb104-3"><a href="functions-1.html#cb104-3"></a><span class="co">##        healthy kidney_disease </span></span>
+<span id="cb104-4"><a href="functions-1.html#cb104-4"></a><span class="co">##             37             56</span></span></code></pre></div>
 <p>This means that the weights should be 37/(37+56) and 56/(37+56)</p>
 <p>Now, let’s assign those weights to each column:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="functions-1.html#cb103-1"></a>ckd_data_pyruvate &lt;-<span class="st"> </span><span class="kw">mutate</span>(</span>
-<span id="cb103-2"><a href="functions-1.html#cb103-2"></a>  ckd_data_pyruvate, </span>
-<span id="cb103-3"><a href="functions-1.html#cb103-3"></a>  <span class="dt">weight =</span> <span class="kw">case_when</span>(</span>
-<span id="cb103-4"><a href="functions-1.html#cb103-4"></a>    patient_status <span class="op">==</span><span class="st"> &quot;healthy&quot;</span> <span class="op">~</span><span class="st"> </span><span class="dv">56</span><span class="op">/</span>(<span class="dv">37</span><span class="op">+</span><span class="dv">56</span>), patient_status <span class="op">==</span><span class="st"> &quot;kidney_disease&quot;</span> <span class="op">~</span><span class="st"> </span><span class="dv">37</span><span class="op">/</span>(<span class="dv">37</span><span class="op">+</span><span class="dv">56</span>)</span>
-<span id="cb103-5"><a href="functions-1.html#cb103-5"></a>  )</span>
-<span id="cb103-6"><a href="functions-1.html#cb103-6"></a>)</span>
-<span id="cb103-7"><a href="functions-1.html#cb103-7"></a>ckd_data_pyruvate</span>
-<span id="cb103-8"><a href="functions-1.html#cb103-8"></a><span class="co">## # A tibble: 93 x 4</span></span>
-<span id="cb103-9"><a href="functions-1.html#cb103-9"></a><span class="co">##    patient_number patient_status Pyruvate weight</span></span>
-<span id="cb103-10"><a href="functions-1.html#cb103-10"></a><span class="co">##             &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span id="cb103-11"><a href="functions-1.html#cb103-11"></a><span class="co">##  1             20 healthy            14.2  0.602</span></span>
-<span id="cb103-12"><a href="functions-1.html#cb103-12"></a><span class="co">##  2             24 healthy            14.2  0.602</span></span>
-<span id="cb103-13"><a href="functions-1.html#cb103-13"></a><span class="co">##  3             29 healthy            13.9  0.602</span></span>
-<span id="cb103-14"><a href="functions-1.html#cb103-14"></a><span class="co">##  4             52 healthy            13.8  0.602</span></span>
-<span id="cb103-15"><a href="functions-1.html#cb103-15"></a><span class="co">##  5             54 healthy            13.7  0.602</span></span>
-<span id="cb103-16"><a href="functions-1.html#cb103-16"></a><span class="co">##  6             56 healthy            13.4  0.602</span></span>
-<span id="cb103-17"><a href="functions-1.html#cb103-17"></a><span class="co">##  7             57 healthy            13.6  0.602</span></span>
-<span id="cb103-18"><a href="functions-1.html#cb103-18"></a><span class="co">##  8             58 healthy            13.7  0.602</span></span>
-<span id="cb103-19"><a href="functions-1.html#cb103-19"></a><span class="co">##  9             59 healthy            14.5  0.602</span></span>
-<span id="cb103-20"><a href="functions-1.html#cb103-20"></a><span class="co">## 10             60 healthy            13.6  0.602</span></span>
-<span id="cb103-21"><a href="functions-1.html#cb103-21"></a><span class="co">## # … with 83 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="functions-1.html#cb105-1"></a>ckd_data_pyruvate &lt;-<span class="st"> </span><span class="kw">mutate</span>(</span>
+<span id="cb105-2"><a href="functions-1.html#cb105-2"></a>  ckd_data_pyruvate, </span>
+<span id="cb105-3"><a href="functions-1.html#cb105-3"></a>  <span class="dt">weight =</span> <span class="kw">case_when</span>(</span>
+<span id="cb105-4"><a href="functions-1.html#cb105-4"></a>    patient_status <span class="op">==</span><span class="st"> &quot;healthy&quot;</span> <span class="op">~</span><span class="st"> </span><span class="dv">56</span><span class="op">/</span>(<span class="dv">37</span><span class="op">+</span><span class="dv">56</span>), patient_status <span class="op">==</span><span class="st"> &quot;kidney_disease&quot;</span> <span class="op">~</span><span class="st"> </span><span class="dv">37</span><span class="op">/</span>(<span class="dv">37</span><span class="op">+</span><span class="dv">56</span>)</span>
+<span id="cb105-5"><a href="functions-1.html#cb105-5"></a>  )</span>
+<span id="cb105-6"><a href="functions-1.html#cb105-6"></a>)</span>
+<span id="cb105-7"><a href="functions-1.html#cb105-7"></a>ckd_data_pyruvate</span>
+<span id="cb105-8"><a href="functions-1.html#cb105-8"></a><span class="co">## # A tibble: 93 x 4</span></span>
+<span id="cb105-9"><a href="functions-1.html#cb105-9"></a><span class="co">##    patient_number patient_status Pyruvate weight</span></span>
+<span id="cb105-10"><a href="functions-1.html#cb105-10"></a><span class="co">##             &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb105-11"><a href="functions-1.html#cb105-11"></a><span class="co">##  1             20 healthy            14.2  0.602</span></span>
+<span id="cb105-12"><a href="functions-1.html#cb105-12"></a><span class="co">##  2             24 healthy            14.2  0.602</span></span>
+<span id="cb105-13"><a href="functions-1.html#cb105-13"></a><span class="co">##  3             29 healthy            13.9  0.602</span></span>
+<span id="cb105-14"><a href="functions-1.html#cb105-14"></a><span class="co">##  4             52 healthy            13.8  0.602</span></span>
+<span id="cb105-15"><a href="functions-1.html#cb105-15"></a><span class="co">##  5             54 healthy            13.7  0.602</span></span>
+<span id="cb105-16"><a href="functions-1.html#cb105-16"></a><span class="co">##  6             56 healthy            13.4  0.602</span></span>
+<span id="cb105-17"><a href="functions-1.html#cb105-17"></a><span class="co">##  7             57 healthy            13.6  0.602</span></span>
+<span id="cb105-18"><a href="functions-1.html#cb105-18"></a><span class="co">##  8             58 healthy            13.7  0.602</span></span>
+<span id="cb105-19"><a href="functions-1.html#cb105-19"></a><span class="co">##  9             59 healthy            14.5  0.602</span></span>
+<span id="cb105-20"><a href="functions-1.html#cb105-20"></a><span class="co">## 10             60 healthy            13.6  0.602</span></span>
+<span id="cb105-21"><a href="functions-1.html#cb105-21"></a><span class="co">## # … with 83 more rows</span></span></code></pre></div>
 <p>Now we can calculate the weighted mean:</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="functions-1.html#cb104-1"></a><span class="kw">group_by</span>(ckd_data_pyruvate, patient_status) <span class="op">%&gt;%</span></span>
-<span id="cb104-2"><a href="functions-1.html#cb104-2"></a><span class="st">  </span><span class="kw">summarize</span>(</span>
-<span id="cb104-3"><a href="functions-1.html#cb104-3"></a>    <span class="dt">weighted_mean_pyruvate =</span> <span class="kw">weighted.mean</span>(Pyruvate, weight)</span>
-<span id="cb104-4"><a href="functions-1.html#cb104-4"></a>  )</span>
-<span id="cb104-5"><a href="functions-1.html#cb104-5"></a><span class="co">## `summarise()` ungrouping output (override with `.groups` argument)</span></span>
-<span id="cb104-6"><a href="functions-1.html#cb104-6"></a><span class="co">## # A tibble: 2 x 2</span></span>
-<span id="cb104-7"><a href="functions-1.html#cb104-7"></a><span class="co">##   patient_status weighted_mean_pyruvate</span></span>
-<span id="cb104-8"><a href="functions-1.html#cb104-8"></a><span class="co">##   &lt;chr&gt;                           &lt;dbl&gt;</span></span>
-<span id="cb104-9"><a href="functions-1.html#cb104-9"></a><span class="co">## 1 healthy                          13.9</span></span>
-<span id="cb104-10"><a href="functions-1.html#cb104-10"></a><span class="co">## 2 kidney_disease                   13.8</span></span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="functions-1.html#cb106-1"></a><span class="kw">group_by</span>(ckd_data_pyruvate, patient_status) <span class="op">%&gt;%</span></span>
+<span id="cb106-2"><a href="functions-1.html#cb106-2"></a><span class="st">  </span><span class="kw">summarize</span>(</span>
+<span id="cb106-3"><a href="functions-1.html#cb106-3"></a>    <span class="dt">weighted_mean_pyruvate =</span> <span class="kw">weighted.mean</span>(Pyruvate, weight)</span>
+<span id="cb106-4"><a href="functions-1.html#cb106-4"></a>  )</span>
+<span id="cb106-5"><a href="functions-1.html#cb106-5"></a><span class="co">## `summarise()` ungrouping output (override with `.groups` argument)</span></span>
+<span id="cb106-6"><a href="functions-1.html#cb106-6"></a><span class="co">## # A tibble: 2 x 2</span></span>
+<span id="cb106-7"><a href="functions-1.html#cb106-7"></a><span class="co">##   patient_status weighted_mean_pyruvate</span></span>
+<span id="cb106-8"><a href="functions-1.html#cb106-8"></a><span class="co">##   &lt;chr&gt;                           &lt;dbl&gt;</span></span>
+<span id="cb106-9"><a href="functions-1.html#cb106-9"></a><span class="co">## 1 healthy                          13.9</span></span>
+<span id="cb106-10"><a href="functions-1.html#cb106-10"></a><span class="co">## 2 kidney_disease                   13.8</span></span></code></pre></div>
 </div>
 </div>
 <div id="t.test" class="section level2">
 <h2><span class="header-section-number">B.6</span> t.test()</h2>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="functions-1.html#cb105-1"></a>  algae_data_filtered &lt;-<span class="st"> </span><span class="kw">filter</span>(</span>
-<span id="cb105-2"><a href="functions-1.html#cb105-2"></a>    algae_data, </span>
-<span id="cb105-3"><a href="functions-1.html#cb105-3"></a>    algae_strain <span class="op">==</span><span class="st"> &quot;Tsv1&quot;</span> </span>
-<span id="cb105-4"><a href="functions-1.html#cb105-4"></a>    <span class="op">&amp;</span></span>
-<span id="cb105-5"><a href="functions-1.html#cb105-5"></a><span class="st">    </span>chemical_species <span class="op">==</span><span class="st"> &quot;omega_3_polyunsaturated_Fas&quot;</span></span>
-<span id="cb105-6"><a href="functions-1.html#cb105-6"></a>  )</span>
-<span id="cb105-7"><a href="functions-1.html#cb105-7"></a>  <span class="kw">t.test</span>(</span>
-<span id="cb105-8"><a href="functions-1.html#cb105-8"></a>    algae_data_filtered<span class="op">$</span>abundance</span>
-<span id="cb105-9"><a href="functions-1.html#cb105-9"></a>    <span class="op">~</span></span>
-<span id="cb105-10"><a href="functions-1.html#cb105-10"></a><span class="st">    </span>algae_data_filtered<span class="op">$</span>harvesting_regime</span>
-<span id="cb105-11"><a href="functions-1.html#cb105-11"></a>  )</span>
-<span id="cb105-12"><a href="functions-1.html#cb105-12"></a><span class="co">## </span></span>
-<span id="cb105-13"><a href="functions-1.html#cb105-13"></a><span class="co">##  Welch Two Sample t-test</span></span>
-<span id="cb105-14"><a href="functions-1.html#cb105-14"></a><span class="co">## </span></span>
-<span id="cb105-15"><a href="functions-1.html#cb105-15"></a><span class="co">## data:  algae_data_filtered$abundance by algae_data_filtered$harvesting_regime</span></span>
-<span id="cb105-16"><a href="functions-1.html#cb105-16"></a><span class="co">## t = -4.1635, df = 2.5212, p-value = 0.03511</span></span>
-<span id="cb105-17"><a href="functions-1.html#cb105-17"></a><span class="co">## alternative hypothesis: true difference in means is not equal to 0</span></span>
-<span id="cb105-18"><a href="functions-1.html#cb105-18"></a><span class="co">## 95 percent confidence interval:</span></span>
-<span id="cb105-19"><a href="functions-1.html#cb105-19"></a><span class="co">##  -95.377472  -7.542528</span></span>
-<span id="cb105-20"><a href="functions-1.html#cb105-20"></a><span class="co">## sample estimates:</span></span>
-<span id="cb105-21"><a href="functions-1.html#cb105-21"></a><span class="co">## mean in group Heavy mean in group Light </span></span>
-<span id="cb105-22"><a href="functions-1.html#cb105-22"></a><span class="co">##            185.9367            237.3967</span></span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="functions-1.html#cb107-1"></a>  algae_data_filtered &lt;-<span class="st"> </span><span class="kw">filter</span>(</span>
+<span id="cb107-2"><a href="functions-1.html#cb107-2"></a>    algae_data, </span>
+<span id="cb107-3"><a href="functions-1.html#cb107-3"></a>    algae_strain <span class="op">==</span><span class="st"> &quot;Tsv1&quot;</span> </span>
+<span id="cb107-4"><a href="functions-1.html#cb107-4"></a>    <span class="op">&amp;</span></span>
+<span id="cb107-5"><a href="functions-1.html#cb107-5"></a><span class="st">    </span>chemical_species <span class="op">==</span><span class="st"> &quot;omega_3_polyunsaturated_Fas&quot;</span></span>
+<span id="cb107-6"><a href="functions-1.html#cb107-6"></a>  )</span>
+<span id="cb107-7"><a href="functions-1.html#cb107-7"></a>  <span class="kw">t.test</span>(</span>
+<span id="cb107-8"><a href="functions-1.html#cb107-8"></a>    algae_data_filtered<span class="op">$</span>abundance</span>
+<span id="cb107-9"><a href="functions-1.html#cb107-9"></a>    <span class="op">~</span></span>
+<span id="cb107-10"><a href="functions-1.html#cb107-10"></a><span class="st">    </span>algae_data_filtered<span class="op">$</span>harvesting_regime</span>
+<span id="cb107-11"><a href="functions-1.html#cb107-11"></a>  )</span>
+<span id="cb107-12"><a href="functions-1.html#cb107-12"></a><span class="co">## </span></span>
+<span id="cb107-13"><a href="functions-1.html#cb107-13"></a><span class="co">##  Welch Two Sample t-test</span></span>
+<span id="cb107-14"><a href="functions-1.html#cb107-14"></a><span class="co">## </span></span>
+<span id="cb107-15"><a href="functions-1.html#cb107-15"></a><span class="co">## data:  algae_data_filtered$abundance by algae_data_filtered$harvesting_regime</span></span>
+<span id="cb107-16"><a href="functions-1.html#cb107-16"></a><span class="co">## t = -4.1635, df = 2.5212, p-value = 0.03511</span></span>
+<span id="cb107-17"><a href="functions-1.html#cb107-17"></a><span class="co">## alternative hypothesis: true difference in means is not equal to 0</span></span>
+<span id="cb107-18"><a href="functions-1.html#cb107-18"></a><span class="co">## 95 percent confidence interval:</span></span>
+<span id="cb107-19"><a href="functions-1.html#cb107-19"></a><span class="co">##  -95.377472  -7.542528</span></span>
+<span id="cb107-20"><a href="functions-1.html#cb107-20"></a><span class="co">## sample estimates:</span></span>
+<span id="cb107-21"><a href="functions-1.html#cb107-21"></a><span class="co">## mean in group Heavy mean in group Light </span></span>
+<span id="cb107-22"><a href="functions-1.html#cb107-22"></a><span class="co">##            185.9367            237.3967</span></span></code></pre></div>
 </div>
 <div id="anova" class="section level2">
 <h2><span class="header-section-number">B.7</span> anova()</h2>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="functions-1.html#cb106-1"></a>  algae_data_filtered &lt;-<span class="st"> </span><span class="kw">filter</span>(</span>
-<span id="cb106-2"><a href="functions-1.html#cb106-2"></a>    algae_data, </span>
-<span id="cb106-3"><a href="functions-1.html#cb106-3"></a>    harvesting_regime <span class="op">==</span><span class="st"> &quot;Heavy&quot;</span> </span>
-<span id="cb106-4"><a href="functions-1.html#cb106-4"></a>    <span class="op">&amp;</span><span class="st"> </span>chemical_species <span class="op">==</span><span class="st"> &quot;omega_3_polyunsaturated_Fas&quot;</span></span>
-<span id="cb106-5"><a href="functions-1.html#cb106-5"></a>  )</span>
-<span id="cb106-6"><a href="functions-1.html#cb106-6"></a>  aov_results &lt;-<span class="st"> </span><span class="kw">aov</span>(</span>
-<span id="cb106-7"><a href="functions-1.html#cb106-7"></a>    algae_data_filtered<span class="op">$</span>abundance</span>
-<span id="cb106-8"><a href="functions-1.html#cb106-8"></a>    <span class="op">~</span></span>
-<span id="cb106-9"><a href="functions-1.html#cb106-9"></a><span class="st">    </span>algae_data_filtered<span class="op">$</span>algae_strain</span>
-<span id="cb106-10"><a href="functions-1.html#cb106-10"></a>  )</span>
-<span id="cb106-11"><a href="functions-1.html#cb106-11"></a>  <span class="kw">summary</span>(aov_results)</span>
-<span id="cb106-12"><a href="functions-1.html#cb106-12"></a><span class="co">##                                  Df Sum Sq Mean Sq F value Pr(&gt;F)  </span></span>
-<span id="cb106-13"><a href="functions-1.html#cb106-13"></a><span class="co">## algae_data_filtered$algae_strain  2   4486  2243.0   7.077 0.0264 *</span></span>
-<span id="cb106-14"><a href="functions-1.html#cb106-14"></a><span class="co">## Residuals                         6   1902   316.9                 </span></span>
-<span id="cb106-15"><a href="functions-1.html#cb106-15"></a><span class="co">## ---</span></span>
-<span id="cb106-16"><a href="functions-1.html#cb106-16"></a><span class="co">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
-<span id="cb106-17"><a href="functions-1.html#cb106-17"></a>  <span class="kw">TukeyHSD</span>(aov_results)</span>
-<span id="cb106-18"><a href="functions-1.html#cb106-18"></a><span class="co">##   Tukey multiple comparisons of means</span></span>
-<span id="cb106-19"><a href="functions-1.html#cb106-19"></a><span class="co">##     95% family-wise confidence level</span></span>
-<span id="cb106-20"><a href="functions-1.html#cb106-20"></a><span class="co">## </span></span>
-<span id="cb106-21"><a href="functions-1.html#cb106-21"></a><span class="co">## Fit: aov(formula = algae_data_filtered$abundance ~ algae_data_filtered$algae_strain)</span></span>
-<span id="cb106-22"><a href="functions-1.html#cb106-22"></a><span class="co">## </span></span>
-<span id="cb106-23"><a href="functions-1.html#cb106-23"></a><span class="co">## $`algae_data_filtered$algae_strain`</span></span>
-<span id="cb106-24"><a href="functions-1.html#cb106-24"></a><span class="co">##                 diff       lwr       upr     p adj</span></span>
-<span id="cb106-25"><a href="functions-1.html#cb106-25"></a><span class="co">## Tsv11-Tsv1 -25.16333 -69.76378  19.43711 0.2696625</span></span>
-<span id="cb106-26"><a href="functions-1.html#cb106-26"></a><span class="co">## Tsv2-Tsv1  -54.63000 -99.23045 -10.02955 0.0219944</span></span>
-<span id="cb106-27"><a href="functions-1.html#cb106-27"></a><span class="co">## Tsv2-Tsv11 -29.46667 -74.06711  15.13378 0.1864469</span></span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="functions-1.html#cb108-1"></a>  algae_data_filtered &lt;-<span class="st"> </span><span class="kw">filter</span>(</span>
+<span id="cb108-2"><a href="functions-1.html#cb108-2"></a>    algae_data, </span>
+<span id="cb108-3"><a href="functions-1.html#cb108-3"></a>    harvesting_regime <span class="op">==</span><span class="st"> &quot;Heavy&quot;</span> </span>
+<span id="cb108-4"><a href="functions-1.html#cb108-4"></a>    <span class="op">&amp;</span><span class="st"> </span>chemical_species <span class="op">==</span><span class="st"> &quot;omega_3_polyunsaturated_Fas&quot;</span></span>
+<span id="cb108-5"><a href="functions-1.html#cb108-5"></a>  )</span>
+<span id="cb108-6"><a href="functions-1.html#cb108-6"></a>  aov_results &lt;-<span class="st"> </span><span class="kw">aov</span>(</span>
+<span id="cb108-7"><a href="functions-1.html#cb108-7"></a>    algae_data_filtered<span class="op">$</span>abundance</span>
+<span id="cb108-8"><a href="functions-1.html#cb108-8"></a>    <span class="op">~</span></span>
+<span id="cb108-9"><a href="functions-1.html#cb108-9"></a><span class="st">    </span>algae_data_filtered<span class="op">$</span>algae_strain</span>
+<span id="cb108-10"><a href="functions-1.html#cb108-10"></a>  )</span>
+<span id="cb108-11"><a href="functions-1.html#cb108-11"></a>  <span class="kw">summary</span>(aov_results)</span>
+<span id="cb108-12"><a href="functions-1.html#cb108-12"></a><span class="co">##                                  Df Sum Sq Mean Sq F value Pr(&gt;F)  </span></span>
+<span id="cb108-13"><a href="functions-1.html#cb108-13"></a><span class="co">## algae_data_filtered$algae_strain  2   4486  2243.0   7.077 0.0264 *</span></span>
+<span id="cb108-14"><a href="functions-1.html#cb108-14"></a><span class="co">## Residuals                         6   1902   316.9                 </span></span>
+<span id="cb108-15"><a href="functions-1.html#cb108-15"></a><span class="co">## ---</span></span>
+<span id="cb108-16"><a href="functions-1.html#cb108-16"></a><span class="co">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb108-17"><a href="functions-1.html#cb108-17"></a>  <span class="kw">TukeyHSD</span>(aov_results)</span>
+<span id="cb108-18"><a href="functions-1.html#cb108-18"></a><span class="co">##   Tukey multiple comparisons of means</span></span>
+<span id="cb108-19"><a href="functions-1.html#cb108-19"></a><span class="co">##     95% family-wise confidence level</span></span>
+<span id="cb108-20"><a href="functions-1.html#cb108-20"></a><span class="co">## </span></span>
+<span id="cb108-21"><a href="functions-1.html#cb108-21"></a><span class="co">## Fit: aov(formula = algae_data_filtered$abundance ~ algae_data_filtered$algae_strain)</span></span>
+<span id="cb108-22"><a href="functions-1.html#cb108-22"></a><span class="co">## </span></span>
+<span id="cb108-23"><a href="functions-1.html#cb108-23"></a><span class="co">## $`algae_data_filtered$algae_strain`</span></span>
+<span id="cb108-24"><a href="functions-1.html#cb108-24"></a><span class="co">##                 diff       lwr       upr     p adj</span></span>
+<span id="cb108-25"><a href="functions-1.html#cb108-25"></a><span class="co">## Tsv11-Tsv1 -25.16333 -69.76378  19.43711 0.2696625</span></span>
+<span id="cb108-26"><a href="functions-1.html#cb108-26"></a><span class="co">## Tsv2-Tsv1  -54.63000 -99.23045 -10.02955 0.0219944</span></span>
+<span id="cb108-27"><a href="functions-1.html#cb108-27"></a><span class="co">## Tsv2-Tsv11 -29.46667 -74.06711  15.13378 0.1864469</span></span></code></pre></div>
 </div>
 </div>
             </section>

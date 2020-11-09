@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-11-04" />
+<meta name="date" content="2020-11-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -186,7 +186,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
 <li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
 <li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
-<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
 <li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
 <li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
 <li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
@@ -342,7 +344,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="activating-custom-functions" class="section level2">
 <h2><span class="header-section-number">C.1</span> Activating custom functions</h2>
 <p>To activate in your session, run the following in your console:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="custom-functions.html#cb107-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="custom-functions.html#cb109-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
 <p>Once this is run the following will available in your R environment:</p>
 <p><code>algae_data</code></p>
 <p><code>alaska_lake_data</code></p>
@@ -359,37 +361,37 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="basic-runmatrixanalysis-template" class="section level2">
 <h2><span class="header-section-number">C.2</span> Basic <code>runMatrixAnalysis()</code> template</h2>
 <p>Once you have activated <code>runMatrixAnalysis</code> in your R session (see above), you can use the function by filling out and executing the basic template below. There is also an advanced template further down the page.</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="custom-functions.html#cb108-1"></a></span>
-<span id="cb108-2"><a href="custom-functions.html#cb108-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb108-3"><a href="custom-functions.html#cb108-3"></a>                </span>
-<span id="cb108-4"><a href="custom-functions.html#cb108-4"></a>  <span class="dt">data =</span> <span class="ot">NULL</span>,</span>
-<span id="cb108-5"><a href="custom-functions.html#cb108-5"></a></span>
-<span id="cb108-6"><a href="custom-functions.html#cb108-6"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
-<span id="cb108-7"><a href="custom-functions.html#cb108-7"></a></span>
-<span id="cb108-8"><a href="custom-functions.html#cb108-8"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb108-9"><a href="custom-functions.html#cb108-9"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
-<span id="cb108-10"><a href="custom-functions.html#cb108-10"></a>    </span>
-<span id="cb108-11"><a href="custom-functions.html#cb108-11"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</span>
-<span id="cb108-12"><a href="custom-functions.html#cb108-12"></a></span>
-<span id="cb108-13"><a href="custom-functions.html#cb108-13"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></span>
-<span id="cb108-14"><a href="custom-functions.html#cb108-14"></a></span>
-<span id="cb108-15"><a href="custom-functions.html#cb108-15"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="custom-functions.html#cb110-1"></a></span>
+<span id="cb110-2"><a href="custom-functions.html#cb110-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb110-3"><a href="custom-functions.html#cb110-3"></a>                </span>
+<span id="cb110-4"><a href="custom-functions.html#cb110-4"></a>  <span class="dt">data =</span> <span class="ot">NULL</span>,</span>
+<span id="cb110-5"><a href="custom-functions.html#cb110-5"></a></span>
+<span id="cb110-6"><a href="custom-functions.html#cb110-6"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
+<span id="cb110-7"><a href="custom-functions.html#cb110-7"></a></span>
+<span id="cb110-8"><a href="custom-functions.html#cb110-8"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb110-9"><a href="custom-functions.html#cb110-9"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>,</span>
+<span id="cb110-10"><a href="custom-functions.html#cb110-10"></a>    </span>
+<span id="cb110-11"><a href="custom-functions.html#cb110-11"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>,</span>
+<span id="cb110-12"><a href="custom-functions.html#cb110-12"></a></span>
+<span id="cb110-13"><a href="custom-functions.html#cb110-13"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span></span>
+<span id="cb110-14"><a href="custom-functions.html#cb110-14"></a></span>
+<span id="cb110-15"><a href="custom-functions.html#cb110-15"></a>)</span></code></pre></div>
 </div>
 <div id="advanced-runmatrixanalysis-template" class="section level2">
 <h2><span class="header-section-number">C.3</span> Advanced <code>runMatrixAnalysis()</code> template</h2>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="custom-functions.html#cb109-1"></a></span>
-<span id="cb109-2"><a href="custom-functions.html#cb109-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb109-3"><a href="custom-functions.html#cb109-3"></a>  <span class="dt">data =</span> <span class="ot">NULL</span>, <span class="co"># the data set to work on</span></span>
-<span id="cb109-4"><a href="custom-functions.html#cb109-4"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>), <span class="co"># the analysis to conduct</span></span>
-<span id="cb109-5"><a href="custom-functions.html#cb109-5"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>, <span class="co"># a column with names of multiple analytes</span></span>
-<span id="cb109-6"><a href="custom-functions.html#cb109-6"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span></span>
-<span id="cb109-7"><a href="custom-functions.html#cb109-7"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span></span>
-<span id="cb109-8"><a href="custom-functions.html#cb109-8"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>, <span class="co"># a column with character or numeric information about analytes that was not &quot;measured&quot; as part of the experiment.</span></span>
-<span id="cb109-9"><a href="custom-functions.html#cb109-9"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span>, <span class="co"># a column with information about the sample (i.e. contents from the test tube&#39;s label)</span></span>
-<span id="cb109-10"><a href="custom-functions.html#cb109-10"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb109-11"><a href="custom-functions.html#cb109-11"></a>  <span class="dt">kmeans =</span> <span class="kw">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;elbow&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;etc.&quot;</span>),</span>
-<span id="cb109-12"><a href="custom-functions.html#cb109-12"></a>  <span class="dt">na_replacement =</span> <span class="kw">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;zero&quot;</span>, <span class="st">&quot;drop&quot;</span>)</span>
-<span id="cb109-13"><a href="custom-functions.html#cb109-13"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="custom-functions.html#cb111-1"></a></span>
+<span id="cb111-2"><a href="custom-functions.html#cb111-2"></a><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb111-3"><a href="custom-functions.html#cb111-3"></a>  <span class="dt">data =</span> <span class="ot">NULL</span>, <span class="co"># the data set to work on</span></span>
+<span id="cb111-4"><a href="custom-functions.html#cb111-4"></a>  <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>), <span class="co"># the analysis to conduct</span></span>
+<span id="cb111-5"><a href="custom-functions.html#cb111-5"></a>  <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="ot">NULL</span>, <span class="co"># a column with names of multiple analytes</span></span>
+<span id="cb111-6"><a href="custom-functions.html#cb111-6"></a>  <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="ot">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span></span>
+<span id="cb111-7"><a href="custom-functions.html#cb111-7"></a>  <span class="dt">columns_w_values_for_single_analyte =</span> <span class="ot">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span></span>
+<span id="cb111-8"><a href="custom-functions.html#cb111-8"></a>  <span class="dt">columns_w_additional_analyte_info =</span> <span class="ot">NULL</span>, <span class="co"># a column with character or numeric information about analytes that was not &quot;measured&quot; as part of the experiment.</span></span>
+<span id="cb111-9"><a href="custom-functions.html#cb111-9"></a>  <span class="dt">columns_w_sample_ID_info =</span> <span class="ot">NULL</span>, <span class="co"># a column with information about the sample (i.e. contents from the test tube&#39;s label)</span></span>
+<span id="cb111-10"><a href="custom-functions.html#cb111-10"></a>  <span class="dt">transpose =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb111-11"><a href="custom-functions.html#cb111-11"></a>  <span class="dt">kmeans =</span> <span class="kw">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;elbow&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;etc.&quot;</span>),</span>
+<span id="cb111-12"><a href="custom-functions.html#cb111-12"></a>  <span class="dt">na_replacement =</span> <span class="kw">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;zero&quot;</span>, <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb111-13"><a href="custom-functions.html#cb111-13"></a>)</span></code></pre></div>
 </div>
 </div>
             </section>

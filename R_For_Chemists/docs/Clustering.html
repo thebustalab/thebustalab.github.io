@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-11-04" />
+<meta name="date" content="2020-11-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -186,7 +186,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
 <li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
 <li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
-<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
 <li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
 <li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
 <li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
@@ -340,85 +342,84 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="Clustering" class="section level1">
 <h1><span class="header-section-number">Chapter 10</span> Clustering</h1>
 <p>So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use <code>runMatrixAnalysis()</code>, a function that you can load into your R Session by running the following command:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="Clustering.html#cb47-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="Clustering.html#cb49-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
 <p>In order for <code>runMatrixAnalysis()</code> to work, you will also need to install <code>ape</code> and <code>ggtree</code>. Use the code below to do that:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="Clustering.html#cb48-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;ape&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org&quot;</span>, <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb48-2"><a href="Clustering.html#cb48-2"></a></span>
-<span id="cb48-3"><a href="Clustering.html#cb48-3"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">requireNamespace</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="dt">quietly =</span> <span class="ot">TRUE</span>))</span>
-<span id="cb48-4"><a href="Clustering.html#cb48-4"></a><span class="kw">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
-<span id="cb48-5"><a href="Clustering.html#cb48-5"></a></span>
-<span id="cb48-6"><a href="Clustering.html#cb48-6"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;ggtree&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="Clustering.html#cb50-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;ape&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org&quot;</span>, <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb50-2"><a href="Clustering.html#cb50-2"></a></span>
+<span id="cb50-3"><a href="Clustering.html#cb50-3"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">requireNamespace</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="dt">quietly =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb50-4"><a href="Clustering.html#cb50-4"></a><span class="kw">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb50-5"><a href="Clustering.html#cb50-5"></a></span>
+<span id="cb50-6"><a href="Clustering.html#cb50-6"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;ggtree&quot;</span>)</span></code></pre></div>
 <p>With the requisite packages installed, we can use the template for <code>runMatrixAnalysis()</code> to begin our command. In order to use the template, it is <em>critical</em> that we think about our data in terms of <strong>samples</strong> and <strong>analytes</strong>. Let’s consider our Alaksa lakes data set:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="Clustering.html#cb49-1"></a><span class="kw">library</span>(tidyverse)</span>
-<span id="cb49-2"><a href="Clustering.html#cb49-2"></a>AK_lakes &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
-<span id="cb49-3"><a href="Clustering.html#cb49-3"></a>AK_lakes</span>
-<span id="cb49-4"><a href="Clustering.html#cb49-4"></a><span class="co">## # A tibble: 220 x 7</span></span>
-<span id="cb49-5"><a href="Clustering.html#cb49-5"></a><span class="co">##    lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb49-6"><a href="Clustering.html#cb49-6"></a><span class="co">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb49-7"><a href="Clustering.html#cb49-7"></a><span class="co">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
-<span id="cb49-8"><a href="Clustering.html#cb49-8"></a><span class="co">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
-<span id="cb49-9"><a href="Clustering.html#cb49-9"></a><span class="co">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
-<span id="cb49-10"><a href="Clustering.html#cb49-10"></a><span class="co">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span id="cb49-11"><a href="Clustering.html#cb49-11"></a><span class="co">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
-<span id="cb49-12"><a href="Clustering.html#cb49-12"></a><span class="co">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free        </span></span>
-<span id="cb49-13"><a href="Clustering.html#cb49-13"></a><span class="co">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02  free        </span></span>
-<span id="cb49-14"><a href="Clustering.html#cb49-14"></a><span class="co">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92  free        </span></span>
-<span id="cb49-15"><a href="Clustering.html#cb49-15"></a><span class="co">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></span>
-<span id="cb49-16"><a href="Clustering.html#cb49-16"></a><span class="co">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></span>
-<span id="cb49-17"><a href="Clustering.html#cb49-17"></a><span class="co">## # … with 210 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="Clustering.html#cb51-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb51-2"><a href="Clustering.html#cb51-2"></a>AK_lakes &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
+<span id="cb51-3"><a href="Clustering.html#cb51-3"></a>AK_lakes</span>
+<span id="cb51-4"><a href="Clustering.html#cb51-4"></a><span class="co">## # A tibble: 220 x 7</span></span>
+<span id="cb51-5"><a href="Clustering.html#cb51-5"></a><span class="co">##    lake                park  water_temp    pH element mg_per_L element_type</span></span>
+<span id="cb51-6"><a href="Clustering.html#cb51-6"></a><span class="co">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb51-7"><a href="Clustering.html#cb51-7"></a><span class="co">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
+<span id="cb51-8"><a href="Clustering.html#cb51-8"></a><span class="co">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
+<span id="cb51-9"><a href="Clustering.html#cb51-9"></a><span class="co">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
+<span id="cb51-10"><a href="Clustering.html#cb51-10"></a><span class="co">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
+<span id="cb51-11"><a href="Clustering.html#cb51-11"></a><span class="co">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
+<span id="cb51-12"><a href="Clustering.html#cb51-12"></a><span class="co">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free        </span></span>
+<span id="cb51-13"><a href="Clustering.html#cb51-13"></a><span class="co">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02  free        </span></span>
+<span id="cb51-14"><a href="Clustering.html#cb51-14"></a><span class="co">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92  free        </span></span>
+<span id="cb51-15"><a href="Clustering.html#cb51-15"></a><span class="co">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></span>
+<span id="cb51-16"><a href="Clustering.html#cb51-16"></a><span class="co">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></span>
+<span id="cb51-17"><a href="Clustering.html#cb51-17"></a><span class="co">## # … with 210 more rows</span></span></code></pre></div>
 <p>We can see that this dataset is comprised of measuring various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
 <p><img src="http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
 <p>With this in mind, let’s try out our template:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="Clustering.html#cb50-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">:::</span><span class="kw">knit_global</span>())</span>
-<span id="cb50-2"><a href="Clustering.html#cb50-2"></a>AK_lakes_clustered &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb50-3"><a href="Clustering.html#cb50-3"></a>                                </span>
-<span id="cb50-4"><a href="Clustering.html#cb50-4"></a>    <span class="dt">data =</span> AK_lakes,</span>
-<span id="cb50-5"><a href="Clustering.html#cb50-5"></a></span>
-<span id="cb50-6"><a href="Clustering.html#cb50-6"></a>    <span class="dt">analysis =</span> <span class="st">&quot;hclust&quot;</span>,</span>
-<span id="cb50-7"><a href="Clustering.html#cb50-7"></a></span>
-<span id="cb50-8"><a href="Clustering.html#cb50-8"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb50-9"><a href="Clustering.html#cb50-9"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb50-10"><a href="Clustering.html#cb50-10"></a>    </span>
-<span id="cb50-11"><a href="Clustering.html#cb50-11"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb50-12"><a href="Clustering.html#cb50-12"></a>    </span>
-<span id="cb50-13"><a href="Clustering.html#cb50-13"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb50-14"><a href="Clustering.html#cb50-14"></a></span>
-<span id="cb50-15"><a href="Clustering.html#cb50-15"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb50-16"><a href="Clustering.html#cb50-16"></a></span>
-<span id="cb50-17"><a href="Clustering.html#cb50-17"></a>)</span>
-<span id="cb50-18"><a href="Clustering.html#cb50-18"></a><span class="co">## Not replacing any NAs in your data set</span></span>
-<span id="cb50-19"><a href="Clustering.html#cb50-19"></a>AK_lakes_clustered</span>
-<span id="cb50-20"><a href="Clustering.html#cb50-20"></a><span class="co">## # A tibble: 39 x 25</span></span>
-<span id="cb50-21"><a href="Clustering.html#cb50-21"></a><span class="co">##    lake  park  sample_unique_ID parent  node branch.length label isTip</span></span>
-<span id="cb50-22"><a href="Clustering.html#cb50-22"></a><span class="co">##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;             &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt;</span></span>
-<span id="cb50-23"><a href="Clustering.html#cb50-23"></a><span class="co">##  1 Devi… BELA  Devil_Mountain_…     33     1          7.25 Devi… TRUE </span></span>
-<span id="cb50-24"><a href="Clustering.html#cb50-24"></a><span class="co">##  2 Imur… BELA  Imuruk_Lake_BELA     32     2          4.91 Imur… TRUE </span></span>
-<span id="cb50-25"><a href="Clustering.html#cb50-25"></a><span class="co">##  3 Kuzi… BELA  Kuzitrin_Lake_B…     36     3          3.27 Kuzi… TRUE </span></span>
-<span id="cb50-26"><a href="Clustering.html#cb50-26"></a><span class="co">##  4 Lava… BELA  Lava_Lake_BELA       35     4          3.02 Lava… TRUE </span></span>
-<span id="cb50-27"><a href="Clustering.html#cb50-27"></a><span class="co">##  5 Nort… BELA  North_Killeak_L…     21     5        204.   Nort… TRUE </span></span>
-<span id="cb50-28"><a href="Clustering.html#cb50-28"></a><span class="co">##  6 Whit… BELA  White_Fish_Lake…     22     6         65.2  Whit… TRUE </span></span>
-<span id="cb50-29"><a href="Clustering.html#cb50-29"></a><span class="co">##  7 Inia… GAAR  Iniakuk_Lake_GA…     29     7          3.60 Inia… TRUE </span></span>
-<span id="cb50-30"><a href="Clustering.html#cb50-30"></a><span class="co">##  8 Kuru… GAAR  Kurupa_Lake_GAAR     31     8          8.57 Kuru… TRUE </span></span>
-<span id="cb50-31"><a href="Clustering.html#cb50-31"></a><span class="co">##  9 Lake… GAAR  Lake_Matcharak_…     29     9          3.60 Lake… TRUE </span></span>
-<span id="cb50-32"><a href="Clustering.html#cb50-32"></a><span class="co">## 10 Lake… GAAR  Lake_Selby_GAAR      30    10          5.24 Lake… TRUE </span></span>
-<span id="cb50-33"><a href="Clustering.html#cb50-33"></a><span class="co">## # … with 29 more rows, and 17 more variables: x &lt;dbl&gt;, y &lt;dbl&gt;,</span></span>
-<span id="cb50-34"><a href="Clustering.html#cb50-34"></a><span class="co">## #   branch &lt;dbl&gt;, angle &lt;dbl&gt;, water_temp &lt;dbl&gt;, pH &lt;dbl&gt;, C &lt;dbl&gt;,</span></span>
-<span id="cb50-35"><a href="Clustering.html#cb50-35"></a><span class="co">## #   N &lt;dbl&gt;, P &lt;dbl&gt;, Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;,</span></span>
-<span id="cb50-36"><a href="Clustering.html#cb50-36"></a><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="Clustering.html#cb52-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">:::</span><span class="kw">knit_global</span>())</span>
+<span id="cb52-2"><a href="Clustering.html#cb52-2"></a>AK_lakes_clustered &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
+<span id="cb52-3"><a href="Clustering.html#cb52-3"></a>                                </span>
+<span id="cb52-4"><a href="Clustering.html#cb52-4"></a>    <span class="dt">data =</span> AK_lakes,</span>
+<span id="cb52-5"><a href="Clustering.html#cb52-5"></a></span>
+<span id="cb52-6"><a href="Clustering.html#cb52-6"></a>    <span class="dt">analysis =</span> <span class="st">&quot;hclust&quot;</span>,</span>
+<span id="cb52-7"><a href="Clustering.html#cb52-7"></a></span>
+<span id="cb52-8"><a href="Clustering.html#cb52-8"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb52-9"><a href="Clustering.html#cb52-9"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb52-10"><a href="Clustering.html#cb52-10"></a>    </span>
+<span id="cb52-11"><a href="Clustering.html#cb52-11"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb52-12"><a href="Clustering.html#cb52-12"></a>    </span>
+<span id="cb52-13"><a href="Clustering.html#cb52-13"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb52-14"><a href="Clustering.html#cb52-14"></a></span>
+<span id="cb52-15"><a href="Clustering.html#cb52-15"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb52-16"><a href="Clustering.html#cb52-16"></a></span>
+<span id="cb52-17"><a href="Clustering.html#cb52-17"></a>)</span>
+<span id="cb52-18"><a href="Clustering.html#cb52-18"></a><span class="co">## Not replacing any NAs in your data set</span></span>
+<span id="cb52-19"><a href="Clustering.html#cb52-19"></a>AK_lakes_clustered</span>
+<span id="cb52-20"><a href="Clustering.html#cb52-20"></a><span class="co">## # A tibble: 39 x 25</span></span>
+<span id="cb52-21"><a href="Clustering.html#cb52-21"></a><span class="co">##    lake  park  sample_unique_ID parent  node branch.length label isTip     x</span></span>
+<span id="cb52-22"><a href="Clustering.html#cb52-22"></a><span class="co">##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;             &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt; &lt;dbl&gt;</span></span>
+<span id="cb52-23"><a href="Clustering.html#cb52-23"></a><span class="co">##  1 Devi… BELA  Devil_Mountain_…     33     1          7.25 Devi… TRUE   204.</span></span>
+<span id="cb52-24"><a href="Clustering.html#cb52-24"></a><span class="co">##  2 Imur… BELA  Imuruk_Lake_BELA     32     2          4.91 Imur… TRUE   204.</span></span>
+<span id="cb52-25"><a href="Clustering.html#cb52-25"></a><span class="co">##  3 Kuzi… BELA  Kuzitrin_Lake_B…     36     3          3.27 Kuzi… TRUE   204.</span></span>
+<span id="cb52-26"><a href="Clustering.html#cb52-26"></a><span class="co">##  4 Lava… BELA  Lava_Lake_BELA       35     4          3.02 Lava… TRUE   204.</span></span>
+<span id="cb52-27"><a href="Clustering.html#cb52-27"></a><span class="co">##  5 Nort… BELA  North_Killeak_L…     21     5        204.   Nort… TRUE   204.</span></span>
+<span id="cb52-28"><a href="Clustering.html#cb52-28"></a><span class="co">##  6 Whit… BELA  White_Fish_Lake…     22     6         65.2  Whit… TRUE   204.</span></span>
+<span id="cb52-29"><a href="Clustering.html#cb52-29"></a><span class="co">##  7 Inia… GAAR  Iniakuk_Lake_GA…     29     7          3.60 Inia… TRUE   204.</span></span>
+<span id="cb52-30"><a href="Clustering.html#cb52-30"></a><span class="co">##  8 Kuru… GAAR  Kurupa_Lake_GAAR     31     8          8.57 Kuru… TRUE   204.</span></span>
+<span id="cb52-31"><a href="Clustering.html#cb52-31"></a><span class="co">##  9 Lake… GAAR  Lake_Matcharak_…     29     9          3.60 Lake… TRUE   204.</span></span>
+<span id="cb52-32"><a href="Clustering.html#cb52-32"></a><span class="co">## 10 Lake… GAAR  Lake_Selby_GAAR      30    10          5.24 Lake… TRUE   204.</span></span>
+<span id="cb52-33"><a href="Clustering.html#cb52-33"></a><span class="co">## # … with 29 more rows, and 16 more variables: y &lt;dbl&gt;, branch &lt;dbl&gt;,</span></span>
+<span id="cb52-34"><a href="Clustering.html#cb52-34"></a><span class="co">## #   angle &lt;dbl&gt;, water_temp &lt;dbl&gt;, pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;, P &lt;dbl&gt;,</span></span>
+<span id="cb52-35"><a href="Clustering.html#cb52-35"></a><span class="co">## #   Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;, K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
 <p>It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We’ve seen that ggplot takes a “data” argument (i.e. <code>ggplot(data = &lt;some_data&gt;) + geom_*()</code> etc.). In contrast, ggtree takes an argument called <code>tr</code>, though if you’re using the <code>runMatrixAnalysis()</code> function, you can treat these two (<code>data</code> and <code>tr</code>) the same, so, use: <code>ggtree(tr = &lt;output_from_runMatrixAnalysis&gt;) + geom_*()</code> etc.</p>
 <p>Note that <code>ggtree</code> also comes with several great new geoms: <code>geom_tiplab()</code> and <code>geom_tippoint()</code>. Let’s try those out:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="Clustering.html#cb51-1"></a><span class="kw">library</span>(ggtree)</span>
-<span id="cb51-2"><a href="Clustering.html#cb51-2"></a><span class="kw">ggtree</span>(<span class="dt">tr =</span> AK_lakes_clustered) <span class="op">+</span></span>
-<span id="cb51-3"><a href="Clustering.html#cb51-3"></a><span class="st">  </span><span class="kw">geom_tiplab</span>() <span class="op">+</span></span>
-<span id="cb51-4"><a href="Clustering.html#cb51-4"></a><span class="st">  </span><span class="kw">geom_tippoint</span>() <span class="op">+</span></span>
-<span id="cb51-5"><a href="Clustering.html#cb51-5"></a><span class="st">  </span><span class="kw">theme_classic</span>()</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-85-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>Cool! Though that plot could use some tweaking… let’s try:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="Clustering.html#cb52-1"></a><span class="kw">ggtree</span>(<span class="dt">tr =</span> AK_lakes_clustered) <span class="op">+</span></span>
-<span id="cb52-2"><a href="Clustering.html#cb52-2"></a><span class="st">        </span><span class="kw">geom_tiplab</span>(<span class="kw">aes</span>(<span class="dt">label =</span> lake), <span class="dt">offset =</span> <span class="dv">10</span>) <span class="op">+</span></span>
-<span id="cb52-3"><a href="Clustering.html#cb52-3"></a><span class="st">        </span><span class="kw">geom_tippoint</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="kw">aes</span>(<span class="dt">fill =</span> park), <span class="dt">size =</span> <span class="dv">4</span>) <span class="op">+</span></span>
-<span id="cb52-4"><a href="Clustering.html#cb52-4"></a><span class="st">        </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">350</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="Clustering.html#cb53-1"></a><span class="kw">library</span>(ggtree)</span>
+<span id="cb53-2"><a href="Clustering.html#cb53-2"></a><span class="kw">ggtree</span>(<span class="dt">tr =</span> AK_lakes_clustered) <span class="op">+</span></span>
+<span id="cb53-3"><a href="Clustering.html#cb53-3"></a><span class="st">  </span><span class="kw">geom_tiplab</span>() <span class="op">+</span></span>
+<span id="cb53-4"><a href="Clustering.html#cb53-4"></a><span class="st">  </span><span class="kw">geom_tippoint</span>() <span class="op">+</span></span>
+<span id="cb53-5"><a href="Clustering.html#cb53-5"></a><span class="st">  </span><span class="kw">theme_classic</span>()</span></code></pre></div>
 <p><img src="bio723-book_files/figure-html/unnamed-chunk-86-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Cool! Though that plot could use some tweaking… let’s try:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="Clustering.html#cb54-1"></a><span class="kw">ggtree</span>(<span class="dt">tr =</span> AK_lakes_clustered) <span class="op">+</span></span>
+<span id="cb54-2"><a href="Clustering.html#cb54-2"></a><span class="st">        </span><span class="kw">geom_tiplab</span>(<span class="kw">aes</span>(<span class="dt">label =</span> lake), <span class="dt">offset =</span> <span class="dv">10</span>) <span class="op">+</span></span>
+<span id="cb54-3"><a href="Clustering.html#cb54-3"></a><span class="st">        </span><span class="kw">geom_tippoint</span>(<span class="dt">shape =</span> <span class="dv">21</span>, <span class="kw">aes</span>(<span class="dt">fill =</span> park), <span class="dt">size =</span> <span class="dv">4</span>) <span class="op">+</span></span>
+<span id="cb54-4"><a href="Clustering.html#cb54-4"></a><span class="st">        </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">350</span>))</span></code></pre></div>
+<p><img src="bio723-book_files/figure-html/unnamed-chunk-87-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Very nice!
 <!-- end --></p>
 <!-- start Exercises 4-->

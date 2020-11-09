@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-11-04" />
+<meta name="date" content="2020-11-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -186,7 +186,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
 <li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
 <li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
-<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
 <li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
 <li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
 <li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
@@ -350,33 +352,21 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Chapter 10. It explains how to use <code>runMatrixAnalysis()</code>. Please note that I used some of your feedback in class to make <code>runMatrixAnalysis()</code> simpler. Accordingly, in the lecture recording I am explaining a version of that command that is slightly out of date. The book chapter, however, is completely up-to-date.</p></li>
 <li><p>You may find the <code>colnames()</code> function useful for this assignment. It will list all the column names in a dataset for you. For example:</p></li>
 </ol>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="Exercises-4.html#cb53-1"></a>mini_per_table &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="Exercises-4.html#cb54-1"></a><span class="kw">colnames</span>(mini_per_table)</span>
-<span id="cb54-2"><a href="Exercises-4.html#cb54-2"></a><span class="co">##  [1] &quot;atomic_number&quot;                     </span></span>
-<span id="cb54-3"><a href="Exercises-4.html#cb54-3"></a><span class="co">##  [2] &quot;atomic_symbol&quot;                     </span></span>
-<span id="cb54-4"><a href="Exercises-4.html#cb54-4"></a><span class="co">##  [3] &quot;group_number&quot;                      </span></span>
-<span id="cb54-5"><a href="Exercises-4.html#cb54-5"></a><span class="co">##  [4] &quot;period&quot;                            </span></span>
-<span id="cb54-6"><a href="Exercises-4.html#cb54-6"></a><span class="co">##  [5] &quot;atomic_mass_rounded&quot;               </span></span>
-<span id="cb54-7"><a href="Exercises-4.html#cb54-7"></a><span class="co">##  [6] &quot;melting_point_C&quot;                   </span></span>
-<span id="cb54-8"><a href="Exercises-4.html#cb54-8"></a><span class="co">##  [7] &quot;boiling_point_C&quot;                   </span></span>
-<span id="cb54-9"><a href="Exercises-4.html#cb54-9"></a><span class="co">##  [8] &quot;state_at_RT&quot;                       </span></span>
-<span id="cb54-10"><a href="Exercises-4.html#cb54-10"></a><span class="co">##  [9] &quot;density_g_per_mL&quot;                  </span></span>
-<span id="cb54-11"><a href="Exercises-4.html#cb54-11"></a><span class="co">## [10] &quot;electronegativity_pauling&quot;         </span></span>
-<span id="cb54-12"><a href="Exercises-4.html#cb54-12"></a><span class="co">## [11] &quot;first_ionization_poten_eV&quot;         </span></span>
-<span id="cb54-13"><a href="Exercises-4.html#cb54-13"></a><span class="co">## [12] &quot;second_ionization_poten_eV&quot;        </span></span>
-<span id="cb54-14"><a href="Exercises-4.html#cb54-14"></a><span class="co">## [13] &quot;third_ionization_poten_eV&quot;         </span></span>
-<span id="cb54-15"><a href="Exercises-4.html#cb54-15"></a><span class="co">## [14] &quot;electron_affinity_eV&quot;              </span></span>
-<span id="cb54-16"><a href="Exercises-4.html#cb54-16"></a><span class="co">## [15] &quot;atomic_radius_ang&quot;                 </span></span>
-<span id="cb54-17"><a href="Exercises-4.html#cb54-17"></a><span class="co">## [16] &quot;ionic_radius_ang&quot;                  </span></span>
-<span id="cb54-18"><a href="Exercises-4.html#cb54-18"></a><span class="co">## [17] &quot;covalent_radius_ang&quot;               </span></span>
-<span id="cb54-19"><a href="Exercises-4.html#cb54-19"></a><span class="co">## [18] &quot;atomic_volume_cm3_per_mol&quot;         </span></span>
-<span id="cb54-20"><a href="Exercises-4.html#cb54-20"></a><span class="co">## [19] &quot;electrical_conductivity_mho_per_cm&quot;</span></span>
-<span id="cb54-21"><a href="Exercises-4.html#cb54-21"></a><span class="co">## [20] &quot;specific_heat_J_per_g_K&quot;           </span></span>
-<span id="cb54-22"><a href="Exercises-4.html#cb54-22"></a><span class="co">## [21] &quot;heat_of_fusion_kJ_per_mol&quot;         </span></span>
-<span id="cb54-23"><a href="Exercises-4.html#cb54-23"></a><span class="co">## [22] &quot;heat_of_vaporization_kJ_per_mol&quot;   </span></span>
-<span id="cb54-24"><a href="Exercises-4.html#cb54-24"></a><span class="co">## [23] &quot;thermal_conductivity_W_per_m_K&quot;    </span></span>
-<span id="cb54-25"><a href="Exercises-4.html#cb54-25"></a><span class="co">## [24] &quot;polarizability_A_cubed&quot;            </span></span>
-<span id="cb54-26"><a href="Exercises-4.html#cb54-26"></a><span class="co">## [25] &quot;heat_atomization_kJ_per_mol&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="Exercises-4.html#cb55-1"></a>mini_per_table &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="Exercises-4.html#cb56-1"></a><span class="kw">colnames</span>(mini_per_table)</span>
+<span id="cb56-2"><a href="Exercises-4.html#cb56-2"></a><span class="co">##  [1] &quot;atomic_number&quot;                      &quot;atomic_symbol&quot;                     </span></span>
+<span id="cb56-3"><a href="Exercises-4.html#cb56-3"></a><span class="co">##  [3] &quot;group_number&quot;                       &quot;period&quot;                            </span></span>
+<span id="cb56-4"><a href="Exercises-4.html#cb56-4"></a><span class="co">##  [5] &quot;atomic_mass_rounded&quot;                &quot;melting_point_C&quot;                   </span></span>
+<span id="cb56-5"><a href="Exercises-4.html#cb56-5"></a><span class="co">##  [7] &quot;boiling_point_C&quot;                    &quot;state_at_RT&quot;                       </span></span>
+<span id="cb56-6"><a href="Exercises-4.html#cb56-6"></a><span class="co">##  [9] &quot;density_g_per_mL&quot;                   &quot;electronegativity_pauling&quot;         </span></span>
+<span id="cb56-7"><a href="Exercises-4.html#cb56-7"></a><span class="co">## [11] &quot;first_ionization_poten_eV&quot;          &quot;second_ionization_poten_eV&quot;        </span></span>
+<span id="cb56-8"><a href="Exercises-4.html#cb56-8"></a><span class="co">## [13] &quot;third_ionization_poten_eV&quot;          &quot;electron_affinity_eV&quot;              </span></span>
+<span id="cb56-9"><a href="Exercises-4.html#cb56-9"></a><span class="co">## [15] &quot;atomic_radius_ang&quot;                  &quot;ionic_radius_ang&quot;                  </span></span>
+<span id="cb56-10"><a href="Exercises-4.html#cb56-10"></a><span class="co">## [17] &quot;covalent_radius_ang&quot;                &quot;atomic_volume_cm3_per_mol&quot;         </span></span>
+<span id="cb56-11"><a href="Exercises-4.html#cb56-11"></a><span class="co">## [19] &quot;electrical_conductivity_mho_per_cm&quot; &quot;specific_heat_J_per_g_K&quot;           </span></span>
+<span id="cb56-12"><a href="Exercises-4.html#cb56-12"></a><span class="co">## [21] &quot;heat_of_fusion_kJ_per_mol&quot;          &quot;heat_of_vaporization_kJ_per_mol&quot;   </span></span>
+<span id="cb56-13"><a href="Exercises-4.html#cb56-13"></a><span class="co">## [23] &quot;thermal_conductivity_W_per_m_K&quot;     &quot;polarizability_A_cubed&quot;            </span></span>
+<span id="cb56-14"><a href="Exercises-4.html#cb56-14"></a><span class="co">## [25] &quot;heat_atomization_kJ_per_mol&quot;</span></span></code></pre></div>
 <!-- end -->
 <!-- start principal components analysis-->
 </div>

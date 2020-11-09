@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-11-04" />
+<meta name="date" content="2020-11-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -186,7 +186,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
 <li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
 <li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
-<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
 <li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
 <li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
 <li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
@@ -339,7 +341,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="exam" class="section level1">
 <h1><span class="header-section-number">Chapter 17</span> Exam</h1>
-<p>For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract.</p>
+<p>For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.</p>
 <p>The person that previously worked in your postion, Mr. Porter, recently completed a chemical analysis of the major ingredients that Fireside Brewing uses. However, Mr. Porter didn’t have time to finish analyzing the data that was collected.</p>
 <p>At Fireside Brewing, your boss is Mrs. Pilsner, a friendly woman who has worked in the brewing industry for decades and is a certified cicerone (a professional beer taster). As an expert taster, she is familiar with all the classes of compounds in beer ingredients and their corresponding flavors, but she is not an expert in chemistry or data analysis.</p>
 <p>For your first task in this new position, Mrs. Pilsner wants you to finish analyzing Mr. Porter’s data. Mrs. Pilsner has not given you specific instructions on how to analyze the data, rather, she has a set of specific questions that she wants answered so that she can improve Fireside Brewing. Mr. Porter left some notes about how to perform the analyses, but, since he was close to retirement and spent too much time riding his bicycle and drinking beer, the notes are not complete. Use Mr. Porter’s incomplete notes to help you answer the questions below.</p>
@@ -368,7 +370,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="question-5-3" class="section level3">
 <h3><span class="header-section-number">17.1.5</span> Question 5:</h3>
-<p>Mrs. Pilsner: <em>When I taste our beers made with hop extract, they don’t taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do our different ingredients cluster according to their average chemical composition?</em></p>
+<p>Mrs. Pilsner: <em>When I taste our beers made with hop extract, they don’t taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do all our different ingredients cluster according to their average chemical composition?</em></p>
 </div>
 </div>
 <div id="data-set-2-hops_components" class="section level2">
@@ -381,8 +383,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="question-2-4" class="section level3">
 <h3><span class="header-section-number">17.2.2</span> Question 2:</h3>
-<p>Mrs. Pilsner: <em>We buy our hops from many different countries of origin. I’ve always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the flavor profiles of other countries’ hops? What chemical(s) largely drive this difference?</em></p>
-<p>note from Mr. Porter: <em>note to self… by reducing the dimensionality of the dataset to two dimensions, it should be possible to draw ellipses that encapsulate the “flavor profile” of each country’s hops.</em></p>
+<p>Mrs. Pilsner: <em>We buy our hops from many different countries of origin. I’ve always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the chemical profiles of other countries’ hops (as a proxy for flavor profiles)? What chemical(s) largely drive this difference?</em></p>
+<p>note from Mr. Porter: <em>note to self… by reducing the dimensionality of the chemical dataset to two dimensions, it should be possible to draw ellipses that encapsulate the chemical profile (as a proxy for “flavor profile”) of each country’s hops.</em></p>
 </div>
 <div id="question-3-4" class="section level3">
 <h3><span class="header-section-number">17.2.3</span> Question 3:</h3>
