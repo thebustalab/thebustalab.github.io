@@ -2106,7 +2106,7 @@ Load this data set by running our source() command. It will then be present in y
 
 ### Question 1:
 
-Mrs Pilsner: *We are having problems with our Pale Ale. Its flavor is not consistent from batch to batch. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?*
+Mrs. Pilsner: *We are having problems with our Pale Ale. Its flavor is not consistent from batch to batch. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?*
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 #asdfasdf group_by, summarize, plot
@@ -2208,7 +2208,7 @@ beer_thing <- beer_components %>%
   group_by(analyte) %>%
   shapiro_test(abundance)
   
-  # levene_test(abundance ~ analyte)
+  levene_test(abundance ~ analyte)
 
   # anova_test(abundance ~ analyte)
 
@@ -2334,6 +2334,7 @@ plot1 <- ggplot(beer_analyzed) +
   geom_mark_ellipse(aes(x = Dim.1, y = Dim.2, fill = hop_origin, label = hop_origin), alpha = 0.2) +
   scale_y_continuous(limits = c(-6,5)) +
   scale_fill_brewer(palette = "Set1") +
+  geom_text(aes(x = Dim.1, y = Dim.2, fill = hop_origin, label = hop_variety)) +
   theme_bw() +
   guides(fill = "none")
 

@@ -117,12 +117,12 @@
                     }
                 }
 
-                if( length(column_w_names_of_multiple_analytes) > 0 ) {
-                    x <- table(select(data, column_w_names_of_multiple_analytes))
-                    if( all(range(x) / mean(x) != c(1,1)) ) {
-                        stop("There are duplicate analyte names.")
-                    }
-                } 
+                # if( length(column_w_names_of_multiple_analytes) > 0 ) {
+                #     x <- table(select(data, column_w_names_of_multiple_analytes))
+                #     if( all(range(x) / mean(x) != c(1,1)) ) {
+                #         stop("There are duplicate analyte names.")
+                #     }
+                # } 
 
             # Remove analyte annotation columns before pivoting
 
