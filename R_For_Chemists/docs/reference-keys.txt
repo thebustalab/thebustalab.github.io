@@ -160,3 +160,10 @@ question-5-4
 data-set-1-beer_components
 data-set-2-hops_components
 rcolorbrewer
+writing
+results
+manuscript
+general
+structure
+final-project
+results-section

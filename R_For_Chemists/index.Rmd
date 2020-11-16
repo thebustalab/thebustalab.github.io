@@ -2431,6 +2431,43 @@ ggtree(beer_analyzed) + geom_tiplab()
 ```
 <!-- end -->
 
+<!-- start Writing -->
+
+# Final Project
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/project.png', dpi = NA)
+```
+
+## Results Section
+
+### General
+
+* Key: number of optional sentences / **number of suggested sentences**: *purpose*: "example"
+
+* Tense: past tense and passive voice, because we are talking about what happened in the experiments, and reflecting with distance on the results.
+
+* As you go: make notes of what should go into the introduction and discussion
+
+### Structure
+
+* Intro paragraph:
+  + **1**: *Review the aim of the paper*: "In order to understand…"
+  + **3-4**: *Combine methods summary with generalized summary of results to call out subsections*: "We used method X to quantify property Y of our study subject (section 3.1)"
+    <!-- + *Keep it as short as possible! No details are required*  -->
+    <!-- + *Some exceptions:*
+      + including method details to avoid topic switching in later paragraphs (i.e. FID v. MS) -->
+
+* Each subsection paragraph:
+  + 1: *Statement of observation or lead-in*: "Based on the observation of X..."
+  + **1**: *Purpose of the work described in this paragraph*: "In order to determine..."
+  + 1: *Review methods specific to subsection*
+    + *make sure verbs apply to the obj. in question*
+  + **4-5**: *Results of that method*
+  + **1-2**: *Conclusion from those results or concluding remark* "Thus, analysis X revealed that..."
+
+<!-- end -->
+
 <!-- start Appendix -->
 # (APPENDIX) Appendix {-}
 
