@@ -16,7 +16,7 @@
     # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
     ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
     wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
-    data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
+    # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
     hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv")
     beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv")
     hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv")
@@ -53,6 +53,7 @@
                                     columns_w_additional_analyte_info = NULL,
                                     columns_w_sample_ID_info = NULL,
                                     transpose = FALSE,
+                                    unknown_sample_ID_info = NULL,
                                     kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
                                     na_replacement = c("none", "mean", "zero", "drop"),
                                     output_format = c("wide", "long"),
@@ -87,10 +88,8 @@
                             c(
                                 column_w_names_of_multiple_analytes,
                                 column_w_values_for_multiple_analytes,
-
                                 columns_w_values_for_single_analyte,
                                 columns_w_additional_analyte_info,
-
                                 columns_w_sample_ID_info
                             )
                         )
@@ -100,10 +99,8 @@
                         c(
                             column_w_names_of_multiple_analytes,
                             column_w_values_for_multiple_analytes,
-
                             columns_w_values_for_single_analyte,
                             columns_w_additional_analyte_info,
-
                             columns_w_sample_ID_info
                         )
                     )]
@@ -221,15 +218,85 @@
                         }
                     }
 
-                    if( transpose == TRUE ) {
+                # Transpose matrix, if requested
+                    if( transpose == TRUE ) { matrix <- t(matrix) }
 
-                        matrix <- t(matrix)
+                # Run unknown, if requested
+
+                    if( length(unknown_sample_ID_info) > 0 ) {
+                    
+                        ## Use na_replacement != "drop"
+
+                            if( na_replacement != "drop" ) {
+                              stop("It is highly recommended that you use na_replacement = \"drop\" when matching an unknown, since anything with an NA value will be sent to the bottom of the matching list.")
+                            }
+
+                        ## Separate unknown and knowns matrix
+
+                            sample_ID_of_unknown <- unknown_sample_ID_info
+                            index_of_unknown <- which(rownames(matrix) == sample_ID_of_unknown)
+                            unknown <- matrix[index_of_unknown,]
+                            matrix_minus_unknown <- matrix[-c(index_of_unknown),]
+
+                        ## Identify how many knowns there are to test
+
+                            indices_to_test <- seq(1, dim(matrix_minus_unknown)[1], 1)
+
+                        ## Loop and select 20 nearest neighbors until there are just 100 left
+
+                            while( length(indices_to_test) > 100 ) { ## Has been optimized for 50, 100, and 1000 indeces bites. 100 and 1000 both take ~5s.
+
+                                ## Select 100 entries at random, subset matrix_minus_unknown for that, append the unknowns
+                                
+                                    indices_being_tested <- sample(indices_to_test, 100, replace = FALSE)
+
+                                    matrix_to_be_tested <- matrix_minus_unknown[indices_being_tested,]
+                                    matrix_to_be_tested <- rbind(unknown, matrix_to_be_tested)
+                                    dist <- Rfast::Dist(matrix_to_be_tested)
+                                    results <- data.frame(
+                                      distance = dist[2:dim(dist)[1], 1],
+                                      index = indices_being_tested
+                                    )
+
+                                ## Keep closest 20 indices, modify indices_to_test
+
+                                    indices_to_keep <- results[order(results$distance),]$index[1:20]
+                                    indices_to_toss <- indices_being_tested[!indices_being_tested %in% indices_to_keep]
+                                    indices_to_test <- indices_to_test[!indices_to_test %in% indices_to_toss]
+
+                            }
+
+                            ## Test the last 100 neighbors and return the closest 20
+
+                                final_matrix_to_be_tested <- rbind(unknown, matrix_minus_unknown[indices_to_test,])
+                                dist <- Rfast::Dist(final_matrix_to_be_tested)
+                                results <- data.frame(
+                                      distance = dist[2:dim(dist)[1], 1],
+                                      index = indices_to_test
+                                )
+
+                                if( length(indices_to_test) < 20 ) {
+                                    number_for_final_tree <- length(indices_to_test)
+                                } else {
+                                    number_for_final_tree <- 20
+                                }
+
+                                indices_to_keep <- results[order(results$distance),]$index[1:number_for_final_tree]
+                                indices_to_keep
+
+                            ## Subset the matrix
+
+                                matrix <- rbind(unknown, matrix_minus_unknown[indices_to_keep,])
+
+                                ### THINK CAREFULLY HERE! THINGS SOMEWHAT CLOSE TO THE UNKNOWN 
+                                ### MIGHT NOT CLUSTER DIRECTLY WITH IT
+                                ### DEPENDING ON HOW RELATED THEY ARE TO OTHER THINGS
 
                     }
 
                 # Run hclust, if requested
 
-                    if( analysis == "hclust" ) {
+                    if( analysis == "hclust" ) {                        
                         phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
                         clustering <- ggtree::fortify(phylo)
                         clustering$sample_unique_ID <- clustering$label
@@ -337,7 +404,7 @@
                     
                 # Add back annotations to the output
 
-                    clustering <- full_join(
+                    clustering <- right_join(
                         data_wide[,match(
                             if( length(columns_w_sample_ID_info) == 1 ) {
                                 "sample_unique_ID"
