@@ -266,7 +266,7 @@
 
                             }
 
-                            ## Test the last 100 neighbors and return the closest 20
+                            ## Test the last 100 neighbors and return the closest 10
 
                                 final_matrix_to_be_tested <- rbind(unknown, matrix_minus_unknown[indices_to_test,])
                                 dist <- Rfast::Dist(final_matrix_to_be_tested)
@@ -275,10 +275,10 @@
                                       index = indices_to_test
                                 )
 
-                                if( length(indices_to_test) < 20 ) {
+                                if( length(indices_to_test) < 10 ) {
                                     number_for_final_tree <- length(indices_to_test)
                                 } else {
-                                    number_for_final_tree <- 20
+                                    number_for_final_tree <- 10
                                 }
 
                                 indices_to_keep <- results[order(results$distance),]$index[1:number_for_final_tree]
