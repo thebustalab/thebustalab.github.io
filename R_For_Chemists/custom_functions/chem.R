@@ -864,5 +864,5 @@
 
             # Reset row numbers, return the polylist
                 rownames(polylist) <- NULL
-                return(polylist)
+                return(as_tibble(polylist))
         }
