@@ -183,7 +183,6 @@
                 # Replace NAs with colmeans
 
                     if( na_replacement[1] == "none") {
-                        cat("Not replacing any NAs in your data set \n")
                     }
                     if( na_replacement[1] == "drop" ) {
                         cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
