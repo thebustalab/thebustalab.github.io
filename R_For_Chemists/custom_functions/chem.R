@@ -856,6 +856,9 @@
                 polylist <- cbind(horizontal_monolist,vertical_monolist[match(horizontal_monolist$URI_URI_URI, vertical_monolist[,colnames(vertical_monolist) == "URI_URI_URI"]),])
                 polylist <- polylist[,colnames(polylist) != "URI_URI_URI"]
 
+            # Make the table_value_unit column numeric
+                polylist[,colnames(polylist) == table_value_unit] <- as.numeric(as.character(polylist[,colnames(polylist) == table_value_unit]))
+
             # Add Genus_species column if not present
                 # if ( any(colnames(polylist) == "Genus_species") == FALSE) {
                 #     print("Adding Genus_species column")
