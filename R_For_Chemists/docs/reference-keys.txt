@@ -171,3 +171,6 @@ discussion-section
 general-1
 process
 structure-1
+methods-section
+conclusion-section
+introduction-1

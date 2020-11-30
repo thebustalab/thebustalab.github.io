@@ -2439,6 +2439,10 @@ ggtree(beer_analyzed) + geom_tiplab()
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/project.png', dpi = NA)
 ```
 
+For your final project you will use the chemometric techniques we learned in class to either (i) conduct a detailed analysis of a large dataset or (ii) build a data analysis tool. You will then generate high quality figures to describe your analysis or tool, and you will build a manuscript around those figures (see workflow above).
+
+For your manuscript, I suggest that you write the sections in the order outlined below, following the tips or suggestions given for each section.
+
 ## Results Section
 
 ### General
@@ -2517,9 +2521,51 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/pr
 * Edit your discussion section as a whole:
 
 	+ Edit each paragraph, particularly its first and last sentences, to connect the paragraphs into a flowing document. Specifically, this means several things:
-		+ There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exibited other interesting properties.").
+		+ There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exhibited other interesting properties.").
 		+ There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
 		+ The discussion should not require the reader to go back and read its first half in order to understand its second half.
+
+## Methods Section
+
+* Create subsections according to experiments/techniques.
+* Describe methods used in sufficient detail so that another research lab with average experience could reproduce the results.
+
+## Conclusion Section
+
+* Summarize over-arching conclusions from each section of the paper (omit details from results or discussion)
+    + Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses.
+    + Suggest experiments to test these hypotheses.
+    + Be clear about what is speculation
+    + Describe future directions
+<!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. -->
+
+## Introduction
+
+* Try this outline:
+  
+  + Paragraph 1: Introduce the topic
+    + Introduce a topic, ideally, an application of the research you will describe (grab attention of reader with an important fact or relationship).
+    + State why the topic is important.
+    + Describe what is known about the topic (at least, as pertains to the work at hand).
+    + Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic."
+    + List the negative things that will happen if we don't fill this gap in knowledge.
+  
+  + Paragraph 2: Provide background information
+    + Describe, in moderate detail, the background information (concepts, literature) relevant to the study.
+    + End by saying how the details you just described relate to the application/topic described in the first paragraph.
+
+  + Paragraph 3: Objectives of this study
+    + State the objective of this study.
+    + Briefly describe what was done and the techniques or instruments used.
+    + (optional - personal preference) State the conclusions from the work and what they mean for the application described in paragraph 1.
+
+* Other tips:
+  + If something is well-established, say so.
+  + Last paragraph can mention objectives in list form.
+  + Last sentence can briefly mention methods (specific techniques or instruments) that were used.
+
+
+
 
 <!-- end -->
 
