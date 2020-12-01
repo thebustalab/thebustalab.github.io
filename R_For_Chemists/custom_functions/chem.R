@@ -54,6 +54,7 @@
                                     columns_w_sample_ID_info = NULL,
                                     transpose = FALSE,
                                     unknown_sample_ID_info = NULL,
+                                    scale_variance = TRUE,
                                     kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
                                     na_replacement = c("none", "mean", "zero", "drop"),
                                     output_format = c("wide", "long"),
@@ -304,7 +305,11 @@
                 # Run PCA, if requested
 
                     if( analysis == "pca" ) {
-                        coords <- FactoMineR::PCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
+                        if( scale_variance == TRUE ) {
+                            coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = TRUE)$ind$coord[,c(1:2)]    
+                        } else {
+                            coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
+                        }
                         clustering <- as_tibble(coords)
                         clustering$sample_unique_ID <- rownames(coords)
                     }
@@ -312,7 +317,11 @@
                 # Run PCA and return ordination plot coordinates, if requested
 
                     if( analysis == "pca-ord" ) {
-                        coords <- FactoMineR::PCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
+                        if( scale_variance == TRUE ) {
+                            coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = TRUE)$var$coord[,c(1,2)]
+                        } else {
+                            coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
+                        }
                         clustering <- as_tibble(coords)
                         clustering$analyte <- rownames(coords)
                         clustering <- select(clustering, analyte, Dim.1, Dim.2)
@@ -322,16 +331,20 @@
 
                 # Run PCA and return eigenvalues, if requested
 
-                    if( analysis == "pca-dim" ) {
-                        coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
-                        clustering <- tibble::enframe(coords, name = NULL)
-                        clustering$principal_component <- names(coords)
-                        clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
-                        colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                        clustering <- select(clustering, principal_component, percent_variance_explained)
-                        return(clustering)
-                        stop("Returning eigenvalues.")
-                    }
+                        if( analysis == "pca-dim" ) {
+                            if( scale_variance == TRUE ) {
+                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = TRUE)$eig[,2]
+                            } else {
+                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
+                            }
+                            clustering <- tibble::enframe(coords, name = NULL)
+                            clustering$principal_component <- names(coords)
+                            clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
+                            colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                            clustering <- select(clustering, principal_component, percent_variance_explained)
+                            return(clustering)
+                            stop("Returning eigenvalues.")
+                        }
 
                 # Run kMeans, if requested
 
