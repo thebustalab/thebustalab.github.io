@@ -25,7 +25,14 @@
 
     #' Interactive selection of a CSV file to read
 
-    readCSV <- function() { return(readr::read_csv(file.choose())) }
+    readCSV <- function(sep = c(",", " ")) {
+        if (sep[1] == ",") {
+            return(readr::read_csv(file.choose()))
+        }  
+        if (sep[1] == " ") {
+            return(utils::read.delim(file.choose()))
+        }
+    }
 
 #### runMatrixAnalysis
 
