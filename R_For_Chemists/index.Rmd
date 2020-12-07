@@ -15,7 +15,7 @@ output:
       fontsettings:
         theme: white
         family: sans
-        size: 2 
+        size: 1 
       toolbar:
         position: fixed     
 documentclass: book
@@ -2083,8 +2083,8 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 
 <!-- end -->
 
-<!-- start Exam -->
-# Exam
+<!-- start Mid Term Exam -->
+# Mid Term Exam
 
 For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
 
@@ -2431,9 +2431,9 @@ ggtree(beer_analyzed) + geom_tiplab()
 ```
 <!-- end -->
 
-<!-- start Writing -->
+<!-- start Project Overview -->
 
-# Final Project
+# Project Overview
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/project.png', dpi = NA)
@@ -2441,11 +2441,39 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/pr
 
 For your final project you will use the chemometric techniques we learned in class to either (i) conduct a detailed analysis of a large dataset or (ii) build a data analysis tool. You will then generate high quality figures to describe your analysis or tool, and you will build a manuscript around those figures (see workflow above).
 
-For your manuscript, I suggest that you write the sections in the order outlined below, following the tips or suggestions given for each section.
+For your manuscript, I suggest that you write the sections in the order of the chapters that follow below, paying close attention to the tips or suggestions given for each section.
 
-## Results Section
+While everyone's manuscripts will differ, I suggest aiming for the following criteria:
+  * 4-6 figures (if you have more than this, consider using an appendix/supplementary information section)
+  * 1 results section paragraph for each 1-2 figures
+  * 3+ discussion paragraphs
 
-### General
+<!-- in future: research questions, exploratory vs hypothesis-driven research -->
+
+<!-- end -->
+
+<!-- start Figures and Captions -->
+# Figures and Captions
+<!-- end -->
+
+<!-- start Methods -->
+# Methods
+
+## General
+
+* Objective: describe how the study was performed. Refer to the chapters of this book for details about the analysis techniques we've covered in class.
+
+## Suggestions
+
+* Create subsections according to experiments / techniques / sets of analyses.
+* Describe methods used in sufficient detail so that another research lab with average experience could reproduce the results.
+* For this project, describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc.
+<!-- end -->
+
+<!-- start Results -->
+# Results
+
+## General
 
 * Objective: Walk your reader through your results.
 
@@ -2453,7 +2481,7 @@ For your manuscript, I suggest that you write the sections in the order outlined
 
 * As you go: make notes of what should go into the introduction and discussion.
 
-### Structure
+## Structure
 
 * Key: number of optional sentences / **number of suggested sentences**: *purpose*: "example"
 
@@ -2471,10 +2499,12 @@ For your manuscript, I suggest that you write the sections in the order outlined
     + *make sure verbs apply to the obj. in question*
   + **4-5**: *Results of that method*
   + **1-2**: *Conclusion from those results or concluding remark* "Thus, analysis X revealed that..."
+<!-- end -->
 
-## Discussion Section
+<!-- start Discussion -->
+# Discussion
 
-### General
+## General
 
 * Objective: Use your data to argue for or against your or others' ideas.
 
@@ -2482,7 +2512,7 @@ For your manuscript, I suggest that you write the sections in the order outlined
 
 * As you go: make notes of what should go into the introduction and discussion
 
-### Process
+## Suggestions
 
 * Create paragraph outlines:
 
@@ -2524,13 +2554,16 @@ For your manuscript, I suggest that you write the sections in the order outlined
 		+ There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exhibited other interesting properties.").
 		+ There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
 		+ The discussion should not require the reader to go back and read its first half in order to understand its second half.
+<!-- end -->
 
-## Methods Section
+<!-- start Conclusions -->
+# Conclusions
 
-* Create subsections according to experiments/techniques.
-* Describe methods used in sufficient detail so that another research lab with average experience could reproduce the results.
+## General 
 
-## Conclusion Section
+* Objective: to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study? 
+
+## Suggestions
 
 * Summarize over-arching conclusions from each section of the paper (omit details from results or discussion)
     + Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses.
@@ -2538,34 +2571,93 @@ For your manuscript, I suggest that you write the sections in the order outlined
     + Be clear about what is speculation
     + Describe future directions
 <!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. -->
+<!-- end -->
 
-## Introduction
+<!-- start Introduction -->
+# Introduction
 
-* Try this outline:
+## General
+
+* Objective: to prepare the reader by giving the reader sufficient background to understand the study as a whole. It therefore should only contain information pertinent to understanding the study and its broader significance. 
+
+## Suggestions: 
+
+Try this outline:
   
-  + Paragraph 1: Introduce the topic
-    + Introduce a topic, ideally, an application of the research you will describe (grab attention of reader with an important fact or relationship).
-    + State why the topic is important.
-    + Describe what is known about the topic (at least, as pertains to the work at hand).
-    + Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic."
-    + List the negative things that will happen if we don't fill this gap in knowledge.
+* Paragraph 1: Introduce the topic
+  + Introduce a topic, ideally, an application of the research you will describe (grab attention of reader with an important fact or relationship).
+  + State why the topic is important.
+  + Describe what is known about the topic (at least, as pertains to the work at hand).
+  + Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic."
+  + List the negative things that will happen if we don't fill this gap in knowledge.
   
-  + Paragraph 2: Provide background information
-    + Describe, in moderate detail, the background information (concepts, literature) relevant to the study.
-    + End by saying how the details you just described relate to the application/topic described in the first paragraph.
+* Paragraph 2: Provide background information
+  + Describe, in moderate detail, the background information (concepts, literature) relevant to the study.
+  + End by saying how the details you just described relate to the application/topic described in the first paragraph.
 
-  + Paragraph 3: Objectives of this study
-    + State the objective of this study.
-    + Briefly describe what was done and the techniques or instruments used.
-    + (optional - personal preference) State the conclusions from the work and what they mean for the application described in paragraph 1.
+* Paragraph 3: Objectives of this study
+  + State the objective of this study.
+  + Briefly describe what was done and the techniques or instruments used.
+  + (optional - personal preference) State the conclusions from the work and what they mean for the application described in paragraph 1.
 
 * Other tips:
   + If something is well-established, say so.
   + Last paragraph can mention objectives in list form.
   + Last sentence can briefly mention methods (specific techniques or instruments) that were used.
+<!-- end -->
 
+<!-- start Abstract -->
+# Abstract
 
+## General
 
+* Objective: prove a short summary of the entire study. 
+
+The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study.
+
+* Purposes of an Abstract
+  + Informs readers about the article’s content
+  + Summarizes complex information in a clear, concise manner
+  + Helps readers decide whether or not to read the article
+  + Used in conferences to summarize what the speaker will say during his/her presentation
+
+## Suggestions
+  
+* Use one or more well-developed, concise paragraphs that are able to stand alone.
+* Use about 200 - 500 words (ideally no more than 400 words)
+* Use an introduction-body-conclusion structure in which the parts of the paper are discussed in order:
+  + Introduction (1-2 sentences): Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?)
+  + Research Objective (1-2 sentences): Specific research objective, and potentially hypotheses/predictions
+  + Methods (1-2 sentences): Very concise overview of the methods used to address the research questions
+  + Results (1-3 sentences): Describe the major results (what you found) and interpretation of the results (what the results mean)
+  + Conclusions (1-2 sentences): Synthesizes the major contributions of the study in light of the new information provided by the results of the study – what does it all mean? Why is the result important, What did we learn in the bigger picture from doing this study?)
+
+<!-- end -->
+
+<!-- start Title -->
+# Title
+
+## General
+
+* Objective: Capture attention and highlight the research question.
+
+## Suggestions
+
+* There are essentially two types of titles: descriptive titles and conclusive titles. 
+  + If your manuscript is exploratory research, consider using a descriptive title. For example:
+    + "Comparative analysis of the chemical composition and water permeability of the cuticular wax barrier in Welsh onion (Allium fistulosum L.)"
+  + If your manuscript is hypothesis driven research, consider using a conclusive title. For example:
+    + "The Rice Gene "OsGL1-6" Is Involved in Leaf Cuticular Wax Accumulation and Drought Resistance"
+
+* A good title should:
+  + Be indicative of the content of the paper
+  + Attract the interest of potential readers
+  + Reflect whether the article is formal or casual
+  + Include important keywords
+
+## Further reading
+
+* [Titles Guide](https://libguides.usc.edu/writingguide/title)
 
 <!-- end -->
 

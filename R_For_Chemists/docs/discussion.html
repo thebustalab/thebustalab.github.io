@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 PCA | R For Chemists</title>
+  <title>Chapter 22 Discussion | R For Chemists</title>
   <meta name="description" content="Textbook R For Chemists." />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 PCA | R For Chemists" />
+  <meta property="og:title" content="Chapter 22 Discussion | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 PCA | R For Chemists" />
+  <meta name="twitter:title" content="Chapter 22 Discussion | R For Chemists" />
   
   <meta name="twitter:description" content="Textbook R For Chemists." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="Exercises-4.html"/>
-<link rel="next" href="Exercises-5.html"/>
+<link rel="prev" href="results.html"/>
+<link rel="next" href="conclusions.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -370,138 +370,72 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="PCA" class="section level1">
-<h1><span class="header-section-number">Chapter 12</span> PCA</h1>
-<p>There is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA).</p>
-<div id="pca" class="section level2">
-<h2><span class="header-section-number">12.1</span> PCA</h2>
-<p>PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let’s look at an example:</p>
-<p><img src="https://thebustalab.github.io/R_For_Chemists/figures/PCA.png" style="display: block; margin: auto;" /></p>
-<p>In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).</p>
-<p>We can run and visualize principal components analyses using the <code>runMatrixAnalysis()</code> function as in the example below:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="PCA.html#cb57-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
-<span id="cb57-2"><a href="PCA.html#cb57-2"></a>AK_lakes &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
-<span id="cb57-3"><a href="PCA.html#cb57-3"></a><span class="kw">head</span>(AK_lakes)</span>
-<span id="cb57-4"><a href="PCA.html#cb57-4"></a><span class="co">## # A tibble: 6 x 7</span></span>
-<span id="cb57-5"><a href="PCA.html#cb57-5"></a><span class="co">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb57-6"><a href="PCA.html#cb57-6"></a><span class="co">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb57-7"><a href="PCA.html#cb57-7"></a><span class="co">## 1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
-<span id="cb57-8"><a href="PCA.html#cb57-8"></a><span class="co">## 2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
-<span id="cb57-9"><a href="PCA.html#cb57-9"></a><span class="co">## 3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
-<span id="cb57-10"><a href="PCA.html#cb57-10"></a><span class="co">## 4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span id="cb57-11"><a href="PCA.html#cb57-11"></a><span class="co">## 5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
-<span id="cb57-12"><a href="PCA.html#cb57-12"></a><span class="co">## 6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free</span></span>
-<span id="cb57-13"><a href="PCA.html#cb57-13"></a></span>
-<span id="cb57-14"><a href="PCA.html#cb57-14"></a>AK_lakes_pca &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb57-15"><a href="PCA.html#cb57-15"></a>    <span class="dt">data =</span> AK_lakes,</span>
-<span id="cb57-16"><a href="PCA.html#cb57-16"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
-<span id="cb57-17"><a href="PCA.html#cb57-17"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb57-18"><a href="PCA.html#cb57-18"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb57-19"><a href="PCA.html#cb57-19"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb57-20"><a href="PCA.html#cb57-20"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb57-21"><a href="PCA.html#cb57-21"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb57-22"><a href="PCA.html#cb57-22"></a>)</span>
-<span id="cb57-23"><a href="PCA.html#cb57-23"></a><span class="co">## Not replacing any NAs in your data set</span></span>
-<span id="cb57-24"><a href="PCA.html#cb57-24"></a></span>
-<span id="cb57-25"><a href="PCA.html#cb57-25"></a><span class="kw">library</span>(ggrepel)</span>
-<span id="cb57-26"><a href="PCA.html#cb57-26"></a></span>
-<span id="cb57-27"><a href="PCA.html#cb57-27"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> AK_lakes_pca, <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>)) <span class="op">+</span></span>
-<span id="cb57-28"><a href="PCA.html#cb57-28"></a><span class="st">    </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> park), <span class="dt">shape =</span> <span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">4</span>, <span class="dt">alpha =</span> <span class="fl">0.8</span>) <span class="op">+</span></span>
-<span id="cb57-29"><a href="PCA.html#cb57-29"></a><span class="st">    </span><span class="kw">geom_label_repel</span>(<span class="kw">aes</span>(<span class="dt">label =</span> lake), <span class="dt">alpha =</span> <span class="fl">0.5</span>) <span class="op">+</span></span>
-<span id="cb57-30"><a href="PCA.html#cb57-30"></a><span class="st">    </span><span class="kw">theme_classic</span>()</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-92-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
-<p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
+<div id="discussion" class="section level1">
+<h1><span class="header-section-number">Chapter 22</span> Discussion</h1>
+<div id="general-2" class="section level2">
+<h2><span class="header-section-number">22.1</span> General</h2>
+<ul>
+<li>Objective: Use your data to argue for or against your or others’ ideas.</li>
+</ul>
+<!-- * Tense: Where referring to data, past tense. When referring to literature, past perfect, active voice. -->
+<ul>
+<li>As you go: make notes of what should go into the introduction and discussion</li>
+</ul>
 </div>
-<div id="drivers-of-pca-dimensions" class="section level2">
-<h2><span class="header-section-number">12.2</span> Drivers of PCA dimensions</h2>
-<p>Let’s look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let’s look at an example. We can obtain the ordination plot information using <code>runMatrixAnalysis()</code> with <code>analysis = "pca-ord"</code>:</p>
-<pre><code>## Not replacing any NAs in your data set
-## # A tibble: 6 x 3
-##   analyte      Dim.1   Dim.2
-##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;
-## 1 water_temp 0.0769  -0.267 
-## 2 pH         0.704    0.0190
-## 3 C          0.297   -0.248 
-## 4 N          0.00446  0.732 
-## 5 P          0.485   -0.0817
-## 6 Cl         0.978    0.0152</code></pre>
-<p>We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of <code>geom_label_repel()</code> and <code>filter()</code> to label certain segments in the ordination plot. You do not need to use <code>geom_label_repel()</code>, you could use the built in <code>geom_label()</code>, but <code>geom_label_repel()</code> can make labelling your segments easier.</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="PCA.html#cb59-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
-<span id="cb59-2"><a href="PCA.html#cb59-2"></a>AK_lakes_pca_ord &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb59-3"><a href="PCA.html#cb59-3"></a>    <span class="dt">data =</span> AK_lakes,</span>
-<span id="cb59-4"><a href="PCA.html#cb59-4"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca-ord&quot;</span>),</span>
-<span id="cb59-5"><a href="PCA.html#cb59-5"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb59-6"><a href="PCA.html#cb59-6"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb59-7"><a href="PCA.html#cb59-7"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb59-8"><a href="PCA.html#cb59-8"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb59-9"><a href="PCA.html#cb59-9"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb59-10"><a href="PCA.html#cb59-10"></a>)</span>
-<span id="cb59-11"><a href="PCA.html#cb59-11"></a><span class="co">## Not replacing any NAs in your data set</span></span>
-<span id="cb59-12"><a href="PCA.html#cb59-12"></a></span>
-<span id="cb59-13"><a href="PCA.html#cb59-13"></a><span class="kw">library</span>(ggforce) <span class="co"># Gives access to geom_circle</span></span>
-<span id="cb59-14"><a href="PCA.html#cb59-14"></a><span class="kw">library</span>(ggrepel) <span class="co"># Gives access to geom_label_repel</span></span>
-<span id="cb59-15"><a href="PCA.html#cb59-15"></a><span class="kw">head</span>(AK_lakes_pca_ord)</span>
-<span id="cb59-16"><a href="PCA.html#cb59-16"></a><span class="co">## # A tibble: 6 x 3</span></span>
-<span id="cb59-17"><a href="PCA.html#cb59-17"></a><span class="co">##   analyte      Dim.1   Dim.2</span></span>
-<span id="cb59-18"><a href="PCA.html#cb59-18"></a><span class="co">##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span id="cb59-19"><a href="PCA.html#cb59-19"></a><span class="co">## 1 water_temp 0.0769  -0.267 </span></span>
-<span id="cb59-20"><a href="PCA.html#cb59-20"></a><span class="co">## 2 pH         0.704    0.0190</span></span>
-<span id="cb59-21"><a href="PCA.html#cb59-21"></a><span class="co">## 3 C          0.297   -0.248 </span></span>
-<span id="cb59-22"><a href="PCA.html#cb59-22"></a><span class="co">## 4 N          0.00446  0.732 </span></span>
-<span id="cb59-23"><a href="PCA.html#cb59-23"></a><span class="co">## 5 P          0.485   -0.0817</span></span>
-<span id="cb59-24"><a href="PCA.html#cb59-24"></a><span class="co">## 6 Cl         0.978    0.0152</span></span>
-<span id="cb59-25"><a href="PCA.html#cb59-25"></a><span class="kw">ggplot</span>(AK_lakes_pca_ord) <span class="op">+</span></span>
-<span id="cb59-26"><a href="PCA.html#cb59-26"></a><span class="st">    </span><span class="kw">geom_segment</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="dv">0</span>, <span class="dt">y =</span> <span class="dv">0</span>, <span class="dt">xend =</span> Dim<span class="fl">.1</span>, <span class="dt">yend =</span> Dim<span class="fl">.2</span>, <span class="dt">color =</span> analyte), <span class="dt">size =</span> <span class="dv">1</span>) <span class="op">+</span></span>
-<span id="cb59-27"><a href="PCA.html#cb59-27"></a><span class="st">    </span><span class="kw">geom_circle</span>(<span class="kw">aes</span>(<span class="dt">x0 =</span> <span class="dv">0</span>, <span class="dt">y0 =</span> <span class="dv">0</span>, <span class="dt">r =</span> <span class="dv">1</span>)) <span class="op">+</span></span>
-<span id="cb59-28"><a href="PCA.html#cb59-28"></a><span class="st">  </span><span class="kw">geom_label_repel</span>(</span>
-<span id="cb59-29"><a href="PCA.html#cb59-29"></a>    <span class="dt">data =</span> <span class="kw">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.1</span> <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.9</span>, Dim<span class="fl">.2</span> <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.1</span>, Dim<span class="fl">.2</span> <span class="op">&gt;</span><span class="st"> </span><span class="fl">-0.1</span>),</span>
-<span id="cb59-30"><a href="PCA.html#cb59-30"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">label =</span> analyte), <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
-<span id="cb59-31"><a href="PCA.html#cb59-31"></a>  ) <span class="op">+</span></span>
-<span id="cb59-32"><a href="PCA.html#cb59-32"></a><span class="st">  </span><span class="kw">geom_label_repel</span>(</span>
-<span id="cb59-33"><a href="PCA.html#cb59-33"></a>    <span class="dt">data =</span> <span class="kw">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.2</span> <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>),</span>
-<span id="cb59-34"><a href="PCA.html#cb59-34"></a>    <span class="kw">aes</span>(<span class="dt">x =</span> Dim<span class="fl">.1</span>, <span class="dt">y =</span> Dim<span class="fl">.2</span>, <span class="dt">label =</span> analyte), <span class="dt">direction =</span> <span class="st">&quot;y&quot;</span>, <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
-<span id="cb59-35"><a href="PCA.html#cb59-35"></a>  ) <span class="op">+</span></span>
-<span id="cb59-36"><a href="PCA.html#cb59-36"></a><span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="fl">1.5</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="fl">1.5</span>)) <span class="op">+</span></span>
-<span id="cb59-37"><a href="PCA.html#cb59-37"></a><span class="st">  </span><span class="kw">theme_bw</span>()</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-94-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.</p>
-</div>
-<div id="comparing-principal-components" class="section level2">
-<h2><span class="header-section-number">12.3</span> Comparing principal components</h2>
-<p>We also can access information about the how much of the variance in the data set is explained by each principal component:</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="PCA.html#cb60-1"></a>AK_lakes_pca_ord &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
-<span id="cb60-2"><a href="PCA.html#cb60-2"></a>    <span class="dt">data =</span> AK_lakes,</span>
-<span id="cb60-3"><a href="PCA.html#cb60-3"></a>    <span class="dt">analysis =</span> <span class="kw">c</span>(<span class="st">&quot;pca-dim&quot;</span>),</span>
-<span id="cb60-4"><a href="PCA.html#cb60-4"></a>    <span class="dt">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb60-5"><a href="PCA.html#cb60-5"></a>    <span class="dt">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb60-6"><a href="PCA.html#cb60-6"></a>    <span class="dt">columns_w_values_for_single_analyte =</span> <span class="kw">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb60-7"><a href="PCA.html#cb60-7"></a>    <span class="dt">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb60-8"><a href="PCA.html#cb60-8"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb60-9"><a href="PCA.html#cb60-9"></a>)</span>
-<span id="cb60-10"><a href="PCA.html#cb60-10"></a><span class="co">## Not replacing any NAs in your data set</span></span>
-<span id="cb60-11"><a href="PCA.html#cb60-11"></a><span class="kw">head</span>(AK_lakes_pca_ord)</span>
-<span id="cb60-12"><a href="PCA.html#cb60-12"></a><span class="co">## # A tibble: 6 x 2</span></span>
-<span id="cb60-13"><a href="PCA.html#cb60-13"></a><span class="co">##   principal_component percent_variance_explained</span></span>
-<span id="cb60-14"><a href="PCA.html#cb60-14"></a><span class="co">##                 &lt;dbl&gt;                      &lt;dbl&gt;</span></span>
-<span id="cb60-15"><a href="PCA.html#cb60-15"></a><span class="co">## 1                   1                      48.8 </span></span>
-<span id="cb60-16"><a href="PCA.html#cb60-16"></a><span class="co">## 2                   2                      18.6 </span></span>
-<span id="cb60-17"><a href="PCA.html#cb60-17"></a><span class="co">## 3                   3                      11.6 </span></span>
-<span id="cb60-18"><a href="PCA.html#cb60-18"></a><span class="co">## 4                   4                       7.88</span></span>
-<span id="cb60-19"><a href="PCA.html#cb60-19"></a><span class="co">## 5                   5                       4.68</span></span>
-<span id="cb60-20"><a href="PCA.html#cb60-20"></a><span class="co">## 6                   6                       3.33</span></span></code></pre></div>
-<p>And we can now plot that using ggplot:</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="PCA.html#cb61-1"></a><span class="kw">ggplot</span>(</span>
-<span id="cb61-2"><a href="PCA.html#cb61-2"></a>  <span class="dt">data =</span> AK_lakes_pca_ord, </span>
-<span id="cb61-3"><a href="PCA.html#cb61-3"></a>  <span class="kw">aes</span>(<span class="dt">x =</span> principal_component, <span class="dt">y =</span> percent_variance_explained)</span>
-<span id="cb61-4"><a href="PCA.html#cb61-4"></a>) <span class="op">+</span></span>
-<span id="cb61-5"><a href="PCA.html#cb61-5"></a><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></span>
-<span id="cb61-6"><a href="PCA.html#cb61-6"></a><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></span>
-<span id="cb61-7"><a href="PCA.html#cb61-7"></a><span class="st">  </span><span class="kw">theme_bw</span>()</span></code></pre></div>
-<p><img src="bio723-book_files/figure-html/unnamed-chunk-96-1.png" width="288" style="display: block; margin: auto;" /></p>
-<p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
-<!-- end --></p>
-<!-- start Exercises 5 -->
+<div id="suggestions-1" class="section level2">
+<h2><span class="header-section-number">22.2</span> Suggestions</h2>
+<ul>
+<li><p>Create paragraph outlines:</p>
+<ul>
+<li>Identify “data features” in your figures, then possible conclusions those could lead to. Example:
+<ul>
+<li>“The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1),” (a data feature)</li>
+<li>“suggesting that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.”</li>
+</ul></li>
+<li>Expand your “data feature” -&gt; “conclusion” combinations with “supplementary information” or “literature information”. Example:
+<ul>
+<li>“The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas.” (data feature)</li>
+<li>“These direct observations are consistent with meta-analyses of previously published observations (Supplemental Figure 1), as well as with conclusions drawn by others in recent literature reviews (So and so et al., 2018; The other person et al., 2019)” (supplementary and literature information.)</li>
+<li>“Overall, this suggests that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.”</li>
+</ul></li>
+</ul></li>
+<li><p>Write drafts of your paragraphs:</p>
+<ul>
+<li>Combine each of your “data feature” -&gt; “supp/lit info” -&gt; “conclusion” combinations into a single paragraph.</li>
+<li>Consider editing each paragraph so that it highlights what new contribution your data makes to the situation. Example (see italics):
+<ul>
+<li>"The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1). These direct observations are consistent with meta-analyses of previously published observations (Supplemental Figure 1), as well as with conclusions drawn by others in recent literature reviews (So and so et al., 2018; The other person et al., 2019). <em>The new chemical analyses presented here demonstrate that this is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds in the atmosphere.</em> Together these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.</li>
+</ul></li>
+</ul></li>
+<li><p>Order your paragraphs:</p>
+<ul>
+<li><p>Identify characteristics of your paragraphs that can help determine what order they should go in:</p>
+<ul>
+<li>Whether any of your paragraphs are prerequisites for others.</li>
+<li>Whether any paragraphs can be grouped according to topic.</li>
+</ul></li>
+<li><p>Group paragraphs according to topic and prerequisite dependencies (putting prereq dependencies as close to eachother as possible.)</p></li>
+<li><p>Rearrange groups for what seems like the most natural flow. Consider:</p>
+<ul>
+<li>Starting with group of paragraphs most relevant to the overall pitch/goal of the paper</li>
+<li>Ending on the group of paragraphs that has the most future perspective</li>
+<li>Ending in a strong suit (i.e. not something too speculative)</li>
+</ul></li>
+<li><p>After this, if you have any orphaned paragraphs, consider putting them (or a shortened version of them) into the conclusion section.</p></li>
+<li><p>Throughout this process, read lots of literature and incorporate it into your discussion section. Place your research into the context of what has been done previously.</p></li>
+</ul></li>
+<li><p>Edit your discussion section as a whole:</p>
+<ul>
+<li>Edit each paragraph, particularly its first and last sentences, to connect the paragraphs into a flowing document. Specifically, this means several things:
+<ul>
+<li>There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin “The compound described above exhibited other interesting properties”, rather, “3-hydroxycinnamic acid exhibited other interesting properties.”).</li>
+<li>There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.</li>
+<li>The discussion should not require the reader to go back and read its first half in order to understand its second half.
+<!-- end --></li>
+</ul></li>
+</ul></li>
+</ul>
+<!-- start Conclusions -->
 </div>
 </div>
             </section>
@@ -509,8 +443,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="Exercises-4.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="Exercises-5.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="results.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="conclusions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
