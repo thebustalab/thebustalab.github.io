@@ -34,6 +34,14 @@
         }
     }
 
+#### writeCSV
+
+    #' Interactive selection of a CSV file to read
+
+    writeCSV <- function(x) {
+        readr::write_csv(x = file, file = file.choose())
+    }
+
 #### runMatrixAnalysis
 
     #' Runs a matrix analysis (clustering, kmeans, pca).
