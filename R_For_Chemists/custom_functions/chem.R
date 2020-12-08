@@ -27,10 +27,10 @@
 
     readCSV <- function(sep = c(",", " ")) {
         if (sep[1] == ",") {
-            return(readr::read_csv(file.choose(), sep = ","))
+            return(readr::read_csv(file.choose(), delim = ","))
         }  
         if (sep[1] == " ") {
-            return(utils::read.delim(file.choose(), sep = " "))
+            return(utils::read.delim(file.choose(), delim = " "))
         }
     }
 
