@@ -39,7 +39,7 @@
     #' Interactive selection of a CSV file to read
 
     writeCSV <- function(x) {
-        readr::write_csv(x = file, file = file.choose())
+        readr::write_csv(x = x, file = file.choose())
     }
 
 #### runMatrixAnalysis
