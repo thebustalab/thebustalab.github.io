@@ -27,7 +27,7 @@
 
     readCSV <- function(sep = c(",", " ")) {
         if (sep[1] == ",") {
-            return(readr::read_csv(file.choose(), delim = ","))
+            return(readr::read_csv(file.choose()))
         }  
         if (sep[1] == " ") {
             return(utils::read.delim(file.choose(), delim = " "))
