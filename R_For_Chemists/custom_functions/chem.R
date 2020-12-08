@@ -829,66 +829,66 @@
 
 #### readPolylist
 
-        #' Reads a polylist
-        #'
-        #' Reads a spreadsheet in polylist format (wide format, multiple column and row headers), and converts it into tidy format
-        #' @param polylist_in_path The path to the polylist (in .csv format) to be read
-        #' @param centroid The characters in the cell that defines the boundaries of the multiple row and column headers
-        #' @param table_value_unit The name to be given to the column that will contain the values in the polylist table
-        #' @examples
-        #' @export
-        #' readPolylist
+    #' Reads a polylist
+    #'
+    #' Reads a spreadsheet in polylist format (wide format, multiple column and row headers), and converts it into tidy format
+    #' @param polylist_in_path The path to the polylist (in .csv format) to be read
+    #' @param centroid The characters in the cell that defines the boundaries of the multiple row and column headers
+    #' @param table_value_unit The name to be given to the column that will contain the values in the polylist table
+    #' @examples
+    #' @export
+    #' readPolylist
 
-        readPolylist <- function(   
-                            polylist_in_path,
-                            centroid = "~~~",
-                            table_value_unit = "abundance"
-                        ) {
+    readPolylist <- function(   
+                        polylist_in_path,
+                        centroid = "~~~",
+                        table_value_unit = "abundance"
+                    ) {
 
-            # Check for centroid
-                if ( length(centroid) != 1 ) {
-                    stop("Please provide a centroid")
-                }
+        # Check for centroid
+            if ( length(centroid) != 1 ) {
+                stop("Please provide a centroid")
+            }
 
-            # Import polylist
-                polylist <- as.data.frame(data.table::fread(polylist_in_path, header = FALSE))
+        # Import polylist
+            polylist <- as.data.frame(data.table::fread(polylist_in_path, header = FALSE))
 
-            # Identify location of centroid
-                center_column <- unlist(apply(polylist, 1, function(x) grep(centroid, x)))
-                center_row <- grep(centroid, polylist[,center_column])
+        # Identify location of centroid
+            center_column <- unlist(apply(polylist, 1, function(x) grep(centroid, x)))
+            center_row <- grep(centroid, polylist[,center_column])
 
-            # Use centroid to extract vertical_monolist
-                vertical_monolist <- polylist[(center_row+1):dim(polylist)[1], 1:(center_column-1)]
-                colnames(vertical_monolist) <- as.character(unlist(polylist[center_row, 1:(center_column-1)]))
-                vertical_monolist$URI_URI_URI <- apply(vertical_monolist, 1, function(x) paste(x, collapse = ""))
+        # Use centroid to extract vertical_monolist
+            vertical_monolist <- polylist[(center_row+1):dim(polylist)[1], 1:(center_column-1)]
+            colnames(vertical_monolist) <- as.character(unlist(polylist[center_row, 1:(center_column-1)]))
+            vertical_monolist$URI_URI_URI <- apply(vertical_monolist, 1, function(x) paste(x, collapse = ""))
 
-            # Use centroid to extract horizontal_monolist
-                horizontal_monolist <- as.data.frame(t(polylist[-c(center_row), (center_column+1):dim(polylist)[2]]))
-                rownames(horizontal_monolist) <- NULL
-                colnames(horizontal_monolist) <-    c(
-                                                    as.character(unlist(polylist[c(1:(center_row-1), (center_row+1):dim(polylist)[1]), center_column]))[1:(center_row-1)],
-                                                    as.character(vertical_monolist$URI_URI_URI)
-                                                )
-                horizontal_monolist <- tidyr::gather(horizontal_monolist, URI_URI_URI, table_value_unit, (center_row):dim(horizontal_monolist)[2])
-                colnames(horizontal_monolist)[colnames(horizontal_monolist) == "table_value_unit"] <- table_value_unit
+        # Use centroid to extract horizontal_monolist
+            horizontal_monolist <- as.data.frame(t(polylist[-c(center_row), (center_column+1):dim(polylist)[2]]))
+            rownames(horizontal_monolist) <- NULL
+            colnames(horizontal_monolist) <-    c(
+                                                as.character(unlist(polylist[c(1:(center_row-1), (center_row+1):dim(polylist)[1]), center_column]))[1:(center_row-1)],
+                                                as.character(vertical_monolist$URI_URI_URI)
+                                            )
+            horizontal_monolist <- tidyr::gather(horizontal_monolist, URI_URI_URI, table_value_unit, (center_row):dim(horizontal_monolist)[2])
+            colnames(horizontal_monolist)[colnames(horizontal_monolist) == "table_value_unit"] <- table_value_unit
 
-            # Bind the two monolists, drop the URI column
-                polylist <- cbind(horizontal_monolist,vertical_monolist[match(horizontal_monolist$URI_URI_URI, vertical_monolist[,colnames(vertical_monolist) == "URI_URI_URI"]),])
-                polylist <- polylist[,colnames(polylist) != "URI_URI_URI"]
+        # Bind the two monolists, drop the URI column
+            polylist <- cbind(horizontal_monolist,vertical_monolist[match(horizontal_monolist$URI_URI_URI, vertical_monolist[,colnames(vertical_monolist) == "URI_URI_URI"]),])
+            polylist <- polylist[,colnames(polylist) != "URI_URI_URI"]
 
-            # Make the table_value_unit column numeric
-                polylist[,colnames(polylist) == table_value_unit] <- as.numeric(as.character(polylist[,colnames(polylist) == table_value_unit]))
+        # Make the table_value_unit column numeric
+            polylist[,colnames(polylist) == table_value_unit] <- as.numeric(as.character(polylist[,colnames(polylist) == table_value_unit]))
 
-            # Add Genus_species column if not present
-                # if ( any(colnames(polylist) == "Genus_species") == FALSE) {
-                #     print("Adding Genus_species column")
-                #     polylist$Genus_species <- paste(polylist$Genus, polylist$species, sep="_")
-                # }
+        # Add Genus_species column if not present
+            # if ( any(colnames(polylist) == "Genus_species") == FALSE) {
+            #     print("Adding Genus_species column")
+            #     polylist$Genus_species <- paste(polylist$Genus, polylist$species, sep="_")
+            # }
 
-            # Reset row numbers, return the polylist
-                rownames(polylist) <- NULL
-                return(as_tibble(polylist))
-        }
+        # Reset row numbers, return the polylist
+            rownames(polylist) <- NULL
+            return(as_tibble(polylist))
+    }
 
 #### drawMolecules
 
@@ -1031,3 +1031,34 @@
 
             print(plot)
     }
+
+
+#### SSexp
+
+    SSexp <- structure(function (input, A, rc) {
+      .expr2 <- exp(rc * input)
+      .value <- A * .expr2
+      .actualArgs <- as.list(match.call()[c("A", "rc")])
+      if (all(unlist(lapply(.actualArgs, is.name)))) {
+        .grad <- array(0, c(length(.value), 2), list(NULL, c("A", "rc")))
+        .grad[, "A"] <- .expr2
+        .grad[, "rc"] <- A * (.expr2 * input)
+        dimnames(.grad) <- list(NULL, .actualArgs)
+        attr(.value, "gradient") <- .grad
+      }
+      .value
+    }
+    , initial = function (mCall, data, LHS) {
+      xy <- data.frame(sortedXyData(mCall[["input"]], LHS, data))
+      if (nrow(xy) < 3)
+        stop("Too few distinct input values to fit an exponential")
+      xy$logy <- log(xy$y)
+      ## Keep only finite cases (if there are y <= 0)
+      xyfinite <- xy[is.finite(xy$logy), ]
+      if (nrow(xyfinite) < 2)
+        stop("Too few distinct LHS values > 0 to fit an exponential")
+      res <- lsfit(xyfinite$x, xyfinite$logy)$coef
+      value <- c(exp(res[1]), res[2])
+      setNames(value, mCall[c("A", "rc")])
+    }
+    , pnames = c("A", "rc"), class = "selfStart")
