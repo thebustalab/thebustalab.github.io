@@ -1028,7 +1028,7 @@
               scale_x_continuous(breaks = seq(0,20,1)) +
               # scale_linetype_manual(values = bond_line_types) +
               scale_y_continuous(breaks = seq(0,20,1)) +
-              scale_fill_manual(values = atom_colors, name = "") +
+              # scale_fill_manual(values = atom_colors, name = "") +
               facet_wrap(.~molecule_name, ncol = 2) +
               theme_void() +
               guides(size = "none", alpha = "none") +
