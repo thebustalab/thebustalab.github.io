@@ -1013,19 +1013,24 @@
                 size = 1.5, alpha = 0.7
               ) +
 
-            ## Add atoms
+            ## Add atom number labels
               geom_point(
                 data = filter(plot_data, molecule_component == "atom"),
                 aes(x = x, y = y, fill = element_or_group),
                 shape = 21, size = 4
               ) +
               geom_text(
-                data = filter(plot_data, molecule_component == "atom"),
+                data = filter(plot_data, molecule_component == "atom", element_or_group != "H"),
                 aes(x = x, y = y, label = atom_number),
                 size = 2, color = "white"
               ) +
+              geom_text(
+                data = filter(plot_data, molecule_component == "atom", element_or_group == "H"),
+                aes(x = x, y = y, label = atom_number),
+                size = 2, color = "black"
+              ) +
 
-            ## Add label
+            ## Add molecule name as label
               geom_text(
                 data = drop_na(unique(select(plot_data, molecule_name, skeleton))),
                 aes(x = 1, y = 13, label = molecule_name),
