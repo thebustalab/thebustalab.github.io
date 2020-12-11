@@ -920,8 +920,18 @@
         # plot_data <- data[keep,]
         plot_data <- data
 
-        atom_colors <- c("grey", "black", "#377eb8", "#e41a1c", "#4daf4a")
-        names(atom_colors) <- c("H", "C", "CH3", "O", "OH")
+        atom_colors_pre <- as.data.frame(rbind(
+            c("C", "black"),
+            c("CH2", "grey"),
+            c("CH2OH", "#4daf4a"), # green
+            c("CH3", "#ff7f00"), # orange
+            c("COOH", "#ffff33"), # yellow
+            c("H", "white"),
+            c("O", "#e41a1c"), # red
+            c("OH", "#377eb8") # blue
+        ))
+        atom_colors <- atom_colors_pre[,2]
+        names(atom_colors) <- atom_colors_pre[,1]
 
         #e41a1c red
         #377eb8 blue
@@ -1028,7 +1038,7 @@
               scale_x_continuous(breaks = seq(0,20,1)) +
               # scale_linetype_manual(values = bond_line_types) +
               scale_y_continuous(breaks = seq(0,20,1)) +
-              # scale_fill_manual(values = atom_colors, name = "") +
+              scale_fill_manual(values = atom_colors, name = "") +
               facet_wrap(.~molecule_name, ncol = 2) +
               theme_void() +
               guides(size = "none", alpha = "none") +
@@ -1039,7 +1049,6 @@
 
             print(plot)
     }
-
 
 #### SSexp
 
