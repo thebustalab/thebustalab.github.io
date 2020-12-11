@@ -1020,12 +1020,12 @@
                 shape = 21, size = 4
               ) +
               geom_text(
-                data = filter(plot_data, molecule_component == "atom", element_or_group != "H"),
+                data = filter(plot_data, molecule_component == "atom", element_or_group %in% c("H", "COOH")),
                 aes(x = x, y = y, label = atom_number),
                 size = 2, color = "white"
               ) +
               geom_text(
-                data = filter(plot_data, molecule_component == "atom", element_or_group == "H"),
+                data = filter(plot_data, molecule_component == "atom", element_or_group == "H" | element_or_group == "COOH"),
                 aes(x = x, y = y, label = atom_number),
                 size = 2, color = "black"
               ) +
