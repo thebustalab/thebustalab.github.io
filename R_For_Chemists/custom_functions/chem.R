@@ -989,7 +989,7 @@
                 ), color = "grey0"
               ) +
 
-            ## Add non-vertical double bonds
+            ## Add nearly horizontal double bonds
               geom_segment(
                 data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
                 aes(x = bond_start_x, y = bond_start_y-0.2, xend = bond_end_x, yend = bond_end_y-0.2),
@@ -1052,7 +1052,8 @@
                 strip.text = element_blank()
               )
 
-            print(plot)
+            # print(plot)
+              return(plot)
     }
 
 #### SSexp
@@ -1084,3 +1085,152 @@
       setNames(value, mCall[c("A", "rc")])
     }
     , pnames = c("A", "rc"), class = "selfStart")
+
+#### analyzeMassSpectralImages
+
+    # library(imager)
+    # Read a png with left-most pixel low mass, right-most pixel high mass
+    # Filename: reference~compoundName_lowmz-rightmz
+
+    analyzeMassSpectralImages <- function(image_directory_path_in) {
+
+        images_to_analyze <- dir(image_directory_path_in)[grep(".png", dir(image_directory_path_in))]
+        
+        ## Skip comparison images, if necessary
+            if (length(grep("comparison.png", images_to_analyze)) > 0) {
+                images_to_analyze <- images_to_analyze[-c(grep("comparison.png", images_to_analyze))]
+            }
+
+        merged_spectral_output <- list()
+        for (image_to_analyze in 1:length(images_to_analyze)) {
+
+            ## Load and rotate image, filter for just one color channel
+
+                cat(paste0("\n", "Analyzing ", images_to_analyze[image_to_analyze], "\n", "\n"))
+
+                left_mz <- as.numeric(gsub("-.*$", "", gsub(".*_", "", images_to_analyze[image_to_analyze])))
+                right_mz <- as.numeric(gsub("\\..*$", "", gsub(".*-", "", images_to_analyze[image_to_analyze])))
+                reference <- gsub("~.*$", "", images_to_analyze[image_to_analyze])
+
+                image <- imager::load.image(paste0(image_directory_path_in, "/", images_to_analyze[image_to_analyze]))
+                image <- as_tibble(as.data.frame(as.cimg(image)))
+                image <- image[image$cc == 1,]
+                image$y <- -as.numeric(image$y)
+                image$y <- image$y + -min(image$y)
+                
+                # ggplot(image, aes(x = x, y = y, fill = value)) + geom_tile()
+
+            ## Set to monochrome, normalize coordinates, sort output
+                
+                filtered_image <- filter(image, value < 0.8)
+                filtered_image$value <- 1
+                filtered_image$x <- normalize(
+                    filtered_image$x, 
+                    old_min = min(filtered_image$x),
+                    old_max = max(filtered_image$x),
+                    new_min = left_mz,
+                    new_max = right_mz
+                )
+                filtered_image <- filtered_image[order(filtered_image$x),]
+
+                # ggplot(filtered_image, aes(x = x, y = y)) + geom_point(size = 0.1) + coord_cartesian(xlim = c(330,350))
+
+            ## Evaluate continuity and create processed image, do some clean up with median and negative numbers
+
+                processed_image_y <- list()
+                processed_image_x <- list()
+                pb <- progress::progress_bar$new(total = length(unique(filtered_image$x)))
+                for( i in 1:length(unique(filtered_image$x)) ) {
+                    
+                    data <- filtered_image[filtered_image$x == unique(filtered_image$x)[i],]
+                    
+                    # # One way to find gaps
+                    # if (any(!diff(data$y) == -1)) {
+                    #   start <- data$y[sum(head(rle(diff(data$y))$lengths, -1))+1]
+                    # } else {
+                    #   start <- max(data$y)
+                    # }
+
+                    # Another way.. both are slow
+                    start <- min(data$y)
+                    while((start + 1) %in% data$y) {
+                        start <- start + 1
+                    }
+
+                    processed_image_y[[i]] <- start
+                    processed_image_x[[i]] <- unique(filtered_image$x)[i]
+                    pb$tick()
+                }
+
+                processed_image <- data.frame(
+                    x = do.call(rbind, processed_image_x),
+                    y = do.call(rbind, processed_image_y)
+                )
+
+                processed_image$y <- processed_image$y - median(processed_image$y)
+                processed_image$y[processed_image$y < 0] <- 0
+
+                # ggplot(processed_image, aes(x = x, y = y)) + geom_col()
+
+            ## Bin x coordinates to nominal resolution, set negatives to zero
+
+                processed_image$x_round <- round(processed_image$x, 0)
+                processed_image <- group_by(processed_image, x_round)
+                processed_image <- summarize(processed_image, y = sum(y))
+                processed_image$y <- processed_image$y / max(processed_image$y) * 100
+                colnames(processed_image)[colnames(processed_image) == "x_round"] <- "x"
+                
+
+                # ggplot(processed_image, aes(x = x, y = y)) + geom_col()
+
+            ## Deal with duplicate peaks by resolving them in the way that creates the highest number of odd peaks
+
+                badness <- 0
+                for( i in 1:(length(processed_image$x)-1) ) {
+                    if (processed_image$y[i] > 0 ) {
+                        if( processed_image$y[i]/processed_image$y[i+1] > 0.9 & processed_image$y[i]/processed_image$y[i+1] < 1.1 ) {
+                            if (processed_image$y[i] > 25) {
+                                badness <- badness + 1
+                            }
+                        }
+                    }
+                }
+                # warning(paste0("Badness: ", badness, "\n"))
+
+            ## Return
+
+                colnames(processed_image) <- c("mz", "relative_abundance")
+                write_csv(processed_image, paste0(image_directory_path_in, "/", gsub(".png", "", images_to_analyze[image_to_analyze]), ".csv"))
+
+            ## Make plot of image versus processed data
+
+                plot_output <- ggplot() +
+                    geom_col(data = processed_image, aes(x = mz, y = -relative_abundance), width = 0.8, color = "black") +
+                    geom_text(data = 
+                        processed_image[apply(cbind(
+                            processed_image$relative_abundance > 2,
+                            processed_image$mz > max(processed_image$mz)*0.999,
+                            processed_image$mz < min(processed_image$mz)*1.001
+                        ), 1, any),],
+                        aes(x = mz, y = -relative_abundance - 5, label = mz)
+                    ) +
+                    geom_point(data = filtered_image, aes(x = x, y = y/max(y)*100), size = 0.1) +
+                    theme_bw()
+                print(plot_output)
+                ggsave(filename = paste0(image_directory_path_in, "/", gsub(".png", "", images_to_analyze[image_to_analyze]), "_comparison.png"), plot = plot_output)
+
+            ## Add to merged_spectral_output
+
+                merged_spectral_output[[image_to_analyze]] <- data.frame(
+                    reference = reference,
+                    compound_name = gsub("_.*$", "", gsub(".*~", "", gsub(".png", "", images_to_analyze[image_to_analyze]))),
+                    mz = processed_image$mz,
+                    relative_abundance = processed_image$relative_abundance
+                )
+        }
+
+            ## Write out merged_spectral_output
+
+                merged_spectral_output <- do.call(rbind, merged_spectral_output)
+                write_csv(merged_spectral_output, paste0(image_directory_path_in, "/_merged_spectral_output.csv"))
+    }
