@@ -2431,6 +2431,13 @@
 	            library(tidyverse)
 	            library(DT)
 	            library(RColorBrewer)
+                library(xcms)
+                library(data.table)
+                library(rhandsontable)
+                library(ape)
+                library(ips)
+                library(phangorn)
+                library(seqinr)
 
 	            ## Set up monolists
 
@@ -2590,7 +2597,7 @@
 	                                    
 	                                    hot = isolate(input$peak_table)
 	                                    if (!is.null(hot)) {
-	                                        writeMonolist(hot_to_r(input$peak_table), peaks_monolist_path)
+	                                        writeMonolist(rhandsontable::hot_to_r(input$peak_table), peaks_monolist_path)
 	                                        print(peaks_monolist_path)
 	                                    }
 
