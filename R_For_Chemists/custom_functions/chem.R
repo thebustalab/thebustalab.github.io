@@ -22,27 +22,6 @@
     beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv")
     hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv")
 
-#### readCSV
-
-    #' Interactive selection of a CSV file to read
-
-    readCSV <- function(sep = c(",", " ")) {
-        if (sep[1] == ",") {
-            return(readr::read_csv(file.choose()))
-        }  
-        if (sep[1] == " ") {
-            return(utils::read.delim(file.choose(), delim = " "))
-        }
-    }
-
-#### writeCSV
-
-    #' Interactive selection of a CSV file to read
-
-    writeCSV <- function(x) {
-        readr::write_csv(x = x, file = file.choose(), append = TRUE)
-    }
-
 #### runMatrixAnalysis
 
     #' Runs a matrix analysis (clustering, kmeans, pca).
@@ -1238,27 +1217,27 @@
 
 #### normalize
 
-        #' Normalizes a vector of numbers to a range of zero to one.
-        #'
-        #' @param x The vector to normalize
-        #' @param old_min The minimum of the old range
-        #' @param old_max The maximum of the old range
-        #' @param new_min The minimum of the new range, defaults to 0
-        #' @param new_max The maximum of the new range, defaults to 1
-        #' @examples
-        #' @export
-        #' normalize
+    #' Normalizes a vector of numbers to a range of zero to one.
+    #'
+    #' @param x The vector to normalize
+    #' @param old_min The minimum of the old range
+    #' @param old_max The maximum of the old range
+    #' @param new_min The minimum of the new range, defaults to 0
+    #' @param new_max The maximum of the new range, defaults to 1
+    #' @examples
+    #' @export
+    #' normalize
 
-        normalize <- function( x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1 ) {
+    normalize <- function( x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1 ) {
 
-            if ( length(old_min) == 0 & length(old_max) == 0 ) {
-                
-                (x - min(x)) * (new_max - new_min) / (max(x) - min(x)) + new_min                
+        if ( length(old_min) == 0 & length(old_max) == 0 ) {
             
-            } else {
+            (x - min(x)) * (new_max - new_min) / (max(x) - min(x)) + new_min                
+        
+        } else {
 
-                (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min
-
-            }
+            (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min
 
         }
+
+    }
