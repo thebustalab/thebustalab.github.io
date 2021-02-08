@@ -3035,6 +3035,7 @@
                                                                     rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
                                                                     rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
                                                                 ))
+                                            library(plyr)
                                             framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
                                             framedDataFile_1 <<- framedDataFile
                                             framedDataFile$intensity <- framedDataFile$intensity*100/max(framedDataFile$intensity)
@@ -3070,6 +3071,7 @@
                                                                     rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
                                                                     rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
                                                                 ))
+                                            library(plyr)
                                             framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
                                             framedDataFile_1$intensity <- framedDataFile_1$intensity - framedDataFile_to_subtract$intensity
                                             framedDataFile_1 <<- framedDataFile_1
@@ -3123,6 +3125,7 @@
                                                                     rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
                                                                     rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
                                                                 ))
+                                        library(plyr)
                                         framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
                                         framedDataFile_2 <<- framedDataFile
                                         framedDataFile$intensity <- framedDataFile$intensity*100/max(framedDataFile$intensity)
@@ -3159,6 +3162,7 @@
                                                                         rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
                                                                         rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
                                                                     ))
+                                                library(plyr)
                                                 framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
                                                 framedDataFile_2$intensity <- framedDataFile_2$intensity - framedDataFile_to_subtract$intensity
                                                 framedDataFile_2 <<- framedDataFile_2
