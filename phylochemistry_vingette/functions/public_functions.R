@@ -2612,7 +2612,9 @@
 
                             # DT::dataTableOutput("selected_peak"), ## Useful for troubleshooting
 
-                            rhandsontable::rHandsontableOutput("peak_table")
+                            rhandsontable::rHandsontableOutput("peak_table"),
+
+                            verbatimTextOutput("key", placeholder = TRUE)
                         )
                     )
 
