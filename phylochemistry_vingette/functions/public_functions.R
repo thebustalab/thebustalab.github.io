@@ -2471,7 +2471,7 @@
 
         integrationAppLite <-   function(
                 CDF_directory_path,
-                create_new_samples_monolist = FALSE,
+                create_new_samples_monolist = TRUE,
                 create_new_peak_monolist = FALSE,
                 zoom_and_scroll_rate = 100,
                 baseline_window = 400
