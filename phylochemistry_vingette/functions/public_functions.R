@@ -2528,24 +2528,20 @@
                         }
 
                 ## Set up new samples monolist
-
-                    if ( create_new_samples_monolist == TRUE ) {
                         
-                        samples_monolist <- data.frame(
-                            Sample_ID = gsub("\\..*$", "", gsub(".*/", "", unique(chromatograms$path_to_cdf_csv))),
-                            rt_offset = 0,
-                            baseline_window = baseline_window,
-                            path_to_cdf_csv = unique(chromatograms$path_to_cdf_csv)
-                        )
+                    samples_monolist <- data.frame(
+                        Sample_ID = gsub("\\..*$", "", gsub(".*/", "", unique(chromatograms$path_to_cdf_csv))),
+                        rt_offset = 0,
+                        baseline_window = baseline_window,
+                        path_to_cdf_csv = unique(chromatograms$path_to_cdf_csv)
+                    )
 
-                        write.table(
-                            x = samples_monolist,
-                            file = samples_monolist_path,
-                            row.names = FALSE,
-                            sep = ","
-                        )
-
-                    }
+                    write.table(
+                        x = samples_monolist,
+                        file = samples_monolist_path,
+                        row.names = FALSE,
+                        sep = ","
+                    )
 
                 ## Set up several variables, plot_height, and x_axis limits if not specified in function call
                     
