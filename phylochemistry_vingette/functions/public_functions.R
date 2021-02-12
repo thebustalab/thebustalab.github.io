@@ -2447,8 +2447,14 @@
 
 	        peak_list <- list()
 	        for (i in 1:length(paths_to_peak_monolists)) {
-	            peak_list[[i]] <- readMonolist(paths_to_peak_monolists[i])
-	        }
+                
+                if ( file.exits(paths_to_peak_monolists[i]) ) {
+	               
+                   peak_list[[i]] <- readMonolist(paths_to_peak_monolists[i])
+                
+                }
+	        
+            }
 
 	        do.call(rbind, peak_list)
 
