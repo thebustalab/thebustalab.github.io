@@ -2438,8 +2438,6 @@
 
 	    mergePeakLists <- function(analysis_directory_path) {
 
-	        analysis_directory_path <- "/Users/lucasbusta/Desktop/test"
-
 	        paths_to_peak_monolists <- paste(
 	            analysis_directory_path,
 	            dir(analysis_directory_path),
