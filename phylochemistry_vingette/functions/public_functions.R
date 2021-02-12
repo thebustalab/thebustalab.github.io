@@ -1657,14 +1657,17 @@
 	                            addition$mz <- add     
 	                        }
 	                        
-	                        addition <- tidyr::gather(addition, rt, intensity, 2:dim(addition)[2])
+                            addition <- tidyr::pivot_longer(addition, cols = 2:dim(addition)[2], names_to = "rt", values_to = "intensity")
 	                        addition$intensity <- 0
 	                        addition$rt <- as.numeric(addition$rt)
 	                        
-	                        framedDataFile <- tidyr::gather(spreadDataFile, rt, intensity, 2:dim(spreadDataFile)[2])
+                            framedDataFile <- tidyr::pivot_longer(spreadDataFile, cols = 2:dim(spreadDataFile)[2], names_to = "rt", values_to = "intensity")
+                        cat("   still working ...\n")
 	                        framedDataFile <- rbind(framedDataFile, addition)
+                        cat("   still working ... patience please\n")
 	                        framedDataFile$rt <- as.numeric(framedDataFile$rt)
 	                        framedDataFile <- framedDataFile[sort.list(framedDataFile$mz),]
+                        cat("   still working ... almost done\n")
 	                        framedDataFile <- framedDataFile[sort.list(framedDataFile$rt),]
 	                        rownames(framedDataFile) <- NULL
 
@@ -2471,8 +2474,6 @@
 
         integrationAppLite <-   function(
                 CDF_directory_path,
-                create_new_samples_monolist = TRUE,
-                create_new_peak_monolist = FALSE,
                 zoom_and_scroll_rate = 100,
                 baseline_window = 400
             ) {
@@ -2555,9 +2556,9 @@
                     x_axis_start <<- min(chromatograms$rt)
                     x_axis_end <<- max(chromatograms$rt)
                     
-                ## Set up new peak monolist
+                ## Set up new peak monolist if it doesn't exist
                     
-                    if ( create_new_peak_monolist == TRUE ) {
+                    if ( !file.exists(peaks_monolist_path) ) {
                         
                         peak_data <- data.frame(
                           peak_start = 0,
