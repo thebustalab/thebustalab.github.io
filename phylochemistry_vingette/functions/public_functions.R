@@ -3343,171 +3343,6 @@
                 return( data )
         }
 
-    #### drawMolecules
-
-        #' Draw chemical structures from CSV
-        #'
-        #' @param csv_in_path Path to the csv with the molecular coordinates.
-        #' @export
-        #' @examples
-        #' drawMolecules()
-
-        drawMolecules <- function(csv_in_path) {
-
-            data <- read_csv(csv_in_path)
-
-            data$bond_start_x <- data$x[match(data$bond_start_atom, data$atom_number)]
-            data$bond_start_y <- data$y[match(data$bond_start_atom, data$atom_number)]
-            data$bond_end_x <- data$x[match(data$bond_end_atom, data$atom_number)]
-            data$bond_end_y <- data$y[match(data$bond_end_atom, data$atom_number)]
-            data$bond_start_element_or_group <- data$element_or_group[match(data$bond_start_atom, data$atom_number)]
-            data$bond_end_element_or_group <- data$element_or_group[match(data$bond_end_atom, data$atom_number)]
-
-            # keep <- !apply(cbind(
-            #   data$element_or_group == "H",
-            #   data$bond_start_element_or_group == "H",
-            #   data$bond_end_element_or_group == "H"
-            # ), 1, any)
-            # keep[is.na(keep)] <- TRUE
-            # plot_data <- data[keep,]
-            plot_data <- data
-
-            atom_colors_pre <- as.data.frame(rbind(
-                c("C", "black"),
-                c("CH2", "grey"),
-                c("CH2OH", "#4daf4a"), # green
-                c("CH3", "#ff7f00"), # orange
-                c("COOH", "#ffff33"), # yellow
-                c("H", "white"),
-                c("O", "#e41a1c"), # red
-                c("OH", "#377eb8") # blue
-            ))
-            atom_colors <- atom_colors_pre[,2]
-            names(atom_colors) <- atom_colors_pre[,1]
-
-            #e41a1c red
-            #377eb8 blue
-            #4daf4a green
-            #984ea3 purple
-            #ff7f00 orange
-            #ffff33 yellow
-            #a65628 brown
-
-            ## Plotting
-
-              plot <- ggplot() +
-
-                ## Add achiral single bonds
-                  geom_link(
-                    data = filter(
-                      plot_data, 
-                      molecule_component == "bond" &  
-                      bond_type == "single" & 
-                      bond_direction == "flat"
-                    ),
-                    aes(
-                      x = bond_start_x, y = bond_start_y,
-                      xend = bond_end_x, yend = bond_end_y
-                    ), size = 2, color = "grey30"
-                  ) +
-
-                ## Add down chiral single bonds
-                  geom_link(
-                    data = filter(
-                      plot_data, 
-                      molecule_component == "bond" &
-                      bond_type == "single" &
-                      bond_direction == "down"
-                    ),
-                    aes(
-                      x = bond_start_x, y = bond_start_y,
-                      xend = bond_end_x, yend = bond_end_y,
-                      size = stat(index)
-                    ), color = "grey60"
-                  ) +
-                
-                ## Add up chiral single bonds
-                  geom_link(
-                    data = filter(
-                      plot_data, 
-                      molecule_component == "bond" &
-                      bond_type == "single" &
-                      bond_direction == "up"
-                    ),
-                    aes(
-                      x = bond_start_x, y = bond_start_y,
-                      xend = bond_end_x, yend = bond_end_y,
-                      size = stat(index)
-                    ), color = "grey0"
-                  ) +
-
-                ## Add nearly horizontal double bonds
-                  geom_segment(
-                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
-                    aes(x = bond_start_x, y = bond_start_y-0.2, xend = bond_end_x, yend = bond_end_y-0.2),
-                    size = 1.5, alpha = 0.7
-                  ) +
-                  geom_segment(
-                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
-                    aes(x = bond_start_x, y = bond_start_y+0.2, xend = bond_end_x, yend = bond_end_y+0.2),
-                    size = 1.5, alpha = 0.7
-                  ) +
-
-                ## Add vertical double bonds
-                  geom_segment(
-                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x == bond_end_x),
-                    aes(x = bond_start_x-0.18, y = bond_start_y, xend = bond_end_x-0.18, yend = bond_end_y),
-                    size = 1.5, alpha = 0.7
-                  ) +
-                  geom_segment(
-                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x == bond_end_x),
-                    aes(x = bond_start_x+0.18, y = bond_start_y, xend = bond_end_x+0.18, yend = bond_end_y),
-                    size = 1.5, alpha = 0.7
-                  ) +
-
-                ## Add atom number labels
-                  geom_point(
-                    data = filter(plot_data, molecule_component == "atom"),
-                    aes(x = x, y = y, fill = element_or_group),
-                    shape = 21, size = 4
-                  ) +
-                  geom_text(
-                    data = filter(plot_data, molecule_component == "atom", element_or_group %in% c("H", "COOH")),
-                    aes(x = x, y = y, label = atom_number),
-                    size = 2, color = "black"
-                  ) +
-                  geom_text(
-                    data = filter(plot_data, molecule_component == "atom", element_or_group != "H" & element_or_group != "COOH"),
-                    aes(x = x, y = y, label = atom_number),
-                    size = 2, color = "white"
-                  ) +
-
-                ## Add molecule name as label
-                  geom_text(
-                    data = drop_na(unique(select(plot_data, molecule_name, skeleton))),
-                    aes(x = 1, y = 13, label = molecule_name),
-                    size = 4, color = "black", hjust = 0
-                  ) +
-
-                ## Scales and theme
-                  scale_color_gradient(low = "black", high = "black") +
-                  scale_size_continuous(range = c(0,4)) +
-                  scale_x_continuous(breaks = seq(0,20,1)) +
-                  # scale_linetype_manual(values = bond_line_types) +
-                  scale_y_continuous(breaks = seq(0,20,1)) +
-                  scale_fill_manual(values = atom_colors, name = "") +
-                  facet_wrap(.~molecule_name, ncol = 2) +
-                  theme_void() +
-                  guides(size = "none", alpha = "none") +
-                  coord_fixed() +
-                  theme(
-                    strip.text = element_blank()
-                  )
-
-                # print(plot)
-                  return(plot)
-        }
-
     #### analyzeMassSpectralImages
 
         #' Use image analysis to obtain csv of mass spectrum from an image.
@@ -4115,6 +3950,171 @@
 
                                 return(return)
                             }
+
+    #### drawMolecules
+
+        #' Draw chemical structures from CSV
+        #'
+        #' @param csv_in_path Path to the csv with the molecular coordinates.
+        #' @export
+        #' @examples
+        #' drawMolecules()
+
+        drawMolecules <- function(csv_in_path) {
+
+            data <- read_csv(csv_in_path)
+
+            data$bond_start_x <- data$x[match(data$bond_start_atom, data$atom_number)]
+            data$bond_start_y <- data$y[match(data$bond_start_atom, data$atom_number)]
+            data$bond_end_x <- data$x[match(data$bond_end_atom, data$atom_number)]
+            data$bond_end_y <- data$y[match(data$bond_end_atom, data$atom_number)]
+            data$bond_start_element_or_group <- data$element_or_group[match(data$bond_start_atom, data$atom_number)]
+            data$bond_end_element_or_group <- data$element_or_group[match(data$bond_end_atom, data$atom_number)]
+
+            # keep <- !apply(cbind(
+            #   data$element_or_group == "H",
+            #   data$bond_start_element_or_group == "H",
+            #   data$bond_end_element_or_group == "H"
+            # ), 1, any)
+            # keep[is.na(keep)] <- TRUE
+            # plot_data <- data[keep,]
+            plot_data <- data
+
+            atom_colors_pre <- as.data.frame(rbind(
+                c("C", "black"),
+                c("CH2", "grey"),
+                c("CH2OH", "#4daf4a"), # green
+                c("CH3", "#ff7f00"), # orange
+                c("COOH", "#ffff33"), # yellow
+                c("H", "white"),
+                c("O", "#e41a1c"), # red
+                c("OH", "#377eb8") # blue
+            ))
+            atom_colors <- atom_colors_pre[,2]
+            names(atom_colors) <- atom_colors_pre[,1]
+
+            #e41a1c red
+            #377eb8 blue
+            #4daf4a green
+            #984ea3 purple
+            #ff7f00 orange
+            #ffff33 yellow
+            #a65628 brown
+
+            ## Plotting
+
+              plot <- ggplot() +
+
+                ## Add achiral single bonds
+                  geom_link(
+                    data = filter(
+                      plot_data, 
+                      molecule_component == "bond" &  
+                      bond_type == "single" & 
+                      bond_direction == "flat"
+                    ),
+                    aes(
+                      x = bond_start_x, y = bond_start_y,
+                      xend = bond_end_x, yend = bond_end_y
+                    ), size = 2, color = "grey30"
+                  ) +
+
+                ## Add down chiral single bonds
+                  geom_link(
+                    data = filter(
+                      plot_data, 
+                      molecule_component == "bond" &
+                      bond_type == "single" &
+                      bond_direction == "down"
+                    ),
+                    aes(
+                      x = bond_start_x, y = bond_start_y,
+                      xend = bond_end_x, yend = bond_end_y,
+                      size = stat(index)
+                    ), color = "grey60"
+                  ) +
+                
+                ## Add up chiral single bonds
+                  geom_link(
+                    data = filter(
+                      plot_data, 
+                      molecule_component == "bond" &
+                      bond_type == "single" &
+                      bond_direction == "up"
+                    ),
+                    aes(
+                      x = bond_start_x, y = bond_start_y,
+                      xend = bond_end_x, yend = bond_end_y,
+                      size = stat(index)
+                    ), color = "grey0"
+                  ) +
+
+                ## Add nearly horizontal double bonds
+                  geom_segment(
+                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
+                    aes(x = bond_start_x, y = bond_start_y-0.2, xend = bond_end_x, yend = bond_end_y-0.2),
+                    size = 1.5, alpha = 0.7
+                  ) +
+                  geom_segment(
+                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
+                    aes(x = bond_start_x, y = bond_start_y+0.2, xend = bond_end_x, yend = bond_end_y+0.2),
+                    size = 1.5, alpha = 0.7
+                  ) +
+
+                ## Add vertical double bonds
+                  geom_segment(
+                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x == bond_end_x),
+                    aes(x = bond_start_x-0.18, y = bond_start_y, xend = bond_end_x-0.18, yend = bond_end_y),
+                    size = 1.5, alpha = 0.7
+                  ) +
+                  geom_segment(
+                    data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x == bond_end_x),
+                    aes(x = bond_start_x+0.18, y = bond_start_y, xend = bond_end_x+0.18, yend = bond_end_y),
+                    size = 1.5, alpha = 0.7
+                  ) +
+
+                ## Add atom number labels
+                  geom_point(
+                    data = filter(plot_data, molecule_component == "atom"),
+                    aes(x = x, y = y, fill = element_or_group),
+                    shape = 21, size = 4
+                  ) +
+                  geom_text(
+                    data = filter(plot_data, molecule_component == "atom", element_or_group %in% c("H", "COOH")),
+                    aes(x = x, y = y, label = atom_number),
+                    size = 2, color = "black"
+                  ) +
+                  geom_text(
+                    data = filter(plot_data, molecule_component == "atom", element_or_group != "H" & element_or_group != "COOH"),
+                    aes(x = x, y = y, label = atom_number),
+                    size = 2, color = "white"
+                  ) +
+
+                ## Add molecule name as label
+                  geom_text(
+                    data = drop_na(unique(select(plot_data, molecule_name, skeleton))),
+                    aes(x = 1, y = 13, label = molecule_name),
+                    size = 4, color = "black", hjust = 0
+                  ) +
+
+                ## Scales and theme
+                  scale_color_gradient(low = "black", high = "black") +
+                  scale_size_continuous(range = c(0,4)) +
+                  scale_x_continuous(breaks = seq(0,20,1)) +
+                  # scale_linetype_manual(values = bond_line_types) +
+                  scale_y_continuous(breaks = seq(0,20,1)) +
+                  scale_fill_manual(values = atom_colors, name = "") +
+                  facet_wrap(.~molecule_name, ncol = 2) +
+                  theme_void() +
+                  guides(size = "none", alpha = "none") +
+                  coord_fixed() +
+                  theme(
+                    strip.text = element_blank()
+                  )
+
+                # print(plot)
+                  return(plot)
+        }                       
 
 ##### Statistical testing
 
