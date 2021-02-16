@@ -1026,6 +1026,7 @@ You have learned many things in this course so far. `filter()`, `ggplot()`, and 
 So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use `runMatrixAnalysis()`, a function that you can load into your R Session by running the following command:
 
 ```{r, message = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 source("https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R")
 ```
 
