@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2020-12-07" />
+<meta name="date" content="2021-02-15" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,8 +51,6 @@
 
 
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
@@ -238,7 +236,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="15.8" data-path="Exercises-6.html"><a href="Exercises-6.html#challenge-optional"><i class="fa fa-check"></i><b>15.8</b> Challenge (optional)</a></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>16</b> comparing means</a><ul>
-<li class="chapter" data-level="16.1" data-path="comparing-means.html"><a href="comparing-means.html#the-p-value"><i class="fa fa-check"></i><b>16.1</b> The p value</a></li>
+<li class="chapter" data-level="16.1" data-path="comparing-means.html"><a href="comparing-means.html#getting-ready"><i class="fa fa-check"></i><b>16.1</b> Getting Ready</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="comparing-means.html"><a href="comparing-means.html#the-null-hypothesis"><i class="fa fa-check"></i><b>16.1.1</b> The null hypothesis</a></li>
+<li class="chapter" data-level="16.1.2" data-path="comparing-means.html"><a href="comparing-means.html#the-p-value"><i class="fa fa-check"></i><b>16.1.2</b> The p value</a></li>
+<li class="chapter" data-level="16.1.3" data-path="comparing-means.html"><a href="comparing-means.html#the-plan"><i class="fa fa-check"></i><b>16.1.3</b> The plan</a></li>
+</ul></li>
 <li class="chapter" data-level="16.2" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>16.2</b> Two means</a></li>
 <li class="chapter" data-level="16.3" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>16.3</b> More than two means</a><ul>
 <li class="chapter" data-level="16.3.1" data-path="comparing-means.html"><a href="comparing-means.html#anova-tukey-tests"><i class="fa fa-check"></i><b>16.3.1</b> ANOVA, Tukey tests</a></li>
@@ -374,11 +376,21 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 16</span> comparing means</h1>
 <p>Often, we want to know if our study subjects contain different amounts of certain analytes. For example, “Does this lake over here contain more potassium than that lake over there?” For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.</p>
 <p>To run these statistical analyses, we will need several new R packages: <code>rstatix</code>, <code>agricolae</code>, and <code>multcompView</code>. Please install these with <code>install.packages("rstatix")</code>, <code>install.packages("agricolae")</code>, and <code>install.packages("multcompView")</code>. Load them into your R session using <code>library(rstatix)</code>, <code>library(agricolae)</code>, and <code>library(multcompView)</code>.</p>
-<div id="the-p-value" class="section level2">
-<h2><span class="header-section-number">16.1</span> The p value</h2>
-<p>“The p value represents the probability of getting data as extreme as our results if the null hypothesis is true.”</p>
-<p>In other words - the p value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all.</p>
+<div id="getting-ready" class="section level2">
+<h2><span class="header-section-number">16.1</span> Getting Ready</h2>
+<div id="the-null-hypothesis" class="section level3">
+<h3><span class="header-section-number">16.1.1</span> The null hypothesis</h3>
+<p>When we conduct a statistical test, we are testing the null hypothesis. The null hypothesis is that there is no difference bewteen the means (hence the name “null”).</p>
+</div>
+<div id="the-p-value" class="section level3">
+<h3><span class="header-section-number">16.1.2</span> The p value</h3>
+<p>The p value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the p value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all.</p>
+</div>
+<div id="the-plan" class="section level3">
+<h3><span class="header-section-number">16.1.3</span> The plan</h3>
+<p>Below is a flow chart illustrating how it is recommended that statistical tests be used in this course.</p>
 <p><img src="http://thebustalab.github.io/R_For_Chemists/figures/stats.png" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="two-means" class="section level2">
 <h2><span class="header-section-number">16.2</span> Two means</h2>

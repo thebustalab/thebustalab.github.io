@@ -1886,11 +1886,20 @@ library(agricolae)
 library(multcompView)
 ```
 
-## The p value
+## Getting Ready
 
-"The p value represents the probability of getting data as extreme as our results if the null hypothesis is true."
+### The null hypothesis
 
-In other words - the p value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all.
+When we conduct a statistical test, we are testing the null hypothesis. The null hypothesis is that there is no difference bewteen the means (hence the name "null").
+
+### The p value
+
+The p value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the p value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all.
+
+### The plan
+
+Below is a flow chart illustrating how it is recommended that statistical tests be used in this course.
+
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/stats.png', dpi = NA)

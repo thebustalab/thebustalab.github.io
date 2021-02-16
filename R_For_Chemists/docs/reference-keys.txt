@@ -194,3 +194,6 @@ suggestions-3
 suggestions-4
 suggestions-5
 further-reading-1
+getting-ready
+the-null-hypothesis
+the-plan
