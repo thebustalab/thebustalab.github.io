@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>17 Mid Term Exam | R For Chemists</title>
+  <meta name="description" content="17 Mid Term Exam | R For Chemists" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="17 Mid Term Exam | R For Chemists" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="17 Mid Term Exam | R For Chemists" />
+  
+  
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2021-02-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="comparing-means.html"/>
+<link rel="next" href="project-overview.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installation</a><ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-r"><i class="fa fa-check"></i><b>2.1</b> Installing <code>R</code></a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
+<li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
+<li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="R-Basics.html"><a href="R-Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a><ul>
+<li class="chapter" data-level="3.1" data-path="R-Basics.html"><a href="R-Basics.html#before-we-start"><i class="fa fa-check"></i><b>3.1</b> Before we start…</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="R-Basics.html"><a href="R-Basics.html#help"><i class="fa fa-check"></i><b>3.1.1</b> Help</a></li>
+<li class="chapter" data-level="3.1.2" data-path="R-Basics.html"><a href="R-Basics.html#syntax"><i class="fa fa-check"></i><b>3.1.2</b> Syntax</a></li>
+<li class="chapter" data-level="3.1.3" data-path="R-Basics.html"><a href="R-Basics.html#paths"><i class="fa fa-check"></i><b>3.1.3</b> Paths</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="R-Basics.html"><a href="R-Basics.html#functions"><i class="fa fa-check"></i><b>3.2</b> Functions</a></li>
+<li class="chapter" data-level="3.3" data-path="R-Basics.html"><a href="R-Basics.html#objects"><i class="fa fa-check"></i><b>3.3</b> Objects</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="ggplot2.html"><a href="ggplot2.html"><i class="fa fa-check"></i><b>4</b> ggplot2</a><ul>
+<li class="chapter" data-level="4.1" data-path="ggplot2.html"><a href="ggplot2.html#setting-up-a-ggplot"><i class="fa fa-check"></i><b>4.1</b> Setting up a ggplot</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="ggplot2.html"><a href="ggplot2.html#step-1-define-the-data-you-want-to-use."><i class="fa fa-check"></i><b>4.1.1</b> Step 1: Define the data you want to use.</a></li>
+<li class="chapter" data-level="4.1.2" data-path="ggplot2.html"><a href="ggplot2.html#step-2-define-how-your-variables-map-onto-the-axes."><i class="fa fa-check"></i><b>4.1.2</b> Step 2: Define how your variables map onto the axes.</a></li>
+<li class="chapter" data-level="4.1.3" data-path="ggplot2.html"><a href="ggplot2.html#step-3-use-geometric-shapes-to-represent-other-variables-in-your-data."><i class="fa fa-check"></i><b>4.1.3</b> Step 3: Use geometric shapes to represent other variables in your data.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="ggplot2.html"><a href="ggplot2.html#geoms"><i class="fa fa-check"></i><b>4.2</b> Geoms</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="ggplot2.html"><a href="ggplot2.html#modifying-geoms"><i class="fa fa-check"></i><b>4.2.1</b> Modifying geoms</a></li>
+<li class="chapter" data-level="4.2.2" data-path="ggplot2.html"><a href="ggplot2.html#using-multiple-geoms"><i class="fa fa-check"></i><b>4.2.2</b> Using multiple geoms</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Exercises-1.html"><a href="Exercises-1.html"><i class="fa fa-check"></i><b>5</b> Exercises 1</a><ul>
+<li class="chapter" data-level="5.1" data-path="Exercises-1.html"><a href="Exercises-1.html#part-1-algae-chemistry-dataset"><i class="fa fa-check"></i><b>5.1</b> Part 1: Algae Chemistry Dataset</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="Exercises-1.html"><a href="Exercises-1.html#question-1-importing-data"><i class="fa fa-check"></i><b>5.1.1</b> Question 1: Importing data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="Exercises-1.html"><a href="Exercises-1.html#question-2-dataset-dimensions"><i class="fa fa-check"></i><b>5.1.2</b> Question 2: Dataset dimensions</a></li>
+<li class="chapter" data-level="5.1.3" data-path="Exercises-1.html"><a href="Exercises-1.html#question-3-objects"><i class="fa fa-check"></i><b>5.1.3</b> Question 3: Objects</a></li>
+<li class="chapter" data-level="5.1.4" data-path="Exercises-1.html"><a href="Exercises-1.html#question-4-filtering"><i class="fa fa-check"></i><b>5.1.4</b> Question 4: Filtering</a></li>
+<li class="chapter" data-level="5.1.5" data-path="Exercises-1.html"><a href="Exercises-1.html#question-5-plotting"><i class="fa fa-check"></i><b>5.1.5</b> Question 5: Plotting</a></li>
+<li class="chapter" data-level="5.1.6" data-path="Exercises-1.html"><a href="Exercises-1.html#question-6-plotting"><i class="fa fa-check"></i><b>5.1.6</b> Question 6: Plotting</a></li>
+<li class="chapter" data-level="5.1.7" data-path="Exercises-1.html"><a href="Exercises-1.html#question-7-filtering-and-plotting"><i class="fa fa-check"></i><b>5.1.7</b> Question 7: Filtering and plotting</a></li>
+<li class="chapter" data-level="5.1.8" data-path="Exercises-1.html"><a href="Exercises-1.html#question-8-filtering-and-plotting"><i class="fa fa-check"></i><b>5.1.8</b> Question 8: Filtering and plotting</a></li>
+<li class="chapter" data-level="5.1.9" data-path="Exercises-1.html"><a href="Exercises-1.html#question-9-open-ended-plotting"><i class="fa fa-check"></i><b>5.1.9</b> Question 9: Open-ended plotting</a></li>
+<li class="chapter" data-level="5.1.10" data-path="Exercises-1.html"><a href="Exercises-1.html#question-10-a-peek-at-whats-to-come"><i class="fa fa-check"></i><b>5.1.10</b> Question 10: A peek at what’s to come…</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="Exercises-1.html"><a href="Exercises-1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>5.2</b> Part 2: Alaska Lakes Dataset</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="Exercises-1.html"><a href="Exercises-1.html#question-1-importing-data-1"><i class="fa fa-check"></i><b>5.2.1</b> Question 1: Importing Data</a></li>
+<li class="chapter" data-level="5.2.2" data-path="Exercises-1.html"><a href="Exercises-1.html#question-2-objects"><i class="fa fa-check"></i><b>5.2.2</b> Question 2: Objects</a></li>
+<li class="chapter" data-level="5.2.3" data-path="Exercises-1.html"><a href="Exercises-1.html#question-3-filtering"><i class="fa fa-check"></i><b>5.2.3</b> Question 3: Filtering</a></li>
+<li class="chapter" data-level="5.2.4" data-path="Exercises-1.html"><a href="Exercises-1.html#question-4-plotting"><i class="fa fa-check"></i><b>5.2.4</b> Question 4: Plotting</a></li>
+<li class="chapter" data-level="5.2.5" data-path="Exercises-1.html"><a href="Exercises-1.html#question-5-plotting-1"><i class="fa fa-check"></i><b>5.2.5</b> Question 5: Plotting</a></li>
+<li class="chapter" data-level="5.2.6" data-path="Exercises-1.html"><a href="Exercises-1.html#question-6-filtering-and-plotting"><i class="fa fa-check"></i><b>5.2.6</b> Question 6: Filtering and Plotting</a></li>
+<li class="chapter" data-level="5.2.7" data-path="Exercises-1.html"><a href="Exercises-1.html#question-7-filtering-and-plotting-1"><i class="fa fa-check"></i><b>5.2.7</b> Question 7: Filtering and Plotting</a></li>
+<li class="chapter" data-level="5.2.8" data-path="Exercises-1.html"><a href="Exercises-1.html#question-8-open-ended-plotting"><i class="fa fa-check"></i><b>5.2.8</b> Question 8: Open-ended Plotting</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a><ul>
+<li class="chapter" data-level="6.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
+<li class="chapter" data-level="6.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
+<li class="chapter" data-level="6.4.2" data-path="geoms-facets-scales-themes.html"><a href="geoms-facets-scales-themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="Exercises-2.html"><a href="Exercises-2.html"><i class="fa fa-check"></i><b>7</b> Exercises 2</a><ul>
+<li class="chapter" data-level="7.1" data-path="Exercises-2.html"><a href="Exercises-2.html#question-1"><i class="fa fa-check"></i><b>7.1</b> Question 1</a></li>
+<li class="chapter" data-level="7.2" data-path="Exercises-2.html"><a href="Exercises-2.html#question-2"><i class="fa fa-check"></i><b>7.2</b> Question 2</a></li>
+<li class="chapter" data-level="7.3" data-path="Exercises-2.html"><a href="Exercises-2.html#question-3"><i class="fa fa-check"></i><b>7.3</b> Question 3</a></li>
+<li class="chapter" data-level="7.4" data-path="Exercises-2.html"><a href="Exercises-2.html#question-4"><i class="fa fa-check"></i><b>7.4</b> Question 4</a></li>
+<li class="chapter" data-level="7.5" data-path="Exercises-2.html"><a href="Exercises-2.html#question-5"><i class="fa fa-check"></i><b>7.5</b> Question 5</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="summary-statistics.html"><a href="summary-statistics.html"><i class="fa fa-check"></i><b>8</b> Summary Statistics</a><ul>
+<li class="chapter" data-level="8.1" data-path="summary-statistics.html"><a href="summary-statistics.html#summary-statistics"><i class="fa fa-check"></i><b>8.1</b> Summary statistics</a></li>
+<li class="chapter" data-level="8.2" data-path="summary-statistics.html"><a href="summary-statistics.html#the-pipe"><i class="fa fa-check"></i><b>8.2</b> The pipe (%&gt;%)</a></li>
+<li class="chapter" data-level="8.3" data-path="summary-statistics.html"><a href="summary-statistics.html#tidy-data"><i class="fa fa-check"></i><b>8.3</b> Tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="Exercises-3.html"><a href="Exercises-3.html"><i class="fa fa-check"></i><b>9</b> Exercises 3</a><ul>
+<li class="chapter" data-level="9.1" data-path="Exercises-3.html"><a href="Exercises-3.html#question-1-1"><i class="fa fa-check"></i><b>9.1</b> Question 1</a></li>
+<li class="chapter" data-level="9.2" data-path="Exercises-3.html"><a href="Exercises-3.html#question-2-1"><i class="fa fa-check"></i><b>9.2</b> Question 2</a></li>
+<li class="chapter" data-level="9.3" data-path="Exercises-3.html"><a href="Exercises-3.html#question-3-1"><i class="fa fa-check"></i><b>9.3</b> Question 3</a></li>
+<li class="chapter" data-level="9.4" data-path="Exercises-3.html"><a href="Exercises-3.html#question-4-1"><i class="fa fa-check"></i><b>9.4</b> Question 4</a></li>
+<li class="chapter" data-level="9.5" data-path="Exercises-3.html"><a href="Exercises-3.html#question-5-1"><i class="fa fa-check"></i><b>9.5</b> Question 5</a></li>
+<li class="chapter" data-level="9.6" data-path="Exercises-3.html"><a href="Exercises-3.html#question-6"><i class="fa fa-check"></i><b>9.6</b> Question 6</a></li>
+<li class="chapter" data-level="9.7" data-path="Exercises-3.html"><a href="Exercises-3.html#question-7"><i class="fa fa-check"></i><b>9.7</b> Question 7</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="Clustering.html"><a href="Clustering.html"><i class="fa fa-check"></i><b>10</b> Clustering</a></li>
+<li class="chapter" data-level="11" data-path="Exercises-4.html"><a href="Exercises-4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
+<li class="chapter" data-level="12" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>12</b> PCA</a><ul>
+<li class="chapter" data-level="12.1" data-path="PCA.html"><a href="PCA.html#pca"><i class="fa fa-check"></i><b>12.1</b> PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="PCA.html"><a href="PCA.html#drivers-of-pca-dimensions"><i class="fa fa-check"></i><b>12.2</b> Drivers of PCA dimensions</a></li>
+<li class="chapter" data-level="12.3" data-path="PCA.html"><a href="PCA.html#comparing-principal-components"><i class="fa fa-check"></i><b>12.3</b> Comparing principal components</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="Exercises-5.html"><a href="Exercises-5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a><ul>
+<li class="chapter" data-level="13.1" data-path="Exercises-5.html"><a href="Exercises-5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
+<li class="chapter" data-level="13.2" data-path="Exercises-5.html"><a href="Exercises-5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>13.2</b> Option 2: Grape vine varieties</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>14</b> k-means</a></li>
+<li class="chapter" data-level="15" data-path="Exercises-6.html"><a href="Exercises-6.html"><i class="fa fa-check"></i><b>15</b> Exercises 6</a><ul>
+<li class="chapter" data-level="15.1" data-path="Exercises-6.html"><a href="Exercises-6.html#question-1-2"><i class="fa fa-check"></i><b>15.1</b> Question 1</a></li>
+<li class="chapter" data-level="15.2" data-path="Exercises-6.html"><a href="Exercises-6.html#question-2-2"><i class="fa fa-check"></i><b>15.2</b> Question 2</a></li>
+<li class="chapter" data-level="15.3" data-path="Exercises-6.html"><a href="Exercises-6.html#question-3-2"><i class="fa fa-check"></i><b>15.3</b> Question 3</a></li>
+<li class="chapter" data-level="15.4" data-path="Exercises-6.html"><a href="Exercises-6.html#question-4-2"><i class="fa fa-check"></i><b>15.4</b> Question 4</a></li>
+<li class="chapter" data-level="15.5" data-path="Exercises-6.html"><a href="Exercises-6.html#question-5-2"><i class="fa fa-check"></i><b>15.5</b> Question 5</a></li>
+<li class="chapter" data-level="15.6" data-path="Exercises-6.html"><a href="Exercises-6.html#question-6-1"><i class="fa fa-check"></i><b>15.6</b> Question 6</a></li>
+<li class="chapter" data-level="15.7" data-path="Exercises-6.html"><a href="Exercises-6.html#question-7-1"><i class="fa fa-check"></i><b>15.7</b> Question 7</a></li>
+<li class="chapter" data-level="15.8" data-path="Exercises-6.html"><a href="Exercises-6.html#challenge-optional"><i class="fa fa-check"></i><b>15.8</b> Challenge (optional)</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>16</b> comparing means</a><ul>
+<li class="chapter" data-level="16.1" data-path="comparing-means.html"><a href="comparing-means.html#getting-ready"><i class="fa fa-check"></i><b>16.1</b> Getting Ready</a><ul>
+<li class="chapter" data-level="16.1.1" data-path="comparing-means.html"><a href="comparing-means.html#the-null-hypothesis"><i class="fa fa-check"></i><b>16.1.1</b> The null hypothesis</a></li>
+<li class="chapter" data-level="16.1.2" data-path="comparing-means.html"><a href="comparing-means.html#the-p-value"><i class="fa fa-check"></i><b>16.1.2</b> The p value</a></li>
+<li class="chapter" data-level="16.1.3" data-path="comparing-means.html"><a href="comparing-means.html#the-plan"><i class="fa fa-check"></i><b>16.1.3</b> The plan</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>16.2</b> Two means</a></li>
+<li class="chapter" data-level="16.3" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>16.3</b> More than two means</a><ul>
+<li class="chapter" data-level="16.3.1" data-path="comparing-means.html"><a href="comparing-means.html#anova-tukey-tests"><i class="fa fa-check"></i><b>16.3.1</b> ANOVA, Tukey tests</a></li>
+<li class="chapter" data-level="16.3.2" data-path="comparing-means.html"><a href="comparing-means.html#kruskal-dunn-tests"><i class="fa fa-check"></i><b>16.3.2</b> Kruskal, Dunn tests</a></li>
+</ul></li>
+<li class="chapter" data-level="16.4" data-path="comparing-means.html"><a href="comparing-means.html#further-reading"><i class="fa fa-check"></i><b>16.4</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="mid-term-exam.html"><a href="mid-term-exam.html"><i class="fa fa-check"></i><b>17</b> Mid Term Exam</a><ul>
+<li class="chapter" data-level="17.1" data-path="mid-term-exam.html"><a href="mid-term-exam.html#data-set-1-beer_components"><i class="fa fa-check"></i><b>17.1</b> Data set 1: beer_components</a><ul>
+<li class="chapter" data-level="17.1.1" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-1-3"><i class="fa fa-check"></i><b>17.1.1</b> Question 1:</a></li>
+<li class="chapter" data-level="17.1.2" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-2-3"><i class="fa fa-check"></i><b>17.1.2</b> Question 2:</a></li>
+<li class="chapter" data-level="17.1.3" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-3-3"><i class="fa fa-check"></i><b>17.1.3</b> Question 3:</a></li>
+<li class="chapter" data-level="17.1.4" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-4-3"><i class="fa fa-check"></i><b>17.1.4</b> Question 4:</a></li>
+<li class="chapter" data-level="17.1.5" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-5-3"><i class="fa fa-check"></i><b>17.1.5</b> Question 5:</a></li>
+</ul></li>
+<li class="chapter" data-level="17.2" data-path="mid-term-exam.html"><a href="mid-term-exam.html#data-set-2-hops_components"><i class="fa fa-check"></i><b>17.2</b> Data set 2: hops_components</a><ul>
+<li class="chapter" data-level="17.2.1" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-1-4"><i class="fa fa-check"></i><b>17.2.1</b> Question 1</a></li>
+<li class="chapter" data-level="17.2.2" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-2-4"><i class="fa fa-check"></i><b>17.2.2</b> Question 2:</a></li>
+<li class="chapter" data-level="17.2.3" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-3-4"><i class="fa fa-check"></i><b>17.2.3</b> Question 3:</a></li>
+<li class="chapter" data-level="17.2.4" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-4-4"><i class="fa fa-check"></i><b>17.2.4</b> Question 4:</a></li>
+<li class="chapter" data-level="17.2.5" data-path="mid-term-exam.html"><a href="mid-term-exam.html#question-5-4"><i class="fa fa-check"></i><b>17.2.5</b> Question 5:</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="project-overview.html"><a href="project-overview.html"><i class="fa fa-check"></i><b>18</b> Project Overview</a></li>
+<li class="chapter" data-level="19" data-path="figures-and-captions.html"><a href="figures-and-captions.html"><i class="fa fa-check"></i><b>19</b> Figures and Captions</a></li>
+<li class="chapter" data-level="20" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>20</b> Methods</a><ul>
+<li class="chapter" data-level="20.1" data-path="methods.html"><a href="methods.html#general"><i class="fa fa-check"></i><b>20.1</b> General</a></li>
+<li class="chapter" data-level="20.2" data-path="methods.html"><a href="methods.html#suggestions"><i class="fa fa-check"></i><b>20.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="21" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>21</b> Results</a><ul>
+<li class="chapter" data-level="21.1" data-path="results.html"><a href="results.html#general-1"><i class="fa fa-check"></i><b>21.1</b> General</a></li>
+<li class="chapter" data-level="21.2" data-path="results.html"><a href="results.html#structure"><i class="fa fa-check"></i><b>21.2</b> Structure</a></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="discussion.html"><a href="discussion.html"><i class="fa fa-check"></i><b>22</b> Discussion</a><ul>
+<li class="chapter" data-level="22.1" data-path="discussion.html"><a href="discussion.html#general-2"><i class="fa fa-check"></i><b>22.1</b> General</a></li>
+<li class="chapter" data-level="22.2" data-path="discussion.html"><a href="discussion.html#suggestions-1"><i class="fa fa-check"></i><b>22.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="23" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>23</b> Conclusions</a><ul>
+<li class="chapter" data-level="23.1" data-path="conclusions.html"><a href="conclusions.html#general-3"><i class="fa fa-check"></i><b>23.1</b> General</a></li>
+<li class="chapter" data-level="23.2" data-path="conclusions.html"><a href="conclusions.html#suggestions-2"><i class="fa fa-check"></i><b>23.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="24" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>24</b> Introduction</a><ul>
+<li class="chapter" data-level="24.1" data-path="introduction-1.html"><a href="introduction-1.html#general-4"><i class="fa fa-check"></i><b>24.1</b> General</a></li>
+<li class="chapter" data-level="24.2" data-path="introduction-1.html"><a href="introduction-1.html#suggestions-3"><i class="fa fa-check"></i><b>24.2</b> Suggestions:</a></li>
+</ul></li>
+<li class="chapter" data-level="25" data-path="abstract.html"><a href="abstract.html"><i class="fa fa-check"></i><b>25</b> Abstract</a><ul>
+<li class="chapter" data-level="25.1" data-path="abstract.html"><a href="abstract.html#general-5"><i class="fa fa-check"></i><b>25.1</b> General</a></li>
+<li class="chapter" data-level="25.2" data-path="abstract.html"><a href="abstract.html#suggestions-4"><i class="fa fa-check"></i><b>25.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="26" data-path="title.html"><a href="title.html"><i class="fa fa-check"></i><b>26</b> Title</a><ul>
+<li class="chapter" data-level="26.1" data-path="title.html"><a href="title.html#general-6"><i class="fa fa-check"></i><b>26.1</b> General</a></li>
+<li class="chapter" data-level="26.2" data-path="title.html"><a href="title.html#suggestions-5"><i class="fa fa-check"></i><b>26.2</b> Suggestions</a></li>
+<li class="chapter" data-level="26.3" data-path="title.html"><a href="title.html#further-reading-1"><i class="fa fa-check"></i><b>26.3</b> Further reading</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="datasets.html"><a href="datasets.html"><i class="fa fa-check"></i><b>A</b> Datasets</a><ul>
+<li class="chapter" data-level="A.1" data-path="datasets.html"><a href="datasets.html#hawaii_aquifers"><i class="fa fa-check"></i><b>A.1</b> hawaii_aquifers</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>B</b> Functions</a><ul>
+<li class="chapter" data-level="B.1" data-path="functions-1.html"><a href="functions-1.html#libraries-and-packages"><i class="fa fa-check"></i><b>B.1</b> Libraries and packages</a><ul>
+<li class="chapter" data-level="B.1.1" data-path="functions-1.html"><a href="functions-1.html#install.packages"><i class="fa fa-check"></i><b>B.1.1</b> <code>install.packages()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.2" data-path="functions-1.html"><a href="functions-1.html#operators"><i class="fa fa-check"></i><b>B.2</b> Operators</a><ul>
+<li class="chapter" data-level="B.2.1" data-path="functions-1.html"><a href="functions-1.html#in"><i class="fa fa-check"></i><b>B.2.1</b> <code>%in%</code></a></li>
+<li class="chapter" data-level="B.2.2" data-path="functions-1.html"><a href="functions-1.html#section"><i class="fa fa-check"></i><b>B.2.2</b> &lt;</a></li>
+<li class="chapter" data-level="B.2.3" data-path="functions-1.html"><a href="functions-1.html#section-1"><i class="fa fa-check"></i><b>B.2.3</b> &lt;=</a></li>
+<li class="chapter" data-level="B.2.4" data-path="functions-1.html"><a href="functions-1.html#section-2"><i class="fa fa-check"></i><b>B.2.4</b> &gt;</a></li>
+<li class="chapter" data-level="B.2.5" data-path="functions-1.html"><a href="functions-1.html#section-3"><i class="fa fa-check"></i><b>B.2.5</b> &gt;=</a></li>
+<li class="chapter" data-level="B.2.6" data-path="functions-1.html"><a href="functions-1.html#section-4"><i class="fa fa-check"></i><b>B.2.6</b> ==</a></li>
+<li class="chapter" data-level="B.2.7" data-path="functions-1.html"><a href="functions-1.html#section-5"><i class="fa fa-check"></i><b>B.2.7</b> !=</a></li>
+<li class="chapter" data-level="B.2.8" data-path="functions-1.html"><a href="functions-1.html#section-6"><i class="fa fa-check"></i><b>B.2.8</b> |</a></li>
+</ul></li>
+<li class="chapter" data-level="B.3" data-path="functions-1.html"><a href="functions-1.html#data-wrangling"><i class="fa fa-check"></i><b>B.3</b> Data wrangling</a><ul>
+<li class="chapter" data-level="B.3.1" data-path="functions-1.html"><a href="functions-1.html#read_csv"><i class="fa fa-check"></i><b>B.3.1</b> <code>read_csv()</code></a></li>
+<li class="chapter" data-level="B.3.2" data-path="functions-1.html"><a href="functions-1.html#read.csv"><i class="fa fa-check"></i><b>B.3.2</b> <code>read.csv()</code></a></li>
+<li class="chapter" data-level="B.3.3" data-path="functions-1.html"><a href="functions-1.html#readcsv"><i class="fa fa-check"></i><b>B.3.3</b> <code>readCSV()</code></a></li>
+<li class="chapter" data-level="B.3.4" data-path="functions-1.html"><a href="functions-1.html#head"><i class="fa fa-check"></i><b>B.3.4</b> <code>head()</code></a></li>
+<li class="chapter" data-level="B.3.5" data-path="functions-1.html"><a href="functions-1.html#filter"><i class="fa fa-check"></i><b>B.3.5</b> <code>filter()</code></a></li>
+<li class="chapter" data-level="B.3.6" data-path="functions-1.html"><a href="functions-1.html#mutate"><i class="fa fa-check"></i><b>B.3.6</b> <code>mutate()</code></a></li>
+<li class="chapter" data-level="B.3.7" data-path="functions-1.html"><a href="functions-1.html#case_when"><i class="fa fa-check"></i><b>B.3.7</b> <code>case_when()</code></a></li>
+<li class="chapter" data-level="B.3.8" data-path="functions-1.html"><a href="functions-1.html#pivot_longer"><i class="fa fa-check"></i><b>B.3.8</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="B.3.9" data-path="functions-1.html"><a href="functions-1.html#group_by"><i class="fa fa-check"></i><b>B.3.9</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="B.3.10" data-path="functions-1.html"><a href="functions-1.html#summarize"><i class="fa fa-check"></i><b>B.3.10</b> <code>summarize()</code></a></li>
+<li class="chapter" data-level="B.3.11" data-path="functions-1.html"><a href="functions-1.html#section-7"><i class="fa fa-check"></i><b>B.3.11</b> <code>%&gt;%</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.4" data-path="functions-1.html"><a href="functions-1.html#plotting"><i class="fa fa-check"></i><b>B.4</b> Plotting</a><ul>
+<li class="chapter" data-level="B.4.1" data-path="functions-1.html"><a href="functions-1.html#plot"><i class="fa fa-check"></i><b>B.4.1</b> <code>plot()</code></a></li>
+<li class="chapter" data-level="B.4.2" data-path="functions-1.html"><a href="functions-1.html#ggplot2ggplot"><i class="fa fa-check"></i><b>B.4.2</b> <code>ggplot2::ggplot()</code></a></li>
+<li class="chapter" data-level="B.4.3" data-path="functions-1.html"><a href="functions-1.html#ggplot2aes"><i class="fa fa-check"></i><b>B.4.3</b> <code>ggplot2::aes()</code></a></li>
+<li class="chapter" data-level="B.4.4" data-path="functions-1.html"><a href="functions-1.html#ggplot2geom_"><i class="fa fa-check"></i><b>B.4.4</b> <code>ggplot2::geom_*()</code></a></li>
+<li class="chapter" data-level="B.4.5" data-path="functions-1.html"><a href="functions-1.html#ggplot2facet_grid"><i class="fa fa-check"></i><b>B.4.5</b> <code>ggplot2::facet_grid()</code></a></li>
+<li class="chapter" data-level="B.4.6" data-path="functions-1.html"><a href="functions-1.html#ggplot2scale__"><i class="fa fa-check"></i><b>B.4.6</b> <code>ggplot2::scale_*_*()</code></a></li>
+<li class="chapter" data-level="B.4.7" data-path="functions-1.html"><a href="functions-1.html#ggplot2theme_"><i class="fa fa-check"></i><b>B.4.7</b> <code>ggplot2::theme_*()</code></a></li>
+<li class="chapter" data-level="B.4.8" data-path="functions-1.html"><a href="functions-1.html#ggplot2coord_flip"><i class="fa fa-check"></i><b>B.4.8</b> <code>ggplot2::coord_flip()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.5" data-path="functions-1.html"><a href="functions-1.html#statistics"><i class="fa fa-check"></i><b>B.5</b> Statistics</a><ul>
+<li class="chapter" data-level="B.5.1" data-path="functions-1.html"><a href="functions-1.html#mean"><i class="fa fa-check"></i><b>B.5.1</b> <code>mean()</code></a></li>
+<li class="chapter" data-level="B.5.2" data-path="functions-1.html"><a href="functions-1.html#sd"><i class="fa fa-check"></i><b>B.5.2</b> <code>sd()</code></a></li>
+<li class="chapter" data-level="B.5.3" data-path="functions-1.html"><a href="functions-1.html#table"><i class="fa fa-check"></i><b>B.5.3</b> <code>table()</code></a></li>
+<li class="chapter" data-level="B.5.4" data-path="functions-1.html"><a href="functions-1.html#weighted.mean"><i class="fa fa-check"></i><b>B.5.4</b> <code>weighted.mean()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.6" data-path="functions-1.html"><a href="functions-1.html#t.test"><i class="fa fa-check"></i><b>B.6</b> t.test()</a></li>
+<li class="chapter" data-level="B.7" data-path="functions-1.html"><a href="functions-1.html#anova"><i class="fa fa-check"></i><b>B.7</b> anova()</a></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="custom-functions.html"><a href="custom-functions.html"><i class="fa fa-check"></i><b>C</b> Custom functions</a><ul>
+<li class="chapter" data-level="C.1" data-path="custom-functions.html"><a href="custom-functions.html#activating-custom-functions"><i class="fa fa-check"></i><b>C.1</b> Activating custom functions</a></li>
+<li class="chapter" data-level="C.2" data-path="custom-functions.html"><a href="custom-functions.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>C.2</b> Basic <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="C.3" data-path="custom-functions.html"><a href="custom-functions.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>C.3</b> Advanced <code>runMatrixAnalysis()</code> template</a></li>
+</ul></li>
+<li class="chapter" data-level="D" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>D</b> FAQ</a><ul>
+<li class="chapter" data-level="D.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>D.1</b> Filtering</a></li>
+<li class="chapter" data-level="D.2" data-path="faq.html"><a href="faq.html#order-categorical-axes"><i class="fa fa-check"></i><b>D.2</b> Order categorical axes</a></li>
+</ul></li>
+<li class="chapter" data-level="E" data-path="pca-and-big-data.html"><a href="pca-and-big-data.html"><i class="fa fa-check"></i><b>E</b> PCA and Big Data</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R For Chemists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="mid-term-exam" class="section level1">
+<h1><span class="header-section-number">17</span> Mid Term Exam</h1>
+<p>For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.</p>
+<p>The person that previously worked in your postion, Mr. Porter, recently completed a chemical analysis of the major ingredients that Fireside Brewing uses. However, Mr. Porter didn’t have time to finish analyzing the data that was collected.</p>
+<p>At Fireside Brewing, your boss is Mrs. Pilsner, a friendly woman who has worked in the brewing industry for decades and is a certified cicerone (a professional beer taster). As an expert taster, she is familiar with all the classes of compounds in beer ingredients and their corresponding flavors, but she is not an expert in chemistry or data analysis.</p>
+<p>For your first task in this new position, Mrs. Pilsner wants you to finish analyzing Mr. Porter’s data. Mrs. Pilsner has not given you specific instructions on how to analyze the data, rather, she has a set of specific questions that she wants answered so that she can improve Fireside Brewing. Mr. Porter left some notes about how to perform the analyses, but, since he was close to retirement and spent too much time riding his bicycle and drinking beer, the notes are not complete. Use Mr. Porter’s incomplete notes to help you answer the questions below.</p>
+<p><strong>Answer each question with both (i) at least one high quality plot that provides a visual answer and (ii) a caption that provides a written answer. If a question necessitates an answer that is difficult to show with a plot (for example, a single p value), include that answer in the caption.</strong></p>
+<p>Put your answers in a powerpoint presentation (graphic in the slide, code in the notes section) and email it to Dr. Busta.</p>
+<p><em>note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!</em></p>
+<div id="data-set-1-beer_components" class="section level2">
+<h2><span class="header-section-number">17.1</span> Data set 1: beer_components</h2>
+<p>Load this data set by running our source() command. It will then be present in your environment as <code>beer_components</code>.</p>
+<div id="question-1-3" class="section level3">
+<h3><span class="header-section-number">17.1.1</span> Question 1:</h3>
+<p>Mrs. Pilsner: <em>We are having problems with our Pale Ale. Its flavor is not consistent from batch to batch. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?</em></p>
+</div>
+<div id="question-2-3" class="section level3">
+<h3><span class="header-section-number">17.1.2</span> Question 2:</h3>
+<p>Mrs. Pilsner: <em>We are experimenting with a new beer that uses a 1:1:1 mixture of all the hop products that we use (hops, hop oil, and hop extract). I want to try to predict what type of flavor profile this beer might have. Using Mr. Porter’s data for those three ingredients (hops, hop oil, and hop extract), can you predict what the relative abundance of each analyte class will be in the mixture?</em></p>
+</div>
+<div id="question-3-3" class="section level3">
+<h3><span class="header-section-number">17.1.3</span> Question 3:</h3>
+<p>Mrs. Pilsner: <em>We are trying to reduce the price of our India Session Ale by replacing its hops with either hop extract or hop oil. Chemically speaking, which is more similar to hops - hop extract, or hop oil?</em></p>
+</div>
+<div id="question-4-3" class="section level3">
+<h3><span class="header-section-number">17.1.4</span> Question 4:</h3>
+<p>Mrs. Pilsner: <em>I recently heard a rumor from other cicerones that, compared to other types of barley, barley containing significantly more 3-methylbutanal than all other aldehydes leads to a maltier flavor. Statistically speaking, does our barley currently contain significantly more 3-methylbutanal than all other aldehydes?</em></p>
+<p>note from Mr. Porter: <em>Reminder to self: before conducting statistical tests, filter out analytes whose abundance == 0 in all five replicates, otherwise the tests will be biased.</em></p>
+</div>
+<div id="question-5-3" class="section level3">
+<h3><span class="header-section-number">17.1.5</span> Question 5:</h3>
+<p>Mrs. Pilsner: <em>When I taste our beers made with hop extract, they don’t taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do all our different ingredients cluster according to their average chemical composition?</em></p>
+</div>
+</div>
+<div id="data-set-2-hops_components" class="section level2">
+<h2><span class="header-section-number">17.2</span> Data set 2: hops_components</h2>
+<p>After you answer all Mrs. Pilsner’s questions about Mr. Porter’s data, Mrs. Pilsner tells you about another data set that Fireside Brewing has. This data set was collected by Mr. Porter’s intern, an undergraduate named Ms. Amber Stout. Amber measured the chemical composition of many different hop varieties. Please answer Mrs. Pilsner’s questions below about the hops data in the same way you did for the questions above.</p>
+<p>To load this second data set, the hops data set, run our source() command. It will then be present in your environment as <code>hops_components</code>.</p>
+<div id="question-1-4" class="section level3">
+<h3><span class="header-section-number">17.2.1</span> Question 1</h3>
+<p>Mrs. Pilsner: <em>There are three major types of hops - aroma hops, dry hopping hops, and bittering hops. We had an emergency scenario last month where we ran out of bittering hops. We needed to substitute either aroma hops or dry hopping hops into the recipe in place of bittering hops. At the time, we used aroma hops. Was that a good decision? If that emergency were to arise again, should we substitute aroma hops again, or should we use dry hopping hops instead? As much as possible, we would want the product from the emergency-substituted batch to be as similar to the normal batch made with bittering hops.</em></p>
+</div>
+<div id="question-2-4" class="section level3">
+<h3><span class="header-section-number">17.2.2</span> Question 2:</h3>
+<p>Mrs. Pilsner: <em>We buy our hops from many different countries of origin. I’ve always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the chemical profiles of other countries’ hops (as a proxy for flavor profiles)? What chemical(s) largely drive this difference?</em></p>
+<p>note from Mr. Porter: <em>note to self… by reducing the dimensionality of the chemical dataset to two dimensions, it should be possible to draw ellipses that encapsulate the chemical profile (as a proxy for “flavor profile”) of each country’s hops.</em></p>
+</div>
+<div id="question-3-4" class="section level3">
+<h3><span class="header-section-number">17.2.3</span> Question 3:</h3>
+<p>Mrs. Pilsner: <em>If we wanted to prepare our own hop oil, which type of hops should we use - aroma hops, bittering hops, or dry hopping hops? In other words, is there a statistical difference in the amount of total oil that each type of hops has? We want to pick the type of hops that would maximize our oil yield.</em></p>
+<p>Mr. Porter: <em>Note to self: here we are interested not in comparing <code>total_oil</code> from different <code>hop_varieties</code>, but instead in comparing <code>total_oil</code> from hops with different <code>hop_brewing_usage</code>.</em></p>
+</div>
+<div id="question-4-4" class="section level3">
+<h3><span class="header-section-number">17.2.4</span> Question 4:</h3>
+<p>Mrs. Pilsner: <em>We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?</em></p>
+</div>
+<div id="question-5-4" class="section level3">
+<h3><span class="header-section-number">17.2.5</span> Question 5:</h3>
+<p>Mrs. Pilsner: <em>Cascade hops are a very popular variety, and also a variety we use in producing our flagship IPA. However, due to COVID-19, cascade hops are on back order for six months. What style of hop is most similar to cascade? I would like to order it to use in place of cascade hops for the batch of IPA we will brew two weeks from now.</em></p>
+<!-- end -->
+<!-- start Project Overview -->
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="comparing-means.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="project-overview.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "night",
+"family": "serif",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+},
+"search": false
+});
+});
+</script>
+
+</body>
+
+</html>
