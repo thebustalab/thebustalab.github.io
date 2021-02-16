@@ -2,6 +2,30 @@
 # PHYLOCHEMISTRY 0.9 #
 ######################
 
+##### Libraries
+
+    library(tidyverse)
+    library(ape)
+    library(ggtree)
+    library(rstatix)
+    library(multcompView)
+    library(imager)
+
+##### Datasets
+    
+    algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+    alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
+    solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv")
+    periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+    periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+    # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
+    ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
+    wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
+    # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
+    hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv")
+    beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv")
+    hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv")
+
 ##### Read and write functions
 
     #### readCSV
@@ -4569,6 +4593,28 @@
         #' pGroups
 
         pGroups <- function(data) {
+            
+            p <- data$p.adj
+            names(p) <- paste(data$group1, data$group2, sep = "-")
+
+            output <- data.frame(
+                treatment = names(multcompLetters(p)$Letters),
+                group = multcompLetters(p)$Letters,
+                spaced_group = multcompLetters(p)$monospacedLetters
+            )
+            return(output)
+        }
+
+    #### p_groups
+
+        #' Determine which samples are identical based on p values
+        #'
+        #' @param data 
+        #' @examples
+        #' @export
+        #' p_groups
+
+        p_groups <- function(data) {
             
             p <- data$p.adj
             names(p) <- paste(data$group1, data$group2, sep = "-")
