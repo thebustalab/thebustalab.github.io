@@ -4557,7 +4557,7 @@
                     if( analysis == "hclust" ) {
                         for( node in dplyr::filter(clustering, isTip == FALSE)$node ) {
                             for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
-                                descends <- clustering[clustering$node %in% descendants(phylo, node),]
+                                descends <- clustering[clustering$node %in% ips::descendants(phylo, node),]
                                 if ( table(duplicated(descends[,colnames(descends) == sample_property]))[1] == 1 ) {
                                     clustering[
                                         which(clustering$node == node),
