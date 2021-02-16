@@ -2705,11 +2705,16 @@ install.packages("tidyverse")
 
 ### `%in%` 
 
-(base function). Use it to find An example:
+(base function). Use it to find things that are in a range or list. Some examples:
 
 ```{r}
 # Find cars in the horsepower mid-range
-mid_strength <- filter(mtcars,hp %in% 100:200)
+mid_strength <- filter(mtcars, hp %in% 100:200)
+```
+
+```{r}
+# Find cars in the horsepower mid-range
+mid_strength <- filter(mtcars, cyl %in% c(4, 8))
 ```
 
 ### < 

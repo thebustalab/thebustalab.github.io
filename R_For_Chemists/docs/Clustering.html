@@ -375,7 +375,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="Clustering" class="section level1">
 <h1><span class="header-section-number">Chapter 10</span> Clustering</h1>
 <p>So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, we will use <code>runMatrixAnalysis()</code>, a function that you can load into your R Session by running the following command:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="Clustering.html#cb49-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="Clustering.html#cb49-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span>
+<span id="cb49-2"><a href="Clustering.html#cb49-2"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <p>In order for <code>runMatrixAnalysis()</code> to work, you will also need to install <code>ape</code> and <code>ggtree</code>. Use the code below to do that:</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="Clustering.html#cb50-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;ape&quot;</span>, <span class="dt">repos =</span> <span class="st">&quot;https://cloud.r-project.org&quot;</span>, <span class="dt">quiet =</span> <span class="ot">FALSE</span>)</span>
 <span id="cb50-2"><a href="Clustering.html#cb50-2"></a></span>
@@ -404,7 +405,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>We can see that this dataset is comprised of measuring various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
 <p><img src="http://thebustalab.github.io/R_For_Chemists/figures/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
 <p>With this in mind, let’s try out our template:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="Clustering.html#cb52-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">:::</span><span class="kw">knit_global</span>())</span>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="Clustering.html#cb52-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>, <span class="dt">local =</span> knitr<span class="op">:::</span><span class="kw">knit_global</span>())</span>
 <span id="cb52-2"><a href="Clustering.html#cb52-2"></a>AK_lakes_clustered &lt;-<span class="st"> </span><span class="kw">runMatrixAnalysis</span>(</span>
 <span id="cb52-3"><a href="Clustering.html#cb52-3"></a>                                </span>
 <span id="cb52-4"><a href="Clustering.html#cb52-4"></a>    <span class="dt">data =</span> AK_lakes,</span>
@@ -421,24 +422,23 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb52-15"><a href="Clustering.html#cb52-15"></a>    <span class="dt">columns_w_sample_ID_info =</span> <span class="kw">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
 <span id="cb52-16"><a href="Clustering.html#cb52-16"></a></span>
 <span id="cb52-17"><a href="Clustering.html#cb52-17"></a>)</span>
-<span id="cb52-18"><a href="Clustering.html#cb52-18"></a><span class="co">## Not replacing any NAs in your data set</span></span>
-<span id="cb52-19"><a href="Clustering.html#cb52-19"></a>AK_lakes_clustered</span>
-<span id="cb52-20"><a href="Clustering.html#cb52-20"></a><span class="co">## # A tibble: 39 x 25</span></span>
-<span id="cb52-21"><a href="Clustering.html#cb52-21"></a><span class="co">##    lake  park  sample_unique_ID parent  node branch.length label isTip     x</span></span>
-<span id="cb52-22"><a href="Clustering.html#cb52-22"></a><span class="co">##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;             &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt; &lt;dbl&gt;</span></span>
-<span id="cb52-23"><a href="Clustering.html#cb52-23"></a><span class="co">##  1 Devi… BELA  Devil_Mountain_…     33     1          7.25 Devi… TRUE   204.</span></span>
-<span id="cb52-24"><a href="Clustering.html#cb52-24"></a><span class="co">##  2 Imur… BELA  Imuruk_Lake_BELA     32     2          4.91 Imur… TRUE   204.</span></span>
-<span id="cb52-25"><a href="Clustering.html#cb52-25"></a><span class="co">##  3 Kuzi… BELA  Kuzitrin_Lake_B…     36     3          3.27 Kuzi… TRUE   204.</span></span>
-<span id="cb52-26"><a href="Clustering.html#cb52-26"></a><span class="co">##  4 Lava… BELA  Lava_Lake_BELA       35     4          3.02 Lava… TRUE   204.</span></span>
-<span id="cb52-27"><a href="Clustering.html#cb52-27"></a><span class="co">##  5 Nort… BELA  North_Killeak_L…     21     5        204.   Nort… TRUE   204.</span></span>
-<span id="cb52-28"><a href="Clustering.html#cb52-28"></a><span class="co">##  6 Whit… BELA  White_Fish_Lake…     22     6         65.2  Whit… TRUE   204.</span></span>
-<span id="cb52-29"><a href="Clustering.html#cb52-29"></a><span class="co">##  7 Inia… GAAR  Iniakuk_Lake_GA…     29     7          3.60 Inia… TRUE   204.</span></span>
-<span id="cb52-30"><a href="Clustering.html#cb52-30"></a><span class="co">##  8 Kuru… GAAR  Kurupa_Lake_GAAR     31     8          8.57 Kuru… TRUE   204.</span></span>
-<span id="cb52-31"><a href="Clustering.html#cb52-31"></a><span class="co">##  9 Lake… GAAR  Lake_Matcharak_…     29     9          3.60 Lake… TRUE   204.</span></span>
-<span id="cb52-32"><a href="Clustering.html#cb52-32"></a><span class="co">## 10 Lake… GAAR  Lake_Selby_GAAR      30    10          5.24 Lake… TRUE   204.</span></span>
-<span id="cb52-33"><a href="Clustering.html#cb52-33"></a><span class="co">## # … with 29 more rows, and 16 more variables: y &lt;dbl&gt;, branch &lt;dbl&gt;,</span></span>
-<span id="cb52-34"><a href="Clustering.html#cb52-34"></a><span class="co">## #   angle &lt;dbl&gt;, water_temp &lt;dbl&gt;, pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;, P &lt;dbl&gt;,</span></span>
-<span id="cb52-35"><a href="Clustering.html#cb52-35"></a><span class="co">## #   Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;, K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
+<span id="cb52-18"><a href="Clustering.html#cb52-18"></a>AK_lakes_clustered</span>
+<span id="cb52-19"><a href="Clustering.html#cb52-19"></a><span class="co">## # A tibble: 39 x 25</span></span>
+<span id="cb52-20"><a href="Clustering.html#cb52-20"></a><span class="co">##    lake  park  sample_unique_ID parent  node branch.length label isTip     x</span></span>
+<span id="cb52-21"><a href="Clustering.html#cb52-21"></a><span class="co">##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;             &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt; &lt;dbl&gt;</span></span>
+<span id="cb52-22"><a href="Clustering.html#cb52-22"></a><span class="co">##  1 Devi… BELA  Devil_Mountain_…     33     1          7.25 Devi… TRUE   204.</span></span>
+<span id="cb52-23"><a href="Clustering.html#cb52-23"></a><span class="co">##  2 Imur… BELA  Imuruk_Lake_BELA     32     2          4.91 Imur… TRUE   204.</span></span>
+<span id="cb52-24"><a href="Clustering.html#cb52-24"></a><span class="co">##  3 Kuzi… BELA  Kuzitrin_Lake_B…     36     3          3.27 Kuzi… TRUE   204.</span></span>
+<span id="cb52-25"><a href="Clustering.html#cb52-25"></a><span class="co">##  4 Lava… BELA  Lava_Lake_BELA       35     4          3.02 Lava… TRUE   204.</span></span>
+<span id="cb52-26"><a href="Clustering.html#cb52-26"></a><span class="co">##  5 Nort… BELA  North_Killeak_L…     21     5        204.   Nort… TRUE   204.</span></span>
+<span id="cb52-27"><a href="Clustering.html#cb52-27"></a><span class="co">##  6 Whit… BELA  White_Fish_Lake…     22     6         65.2  Whit… TRUE   204.</span></span>
+<span id="cb52-28"><a href="Clustering.html#cb52-28"></a><span class="co">##  7 Inia… GAAR  Iniakuk_Lake_GA…     29     7          3.60 Inia… TRUE   204.</span></span>
+<span id="cb52-29"><a href="Clustering.html#cb52-29"></a><span class="co">##  8 Kuru… GAAR  Kurupa_Lake_GAAR     31     8          8.57 Kuru… TRUE   204.</span></span>
+<span id="cb52-30"><a href="Clustering.html#cb52-30"></a><span class="co">##  9 Lake… GAAR  Lake_Matcharak_…     29     9          3.60 Lake… TRUE   204.</span></span>
+<span id="cb52-31"><a href="Clustering.html#cb52-31"></a><span class="co">## 10 Lake… GAAR  Lake_Selby_GAAR      30    10          5.24 Lake… TRUE   204.</span></span>
+<span id="cb52-32"><a href="Clustering.html#cb52-32"></a><span class="co">## # … with 29 more rows, and 16 more variables: y &lt;dbl&gt;, branch &lt;dbl&gt;,</span></span>
+<span id="cb52-33"><a href="Clustering.html#cb52-33"></a><span class="co">## #   angle &lt;dbl&gt;, water_temp &lt;dbl&gt;, pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;, P &lt;dbl&gt;,</span></span>
+<span id="cb52-34"><a href="Clustering.html#cb52-34"></a><span class="co">## #   Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;, K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
 <p>It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We’ve seen that ggplot takes a “data” argument (i.e. <code>ggplot(data = &lt;some_data&gt;) + geom_*()</code> etc.). In contrast, ggtree takes an argument called <code>tr</code>, though if you’re using the <code>runMatrixAnalysis()</code> function, you can treat these two (<code>data</code> and <code>tr</code>) the same, so, use: <code>ggtree(tr = &lt;output_from_runMatrixAnalysis&gt;) + geom_*()</code> etc.</p>
 <p>Note that <code>ggtree</code> also comes with several great new geoms: <code>geom_tiplab()</code> and <code>geom_tippoint()</code>. Let’s try those out:</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="Clustering.html#cb53-1"></a><span class="kw">library</span>(ggtree)</span>

@@ -396,7 +396,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">16.2</span> Two means</h2>
 <p>When we are comparing two means, we need to first determine what kind of statistical test we can use on our data. If (i) our data can be modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use a more powerful test (i.e. a test that will be more likely to detect a difference in means, assuming one exists).</p>
 <p>We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let’s use the <code>hawaii_aquifers</code> data as an example, and let’s consider only the element potassium:</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="comparing-means.html#cb74-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="comparing-means.html#cb74-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span>
 <span id="cb74-2"><a href="comparing-means.html#cb74-2"></a>K_data &lt;-<span class="st"> </span>hawaii_aquifers <span class="op">%&gt;%</span></span>
 <span id="cb74-3"><a href="comparing-means.html#cb74-3"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(analyte <span class="op">==</span><span class="st"> &quot;K&quot;</span>)</span>
 <span id="cb74-4"><a href="comparing-means.html#cb74-4"></a>  K_data</span>
@@ -564,7 +564,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb86-15"><a href="comparing-means.html#cb86-15"></a><span class="co">## 10 aqui… aquif… aquif…          0  1.44      -0.910     3.79  6.13e-1</span></span>
 <span id="cb86-16"><a href="comparing-means.html#cb86-16"></a><span class="co">## # … with 35 more rows, and 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
 <p>Using the output from our tukey test, we can determine which means are similar. We can do this using the p_groups function:</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="comparing-means.html#cb87-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/custom_functions/chem.R&quot;</span>)</span>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="comparing-means.html#cb87-1"></a><span class="kw">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span>
 <span id="cb87-2"><a href="comparing-means.html#cb87-2"></a>groups_based_on_tukey &lt;-<span class="st"> </span>K_data <span class="op">%&gt;%</span></span>
 <span id="cb87-3"><a href="comparing-means.html#cb87-3"></a><span class="st">  </span><span class="kw">tukey_hsd</span>(abundance <span class="op">~</span><span class="st"> </span>aquifer_code) <span class="op">%&gt;%</span></span>
 <span id="cb87-4"><a href="comparing-means.html#cb87-4"></a><span class="st">  </span><span class="kw">p_groups</span>()</span>
