@@ -4140,7 +4140,7 @@
                   return(plot)
         }                       
 
-##### Statistical testing
+##### Statistical testing and modelling
 
     #### runMatrixAnalysis
 
@@ -4625,6 +4625,305 @@
                 spaced_group = multcompLetters(p)$monospacedLetters
             )
             return(output)
+        }
+
+    #### fitGaussian
+
+        #' Fit a Gaussian curve to a set of x y data
+        #'
+        #' This function may work better if you feed it a smoothed signal, or add smoothing to the derivatives
+        #' @param x
+        #' @param y
+        #' @param smoothing_order
+        #' @param smoothing_window
+        #' @export
+        #' @examples
+        #' fitGaussians()
+
+        fitGaussians <- function(
+                            x, 
+                            y, 
+                            peak_detection_threshold = 10
+                        ) {
+
+            ## Find peaks
+
+                ## Find "change points" maxima and minima in first derivative = peak half heights
+                    deriv1_y <- as.vector(stats::predict(pspline::sm.spline(x, y), x, 1))
+                    deriv1_extreme_indices <- c(cumsum(rle(abs(diff(deriv1_y)) > median(diff(deriv1_y))*2)$lengths)+1) # This from https://stackoverflow.com/questions/46029090/how-to-find-changing-points-in-a-dataset
+                    deriv1_extremes <- x[deriv1_extreme_indices]
+
+                ## Find peaks using second derivative - better at detecting shoulder peaks v. 1st derivative
+                    deriv2_y <- stats::predict(pspline::sm.spline(x, deriv1_y), x, 1)
+
+                    peak_means <- list()
+                    for (i in peak_detection_threshold:(length(x)-peak_detection_threshold)) {
+                        if ( # Find all points in 2nd derivative where values on either side of it are increasing for n points in a row
+                            all(
+                                all(deriv2_y[(i-(peak_detection_threshold-1)):(i-1)] > deriv2_y[i]), 
+                                all(deriv2_y[(i+1):(i+peak_detection_threshold)] > deriv2_y[i])
+                            )
+                        ) {
+                            peak_means[[i]] <- x[i]
+                        }
+                    }
+                    peak_means <- unlist(peak_means)
+
+                ## Find sigma for each peak based on mean and "change points"
+                    peak_sigma <- vector()
+                    for (peak in 1:length(peak_means)) {
+                        peak_sigma[[peak]] <- 1.5*min(abs(deriv1_extremes - peak_means[peak]))
+                    }
+                    
+                ## Peak heights are just the height at the mean
+                    peak_heights <- y[x %in% peak_means]
+
+                    ggplot() +
+                        geom_line(data = data.frame(x = x, y = y), aes(x = x, y = y), color = "red") +
+                        geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv1_y), color = "black") +
+                        geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv2_y), color = "blue") +
+                        geom_vline(aes(xintercept = peak_means)) +
+                        geom_vline(aes(xintercept = peak_means + peak_sigma), color = "red") +
+                        geom_vline(aes(xintercept = peak_means - peak_sigma), color = "red")
+
+            ## If nls, fit peaks with gaussians using nls and extract fit data
+
+                    algorithm = "port"
+                    fit <- NULL
+
+                    if (length(peak_means) == 1) {
+                        try(
+                            fit <-  nls(    y ~ (
+                                            C1*exp(-(x-mean1)**2/(2 * sigma1**2))
+                                        ),
+                                    data = data.frame(x = x, y = y),
+                                    start = list(
+                                                mean1 = peak_means[1],
+                                                sigma1 = peak_sigma[1],
+                                                C1 = peak_heights[1]
+                                            ),
+                                    algorithm = algorithm, control = list(maxiter = 5000000))
+                        , silent = TRUE)
+                    }
+
+                    if (length(peak_means) == 2) {
+                        try(
+                            fit <- nls( y ~ (
+                                            C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
+                                            C2*exp(-(x-mean2)**2/(2 * sigma2**2))
+                                        ),
+                                data = data.frame(x = x, y = y),
+                                start = list(
+                                            mean1 = peak_means[1],
+                                            mean2 = peak_means[2],
+                                            sigma1 = peak_sigma[1],
+                                            sigma2 = peak_sigma[2],
+                                            C1 = peak_heights[1],
+                                            C2 = peak_heights[2]
+                                        ),
+                                algorithm = algorithm, control = list(maxiter = 500000000))
+                    , silent = TRUE)
+                }
+                
+                if (length(peak_means) == 3) {
+                    try(
+                        fit <- nls( y ~ (
+                                        C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
+                                        C2*exp(-(x-mean2)**2/(2 * sigma2**2)) +
+                                        C3*exp(-(x-mean3)**2/(2 * sigma3**2))
+                                    ),
+                                data = data.frame(x = x, y = y),
+                                start = list(
+                                            mean1 = peak_means[1],
+                                            mean2 = peak_means[2],
+                                            mean3 = peak_means[3],
+                                            sigma1 = peak_sigma[1],
+                                            sigma2 = peak_sigma[2],
+                                            sigma3 = peak_sigma[3],
+                                            C1 = peak_heights[1],
+                                            C2 = peak_heights[2],
+                                            C3 = peak_heights[3]
+                                        ),
+                                algorithm = algorithm, control = list(maxiter = 5000000))
+                    , silent = TRUE)
+                }
+
+                if (length(peak_means) == 4) {
+                    try(
+                        fit <-  nls(    y ~ (
+                                        C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
+                                        C2*exp(-(x-mean2)**2/(2 * sigma2**2)) +
+                                        C3*exp(-(x-mean3)**2/(2 * sigma3**2)) +
+                                        C4*exp(-(x-mean4)**2/(2 * sigma4**2))
+                                    ),
+                                data = data.frame(x = x, y = y),
+                                start = list(
+                                            mean1 = peak_means[1],
+                                            mean2 = peak_means[2],
+                                            mean3 = peak_means[3],
+                                            mean4 = peak_means[4],
+                                            sigma1 = peak_sigma[1],
+                                            sigma2 = peak_sigma[2],
+                                            sigma3 = peak_sigma[3],
+                                            sigma4 = peak_sigma[4],
+                                            C1 = peak_heights[1],
+                                            C2 = peak_heights[2],
+                                            C3 = peak_heights[3],
+                                            C4 = peak_heights[4]
+                                        ),
+                                algorithm = algorithm, control = list(maxiter = 5000000))
+                    , silent = TRUE)
+                }
+
+                if (length(peak_means) == 5) {
+                    try(
+                        fit <- nls( y ~ (
+                                        C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
+                                        C2*exp(-(x-mean2)**2/(2 * sigma2**2)) +
+                                        C3*exp(-(x-mean3)**2/(2 * sigma3**2)) +
+                                        C4*exp(-(x-mean4)**2/(2 * sigma4**2)) +
+                                        C5*exp(-(x-mean5)**2/(2 * sigma5**2))
+                                    ),
+                                data = data.frame(x = x, y = y),
+                                start = list(
+                                            mean1 = peak_means[1],
+                                            mean2 = peak_means[2],
+                                            mean3 = peak_means[3],
+                                            mean4 = peak_means[4],
+                                            mean5 = peak_means[5],
+                                            sigma1 = peak_sigma[1],
+                                            sigma2 = peak_sigma[2],
+                                            sigma3 = peak_sigma[3],
+                                            sigma4 = peak_sigma[4],
+                                            sigma5 = peak_sigma[5],
+                                            C1 = peak_heights[1],
+                                            C2 = peak_heights[2],
+                                            C3 = peak_heights[3],
+                                            C4 = peak_heights[4],
+                                            C5 = peak_heights[5]
+                                        ),
+                                algorithm = algorithm, control = list(maxiter = 5000000))
+                    , silent = TRUE)
+                }
+
+                if (length(peak_means) == 6) {
+                    try(
+                        fit <- nls( y ~ (
+                                        C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
+                                        C2*exp(-(x-mean2)**2/(2 * sigma2**2)) +
+                                        C3*exp(-(x-mean3)**2/(2 * sigma3**2)) +
+                                        C4*exp(-(x-mean4)**2/(2 * sigma4**2)) +
+                                        C5*exp(-(x-mean5)**2/(2 * sigma5**2)) +
+                                        C6*exp(-(x-mean6)**2/(2 * sigma6**2))
+                                    ),
+                                data = data.frame(x = x, y = y),
+                                start = list(
+                                            mean1 = peak_means[1],
+                                            mean2 = peak_means[2],
+                                            mean3 = peak_means[3],
+                                            mean4 = peak_means[4],
+                                            mean5 = peak_means[5],
+                                            mean6 = peak_means[6],
+                                            sigma1 = peak_sigma[1],
+                                            sigma2 = peak_sigma[2],
+                                            sigma3 = peak_sigma[3],
+                                            sigma4 = peak_sigma[4],
+                                            sigma5 = peak_sigma[5],
+                                            sigma6 = peak_sigma[6],
+                                            C1 = peak_heights[1],
+                                            C2 = peak_heights[2],
+                                            C3 = peak_heights[3],
+                                            C4 = peak_heights[4],
+                                            C5 = peak_heights[5],
+                                            C6 = peak_heights[6]
+                                        ),
+                                algorithm = algorithm, control = list(maxiter = 10000000))
+                    , silent = TRUE)
+                }
+
+                if (length(peak_means) == 7) {
+                    try(
+                        fit <- nls( y ~ (
+                                        C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
+                                        C2*exp(-(x-mean2)**2/(2 * sigma2**2)) +
+                                        C3*exp(-(x-mean3)**2/(2 * sigma3**2)) +
+                                        C4*exp(-(x-mean4)**2/(2 * sigma4**2)) +
+                                        C5*exp(-(x-mean5)**2/(2 * sigma5**2)) +
+                                        C6*exp(-(x-mean6)**2/(2 * sigma6**2)) +
+                                        C7*exp(-(x-mean7)**2/(2 * sigma7**2))
+                                    ),
+                                data = data.frame(x = x, y = y),
+                                start = list(
+                                            mean1 = peak_means[1],
+                                            mean2 = peak_means[2],
+                                            mean3 = peak_means[3],
+                                            mean4 = peak_means[4],
+                                            mean5 = peak_means[5],
+                                            mean6 = peak_means[6],
+                                            mean7 = peak_means[7],
+                                            sigma1 = peak_sigma[1],
+                                            sigma2 = peak_sigma[2],
+                                            sigma3 = peak_sigma[3],
+                                            sigma4 = peak_sigma[4],
+                                            sigma5 = peak_sigma[5],
+                                            sigma6 = peak_sigma[6],
+                                            sigma7 = peak_sigma[7],
+                                            C1 = peak_heights[1],
+                                            C2 = peak_heights[2],
+                                            C3 = peak_heights[3],
+                                            C4 = peak_heights[4],
+                                            C5 = peak_heights[5],
+                                            C6 = peak_heights[6],
+                                            C7 = peak_heights[7]
+                                        ),
+                                algorithm = algorithm, control = list(maxiter = 10000000))
+                    , silent = TRUE)
+                }
+
+                if ( !is.null(fit) ) {
+                    
+                    cat(paste0("Fit ", length(peak_means), " peak(s) with gaussians at this peak detection threshold.\n\n"))
+                    dffit <- data.frame(x = x)
+                    dffit$y <- predict(fit, newdata = dffit)
+                    fit.sum <- summary(fit)
+                    coef.fit <- fit.sum$coefficients[,1]
+                    mean.fit <- coef.fit[1:length(peak_means)]
+                    sigma.fit <- coef.fit[(length(peak_means)+1):(2*length(peak_means))]
+                    C.fit <- coef.fit[((2*length(peak_means))+1):(3*length(peak_means))]
+                    
+                } else {
+                    cat(paste0("Couldn't fit gaussian(s) at this peak detection threshold"))
+                    gaussians <- NULL
+                }
+
+            ## Generate gaussian curves
+
+                gaussians <- list()
+                for (peak in 1:length(peak_means)) {
+                    peak_data <-    data.frame(
+                                        x = x,
+                                        y = C.fit[peak] * exp(-((x)-mean.fit[peak])**2/(2 * sigma.fit[peak]**2)),
+                                        peak_number = peak
+                                    )
+                    peak_data$peak_area <- sum(peak_data$y)
+                    gaussians[[peak]] <- peak_data
+                }
+                gaussians <- do.call(rbind, gaussians)
+
+            ## Plot the results
+
+                plot <- ggplot() +
+                    geom_line(data = data.frame(x = x, y = y), aes(x = x, y = y), color = "red", size = 2) +
+                    geom_vline(aes(xintercept = peak_means)) +
+                    stat_summary(data = gaussians, geom = "line", fun = "sum", color = "blue", aes(x = x, y = y), size = 2) +
+                    geom_line(data = gaussians, aes(x = x, y = y, group = peak_number))
+
+                print(plot)
+
+            ## Return gaussians
+
+                return(gaussians)
+
         }
 
 ##### Phylogenetic statistical testing
