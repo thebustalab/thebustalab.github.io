@@ -3380,8 +3380,6 @@
 
         analyzeMassSpectralImages <- function(image_directory_in_path) {
 
-            # library(imager)
-
             images_to_analyze <- dir(image_directory_in_path)[grep(".png", dir(image_directory_in_path))]
             
             ## Skip comparison images, if necessary

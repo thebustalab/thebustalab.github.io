@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Phylochemistry</title>
+  <meta name="description" content="Vingette for the R Package Phylochemistry." />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Phylochemistry" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Vingette for the R Package Phylochemistry." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Phylochemistry" />
+  
+  <meta name="twitter:description" content="Vingette for the R Package Phylochemistry." />
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2021-02-17" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="fix.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path=""><a href="#phylochemistry"><i class="fa fa-check"></i><b>1</b> phylochemistry</a><ul>
+<li class="chapter" data-level="1.1" data-path=""><a href="#install"><i class="fa fa-check"></i><b>1.1</b> install</a></li>
+<li class="chapter" data-level="1.2" data-path=""><a href="#new-features"><i class="fa fa-check"></i><b>1.2</b> new features</a></li>
+<li class="chapter" data-level="1.3" data-path=""><a href="#wrapped-features"><i class="fa fa-check"></i><b>1.3</b> wrapped features</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Phylochemistry</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Phylochemistry</h1>
+<p class="author"><em>Lucas Busta</em></p>
+<p class="date"><em>2021-02-17</em></p>
+</div>
+<div id="phylochemistry" class="section level1">
+<h1><span class="header-section-number">1</span> phylochemistry</h1>
+<p><img src="http://thebustalab.github.io/phylochemistry/figures/phylochemistry_logo.jpg" /></p>
+<p><code>phylochemistry</code> is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new functions and wrapped features of previously developed packages. A number of new functions to streamline analyses in this interdisciplinary space are also provided. This repository contains the latest version of the <code>phylochemistry</code> R package.</p>
+<div id="install" class="section level2">
+<h2><span class="header-section-number">1.1</span> install</h2>
+<p><code>phylochemistry</code> can be installed by following these four steps:</p>
+<ol style="list-style-type: decimal">
+<li>Install <code>msa</code> and <code>phangorn</code> by running the following code in R</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">requireNamespace</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="dt">quietly =</span> <span class="ot">TRUE</span>)) <span class="kw">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;msa&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;ggtree&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;phangorn&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;seqinr&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;Biostrings&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;GenomicRanges&quot;</span>)</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Install prequisite R packages by running the following code in R</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">install.packages</span>(<span class="st">&quot;DT&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">install.packages</span>(<span class="st">&quot;RColorBrewer&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">install.packages</span>(<span class="st">&quot;xcms&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">install.packages</span>(<span class="st">&quot;data.table&quot;</span>)</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="kw">install.packages</span>(<span class="st">&quot;rhandsontable&quot;</span>)</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">install.packages</span>(<span class="st">&quot;ape&quot;</span>)</span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">install.packages</span>(<span class="st">&quot;ips&quot;</span>)</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li><p>(for Windows only) <a href="https://www.x.org/wiki/">install X.Org</a></p></li>
+<li><p>(for Mac only) <a href="https://www.xquartz.org/">install XQuartz</a></p></li>
+<li><p>Load <code>phylochemistry</code> directly into your R session using the following:</p></li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+</div>
+<div id="new-features" class="section level2">
+<h2><span class="header-section-number">1.2</span> new features</h2>
+<ol style="list-style-type: decimal">
+<li>A Shiny app for GC-FID and GC-MS data analysis.</li>
+<li>Open reading frame extraction from multiple fasta files.</li>
+<li>Store BLAST results in a .csv file.</li>
+<li>Minor ticks for ggplot2 axes.</li>
+<li>Phylogenetic signal for discrete traits.</li>
+<li>Analyze multiple sequence alignments for sites associated with user-defined function</li>
+<li>Multiple column name, multiple row name data structures (aka “polylists”).</li>
+<li>Draw annotated multiple sequence alignments.</li>
+<li>Use image analysis to automatically get the csv of a mass spectrum from a published image.</li>
+<li>Draw chemical structures in R from a csv of molecular coordinates.</li>
+</ol>
+</div>
+<div id="wrapped-features" class="section level2">
+<h2><span class="header-section-number">1.3</span> wrapped features</h2>
+<ol style="list-style-type: decimal">
+<li>BLAST transcriptomes, via <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&amp;DOC_TYPE=Download">NCBI BLAST+</a>.</li>
+<li>Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via <a href="https://bioconductor.org/packages/release/bioc/html/msa.html">msa</a> and <a href="https://github.com/HajkD/orthologr">orthologr</a>.</li>
+<li>Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via <a href="https://cran.r-project.org/web/packages/phangorn/index.html">phangorn</a>.</li>
+<li>Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).</li>
+<li>Phylogenetic signal for continuous traits.</li>
+</ol>
+<!-- end -->
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "night",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "fixed"
+},
+"search": false
+});
+});
+</script>
+
+</body>
+
+</html>

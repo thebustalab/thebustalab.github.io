@@ -2,20 +2,18 @@
 title: "R For Chemists"
 author: "Lucas Busta"
 date: "`r Sys.Date()`"
-# site: bookdown::bookdown_site
-# always_allow_html: yes
 output:
   bookdown::gitbook:
     config:
+      toc:
+        collapse: section
       fontsettings:
         theme: night
         family: serif
         size: 1
-# documentclass: book
-# bibliography: [bio723-book.bib]
-# biblio-style: apalike
-# link-citations: yes
-# description: "Textbook R For Chemists."
+      toolbar:
+        position: fixed
+description: "Textbook R For Chemists."
 ---
 
 ```{r setup, include=FALSE}
