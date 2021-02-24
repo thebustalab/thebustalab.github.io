@@ -10,6 +10,15 @@
     library(rstatix)
     library(multcompView)
     library(imager)
+    library(shiny)
+    library(DT)
+    library(RColorBrewer)
+    library(xcms)
+    library(data.table)
+    library(rhandsontable)
+    library(ips)
+    library(phangorn)
+    library(seqinr)
 
 ##### Datasets
     
@@ -1761,6 +1770,39 @@
                     }                
             }
 
+    #### mergePeakLists
+
+	    #' Merge multiple peaklists
+	    #'
+	    #' @param analysis_directory_path Path to the directory above all the peak lists
+	    #' @examples
+	    #' @export
+	    #' mergePeakLists
+
+	    mergePeakLists <- function(analysis_directory_path) {
+
+	        paths_to_peak_monolists <- paste(
+	            analysis_directory_path,
+	            dir(analysis_directory_path),
+	            "peaks_monolist.csv",
+	            sep = "/"
+	        )
+
+	        peak_list <- list()
+	        for (i in 1:length(paths_to_peak_monolists)) {
+                
+                if ( file.exists(paths_to_peak_monolists[i]) ) {
+	               
+                   peak_list[[i]] <- readMonolist(paths_to_peak_monolists[i])
+                
+                }
+	        
+            }
+
+	        do.call(rbind, peak_list)
+
+	    }
+
     #### integrationApp
 
         #' A Shiny app to integrate GC-FID and GC-MS data
@@ -1797,12 +1839,12 @@
 
                 ## Messages for setup
 
-	            	if( length(samples_monolist_path) == 0 ) {
-	            		stop("You must specify a samples_monolist_path")
-	            	}
-	            	if( length(peaks_monolist_path) == 0 ) {
-	            		stop("You must specify a peaks_monolist_path")
-	            	}
+                    if( length(samples_monolist_path) == 0 ) {
+                        stop("You must specify a samples_monolist_path")
+                    }
+                    if( length(peaks_monolist_path) == 0 ) {
+                        stop("You must specify a peaks_monolist_path")
+                    }
 
                 ## Set up new samples monolist
 
@@ -1872,29 +1914,35 @@
                     ui <- fluidPage(
 
                         tags$script('
-                        $(document).on("keypress", function (e) {
-                           Shiny.onInputChange("keypress", e.which);
-                        });
+                            $(document).on("keypress", function (e) {
+                               Shiny.onInputChange("keypress", e.which);
+                            });
                         '), 
 
                         verticalLayout(
 
                             plotOutput(
-                                "massSpectra_z",
+                                "massSpectra_1",
+                                brush = "massSpectra_1_brush",
+                                click = "massSpectra_1_brush_click", 
+                                dblclick = "massSpectra_1_brush_double_click",
                                 height = 150
                             ),
 
                             plotOutput(
-                                "massSpectra_x",
+                                "massSpectra_2",
                                 height = 150
                             ),
 
                             plotOutput(
-                              "chromatograms",
-                              brush = "chromatogram_brush", 
-                              click = "chromatogram_click", 
-                              dblclick = "chromatogram_double_click",
-                              height = plot_height
+                                outputId = "chromatograms",
+                                brush = brushOpts(
+                                    id = "chromatogram_brush",
+                                    fill = "f00"
+                                ), 
+                                click = "chromatogram_click", 
+                                dblclick = "chromatogram_double_click",
+                                height = plot_height
                             ),
 
                             verbatimTextOutput("key", placeholder = TRUE),
@@ -2273,6 +2321,7 @@
                             })
 
                         ## Show mass spectrum on "1" keypress
+                            
                             observeEvent(input$keypress, {
 
                                 # Do nothing if no selection
@@ -2283,7 +2332,7 @@
                                 # If selection and "1" is pressed, extract and print mass spectra
                                     if( input$keypress == 49 ) {
 
-                                        output$massSpectra_z <- renderPlot({
+                                        output$massSpectra_1 <- renderPlot({
                                             framedDataFile <- isolate(as.data.frame(
                                                                 data.table::fread(as.character(
                                                                     brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
@@ -2297,10 +2346,22 @@
                                             framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
                                             framedDataFile_1 <<- framedDataFile
                                             framedDataFile$intensity <- framedDataFile$intensity*100/max(framedDataFile$intensity)
+
+
+                                            ## Set ranges on mass spec (allow zooming in with selection)
+                                                # if(!is.null(input$massSpectra_1_brush)) {
+                                                #     MS1_low_limit <- 0
+                                                #     MS1_high_limit <- 800
+                                                
+                                                #     MS1_low_limit <- min(brushedPoints(framedDataFile, input$massSpectra_1_brush)$mz)
+                                                #     MS1_high_limit <- max(brushedPoints(framedDataFile, input$massSpectra_1_brush)$mz)
+                                                # }
+
                                             ggplot() + 
                                                 geom_bar(data = framedDataFile, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
                                                 theme_classic() +
                                                 scale_x_continuous(expand = c(0,0)) +
+                                                coord_cartesian(xlim = c(MS1_low_limit, MS1_high_limit)) +
                                                 scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
                                                 geom_text(data = dplyr::filter(framedDataFile, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
                                         })
@@ -2308,6 +2369,7 @@
                             })
 
                         ## Show subtracted mass spectrum for "1" on "3" keypress
+                            
                             observeEvent(input$keypress, {
 
                                 # Do nothing if no selection
@@ -2318,7 +2380,7 @@
                                 # If selection and "51" is pressed, extract and print mass spectra
                                     if( input$keypress == 51 ) {
 
-                                        output$massSpectra_z <- renderPlot({
+                                        output$massSpectra_1 <- renderPlot({
                                             framedDataFile_to_subtract <- isolate(as.data.frame(
                                                                 data.table::fread(as.character(
                                                                     brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
@@ -2344,6 +2406,7 @@
                             })
 
                         ## Save mass spectrum in "1" on "5" keypress
+                            
                             observeEvent(input$keypress, {
 
                                 # Do nothing if no selection
@@ -2359,6 +2422,7 @@
                             })
 
                         ## Show mass spectrum on "2" keypress
+                            
                             observeEvent(input$keypress, {
 
                                 # Do nothing if no selection
@@ -2369,7 +2433,7 @@
                                 # If selection and "2" is pressed, extract and print mass spectra
                                     if( input$keypress == 50 ) {
 
-                                        output$massSpectra_x <- renderPlot({
+                                        output$massSpectra_2 <- renderPlot({
                                             framedDataFile <- isolate(as.data.frame(
                                                                 data.table::fread(as.character(
                                                                     brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
@@ -2404,7 +2468,7 @@
                                     # If selection and "51" is pressed, extract and print mass spectra
                                         if( input$keypress == 52 ) {
 
-                                            output$massSpectra_x <- renderPlot({
+                                            output$massSpectra_2 <- renderPlot({
                                                 framedDataFile_to_subtract <- isolate(as.data.frame(
                                                                     data.table::fread(as.character(
                                                                         brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
@@ -2451,39 +2515,6 @@
 
             }
 
-    #### mergePeakLists
-
-	    #' Merge multiple peaklists
-	    #'
-	    #' @param analysis_directory_path Path to the directory above all the peak lists
-	    #' @examples
-	    #' @export
-	    #' mergePeakLists
-
-	    mergePeakLists <- function(analysis_directory_path) {
-
-	        paths_to_peak_monolists <- paste(
-	            analysis_directory_path,
-	            dir(analysis_directory_path),
-	            "peaks_monolist.csv",
-	            sep = "/"
-	        )
-
-	        peak_list <- list()
-	        for (i in 1:length(paths_to_peak_monolists)) {
-                
-                if ( file.exists(paths_to_peak_monolists[i]) ) {
-	               
-                   peak_list[[i]] <- readMonolist(paths_to_peak_monolists[i])
-                
-                }
-	        
-            }
-
-	        do.call(rbind, peak_list)
-
-	    }
-
     #### integrationAppLite
 
         #' A Shiny app to integrate GC-FID and GC-MS data
@@ -2505,18 +2536,6 @@
                 zoom_and_scroll_rate = 100,
                 baseline_window = 400
             ) {
-
-                library(shiny)
-                library(tidyverse)
-                library(DT)
-                library(RColorBrewer)
-                library(xcms)
-                library(data.table)
-                library(rhandsontable)
-                library(ape)
-                library(ips)
-                library(phangorn)
-                library(seqinr)
 
                 ## Set up monolists
 
@@ -2616,18 +2635,26 @@
                         verticalLayout(
 
                             plotOutput(
-                                "massSpectra_z",
+                                outputId = "massSpectra_1",
+                                brush = brushOpts(
+                                    id = "massSpectra_1_brush"
+                                ),
                                 height = 150
                             ),
 
                             plotOutput(
-                                "massSpectra_x",
+                                outputId = "massSpectra_2",
+                                brush = brushOpts(
+                                    id = "massSpectra_2_brush"
+                                ),
                                 height = 150
                             ),
 
                             plotOutput(
-                              "chromatograms",
-                              brush = "chromatogram_brush", 
+                                outputId = "chromatograms",
+                                brush = brushOpts(
+                                    id = "chromatogram_brush"
+                                ),
                               click = "chromatogram_click", 
                               dblclick = "chromatogram_double_click",
                               height = plot_height
@@ -3038,185 +3065,282 @@
                                     }
                             })
 
-                        ## Extract selected MS to MS panel one on "shift+1" (33) keypress
-                            observeEvent(input$keypress, {
-
-                                # Do nothing if no selection
-                                    if(is.null(input$chromatogram_brush)) {
-                                        return()
-                                    }
-
-                                # If selection and "shift+1" is pressed, extract and print mass spectra
-                                    if( input$keypress == 33 ) {
-
-                                        output$massSpectra_z <- renderPlot({
-                                            framedDataFile <- isolate(as.data.frame(
-                                                                data.table::fread(as.character(
-                                                                    brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                                ))
-                                            ))
-                                            framedDataFile <- isolate(dplyr::filter(
-                                                                    framedDataFile, 
-                                                                    rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                    rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                                ))
-                                            library(plyr)
-                                            framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
-                                            framedDataFile_1 <<- framedDataFile
-                                            framedDataFile$intensity <- framedDataFile$intensity*100/max(framedDataFile$intensity)
-                                            ggplot() + 
-                                                geom_bar(data = framedDataFile, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
-                                                theme_classic() +
-                                                scale_x_continuous(expand = c(0,0)) +
-                                                scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
-                                                geom_text(data = dplyr::filter(framedDataFile, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
-                                        })
-                                    }
-                            })
-
-                        ## Subtract selected MS as background from MS panel one on "shift+3" (35) keypress
-                            observeEvent(input$keypress, {
-
-                                # Do nothing if no selection
-                                    if(is.null(input$chromatogram_brush)) {
-                                        return()
-                                    }
-
-                                # If selection and "35" is pressed, extract and print mass spectra
-                                    if( input$keypress == 35 ) {
-
-                                        output$massSpectra_z <- renderPlot({
-                                            framedDataFile_to_subtract <- isolate(as.data.frame(
-                                                                data.table::fread(as.character(
-                                                                    brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                                ))
-                                            ))
-                                            framedDataFile_to_subtract <- isolate(dplyr::filter(
-                                                                    framedDataFile_to_subtract, 
-                                                                    rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                    rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                                ))
-                                            library(plyr)
-                                            framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
-                                            framedDataFile_1$intensity <- framedDataFile_1$intensity - framedDataFile_to_subtract$intensity
-                                            framedDataFile_1 <<- framedDataFile_1
-                                            framedDataFile_1$intensity <- framedDataFile_1$intensity*100/max(framedDataFile_1$intensity)
-                                            ggplot() + 
-                                                geom_bar(data = framedDataFile_1, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
-                                                theme_classic() +
-                                                scale_x_continuous(expand = c(0,0)) +
-                                                scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
-                                                geom_text(data = dplyr::filter(framedDataFile_1, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
-                                        })
-                                    }
-                            })
-
-                        ## Save MS in MS panel one on "shift+5" (37) keypress
+                        ## [MS1 Extract] Extract selected MS to MS panel 1 on "shift+1" (33) keypress
                             
                             observeEvent(input$keypress, {
 
-                                # Do nothing if no selection
-                                    if(is.null(input$chromatogram_brush)) {
-                                        return()
+                                # If "shift+2", MS from chromatogram brush -> MS_out_1
+                                    if( input$keypress == 64 ) {
+                                        
+                                        framedDataFile <- isolate(as.data.frame(
+                                                            data.table::fread(as.character(
+                                                                brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
+                                                            ))
+                                        ))
+                                        framedDataFile <- isolate(dplyr::filter(
+                                                                framedDataFile, 
+                                                                rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                                                                rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                                            ))
+                                        library(plyr)
+                                        framedDataFile$mz <- round(framedDataFile$mz, 1)
+                                        framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
+                                        MS_out_1 <<- framedDataFile
+
                                     }
 
-                                # If selection and "37" is pressed, extract and print mass spectra
-                                    if( input$keypress == 37 ) {
-                                        framedDataFile_1$intensity[framedDataFile_1$intensity < 0] <- 0
-                                        write.csv(framedDataFile_1, "integration_app_spectrum_1.csv", row.names = FALSE)
+                                ## If "shift+3" subtract chromatogram brush from MS_out_1 -> MS_out_1
+
+                                    if ( input$keypress == 35 ) {
+                                        
+                                        framedDataFile_to_subtract <- isolate(as.data.frame(
+                                                            data.table::fread(as.character(
+                                                                brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
+                                                            ))
+                                        ))
+                                        framedDataFile_to_subtract <- isolate(dplyr::filter(
+                                                                framedDataFile_to_subtract, 
+                                                                rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                                                                rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                                            ))
+                                        library(plyr)
+                                        framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
+                                        framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
+                                        MS_out_1$intensity <- MS_out_1$intensity - framedDataFile_to_subtract$intensity
+                                        MS_out_1 <<- MS_out_1
+                                        
+                                    }
+
+                                ## If "shift+1", or "shift+2", or "shift+3, make plot based on brush if any
+
+                                    if ( input$keypress == 33 | input$keypress == 64 | input$keypress == 35 ) {
+
+                                        if (!exists("MS_out_1")) {
+                                            cat("No mass spectrum extracted yet.")
+                                            return()
+                                        } else {
+
+                                            # Normalize to max abu 100
+                                                MS_out_1$intensity <- MS_out_1$intensity*100/max(MS_out_1$intensity)
+
+                                            # Set ranges on mass spec (allow zooming in with selection), Sometimes brush returns Inf or -Inf if the range gets too small, so if that happens, just go up to the main view
+                                        
+                                                if (isolate(is.null(input$massSpectra_1_brush))) {
+                                                    MS1_low_x_limit <- 0; MS1_high_x_limit <- 800; MS1_high_y_limit <- 110
+                                                } else {
+                                                    MS1_low_x_limit <- isolate(min(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
+                                                    MS1_high_x_limit <- isolate(max(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
+                                                    MS1_high_y_limit <- max(dplyr::filter(MS_out_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)$intensity) + 8
+                                                }
+                                                if (MS1_low_x_limit %in% c(Inf, -Inf) | MS1_high_x_limit %in% c(Inf, -Inf) | MS1_high_y_limit %in% c(Inf, -Inf)) {
+                                                    MS1_low_x_limit <- 0; MS1_high_x_limit <- 800; MS1_high_y_limit <- 110
+                                                }
+
+                                            # Make plot
+
+                                                output$massSpectra_1 <- renderPlot({
+
+                                                    ggplot() + 
+                                                        geom_bar(
+                                                            data = MS_out_1,
+                                                            mapping = aes(x = mz, y = intensity),
+                                                            stat = "identity", width = 0.1,
+                                                            color = "black", fill = "grey"
+                                                        ) +
+                                                        theme_classic() +
+                                                        scale_x_continuous(expand = c(0,0)) +
+                                                        scale_y_continuous(expand = c(0,0)) +
+                                                        coord_cartesian(xlim = c(MS1_low_x_limit, MS1_high_x_limit), ylim = c(0, MS1_high_y_limit)) +
+                                                        geom_text(
+                                                            data = # If it's less than 10 bars, label all. Otherwise, label 10 biggest ones
+                                                                if (MS1_high_x_limit - MS1_low_x_limit >= 1) {
+                                                                    dplyr::filter(MS_out_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)[
+                                                                        order(
+                                                                            dplyr::filter(MS_out_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)$intensity,
+                                                                            decreasing = TRUE
+                                                                        )[1:10]
+                                                                    ,]
+                                                                } else {
+                                                                    MS_out_1
+                                                                },
+                                                            mapping = aes(x = mz, y = intensity + 5, label = mz)
+                                                        )
+                                                })
+                                        }
                                     }
                             })
+
+                        ## [MS1 Subtract] Subtract selected MS as background from MS panel one on "shift+3" (35) keypress
+                            # observeEvent(input$keypress, {
+
+                            #     # Do nothing if no selection
+                            #         if(is.null(input$chromatogram_brush)) {
+                            #             return()
+                            #         }
+
+                            #     # If selection and "35" is pressed, extract and print mass spectra
+                            #         if( input$keypress == 35 ) {
+
+                            #             output$massSpectra_1 <- renderPlot({
+                            #                 framedDataFile_to_subtract <- isolate(as.data.frame(
+                            #                                     data.table::fread(as.character(
+                            #                                         brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
+                            #                                     ))
+                            #                 ))
+                            #                 framedDataFile_to_subtract <- isolate(dplyr::filter(
+                            #                                         framedDataFile_to_subtract, 
+                            #                                         rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                            #                                         rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                            #                                     ))
+                            #                 library(plyr)
+                            #                 framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 0)
+                            #                 framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
+                            #                 framedDataFile_1$intensity <- framedDataFile_1$intensity - framedDataFile_to_subtract$intensity
+                            #                 framedDataFile_1 <<- framedDataFile_1
+                            #                 framedDataFile_1$intensity <- framedDataFile_1$intensity*100/max(framedDataFile_1$intensity)
+
+                            #                 # Set ranges on mass spec (allow zooming in with selection)
+                            #                     if(isolate(is.null(input$massSpectra_1_brush))) {
+                            #                         MS1_low_x_limit <- 0
+                            #                         MS1_high_x_limit <- 800
+                            #                         MS1_high_y_limit <- 110
+                            #                     } else {
+                            #                         MS1_low_x_limit <- isolate(min(brushedPoints(framedDataFile_1, input$massSpectra_1_brush)$mz))
+                            #                         MS1_high_x_limit <- isolate(max(brushedPoints(framedDataFile_1, input$massSpectra_1_brush)$mz))
+                            #                         MS1_high_y_limit <- max(dplyr::filter(framedDataFile_1, intensity > MS1_low_x_limit & intensity < MS1_high_x_limit)$intensity) + 10
+                            #                     }
+
+                            #                 ggplot() + 
+                            #                     geom_bar(
+                            #                         data = framedDataFile_1,
+                            #                         mapping = aes(x = mz, y = intensity),
+                            #                         stat = "identity", width = 1,
+                            #                         color = "black", fill = "grey"
+                            #                     ) +
+                            #                     theme_classic() +
+                            #                     scale_x_continuous(expand = c(0,0)) +
+                            #                     scale_y_continuous(expand = c(0,0)) +
+                            #                     coord_cartesian(xlim = c(MS1_low_x_limit, MS1_high_x_limit), ylim = c(0, MS1_high_y_limit)) +
+                            #                     geom_text(
+                            #                         data = 
+                            #                             dplyr::filter(framedDataFile_1, mz > MS1_low_x_limit, mz < MS1_high_x_limit)[
+                            #                                 order(
+                            #                                     dplyr::filter(framedDataFile_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)$intensity,
+                            #                                     decreasing = TRUE
+                            #                                 )[1:10]
+                            #                             ,],
+                            #                         mapping = aes(x = mz, y = intensity + 5, label = mz)
+                            #                     )
+                            #             })
+                            #         }
+                            # })
+
+                        ## [MS1 Save] Save MS in MS panel one on "shift+5" (37) keypress
+                            
+                            # observeEvent(input$keypress, {
+
+                            #     # Do nothing if no selection
+                            #         if(is.null(input$chromatogram_brush)) {
+                            #             return()
+                            #         }
+
+                            #     # If selection and "37" is pressed, extract and print mass spectra
+                            #         if( input$keypress == 37 ) {
+                            #             framedDataFile_1$intensity[framedDataFile_1$intensity < 0] <- 0
+                            #             write.csv(framedDataFile_1, "integration_app_spectrum_1.csv", row.names = FALSE)
+                            #         }
+                            # })
 
                         ## Extract selected MS to MS panel two on "shift+2" (64) keypress
                             
-                            observeEvent(input$keypress, {
+                        #     observeEvent(input$keypress, {
 
-                                # Do nothing if no selection
-                                    if(is.null(input$chromatogram_brush)) {
-                                        return()
-                                    }
+                        #         # Do nothing if no selection
+                        #             if(is.null(input$chromatogram_brush)) {
+                        #                 return()
+                        #             }
 
-                                # If selection and "shift+22" is pressed, extract and print mass spectra
-                                    if( input$keypress == 64 ) {
+                        #         # If selection and "shift+22" is pressed, extract and print mass spectra
+                        #             if( input$keypress == 64 ) {
 
-                                        output$massSpectra_x <- renderPlot({
-                                            framedDataFile <- isolate(as.data.frame(
-                                                                data.table::fread(as.character(
-                                                                    brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                                ))
-                                        ))
-                                        framedDataFile <- isolate(dplyr::filter(
-                                                                    framedDataFile, 
-                                                                    rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                    rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                                ))
-                                        library(plyr)
-                                        framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
-                                        framedDataFile_2 <<- framedDataFile
-                                        framedDataFile$intensity <- framedDataFile$intensity*100/max(framedDataFile$intensity)
-                                        ggplot() + 
-                                            geom_bar(data = framedDataFile, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
-                                            theme_classic() +
-                                            scale_x_continuous(expand = c(0,0)) +
-                                            scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
-                                            geom_text(data = dplyr::filter(framedDataFile, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
-                                        })
-                                    }
-                            })
+                        #                 output$massSpectra_2 <- renderPlot({
+                        #                     framedDataFile <- isolate(as.data.frame(
+                        #                                         data.table::fread(as.character(
+                        #                                             brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
+                        #                                         ))
+                        #                 ))
+                        #                 framedDataFile <- isolate(dplyr::filter(
+                        #                                             framedDataFile, 
+                        #                                             rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                        #                                             rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                        #                                         ))
+                        #                 library(plyr)
+                        #                 framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
+                        #                 framedDataFile_2 <<- framedDataFile
+                        #                 framedDataFile$intensity <- framedDataFile$intensity*100/max(framedDataFile$intensity)
+                        #                 ggplot() + 
+                        #                     geom_bar(data = framedDataFile, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
+                        #                     theme_classic() +
+                        #                     scale_x_continuous(expand = c(0,0)) +
+                        #                     scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
+                        #                     geom_text(data = dplyr::filter(framedDataFile, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
+                        #                 })
+                        #             }
+                        #     })
 
-                        ## Subtract selected MS as background from MS panel one on "shift+4" (36) keypress
+                        # ## Subtract selected MS as background from MS panel one on "shift+4" (36) keypress
                             
-                            observeEvent(input$keypress, {
+                        #     observeEvent(input$keypress, {
 
-                                # Do nothing if no selection
-                                    if(is.null(input$chromatogram_brush)) {
-                                        return()
-                                    }
+                        #         # Do nothing if no selection
+                        #             if(is.null(input$chromatogram_brush)) {
+                        #                 return()
+                        #             }
 
-                                    # If selection and "shift+4" is pressed, extract and print mass spectra
-                                        if( input$keypress == 36 ) {
+                        #             # If selection and "shift+4" is pressed, extract and print mass spectra
+                        #                 if( input$keypress == 36 ) {
 
-                                            output$massSpectra_x <- renderPlot({
-                                                framedDataFile_to_subtract <- isolate(as.data.frame(
-                                                                    data.table::fread(as.character(
-                                                                        brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                                    ))
-                                                ))
-                                                framedDataFile_to_subtract <- isolate(dplyr::filter(
-                                                                        framedDataFile_to_subtract, 
-                                                                        rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                        rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                                    ))
-                                                library(plyr)
-                                                framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
-                                                framedDataFile_2$intensity <- framedDataFile_2$intensity - framedDataFile_to_subtract$intensity
-                                                framedDataFile_2 <<- framedDataFile_2
-                                                framedDataFile_2$intensity <- framedDataFile_2$intensity*100/max(framedDataFile_2$intensity)
-                                                ggplot() + 
-                                                    geom_bar(data = framedDataFile_2, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
-                                                    theme_classic() +
-                                                    scale_x_continuous(expand = c(0,0)) +
-                                                    scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
-                                                    geom_text(data = dplyr::filter(framedDataFile_2, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
-                                            })
-                                        }
-                                })
+                        #                     output$massSpectra_2 <- renderPlot({
+                        #                         framedDataFile_to_subtract <- isolate(as.data.frame(
+                        #                                             data.table::fread(as.character(
+                        #                                                 brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
+                        #                                             ))
+                        #                         ))
+                        #                         framedDataFile_to_subtract <- isolate(dplyr::filter(
+                        #                                                 framedDataFile_to_subtract, 
+                        #                                                 rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                        #                                                 rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                        #                                             ))
+                        #                         library(plyr)
+                        #                         framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
+                        #                         framedDataFile_2$intensity <- framedDataFile_2$intensity - framedDataFile_to_subtract$intensity
+                        #                         framedDataFile_2 <<- framedDataFile_2
+                        #                         framedDataFile_2$intensity <- framedDataFile_2$intensity*100/max(framedDataFile_2$intensity)
+                        #                         ggplot() + 
+                        #                             geom_bar(data = framedDataFile_2, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
+                        #                             theme_classic() +
+                        #                             scale_x_continuous(expand = c(0,0)) +
+                        #                             scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
+                        #                             geom_text(data = dplyr::filter(framedDataFile_2, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
+                        #                     })
+                        #                 }
+                        #         })
 
-                        ## Save MS in MS panel one on "shift+6" (94) keypress
+                        # ## Save MS in MS panel one on "shift+6" (94) keypress
 
-                            observeEvent(input$keypress, {
+                        #     observeEvent(input$keypress, {
 
-                                # Do nothing if no selection
-                                    if(is.null(input$chromatogram_brush)) {
-                                        return()
-                                    }
+                        #         # Do nothing if no selection
+                        #             if(is.null(input$chromatogram_brush)) {
+                        #                 return()
+                        #             }
 
-                                # If selection and "shift+6" is pressed, extract and print mass spectra
-                                    if( input$keypress == 96 ) {
-                                        framedDataFile_2$intensity[framedDataFile_2$intensity < 0] <- 0
-                                        write.csv(framedDataFile_2, "integration_app_spectrum_2.csv")
-                                    }
-                            })
+                        #         # If selection and "shift+6" is pressed, extract and print mass spectra
+                        #             if( input$keypress == 96 ) {
+                        #                 framedDataFile_2$intensity[framedDataFile_2$intensity < 0] <- 0
+                        #                 write.csv(framedDataFile_2, "integration_app_spectrum_2.csv")
+                        #             }
+                        #     })
                     }
 
                 ## Call the app
@@ -3225,7 +3349,7 @@
 
             }
 
-    #### readChromatograms
+	#### readChromatograms
 
         #' Import chromatograms stored as ChemStation exported .csv files
         #'
