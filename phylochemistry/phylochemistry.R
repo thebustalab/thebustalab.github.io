@@ -19,6 +19,7 @@
     library(ips)
     library(phangorn)
     library(seqinr)
+    library(msa)
 
 ##### Datasets
     
@@ -4134,10 +4135,16 @@
                 c("COOH", "#ffff33"), # yellow
                 c("H", "white"),
                 c("O", "#e41a1c"), # red
-                c("OH", "#377eb8") # blue
+                c("OH", "#377eb8"), # blue
+                c("CHO", "grey20"),
+                c("OCOCH3", "grey30"),
+                c("COOCH3", "grey40"),
+                c("CH2CH3", "grey50")
             ))
             atom_colors <- atom_colors_pre[,2]
             names(atom_colors) <- atom_colors_pre[,1]
+
+
 
             #e41a1c red
             #377eb8 blue
@@ -4250,7 +4257,7 @@
                   # scale_linetype_manual(values = bond_line_types) +
                   scale_y_continuous(breaks = seq(0,20,1)) +
                   scale_fill_manual(values = atom_colors, name = "") +
-                  facet_wrap(.~molecule_name, ncol = 2) +
+                  facet_wrap(.~molecule_name, ncol = 4) +
                   theme_void() +
                   guides(size = "none", alpha = "none") +
                   coord_fixed() +
@@ -4260,7 +4267,7 @@
 
                 # print(plot)
                   return(plot)
-        }                       
+        }                  
 
 ##### Statistical testing and modelling
 
