@@ -2859,7 +2859,7 @@
 
                                                     output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
                                                         peak_table2 <- read.csv(peaks_monolist_path)
-                                                        peak_table2
+                                                        peak_table2[,1:6]
                                                     }))
 
                                                 ## Create the plot with subsetted data to make it faster
