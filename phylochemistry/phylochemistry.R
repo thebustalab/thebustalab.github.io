@@ -20,21 +20,22 @@
     library(phangorn)
     library(seqinr)
     library(msa)
+    library(Rfast)
 
 ##### Datasets
     
-    algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-    alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
-    solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv")
-    periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
-    periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
-    # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
-    ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
-    wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv")
-    # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv")
-    hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv")
-    beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv")
-    hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv")
+    algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv", col_types = cols())
+    alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv", col_types = cols())
+    solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv", col_types = cols())
+    periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv", col_types = cols())
+    periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv", col_types = cols())
+    # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv", col_types = cols())
+    ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv", col_types = cols())
+    wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv", col_types = cols())
+    # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv", col_types = cols())
+    hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv", col_types = cols())
+    beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv", col_types = cols())
+    hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
 
 ##### Read and write functions
 
@@ -2532,14 +2533,13 @@
         #' @export
         #' integrationAppLite
 
-        integrationAppLite <-   function(
+        integrationAppLite <- function(
                 CDF_directory_path,
                 zoom_and_scroll_rate = 100,
                 baseline_window = 400
             ) {
 
-                ## Set up monolists
-
+                ## Set up monolists and status
                     samples_monolist_subset = NULL
                     samples_monolist_path <- paste0(CDF_directory_path, "/samples_monolist.csv")
                     peaks_monolist_path <- paste0(CDF_directory_path, "/peaks_monolist.csv")
@@ -2633,39 +2633,55 @@
                         });
                         '), 
 
-                        verticalLayout(
+                        tabsetPanel(type = "tabs",
 
-                            plotOutput(
-                                outputId = "massSpectra_1",
-                                brush = brushOpts(
-                                    id = "massSpectra_1_brush"
-                                ),
-                                height = 150
+                            tabPanel("Main",
+
+                                verticalLayout(
+
+                                    plotOutput(
+                                        outputId = "massSpectra_1",
+                                        brush = brushOpts(
+                                            id = "massSpectra_1_brush"
+                                        ),
+                                        height = 150
+                                    ),
+
+                                    plotOutput(
+                                        outputId = "massSpectra_2",
+                                        brush = brushOpts(
+                                            id = "massSpectra_2_brush"
+                                        ),
+                                        height = 150
+                                    ),
+
+                                    plotOutput(
+                                        outputId = "chromatograms",
+                                        brush = brushOpts(
+                                            id = "chromatogram_brush"
+                                        ),
+                                      click = "chromatogram_click", 
+                                      dblclick = "chromatogram_double_click",
+                                      height = plot_height
+                                    ),
+
+                                    verbatimTextOutput("key", placeholder = TRUE),
+
+                                    rhandsontable::rHandsontableOutput("peak_table")
+                                )
                             ),
 
-                            plotOutput(
-                                outputId = "massSpectra_2",
-                                brush = brushOpts(
-                                    id = "massSpectra_2_brush"
-                                ),
-                                height = 150
-                            ),
+                            tabPanel("MS Library",
 
-                            plotOutput(
-                                outputId = "chromatograms",
-                                brush = brushOpts(
-                                    id = "chromatogram_brush"
-                                ),
-                              click = "chromatogram_click", 
-                              dblclick = "chromatogram_double_click",
-                              height = plot_height
-                            ),
+                                verticalLayout(
+                                    
+                                    plotOutput(
+                                        outputId = "massSpectrumLookup",
+                                        height = 1200
+                                    )
 
-                            verbatimTextOutput("key", placeholder = TRUE),
-
-                            # DT::dataTableOutput("selected_peak"), ## Useful for troubleshooting
-
-                            rhandsontable::rHandsontableOutput("peak_table")
+                                )
+                            )
                         )
                     )
 
@@ -3066,11 +3082,11 @@
                                     }
                             })
 
-                        ## [MS1 Extract] Extract selected MS to MS panel 1 on "shift+1" (33) keypress
+                        ## [MS1 update ("shift+1"), extract ("shift+2"), subtract ("shift+3"), library search ("shift+4"), save ("shift+5")]
                             
                             observeEvent(input$keypress, {
 
-                                # If "shift+2", MS from chromatogram brush -> MS_out_1
+                                ## If "shift+2", MS from chromatogram brush -> MS_out_1
                                     if( input$keypress == 64 ) {
                                         
                                         framedDataFile <- isolate(as.data.frame(
@@ -3117,7 +3133,7 @@
                                     if ( input$keypress == 33 | input$keypress == 64 | input$keypress == 35 ) {
 
                                         if (!exists("MS_out_1")) {
-                                            cat("No mass spectrum extracted yet.")
+                                            cat("No mass spectrum extracted yet.\n")
                                             return()
                                         } else {
 
@@ -3168,6 +3184,70 @@
                                                         )
                                                 })
                                         }
+                                    }
+
+                                ## If "shift+4" library lookup
+
+                                    if (input$keypress == 36) {
+                                            
+                                        if (!exists("reference_MS_library")) {
+                                            message("Reading in reference library...\n")
+                                            reference_MS_library <- read_csv("/Users/bust0037/Documents/Science/Instruments_and_supplies/Resources_MS/MS_spectral_library/busta_spectral_library_MASTER.csv", col_types = cols())
+                                        }
+                                            
+                                            MS_out_1$mz <- round(MS_out_1$mz)
+                                            MS_out_1 %>%
+                                                group_by(mz) %>%
+                                                dplyr::summarize(intensity = sum(intensity)) -> MS_out_1
+                                            MS_out_1$intensity <- MS_out_1$intensity/max(MS_out_1$intensity)*100
+
+                                            unknown <- cbind(
+                                                data.frame(
+                                                    Accession_number = "unknown",
+                                                    Source = "unknown",
+                                                    Compound_name = "unknown",
+                                                    Compound_alias = "unknown"
+                                                ),
+                                                t(c(rep(0,49), MS_out_1$intensity))
+                                            )
+                                            colnames(unknown)[5:804] <- c(seq(1,49,1), MS_out_1$mz)
+
+                                            lookup_data <- rbind(reference_MS_library, unknown)
+                                            
+                                        message("Searching reference library for unknown spectrum...\n")
+                                            
+                                            hits <- runMatrixAnalysis(
+                                                data = lookup_data,
+                                                analysis = c("hclust"),
+                                                column_w_names_of_multiple_analytes = NULL,
+                                                column_w_values_for_multiple_analytes = NULL,
+                                                columns_w_values_for_single_analyte = colnames(lookup_data)[5:804],
+                                                columns_w_additional_analyte_info = NULL,
+                                                columns_w_sample_ID_info = c("Accession_number", "Compound_name"),
+                                                transpose = FALSE,
+                                                unknown_sample_ID_info = c("unknown_unknown"),
+                                                scale_variance = TRUE,
+                                                kmeans = "none",
+                                                na_replacement = "drop",
+                                                output_format = "long"
+                                            )
+
+                                            hits[!is.na(hits$sample_unique_ID),] %>%
+                                                select(analyte_name, value, sample_unique_ID) %>%
+                                                unique() -> bars
+                                            
+                                            plot <- ggplot(bars) +
+                                                geom_col(aes(x = as.numeric(as.character(analyte_name)), y = value)) +
+                                                geom_text(aes(label = sample_unique_ID, x = 400, y = 90), hjust = 0.5, size = 4) +
+                                                facet_grid(sample_unique_ID~.) +
+                                                theme_bw() +
+                                                scale_x_continuous(name = "m/z") +
+                                                scale_y_continuous(name = "Relative intensity (%)")
+
+                                            output$massSpectrumLookup <- renderPlot({plot})
+
+                                        message("Done.\n")
+
                                     }
                             })
 
@@ -3342,6 +3422,7 @@
                         #                 write.csv(framedDataFile_2, "integration_app_spectrum_2.csv")
                         #             }
                         #     })
+
                     }
 
                 ## Call the app
@@ -4109,7 +4190,7 @@
 
         drawMolecules <- function(csv_in_path) {
 
-            data <- read_csv(csv_in_path)
+            data <- read_csv(csv_in_path, col_types = cols())
 
             data$bond_start_x <- data$x[match(data$bond_start_atom, data$atom_number)]
             data$bond_start_y <- data$y[match(data$bond_start_atom, data$atom_number)]
@@ -4807,13 +4888,17 @@
                 ## Peak heights are just the height at the mean
                     peak_heights <- y[x %in% peak_means]
 
-                    ggplot() +
+                ## Report on peaks found and plot them
+                    cat(paste0("Found ", length(peak_heights), " peaks at peak_detection_threshold = ", peak_detection_threshold, "\n"))
+
+                    plot <- ggplot() +
                         geom_line(data = data.frame(x = x, y = y), aes(x = x, y = y), color = "red") +
                         geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv1_y), color = "black") +
                         geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv2_y), color = "blue") +
                         geom_vline(aes(xintercept = peak_means)) +
                         geom_vline(aes(xintercept = peak_means + peak_sigma), color = "red") +
                         geom_vline(aes(xintercept = peak_means - peak_sigma), color = "red")
+                    print(plot)
 
             ## If nls, fit peaks with gaussians using nls and extract fit data
 
