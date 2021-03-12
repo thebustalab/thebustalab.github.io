@@ -3237,10 +3237,7 @@
 
                                         if (input$keypress == 36) {
                                                 
-                                            # if (!exists("reference_MS_library")) {
-                                            #     message("Reading in reference library...\n")
-                                            #     reference_MS_library <- busta_spectral_library_MASTER
-                                            # }
+                                            message("Searching reference library for unknown spectrum...\n")
                                                 
                                                 MS_out_1$mz <- round(MS_out_1$mz)
                                                 MS_out_1 %>%
@@ -3261,8 +3258,6 @@
                                                 colnames(unknown)[6:805] <- paste("mz_", c(seq(1,39,1), MS_out_1$mz), sep = "")
 
                                                 lookup_data <- rbind(busta_spectral_library, unknown)
-                                                
-                                            message("Searching reference library for unknown spectrum...\n")
                                                 
                                                 hits <- runMatrixAnalysis(
                                                     data = lookup_data,
