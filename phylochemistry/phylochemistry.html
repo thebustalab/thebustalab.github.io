@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-02-17" />
+<meta name="date" content="2021-03-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -156,42 +156,46 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Phylochemistry</h1>
 <p class="author"><em>Lucas Busta</em></p>
-<p class="date"><em>2021-02-17</em></p>
+<p class="date"><em>2021-03-12</em></p>
 </div>
 <div id="phylochemistry" class="section level1">
 <h1><span class="header-section-number">1</span> phylochemistry</h1>
-<p><img src="http://thebustalab.github.io/phylochemistry/figures/phylochemistry_logo.jpg" /></p>
+<p><img src="http://thebustalab.github.io/images/phylochemistry_logo.jpg" /></p>
 <p><code>phylochemistry</code> is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new functions and wrapped features of previously developed packages. A number of new functions to streamline analyses in this interdisciplinary space are also provided. This repository contains the latest version of the <code>phylochemistry</code> R package.</p>
 <div id="install" class="section level2">
 <h2><span class="header-section-number">1.1</span> install</h2>
-<p><code>phylochemistry</code> can be installed by following these four steps:</p>
+<!-- `phylochemistry` can be installed by following these four steps:
+
+1. Install `msa` and `phangorn` by running the following code in R
+
+```r
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install("msa")
+BiocManager::install("ggtree")
+BiocManager::install("phangorn")
+BiocManager::install("seqinr")
+BiocManager::install("Biostrings")
+BiocManager::install("GenomicRanges")
+```
+2. Install prequisite R packages by running the following code in R
+
+```r
+install.packages("tidyverse")
+install.packages("DT")
+install.packages("RColorBrewer")
+install.packages("xcms")
+install.packages("data.table")
+install.packages("rhandsontable")
+install.packages("ape")
+install.packages("ips")
+```
+ -->
 <ol style="list-style-type: decimal">
-<li>Install <code>msa</code> and <code>phangorn</code> by running the following code in R</li>
-</ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw">requireNamespace</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="dt">quietly =</span> <span class="ot">TRUE</span>)) <span class="kw">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;msa&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;ggtree&quot;</span>)</span>
-<span id="cb1-4"><a href="#cb1-4"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;phangorn&quot;</span>)</span>
-<span id="cb1-5"><a href="#cb1-5"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;seqinr&quot;</span>)</span>
-<span id="cb1-6"><a href="#cb1-6"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;Biostrings&quot;</span>)</span>
-<span id="cb1-7"><a href="#cb1-7"></a>BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;GenomicRanges&quot;</span>)</span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>Install prequisite R packages by running the following code in R</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">install.packages</span>(<span class="st">&quot;DT&quot;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">install.packages</span>(<span class="st">&quot;RColorBrewer&quot;</span>)</span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">install.packages</span>(<span class="st">&quot;xcms&quot;</span>)</span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">install.packages</span>(<span class="st">&quot;data.table&quot;</span>)</span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="kw">install.packages</span>(<span class="st">&quot;rhandsontable&quot;</span>)</span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">install.packages</span>(<span class="st">&quot;ape&quot;</span>)</span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">install.packages</span>(<span class="st">&quot;ips&quot;</span>)</span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
 <li><p>(for Windows only) <a href="https://www.x.org/wiki/">install X.Org</a></p></li>
 <li><p>(for Mac only) <a href="https://www.xquartz.org/">install XQuartz</a></p></li>
-<li><p>Load <code>phylochemistry</code> directly into your R session using the following:</p></li>
+<li><p><code>phylochemistry</code> requires some other R packages to run, but it will help you install these packages if you haven’t already. Load <code>phylochemistry</code> directly into your R session using the following:</p></li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 </div>
 <div id="new-features" class="section level2">
 <h2><span class="header-section-number">1.2</span> new features</h2>
