@@ -3238,7 +3238,7 @@
                                         if (input$keypress == 36) {
                                                 
                                             message("Searching reference library for unknown spectrum...\n")
-                                                
+
                                                 MS_out_1$mz <- round(MS_out_1$mz)
                                                 MS_out_1 %>%
                                                     group_by(mz) %>%
@@ -3253,7 +3253,7 @@
                                                         SMILES = NA,
                                                         Source = "unknown"
                                                     ),
-                                                    t(c(rep(0,49), MS_out_1$intensity))
+                                                    t(c(rep(0,39), MS_out_1$intensity))
                                                 )
                                                 colnames(unknown)[6:805] <- paste("mz_", c(seq(1,39,1), MS_out_1$mz), sep = "")
 
