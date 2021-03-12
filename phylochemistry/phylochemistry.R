@@ -4,26 +4,67 @@
 
 ##### Libraries
 
-    library(tidyverse)
-    library(ape)
-    library(ggtree)
-    library(rstatix)
-    library(multcompView)
-    library(imager)
-    library(shiny)
-    library(DT)
-    library(RColorBrewer)
-    library(xcms)
-    library(data.table)
-    library(rhandsontable)
-    library(ips)
-    library(phangorn)
-    library(seqinr)
-    library(msa)
-    library(Rfast)
+    ## Define necessary libraries
+        
+        CRAN_packages <- c(
+                "tidyverse",
+                "ape",
+                "ggtree",
+                "rstatix",
+                "multcompView",
+                "imager",
+                "shiny",
+                "DT",
+                "RColorBrewer",
+                "data.table",
+                "rhandsontable",
+                "ips",
+                "phangorn",
+                "seqinr",
+                "Rfast",
+                "picante",
+                "BiocManager"
+            )
+
+        Bioconductor_packages <- c(
+                "ggtree",
+                "xcms",
+                "msa"
+            )
+
+        packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
+
+    ## Define function to auto install them
+        
+        installPhylochemistry <- function() {
+            
+            if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
+                install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
+            }
+
+            if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
+                BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed])
+            }
+        
+        }
+   
+    ## Determine if anything needs to be installed
+        
+        if (length(packages_needed) > 0) {
+            stop(paste(
+                "You need to install the following packages before proceeding:\n",
+                paste(packages_needed, collapse = ", "),
+                "\n", "\n",
+                "Run: installPhylochemistry() to automatically install the required packages."
+            ))
+        } else {
+            message("Loading packages...")
+            invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
+        }
 
 ##### Datasets
     
+    message("Loading datasets...")
     algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv", col_types = cols())
     alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv", col_types = cols())
     solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv", col_types = cols())
@@ -36,6 +77,9 @@
     hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv", col_types = cols())
     beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv", col_types = cols())
     hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
+    busta_spectral_library_MASTER <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_MASTER.csv", col_types = cols())
+
+message("Loading functions...")
 
 ##### Read and write functions
 
@@ -2536,7 +2580,8 @@
         integrationAppLite <- function(
                 CDF_directory_path,
                 zoom_and_scroll_rate = 100,
-                baseline_window = 400
+                baseline_window = 400,
+                path_to_reference_library = busta_spectral_library_MASTER
             ) {
 
                 ## Set up monolists and status
@@ -3190,10 +3235,10 @@
 
                                     if (input$keypress == 36) {
                                             
-                                        if (!exists("reference_MS_library")) {
-                                            message("Reading in reference library...\n")
-                                            reference_MS_library <- read_csv("/Users/bust0037/Documents/Science/Instruments_and_supplies/Resources_MS/MS_spectral_library/busta_spectral_library_MASTER.csv", col_types = cols())
-                                        }
+                                        # if (!exists("reference_MS_library")) {
+                                        #     message("Reading in reference library...\n")
+                                        #     reference_MS_library <- busta_spectral_library_MASTER
+                                        # }
                                             
                                             MS_out_1$mz <- round(MS_out_1$mz)
                                             MS_out_1 %>%
@@ -3212,7 +3257,7 @@
                                             )
                                             colnames(unknown)[5:804] <- c(seq(1,49,1), MS_out_1$mz)
 
-                                            lookup_data <- rbind(reference_MS_library, unknown)
+                                            lookup_data <- rbind(busta_spectral_library_MASTER, unknown)
                                             
                                         message("Searching reference library for unknown spectrum...\n")
                                             
@@ -4741,16 +4786,15 @@
                     
                 # Add back annotations to the output
 
-                    clustering <- right_join(
-                        data_wide[,match(
-                            if( length(columns_w_sample_ID_info) == 1 ) {
-                                "sample_unique_ID"
-                            } else {
-                                c(columns_w_sample_ID_info, "sample_unique_ID")
-                            }, colnames(data_wide))],
-                        clustering,
-                        by = "sample_unique_ID"
-                    )
+                    if( length(columns_w_sample_ID_info) == 1 ) {
+                    } else {
+                    clustering <-   right_join(
+                                        data_wide[,match(
+                                            c(columns_w_sample_ID_info, "sample_unique_ID"),
+                                            colnames(data_wide))
+                                        ], clustering, by = "sample_unique_ID"
+                                    )
+                    }
 
                     rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
                     colnames(rownames_matrix)[1] <- "sample_unique_ID"
@@ -4761,6 +4805,8 @@
                         by = "sample_unique_ID"
                     )
                     clustering
+
+                    clustering <- select(clustering, sample_unique_ID, everything())
 
                 # Annotate internal branches if tree output
 
@@ -5144,90 +5190,150 @@
 
     #### phylogeneticSignal
 
-        #' Convert mass spectral datafiles (CDF) into a csv file
+        #' Compute phylogenetic signal for continuous and discrete traits
         #'
-        #' @param trait A vector of the variable, named according to which tree tip it comes from
-        #' @param tree A phylogenetic tree with tips that exactly match the names of trait
+        #' @param trait A data frame of traits where the first column is tree tip names that exactly match the tree tip labels
+        #' @param tree A phylogenetic tree (class phylo) with tips that exactly match the names of trait
         #' @param replicates Number of random replications to run
         #' @param cost Optional. A specialized transition matrix
         #' @examples
         #' @export
         #' phylogeneticSignal
 
-            phylogeneticSignal <- function( trait, tree, replicates = 999, cost = NULL ) {
+            phylogeneticSignal <- function( traits, tree, replicates = 999, cost = NULL ) {
 
-                ### For discrete traits
+                results <- list()
 
-                    ## Get the states in which the trait may exist (levels)
+                ## Loop over columns
+                
+                    for (i in 2:dim(traits)[2]) {
 
-                        levels <- attributes(factor(trait))$levels
+                        trait <- traits[,i]
+                        names(trait) <- traits[,1]
 
-                    ## Chech that the variable is indeed categorical
+                        if (class(trait) %in% c("factor", "character")) {
+
+                            ### For discrete traits
+
+                                ## Get the states in which the trait may exist (levels)
+
+                                    levels <- attributes(factor(trait))$levels
+
+                                ## Chech that the variable is indeed categorical
+                                                
+                                    if (length(levels) == length(trait)) {
                                     
-                        if (length(levels) == length(trait)) {
-                        
-                            warn("Are you sure this variable is categorical?")
+                                        warn("Are you sure this variable is categorical?")
+
+                                    }
+
+                                ## Make the transition matrix
+                                    
+                                    if (is.null(cost)) {
+                                    
+                                        cost1 <- 1-diag(length(levels))
+                                    
+                                    } else {
+                                    
+                                    if (length(levels) != dim(cost)[1])
+                                        
+                                        stop("Dimensions of the character state transition matrix do not agree with the number of levels")
+                                        
+                                        cost1 <- t(cost)
+                                    }
+                                    dimnames(cost1) <- list(levels, levels)
+
+                                ## Make the trait numeric
+                                
+                                    trait_as_numeric <- as.numeric(as.factor(trait))
+                                    names(trait_as_numeric) <- names(trait)
+                                
+                                ## Make the phyDat object and get the parsimony score for the tree with the associated observations
+
+                                    # obs <- t(data.frame(trait))
+                                    obs <- phyDat( trait, type = "USER", levels = attributes(factor(trait))$levels )
+                                    OBS <- parsimony( tree, obs, method = "sankoff", cost = cost1 )
+
+                                ## Make "replicates" number of random tree-trait associations and check their parsimony score
+
+                                    null_model <- matrix(NA, replicates, 1)
+                                    for (i in 1:replicates){
+
+                                        ## Randomize the traits and get the parsimony score for the random traits on that tree
+                                            null <- sample(as.numeric(trait_as_numeric))
+                                            attributes(null)$names <- attributes(trait_as_numeric)$names
+                                            # null <- t(data.frame(null))
+                                            null <- phyDat( null,type = "USER",levels = attributes(factor(null))$levels )
+                                            null_model[i,] <- parsimony( tree, null, method = "sankoff", cost = cost1 )
+
+                                    }
+
+                                ## Assess observed parsimony score in the context of the random ones
+                                    
+                                    p_value <- sum(OBS >= null_model)/(replicates + 1)
+                                    p_value
+
+                                ## Summarize output and report it
+                                    
+                                    results[[i-1]] <- data.frame(
+                                        trait = colnames(traits)[i],
+                                        trait_type = "categorical",
+                                        n_species = length(tree$tip.label),
+                                        number_of_levels = length(attributes(factor(trait))$levels), 
+                                        evolutionary_transitions_observed = OBS,
+                                        median_evolutionary_transitions_in_randomization = median(null_model),
+                                        minimum_evolutionary_transitions_in_randomization = min(null_model),
+                                        evolutionary_transitions_in_randomization = max(null_model),
+                                        p_value = p_value
+                                    )
 
                         }
 
-                    ## Make the transition matrix
-                        
-                        if (is.null(cost)) {
-                        
-                            cost1 <- 1-diag(length(levels))
-                        
-                        } else {
-                        
-                        if (length(levels) != dim(cost)[1])
-                            
-                            stop("Dimensions of the character state transition matrix do not agree with the number of levels")
-                            
-                            cost1 <- t(cost)
-                        }
-                        dimnames(cost1) <- list(levels, levels)
+                        if (class(trait) %in% c("numeric")) {
 
-                    ## Make the trait numeric
-                    
-                        trait_as_numeric <- as.numeric(as.factor(trait))
-                        names(trait_as_numeric) <- names(trait)
-                    
-                    ## Make the phyDat object and get the parsimony score for the tree with the associated observations
+                            ### For continuous traits
 
-                        # obs <- t(data.frame(trait))
-                        obs <- phyDat( trait, type = "USER", levels = attributes(factor(trait))$levels )
-                        OBS <- parsimony( tree, obs, method = "sankoff", cost = cost1 )
+                                # for (trait in 1:length(cont_traits)) {
 
-                    ## Make "replicates" number of random tree-trait associations and check their parsimony score
+                                #     # Pull out one variable into a new dataframe
+                                #         var <- as.matrix(pdata_continuous[,colnames(pdata_continuous) == cont_traits[trait]])
+                                #         colnames(var) <- cont_traits[trait]
+                                #         rownames(var) <- pdata_continuous$Species
+                                #         var <- na.omit(var)
 
-                        null_model <- matrix(NA, replicates, 1)
-                        for (i in 1:replicates){
+                                #     # Drop tips not in data, data not in tree
+                                #         matches <- name.check(nepenthes_tree,var)
+                                #         matches
+                                #         nepenthes_tree_2 <- ape::drop.tip(phy = nepenthes_tree, tip = matches$tree_not_data)
+                                #         name.check(nepenthes_tree_2,var)
+                                #         var <- var[nepenthes_tree_2$tip.label,]
 
-                            ## Randomize the traits and get the parsimony score for the random traits on that tree
-                                null <- sample(as.numeric(trait_as_numeric))
-                                attributes(null)$names <- attributes(trait_as_numeric)$names
-                                # null <- t(data.frame(null))
-                                null <- phyDat( null,type = "USER",levels = attributes(factor(null))$levels )
-                                null_model[i,] <- parsimony( tree, null, method = "sankoff", cost = cost1 )
+                                #     # Root the tree and resolve multichotomies
+                                #         # nepenthes_tree_3 <- root(nepenthes_tree_2, "N._pervillei_matK")
+                                #         nepenthes_tree_3 <- nepenthes_tree_2
+                                #         nepenthes_tree_4 <- multi2di(nepenthes_tree_3)
 
+                                    # Determine phylogenetic signal
+                                        results[[i-1]] <- data.frame(
+                                            trait = colnames(traits)[i],
+                                            trait_type = "continuous",
+                                            n_species = length(tree$tip.label),
+                                            number_of_levels = NA,
+                                            evolutionary_transitions_observed = NA,
+                                            median_evolutionary_transitions_in_randomization = NA,
+                                            minimum_evolutionary_transitions_in_randomization = NA,
+                                            evolutionary_transitions_in_randomization = NA,
+                                            p_value = as.numeric(picante::phylosignal(trait, tree)[4])
+                                        )
                         }
 
-                    ## Assess observed parsimony score in the context of the random ones
-                        
-                        p_value <- sum(OBS >= null_model)/(replicates + 1)
-                        p_value
+                    }
 
-                    ## Summarize output and report it
-                        
-                        output <- data.frame(
-                            number_of_levels = length(attributes(factor(trait))$levels), 
-                            evolutionary_transitions_observed = OBS,
-                            median_evolutionary_transitions_in_randomization = median(null_model),
-                            minimum_evolutionary_transitions_in_randomization = min(null_model),
-                            evolutionary_transitions_in_randomization = max(null_model),
-                            p_value = p_value
-                        )
-                        
-                    return(output)
+                ## Return results
 
-                }
+                    results <- do.call(rbind, results)
+                    results
+                    return(results)
+
+            }
 
