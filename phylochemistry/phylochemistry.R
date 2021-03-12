@@ -3260,7 +3260,7 @@
                                                 )
                                                 colnames(unknown)[6:805] <- paste("mz_", c(seq(1,49,1), MS_out_1$mz), sep = "")
 
-                                                lookup_data <- rbind(busta_spectral_library_MASTER, unknown)
+                                                lookup_data <- rbind(busta_spectral_library, unknown)
                                                 
                                             message("Searching reference library for unknown spectrum...\n")
                                                 
