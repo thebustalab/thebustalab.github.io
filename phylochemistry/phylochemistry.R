@@ -77,7 +77,7 @@
     hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv", col_types = cols())
     beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv", col_types = cols())
     hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
-    busta_spectral_library_MASTER <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_MASTER.csv", col_types = cols())
+    busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_v1.csv", col_types = cols())
 
 ###### Functions
 
@@ -2583,7 +2583,7 @@
                     CDF_directory_path,
                     zoom_and_scroll_rate = 100,
                     baseline_window = 400,
-                    path_to_reference_library = busta_spectral_library_MASTER
+                    path_to_reference_library = busta_spectral_library
                 ) {
 
                     ## Set up monolists and status
@@ -3251,13 +3251,14 @@
                                                 unknown <- cbind(
                                                     data.frame(
                                                         Accession_number = "unknown",
-                                                        Source = "unknown",
-                                                        Compound_name = "unknown",
-                                                        Compound_alias = "unknown"
+                                                        Compound_systematic_name = "unknown",
+                                                        Compound_common_name = "unknown",
+                                                        SMILES = NA,
+                                                        Source = "unknown"
                                                     ),
                                                     t(c(rep(0,49), MS_out_1$intensity))
                                                 )
-                                                colnames(unknown)[5:804] <- c(seq(1,49,1), MS_out_1$mz)
+                                                colnames(unknown)[6:805] <- paste("mz_", c(seq(1,49,1), MS_out_1$mz), sep = "")
 
                                                 lookup_data <- rbind(busta_spectral_library_MASTER, unknown)
                                                 
@@ -3268,9 +3269,9 @@
                                                     analysis = c("hclust"),
                                                     column_w_names_of_multiple_analytes = NULL,
                                                     column_w_values_for_multiple_analytes = NULL,
-                                                    columns_w_values_for_single_analyte = colnames(lookup_data)[5:804],
+                                                    columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
                                                     columns_w_additional_analyte_info = NULL,
-                                                    columns_w_sample_ID_info = c("Accession_number", "Compound_name"),
+                                                    columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
                                                     transpose = FALSE,
                                                     unknown_sample_ID_info = c("unknown_unknown"),
                                                     scale_variance = TRUE,
@@ -3282,10 +3283,12 @@
                                                 hits[!is.na(hits$sample_unique_ID),] %>%
                                                     select(analyte_name, value, sample_unique_ID) %>%
                                                     unique() -> bars
+
+                                                bars$analyte_name <- gsub(".*_", "", bars$analyte_name)
                                                 
-                                                plot <- ggplot(bars) +
-                                                    geom_col(aes(x = as.numeric(as.character(analyte_name)), y = value)) +
-                                                    geom_text(aes(label = sample_unique_ID, x = 400, y = 90), hjust = 0.5, size = 4) +
+                                                plot <- ggplot() +
+                                                    geom_col(data = bars, aes(x = as.numeric(as.character(analyte_name)), y = value)) +
+                                                    geom_text(data = unique(select(bars, sample_unique_ID)), aes(label = sample_unique_ID, x = 400, y = 90), hjust = 0.5, size = 4) +
                                                     facet_grid(sample_unique_ID~.) +
                                                     theme_bw() +
                                                     scale_x_continuous(name = "m/z") +
