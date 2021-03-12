@@ -3258,7 +3258,7 @@
                                                     ),
                                                     t(c(rep(0,49), MS_out_1$intensity))
                                                 )
-                                                colnames(unknown)[6:805] <- paste("mz_", c(seq(1,49,1), MS_out_1$mz), sep = "")
+                                                colnames(unknown)[6:805] <- paste("mz_", c(seq(1,39,1), MS_out_1$mz), sep = "")
 
                                                 lookup_data <- rbind(busta_spectral_library, unknown)
                                                 
