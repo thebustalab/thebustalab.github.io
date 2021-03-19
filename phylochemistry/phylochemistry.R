@@ -29,7 +29,8 @@
         Bioconductor_packages <- c(
                 "ggtree",
                 "xcms",
-                "msa"
+                "msa",
+                "rtracklayer"
             )
 
         packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
@@ -45,6 +46,8 @@
             if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
                 BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed])
             }
+
+            message("\n\n\nIf the packages installed without error, you should be ready to run source() again to load the phylochemistry package.")
         
         }
    
@@ -947,6 +950,21 @@
 
             }
 
+        #### dropNA
+
+            #' drops NAs from a vector
+            #'
+            #' @param x The vector to drop NAs from 
+            #' @examples
+            #' @export
+            #' normalize
+
+            dropNA <- function( x ) {
+
+                return(x[!is.na(x)])
+
+            }
+
     ##### Sequence data handling
 
         #### extractORFs
@@ -1504,7 +1522,7 @@
             #' readGFFs
             #'
             #' Read multiple genome feature files into a tidy dataframe
-            #' @param input_frame A dataframe with columns: Genus_species, GFF_in_path, region_reach, concatenation_spacing
+            #' @param input_frame A dataframe with columns: Genus_species, GFF_in_path, region_reach (20000), concatenation_spacing (10000)
             #' @param query A .fa file containing the query
             #' @param phylochem The phylochem object to which the data should be bound
             #' @examples
@@ -1513,12 +1531,10 @@
 
                 readGFFs <- function(
                                 input_frame, # Dataframe with columns
-                                subset_mode = c("none", "goi_only", "foi_only", "goi_region", "foi_region", "name_check"), 
+                                subset_mode = c("none", "goi_only", "goi_region", "name_check"), 
                                 goi = NULL, # Character vector of gene names. Labelling by species is not necessary
-                                foi = NULL,
-                                region_reach = 200000,
                                 concatenate_by_species = TRUE,
-                                concatenation_spacing = 10000,
+                                chromosomes_only = FALSE,
                                 omit = NULL
                             ) {
 
@@ -1541,6 +1557,11 @@
 
                             ranges <- as.data.frame(gff_as_GRange)
                             ranges <- ranges[,colnames(ranges) != "Parent"]
+
+                        # Remove cols to omit
+                            if ( length(omit) > 0 ) {
+                                ranges <- ranges[, !colnames(ranges) %in% omit]    
+                            }
                             
                         # Custom gene name editing on species-by-species basis
                             if ( input_frame$Genus_species[i] == "Zea_mays" ) {
@@ -1560,7 +1581,7 @@
 
                         # No subsetting
                             if ( subset_mode == "none" ) {
-                                subsetted_ranges <- ranges
+                                framed_GFFs <- ranges
                             }
 
                         # Name check mode
@@ -1581,11 +1602,6 @@
                                 # Remove chrom_scaffs and ranges not on chrom_scaffs that contain goi
                                     chrom_scaff <- chrom_scaff[chrom_scaff$chrom_scaff_name %in% goi_sp_frame$chrom_scaff_of_interest,]
                                     ranges <- ranges[ranges$seqnames %in% goi_sp_frame$chrom_scaff_of_interest,]
-                                    
-                                # Remove cols to omit
-                                    if ( length(omit) > 0 ) {
-                                        ranges <- ranges[, !colnames(ranges) %in% omit]    
-                                    }
                                     
                                 # Remove ranges not within region_reach of a goi, if goi are within region_reach of eachother, expand the size of that region iteratively
                                     subsetted_ranges <- data.frame()
@@ -1658,14 +1674,48 @@
                             }
                     }
 
-                    framed_GFFs <- do.call(plyr::rbind.fill, framed_GFFs)
+                    ## Concatenate range_scaffs for single species
+                        if ( concatenate_by_species == TRUE & dim(input_frame)[1] == 1) {
 
-                    if ( subset_mode != "name_check" ) {
+                            ## Filter for only main chromosomes if specified, then number seqnames
+                                if (chromosomes_only == TRUE) {
+                                    chromosome_seqnames <- as.character(framed_GFFs$seqnames[framed_GFFs$chromosome %in% c(dropNA(as.numeric(unique(framed_GFFs$chromosome))), "X", "Y")])
+                                    message("NA introduced by coersion here is OKAY!")
+                                    framed_GFFs <- framed_GFFs[framed_GFFs$seqnames %in% chromosome_seqnames,]
+                                    framed_GFFs$seqname_number <- 0
+                                    framed_GFFs$seqname_number <- match(framed_GFFs$seqnames, chromosome_seqnames)
+                                } else {
+                                    chromosome_seqnames <- unique(framed_GFFs$seqnames)
+                                    framed_GFFs$seqname_number <- 0
+                                    framed_GFFs$seqname_number <- match(framed_GFFs$seqnames, chromosome_seqnames)
+                                }
+                            if ( length(unique(framed_GFFs$seqnames)) > 1 ) {
+                                end_previous_seqname_number_region <- max(framed_GFFs[framed_GFFs$seqname_number == 1,]$end)
+                                for (this_seqname_number in 2:length(unique(framed_GFFs$seqname_number))) {
+                                    amount_to_advance_this_seqname_number_region <- end_previous_seqname_number_region + input_frame$concatenation_spacing[i]
+                                    framed_GFFs[framed_GFFs$seqname_number == this_seqname_number,]$start <- framed_GFFs[framed_GFFs$seqname_number == this_seqname_number,]$start + amount_to_advance_this_seqname_number_region
+                                    framed_GFFs[framed_GFFs$seqname_number == this_seqname_number,]$end <- framed_GFFs[framed_GFFs$seqname_number == this_seqname_number,]$end + amount_to_advance_this_seqname_number_region
+                                    end_previous_seqname_number_region <- max(framed_GFFs[framed_GFFs$seqname_number == this_seqname_number,]$end)
+                                }
+                            }
+                        }
 
-                        center <- (max(framed_GFFs$end) - min(framed_GFFs$start))/2
-                        framed_GFFs <- plyr::ddply(framed_GFFs, .(Genus_species), mutate, center_start = (start + (center-(max(end)-min(start))/2)), center_end = (end + (center-(max(end)-min(start))/2)) )
 
-                    }
+                    ## Center the scaffolds, merging the GFFs if there is more than one
+                        if (dim(input_frame)[1] > 1) {
+                            framed_GFFs <- do.call(plyr::rbind.fill, framed_GFFs)
+                            if ( subset_mode != "name_check" ) {
+                                center <- (max(framed_GFFs$end) - min(framed_GFFs$start))/2
+                                library(plyr)
+                                framed_GFFs <- plyr::ddply(framed_GFFs, .(Genus_species), mutate, center_start = (start + (center-(max(end)-min(start))/2)), center_end = (end + (center-(max(end)-min(start))/2)) )
+                            }
+                        } else {
+                            if ( subset_mode != "name_check" ) {
+                                center <- (max(framed_GFFs$end) - min(framed_GFFs$start))/2
+                                framed_GFFs$center_start = framed_GFFs$start + (center-(max(framed_GFFs$end)-min(framed_GFFs$start))/2)
+                                framed_GFFs$center_end = framed_GFFs$end + (center-(max(framed_GFFs$end)-min(framed_GFFs$start))/2)
+                            }
+                        }
 
                     return(framed_GFFs)
                 }
@@ -3239,57 +3289,71 @@
                                                 
                                             message("Searching reference library for unknown spectrum...\n")
 
-                                                MS_out_1$mz <- round(MS_out_1$mz)
-                                                MS_out_1 %>%
-                                                    group_by(mz) %>%
-                                                    dplyr::summarize(intensity = sum(intensity)) -> MS_out_1
-                                                MS_out_1$intensity <- MS_out_1$intensity/max(MS_out_1$intensity)*100
+                                                ## Round to nominal mass spectrum
+                                                    MS_out_1$mz <- round(MS_out_1$mz)
+                                                    MS_out_1 %>%
+                                                        group_by(mz) %>%
+                                                        dplyr::summarize(intensity = sum(intensity)) -> MS_out_1
+                                                    MS_out_1$intensity <- MS_out_1$intensity/max(MS_out_1$intensity)*100
 
-                                                unknown <- cbind(
-                                                    data.frame(
-                                                        Accession_number = "unknown",
-                                                        Compound_systematic_name = "unknown",
-                                                        Compound_common_name = "unknown",
-                                                        SMILES = NA,
-                                                        Source = "unknown"
-                                                    ),
-                                                    t(c(rep(0,39), MS_out_1$intensity))
-                                                )
-                                                colnames(unknown)[6:805] <- paste("mz_", c(seq(1,39,1), MS_out_1$mz), sep = "")
+                                                ## Add zeros for mz values missing from unknown spectrum
+                                                    mz_missing <- seq(min(MS_out_1$mz), max(MS_out_1$mz), 1)[!seq(min(MS_out_1$mz), max(MS_out_1$mz), 1) %in% MS_out_1$mz]
+                                                    MS_out_1 <- rbind(MS_out_1, data.frame(mz = mz_missing, intensity = 0))
+                                                    MS_out_1 <- MS_out_1[order(MS_out_1$mz),]
 
-                                                lookup_data <- rbind(busta_spectral_library, unknown)
-                                                
-                                                hits <- runMatrixAnalysis(
-                                                    data = lookup_data,
-                                                    analysis = c("hclust"),
-                                                    column_w_names_of_multiple_analytes = NULL,
-                                                    column_w_values_for_multiple_analytes = NULL,
-                                                    columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
-                                                    columns_w_additional_analyte_info = NULL,
-                                                    columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
-                                                    transpose = FALSE,
-                                                    unknown_sample_ID_info = c("unknown_unknown"),
-                                                    scale_variance = TRUE,
-                                                    kmeans = "none",
-                                                    na_replacement = "drop",
-                                                    output_format = "long"
-                                                )
+                                                ## Bind it with metadata
+                                                    unknown <- cbind(
+                                                        data.frame(
+                                                            Accession_number = "unknown",
+                                                            Compound_systematic_name = "unknown",
+                                                            Compound_common_name = "unknown",
+                                                            SMILES = NA,
+                                                            Source = "unknown"
+                                                        ),
+                                                        t(
+                                                            c(
+                                                                rep(0,min(MS_out_1$mz)-1),
+                                                                MS_out_1$intensity
+                                                            )
+                                                        )
+                                                    )
+                                                    colnames(unknown)[6:805] <- paste("mz_", c(seq(1,min(MS_out_1$mz)-1,1), MS_out_1$mz), sep = "")
 
-                                                hits[!is.na(hits$sample_unique_ID),] %>%
-                                                    select(analyte_name, value, sample_unique_ID) %>%
-                                                    unique() -> bars
+                                                ## Bind it to the library and run the lookup
+                                                    lookup_data <- rbind(busta_spectral_library, unknown)
+                                                    
+                                                    hits <- runMatrixAnalysis(
+                                                        data = lookup_data,
+                                                        analysis = c("hclust"),
+                                                        column_w_names_of_multiple_analytes = NULL,
+                                                        column_w_values_for_multiple_analytes = NULL,
+                                                        columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
+                                                        columns_w_additional_analyte_info = NULL,
+                                                        columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
+                                                        transpose = FALSE,
+                                                        unknown_sample_ID_info = c("unknown_unknown"),
+                                                        scale_variance = TRUE,
+                                                        kmeans = "none",
+                                                        na_replacement = "drop",
+                                                        output_format = "long"
+                                                    )
 
-                                                bars$analyte_name <- gsub(".*_", "", bars$analyte_name)
-                                                
-                                                plot <- ggplot() +
-                                                    geom_col(data = bars, aes(x = as.numeric(as.character(analyte_name)), y = value)) +
-                                                    geom_text(data = unique(select(bars, sample_unique_ID)), aes(label = sample_unique_ID, x = 400, y = 90), hjust = 0.5, size = 4) +
-                                                    facet_grid(sample_unique_ID~.) +
-                                                    theme_bw() +
-                                                    scale_x_continuous(name = "m/z") +
-                                                    scale_y_continuous(name = "Relative intensity (%)")
+                                                ## Make the bar plot
+                                                    hits[!is.na(hits$sample_unique_ID),] %>%
+                                                        select(analyte_name, value, sample_unique_ID) %>%
+                                                        unique() -> bars
 
-                                                output$massSpectrumLookup <- renderPlot({plot})
+                                                    bars$analyte_name <- gsub(".*_", "", bars$analyte_name)
+                                                    
+                                                    plot <- ggplot() +
+                                                        geom_col(data = bars, aes(x = as.numeric(as.character(analyte_name)), y = value)) +
+                                                        geom_text(data = unique(select(bars, sample_unique_ID)), aes(label = sample_unique_ID, x = 400, y = 90), hjust = 0.5, size = 4) +
+                                                        facet_grid(sample_unique_ID~.) +
+                                                        theme_bw() +
+                                                        scale_x_continuous(name = "m/z") +
+                                                        scale_y_continuous(name = "Relative intensity (%)")
+
+                                                    output$massSpectrumLookup <- renderPlot({plot})
 
                                             message("Done.\n")
 
@@ -4557,7 +4621,11 @@
                             }
                             if( na_replacement[1] == "drop" ) {
                                 cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
-                                cat(names(which(apply(is.na(matrix), 2, any))))
+                                if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
+                                    cat(names(which(apply(is.na(matrix), 2, any))))    
+                                } else {
+                                    cat("none")
+                                }
                                 cat("\n")
                                 matrix <- matrix[,!apply(is.na(matrix), 2, any)]
                             }
