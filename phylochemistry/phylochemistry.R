@@ -3296,10 +3296,12 @@
                                                         dplyr::summarize(intensity = sum(intensity)) -> MS_out_1
                                                     MS_out_1$intensity <- MS_out_1$intensity/max(MS_out_1$intensity)*100
 
-                                                ## Add zeros for mz values missing from unknown spectrum
+                                                ## Add zeros for mz values missing from unknown spectrum if necessary
                                                     mz_missing <- seq(min(MS_out_1$mz), max(MS_out_1$mz), 1)[!seq(min(MS_out_1$mz), max(MS_out_1$mz), 1) %in% MS_out_1$mz]
-                                                    MS_out_1 <- rbind(MS_out_1, data.frame(mz = mz_missing, intensity = 0))
-                                                    MS_out_1 <- MS_out_1[order(MS_out_1$mz),]
+                                                    if (length(mz_missing) > 0) {
+                                                        MS_out_1 <- rbind(MS_out_1, data.frame(mz = mz_missing, intensity = 0))
+                                                        MS_out_1 <- MS_out_1[order(MS_out_1$mz),]
+                                                    }
 
                                                 ## Bind it with metadata
                                                     unknown <- cbind(
