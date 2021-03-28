@@ -116,7 +116,7 @@
             #' writeCSV
 
             writeCSV <- function(monolist) {
-                readr::write_csv(x = monolist, file = file.choose(), append = TRUE)
+                writeMonolist(monolist = monolist, monolist_out_path = file.choose(new = TRUE))
             }
 
         #### readMonolist
@@ -3340,12 +3340,60 @@
                                                         output_format = "long"
                                                     )
 
-                                                ## Make the bar plot
+                                                ## Find distance between tips
+
+                                                    phylo <- runMatrixAnalysis(
+                                                        data = hits[!is.na(hits$sample_unique_ID),],
+                                                        analysis = c("hclust_phylo"),
+                                                        column_w_names_of_multiple_analytes = "analyte_name",
+                                                        column_w_values_for_multiple_analytes = "value",
+                                                        columns_w_values_for_single_analyte = NULL,
+                                                        columns_w_additional_analyte_info = NULL,
+                                                        columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
+                                                        transpose = FALSE,
+                                                        unknown_sample_ID_info = NULL,
+                                                        scale_variance = TRUE,
+                                                        kmeans = "none",
+                                                        na_replacement = "drop",
+                                                        output_format = "long"
+                                                    )
+
+                                                    distances_1 <- as.data.frame(cophenetic.phylo(phylo)[,colnames(cophenetic.phylo(phylo)) == "unknown_unknown"])
+                                                    distances_2 <- data.frame(
+                                                        sample_unique_ID = rownames(distances_1),
+                                                        distance = distances_1[,1]
+                                                    )
+                                                    distances_2$distance <- normalize(distances_2$distance, old_min = min(distances_2$distance), old_max = max(distances_2$distance), new_min = 100, new_max = 0)
+
+                                                ## Make the bar data
+
                                                     hits[!is.na(hits$sample_unique_ID),] %>%
                                                         select(analyte_name, value, sample_unique_ID) %>%
                                                         unique() -> bars
 
                                                     bars$analyte_name <- gsub(".*_", "", bars$analyte_name)
+
+                                                    bars %>%
+                                                        group_by(sample_unique_ID) %>%
+                                                        arrange(desc(value)) -> bar_labels
+
+                                                    bar_labels <- bar_labels[1:110,]
+
+                                                ## Order bar data
+
+                                                    bars$sample_unique_ID <- factor(
+                                                        bars$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
+                                                    )
+
+                                                    distances_2$sample_unique_ID <- factor(
+                                                        distances_2$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
+                                                    )
+
+                                                    bar_labels$sample_unique_ID <- factor(
+                                                        bar_labels$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
+                                                    )
+
+                                                ## Make the bar plot
                                                     
                                                     plot <- ggplot() +
                                                         geom_col(data = bars, aes(x = as.numeric(as.character(analyte_name)), y = value)) +
@@ -3353,12 +3401,58 @@
                                                         facet_grid(sample_unique_ID~.) +
                                                         theme_bw() +
                                                         scale_x_continuous(name = "m/z") +
-                                                        scale_y_continuous(name = "Relative intensity (%)")
+                                                        scale_y_continuous(name = "Relative intensity (%)") +
+                                                        geom_text(
+                                                                data = bar_labels,
+                                                                mapping = aes(
+                                                                    x = as.numeric(as.character(analyte_name)),
+                                                                    y = value + 5, label = analyte_name
+                                                                )
+                                                            ) +
+                                                        geom_text(
+                                                                data = distances_2,
+                                                                mapping = aes(
+                                                                    x = 800,
+                                                                    y = 75,
+                                                                    label = paste0(
+                                                                        "Relative similarity to unknown: ",
+                                                                        round(distance, 2), "%"
+                                                                    ), hjust = 1
+                                                                )
+                                                            )
 
                                                     output$massSpectrumLookup <- renderPlot({plot})
 
                                             message("Done.\n")
 
+                                        }
+                                
+                                    ## If "shift+5" save mass spectrum
+
+                                        if( input$keypress == 37 ) {
+
+                                            # Do nothing if no MS extracted
+                                                if (!exists("MS_out_1")) {
+                                                    cat("No mass spectrum extracted yet.\n")
+                                                    return()
+                                                } else {
+                                            
+                                                MS_out_1_to_write <- MS_out_1
+                                                MS_out_1_to_write$mz <- round(MS_out_1_to_write$mz)
+                                                MS_out_1_to_write %>% 
+                                                    group_by(mz) %>%
+                                                    dplyr::summarize(intensity = sum(intensity)) -> MS_out_1_to_write
+                                                MS_out_1_to_write$intensity <- MS_out_1_to_write$intensity*100/max(MS_out_1_to_write$intensity)
+                                                MS_out_1_to_write <- data.frame(
+                                                    Compound_common_name = NA,
+                                                    Compound_systematic_name = NA,
+                                                    SMILES = NA,
+                                                    Source = "Busta",
+                                                    mz = MS_out_1_to_write$mz,
+                                                    abu = MS_out_1_to_write$intensity
+                                                )
+                                                writeCSV(MS_out_1_to_write)
+                                            }
                                         }
                                 })
 
@@ -3426,22 +3520,8 @@
                                 #             })
                                 #         }
                                 # })
-
-                            ## [MS1 Save] Save MS in MS panel one on "shift+5" (37) keypress
                                 
-                                # observeEvent(input$keypress, {
-
-                                #     # Do nothing if no selection
-                                #         if(is.null(input$chromatogram_brush)) {
-                                #             return()
-                                #         }
-
-                                #     # If selection and "37" is pressed, extract and print mass spectra
-                                #         if( input$keypress == 37 ) {
-                                #             framedDataFile_1$intensity[framedDataFile_1$intensity < 0] <- 0
-                                #             write.csv(framedDataFile_1, "integration_app_spectrum_1.csv", row.names = FALSE)
-                                #         }
-                                # })
+                               
 
                             ## Extract selected MS to MS panel two on "shift+2" (64) keypress
                                 
@@ -4482,7 +4562,7 @@
 
                 runMatrixAnalysis <-    function(
                                             data,
-                                            analysis = c("hclust", "pca", "pca-ord", "pca-dim"),
+                                            analysis = c("hclust", "hclust_phylo", "pca", "pca-ord", "pca-dim"),
                                             column_w_names_of_multiple_analytes = NULL,
                                             column_w_values_for_multiple_analytes = NULL,
                                             columns_w_values_for_single_analyte = NULL,
@@ -4550,13 +4630,6 @@
                                 stop("There are duplicate analyte names.")
                             }
                         }
-
-                        # if( length(column_w_names_of_multiple_analytes) > 0 ) {
-                        #     x <- table(select(data, column_w_names_of_multiple_analytes))
-                        #     if( all(range(x) / mean(x) != c(1,1)) ) {
-                        #         stop("There are duplicate analyte names.")
-                        #     }
-                        # } 
 
                     # Remove analyte annotation columns before pivoting
 
@@ -4734,12 +4807,20 @@
 
                         }
 
-                    # Run hclust, if requested
+                    # Run hclust, if requested. Return as phylo, if requested
 
                         if( analysis == "hclust" ) {                        
                             phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
                             clustering <- ggtree::fortify(phylo)
                             clustering$sample_unique_ID <- clustering$label
+                        }
+
+                        if( analysis == "hclust_phylo" ) {                        
+                            phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
+                            # clustering <- ggtree::fortify(phylo)
+                            # clustering$sample_unique_ID <- clustering$label
+                            return(phylo)
+                            stop("Returning hclust_phylo.")
                         }
 
                     # Run PCA, if requested
@@ -4771,20 +4852,20 @@
 
                     # Run PCA and return eigenvalues, if requested
 
-                            if( analysis == "pca-dim" ) {
-                                if( scale_variance == TRUE ) {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
-                                } else {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
-                                }
-                                clustering <- tibble::enframe(coords, name = NULL)
-                                clustering$principal_component <- names(coords)
-                                clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
-                                colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                                clustering <- select(clustering, principal_component, percent_variance_explained)
-                                return(clustering)
-                                stop("Returning eigenvalues.")
+                        if( analysis == "pca-dim" ) {
+                            if( scale_variance == TRUE ) {
+                                coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
+                            } else {
+                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
                             }
+                            clustering <- tibble::enframe(coords, name = NULL)
+                            clustering$principal_component <- names(coords)
+                            clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
+                            colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                            clustering <- select(clustering, principal_component, percent_variance_explained)
+                            return(clustering)
+                            stop("Returning eigenvalues.")
+                        }
 
                     # Run kMeans, if requested
 
@@ -4854,59 +4935,63 @@
                             stop("Returning transposed cluster output. Make sure all your variables have the same units!")
                         }
                         
-                    # Add back annotations to the output
+                    # Post processing and return.
 
-                        if( length(columns_w_sample_ID_info) == 1 ) {
-                        } else {
-                        clustering <-   right_join(
-                                            data_wide[,match(
-                                                c(columns_w_sample_ID_info, "sample_unique_ID"),
-                                                colnames(data_wide))
-                                            ], clustering, by = "sample_unique_ID"
-                                        )
-                        }
+                        if( !analysis %in% c("hclust_phylo")) {
 
-                        rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
-                        colnames(rownames_matrix)[1] <- "sample_unique_ID"
+                            ## Add back annotations to the output
 
-                        clustering <- full_join(
-                            clustering,
-                            as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
-                            by = "sample_unique_ID"
-                        )
-                        clustering
+                                if( length(columns_w_sample_ID_info) == 1 ) {
+                                } else {
+                                clustering <-   right_join(
+                                                    data_wide[,match(
+                                                        c(columns_w_sample_ID_info, "sample_unique_ID"),
+                                                        colnames(data_wide))
+                                                    ], clustering, by = "sample_unique_ID"
+                                                )
+                                }
 
-                        clustering <- select(clustering, sample_unique_ID, everything())
+                                rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
+                                colnames(rownames_matrix)[1] <- "sample_unique_ID"
 
-                    # Annotate internal branches if tree output
+                                clustering <- full_join(
+                                    clustering,
+                                    as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
+                                    by = "sample_unique_ID"
+                                )
+                                clustering
 
-                        if( analysis == "hclust" ) {
-                            for( node in dplyr::filter(clustering, isTip == FALSE)$node ) {
-                                for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
-                                    descends <- clustering[clustering$node %in% ips::descendants(phylo, node),]
-                                    if ( table(duplicated(descends[,colnames(descends) == sample_property]))[1] == 1 ) {
-                                        clustering[
-                                            which(clustering$node == node),
-                                            which(colnames(clustering) == sample_property)
-                                        ] <- descends[,colnames(descends) == sample_property][1,1]
+                                clustering <- select(clustering, sample_unique_ID, everything())
+
+                            # Annotate internal branches if tree output
+
+                                if( analysis == "hclust" ) {
+                                    for( node in dplyr::filter(clustering, isTip == FALSE)$node ) {
+                                        for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
+                                            descends <- clustering[clustering$node %in% ips::descendants(phylo, node),]
+                                            if ( table(duplicated(descends[,colnames(descends) == sample_property]))[1] == 1 ) {
+                                                clustering[
+                                                    which(clustering$node == node),
+                                                    which(colnames(clustering) == sample_property)
+                                                ] <- descends[,colnames(descends) == sample_property][1,1]
+                                            }
+                                        }
                                     }
                                 }
-                            }
+
+                            # Return results
+
+                                if( output_format[1] == "long" ) {
+                                    clustering <- pivot_longer(
+                                        clustering,
+                                        cols = c(which(colnames(clustering) == analyte_columns[1]): dim(clustering)[2]),
+                                        names_to = "analyte_name", 
+                                        values_to = "value"
+                                    )
+                                }
+
+                                return( clustering )
                         }
-
-                # Return results
-
-                    if( output_format[1] == "long" ) {
-                        clustering <- pivot_longer(
-                            clustering,
-                            cols = c(which(colnames(clustering) == analyte_columns[1]): dim(clustering)[2]),
-                            names_to = "analyte_name", 
-                            values_to = "value"
-                        )
-                    }
-
-                    return( clustering )
-
             }
 
         #### pGroups
