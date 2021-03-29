@@ -32,7 +32,7 @@
                 "xcms",
                 "msa",
                 "rtracklayer",
-                "orthologr",
+                "orthologr"
                 # c("Biostrings",
                 #     "GenomicRanges",
                 #     "GenomicFeatures",
