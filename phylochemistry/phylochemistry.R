@@ -23,14 +23,21 @@
                 "seqinr",
                 "Rfast",
                 "picante",
-                "BiocManager"
+                "BiocManager",
+                "googlesheets4"
             )
 
         Bioconductor_packages <- c(
                 "ggtree",
                 "xcms",
                 "msa",
-                "rtracklayer"
+                "rtracklayer",
+                "orthologr",
+                # c("Biostrings",
+                #     "GenomicRanges",
+                #     "GenomicFeatures",
+                #     "Rsamtools",
+                #     "rtracklayer"
             )
 
         packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
@@ -280,7 +287,7 @@
             	}
             }
 
-        #### readManyFasta
+        #### readManyFastas
 
         	#' Returns the contents of many fasta files as a StringSet object.
             #'
@@ -289,9 +296,9 @@
             #' @importFrom Biostrings readBStringSet readDNAStringSet readRNAStringSet readAAStringSet
             #' @examples
             #' @export
-            #' readManyFasta
+            #' readManyFastas
 
-            readManyFasta <- function( fasta_in_paths, fasta_type = "nonspecific" ) {
+            readManyFastas <- function( fasta_in_paths, fasta_type = "nonspecific" ) {
 
         		if ( fasta_type == "nonspecific" ) {
             		temp <- BStringSet()
@@ -333,7 +340,7 @@
 
             }
 
-        #### writeSingleFastas
+        #### writeManyFastas
 
         	#' Writes one or more sequences as individual fasta file(s), each with one sequence
             #'
@@ -342,9 +349,9 @@
             #' @importFrom Biostrings writeXStringSet
             #' @examples
             #' @export
-            #' writeSingleFastas
+            #' writeManyFastas
 
-            writeSingleFastas <- function( XStringSet, fasta_out_directory_path ) {
+            writeManyFastas <- function( XStringSet, fasta_out_directory_path ) {
             	for (sequence in 1:length(XStringSet)) {
             		Biostrings::writeXStringSet( x = XStringSet[sequence], filepath = paste0(fasta_out_directory_path, XStringSet@ranges@NAMES[sequence], ".fa") )
             	}
@@ -1104,6 +1111,7 @@
 
                         if ( dim(orf_coordinates)[1] == 0 ) {
                             ORFs[[j]] <-    data.frame(
+                                                accession = names(fasta[j]),
                                                 start_codon = 0, 
                                                 stop_codon = 0,
                                                 direction = "forward",
@@ -1113,7 +1121,7 @@
                             rownames(orf_coordinates) <- NULL # Reset rownames because of previous step
                             orf_coordinates$orf_length <- (orf_coordinates$stop_codon - orf_coordinates$start_codon + 1)
                             orf_coordinates <- orf_coordinates[order(orf_coordinates$orf_length, decreasing = TRUE),]
-                            ORFs[[j]] <- orf_coordinates
+                            ORFs[[j]] <- cbind(data.frame(accession = names(fasta[j])), orf_coordinates)
                         }
 
                         if ( write_out_ORFs == TRUE) {
@@ -1487,6 +1495,33 @@
                                     fragment_seq_set_aligned <- msa::msa(fragment_seq_set, order = c("input"))
                                     fragment_seq_set_aligned <- AAStringSet(fragment_seq_set_aligned)
                                     writeXStringSet(fragment_seq_set_aligned, filepath = paste(alignment_directory_path, subset, "_fragment_seqs_aligned.fa", sep = ""))
+                            }
+
+                        ## Run amin alignment, if requested
+                            if ( mode == "amin_align") {
+
+                                ## Remove existing amin alignment
+                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_amin_aligned.fa", sep = ""))) {
+                                    file.remove(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_amin_aligned.fa", sep = ""))}
+                                
+                                ## Extarct ORFs
+                                    extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
+                                
+                                ## Translate the nucleotide sequences and write out *_amin_seqs.fa
+                                    nucl_seqs_set <- Biostrings::readDNAStringSet(paste(alignment_directory_path, subset, "_nucl_seqs.fa_orfs", sep = ""))
+                                    amin_seqs_set <- Biostrings::translate(nucl_seqs_set, if.fuzzy.codon = "solve")
+                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))) {
+                                        file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))}
+                                    Biostrings::writeXStringSet(amin_seqs_set, filepath = paste(alignment_directory_path, subset, "_amin_seqs.fa", sep = ""))
+
+                                ## Run amino acid alignment and write out *_amin_seqs.fa
+                                    amin_seqs_set_aligned <- msa::msa(amin_seqs_set, order = c("input"))
+                                    msa <- msa::msaConvert(amin_seqs_set_aligned, type = "seqinr::alignment")
+                                    n <- dim(as.data.frame(msa$seq))[1]
+                                    for (i in 1:n){msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))}
+                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs_aligned.fa", sep = ""))) {
+                                    file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs_aligned.fa", sep = ""))}
+                                    seqinr::write.fasta(as.list(msa$seq),as.list(msa$nam), file.out = paste(alignment_directory_path, subset, "_amin_seqs_aligned.fa", sep = ""))
                             }
                     }
 
@@ -3207,22 +3242,29 @@
                                     ## If "shift+3" subtract chromatogram brush from MS_out_1 -> MS_out_1
 
                                         if ( input$keypress == 35 ) {
+
+                                            if (!exists("MS_out_1")) {
+                                                cat("No mass spectrum extracted yet.\n")
+                                                return()
+                                            } else {
                                             
-                                            framedDataFile_to_subtract <- isolate(as.data.frame(
-                                                                data.table::fread(as.character(
-                                                                    brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                                ))
-                                            ))
-                                            framedDataFile_to_subtract <- isolate(dplyr::filter(
-                                                                    framedDataFile_to_subtract, 
-                                                                    rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                    rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                                ))
-                                            library(plyr)
-                                            framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
-                                            framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
-                                            MS_out_1$intensity <- MS_out_1$intensity - framedDataFile_to_subtract$intensity
-                                            MS_out_1 <<- MS_out_1
+                                                framedDataFile_to_subtract <- isolate(as.data.frame(
+                                                                    data.table::fread(as.character(
+                                                                        brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
+                                                                    ))
+                                                ))
+                                                framedDataFile_to_subtract <- isolate(dplyr::filter(
+                                                                        framedDataFile_to_subtract, 
+                                                                        rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                                                                        rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                                                    ))
+                                                library(plyr)
+                                                framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
+                                                framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
+                                                MS_out_1$intensity <- MS_out_1$intensity - framedDataFile_to_subtract$intensity
+                                                MS_out_1 <<- MS_out_1
+
+                                            }
                                             
                                         }
 
