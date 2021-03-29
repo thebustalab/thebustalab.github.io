@@ -31,8 +31,8 @@
                 "ggtree",
                 "xcms",
                 "msa",
-                "rtracklayer",
-                "orthologr"
+                "rtracklayer"
+                # "orthologr"
                 # c("Biostrings",
                 #     "GenomicRanges",
                 #     "GenomicFeatures",
