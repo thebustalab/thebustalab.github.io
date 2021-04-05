@@ -87,7 +87,7 @@
     hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv", col_types = cols())
     beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv", col_types = cols())
     hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
-    busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_v1.csv", col_types = cols())
+    busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
 
 ###### Functions
 
