@@ -3215,12 +3215,12 @@
                                         }
                                 })
 
-                            ## [MS1 update ("shift+1"), extract ("shift+2"), subtract ("shift+3"), library search ("shift+4"), save ("shift+5")]
+                            ## [MS1 extract ("shift+1"), update ("shift+2"), subtract ("shift+3"), library search ("shift+4"), save ("shift+5")]
                                 
                                 observeEvent(input$keypress, {
 
-                                    ## If "shift+2", MS from chromatogram brush -> MS_out_1
-                                        if( input$keypress == 64 ) {
+                                    ## If "shift+1", MS from chromatogram brush -> MS_out_1
+                                        if( input$keypress == 33 ) {
                                             
                                             framedDataFile <- isolate(as.data.frame(
                                                                 data.table::fread(as.character(
@@ -3959,6 +3959,124 @@
 
                         merged_spectral_output <- do.call(rbind, merged_spectral_output)
                         write_csv(merged_spectral_output, paste0(image_directory_in_path, "/_merged_spectral_output.csv"))
+            }
+
+        #### crystallinity
+
+            #' Extract 720 and 720 wavenumber intensities from FTIR data
+            #'
+            #' Filenames: 123~123-1.csv
+            #' @param data_directory_in_path The directory containing the data to be read and processed.
+            #' @export
+            #' @examples
+            #' crystallinity()
+
+            crystallinity <- function(data_directory_in_path, plots = TRUE) {
+
+                files <- dir(data_directory_in_path)
+                out <- list()
+                plots <- list()
+                
+                for (i in 1:length(files)) {
+
+                    cat(paste0("File ", files[i], "\n"))
+                    spectrum <- read_csv(paste0(dir, files[[i]]), col_names = FALSE, col_types = cols())
+                    colnames(spectrum) <- c("x", "y")
+
+                    spectrum <- dplyr::filter(spectrum, x < 800 & x > 600)
+
+                    ## Baseline the signal using windows. Doesn't work as well as window-defined line below
+                        # baseline <- findBaseline(
+                        #   x = spectrum$x,
+                        #   y = spectrum$y,
+                        #   window_width = 80
+                        # ) 
+                        # spectrum <- spectrum[spectrum$x %in% baseline$x,]
+                        # spectrum$b <- baseline$y
+
+                    ## Baseline the signal using a window-defined line
+                        baseline_guide <- rbind(
+                            dplyr::filter(spectrum, x < 760 & x > 740),
+                            dplyr::filter(spectrum, x < 710 & x > 680)
+                        )
+                        spectrum$b <- lm(y~x, data = baseline_guide)$coefficients[2]*spectrum$x + lm(y~x, data = baseline_guide)$coefficients[1]
+                    
+                    ## Subtract the baseline, smooth, and plot the signal
+                    ## If you dont filter, you will get extra little crappy peaks when you try to model!!
+                        spectrum$y <- signal::sgolayfilt(spectrum$y, p = 1, n = 11)
+                        spectrum$yb <- spectrum$y - spectrum$b
+
+                    ## filter and just find maxima
+                        peak1 <- max(dplyr::filter(spectrum, x > 728 & x < 740)$yb)
+                        peak2 <- max(dplyr::filter(spectrum, x > 715 & x < 722)$yb)
+                        wave1 <- dplyr::filter(spectrum, x > 728 & x < 740)[dplyr::filter(spectrum, x > 728 & x < 740)$yb == peak1,]$x
+                        wave2 <- dplyr::filter(spectrum, x > 715 & x < 722)[dplyr::filter(spectrum, x > 715 & x < 722)$yb == peak2,]$x
+                        ratio <- peak1/peak2
+                        print(ratio)
+
+                    ## Plot to inspect
+                        plots[[i]] <- ggplot(data = spectrum) +
+                            # geom_line(aes(x = x, y = y)) +
+                            # geom_point(aes(x = x, y = y)) +
+                            # geom_line(aes(x = x, y = b)) +
+                            geom_vline(xintercept = wave1) +
+                            geom_vline(xintercept = wave2) +
+                            scale_x_continuous(breaks = seq(0,1000,10)) +
+                            geom_line(aes(x = x, y = yb)) +
+                            coord_cartesian(xlim = c(800, 600)) 
+
+                    ## Filter down and fit gaussians. Just use heights. It's more reliable
+                        # spectrum <- dplyr::filter(spectrum, x > 705 & x < 745)
+                        # gaussians <- fitGaussians(
+                        #   x = spectrum$x, 
+                        #   y = spectrum$yb,
+                        #   peak_detection_threshold = as.numeric(gsub(".CSV", "", gsub(".*~", "", files[i])))
+                        # )
+
+                    ## Get areas
+                        # gaussians$file <- files[i]
+                        # gaussians %>%
+                        #   as_tibble() %>%
+                        #   group_by(peak_number) %>%
+                        #   summarize(
+                        #       wavenumber = x[which.max(y)],
+                        #       area = unique(peak_area),
+                        #       file = unique(file),
+                        #       height = max(y)
+                        #   ) -> out[[i]]
+
+                    cat("\n")
+                    # readline(prompt="Press [enter] to continue")
+
+                    out[[i]] <- 
+                        data.frame(
+                            sample = files[i],
+                            ratio = ratio
+                        )
+                }
+
+                out <- do.call(rbind, out)
+
+                out$rep <- gsub(".CSV", "", gsub(".*-", "", out$sample))
+                out$name <- gsub("-.*$", "", gsub("", "", out$sample))
+
+                out %>%
+                    group_by(name) %>%
+                    dplyr::summarize(mean_ratio = mean(ratio)) -> ratio_order
+
+                out$name <- factor(
+                    out$name, 
+                    levels = ratio_order$name[order(ratio_order$mean_ratio, decreasing = TRUE)]
+                )
+
+                return(out)
+
+                # if (plots == TRUE) {
+                #     library(gridExtra)
+                #     nCol <- floor(sqrt(length(plots)))
+                #     plot <- do.call("grid.arrange", c(plots, ncol=nCol))
+                #     print(plot)
+                # }
             }
 
     ##### Plotting
