@@ -24,7 +24,9 @@
                 "Rfast",
                 "picante",
                 "BiocManager",
-                "googlesheets4"
+                "googlesheets4",
+                "Hmisc",
+                "ggforce"
             )
 
         Bioconductor_packages <- c(
@@ -3966,21 +3968,27 @@
             #' Extract 720 and 720 wavenumber intensities from FTIR data
             #'
             #' Filenames: 123~123-1.csv
+            #' To use plots: library(gridExtra); nCol <- floor(sqrt(length(plots))); do.call("grid.arrange", c(plots, ncol=nCol))
             #' @param data_directory_in_path The directory containing the data to be read and processed.
             #' @export
             #' @examples
             #' crystallinity()
 
-            crystallinity <- function(data_directory_in_path, plots = TRUE) {
+            crystallinity <- function(data_directory_in_path, make_plots = TRUE) {
+
+                data_directory_in_path <- OsDirectoryPathCorrect(data_directory_in_path)
 
                 files <- dir(data_directory_in_path)
                 out <- list()
-                plots <- list()
+
+                if (make_plots == TRUE) {
+                    plots <- list()
+                }
                 
                 for (i in 1:length(files)) {
 
                     cat(paste0("File ", files[i], "\n"))
-                    spectrum <- read_csv(paste0(dir, files[[i]]), col_names = FALSE, col_types = cols())
+                    spectrum <- read_csv(paste0(data_directory_in_path, files[[i]]), col_names = FALSE, col_types = cols())
                     colnames(spectrum) <- c("x", "y")
 
                     spectrum <- dplyr::filter(spectrum, x < 800 & x > 600)
@@ -4015,15 +4023,18 @@
                         print(ratio)
 
                     ## Plot to inspect
-                        plots[[i]] <- ggplot(data = spectrum) +
-                            # geom_line(aes(x = x, y = y)) +
-                            # geom_point(aes(x = x, y = y)) +
-                            # geom_line(aes(x = x, y = b)) +
-                            geom_vline(xintercept = wave1) +
-                            geom_vline(xintercept = wave2) +
-                            scale_x_continuous(breaks = seq(0,1000,10)) +
-                            geom_line(aes(x = x, y = yb)) +
-                            coord_cartesian(xlim = c(800, 600)) 
+
+                        if (make_plots == TRUE) {
+                            plots[[i]] <- ggplot(data = spectrum) +
+                                # geom_line(aes(x = x, y = y)) +
+                                # geom_point(aes(x = x, y = y)) +
+                                # geom_line(aes(x = x, y = b)) +
+                                geom_vline(xintercept = wave1) +
+                                geom_vline(xintercept = wave2) +
+                                scale_x_continuous(breaks = seq(0,1000,10)) +
+                                geom_line(aes(x = x, y = yb)) +
+                                coord_cartesian(xlim = c(800, 600))
+                        }
 
                     ## Filter down and fit gaussians. Just use heights. It's more reliable
                         # spectrum <- dplyr::filter(spectrum, x > 705 & x < 745)
@@ -4071,12 +4082,6 @@
 
                 return(out)
 
-                # if (plots == TRUE) {
-                #     library(gridExtra)
-                #     nCol <- floor(sqrt(length(plots)))
-                #     plot <- do.call("grid.arrange", c(plots, ncol=nCol))
-                #     print(plot)
-                # }
             }
 
     ##### Plotting
