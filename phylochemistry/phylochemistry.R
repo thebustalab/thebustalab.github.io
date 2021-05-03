@@ -803,7 +803,17 @@
                 if ( scaffold_type == "newick" ) {
 
                     ## Read in the newick scaffold
-                        newick <- readTree( tree_in_path = scaffold_in_path )
+                        if (length(grep("http", scaffold_in_path)) > 0) {
+                            tree <- readLines(scaffold_in_path)
+                            temp_tree <- tempfile(fileext = ".newick")
+                            temp_tree_connection <- file(temp_tree, "w")
+                            cat(tree, file = temp_tree_connection)
+                            close(temp_tree_connection)
+                            newick <- readTree(temp_tree)
+                            unlink(temp_tree)
+                        } else {
+                            newick <- readTree( tree_in_path = scaffold_in_path )    
+                        }
 
                     ## Are the Genus_species in your members in the newick? Are the genera in your members in the newick?
                         compatibility <- data.frame( Genus_species = unique(members), is_species_in_tree = NA, is_genus_in_tree = NA )
@@ -3673,7 +3683,7 @@
             #'
             #' Allows the user to import chromatograms stored as .csv files. Files should have originated from an Agilent GC system running ChemStation
             #' Files should be in the format of character~var1-var2.csv
-            #' "character" is the name of the chromatogram, var1 and var2 are variables you want associated with that chromatogram.
+            #' "character" is the name of the chromatogram, var1 and var2 are NUMERIC variables you want associated with that chromatogram.
             #' @param dir A directory containing (ONLY) the chromatogram(s) that are to be plotted
             #' @param normalize_level Level at which to normalize chromatogram
             #' @param normalize_range y range to consider during normalization. Useful for normalizing but excluding solvent peak(s), for example
@@ -3723,7 +3733,7 @@
                     data <- data[!is.na(data$ret),]
 
                 ## Normalize by var1
-                    if (normalize_level == "var1") {
+                    if (normalize_level[1] == "var1") {
                         
                         if (length(normalize_range) > 0) {
                             xmin <- normalize_range[1]
@@ -3742,7 +3752,7 @@
                     }
 
                 ## Normalize by var2
-                    if (normalize_level == "var2") {
+                    if (normalize_level[1] == "var2") {
                         
                         if (length(normalize_range) > 0) {
                             xmin <- normalize_range[1]
