@@ -4559,13 +4559,26 @@
             #' Draw chemical structures from CSV
             #'
             #' @param csv_in_path Path to the csv with the molecular coordinates.
+            #' @param data Data that the functions should plot.
             #' @export
             #' @examples
             #' drawMolecules()
 
-            drawMolecules <- function(csv_in_path) {
+            drawMolecules <- function(csv_in_path = NULL, data = NULL) {
 
-                data <- read_csv(csv_in_path, col_types = cols())
+                if (is.null(csv_in_path) & is.null(data)) {
+                    stop("Please provide a data source using either the `data` argument OR the `csv_in_path` argument.")
+                }
+
+                if (!is.null(csv_in_path) & !is.null(data)) {
+                    stop("Please provide a SINGLE data source using either the `data` argument OR the `csv_in_path` argument.")
+                }
+
+                if (is.null(csv_in_path) & !is.null(data)) {}
+
+                if (!is.null(csv_in_path) & is.null(data)) {
+                    data <- read_csv(csv_in_path, col_types = cols())
+                }
 
                 data$bond_start_x <- data$x[match(data$bond_start_atom, data$atom_number)]
                 data$bond_start_y <- data$y[match(data$bond_start_atom, data$atom_number)]
@@ -4746,7 +4759,7 @@
 
                 runMatrixAnalysis <-    function(
                                             data,
-                                            analysis = c("hclust", "hclust_phylo", "pca", "pca-ord", "pca-dim"),
+                                            analysis = c("hclust", "hclust_phylo", "pca", "pca_ord", "pca_dim", "mca"),
                                             column_w_names_of_multiple_analytes = NULL,
                                             column_w_values_for_multiple_analytes = NULL,
                                             columns_w_values_for_single_analyte = NULL,
@@ -4761,31 +4774,44 @@
                                             ...
                                         ) {
 
-                    # Check that column names are spelled correctly
+                    # Pre-process data
 
-                        if( any(
-                            !c(
-                                column_w_names_of_multiple_analytes,
-                                column_w_values_for_multiple_analytes,
-                                columns_w_values_for_single_analyte,
-                                columns_w_additional_analyte_info,
-                                columns_w_sample_ID_info
-                            ) %in% colnames(data)
-                            ) == TRUE
-                        ) {
-                            stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
-                        }
+                        # Check that column names are spelled correctly
 
-                    # Add analyte_unique_ID_column if necessary
+                            if( any(
+                                !c(
+                                    column_w_names_of_multiple_analytes,
+                                    column_w_values_for_multiple_analytes,
+                                    columns_w_values_for_single_analyte,
+                                    columns_w_additional_analyte_info,
+                                    columns_w_sample_ID_info
+                                ) %in% colnames(data)
+                                ) == TRUE
+                            ) {
+                                stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
+                            }
 
-                        # if( length(columns_for_analyte_unique_ID) > 1 ) {
-                            #add analyte_unique_ID column if necessary
-                        # }
+                        # Add analyte_unique_ID_column if necessary
 
-                    # Remove columns that are not included in input column lists
+                            # if( length(columns_for_analyte_unique_ID) > 1 ) {
+                                #add analyte_unique_ID column if necessary
+                            # }
 
-                        if (length(
-                                which(!colnames(data) %in% 
+                        # Remove columns that are not included in input column lists
+
+                            if (length(
+                                    which(!colnames(data) %in% 
+                                        c(
+                                            column_w_names_of_multiple_analytes,
+                                            column_w_values_for_multiple_analytes,
+                                            columns_w_values_for_single_analyte,
+                                            columns_w_additional_analyte_info,
+                                            columns_w_sample_ID_info
+                                        )
+                                    )
+                                ) > 0 
+                            ) {
+                                data <- data[,-which(!colnames(data) %in% 
                                     c(
                                         column_w_names_of_multiple_analytes,
                                         column_w_values_for_multiple_analytes,
@@ -4793,130 +4819,155 @@
                                         columns_w_additional_analyte_info,
                                         columns_w_sample_ID_info
                                     )
-                                )
-                            ) > 0 
-                        ) {
-                            data <- data[,-which(!colnames(data) %in% 
-                                c(
-                                    column_w_names_of_multiple_analytes,
-                                    column_w_values_for_multiple_analytes,
-                                    columns_w_values_for_single_analyte,
-                                    columns_w_additional_analyte_info,
-                                    columns_w_sample_ID_info
-                                )
-                            )]
-                        }
-
-                    # Check for duplicate analyte names
-
-                        if( length(columns_w_values_for_single_analyte) > 0 ) {
-                            if( any(duplicated(columns_w_values_for_single_analyte)) ) {
-                                stop("There are duplicate analyte names.")
+                                )]
                             }
-                        }
 
-                    # Remove analyte annotation columns before pivoting
+                        # Check for duplicate analyte names
 
-                        if( length(columns_w_additional_analyte_info) > 0 ) {
-                            analyte_annotation_free_data <- data[,-match(columns_w_additional_analyte_info, colnames(data))]
-                        } else {
-                            analyte_annotation_free_data <- data
-                        }
-
-                    # If no pivot required, skip pivoting
-
-                        if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
-                            data_wide <- analyte_annotation_free_data
-                            analyte_columns <- columns_w_values_for_single_analyte
-                            data_wide <- unique(data_wide)
-                        }
-
-                    # If pivoting required, pivot_wider any long-style data
-
-                        if( length(column_w_names_of_multiple_analytes) == 1 ) {
-                            data_wide <- pivot_wider(
-                                analyte_annotation_free_data,
-                                names_from = all_of(column_w_names_of_multiple_analytes),
-                                values_from = all_of(column_w_values_for_multiple_analytes)
-                            )
-                            analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
-                            analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
-                        }
-
-                    # Convert analyte columns to numeric
-
-                        which_analyte_columns <- which(colnames(data_wide) %in% analyte_columns)
-                        for( i in which_analyte_columns ) {
-                          data_wide[[i]] <- as.numeric(data_wide[[i]])
-                        }
-
-                    # Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
-
-                        if( length(columns_w_sample_ID_info) > 1 ) {
-                            sample_unique_IDs <- apply(
-                                data_wide[,match(columns_w_sample_ID_info, colnames(data_wide))],
-                                1, paste, collapse = "_"
-                            )
-                            if( any(duplicated(sample_unique_IDs)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
-                            data_wide$sample_unique_ID <- sample_unique_IDs
-                        } else {
-                            colnames(data_wide)[colnames(data_wide) == columns_w_sample_ID_info] <- "sample_unique_ID"
-                            if( any(duplicated(data_wide$sample_unique_ID)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
-                        }
-
-                        # Make sure "sample_unique_ID" is character
-                            data_wide$sample_unique_ID <- as.character(data_wide$sample_unique_ID)
-
-                    # Clustering analysis
-
-                        # Prepare the matrix
-
-                            matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
-                            rownames(matrix) <- data_wide$sample_unique_ID
-
-                        # Replace NAs with colmeans
-
-                            if( na_replacement[1] == "none") {
-                            }
-                            if( na_replacement[1] == "drop" ) {
-                                cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
-                                if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
-                                    cat(names(which(apply(is.na(matrix), 2, any))))    
-                                } else {
-                                    cat("none")
+                            if( length(columns_w_values_for_single_analyte) > 0 ) {
+                                if( any(duplicated(columns_w_values_for_single_analyte)) ) {
+                                    stop("There are duplicate analyte names.")
                                 }
-                                cat("\n")
-                                matrix <- matrix[,!apply(is.na(matrix), 2, any)]
                             }
-                            if( na_replacement[1] %in% c("zero", "mean") ) {
 
-                                if( any(is.na(matrix)) ) {
-                                    
-                                    cat(paste0("Replacing NAs in your data with ", na_replacement), "\n")
+                        # Remove analyte annotation columns before pivoting
 
-                                        for( column in 1:dim(matrix)[2]) {
-                                            
-                                            if( any(is.na(matrix[,column])) ) {
+                            if( length(columns_w_additional_analyte_info) > 0 ) {
+                                analyte_annotation_free_data <- data[,-match(columns_w_additional_analyte_info, colnames(data))]
+                            } else {
+                                analyte_annotation_free_data <- data
+                            }
 
-                                                if( na_replacement == "mean" ) {
-                                                    replacement <- mean(matrix[,column], na.rm = TRUE)
-                                                }
-                                                if( na_replacement == "zero" ) {
-                                                    replacement <- 0
-                                                }
-                                                if( !any(na_replacement %in% c("mean", "zero")) ) {
-                                                    stop("Your data contains NAs. Please specify how to deal with them using na_replacement. \n")
-                                                }
+                        # If no pivot required, skip pivoting
+
+                            if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
+                                data_wide <- analyte_annotation_free_data
+                                analyte_columns <- columns_w_values_for_single_analyte
+                                data_wide <- unique(data_wide)
+                            }
+
+                        # If pivoting required, pivot_wider any long-style data
+
+                            if( length(column_w_names_of_multiple_analytes) == 1 ) {
+                                data_wide <- pivot_wider(
+                                    analyte_annotation_free_data,
+                                    names_from = all_of(column_w_names_of_multiple_analytes),
+                                    values_from = all_of(column_w_values_for_multiple_analytes)
+                                )
+                                analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
+                                analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
+                            }
+
+                        # Check to see if analyte columns are numeric
+
+                            which_analyte_columns <- which(colnames(data_wide) %in% analyte_columns)
+                            are_they_numeric <- list()
+                            for( i in which_analyte_columns ) {
+                              are_they_numeric <- c(are_they_numeric, is.numeric(data_wide[[i]]))
+                            }
+
+                            ## Convert all to numeric?
+                                # for( i in which_analyte_columns ) {
+                                #   data_wide[[i]] <- as.numeric(data_wide[[i]])
+                                # }
+
+                            # Should selected analysis proceed?
+
+                                if ( all(unlist(are_they_numeric)) ) {
+                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
+                                        cat("Analytes are all numeric and compatible with the analysis selected.\n")
+                                    }
+                                    if ( analysis %in% c("mca") ) {
+                                        stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
+                                    }
+                                }
+
+                                if ( !all(unlist(are_they_numeric)) ) {
+                                    if (analysis %in% c("mca")) {
+                                        cat("Analytes are all categorical and compatible with the analysis selected.\n")
+                                    }
+                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
+                                        stop("Analytes are all categorical, but the analysis selected is for numeric variables. Please choose a different analysis method.\n")
+                                    }
+
+                                }
+
+                                # if (    all( 
+                                #             c( !all(unlist(are_they_numeric)), all(unlist(are_they_numeric)) )
+                                #         )
+                                # ) {
+                                #     if (analysis %in% c("mca")) {
+                                #         cat("Analytes are mixed and ...")
+                                #     }
+                                # }
+
+                        # Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
+
+                            if( length(columns_w_sample_ID_info) > 1 ) {
+                                sample_unique_IDs <- apply(
+                                    data_wide[,match(columns_w_sample_ID_info, colnames(data_wide))],
+                                    1, paste, collapse = "_"
+                                )
+                                if( any(duplicated(sample_unique_IDs)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
+                                data_wide$sample_unique_ID <- sample_unique_IDs
+                            } else {
+                                colnames(data_wide)[colnames(data_wide) == columns_w_sample_ID_info] <- "sample_unique_ID"
+                                if( any(duplicated(data_wide$sample_unique_ID)) ) {stop("columns_w_sample_ID_info specified do not lead to unique sample IDs")}
+                            }
+
+                            # Make sure "sample_unique_ID" is character
+                                data_wide$sample_unique_ID <- as.character(data_wide$sample_unique_ID)
+
+                        # Prepare the Matrix for analysis - Clustering analysis
+
+                            # Prepare the matrix
+
+                                matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
+                                rownames(matrix) <- data_wide$sample_unique_ID
+
+                            # Replace NAs with colmeans
+
+                                if( na_replacement[1] == "none") {
+                                }
+                                if( na_replacement[1] == "drop" ) {
+                                    cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
+                                    if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
+                                        cat(names(which(apply(is.na(matrix), 2, any))))    
+                                    } else {
+                                        cat("none")
+                                    }
+                                    cat("\n")
+                                    matrix <- matrix[,!apply(is.na(matrix), 2, any)]
+                                }
+                                if( na_replacement[1] %in% c("zero", "mean") ) {
+
+                                    if( any(is.na(matrix)) ) {
+                                        
+                                        cat(paste0("Replacing NAs in your data with ", na_replacement), "\n")
+
+                                            for( column in 1:dim(matrix)[2]) {
                                                 
-                                                matrix[,column][is.na(matrix[,column])] <- replacement
+                                                if( any(is.na(matrix[,column])) ) {
 
-                                            } else {}
-                                        }
+                                                    if( na_replacement == "mean" ) {
+                                                        replacement <- mean(matrix[,column], na.rm = TRUE)
+                                                    }
+                                                    if( na_replacement == "zero" ) {
+                                                        replacement <- 0
+                                                    }
+                                                    if( !any(na_replacement %in% c("mean", "zero")) ) {
+                                                        stop("Your data contains NAs. Please specify how to deal with them using na_replacement. \n")
+                                                    }
+                                                    
+                                                    matrix[,column][is.na(matrix[,column])] <- replacement
+
+                                                } else {}
+                                            }
+                                    }
                                 }
-                            }
 
-                        # Transpose matrix, if requested
-                            if( transpose == TRUE ) { matrix <- t(matrix) }
+                            # Transpose matrix, if requested
+                                if( transpose == TRUE ) { matrix <- t(matrix) }
 
                         # Run unknown, if requested
 
@@ -4991,7 +5042,41 @@
 
                         }
 
-                    # Run hclust, if requested. Return as phylo, if requested
+                    ## MCA ##
+
+                        if( analysis == "mca" ) {
+                            cat("Running Multiple Correlation Analysis, extracting sample coordinates...\n")
+                            coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
+                            clustering <- as_tibble(coords)
+                            clustering$sample_unique_ID <- rownames(coords)
+                            colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
+                            cat("Done!")
+                        }
+
+                        if( analysis == "mca_ord" ) {
+                            cat("Running Multiple Correlation Analysis, extracting ordination plot...\n")
+                            coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
+                            clustering <- as_tibble(coords)
+                            clustering$analyte <- rownames(coords)
+                            colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
+                            clustering <- select(clustering, analyte, Dim_1, Dim_2)
+                            return(clustering)
+                            stop("Returning ordination plot coordinates. \nDone!")
+                        }
+
+                        if( analysis == "mca_dim" ) {
+                            cat("Running Multiple Correlation Analysis, extracting dimensional contributions...\n")
+                            coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
+                            clustering <- tibble::enframe(coords, name = NULL)
+                            clustering$principal_component <- names(coords)
+                            clustering$principal_component <- as.numeric(gsub("dim ", "", clustering$principal_component))
+                            colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                            clustering <- select(clustering, principal_component, percent_variance_explained)
+                            return(clustering)
+                            stop("Returning eigenvalues. \nDone!")
+                        }
+
+                    ## HCLUST, HCLUST_PHYLO ##
 
                         if( analysis == "hclust" ) {                        
                             phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
@@ -5007,7 +5092,7 @@
                             stop("Returning hclust_phylo.")
                         }
 
-                    # Run PCA, if requested
+                    ## PCA, PCA_ORD, PCA_DIM ## 
 
                         if( analysis == "pca" ) {
                             if( scale_variance == TRUE ) {
@@ -5019,9 +5104,7 @@
                             clustering$sample_unique_ID <- rownames(coords)
                         }
 
-                    # Run PCA and return ordination plot coordinates, if requested
-
-                        if( analysis == "pca-ord" ) {
+                        if( analysis == "pca_ord" ) {
                             if( scale_variance == TRUE ) {
                                 coords <- FactoMineR::PCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
                             } else {
@@ -5034,9 +5117,7 @@
                             stop("Returning ordination plot coordinates.")
                         }
 
-                    # Run PCA and return eigenvalues, if requested
-
-                        if( analysis == "pca-dim" ) {
+                        if( analysis == "pca_dim" ) {
                             if( scale_variance == TRUE ) {
                                 coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
                             } else {
@@ -5051,7 +5132,7 @@
                             stop("Returning eigenvalues.")
                         }
 
-                    # Run kMeans, if requested
+                    ## K-MEANS ##
 
                         if( kmeans[1] %in% c("none", FALSE) ) {}
 
@@ -5112,7 +5193,7 @@
 
                         }
 
-                    # Return without annotations if transpose = TRUE
+                    # If transpose = TRUE, then return without annotations
 
                         if( transpose == TRUE ) {
                             return(clustering)
