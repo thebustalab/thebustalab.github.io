@@ -7,6 +7,9 @@
     ## Define necessary libraries
         
         CRAN_packages <- c(
+                "ellipsis",
+                "vctrs",
+                "dplyr",
                 "tidyverse",
                 "ape",
                 "ggtree",
