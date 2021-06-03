@@ -29,7 +29,9 @@
                 "BiocManager",
                 "googlesheets4",
                 "Hmisc",
-                "ggforce"
+                "ggforce",
+                "network",
+                "ggnetwork"
             )
 
         Bioconductor_packages <- c(
@@ -4567,7 +4569,7 @@
             #' @examples
             #' drawMolecules()
 
-            drawMolecules <- function(csv_in_path = NULL, data = NULL) {
+            drawMolecules <- function(csv_in_path = NULL, data = NULL, color_column = "element_or_group") {
 
                 if (is.null(csv_in_path) & is.null(data)) {
                     stop("Please provide a data source using either the `data` argument OR the `csv_in_path` argument.")
@@ -4615,8 +4617,6 @@
                 ))
                 atom_colors <- atom_colors_pre[,2]
                 names(atom_colors) <- atom_colors_pre[,1]
-
-
 
                 #e41a1c red
                 #377eb8 blue
@@ -4699,21 +4699,24 @@
                       ) +
 
                     ## Add atom number labels
-                      geom_point(
-                        data = filter(plot_data, molecule_component == "atom"),
-                        aes(x = x, y = y, fill = element_or_group),
-                        shape = 21, size = 4
-                      ) +
-                      geom_text(
-                        data = filter(plot_data, molecule_component == "atom", element_or_group %in% c("H", "COOH")),
-                        aes(x = x, y = y, label = atom_number),
-                        size = 2, color = "black"
-                      ) +
-                      geom_text(
-                        data = filter(plot_data, molecule_component == "atom", element_or_group != "H" & element_or_group != "COOH"),
-                        aes(x = x, y = y, label = atom_number),
-                        size = 2, color = "white"
-                      ) +
+                      
+                        geom_point(
+                            data = filter(plot_data, molecule_component == "atom"),
+                            aes_string(x = "x", y = "y", fill = color_column),
+                            shape = 21, size = 4
+                        ) +
+                      
+                        geom_text(
+                            data = filter(plot_data, molecule_component == "atom", element_or_group %in% c("H", "COOH")),
+                            aes(x = x, y = y, label = atom_number),
+                            size = 2, color = "black"
+                        ) +
+
+                        geom_text(
+                            data = filter(plot_data, molecule_component == "atom", element_or_group != "H" & element_or_group != "COOH"),
+                            aes(x = x, y = y, label = atom_number),
+                            size = 2, color = "white"
+                        ) +
 
                     ## Add molecule name as label
                       geom_text(
@@ -4723,23 +4726,25 @@
                       ) +
 
                     ## Scales and theme
-                      scale_color_gradient(low = "black", high = "black") +
-                      scale_size_continuous(range = c(0,4)) +
-                      scale_x_continuous(breaks = seq(0,20,1)) +
-                      # scale_linetype_manual(values = bond_line_types) +
-                      scale_y_continuous(breaks = seq(0,20,1)) +
-                      scale_fill_manual(values = atom_colors, name = "") +
-                      facet_wrap(.~molecule_name, ncol = 4) +
-                      theme_void() +
-                      guides(size = "none", alpha = "none") +
-                      coord_fixed() +
-                      theme(
-                        strip.text = element_blank()
-                      )
+                        scale_color_gradient(low = "black", high = "black") +
+                        scale_size_continuous(range = c(0,4)) +
+                        scale_x_continuous(breaks = seq(0,20,1)) +
+                        # scale_linetype_manual(values = bond_line_types) +
+                        scale_y_continuous(breaks = seq(0,20,1)) +
+                        facet_wrap(.~molecule_name, ncol = 4) +
+                        theme_void() +
+                        guides(size = "none", alpha = "none") +
+                        coord_fixed() +
+                        theme(
+                            strip.text = element_blank()
+                        )
 
-                    # print(plot)
-                      return(plot)
-            }                  
+                        if (color_column == "element_or_group") {
+                            plot <- plot + scale_fill_manual(values = atom_colors, name = "")
+                        }
+
+                        return(plot)
+            }           
 
     ##### Statistical testing and modelling
 
@@ -4762,7 +4767,7 @@
 
                 runMatrixAnalysis <-    function(
                                             data,
-                                            analysis = c("hclust", "hclust_phylo", "pca", "pca_ord", "pca_dim", "mca"),
+                                            analysis = c("hclust", "hclust_phylo", "pca", "pca_ord", "pca_dim", "mca", "mca_ord", "mca_dim"),
                                             column_w_names_of_multiple_analytes = NULL,
                                             column_w_values_for_multiple_analytes = NULL,
                                             columns_w_values_for_single_analyte = NULL,
@@ -4880,13 +4885,13 @@
                                     if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
                                         cat("Analytes are all numeric and compatible with the analysis selected.\n")
                                     }
-                                    if ( analysis %in% c("mca") ) {
+                                    if ( analysis %in% c("ca", "ca_ord", "ca_dim") ) {
                                         stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
                                     }
                                 }
 
                                 if ( !all(unlist(are_they_numeric)) ) {
-                                    if (analysis %in% c("mca")) {
+                                    if (analysis %in% c("ca", "ca_ord", "ca_dim")) {
                                         cat("Analytes are all categorical and compatible with the analysis selected.\n")
                                     }
                                     if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
@@ -5048,7 +5053,7 @@
                     ## MCA ##
 
                         if( analysis == "mca" ) {
-                            cat("Running Multiple Correlation Analysis, extracting sample coordinates...\n")
+                            cat("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
                             coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
                             clustering <- as_tibble(coords)
                             clustering$sample_unique_ID <- rownames(coords)
@@ -5057,7 +5062,7 @@
                         }
 
                         if( analysis == "mca_ord" ) {
-                            cat("Running Multiple Correlation Analysis, extracting ordination plot...\n")
+                            cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
                             coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
                             clustering <- as_tibble(coords)
                             clustering$analyte <- rownames(coords)
@@ -5068,7 +5073,7 @@
                         }
 
                         if( analysis == "mca_dim" ) {
-                            cat("Running Multiple Correlation Analysis, extracting dimensional contributions...\n")
+                            cat("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
                             coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
                             clustering <- tibble::enframe(coords, name = NULL)
                             clustering$principal_component <- names(coords)
