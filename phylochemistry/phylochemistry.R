@@ -5614,6 +5614,105 @@
 
             }
 
+        #### analyzeMolecularDiversity
+
+            analyzeMolecularDiversity <- function( data, scale = TRUE ) {
+
+                ## Check for NAs
+                    if(any(is.na(data$molecule_name))) {
+                        data <- data[!is.na(data$molecule_name),]
+                        cat("One of the molecule names is NA... removing those entries from the analysis...\n")
+                    }
+                    if(any(is.na(data$feature))) {
+                        data <- data[!is.na(data$feature),]
+                        cat("One of the feature names is NA... removing those entries from the analysis...\n")
+                    }
+                    if(any(is.na(data$state))) {
+                        data <- data[!is.na(data$state),]
+                        cat("One of the state names is NA... removing those entries from the analysis...\n")
+                    }
+
+                ## Start the output list, the progress bar, loop over each feature
+
+                    cat("Calculating unlikeability and variation ratio across all molecules...\n")
+                    statistics <- list()
+                    pb <- progress::progress_bar$new(total = length(unique(data$feature)))
+                    for (i in 1:length(unique(data$feature))) {
+
+                        ## Tick the progress bar, get the list of categories to consider
+                            pb$tick()
+                            states_to_consider <- data$state[data$feature == unique(data$feature)[i]]
+                        
+                        ## Unlikeability
+                            all_pairs <- expand.grid(1:length(states_to_consider), 1:length(states_to_consider))
+                            unlikeability <- list()
+                            for (j in 1:dim(all_pairs)[1]) {
+                                if (all_pairs$Var1[j] == all_pairs$Var2[j]) {} else {
+                                    unlikeability[[j]] <- data.frame(
+                                        pair = paste(all_pairs$Var1[j], all_pairs$Var2[j], sep = "_"),
+                                        same = states_to_consider[all_pairs$Var1[j]] == states_to_consider[all_pairs$Var2[j]]
+                                    )
+                                }
+                            }
+                            unlikeability <- do.call(rbind, unlikeability)
+
+                            if(names(table(unlikeability$same))[1] == FALSE) {
+                                coeff_unlikeability <- table(unlikeability$same)[1]/sum(table(unlikeability$same))
+                            } else {
+                                coeff_unlikeability <- 0
+                            }
+
+                        ## Variation Ratio
+                            sum <- sum(table(states_to_consider))
+                            max <- max(table(states_to_consider))
+                            variation_ratio = 1 - (max/sum)
+
+                        ## Build output
+                            statistics[[i]] <- data.frame(
+                                feature = unique(data$feature)[i],
+                                variation_ratio = variation_ratio,
+                                most_common = names(which.max(table(states_to_consider))),
+                                coeff_unlikeability = coeff_unlikeability
+                            )
+                    }
+                    statistics <- do.call(rbind, statistics)
+                    rownames(statistics) <- NULL
+
+                ## Make edgelist
+                    
+                    cat("Building similarity matrix for all molecule pairs...\n")
+                    combinations <- t(combn(unique(data$molecule_name), 2))
+                    similarity <- list()
+                    pb <- progress::progress_bar$new(total = dim(combinations)[1])
+                    for (j in 1:dim(combinations)[1]) {
+                        pb$tick()
+                        compare <- full_join(
+                            filter(data, molecule_name == combinations[j,1]),
+                            filter(data, molecule_name == combinations[j,2]),
+                            by = "feature"
+                        )
+                        compare <- compare$state.x == compare$state.y
+                        compare[is.na(compare)] <- FALSE
+                        similarity[[j]] <- data.frame(
+                            molecule_A = combinations[j,1],
+                            molecule_B = combinations[j,2],
+                            similarity = sum(compare == TRUE)/length(compare)
+                        )
+                    }
+                    similarity <- do.call(rbind, similarity)
+                    rownames(similarity) <- NULL
+
+                    if (scale) {similarity$similarity <- normalize(similarity$similarity)}
+
+                ## Return
+                    
+                    output <- list()
+                    output$statistics <- statistics
+                    output$similarity <- similarity
+                    return(output)
+
+            }
+
     ##### Phylogenetic statistical testing
 
         #### phylogeneticSignal
