@@ -3287,6 +3287,7 @@
                                                 framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
                                                 framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
                                                 MS_out_1$intensity <- MS_out_1$intensity - framedDataFile_to_subtract$intensity
+                                                MS_out_1$intensity[MS_out_1$intensity < 0] <- 0
                                                 MS_out_1 <<- MS_out_1
 
                                             }
