@@ -904,6 +904,30 @@
                     return( tree )
             }
 
+        #### collapseTree
+
+            #' Create a high-level cladogram from a low-level tree
+            #'
+            #' @param tree The tree to manipulate
+            #' @param associations Relationships bewteen tree tip names and the level on which to summarize
+            #' @export
+            #' @examples
+            #' updateCountData()
+
+            collapseTree <- function(tree, associations) {
+
+                ## Drop all species names not in association list
+                    tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% associations[,1]])
+
+                ## Subset the association list to one memeber per family
+                    tip_labels <- associations[associations[,1] %in% tree$tip.label,]
+
+                ## Collapse tree, rename tips, return
+                    collapsed_tree <- ape::drop.tip(tree, tip_labels[,1][duplicated(tip_labels[,2])])
+                    collapsed_tree$tip.label <- associations[,2][match(collapsed_tree$tip.label, associations[,1])]
+                    return(collapsed_tree)
+            }
+
     ##### Other functions
 
         #### normalize
@@ -1416,7 +1440,7 @@
                     alignment_directory_path <- OsDirectoryPathCorrect(alignment_directory_path)
 
                 ## Get appropriate subset of the monolist
-                    monolist_subset <- monolist[monolist[,colnames(monolist) == as.character(subset)],]
+                    monolist_subset <- monolist[unlist(monolist[,as.character(colnames(monolist)) == as.character(subset)]),]
 
                 ## If starting with nucleotide sequences
                     
@@ -4530,35 +4554,40 @@
             #' @export
             #' generateTicks
 
-            generateTicks <-    function(major_ticks, minor_freq = 4, major_tick_size, minor_tick_size) {
+            generateTicks <-    function(
+                                    major_ticks,
+                                    minor_freq = 4,
+                                    major_tick_size = 2,
+                                    minor_tick_size = 1
+                                ) {
                                     
-                                    major_labels <- vector()
-                                    
-                                    for (tick in 1:(length(major_ticks)-1)) {
-                                        major_labels <- c(major_labels, major_ticks[tick])
-                                        major_labels <- c(major_labels, rep("", (minor_freq)))
-                                    }
-                                    
-                                    all_ticks <- vector()
-                                    
-                                    for (tick in 1:(length(major_ticks)-1)) {
-                                        all_ticks <- c(all_ticks, major_ticks[tick])
-                                        minor_tick_values <- vector()
-                                        for (minor_tick in 1:minor_freq) {
-                                            minor_tick_values <- c(minor_tick_values, major_ticks[tick] + minor_tick*(((major_ticks[tick+1] - major_ticks[tick])/(minor_freq+1))))
-                                        }
-                                        all_ticks <- c(all_ticks, minor_tick_values)
-                                    }
-                                    
-                                    major_labels <- c(major_labels, major_ticks[length(major_ticks)])
-                                    all_ticks <- c(all_ticks, major_ticks[length(major_ticks)])
+                major_labels <- vector()
+                
+                for (tick in 1:(length(major_ticks)-1)) {
+                    major_labels <- c(major_labels, major_ticks[tick])
+                    major_labels <- c(major_labels, rep("", (minor_freq)))
+                }
+                
+                all_ticks <- vector()
+                
+                for (tick in 1:(length(major_ticks)-1)) {
+                    all_ticks <- c(all_ticks, major_ticks[tick])
+                    minor_tick_values <- vector()
+                    for (minor_tick in 1:minor_freq) {
+                        minor_tick_values <- c(minor_tick_values, major_ticks[tick] + minor_tick*(((major_ticks[tick+1] - major_ticks[tick])/(minor_freq+1))))
+                    }
+                    all_ticks <- c(all_ticks, minor_tick_values)
+                }
+                
+                major_labels <- c(major_labels, major_ticks[length(major_ticks)])
+                all_ticks <- c(all_ticks, major_ticks[length(major_ticks)])
 
-                                    return <- data.frame(all_ticks = as.numeric(all_ticks), major_labels = as.character(major_labels))
-                                    return$tick_size <- minor_tick_size
-                                    return$tick_size[return$major_labels != ""] <- major_tick_size
+                return <- data.frame(all_ticks = as.numeric(all_ticks), major_labels = as.character(major_labels))
+                return$tick_size <- minor_tick_size
+                return$tick_size[return$major_labels != ""] <- major_tick_size
 
-                                    return(return)
-                                }
+                return(return)
+            }
 
         #### drawMolecules
 
