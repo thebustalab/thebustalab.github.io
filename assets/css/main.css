@@ -15,13 +15,13 @@
 	}
 	#narrow {
 	  width: 30%;
-	  background: lightblue;
+/*	  background: lightblue;*/
 	  /* Just so it's visible */
 	}
 	#wide {
 	  flex: 1;
 	  /* Grow to rest of container */
-	  background: lightgreen;
+	  /*background: lightgreen;*/
 	  /* Just so it's visible */
 	}
 
@@ -36,8 +36,8 @@
 
 	/* Create four equal columns that sit next to each other */
 	.column {
-	  flex: 25%;
-	  max-width: 25%;
+	  flex: 50%;
+	  max-width: 50%;
 	  padding: 0 4px;
 	}
 
