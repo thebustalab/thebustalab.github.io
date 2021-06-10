@@ -10,17 +10,17 @@
 
 /* Custom Box Layouts */
 
-	#parent {
+	.parent {
 	  display: flex;
 	}
 
-	#narrow {
+	.narrow {
 	  width: 200px;
 	  background: lightblue;
 	  /* Just so it's visible */
 	}
 
-	#wide {
+	.wide {
 	  flex: 1;
 	  /* Grow to rest of container */
 	  background: lightgreen;
