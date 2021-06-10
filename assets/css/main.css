@@ -14,7 +14,7 @@
 	  display: flex;
 	}
 	#narrow {
-	  width: 200px;
+	  width: 30%;
 	  background: lightblue;
 	  /* Just so it's visible */
 	}
