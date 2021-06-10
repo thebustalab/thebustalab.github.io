@@ -8,6 +8,26 @@
 	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
 */
 
+/* Custom Box Layouts */
+
+	#parent {
+	  display: flex;
+	}
+
+	#narrow {
+	  width: 200px;
+	  background: lightblue;
+	  /* Just so it's visible */
+	}
+
+	#wide {
+	  flex: 1;
+	  /* Grow to rest of container */
+	  background: lightgreen;
+	  /* Just so it's visible */
+	}
+
+
 /* For Photo Collage */
 
 	.row {
