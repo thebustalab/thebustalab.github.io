@@ -13,16 +13,16 @@
 	#parent {
 	  display: flex;
 	}
-
 	#narrow {
-	  float: right;
 	  width: 200px;
 	  background: lightblue;
+	  /* Just so it's visible */
 	}
 	#wide {
-	  float: left;
-	  width: calc(100% - 200px);
+	  flex: 1;
+	  /* Grow to rest of container */
 	  background: lightgreen;
+	  /* Just so it's visible */
 	}
 
 
