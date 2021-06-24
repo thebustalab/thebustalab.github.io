@@ -10,6 +10,7 @@
                 "ellipsis",
                 "vctrs",
                 "dplyr",
+                "gridExtra"
                 "tidyverse",
                 "ape",
                 "ggtree",
@@ -31,6 +32,7 @@
                 "Hmisc",
                 "ggforce",
                 "network",
+                "pracma"
                 "ggnetwork"
             )
 
