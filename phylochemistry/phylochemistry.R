@@ -1804,6 +1804,65 @@
                     return(framed_GFFs)
                 }
 
+        #### analyzeNanoporeReads
+
+            #' Run QC on nanopore reads
+            #'
+            #' @param fastqs A list of the paths to the fastq files you want to analyze
+            #' @examples
+            #' @export
+            #' analyzeNanoporeReads
+
+            analyzeNanoporeReads <- function(fastqs) {
+
+                output <- list()
+                total_read_number <- 0
+
+                lookup <- data.frame(rbind(
+                    c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43")
+                ))
+
+                for ( fastq in 1:length(fastqs) ) {
+
+                    cat(paste("Analyzing file ", fastqs[fastq], "\n", sep = ""))
+
+                    for (i in 1:(dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)) {
+
+                        data <- data.table::fread(fastqs[fastq], skip = (4*(i-1)), nrows = 4, sep = NULL, header = FALSE)
+
+                        total_read_number <- total_read_number + 1
+
+                        read_score <- mean(as.numeric(lookup$X2[match(
+                                            strsplit(as.character(unlist(data[4,])), split = "")[[1]],
+                                            lookup$X1
+                                        )]))
+                        read_info <- data.frame(
+                            # read_name = 
+                            read_length = nchar(data[2,]),
+                            read_score = read_score,
+                            read_accuracy = (1-10^(-read_score/10))*100
+                        )
+
+                        output[[total_read_number]] <- read_info
+                    
+                    }
+
+                }
+
+                output <- do.call(rbind, output)
+                rownames(output) <- NULL
+
+                #   cat("   Summarizing header and length information...\n\n")
+                #       read_info <- as.data.frame(data.table::fread("nanoheader.txt", header = FALSE))
+                #       read_info$read_length <- as.data.frame(data.table::fread("nanolength.txt"))[,1]
+                #       read_info$read_score <- as.data.frame(data.table::fread("nanoscores.txt"))[,1]
+                #       read_info$read_accuracy <- (1-10^(-read_info$read_score/10))*100
+                #       colnames(read_info) <- c("read_name", "runid", "sampleid", "read", "ch", "start_time", "read_length", "read_score", "read_accuracy")
+                #       sample_info[[fastq]] <- read_info
+
+                    return(output)
+            }
+
     ##### Chemical data handling
 
         #### convertCDFstoCSVs
