@@ -2080,7 +2080,7 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 <!-- end -->
 
 <!-- start Mid Term Exam -->
-# Mid Term Exam
+<!-- # Mid Term Exam
 
 For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
 
@@ -2424,7 +2424,7 @@ beer_analyzed <- runMatrixAnalysis(
   output_format = c("wide")
 )
 ggtree(beer_analyzed) + geom_tiplab()
-```
+``` -->
 <!-- end -->
 
 <!-- start Project Overview -->
