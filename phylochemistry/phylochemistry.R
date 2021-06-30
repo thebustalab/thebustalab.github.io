@@ -10,7 +10,7 @@
                 "ellipsis",
                 "vctrs",
                 "dplyr",
-                "gridExtra"
+                "gridExtra",
                 "tidyverse",
                 "ape",
                 "ggtree",
