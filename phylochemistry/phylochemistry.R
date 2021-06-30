@@ -32,7 +32,7 @@
                 "Hmisc",
                 "ggforce",
                 "network",
-                "pracma"
+                "pracma",
                 "ggnetwork"
             )
 
