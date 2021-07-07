@@ -4884,7 +4884,7 @@
 
                         ## Add molecule name as label
                             geom_text(
-                                data = drop_na(unique(select(plot_data, molecule_name, skeleton))),
+                                data = drop_na(unique(select(plot_data, molecule_name))),
                                 aes(x = 1, y = 13, label = molecule_name),
                                 size = 4, color = "black", hjust = 0
                             ) +
