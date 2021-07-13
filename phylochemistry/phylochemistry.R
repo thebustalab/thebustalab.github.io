@@ -7,47 +7,47 @@
     ## Define necessary libraries
         
         CRAN_packages <- c(
-                "ellipsis",
-                "vctrs",
-                "dplyr",
-                "gridExtra",
-                "tidyverse",
-                "ape",
-                "ggtree",
-                "rstatix",
-                "multcompView",
-                "imager",
-                "shiny",
-                "DT",
-                "RColorBrewer",
-                "data.table",
-                "rhandsontable",
-                "ips",
-                "phangorn",
-                "seqinr",
-                "Rfast",
-                "picante",
-                "BiocManager",
-                "googlesheets4",
-                "Hmisc",
-                "ggforce",
-                "network",
-                "pracma",
-                "ggnetwork"
-            )
+            "ellipsis",
+            "vctrs",
+            "dplyr",
+            "gridExtra",
+            "tidyverse",
+            "ape",
+            "ggtree",
+            "rstatix",
+            "multcompView",
+            "imager",
+            "shiny",
+            "DT",
+            "RColorBrewer",
+            "data.table",
+            "rhandsontable",
+            "ips",
+            "phangorn",
+            "seqinr",
+            "Rfast",
+            "picante",
+            "BiocManager",
+            "googlesheets4",
+            "Hmisc",
+            "ggforce",
+            "network",
+            "pracma",
+            "ggnetwork"
+        )
 
         Bioconductor_packages <- c(
-                "ggtree",
-                "xcms",
-                "msa",
-                "rtracklayer"
-                # "orthologr"
-                # c("Biostrings",
-                #     "GenomicRanges",
-                #     "GenomicFeatures",
-                #     "Rsamtools",
-                #     "rtracklayer"
-            )
+            "ggtree",
+            "xcms",
+            "msa",
+            "rtracklayer"
+            # "orthologr"
+            # c("Biostrings",
+            #     "GenomicRanges",
+            #     "GenomicFeatures",
+            #     "Rsamtools",
+            #     "rtracklayer"
+        )
 
         packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
 
@@ -1218,6 +1218,7 @@
             #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
             #' @param blast_module_directory_path Path to directory containing the BLAST+ module (perhaps something like "/usr/local/ncbi/blast/bin/")
             #' @param blast_type One of "blastn" or "dc-megablast". "blastn" is a traditional BLASTN requiring an exact match of 11. "dc-megablast" is a discontiguous megablast used to find more distant (e.g., interspecies) sequences.
+            #' @param e_value_cutoff e-value cutoff to apply to results. Defaults to 1. Set to 1e-10 for heavy filtering.
             #' @param remove Names of columns to remove from the output monolist
             #' @param monolist_out_path Path to where the output monolist should be written
             #' @examples
@@ -1225,13 +1226,14 @@
             #' blastTranscriptomes
 
             blastTranscriptomes <- function(
-                                    transcriptomes, 
-                                    initial_query_in_path, 
+                                    transcriptomes,
+                                    initial_query_in_path,
                                     iterative_blast = FALSE,
                                     iterative_blast_length_cutoff = 700,
                                     sequences_of_interest_directory_path,
                                     blast_module_directory_path,
                                     blast_type = c("blastn", "dc-megablast"), 
+                                    e_value_cutoff = 1,
                                     remove = NULL,
                                     monolist_out_path
                                 ) {
@@ -1306,8 +1308,71 @@
                                                     paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                     " -out ",
                                                     paste(transcriptomes[transcriptome], ".out", sep = ""),
+                                                    " -evalue ",
+                                                    e_value_cutoff,
                                                     # " -outfmt '6 sacc'",
                                                     " -outfmt '6 sallacc'",
+                                                    # " -outfmt '6 length'",
+                                                    sep = ""
+                                                )
+                                            )
+
+                                            system(
+                                                paste(
+                                                    blast_module_directory_path,
+                                                    "blastn -task ",
+                                                    blast_type,
+                                                    " -db ", 
+                                                    transcriptomes[transcriptome],
+                                                    " -query ",
+                                                    paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                    " -out ",
+                                                    paste(transcriptomes[transcriptome], ".out_length", sep = ""),
+                                                    " -evalue ",
+                                                    e_value_cutoff,
+                                                    # " -outfmt '6 sacc'",
+                                                    # " -outfmt '6 sallacc'",
+                                                    " -outfmt '6 length'",
+                                                    sep = ""
+                                                )
+                                            )
+
+                                            system(
+                                                paste(
+                                                    blast_module_directory_path,
+                                                    "blastn -task ",
+                                                    blast_type,
+                                                    " -db ", 
+                                                    transcriptomes[transcriptome],
+                                                    " -query ",
+                                                    paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                    " -out ",
+                                                    paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
+                                                    " -evalue ",
+                                                    e_value_cutoff,
+                                                    # " -outfmt '6 sacc'",
+                                                    # " -outfmt '6 sallacc'",
+                                                    " -outfmt '6 pident'",
+                                                    sep = ""
+                                                )
+                                            )
+
+                                            system(
+                                                paste(
+                                                    blast_module_directory_path,
+                                                    "blastn -task ",
+                                                    blast_type,
+                                                    " -db ", 
+                                                    transcriptomes[transcriptome],
+                                                    " -query ",
+                                                    paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                    " -out ",
+                                                    paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
+                                                    " -evalue ",
+                                                    e_value_cutoff,
+                                                    # " -outfmt '6 sacc'",
+                                                    # " -outfmt '6 sallacc'",
+                                                    " -outfmt '6 evalue'",
                                                     sep = ""
                                                 )
                                             )
@@ -1325,7 +1390,26 @@
                                                 if ( inherits( try( read.table(file = paste(transcriptomes[transcriptome], ".out", sep = "")), silent = TRUE), "try-error") == TRUE ) { # Skips over empty files
                                                     cat(paste("No BLAST hits found for ", query_seqs[query_seq]@ranges@NAMES, " in ", names(transcriptomes)[transcriptome], "\n", sep = ""))
                                                 } else {
-                                                    temp_hits <- read.table(file = paste(transcriptomes[transcriptome], ".out", sep = ""))
+
+                                                    ## Remove duplicate hits from all output files
+                                                        temp_hits <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out", sep = ""))[,1])
+                                                        temp_hits_length <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1])
+                                                        temp_hits_pident <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1])
+                                                        temp_hits_evalue <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1])
+                                                        
+                                                        duplicate_indeces <- duplicated(temp_hits)
+
+                                                        temp_hits <- temp_hits[!duplicate_indeces]
+                                                        temp_hits_length <- temp_hits_length[!duplicate_indeces]
+                                                        temp_hits_pident <- temp_hits_pident[!duplicate_indeces]
+                                                        temp_hits_evalue <- temp_hits_evalue[!duplicate_indeces]
+                                                        
+                                                        writeMonolist(temp_hits, paste(transcriptomes[transcriptome], ".out", sep = ""))
+                                                        writeMonolist(temp_hits_length, paste(transcriptomes[transcriptome], ".out_length", sep = ""))
+                                                        writeMonolist(temp_hits_pident, paste(transcriptomes[transcriptome], ".out_pident", sep = ""))
+                                                        writeMonolist(temp_hits_evalue, paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))
+
+                                                    temp_hits <- readMonolist(paste(transcriptomes[transcriptome], ".out", sep = ""))
                                                     cat(paste(
                                                         "Found ", 
                                                         dim(temp_hits)[1], 
@@ -1366,9 +1450,14 @@
                                                                                                     species = gsub(".*_", "", names(transcriptomes)[transcriptome]),
                                                                                                     annotation = temp_seqs@ranges@NAMES,
                                                                                                     length = temp_seqs@ranges@width,
+                                                                                                    longestORF = longest_ORFs,
+                                                                                                    length_aligned_with_query = readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1],
+                                                                                                    percent_identity = readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1],
+                                                                                                    e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
                                                                                                     subset_all = TRUE,
                                                                                                     query = query_seqs@ranges@NAMES[query_seq],
-                                                                                                    longestORF = longest_ORFs
+                                                                                                    query_length = query_seqs@ranges@width[query_seq],
+                                                                                                    query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
                                                                                                 )
                                                                             )
                                                         }
@@ -1863,6 +1952,56 @@
                 #       sample_info[[fastq]] <- read_info
 
                     return(output)
+            }
+
+        #### reverseTranslate
+
+            #' Reverse translate a protein sequence
+            #'
+            #' @param fasta_in_path
+            #' @param fasta_out_path
+            #' @param organism The codon table to use. One of "Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", or "Saccharomyces_cerevisiae".
+            #' @examples
+            #' @export
+            #' reverseTranslate
+
+            reverseTranslate <- function(
+                
+                fasta_in_path,
+                fasta_out_path,
+                organism = c("Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", "Saccharomyces_cerevisiae")) {
+
+
+
+                codon_tables <- readMonolist("https://thebustalab.github.io/R_For_Chemists/sample_data/codon_tables.csv")
+                codon_tables$Genus_species <- paste(codon_tables$Genus, codon_tables$species, sep = "_")
+                codon_tables <- dplyr::filter(codon_tables, Genus_species == organism)
+                    
+                substitution_table <- list()
+                for (i in 1:length(unique(codon_tables$amino_acid))) {
+                    this_codon <- dplyr::filter(codon_tables, amino_acid == unique(codon_tables$amino_acid)[i])
+                    substitution_table[[i]] <- this_codon[which.max(this_codon$frequency),]
+                }
+                substitution_table <- do.call(rbind, substitution_table)
+                rownames(substitution_table) <- NULL
+
+                amin_seqs <- Biostrings::readAAStringSet(fasta_in_path)
+                output <- Biostrings::DNAStringSet()
+                for (i in 1:length(amin_seqs)) {
+                    this_amin_seq <- strsplit(as.character(amin_seqs[i]), split = NULL)[[1]]
+
+                    ## Add terminal stop codon if not present
+                        if( this_amin_seq[length(this_amin_seq)] != "*" ) {
+                            this_amin_seq <- c(this_amin_seq, "*")
+                        }
+                    
+                    ## Determine codons and concatenate them
+                        output[[i]] <- paste(substitution_table$codon[match(this_amin_seq, substitution_table$amino_acid)], collapse = "")
+
+                }
+                output@ranges@NAMES <- amin_seqs@ranges@NAMES
+                Biostrings::writeXStringSet(output, fasta_out_path)
+
             }
 
     ##### Chemical data handling
@@ -4905,7 +5044,19 @@
                     return(plot)
             }           
 
-    ##### Statistical testing and modelling
+    ##### Mathematics, Statistical Testing, and Modeling
+
+        #### movingAverage
+
+            #' Compute a moving average
+            #'
+            #' movingAverage
+
+            movingAverage <- function(x, n = 5){
+            
+                stats::filter(x, rep(1 / n, n), sides = 2)
+            
+            }
 
         #### runMatrixAnalysis
 
