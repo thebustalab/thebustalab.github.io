@@ -98,6 +98,9 @@
     hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
     busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
 
+    cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
+    cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
+
 ###### Functions
 
     message("Loading functions...")
@@ -1917,7 +1920,11 @@
 
                     cat(paste("Analyzing file ", fastqs[fastq], "\n", sep = ""))
 
-                    for (i in 1:(dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)) {
+                    n_reads <- (dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)
+
+                    pb <- progress::progress_bar$new(total = n_reads)
+
+                    for (i in 1:n_reads) {
 
                         data <- data.table::fread(fastqs[fastq], skip = (4*(i-1)), nrows = 4, sep = NULL, header = FALSE)
 
@@ -1935,6 +1942,8 @@
                         )
 
                         output[[total_read_number]] <- read_info
+
+                        pb$tick()
                     
                     }
 
@@ -1970,8 +1979,6 @@
                 fasta_in_path,
                 fasta_out_path,
                 organism = c("Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", "Saccharomyces_cerevisiae")) {
-
-
 
                 codon_tables <- readMonolist("https://thebustalab.github.io/R_For_Chemists/sample_data/codon_tables.csv")
                 codon_tables$Genus_species <- paste(codon_tables$Genus, codon_tables$species, sep = "_")
