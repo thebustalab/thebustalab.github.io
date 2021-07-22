@@ -999,19 +999,34 @@
 
             }
 
-        #### openGoogleDriveCode
+        #### openRCodeFromGoogleDrive
 
             #'
 
-            openGoogleDriveCode() <- function(path_to_code) {
+            drive_share_link = "https://drive.google.com/file/d/1fnlz6oE9lUKe1GDWOtzGEVNxvzgBy3A4/view?usp=sharing"
+
+            openRCodeFromGoogleDrive() <- function(drive_share_link) {
 
                 googledrive::drive_download(
-                    file = "https://drive.google.com/file/d/1xLLEcj8R1iXwXQ0hIqY8PcSk98VNW-L9/view?usp=sharing",
+                    file = drive_share_link,
                     path = "temporary_R_file.R",
                     overwrite = FALSE
                 )
 
                 file.edit("temporary_R_file.R")
+
+            }
+
+        #### saveRCodeToGoogleDrive
+
+            saveRCodeToGoogleDrive() <- function(drive_share_link){
+
+                rstudioapi::documentSave()
+
+                googledrive::drive_update(
+                    file = drive_share_link,
+                    media = "temporary_R_file.R"
+                )
 
             }
 
