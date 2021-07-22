@@ -935,33 +935,6 @@
 
     ##### Other functions
 
-        #### normalize
-
-            #' Normalizes a vector of numbers to a range of zero to one.
-            #'
-            #' @param x The vector to normalize
-            #' @param old_min The minimum of the old range
-            #' @param old_max The maximum of the old range
-            #' @param new_min The minimum of the new range, defaults to 0
-            #' @param new_max The maximum of the new range, defaults to 1
-            #' @examples
-            #' @export
-            #' normalize
-
-            normalize <- function( x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1 ) {
-
-                if ( length(old_min) == 0 & length(old_max) == 0 ) {
-                    
-                    (x - min(x)) * (new_max - new_min) / (max(x) - min(x)) + new_min                
-                
-                } else {
-
-                    (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min
-
-                }
-
-            }
-
         #### OsDirectoryPathCorrect
 
             #' OS-aware correction of directory paths
@@ -1023,6 +996,22 @@
             dropNA <- function( x ) {
 
                 return(x[!is.na(x)])
+
+            }
+
+        #### openGoogleDriveCode
+
+            #'
+
+            openGoogleDriveCode() <- function(path_to_code) {
+
+                googledrive::drive_download(
+                    file = "https://drive.google.com/file/d/1xLLEcj8R1iXwXQ0hIqY8PcSk98VNW-L9/view?usp=sharing",
+                    path = "temporary_R_file.R",
+                    overwrite = FALSE
+                )
+
+                file.edit("temporary_R_file.R")
 
             }
 
@@ -1668,6 +1657,8 @@
                             }
                     }
 
+                ## If starting with amino acid sequences
+
                     if ( input_sequence_type == "amin" ) {
 
                         if ( mode == "amin_align" ) {
@@ -1679,9 +1670,9 @@
                                     file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs_aligned.fa", sep = ""))}
 
                             ## Import the subset's sequences, then write out *_amin_seqs.fa
-                                amin_seqs_set <- Biostrings::DNAStringSet()
+                                amin_seqs_set <- Biostrings::AAStringSet()
                                 for (i in 1:dim(monolist_subset)[1]) {
-                                    amin_seqs_set <- c(amin_seqs_set, Biostrings::readDNAStringSet(paste(sequences_of_interest_directory_path, as.character(monolist_subset$accession[i]), ".fa", sep = "")))
+                                    amin_seqs_set <- c(amin_seqs_set, Biostrings::readAAStringSet(paste(sequences_of_interest_directory_path, as.character(monolist_subset$accession[i]), ".fa", sep = "")))
                                 }
                                 Biostrings::writeXStringSet(amin_seqs_set, filepath = paste(alignment_directory_path, subset, "_amin_seqs.fa", sep = ""))
 
@@ -5052,6 +5043,33 @@
             }           
 
     ##### Mathematics, Statistical Testing, and Modeling
+
+        #### normalize
+
+            #' Normalizes a vector of numbers to a range of zero to one.
+            #'
+            #' @param x The vector to normalize
+            #' @param old_min The minimum of the old range
+            #' @param old_max The maximum of the old range
+            #' @param new_min The minimum of the new range, defaults to 0
+            #' @param new_max The maximum of the new range, defaults to 1
+            #' @examples
+            #' @export
+            #' normalize
+
+            normalize <- function( x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1 ) {
+
+                if ( length(old_min) == 0 & length(old_max) == 0 ) {
+                    
+                    (x - min(x)) * (new_max - new_min) / (max(x) - min(x)) + new_min                
+                
+                } else {
+
+                    (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min
+
+                }
+
+            }
 
         #### movingAverage
 
