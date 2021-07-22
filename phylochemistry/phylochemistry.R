@@ -1003,8 +1003,6 @@
 
             #'
 
-            drive_share_link = "https://drive.google.com/file/d/1fnlz6oE9lUKe1GDWOtzGEVNxvzgBy3A4/view?usp=sharing"
-
             openRCodeFromGoogleDrive() <- function(drive_share_link) {
 
                 googledrive::drive_download(
