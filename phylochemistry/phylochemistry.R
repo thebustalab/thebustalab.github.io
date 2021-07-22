@@ -1003,7 +1003,7 @@
 
             #'
 
-            openRCodeFromGoogleDrive() <- function(drive_share_link) {
+            openRCodeFromGoogleDrive <- function(drive_share_link) {
 
                 googledrive::drive_download(
                     file = drive_share_link,
@@ -1017,7 +1017,7 @@
 
         #### saveRCodeToGoogleDrive
 
-            saveRCodeToGoogleDrive() <- function(drive_share_link){
+            saveRCodeToGoogleDrive <- function(drive_share_link){
 
                 rstudioapi::documentSave()
 
