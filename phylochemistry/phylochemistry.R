@@ -1025,44 +1025,64 @@
 
             }
 
-        #### openRCodeFromGoogleDrive
+        #### openRGD
 
             #' Open an RScript stored on Google Drive
             #'
             #' @param drive_share_link
             #' @examples
             #' @export
-            #' openRCodeFromGoogleDrive
+            #' openRGD
 
-            openRCodeFromGoogleDrive <- function(drive_share_link) {
+            openRGD <- function(drive_share_link) {
+
+                file_name <- googledrive::drive_get(
+                    id = googledrive::as_id(drive_share_link)
+                )$name
+
+                googledrive::drive_rename(
+                    file = googledrive::as_id(drive_share_link),
+                    name = paste0("IN_USE___", file_name)
+                )
 
                 googledrive::drive_download(
                     file = googledrive::as_id(drive_share_link),
-                    path = "temporary_R_file.R",
+                    path = paste0("IN_USE___", file_name),
                     overwrite = TRUE
                 )
 
-                file.edit("temporary_R_file.R")
+                file.edit(paste0("IN_USE___", file_name))
 
             }
 
-        #### saveRCodeToGoogleDrive
+        #### closeRGD
 
-            #' Save the current RScript to Google Drive
+            #' Save and close the current RScript to Google Drive
             #'
             #' @param drive_share_link
             #' @examples
             #' @export
-            #' saveRCodeToGoogleDrive
+            #' closeRGD
 
-            saveRCodeToGoogleDrive <- function(drive_share_link){
+            closeRGD <- function(drive_share_link){
 
                 rstudioapi::documentSave()
 
+                file_name <- googledrive::drive_get(
+                    id = googledrive::as_id(drive_share_link)
+                )$name
+
                 googledrive::drive_update(
                     file = googledrive::as_id(drive_share_link),
-                    media = "temporary_R_file.R"
+                    media = paste0(file_name)
                 )
+
+                googledrive::drive_rename(
+                    file = googledrive::as_id(drive_share_link),
+                    name = paste0(gsub("IN_USE___", "", file_name))
+                )
+
+                rstudioapi::documentClose()
 
             }
 
@@ -6251,4 +6271,4 @@
                 }
 
 message("Done!")
-message("Reminder: you can open/save .R scripts on Google Drive directly using:\nopenRCodeFromGoogleDrive(\"<share_link>\")\nsaveRCodeToGoogleDrive(\"<share_link>\")")
+message("Reminder: you can open/save .R scripts on Google Drive directly using:\nopenRGD(\"share_link\")\ncloseRGD(\"share_link\")")
