@@ -83,10 +83,31 @@
 
 ###### Datasets
 
-    if (datasets) {
+    if (exists("datasets")) {
+
+        if (datasets) {
         
+            message("Loading datasets...")
+            
+            algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv", col_types = cols())
+            alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv", col_types = cols())
+            solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv", col_types = cols())
+            periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv", col_types = cols())
+            periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv", col_types = cols())
+            # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv", col_types = cols())
+            ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv", col_types = cols())
+            wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv", col_types = cols())
+            # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv", col_types = cols())
+            hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv", col_types = cols())
+            beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv", col_types = cols())
+            hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
+            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+        }
+
+    } else {
+
         message("Loading datasets...")
-        
+
         algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv", col_types = cols())
         alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv", col_types = cols())
         solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv", col_types = cols())
@@ -100,6 +121,7 @@
         beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv", col_types = cols())
         hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
         busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+
     }
 
     cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
@@ -1005,12 +1027,17 @@
 
         #### openRCodeFromGoogleDrive
 
+            #' Open an RScript stored on Google Drive
             #'
+            #' @param drive_share_link
+            #' @examples
+            #' @export
+            #' openRCodeFromGoogleDrive
 
             openRCodeFromGoogleDrive <- function(drive_share_link) {
 
                 googledrive::drive_download(
-                    file = drive_share_link,
+                    file = googledrive::as_id(drive_share_link),
                     path = "temporary_R_file.R",
                     overwrite = TRUE
                 )
@@ -1021,7 +1048,12 @@
 
         #### saveRCodeToGoogleDrive
 
-            # saveRCodeToGoogleDrive("https://drive.google.com/file/d/1fnlz6oE9lUKe1GDWOtzGEVNxvzgBy3A4/view?usp=sharing")
+            #' Save the current RScript to Google Drive
+            #'
+            #' @param drive_share_link
+            #' @examples
+            #' @export
+            #' saveRCodeToGoogleDrive
 
             saveRCodeToGoogleDrive <- function(drive_share_link){
 
