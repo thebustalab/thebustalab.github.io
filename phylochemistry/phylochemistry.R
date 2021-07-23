@@ -83,7 +83,7 @@
 
 ###### Datasets
 
-    if (exists("datasets")) {
+    if (exists("datasets")) { # You can choose to not load datasets if you define datasets=FALSE before running source()
 
         if (datasets) {
         
@@ -6251,3 +6251,4 @@
                 }
 
 message("Done!")
+message("Reminder: you can open/save .R scripts on Google Drive directly using:\nopenRCodeFromGoogleDrive(\"<share_link>\")\nsaveRCodeToGoogleDrive(\"<share_link>\")")
