@@ -1350,28 +1350,46 @@
                     # sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
                     # blast_module_directory_path <- OsDirectoryPathCorrect(blast_module_directory_path)
 
-                ### Make sure transcriptomes object is character and build BLAST databases
+                ### Make sure transcriptomes object is character
+                    
                     names <- names(transcriptomes)
                     transcriptomes <- as.character(transcriptomes)
                     names(transcriptomes) <- names
 
-                    if( .Platform$OS == "windows") {
-                        transcriptomes <- gsub("\\\\", "\\\\\\\\", transcriptomes)
+                ### Build blast database
+
+                    if( .Platform$OS == "unix") {
+                        
+                        for (transcriptome in 1:length(transcriptomes)) {
+                            cat(paste0("\nSpecies: ", names(transcriptomes)[transcriptome]))
+                            system( 
+                                paste(
+                                    blast_module_directory_path, 
+                                    "makeblastdb -in ", 
+                                    transcriptomes[transcriptome], 
+                                    " -dbtype nucl", 
+                                    sep = "" 
+                                ) 
+                            )
+                        }
+
+                    } else if ( .Platform$OS == "windows" ) {
+
+                        for (transcriptome in 1:length(transcriptomes)) {
+                            cat(paste0("\nSpecies: ", names(transcriptomes)[transcriptome]))
+                            shell(
+                                paste(
+                                    blast_module_directory_path, 
+                                    "makeblastdb -in ", 
+                                    transcriptomes[transcriptome], 
+                                    " -dbtype nucl", 
+                                    sep = "" 
+                                ) 
+                            )
+                        }
+
                     }
                     
-                    for (transcriptome in 1:length(transcriptomes)) {
-                        cat(paste0("\nSpecies: ", names(transcriptomes)[transcriptome]))
-                        system( 
-                            paste(
-                                blast_module_directory_path, 
-                                "makeblastdb -in ", 
-                                transcriptomes[transcriptome], 
-                                " -dbtype nucl", 
-                                sep = "" 
-                            ) 
-                        )
-                    }
-
                 ### Read in query, set initial hit number for iterative BLAST
                     query_seqs <- Biostrings::readDNAStringSet(filepath = initial_query_in_path, format = "fasta")
 
@@ -1408,86 +1426,170 @@
                                 ## Loop over the transcriptomes, run the blast on each, add hits to monolist
                                     for (transcriptome in 1:length(transcriptomes)) {
 
-                                        ## Run BLAST
-                                            system(
-                                                paste(
-                                                    blast_module_directory_path,
-                                                    "blastn -task ",
-                                                    blast_type,
-                                                    " -db ", 
-                                                    transcriptomes[transcriptome],
-                                                    " -query ",
-                                                    paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
-                                                    " -out ",
-                                                    paste(transcriptomes[transcriptome], ".out", sep = ""),
-                                                    " -evalue ",
-                                                    e_value_cutoff,
-                                                    # " -outfmt '6 sacc'",
-                                                    " -outfmt '6 sallacc'",
-                                                    # " -outfmt '6 length'",
-                                                    sep = ""
-                                                )
-                                            )
+                                        ## Run BLASTs on unix system
 
-                                            system(
-                                                paste(
-                                                    blast_module_directory_path,
-                                                    "blastn -task ",
-                                                    blast_type,
-                                                    " -db ", 
-                                                    transcriptomes[transcriptome],
-                                                    " -query ",
-                                                    paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
-                                                    " -out ",
-                                                    paste(transcriptomes[transcriptome], ".out_length", sep = ""),
-                                                    " -evalue ",
-                                                    e_value_cutoff,
-                                                    # " -outfmt '6 sacc'",
-                                                    # " -outfmt '6 sallacc'",
-                                                    " -outfmt '6 length'",
-                                                    sep = ""
-                                                )
-                                            )
+                                            if ( .Platform$OS == "unix") {
 
-                                            system(
-                                                paste(
-                                                    blast_module_directory_path,
-                                                    "blastn -task ",
-                                                    blast_type,
-                                                    " -db ", 
-                                                    transcriptomes[transcriptome],
-                                                    " -query ",
-                                                    paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
-                                                    " -out ",
-                                                    paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
-                                                    " -evalue ",
-                                                    e_value_cutoff,
-                                                    # " -outfmt '6 sacc'",
-                                                    # " -outfmt '6 sallacc'",
-                                                    " -outfmt '6 pident'",
-                                                    sep = ""
+                                                system(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        # " -outfmt '6 sacc'",
+                                                        " -outfmt '6 sallacc'",
+                                                        # " -outfmt '6 length'",
+                                                        sep = ""
+                                                    )
                                                 )
-                                            )
 
-                                            system(
-                                                paste(
-                                                    blast_module_directory_path,
-                                                    "blastn -task ",
-                                                    blast_type,
-                                                    " -db ", 
-                                                    transcriptomes[transcriptome],
-                                                    " -query ",
-                                                    paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
-                                                    " -out ",
-                                                    paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
-                                                    " -evalue ",
-                                                    e_value_cutoff,
-                                                    # " -outfmt '6 sacc'",
-                                                    # " -outfmt '6 sallacc'",
-                                                    " -outfmt '6 evalue'",
-                                                    sep = ""
+                                                system(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_length", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        # " -outfmt '6 sacc'",
+                                                        # " -outfmt '6 sallacc'",
+                                                        " -outfmt '6 length'",
+                                                        sep = ""
+                                                    )
                                                 )
-                                            )
+
+                                                system(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        # " -outfmt '6 sacc'",
+                                                        # " -outfmt '6 sallacc'",
+                                                        " -outfmt '6 pident'",
+                                                        sep = ""
+                                                    )
+                                                )
+
+                                                system(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        # " -outfmt '6 sacc'",
+                                                        # " -outfmt '6 sallacc'",
+                                                        " -outfmt '6 evalue'",
+                                                        sep = ""
+                                                    )
+                                                )
+                                            }
+
+                                        ## Run BLASTs on windows system
+
+                                            if ( .Platform$OS == "windows") {
+
+                                                shell(
+                                                    paste(
+
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        " -outfmt '6 sallacc'",
+                                                        sep = ""
+                                                    )
+                                                )
+
+                                                shell(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_length", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        " -outfmt '6 length'",
+                                                        sep = ""
+                                                    )
+                                                )
+
+                                                shell(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        " -outfmt '6 pident'",
+                                                        sep = ""
+                                                    )
+                                                )
+
+                                                system(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        # " -outfmt '6 sacc'",
+                                                        # " -outfmt '6 sallacc'",
+                                                        " -outfmt '6 evalue'",
+                                                        sep = ""
+                                                    )
+                                                )
+                                            }
 
                                         ## Extract BLAST hits from transcriptome, add them to the monolist, write them to individual files
 
