@@ -1529,7 +1529,7 @@
                                                         paste(transcriptomes[transcriptome], ".out", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        " -outfmt '6 sallacc'",
+                                                        " -outfmt \"6 sallacc\"",
                                                         sep = ""
                                                     )
                                                 )
@@ -1547,7 +1547,7 @@
                                                         paste(transcriptomes[transcriptome], ".out_length", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        " -outfmt '6 length'",
+                                                        " -outfmt \"6 length\"",
                                                         sep = ""
                                                     )
                                                 )
@@ -1565,12 +1565,12 @@
                                                         paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        " -outfmt '6 pident'",
+                                                        " -outfmt \"6 pident\"",
                                                         sep = ""
                                                     )
                                                 )
 
-                                                system(
+                                                shell(
                                                     paste(
                                                         blast_module_directory_path,
                                                         "blastn -task ",
@@ -1583,9 +1583,7 @@
                                                         paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        # " -outfmt '6 sacc'",
-                                                        # " -outfmt '6 sallacc'",
-                                                        " -outfmt '6 evalue'",
+                                                        " -outfmt \"6 evalue\"",
                                                         sep = ""
                                                     )
                                                 )
