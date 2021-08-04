@@ -2019,11 +2019,12 @@
             #' Run QC on nanopore reads
             #'
             #' @param fastqs A list of the paths to the fastq files you want to analyze
+            #' @param max_n_reads The maximum number of reads to analyze. Default is no limit.
             #' @examples
             #' @export
             #' analyzeNanoporeReads
 
-            analyzeNanoporeReads <- function(fastqs) {
+            analyzeNanoporeReads <- function(fastqs, max_n_reads = NULL) {
 
                 output <- list()
                 total_read_number <- 0
@@ -2038,7 +2039,11 @@
                     cat(paste("Analyzing file ", fastqs[fastq], "\n", sep = ""))
                     cat(paste("Using Phred_ASCII_33 score conversions...", "\n", sep = ""))
 
-                    n_reads <- (dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)
+                    if (length(max_n_reads) > 0)) {
+                        n_reads <- max_n_reads
+                    } else {
+                        n_reads <- (dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)
+                    }
 
                     pb <- progress::progress_bar$new(total = n_reads)
 
