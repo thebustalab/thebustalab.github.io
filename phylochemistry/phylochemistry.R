@@ -2039,7 +2039,7 @@
                     cat(paste("Analyzing file ", fastqs[fastq], "\n", sep = ""))
                     cat(paste("Using Phred_ASCII_33 score conversions...", "\n", sep = ""))
 
-                    if (length(max_n_reads) > 0)) {
+                    if (length(max_n_reads) > 0) {
                         n_reads <- max_n_reads
                     } else {
                         n_reads <- (dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)
