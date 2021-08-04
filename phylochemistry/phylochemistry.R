@@ -965,48 +965,91 @@
 
             #' OS-aware correction of directory paths
             #'
-            #' @param directory_in_path The path to correct
+            #' @param directory_path The path to correct
             #' @examples
             #' @export
             #' OsDirectoryPathCorrect
 
             OsDirectoryPathCorrect <- function( directory_path ) {
 
-                OS <- .Platform$OS.type
+                ## Detect OS
 
-                if (OS == "unix"){
+                    OS <- .Platform$OS.type
 
-                    if ( 
-                        substr(
-                            directory_path, 
-                            nchar(directory_path), 
-                            nchar(directory_path)
-                        ) == "/" ) {
+                ## Add terminal slash if missing
+
+                    if (OS == "unix"){
+
+                        if ( 
+                            substr(
+                                directory_path, 
+                                nchar(directory_path), 
+                                nchar(directory_path)
+                            ) == "/" ) {
+                        } else {
+                            directory_path <- paste(directory_path, "/", sep = "")
+                        }
+                        directory_path_corrected <- directory_path
+
+                    } else if (OS == "windows"){
+
+                        if ( 
+                            substr(
+                                directory_path, 
+                                nchar(directory_path), 
+                                nchar(directory_path)
+                            ) == "/" ) {
+                        } else {
+                            directory_path <- paste(directory_path, "\\", sep = "")
+                        }
+                        directory_path_corrected <- directory_path
+
                     } else {
-                        directory_path <- paste(directory_path, "/", sep = "")
+
+                        warning("ERROR: OS could not be identified")
+
                     }
-                    directory_path_corrected <- directory_path
 
-                } else if (OS == "windows"){
+                ## Return
+                    
+                    return(directory_path_corrected)
 
-                    if ( 
-                        substr(
-                            directory_path, 
-                            nchar(directory_path), 
-                            nchar(directory_path)
-                        ) == "/" ) {
+            }
+
+        #### OsPathCorrect
+
+            #' OS-aware correction of paths
+            #'
+            #' @param path The path to correct
+            #' @examples
+            #' @export
+            #' OsPathCorrect
+
+            OsPathCorrect <- function( path ) {
+
+                ## Detect OS
+
+                    OS <- .Platform$OS.type
+
+                ## Replace single windows slashes with doubles
+
+                    if (OS == "unix") {
+
+                        path_corrected <- path
+
+                    } else if (OS == "windows"){
+
+                        path_corrected <- gsub("\\", "\\\\", path)
+
                     } else {
-                        directory_path <- paste(directory_path, "\\", sep = "")
+
+                        warning("ERROR: OS could not be identified")
+
                     }
-                    directory_path_corrected <- directory_path
 
-                } else {
-
-                    warning("ERROR: OS could not be identified")
-
-                }
-
-                return(directory_path_corrected)
+                ## Return
+                    
+                    return(path_corrected)
 
             }
 
@@ -1083,6 +1126,8 @@
                 )
 
                 rstudioapi::documentClose()
+
+                file.remove(paste0("IN_USE___", file_name))
 
             }
 
@@ -1302,8 +1347,8 @@
                                 ) {
 
                 ### Check paths
-                    # sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
-                    # blast_module_directory_path <- OsDirectoryPathCorrect(blast_module_directory_path)
+                    sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
+                    blast_module_directory_path <- OsDirectoryPathCorrect(blast_module_directory_path)
 
                 ### Make sure transcriptomes object is character and build BLAST databases
                     names <- names(transcriptomes)
@@ -1467,12 +1512,12 @@
                                                         temp_hits_pident <- temp_hits_pident[!duplicate_indeces]
                                                         temp_hits_evalue <- temp_hits_evalue[!duplicate_indeces]
                                                         
-                                                        writeMonolist(temp_hits, paste(transcriptomes[transcriptome], ".out", sep = ""))
-                                                        writeMonolist(temp_hits_length, paste(transcriptomes[transcriptome], ".out_length", sep = ""))
-                                                        writeMonolist(temp_hits_pident, paste(transcriptomes[transcriptome], ".out_pident", sep = ""))
-                                                        writeMonolist(temp_hits_evalue, paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))
+                                                        writeMonolist(temp_hits, OsPathCorrect(paste(transcriptomes[transcriptome], ".out", sep = "")))
+                                                        writeMonolist(temp_hits_length, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_length", sep = "")))
+                                                        writeMonolist(temp_hits_pident, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_pident", sep = "")))
+                                                        writeMonolist(temp_hits_evalue, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_evalue", sep = "")))
 
-                                                    temp_hits <- readMonolist(paste(transcriptomes[transcriptome], ".out", sep = ""))
+                                                    temp_hits <- readMonolist(OsPathCorrect(paste(transcriptomes[transcriptome], ".out", sep = "")))
                                                     cat(paste(
                                                         "Found ", 
                                                         dim(temp_hits)[1], 
@@ -1514,9 +1559,9 @@
                                                                                                     annotation = temp_seqs@ranges@NAMES,
                                                                                                     length = temp_seqs@ranges@width,
                                                                                                     longestORF = longest_ORFs,
-                                                                                                    length_aligned_with_query = readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1],
-                                                                                                    percent_identity = readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1],
-                                                                                                    e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
+                                                                                                    length_aligned_with_query = OsPathCorrect(readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = "")))[,1],
+                                                                                                    percent_identity = OsPathCorrect(readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = "")))[,1],
+                                                                                                    e_value = OsPathCorrect(readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = "")))[,1],
                                                                                                     subset_all = TRUE,
                                                                                                     query = query_seqs@ranges@NAMES[query_seq],
                                                                                                     query_length = query_seqs@ranges@width[query_seq],
@@ -1974,13 +2019,15 @@
                 output <- list()
                 total_read_number <- 0
 
+                ## Phred_ascii_33 lookup
                 lookup <- data.frame(rbind(
-                    c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43")
+                    c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89")
                 ))
 
                 for ( fastq in 1:length(fastqs) ) {
 
                     cat(paste("Analyzing file ", fastqs[fastq], "\n", sep = ""))
+                    cat(paste("Using Phred_ASCII_33 score conversions...", "\n", sep = ""))
 
                     n_reads <- (dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)
 
@@ -1989,6 +2036,10 @@
                     for (i in 1:n_reads) {
 
                         data <- data.table::fread(fastqs[fastq], skip = (4*(i-1)), nrows = 4, sep = NULL, header = FALSE)
+
+                        if (!length(strsplit(as.character(unlist(data[2,])), split = "")[[1]]) == length(strsplit(as.character(unlist(data[4,])), split = "")[[1]])) {
+                            stop(paste0("Problem with quality score encoding on line ", i))
+                        }
 
                         total_read_number <- total_read_number + 1
 
