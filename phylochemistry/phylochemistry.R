@@ -998,9 +998,9 @@
                                 directory_path, 
                                 nchar(directory_path), 
                                 nchar(directory_path)
-                            ) == "/" ) {
+                            ) == "\\\\" ) {
                         } else {
-                            directory_path <- paste(directory_path, "\\", sep = "")
+                            directory_path <- paste(directory_path, "\\\\", sep = "")
                         }
                         directory_path_corrected <- directory_path
 
@@ -1347,13 +1347,17 @@
                                 ) {
 
                 ### Check paths
-                    sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
-                    blast_module_directory_path <- OsDirectoryPathCorrect(blast_module_directory_path)
+                    # sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
+                    # blast_module_directory_path <- OsDirectoryPathCorrect(blast_module_directory_path)
 
                 ### Make sure transcriptomes object is character and build BLAST databases
                     names <- names(transcriptomes)
                     transcriptomes <- as.character(transcriptomes)
                     names(transcriptomes) <- names
+
+                    if( .Platform$OS == "windows") {
+                        transcriptomes <- gsub("\\\\", "\\\\\\\\", transcriptomes)
+                    }
                     
                     for (transcriptome in 1:length(transcriptomes)) {
                         cat(paste0("\nSpecies: ", names(transcriptomes)[transcriptome]))
@@ -1512,12 +1516,17 @@
                                                         temp_hits_pident <- temp_hits_pident[!duplicate_indeces]
                                                         temp_hits_evalue <- temp_hits_evalue[!duplicate_indeces]
                                                         
-                                                        writeMonolist(temp_hits, OsPathCorrect(paste(transcriptomes[transcriptome], ".out", sep = "")))
-                                                        writeMonolist(temp_hits_length, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_length", sep = "")))
-                                                        writeMonolist(temp_hits_pident, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_pident", sep = "")))
-                                                        writeMonolist(temp_hits_evalue, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_evalue", sep = "")))
+                                                        # writeMonolist(temp_hits, OsPathCorrect(paste(transcriptomes[transcriptome], ".out", sep = "")))
+                                                        # writeMonolist(temp_hits_length, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_length", sep = "")))
+                                                        # writeMonolist(temp_hits_pident, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_pident", sep = "")))
+                                                        # writeMonolist(temp_hits_evalue, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_evalue", sep = "")))
 
-                                                    temp_hits <- readMonolist(OsPathCorrect(paste(transcriptomes[transcriptome], ".out", sep = "")))
+                                                        writeMonolist(temp_hits, paste(transcriptomes[transcriptome], ".out", sep = ""))
+                                                        writeMonolist(temp_hits_length, paste(transcriptomes[transcriptome], ".out_length", sep = ""))
+                                                        writeMonolist(temp_hits_pident, paste(transcriptomes[transcriptome], ".out_pident", sep = ""))
+                                                        writeMonolist(temp_hits_evalue, paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))
+
+                                                    temp_hits <- readMonolist(paste(transcriptomes[transcriptome], ".out", sep = ""))
                                                     cat(paste(
                                                         "Found ", 
                                                         dim(temp_hits)[1], 
@@ -1559,9 +1568,9 @@
                                                                                                     annotation = temp_seqs@ranges@NAMES,
                                                                                                     length = temp_seqs@ranges@width,
                                                                                                     longestORF = longest_ORFs,
-                                                                                                    length_aligned_with_query = OsPathCorrect(readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = "")))[,1],
-                                                                                                    percent_identity = OsPathCorrect(readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = "")))[,1],
-                                                                                                    e_value = OsPathCorrect(readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = "")))[,1],
+                                                                                                    length_aligned_with_query = readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1],
+                                                                                                    percent_identity = readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1],
+                                                                                                    e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
                                                                                                     subset_all = TRUE,
                                                                                                     query = query_seqs@ranges@NAMES[query_seq],
                                                                                                     query_length = query_seqs@ranges@width[query_seq],
