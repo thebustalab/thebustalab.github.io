@@ -1127,7 +1127,7 @@
 
                 rstudioapi::documentClose()
 
-                file.remove(paste0("IN_USE___", file_name))
+                file.remove(paste0(file_name))
 
             }
 
