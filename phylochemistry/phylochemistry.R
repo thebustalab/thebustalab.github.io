@@ -1327,7 +1327,7 @@
             #' @param blast_module_directory_path Path to directory containing the BLAST+ module (perhaps something like "/usr/local/ncbi/blast/bin/")
             #' @param blast_type One of "blastn" or "dc-megablast". "blastn" is a traditional BLASTN requiring an exact match of 11. "dc-megablast" is a discontiguous megablast used to find more distant (e.g., interspecies) sequences.
             #' @param e_value_cutoff e-value cutoff to apply to results. Defaults to 1. Set to 1e-10 for heavy filtering.
-            #' @param remove Names of columns to remove from the output monolist
+            #' @param queries_in_output Should the queries be included in the fasta output?
             #' @param monolist_out_path Path to where the output monolist should be written
             #' @examples
             #' @export
@@ -1342,13 +1342,9 @@
                                     blast_module_directory_path,
                                     blast_type = c("blastn", "dc-megablast"), 
                                     e_value_cutoff = 1,
-                                    remove = NULL,
+                                    queries_in_output = FALSE,
                                     monolist_out_path
                                 ) {
-
-                ### Check paths
-                    # sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
-                    # blast_module_directory_path <- OsDirectoryPathCorrect(blast_module_directory_path)
 
                 ### Make sure transcriptomes object is character
                     
@@ -1443,9 +1439,7 @@
                                                         paste(transcriptomes[transcriptome], ".out", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        # " -outfmt '6 sacc'",
                                                         " -outfmt '6 sallacc'",
-                                                        # " -outfmt '6 length'",
                                                         sep = ""
                                                     )
                                                 )
@@ -1463,8 +1457,6 @@
                                                         paste(transcriptomes[transcriptome], ".out_length", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        # " -outfmt '6 sacc'",
-                                                        # " -outfmt '6 sallacc'",
                                                         " -outfmt '6 length'",
                                                         sep = ""
                                                     )
@@ -1483,8 +1475,6 @@
                                                         paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        # " -outfmt '6 sacc'",
-                                                        # " -outfmt '6 sallacc'",
                                                         " -outfmt '6 pident'",
                                                         sep = ""
                                                     )
@@ -1503,8 +1493,6 @@
                                                         paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
-                                                        # " -outfmt '6 sacc'",
-                                                        # " -outfmt '6 sallacc'",
                                                         " -outfmt '6 evalue'",
                                                         sep = ""
                                                     )
@@ -1616,11 +1604,6 @@
                                                         temp_hits_pident <- temp_hits_pident[!duplicate_indeces]
                                                         temp_hits_evalue <- temp_hits_evalue[!duplicate_indeces]
                                                         
-                                                        # writeMonolist(temp_hits, OsPathCorrect(paste(transcriptomes[transcriptome], ".out", sep = "")))
-                                                        # writeMonolist(temp_hits_length, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_length", sep = "")))
-                                                        # writeMonolist(temp_hits_pident, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_pident", sep = "")))
-                                                        # writeMonolist(temp_hits_evalue, OsPathCorrect(paste(transcriptomes[transcriptome], ".out_evalue", sep = "")))
-
                                                         writeMonolist(temp_hits, paste(transcriptomes[transcriptome], ".out", sep = ""))
                                                         writeMonolist(temp_hits_length, paste(transcriptomes[transcriptome], ".out_length", sep = ""))
                                                         writeMonolist(temp_hits_pident, paste(transcriptomes[transcriptome], ".out_pident", sep = ""))
@@ -1662,34 +1645,58 @@
 
                                                             # Add hit information to the monolist
                                                                 monolist <- rbind(monolist, data.frame(
-                                                                                                    accession = gsub(" .*", "", temp_seqs@ranges@NAMES),
-                                                                                                    Genus = as.character(gsub("_.*$", "", names(transcriptomes)[transcriptome])),
-                                                                                                    species = gsub(".*_", "", names(transcriptomes)[transcriptome]),
-                                                                                                    annotation = temp_seqs@ranges@NAMES,
-                                                                                                    length = temp_seqs@ranges@width,
-                                                                                                    longestORF = longest_ORFs,
-                                                                                                    length_aligned_with_query = readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1],
-                                                                                                    percent_identity = readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1],
-                                                                                                    e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
-                                                                                                    subset_all = TRUE,
-                                                                                                    query = query_seqs@ranges@NAMES[query_seq],
-                                                                                                    query_length = query_seqs@ranges@width[query_seq],
-                                                                                                    query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
-                                                                                                )
-                                                                            )
+                                                                                                accession = gsub(" .*", "", temp_seqs@ranges@NAMES),
+                                                                                                Genus = as.character(gsub("_.*$", "", names(transcriptomes)[transcriptome])),
+                                                                                                species = gsub(".*_", "", names(transcriptomes)[transcriptome]),
+                                                                                                annotation = temp_seqs@ranges@NAMES,
+                                                                                                length = temp_seqs@ranges@width,
+                                                                                                longestORF = longest_ORFs,
+                                                                                                length_aligned_with_query = readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1],
+                                                                                                percent_identity = readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1],
+                                                                                                e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
+                                                                                                subset_all = TRUE,
+                                                                                                query = query_seqs@ranges@NAMES[query_seq],
+                                                                                                query_length = query_seqs@ranges@width[query_seq],
+                                                                                                query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                                                                            )
+                                                                )
                                                         }
                                                 }
                                     }
+
+                                ## Optionally add the queries to the output
+
+                                    if (queries_in_output == TRUE) {
+                                        
+                                        monolist <- rbind(monolist, data.frame(
+                                                                        accession = query_seqs@ranges@NAMES[query_seq],
+                                                                        Genus = "Query",
+                                                                        species = "query",
+                                                                        annotation = "query",
+                                                                        length = query_seqs@ranges@width,
+                                                                        longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1],
+                                                                        length_aligned_with_query = 100,
+                                                                        percent_identity = 100,
+                                                                        e_value = 0,
+                                                                        subset_all = TRUE,
+                                                                        query = query_seqs@ranges@NAMES,
+                                                                        query_length = query_seqs@ranges@width,
+                                                                        query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                                                    )
+                                        )
+
+                                        Biostrings::writeXStringSet(
+                                            query_seqs[query_seq], 
+                                            filepath = paste(sequences_of_interest_directory_path, query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""), 
+                                            append = FALSE
+                                        )
+                                    }
+
                                 ## Remove individual query files
                                     if (file.exists(paste(query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))) {file.remove(paste(query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))}
                             }
 
                         ## Write out the monolist
-
-                            ## Optionally remove certain columns from the monolist
-                                if ( length(remove) > 0  ) {
-                                    monolist <- monolist[,!colnames(monolist) %in% remove]
-                                }
 
                             monolist <- unique(monolist)
                             rownames(monolist) <- NULL
@@ -3156,8 +3163,20 @@
 
                     ## Set up monolists and status
                         samples_monolist_subset = NULL
-                        samples_monolist_path <- paste0(CDF_directory_path, "/samples_monolist.csv")
-                        peaks_monolist_path <- paste0(CDF_directory_path, "/peaks_monolist.csv")
+
+                        if ( .Platform$OS == "unix") {
+
+                            samples_monolist_path <- paste0(CDF_directory_path, "/samples_monolist.csv")
+                            peaks_monolist_path <- paste0(CDF_directory_path, "/peaks_monolist.csv")
+
+                        }
+
+                        if ( .Platform$OS == "windows") {
+
+                            samples_monolist_path <- paste0(CDF_directory_path, "\\samples_monolist.csv")
+                            peaks_monolist_path <- paste0(CDF_directory_path, "\\peaks_monolist.csv")
+
+                        }
                         
                     ## Covert CDF to csv, if necessary
 
@@ -3173,17 +3192,40 @@
 
                         paths_to_cdf_csvs <- paste0(paths_to_cdfs, ".csv")
 
-                        # If chromatograms doesn't exist, make it 
-                            if (!file.exists(paste(CDF_directory_path, "chromatograms.csv", sep = "/"))) {
-                                chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
-                                writeMonolist(chromatograms, paste(CDF_directory_path, "chromatograms.csv", sep = "/"))
-                            } else {
-                                # If it exists, check to see if all cdfs in this folder are in it, if not, recreate
-                                chromatograms <- readMonolist(paste(CDF_directory_path, "chromatograms.csv", sep = "/"))
-                                if (!all(paths_to_cdf_csvs %in% unique(chromatograms$path_to_cdf_csv))) {
-                                    chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
-                                    writeMonolist(chromatograms, paste(CDF_directory_path, "chromatograms.csv", sep = "/"))
-                                }
+                        ## Handle chromatograms file
+
+                            if ( .Platform$OS == "unix") {
+
+                                # If chromatograms doesn't exist, make it 
+                                    if (!file.exists(paste0(CDF_directory_path, "/chromatograms.csv"))) {
+                                        chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
+                                        writeMonolist(chromatograms, paste0(CDF_directory_path, "/chromatograms.csv"))
+                                    } else {
+                                        # If it exists, check to see if all cdfs in this folder are in it, if not, recreate
+                                        chromatograms <- readMonolist(paste0(CDF_directory_path, "/chromatograms.csv"))
+                                        if (!all(paths_to_cdf_csvs %in% unique(chromatograms$path_to_cdf_csv))) {
+                                            chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
+                                            writeMonolist(chromatograms, paste0(CDF_directory_path, "/chromatograms.csv"))
+                                        }
+                                    }
+
+                            }
+
+                            if ( .Platform$OS == "windows") {
+
+                                # If chromatograms doesn't exist, make it 
+                                    if (!file.exists(paste0(CDF_directory_path, "\\chromatograms.csv"))) {
+                                        chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
+                                        writeMonolist(chromatograms, paste0(CDF_directory_path, "\\chromatograms.csv"))
+                                    } else {
+                                        # If it exists, check to see if all cdfs in this folder are in it, if not, recreate
+                                        chromatograms <- readMonolist(paste0(CDF_directory_path, "\\chromatograms.csv"))
+                                        if (!all(paths_to_cdf_csvs %in% unique(chromatograms$path_to_cdf_csv))) {
+                                            chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
+                                            writeMonolist(chromatograms, paste0(CDF_directory_path, "\\chromatograms.csv"))
+                                        }
+                                    }
+
                             }
 
                     ## Set up new samples monolist
