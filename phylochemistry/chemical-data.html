@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>2 chemical data | Phylochemistry</title>
+  <meta name="description" content="Vingette for the R Package Phylochemistry." />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="2 chemical data | Phylochemistry" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Vingette for the R Package Phylochemistry." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="2 chemical data | Phylochemistry" />
+  
+  <meta name="twitter:description" content="Vingette for the R Package Phylochemistry." />
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2021-08-13" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="phylochemistry.html"/>
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="fix.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="phylochemistry.html"><a href="phylochemistry.html"><i class="fa fa-check"></i><b>1</b> phylochemistry</a><ul>
+<li class="chapter" data-level="1.1" data-path="phylochemistry.html"><a href="phylochemistry.html#requirements"><i class="fa fa-check"></i><b>1.1</b> requirements</a></li>
+<li class="chapter" data-level="1.2" data-path="phylochemistry.html"><a href="phylochemistry.html#load-phylochemistry"><i class="fa fa-check"></i><b>1.2</b> load phylochemistry</a></li>
+<li class="chapter" data-level="1.3" data-path="phylochemistry.html"><a href="phylochemistry.html#r-scripts-on-google-drive"><i class="fa fa-check"></i><b>1.3</b> R scripts on Google Drive</a></li>
+<li class="chapter" data-level="1.4" data-path="phylochemistry.html"><a href="phylochemistry.html#new-features"><i class="fa fa-check"></i><b>1.4</b> new features</a></li>
+<li class="chapter" data-level="1.5" data-path="phylochemistry.html"><a href="phylochemistry.html#wrapped-features"><i class="fa fa-check"></i><b>1.5</b> wrapped features</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="chemical-data.html"><a href="chemical-data.html"><i class="fa fa-check"></i><b>2</b> chemical data</a><ul>
+<li class="chapter" data-level="2.1" data-path="chemical-data.html"><a href="chemical-data.html#integrationapplite"><i class="fa fa-check"></i><b>2.1</b> integrationAppLite</a></li>
+<li class="chapter" data-level="2.2" data-path="chemical-data.html"><a href="chemical-data.html#cdf-export"><i class="fa fa-check"></i><b>2.2</b> CDF export</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Phylochemistry</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="chemical-data" class="section level1">
+<h1><span class="header-section-number">2</span> chemical data</h1>
+<div id="integrationapplite" class="section level2">
+<h2><span class="header-section-number">2.1</span> integrationAppLite</h2>
+<p><code>phylochemistry</code> provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:</p>
+<ol style="list-style-type: decimal">
+<li><p>Create a new folder on your hard drive and place your CDF file into that folder. It doesn’t matter what the name of that folder is, but it must not contain special characters (including a space <code></code> in the name). For example, if my CDF file is called “sorghum_bicolor.CDF”, then I might create a folder called <code>gc_data</code> on my hard drive, and place the “sorghum_bicolor.CDF” file in that folder.</p></li>
+<li><p>In RStudio, run the source command to load <code>phylochemistry</code>:</p></li>
+</ol>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="chemical-data.html#cb6-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<p><br />
+</p>
+<ol start="3" style="list-style-type: decimal">
+<li>In RStudio, run the <code>integrationAppLite</code> command on the <em>folder</em> that contains your CDF file.<br />
+If you are on a Mac, <em>use single forward slashes</em>. For example:</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="chemical-data.html#cb7-1"></a><span class="kw">integrationAppLite</span>(<span class="st">&quot;/Volumes/My_Drive/gc_data&quot;</span>)</span></code></pre></div>
+<p><br />
+If you are on a PC, <em>use double back slashes</em>. For example:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="chemical-data.html#cb8-1"></a><span class="kw">integrationAppLite</span>(<span class="st">&quot;C:</span><span class="ch">\\</span><span class="st">Users</span><span class="ch">\\</span><span class="st">My Profile</span><span class="ch">\\</span><span class="st">gc_data&quot;</span>)</span></code></pre></div>
+<p><br />
+</p>
+<p>The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long.</p>
+<p>Please watch this overview video for a demonstration of how to use the integration app.</p>
+<p>As a reference, below are the key commands used to operate the integration app. This is the information that is covered in the overview video.</p>
+<p>To control the chromatogram window:</p>
+<ul>
+<li>shift + q = update</li>
+<li>shift + a = add selected peak</li>
+<li>shift + r = remove selected peak</li>
+<li>shift + f = forward</li>
+<li>shift + d = backward</li>
+<li>shift + c = zoom in</li>
+<li>shift + v = zoom out</li>
+<li>shift + z = save table</li>
+</ul>
+<p>To control the mass spectrum window:</p>
+<ul>
+<li>shift+1 = extract mass spectra from highlighted chromatogram region, plot average mass spectrum in panel 1.</li>
+<li>shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.</li>
+<li>shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.</li>
+<li>shift+4 = search current spectrum in panel 1 against library of mass spectra.</li>
+</ul>
+</div>
+<div id="cdf-export" class="section level2">
+<h2><span class="header-section-number">2.2</span> CDF export</h2>
+<ol style="list-style-type: decimal">
+<li>On the GC-MS computer, open Enhanced Data Analysis</li>
+<li>File &gt; Export Data To .AIA Format, Create New Directory (“OK”) &gt; Desktop (create a folder with a name you will remember)</li>
+<li>Select all the datafiles you wish to analyze and process them, saving the output into the folder you just created</li>
+<li>Copy the .D files for the samples you wish to analyze to the same folder</li>
+<li>Move this folder to your personal computer</li>
+<li>Create one folder for each sample, and put the corresponding .CDF file into that folder.</li>
+</ol>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="phylochemistry.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "night",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "fixed"
+},
+"search": false
+});
+});
+</script>
+
+</body>
+
+</html>

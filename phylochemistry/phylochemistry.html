@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-07-23" />
+<meta name="date" content="2021-08-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,7 +32,7 @@
   
   
 
-
+<link rel="next" href="chemical-analyses.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -131,11 +131,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li class="chapter" data-level="1" data-path=""><a href="#phylochemistry"><i class="fa fa-check"></i><b>1</b> phylochemistry</a><ul>
-<li class="chapter" data-level="1.1" data-path=""><a href="#load-phylochemistry"><i class="fa fa-check"></i><b>1.1</b> load phylochemistry</a></li>
-<li class="chapter" data-level="1.2" data-path=""><a href="#r-scripts-on-google-drive"><i class="fa fa-check"></i><b>1.2</b> R scripts on Google Drive</a></li>
-<li class="chapter" data-level="1.3" data-path=""><a href="#new-features"><i class="fa fa-check"></i><b>1.3</b> new features</a></li>
-<li class="chapter" data-level="1.4" data-path=""><a href="#wrapped-features"><i class="fa fa-check"></i><b>1.4</b> wrapped features</a></li>
+<li class="chapter" data-level="1" data-path="phylochemistry.html"><a href="phylochemistry.html"><i class="fa fa-check"></i><b>1</b> phylochemistry</a><ul>
+<li class="chapter" data-level="1.1" data-path="phylochemistry.html"><a href="phylochemistry.html#requirements"><i class="fa fa-check"></i><b>1.1</b> requirements</a></li>
+<li class="chapter" data-level="1.2" data-path="phylochemistry.html"><a href="phylochemistry.html#load-phylochemistry"><i class="fa fa-check"></i><b>1.2</b> load phylochemistry</a></li>
+<li class="chapter" data-level="1.3" data-path="phylochemistry.html"><a href="phylochemistry.html#r-scripts-on-google-drive"><i class="fa fa-check"></i><b>1.3</b> R scripts on Google Drive</a></li>
+<li class="chapter" data-level="1.4" data-path="phylochemistry.html"><a href="phylochemistry.html#new-features"><i class="fa fa-check"></i><b>1.4</b> new features</a></li>
+<li class="chapter" data-level="1.5" data-path="phylochemistry.html"><a href="phylochemistry.html#wrapped-features"><i class="fa fa-check"></i><b>1.5</b> wrapped features</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="chemical-analyses.html"><a href="chemical-analyses.html"><i class="fa fa-check"></i><b>2</b> chemical analyses</a><ul>
+<li class="chapter" data-level="2.1" data-path="chemical-analyses.html"><a href="chemical-analyses.html#integrationapplite"><i class="fa fa-check"></i><b>2.1</b> integrationAppLite</a></li>
+<li class="chapter" data-level="2.2" data-path="chemical-analyses.html"><a href="chemical-analyses.html#cdf-export"><i class="fa fa-check"></i><b>2.2</b> CDF export</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="transcriptomic-analyses.html"><a href="transcriptomic-analyses.html"><i class="fa fa-check"></i><b>3</b> transcriptomic analyses</a><ul>
+<li class="chapter" data-level="3.1" data-path="transcriptomic-analyses.html"><a href="transcriptomic-analyses.html#blast"><i class="fa fa-check"></i><b>3.1</b> BLAST</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="genomic-analyses.html"><a href="genomic-analyses.html"><i class="fa fa-check"></i><b>4</b> genomic analyses</a><ul>
+<li class="chapter" data-level="4.1" data-path="genomic-analyses.html"><a href="genomic-analyses.html#loading-gff-files"><i class="fa fa-check"></i><b>4.1</b> loading GFF files</a></li>
 </ul></li>
 </ul>
 
@@ -157,69 +168,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Phylochemistry</h1>
 <p class="author"><em>Lucas Busta</em></p>
-<p class="date"><em>2021-07-23</em></p>
+<p class="date"><em>2021-08-13</em></p>
 </div>
 <div id="phylochemistry" class="section level1">
 <h1><span class="header-section-number">1</span> phylochemistry</h1>
 <p><img src="http://thebustalab.github.io/images/phylochemistry_logo.jpg" /></p>
-<p><code>phylochemistry</code> is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new functions and wrapped features of previously developed packages. A number of new functions to streamline analyses in this interdisciplinary space are also provided. This repository contains the latest version of <code>phylochemistry</code>.</p>
+<p><code>phylochemistry</code> is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of <code>phylochemistry</code>.</p>
+<div id="requirements" class="section level2">
+<h2><span class="header-section-number">1.1</span> requirements</h2>
+<ul>
+<li>To run <code>phylochemistry</code>, you need to have R and RStudio installed. For instructions on how to install those, please see <a href="https://thebustalab.github.io/R_For_Chemists/installation.html">this page</a>.</li>
+</ul>
+</div>
 <div id="load-phylochemistry" class="section level2">
-<h2><span class="header-section-number">1.1</span> load phylochemistry</h2>
-<p>Phylochemistry is not an R package, but rather a set of components that you can add to your R environment. Here is how to set it up:</p>
-<!-- `phylochemistry` can be installed by following these four steps:
-
-1. Install `msa` and `phangorn` by running the following code in R
-
-```r
-if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-BiocManager::install("msa")
-BiocManager::install("ggtree")
-BiocManager::install("phangorn")
-BiocManager::install("seqinr")
-BiocManager::install("Biostrings")
-BiocManager::install("GenomicRanges")
-```
-2. Install prequisite R packages by running the following code in R
-
-```r
-install.packages("tidyverse")
-install.packages("DT")
-install.packages("RColorBrewer")
-install.packages("xcms")
-install.packages("data.table")
-install.packages("rhandsontable")
-install.packages("ape")
-install.packages("ips")
-```
- -->
+<h2><span class="header-section-number">1.2</span> load phylochemistry</h2>
+<p>Phylochemistry is not an R package, but rather a set of components that you can add to your R environment by running an R script hosted on this site. <code>phylochemistry</code> requires a number of existing R packages in order to run, but don’t worry,<code>phylochemistry</code> will help you install these packages if they are not installed already.</p>
 <ol style="list-style-type: decimal">
-<li><p>(for Windows only) <a href="https://www.x.org/wiki/">install X.Org</a></p></li>
-<li><p>(for Mac only) <a href="https://www.xquartz.org/">install XQuartz</a></p></li>
-<li><p><code>phylochemistry</code> requires a number of R packages to run, and it will help you install these packages if you haven’t already. Load <code>phylochemistry</code> directly into your R session using the following:</p></li>
+<li>Load <code>phylochemistry</code> directly into your R session by running the following command in RStudio:</li>
 </ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="phylochemistry.html#cb1-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <p><br />
 Sometimes running the command above generates the message “You need to install the following packages before proceeding […] Run: installPhylochemistry() to automatically install the required packages.”. This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:<br />
 </p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">installPhylochemistry</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="phylochemistry.html#cb2-1"></a><span class="kw">installPhylochemistry</span>()</span></code></pre></div>
 <p><br />
-Then try the source() command again:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+Once that is complete, then try the source() command again:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="phylochemistry.html#cb3-1"></a><span class="kw">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<!-- 1. (for Windows only) [install X.Org](https://www.x.org/wiki/)
+
+1. (for Mac only) [install XQuartz](https://www.xquartz.org/)
+ -->
 </div>
 <div id="r-scripts-on-google-drive" class="section level2">
-<h2><span class="header-section-number">1.2</span> R scripts on Google Drive</h2>
+<h2><span class="header-section-number">1.3</span> R scripts on Google Drive</h2>
 <p>Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">openRGD</span>(<span class="st">&quot;file_share_link_here&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="phylochemistry.html#cb4-1"></a><span class="kw">openRGD</span>(<span class="st">&quot;file_share_link_here&quot;</span>)</span></code></pre></div>
 <p><br />
 When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">closeRGD</span>(<span class="st">&quot;file_share_link_here&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="phylochemistry.html#cb5-1"></a><span class="kw">closeRGD</span>(<span class="st">&quot;file_share_link_here&quot;</span>)</span></code></pre></div>
 </div>
 <div id="new-features" class="section level2">
-<h2><span class="header-section-number">1.3</span> new features</h2>
+<h2><span class="header-section-number">1.4</span> new features</h2>
 <ol style="list-style-type: decimal">
-<li>A Shiny app for GC-FID and GC-MS data analysis.</li>
+<li>A Shiny app for GC-FID and GC-MS data analysis, including a large MS library.</li>
 <li>Open reading frame extraction from multiple fasta files.</li>
-<li>Store BLAST results in a .csv file.</li>
+<li>BLAST searches that export .fasta files of hits and store results in a .csv file.</li>
 <li>Minor ticks for ggplot2 axes.</li>
 <li>Phylogenetic signal for discrete traits.</li>
 <li>Analyze multiple sequence alignments for sites associated with user-defined function</li>
@@ -230,13 +223,13 @@ When you do this, "IN_USE___" will appear in front of the file name in Google Dr
 </ol>
 </div>
 <div id="wrapped-features" class="section level2">
-<h2><span class="header-section-number">1.4</span> wrapped features</h2>
+<h2><span class="header-section-number">1.5</span> wrapped features</h2>
 <ol style="list-style-type: decimal">
 <li>BLAST transcriptomes, via <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&amp;DOC_TYPE=Download">NCBI BLAST+</a>.</li>
 <li>Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via <a href="https://bioconductor.org/packages/release/bioc/html/msa.html">msa</a> and <a href="https://github.com/HajkD/orthologr">orthologr</a>.</li>
 <li>Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via <a href="https://cran.r-project.org/web/packages/phangorn/index.html">phangorn</a>.</li>
 <li>Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).</li>
-<li>Phylogenetic signal for continuous traits.</li>
+<li>Phylogenetic signal for continuous traits, via <a href="https://cran.r-project.org/web/packages/picante/index.html">picante</a>.</li>
 </ol>
 <!-- end -->
 </div>
@@ -247,7 +240,7 @@ When you do this, "IN_USE___" will appear in front of the file name in Google Dr
         </div>
       </div>
 
-
+<a href="chemical-analyses.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
