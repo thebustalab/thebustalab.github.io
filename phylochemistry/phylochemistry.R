@@ -11,7 +11,6 @@
             "vctrs",
             "dplyr",
             "gridExtra",
-            "tidyverse",
             "ape",
             "ggtree",
             "rstatix",
@@ -33,7 +32,8 @@
             "ggforce",
             "network",
             "pracma",
-            "ggnetwork"
+            "ggnetwork",
+            "tidyverse"
         )
 
         Bioconductor_packages <- c(

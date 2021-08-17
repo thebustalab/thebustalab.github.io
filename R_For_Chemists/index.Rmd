@@ -107,6 +107,27 @@ library(tidyverse)
 
 If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the `tidyverse`. If this still fails, please contact me.
 
+## Loading `phylochemistry`
+
+In addition to the `tidyverse`, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
+
+First, attempt to load `phylochemistry`:
+```{r, message = FALSE}
+source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```
+
+The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Run: installPhylochemistry() to automatically install the required packages."
+
+This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:
+```{r, message = FALSE}
+installPhylochemistry()
+```
+
+Once that is complete, and assuming it is successful, attemp to load phylochemistry again:
+```{r, message = FALSE}
+source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```
+
 <!-- end -->
 
 <!-- start R Basics -->
@@ -741,7 +762,7 @@ ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/N
 ny_trees
 ```
 
-More than 300,000 observations of 14 variables! That's 4.2M datapoints! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
+More than 300,000 observations of 14 variables! That's 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
 
 Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. Also, keep in mind that a single column of a dataset can be accessed using `$`. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
 
@@ -752,14 +773,16 @@ sd(ny_trees$tree_height)
 
 Great! But how to do this for each species? We need to divide up the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics. Please note that both `group_by()` and `summarize()` require `.data = ` as an argument, as opposed to `data = `, which we have been using up to this point.
 
-```{r}
-ny_trees_by_spc <- group_by(.data = ny_trees, spc_latin)
-summarize(.data = ny_trees_by_spc, mean_height = mean(tree_height))
+```{r, eval = FALSE}
+library(tidyverse)
+ny_trees %>%
+  group_by(spc_latin) %>%
+  summarize(mean_height = mean(tree_height))
 ```
 
 Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
 
-```{r}
+```{r, eval = FALSE}
 ny_trees_by_spc <- group_by(.data = ny_trees, spc_latin)
 ny_trees_by_spc_summ <- summarize(.data = ny_trees_by_spc, mean_height = mean(tree_height), stdev_height = sd(tree_height))
 ny_trees_by_spc_summ
@@ -767,7 +790,7 @@ ny_trees_by_spc_summ
 
 Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax`. Note that in this case, if we map spc_latin to the x axis, the x axis tick labels will have long names that will overlap in our plot. In the past we have avoided this by swapping the mappings of x and y in out plots. Here, this gets a bit tedious since we will have to change ymin and ymax as well. Instead of all this, we can just add `coord_flip()` to our plot, which will swap x and y axes automatically. Also, note that in the aesthetic mappings for `ymin` and `ymax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
 
-```{r}
+```{r, eval = FALSE}
 ggplot(data = ny_trees_by_spc_summ) +
   geom_pointrange(
       aes(
@@ -782,7 +805,7 @@ ggplot(data = ny_trees_by_spc_summ) +
 
 Cool! Just like that we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out.
 
-```{r}
+```{r, eval = FALSE}
 ny_trees_by_spc_boro <- group_by(.data = ny_trees, spc_latin, boroname)
 ny_trees_by_spc_boro_summ <- summarize(.data = ny_trees_by_spc_boro, mean_diam = mean(tree_diameter), stdev_diam = sd(tree_diameter))
 ny_trees_by_spc_boro_summ
@@ -790,7 +813,7 @@ ny_trees_by_spc_boro_summ
 
 Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let's map boroname to x and facet over tree species, which used to be on x. We'll also manually modify the theme element `strip.text.y` to get the species names in a readable position.
 
-```{r}
+```{r, eval = FALSE}
 ggplot(data = ny_trees_by_spc_boro_summ) +
   geom_pointrange(
     aes(
@@ -809,7 +832,7 @@ ggplot(data = ny_trees_by_spc_boro_summ) +
 
 Excellent! And if we really want to go for something pretty:
 
-```{r fig.height = 10}
+```{r fig.height = 10, eval = FALSE}
 library(RColorBrewer)
 ggplot(data = ny_trees_by_spc_boro_summ) +
   geom_pointrange(
@@ -852,7 +875,7 @@ head(AK_lakes)
 
 AK_lakes_by_park <- group_by(.data = AK_lakes, park)
 
-AK_lakes_by_park_summ <- summarize(.data = AK_lakes_by_park, mean_temperature = mean(water_temp))
+AK_lakes_by_park_summ <- dplyr::summarize(.data = AK_lakes_by_park, mean_temperature = mean(water_temp))
 
 ggplot(AK_lakes_by_park_summ) + geom_point(aes(x = park, y = mean_temperature))
 ```
@@ -865,7 +888,7 @@ read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_d
 
 group_by(park) %>%
 
-summarize(mean_temperature = mean(water_temp)) %>%
+dplyr::summarize(mean_temperature = mean(water_temp)) %>%
 
 ggplot() + geom_point(aes(x = park, y = mean_temperature))
 ```
@@ -903,7 +926,7 @@ Make a plot using `geom_point()` that shows the average atomic weight of the ele
 ```{r, include = FALSE}
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(pt, year_discovered)
-pt_by_year_summ <- summarize(pt_by_year, mean = mean(atomic_mass_rounded))
+pt_by_year_summ <- dplyr::summarize(pt_by_year, mean = mean(atomic_mass_rounded))
 ggplot(pt_by_year_summ, aes(x = year_discovered, y = mean)) + geom_point()
 ```
 
@@ -926,7 +949,7 @@ Filter the dataset so that only elements with atomic number less than 85 are inc
 ```{r, include = FALSE}
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 85), crystal_structure)
-pt_by_year_summ <- summarize(pt_by_year, mean = mean(boiling_point_C), sd = sd(boiling_point_C))
+pt_by_year_summ <- dplyr::summarize(pt_by_year, mean = mean(boiling_point_C), sd = sd(boiling_point_C))
 pt_by_year_summ
 ggplot(pt_by_year_summ, 
       aes(
@@ -963,7 +986,7 @@ Now filter the original dataset so that only elements with atomic number less th
 ```{r, include = FALSE}
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 103 & group_number != 18), group_number)
-pt_by_year_summ <- summarize(
+pt_by_year_summ <- dplyr::summarize(
   pt_by_year,
   mean = mean(electronegativity_pauling),
   min = min(electronegativity_pauling),
@@ -1534,7 +1557,7 @@ solvents_clustered <- runMatrixAnalysis(
 
 solvents_clustered_summary <- solvents_clustered %>%
   group_by(kmeans_cluster) %>%
-  summarize(mean_bp = mean(boiling_point))
+  dplyr::summarize(mean_bp = mean(boiling_point))
 
 ggplot() + 
   geom_col(
