@@ -7,8 +7,6 @@
     ## Define necessary libraries
         
         CRAN_packages <- c(
-            "ellipsis",
-            "vctrs",
             "dplyr",
             "gridExtra",
             "ape",
@@ -34,6 +32,8 @@
             "pracma",
             "ggnetwork",
             "tidyverse"
+            # "ellipsis", # imported by tidyverse
+            # "vctrs", # imported by tidyverse
         )
 
         Bioconductor_packages <- c(

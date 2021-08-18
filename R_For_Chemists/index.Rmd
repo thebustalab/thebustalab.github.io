@@ -924,6 +924,7 @@ In this set of exercises we are going to use the [Periodic Table](https://thebus
 Make a plot using `geom_point()` that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?
 
 ```{r, include = FALSE}
+library(tidyverse)
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(pt, year_discovered)
 pt_by_year_summ <- dplyr::summarize(pt_by_year, mean = mean(atomic_mass_rounded))
@@ -934,7 +935,8 @@ ggplot(pt_by_year_summ, aes(x = year_discovered, y = mean)) + geom_point()
 
 The column `state_at_RT` indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in `state_at_RT` (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?
 
-```{r, include = FALSE}
+```{r, include = FALSE, eval = FALSE}
+library(tidyverse)
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(pt, state_at_RT)
 pt_by_year_summ <- summarize(pt_by_year, mean = mean(first_ionization_poten_eV), sd = sd(first_ionization_poten_eV))
@@ -966,7 +968,7 @@ ggplot(pt_by_year_summ,
 
 Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four *periods* in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does "CHON" mean? (not the rock band, though they are also excellent, especially that song that features GoYama)
 
-```{r, include = FALSE}
+```{r, include = FALSE, eval = FALSE}
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 37), period)
 pt_by_year_summ <- summarize(pt_by_year, mean = mean(mg_per_L_in_seawater))
@@ -983,7 +985,7 @@ ggplot(pt_by_year_summ,
 
 Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each `group_number`. Use `geom_point()` and `geom_errorbar()` to illustrate the average, minimum, and maximum values for each group number.
 
-```{r, include = FALSE}
+```{r, include = FALSE, eval = FALSE}
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 103 & group_number != 18), group_number)
 pt_by_year_summ <- dplyr::summarize(
@@ -1009,7 +1011,7 @@ ggplot(pt_by_year_summ,
 
 Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by `color`. Now filter out those that have `color == "colorless"`. Of the remaining elements, which has the widest range of specific heats? Use `geom_point()` and `geom_errorbar()` to illustrate the mean and standard deviation of each color's specific heats.
 
-```{r, include = FALSE}
+```{r, include = FALSE, eval = FALSE}
 pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 85 & color != "colorless"), color)
 pt_by_year_summ <- summarize(
@@ -1077,10 +1079,11 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/ru
 With this in mind, let's try out our template:
 
 ```{r, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R", local = knitr:::knit_global())
+# source("http://thebustalab.github.io/phylochemistry/phylochemistry.R", local = knitr:::knit_global())
+source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 AK_lakes_clustered <- runMatrixAnalysis(
                                 
-    data = AK_lakes,
+    data = alaska_lake_data,
 
     analysis = "hclust",
 
