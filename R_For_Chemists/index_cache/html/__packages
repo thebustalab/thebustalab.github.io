@@ -57,3 +57,5 @@ msa
 GenomeInfoDb
 GenomicRanges
 rtracklayer
+ggrepel
+agricolae

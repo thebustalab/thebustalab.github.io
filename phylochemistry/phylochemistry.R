@@ -31,7 +31,8 @@
             "network",
             "pracma",
             "ggnetwork",
-            "tidyverse"
+            "tidyverse",
+            "FactoMineR"
             # "ellipsis", # imported by tidyverse
             # "vctrs", # imported by tidyverse
         )

@@ -128,6 +128,35 @@ Once that is complete, and assuming it is successful, attemp to load phylochemis
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
+## Updating R and R Packages
+
+Sometimes when you run `installPhylochemistry()` you will get a message:
+
+`Update all/some/none? [a/s/n]:`
+
+In this case, it is generally advisable to enter `a` into the console and then press enter, indicating to R that you wish to update anything and everything that can be updated.
+
+Other times you may get this message:
+
+`Do you want to install from sources the packages which need compilation? (Yes/no/cancel)`
+
+You can reply `yes` if you wish, but for simplicity's sake it is okay to say `no`. I usually start with saying `no`, only reverting to `yes` if things don't work down the line.
+
+To update R:
+
+```{r, eval = FALSE}
+
+install.packages('devtools') #assuming it is not already installed
+
+library(devtools)
+
+install_github('andreacirilloac/updateR')
+
+library(updateR)
+
+updateR()
+```
+
 <!-- end -->
 
 <!-- start R Basics -->
@@ -1172,7 +1201,7 @@ In the example above, the three dimensional space can be reduced to a two dimens
 
 We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below:
 
-```{r, message = FALSE, fig.align = "center"}
+```{r, message = FALSE, fig.align = "center", eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 AK_lakes <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv")
 head(AK_lakes)
@@ -1203,7 +1232,7 @@ Important question: what makes the lakes listed above different from the others?
 
 Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca-ord"`:
 
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 AK_lakes_pca_ord <- runMatrixAnalysis(
 	data = alaska_lake_data,
@@ -1219,7 +1248,7 @@ head(AK_lakes_pca_ord)
 
 We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
 
-```{r, fig.align = "center", fig.height = 3, fig.width = 4, message = FALSE}
+```{r, fig.align = "center", fig.height = 3, fig.width = 4, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 AK_lakes_pca_ord <- runMatrixAnalysis(
 	data = AK_lakes,
@@ -1255,7 +1284,7 @@ Great! With this ordination plot we can now see that the abundances of K, Cl, Br
 
 We also can access information about the how much of the variance in the data set is explained by each principal component:
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 AK_lakes_pca_ord <- runMatrixAnalysis(
 	data = AK_lakes,
 	analysis = c("pca-dim"),
@@ -1272,7 +1301,7 @@ head(AK_lakes_pca_ord)
 And we can now plot that using ggplot:
 
 
-```{r, fig.height = 2.5, fig.width = 3, fig.align = "center"}
+```{r, fig.height = 2.5, fig.width = 3, fig.align = "center", eval = FALSE}
 ggplot(
   data = AK_lakes_pca_ord, 
   aes(x = principal_component, y = percent_variance_explained)
@@ -1576,7 +1605,7 @@ ggplot() +
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
-```{r, fig.width = 8, fig.height = 4, message = FALSE}
+```{r, fig.width = 8, fig.height = 4, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 solvents_clustered <- runMatrixAnalysis(
   data = solvents,
@@ -2830,7 +2859,7 @@ efficiency
 
 (a magrittr function - part of the tidyverse) Use it to send the output of one command directly to the next.
 
-```{r}
+```{r, eval = FALSE}
 # How many cars with 8 cylinders have automatic transmissions?
 mtcars %>%
   filter(cyl > 6) %>%
@@ -2945,7 +2974,7 @@ ckd_data_pyruvate
 
 Now we can calculate the weighted mean:
 
-```{r}
+```{r, eval = FALSE}
 group_by(ckd_data_pyruvate, patient_status) %>%
   summarize(
     weighted_mean_pyruvate = weighted.mean(Pyruvate, weight)
@@ -3084,7 +3113,7 @@ runMatrixAnalysis(
 
 Under normal plotting scenario:
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 library(tidyverse)
 NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv")
 NY_trees
@@ -3110,7 +3139,7 @@ scale_fill_manual(values = status_color)
 
 But what if we want the order on the x-axis to be from worst `status` to best? We need to make the `status` column into factors (a list of characters that has an order other than alphabetical). Here's how:
 
-```{r}
+```{r, eval = FALSE}
 tree_data_status_summary$status <- factor(tree_data_status_summary$status, levels = c("Dead", "Poor", "Good", "Excellent")) # note that we specify the order we want right here in "levels"...
 
 ggplot(data = tree_data_status_summary) + 
@@ -3143,7 +3172,7 @@ mdata$WIND_GROUP <- as.numeric(cut(mdata$WINDSPEED, breaks = 20))
 
 Cool! Now we can `group_by()` and `summarize()` on `WIND_GROUP`:
 
-```{r}
+```{r, eval = FALSE}
 mdata_windgroup <- group_by(mdata, WIND_GROUP) %>%
   summarize(
     TEMPERATURE = mean(TEMPERATURE, na.rm = TRUE),
@@ -3164,7 +3193,7 @@ mdata_windgroup
 
 With that done, we can run matrix analyses on the summarized data, using our new `WIND_GROUP` variable as the sample ID, and plot the results!
 
-```{r loadRunMatrixAnalysis}
+```{r loadRunMatrixAnalysis, eval = FALSE}
 mdata_windgroup_analyzed <- runMatrixAnalysis(
   data = mdata_windgroup,
   analysis = c("pca"),

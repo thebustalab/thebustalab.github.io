@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>8 Summary Statistics | R For Chemists</title>
+  <meta name="description" content="Textbook R For Chemists." />
+  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="8 Summary Statistics | R For Chemists" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Textbook R For Chemists." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="8 Summary Statistics | R For Chemists" />
+  
+  <meta name="twitter:description" content="Textbook R For Chemists." />
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2021-08-23" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="Exercises_2.html"/>
+<link rel="next" href="Exercises_3.html"/>
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-r"><i class="fa fa-check"></i><b>2.1</b> Installing <code>R</code></a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
+<li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
+<li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="R_Basics.html"><a href="R_Basics.html#before-we-start"><i class="fa fa-check"></i><b>3.1</b> Before we start…</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="R_Basics.html"><a href="R_Basics.html#help"><i class="fa fa-check"></i><b>3.1.1</b> Help</a></li>
+<li class="chapter" data-level="3.1.2" data-path="R_Basics.html"><a href="R_Basics.html#syntax"><i class="fa fa-check"></i><b>3.1.2</b> Syntax</a></li>
+<li class="chapter" data-level="3.1.3" data-path="R_Basics.html"><a href="R_Basics.html#paths"><i class="fa fa-check"></i><b>3.1.3</b> Paths</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="R_Basics.html"><a href="R_Basics.html#functions"><i class="fa fa-check"></i><b>3.2</b> Functions</a></li>
+<li class="chapter" data-level="3.3" data-path="R_Basics.html"><a href="R_Basics.html#objects"><i class="fa fa-check"></i><b>3.3</b> Objects</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="ggplot2.html"><a href="ggplot2.html"><i class="fa fa-check"></i><b>4</b> ggplot2</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="ggplot2.html"><a href="ggplot2.html#setting-up-a-ggplot"><i class="fa fa-check"></i><b>4.1</b> Setting up a ggplot</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="ggplot2.html"><a href="ggplot2.html#step-1-define-the-data-you-want-to-use."><i class="fa fa-check"></i><b>4.1.1</b> Step 1: Define the data you want to use.</a></li>
+<li class="chapter" data-level="4.1.2" data-path="ggplot2.html"><a href="ggplot2.html#step-2-define-how-your-variables-map-onto-the-axes."><i class="fa fa-check"></i><b>4.1.2</b> Step 2: Define how your variables map onto the axes.</a></li>
+<li class="chapter" data-level="4.1.3" data-path="ggplot2.html"><a href="ggplot2.html#step-3-use-geometric-shapes-to-represent-other-variables-in-your-data."><i class="fa fa-check"></i><b>4.1.3</b> Step 3: Use geometric shapes to represent other variables in your data.</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="ggplot2.html"><a href="ggplot2.html#geoms"><i class="fa fa-check"></i><b>4.2</b> Geoms</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="ggplot2.html"><a href="ggplot2.html#modifying-geoms"><i class="fa fa-check"></i><b>4.2.1</b> Modifying geoms</a></li>
+<li class="chapter" data-level="4.2.2" data-path="ggplot2.html"><a href="ggplot2.html#using-multiple-geoms"><i class="fa fa-check"></i><b>4.2.2</b> Using multiple geoms</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Exercises_1.html"><a href="Exercises_1.html"><i class="fa fa-check"></i><b>5</b> Exercises 1</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="Exercises_1.html"><a href="Exercises_1.html#part-1-algae-chemistry-dataset"><i class="fa fa-check"></i><b>5.1</b> Part 1: Algae Chemistry Dataset</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="Exercises_1.html"><a href="Exercises_1.html#question-1-importing-data"><i class="fa fa-check"></i><b>5.1.1</b> Question 1: Importing data</a></li>
+<li class="chapter" data-level="5.1.2" data-path="Exercises_1.html"><a href="Exercises_1.html#question-2-dataset-dimensions"><i class="fa fa-check"></i><b>5.1.2</b> Question 2: Dataset dimensions</a></li>
+<li class="chapter" data-level="5.1.3" data-path="Exercises_1.html"><a href="Exercises_1.html#question-3-objects"><i class="fa fa-check"></i><b>5.1.3</b> Question 3: Objects</a></li>
+<li class="chapter" data-level="5.1.4" data-path="Exercises_1.html"><a href="Exercises_1.html#question-4-filtering"><i class="fa fa-check"></i><b>5.1.4</b> Question 4: Filtering</a></li>
+<li class="chapter" data-level="5.1.5" data-path="Exercises_1.html"><a href="Exercises_1.html#question-5-plotting"><i class="fa fa-check"></i><b>5.1.5</b> Question 5: Plotting</a></li>
+<li class="chapter" data-level="5.1.6" data-path="Exercises_1.html"><a href="Exercises_1.html#question-6-plotting"><i class="fa fa-check"></i><b>5.1.6</b> Question 6: Plotting</a></li>
+<li class="chapter" data-level="5.1.7" data-path="Exercises_1.html"><a href="Exercises_1.html#question-7-filtering-and-plotting"><i class="fa fa-check"></i><b>5.1.7</b> Question 7: Filtering and plotting</a></li>
+<li class="chapter" data-level="5.1.8" data-path="Exercises_1.html"><a href="Exercises_1.html#question-8-filtering-and-plotting"><i class="fa fa-check"></i><b>5.1.8</b> Question 8: Filtering and plotting</a></li>
+<li class="chapter" data-level="5.1.9" data-path="Exercises_1.html"><a href="Exercises_1.html#question-9-open-ended-plotting"><i class="fa fa-check"></i><b>5.1.9</b> Question 9: Open-ended plotting</a></li>
+<li class="chapter" data-level="5.1.10" data-path="Exercises_1.html"><a href="Exercises_1.html#question-10-a-peek-at-whats-to-come"><i class="fa fa-check"></i><b>5.1.10</b> Question 10: A peek at what’s to come…</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="Exercises_1.html"><a href="Exercises_1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>5.2</b> Part 2: Alaska Lakes Dataset</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="Exercises_1.html"><a href="Exercises_1.html#question-1-importing-data-1"><i class="fa fa-check"></i><b>5.2.1</b> Question 1: Importing Data</a></li>
+<li class="chapter" data-level="5.2.2" data-path="Exercises_1.html"><a href="Exercises_1.html#question-2-objects"><i class="fa fa-check"></i><b>5.2.2</b> Question 2: Objects</a></li>
+<li class="chapter" data-level="5.2.3" data-path="Exercises_1.html"><a href="Exercises_1.html#question-3-filtering"><i class="fa fa-check"></i><b>5.2.3</b> Question 3: Filtering</a></li>
+<li class="chapter" data-level="5.2.4" data-path="Exercises_1.html"><a href="Exercises_1.html#question-4-plotting"><i class="fa fa-check"></i><b>5.2.4</b> Question 4: Plotting</a></li>
+<li class="chapter" data-level="5.2.5" data-path="Exercises_1.html"><a href="Exercises_1.html#question-5-plotting-1"><i class="fa fa-check"></i><b>5.2.5</b> Question 5: Plotting</a></li>
+<li class="chapter" data-level="5.2.6" data-path="Exercises_1.html"><a href="Exercises_1.html#question-6-filtering-and-plotting"><i class="fa fa-check"></i><b>5.2.6</b> Question 6: Filtering and Plotting</a></li>
+<li class="chapter" data-level="5.2.7" data-path="Exercises_1.html"><a href="Exercises_1.html#question-7-filtering-and-plotting-1"><i class="fa fa-check"></i><b>5.2.7</b> Question 7: Filtering and Plotting</a></li>
+<li class="chapter" data-level="5.2.8" data-path="Exercises_1.html"><a href="Exercises_1.html#question-8-open-ended-plotting"><i class="fa fa-check"></i><b>5.2.8</b> Question 8: Open-ended Plotting</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html"><i class="fa fa-check"></i><b>6</b> geoms, facets, scales, themes</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#geoms-1"><i class="fa fa-check"></i><b>6.1</b> Geoms</a></li>
+<li class="chapter" data-level="6.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#facets"><i class="fa fa-check"></i><b>6.2</b> Facets</a></li>
+<li class="chapter" data-level="6.3" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#scales"><i class="fa fa-check"></i><b>6.3</b> Scales</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>6.3.1</b> RColorBrewer</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#themes"><i class="fa fa-check"></i><b>6.4</b> Themes</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#complete-themes"><i class="fa fa-check"></i><b>6.4.1</b> Complete themes</a></li>
+<li class="chapter" data-level="6.4.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#theme-components"><i class="fa fa-check"></i><b>6.4.2</b> Theme components</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="Exercises_2.html"><a href="Exercises_2.html"><i class="fa fa-check"></i><b>7</b> Exercises 2</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="Exercises_2.html"><a href="Exercises_2.html#question-1"><i class="fa fa-check"></i><b>7.1</b> Question 1</a></li>
+<li class="chapter" data-level="7.2" data-path="Exercises_2.html"><a href="Exercises_2.html#question-2"><i class="fa fa-check"></i><b>7.2</b> Question 2</a></li>
+<li class="chapter" data-level="7.3" data-path="Exercises_2.html"><a href="Exercises_2.html#question-3"><i class="fa fa-check"></i><b>7.3</b> Question 3</a></li>
+<li class="chapter" data-level="7.4" data-path="Exercises_2.html"><a href="Exercises_2.html#question-4"><i class="fa fa-check"></i><b>7.4</b> Question 4</a></li>
+<li class="chapter" data-level="7.5" data-path="Exercises_2.html"><a href="Exercises_2.html#question-5"><i class="fa fa-check"></i><b>7.5</b> Question 5</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="summary_statistics.html"><a href="summary_statistics.html"><i class="fa fa-check"></i><b>8</b> Summary Statistics</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="summary_statistics.html"><a href="summary_statistics.html#summary-statistics"><i class="fa fa-check"></i><b>8.1</b> Summary statistics</a></li>
+<li class="chapter" data-level="8.2" data-path="summary_statistics.html"><a href="summary_statistics.html#the-pipe"><i class="fa fa-check"></i><b>8.2</b> The pipe (%&gt;%)</a></li>
+<li class="chapter" data-level="8.3" data-path="summary_statistics.html"><a href="summary_statistics.html#tidy-data"><i class="fa fa-check"></i><b>8.3</b> Tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="Exercises_3.html"><a href="Exercises_3.html"><i class="fa fa-check"></i><b>9</b> Exercises 3</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="Exercises_3.html"><a href="Exercises_3.html#question-1-1"><i class="fa fa-check"></i><b>9.1</b> Question 1</a></li>
+<li class="chapter" data-level="9.2" data-path="Exercises_3.html"><a href="Exercises_3.html#question-2-1"><i class="fa fa-check"></i><b>9.2</b> Question 2</a></li>
+<li class="chapter" data-level="9.3" data-path="Exercises_3.html"><a href="Exercises_3.html#question-3-1"><i class="fa fa-check"></i><b>9.3</b> Question 3</a></li>
+<li class="chapter" data-level="9.4" data-path="Exercises_3.html"><a href="Exercises_3.html#question-4-1"><i class="fa fa-check"></i><b>9.4</b> Question 4</a></li>
+<li class="chapter" data-level="9.5" data-path="Exercises_3.html"><a href="Exercises_3.html#question-5-1"><i class="fa fa-check"></i><b>9.5</b> Question 5</a></li>
+<li class="chapter" data-level="9.6" data-path="Exercises_3.html"><a href="Exercises_3.html#question-6"><i class="fa fa-check"></i><b>9.6</b> Question 6</a></li>
+<li class="chapter" data-level="9.7" data-path="Exercises_3.html"><a href="Exercises_3.html#question-7"><i class="fa fa-check"></i><b>9.7</b> Question 7</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="Clustering.html"><a href="Clustering.html"><i class="fa fa-check"></i><b>10</b> Clustering</a></li>
+<li class="chapter" data-level="11" data-path="Exercises_4.html"><a href="Exercises_4.html"><i class="fa fa-check"></i><b>11</b> Exercises 4</a></li>
+<li class="chapter" data-level="12" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>12</b> PCA</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="PCA.html"><a href="PCA.html#pca"><i class="fa fa-check"></i><b>12.1</b> PCA</a></li>
+<li class="chapter" data-level="12.2" data-path="PCA.html"><a href="PCA.html#drivers-of-pca-dimensions"><i class="fa fa-check"></i><b>12.2</b> Drivers of PCA dimensions</a></li>
+<li class="chapter" data-level="12.3" data-path="PCA.html"><a href="PCA.html#comparing-principal-components"><i class="fa fa-check"></i><b>12.3</b> Comparing principal components</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="Exercises_5.html"><a href="Exercises_5.html"><i class="fa fa-check"></i><b>13</b> Exercises 5</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="Exercises_5.html"><a href="Exercises_5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>13.1</b> Option 1: Human metabolomics.</a></li>
+<li class="chapter" data-level="13.2" data-path="Exercises_5.html"><a href="Exercises_5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>13.2</b> Option 2: Grape vine varieties</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>14</b> k-means</a></li>
+<li class="chapter" data-level="15" data-path="Exercises_6.html"><a href="Exercises_6.html"><i class="fa fa-check"></i><b>15</b> Exercises 6</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="Exercises_6.html"><a href="Exercises_6.html#question-1-2"><i class="fa fa-check"></i><b>15.1</b> Question 1</a></li>
+<li class="chapter" data-level="15.2" data-path="Exercises_6.html"><a href="Exercises_6.html#question-2-2"><i class="fa fa-check"></i><b>15.2</b> Question 2</a></li>
+<li class="chapter" data-level="15.3" data-path="Exercises_6.html"><a href="Exercises_6.html#question-3-2"><i class="fa fa-check"></i><b>15.3</b> Question 3</a></li>
+<li class="chapter" data-level="15.4" data-path="Exercises_6.html"><a href="Exercises_6.html#question-4-2"><i class="fa fa-check"></i><b>15.4</b> Question 4</a></li>
+<li class="chapter" data-level="15.5" data-path="Exercises_6.html"><a href="Exercises_6.html#question-5-2"><i class="fa fa-check"></i><b>15.5</b> Question 5</a></li>
+<li class="chapter" data-level="15.6" data-path="Exercises_6.html"><a href="Exercises_6.html#question-6-1"><i class="fa fa-check"></i><b>15.6</b> Question 6</a></li>
+<li class="chapter" data-level="15.7" data-path="Exercises_6.html"><a href="Exercises_6.html#question-7-1"><i class="fa fa-check"></i><b>15.7</b> Question 7</a></li>
+<li class="chapter" data-level="15.8" data-path="Exercises_6.html"><a href="Exercises_6.html#challenge-optional"><i class="fa fa-check"></i><b>15.8</b> Challenge (optional)</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>16</b> comparing means</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="comparing-means.html"><a href="comparing-means.html#getting-ready"><i class="fa fa-check"></i><b>16.1</b> Getting Ready</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="comparing-means.html"><a href="comparing-means.html#the-null-hypothesis"><i class="fa fa-check"></i><b>16.1.1</b> The null hypothesis</a></li>
+<li class="chapter" data-level="16.1.2" data-path="comparing-means.html"><a href="comparing-means.html#the-p-value"><i class="fa fa-check"></i><b>16.1.2</b> The p value</a></li>
+<li class="chapter" data-level="16.1.3" data-path="comparing-means.html"><a href="comparing-means.html#the-plan"><i class="fa fa-check"></i><b>16.1.3</b> The plan</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>16.2</b> Two means</a></li>
+<li class="chapter" data-level="16.3" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>16.3</b> More than two means</a>
+<ul>
+<li class="chapter" data-level="16.3.1" data-path="comparing-means.html"><a href="comparing-means.html#anova-tukey-tests"><i class="fa fa-check"></i><b>16.3.1</b> ANOVA, Tukey tests</a></li>
+<li class="chapter" data-level="16.3.2" data-path="comparing-means.html"><a href="comparing-means.html#kruskal-dunn-tests"><i class="fa fa-check"></i><b>16.3.2</b> Kruskal, Dunn tests</a></li>
+</ul></li>
+<li class="chapter" data-level="16.4" data-path="comparing-means.html"><a href="comparing-means.html#further-reading"><i class="fa fa-check"></i><b>16.4</b> Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="figures-and-captions.html"><a href="figures-and-captions.html"><i class="fa fa-check"></i><b>17</b> Figures and Captions</a></li>
+<li class="chapter" data-level="18" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>18</b> Methods</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="methods.html"><a href="methods.html#general"><i class="fa fa-check"></i><b>18.1</b> General</a></li>
+<li class="chapter" data-level="18.2" data-path="methods.html"><a href="methods.html#suggestions"><i class="fa fa-check"></i><b>18.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>19</b> Results</a>
+<ul>
+<li class="chapter" data-level="19.1" data-path="results.html"><a href="results.html#general-1"><i class="fa fa-check"></i><b>19.1</b> General</a></li>
+<li class="chapter" data-level="19.2" data-path="results.html"><a href="results.html#structure"><i class="fa fa-check"></i><b>19.2</b> Structure</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="discussion.html"><a href="discussion.html"><i class="fa fa-check"></i><b>20</b> Discussion</a>
+<ul>
+<li class="chapter" data-level="20.1" data-path="discussion.html"><a href="discussion.html#general-2"><i class="fa fa-check"></i><b>20.1</b> General</a></li>
+<li class="chapter" data-level="20.2" data-path="discussion.html"><a href="discussion.html#suggestions-1"><i class="fa fa-check"></i><b>20.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="21" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>21</b> Conclusions</a>
+<ul>
+<li class="chapter" data-level="21.1" data-path="conclusions.html"><a href="conclusions.html#general-3"><i class="fa fa-check"></i><b>21.1</b> General</a></li>
+<li class="chapter" data-level="21.2" data-path="conclusions.html"><a href="conclusions.html#suggestions-2"><i class="fa fa-check"></i><b>21.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="introduction-1.html"><a href="introduction-1.html"><i class="fa fa-check"></i><b>22</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="22.1" data-path="introduction-1.html"><a href="introduction-1.html#general-4"><i class="fa fa-check"></i><b>22.1</b> General</a></li>
+<li class="chapter" data-level="22.2" data-path="introduction-1.html"><a href="introduction-1.html#suggestions-3"><i class="fa fa-check"></i><b>22.2</b> Suggestions:</a></li>
+</ul></li>
+<li class="chapter" data-level="23" data-path="abstract.html"><a href="abstract.html"><i class="fa fa-check"></i><b>23</b> Abstract</a>
+<ul>
+<li class="chapter" data-level="23.1" data-path="abstract.html"><a href="abstract.html#general-5"><i class="fa fa-check"></i><b>23.1</b> General</a></li>
+<li class="chapter" data-level="23.2" data-path="abstract.html"><a href="abstract.html#suggestions-4"><i class="fa fa-check"></i><b>23.2</b> Suggestions</a></li>
+</ul></li>
+<li class="chapter" data-level="24" data-path="title.html"><a href="title.html"><i class="fa fa-check"></i><b>24</b> Title</a>
+<ul>
+<li class="chapter" data-level="24.1" data-path="title.html"><a href="title.html#general-6"><i class="fa fa-check"></i><b>24.1</b> General</a></li>
+<li class="chapter" data-level="24.2" data-path="title.html"><a href="title.html#suggestions-5"><i class="fa fa-check"></i><b>24.2</b> Suggestions</a></li>
+<li class="chapter" data-level="24.3" data-path="title.html"><a href="title.html#further-reading-1"><i class="fa fa-check"></i><b>24.3</b> Further reading</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="datasets.html"><a href="datasets.html"><i class="fa fa-check"></i><b>A</b> Datasets</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="datasets.html"><a href="datasets.html#hawaii_aquifers"><i class="fa fa-check"></i><b>A.1</b> hawaii_aquifers</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="functions-1.html"><a href="functions-1.html"><i class="fa fa-check"></i><b>B</b> Functions</a>
+<ul>
+<li class="chapter" data-level="B.1" data-path="functions-1.html"><a href="functions-1.html#libraries-and-packages"><i class="fa fa-check"></i><b>B.1</b> Libraries and packages</a>
+<ul>
+<li class="chapter" data-level="B.1.1" data-path="functions-1.html"><a href="functions-1.html#install.packages"><i class="fa fa-check"></i><b>B.1.1</b> <code>install.packages()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.2" data-path="functions-1.html"><a href="functions-1.html#operators"><i class="fa fa-check"></i><b>B.2</b> Operators</a>
+<ul>
+<li class="chapter" data-level="B.2.1" data-path="functions-1.html"><a href="functions-1.html#in"><i class="fa fa-check"></i><b>B.2.1</b> <code>%in%</code></a></li>
+<li class="chapter" data-level="B.2.2" data-path="functions-1.html"><a href="functions-1.html#section"><i class="fa fa-check"></i><b>B.2.2</b> &lt;</a></li>
+<li class="chapter" data-level="B.2.3" data-path="functions-1.html"><a href="functions-1.html#section-1"><i class="fa fa-check"></i><b>B.2.3</b> &lt;=</a></li>
+<li class="chapter" data-level="B.2.4" data-path="functions-1.html"><a href="functions-1.html#section-2"><i class="fa fa-check"></i><b>B.2.4</b> &gt;</a></li>
+<li class="chapter" data-level="B.2.5" data-path="functions-1.html"><a href="functions-1.html#section-3"><i class="fa fa-check"></i><b>B.2.5</b> &gt;=</a></li>
+<li class="chapter" data-level="B.2.6" data-path="functions-1.html"><a href="functions-1.html#section-4"><i class="fa fa-check"></i><b>B.2.6</b> ==</a></li>
+<li class="chapter" data-level="B.2.7" data-path="functions-1.html"><a href="functions-1.html#section-5"><i class="fa fa-check"></i><b>B.2.7</b> !=</a></li>
+<li class="chapter" data-level="B.2.8" data-path="functions-1.html"><a href="functions-1.html#section-6"><i class="fa fa-check"></i><b>B.2.8</b> |</a></li>
+</ul></li>
+<li class="chapter" data-level="B.3" data-path="functions-1.html"><a href="functions-1.html#data-wrangling"><i class="fa fa-check"></i><b>B.3</b> Data wrangling</a>
+<ul>
+<li class="chapter" data-level="B.3.1" data-path="functions-1.html"><a href="functions-1.html#read_csv"><i class="fa fa-check"></i><b>B.3.1</b> <code>read_csv()</code></a></li>
+<li class="chapter" data-level="B.3.2" data-path="functions-1.html"><a href="functions-1.html#read.csv"><i class="fa fa-check"></i><b>B.3.2</b> <code>read.csv()</code></a></li>
+<li class="chapter" data-level="B.3.3" data-path="functions-1.html"><a href="functions-1.html#readcsv"><i class="fa fa-check"></i><b>B.3.3</b> <code>readCSV()</code></a></li>
+<li class="chapter" data-level="B.3.4" data-path="functions-1.html"><a href="functions-1.html#head"><i class="fa fa-check"></i><b>B.3.4</b> <code>head()</code></a></li>
+<li class="chapter" data-level="B.3.5" data-path="functions-1.html"><a href="functions-1.html#filter"><i class="fa fa-check"></i><b>B.3.5</b> <code>filter()</code></a></li>
+<li class="chapter" data-level="B.3.6" data-path="functions-1.html"><a href="functions-1.html#mutate"><i class="fa fa-check"></i><b>B.3.6</b> <code>mutate()</code></a></li>
+<li class="chapter" data-level="B.3.7" data-path="functions-1.html"><a href="functions-1.html#case_when"><i class="fa fa-check"></i><b>B.3.7</b> <code>case_when()</code></a></li>
+<li class="chapter" data-level="B.3.8" data-path="functions-1.html"><a href="functions-1.html#pivot_longer"><i class="fa fa-check"></i><b>B.3.8</b> <code>pivot_longer()</code></a></li>
+<li class="chapter" data-level="B.3.9" data-path="functions-1.html"><a href="functions-1.html#group_by"><i class="fa fa-check"></i><b>B.3.9</b> <code>group_by()</code></a></li>
+<li class="chapter" data-level="B.3.10" data-path="functions-1.html"><a href="functions-1.html#summarize"><i class="fa fa-check"></i><b>B.3.10</b> <code>summarize()</code></a></li>
+<li class="chapter" data-level="B.3.11" data-path="functions-1.html"><a href="functions-1.html#section-7"><i class="fa fa-check"></i><b>B.3.11</b> <code>%&gt;%</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.4" data-path="functions-1.html"><a href="functions-1.html#plotting"><i class="fa fa-check"></i><b>B.4</b> Plotting</a>
+<ul>
+<li class="chapter" data-level="B.4.1" data-path="functions-1.html"><a href="functions-1.html#plot"><i class="fa fa-check"></i><b>B.4.1</b> <code>plot()</code></a></li>
+<li class="chapter" data-level="B.4.2" data-path="functions-1.html"><a href="functions-1.html#ggplot2ggplot"><i class="fa fa-check"></i><b>B.4.2</b> <code>ggplot2::ggplot()</code></a></li>
+<li class="chapter" data-level="B.4.3" data-path="functions-1.html"><a href="functions-1.html#ggplot2aes"><i class="fa fa-check"></i><b>B.4.3</b> <code>ggplot2::aes()</code></a></li>
+<li class="chapter" data-level="B.4.4" data-path="functions-1.html"><a href="functions-1.html#ggplot2geom_"><i class="fa fa-check"></i><b>B.4.4</b> <code>ggplot2::geom_*()</code></a></li>
+<li class="chapter" data-level="B.4.5" data-path="functions-1.html"><a href="functions-1.html#ggplot2facet_grid"><i class="fa fa-check"></i><b>B.4.5</b> <code>ggplot2::facet_grid()</code></a></li>
+<li class="chapter" data-level="B.4.6" data-path="functions-1.html"><a href="functions-1.html#ggplot2scale__"><i class="fa fa-check"></i><b>B.4.6</b> <code>ggplot2::scale_*_*()</code></a></li>
+<li class="chapter" data-level="B.4.7" data-path="functions-1.html"><a href="functions-1.html#ggplot2theme_"><i class="fa fa-check"></i><b>B.4.7</b> <code>ggplot2::theme_*()</code></a></li>
+<li class="chapter" data-level="B.4.8" data-path="functions-1.html"><a href="functions-1.html#ggplot2coord_flip"><i class="fa fa-check"></i><b>B.4.8</b> <code>ggplot2::coord_flip()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.5" data-path="functions-1.html"><a href="functions-1.html#statistics"><i class="fa fa-check"></i><b>B.5</b> Statistics</a>
+<ul>
+<li class="chapter" data-level="B.5.1" data-path="functions-1.html"><a href="functions-1.html#mean"><i class="fa fa-check"></i><b>B.5.1</b> <code>mean()</code></a></li>
+<li class="chapter" data-level="B.5.2" data-path="functions-1.html"><a href="functions-1.html#sd"><i class="fa fa-check"></i><b>B.5.2</b> <code>sd()</code></a></li>
+<li class="chapter" data-level="B.5.3" data-path="functions-1.html"><a href="functions-1.html#table"><i class="fa fa-check"></i><b>B.5.3</b> <code>table()</code></a></li>
+<li class="chapter" data-level="B.5.4" data-path="functions-1.html"><a href="functions-1.html#weighted.mean"><i class="fa fa-check"></i><b>B.5.4</b> <code>weighted.mean()</code></a></li>
+</ul></li>
+<li class="chapter" data-level="B.6" data-path="functions-1.html"><a href="functions-1.html#t.test"><i class="fa fa-check"></i><b>B.6</b> t.test()</a></li>
+<li class="chapter" data-level="B.7" data-path="functions-1.html"><a href="functions-1.html#anova"><i class="fa fa-check"></i><b>B.7</b> anova()</a></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="custom_functions.html"><a href="custom_functions.html"><i class="fa fa-check"></i><b>C</b> Custom functions</a>
+<ul>
+<li class="chapter" data-level="C.1" data-path="custom_functions.html"><a href="custom_functions.html#activating-custom-functions"><i class="fa fa-check"></i><b>C.1</b> Activating custom functions</a></li>
+<li class="chapter" data-level="C.2" data-path="custom_functions.html"><a href="custom_functions.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>C.2</b> Basic <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="C.3" data-path="custom_functions.html"><a href="custom_functions.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>C.3</b> Advanced <code>runMatrixAnalysis()</code> template</a></li>
+</ul></li>
+<li class="chapter" data-level="D" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>D</b> FAQ</a>
+<ul>
+<li class="chapter" data-level="D.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>D.1</b> Filtering</a></li>
+<li class="chapter" data-level="D.2" data-path="faq.html"><a href="faq.html#order-categorical-axes"><i class="fa fa-check"></i><b>D.2</b> Order categorical axes</a></li>
+</ul></li>
+<li class="chapter" data-level="E" data-path="pca-and-big-data.html"><a href="pca-and-big-data.html"><i class="fa fa-check"></i><b>E</b> PCA and Big Data</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R For Chemists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="summary_statistics" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Summary Statistics</h1>
+<div id="summary-statistics" class="section level2" number="8.1">
+<h2><span class="header-section-number">8.1</span> Summary statistics</h2>
+<p>So far, we have been importing and plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv">NY Trees</a> dataset.</p>
+<p>The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="summary_statistics.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb41-2"><a href="summary_statistics.html#cb41-2" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv&quot;</span>)</span>
+<span id="cb41-3"><a href="summary_statistics.html#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 378762 Columns: 14</span></span>
+<span id="cb41-4"><a href="summary_statistics.html#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb41-5"><a href="summary_statistics.html#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb41-6"><a href="summary_statistics.html#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (9): address, tree_loc, pit_type, soil_lvl, status, spc_latin, spc_commo...</span></span>
+<span id="cb41-7"><a href="summary_statistics.html#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (5): tree_height, tree_diameter, zipcode, latitude, longitude</span></span>
+<span id="cb41-8"><a href="summary_statistics.html#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb41-9"><a href="summary_statistics.html#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb41-10"><a href="summary_statistics.html#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb41-11"><a href="summary_statistics.html#cb41-11" aria-hidden="true" tabindex="-1"></a>ny_trees</span>
+<span id="cb41-12"><a href="summary_statistics.html#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 378,762 × 14</span></span>
+<span id="cb41-13"><a href="summary_statistics.html#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="do">##    tree_height tree_diameter address tree_loc pit_type soil_lvl status spc_latin</span></span>
+<span id="cb41-14"><a href="summary_statistics.html#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="do">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    </span></span>
+<span id="cb41-15"><a href="summary_statistics.html#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  1        21.1             6 1139 5… Front    Sidewal… Level    Good   PYRUS CA…</span></span>
+<span id="cb41-16"><a href="summary_statistics.html#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  2        59.0             6 2220 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
+<span id="cb41-17"><a href="summary_statistics.html#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  3        92.4            13 2254 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
+<span id="cb41-18"><a href="summary_statistics.html#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  4        50.2            15 2332 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
+<span id="cb41-19"><a href="summary_statistics.html#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  5        95.0            21 2361 E… Front    Sidewal… Level    Poor   PLATANUS…</span></span>
+<span id="cb41-20"><a href="summary_statistics.html#cb41-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  6        67.5            19 2409 E… Front    Continu… Level    Good   PLATANUS…</span></span>
+<span id="cb41-21"><a href="summary_statistics.html#cb41-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  7        75.3            11 1481 E… Front    Lawn     Level    Excel… PLATANUS…</span></span>
+<span id="cb41-22"><a href="summary_statistics.html#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  8        27.9             7 1129 5… Front    Sidewal… Level    Good   PYRUS CA…</span></span>
+<span id="cb41-23"><a href="summary_statistics.html#cb41-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       111.             26 2076 E… Across   Sidewal… Level    Excel… PLATANUS…</span></span>
+<span id="cb41-24"><a href="summary_statistics.html#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 10        83.9            20 2025 E… Front    Sidewal… Level    Excel… PLATANUS…</span></span>
+<span id="cb41-25"><a href="summary_statistics.html#cb41-25" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 378,752 more rows, and 6 more variables: spc_common &lt;chr&gt;,</span></span>
+<span id="cb41-26"><a href="summary_statistics.html#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="do">## #   trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;, latitude &lt;dbl&gt;,</span></span>
+<span id="cb41-27"><a href="summary_statistics.html#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="do">## #   longitude &lt;dbl&gt;</span></span></code></pre></div>
+<p>More than 300,000 observations of 14 variables! That’s 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don’t even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
+<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code>mean()</code> and standard deviation can be calculated with <code>sd()</code>. Also, keep in mind that a single column of a dataset can be accessed using <code>$</code>. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="summary_statistics.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(ny_trees<span class="sc">$</span>tree_height)</span>
+<span id="cb42-2"><a href="summary_statistics.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 72.57976</span></span>
+<span id="cb42-3"><a href="summary_statistics.html#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(ny_trees<span class="sc">$</span>tree_height)</span>
+<span id="cb42-4"><a href="summary_statistics.html#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 28.65391</span></span></code></pre></div>
+<p>Great! But how to do this for each species? We need to divide up the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code>group_by()</code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code>summarize()</code> to compute statistics. Please note that both <code>group_by()</code> and <code>summarize()</code> require <code>.data =</code> as an argument, as opposed to <code>data =</code>, which we have been using up to this point.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="summary_statistics.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb43-2"><a href="summary_statistics.html#cb43-2" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
+<span id="cb43-3"><a href="summary_statistics.html#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(spc_latin) <span class="sc">%&gt;%</span></span>
+<span id="cb43-4"><a href="summary_statistics.html#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height))</span></code></pre></div>
+<p>Bam. Mean height of each tree species. <code>summarize()</code> is more powerful though, we can do many summary statistics at once:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="summary_statistics.html#cb44-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> ny_trees, spc_latin)</span>
+<span id="cb44-2"><a href="summary_statistics.html#cb44-2" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> ny_trees_by_spc, <span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height), <span class="at">stdev_height =</span> <span class="fu">sd</span>(tree_height))</span>
+<span id="cb44-3"><a href="summary_statistics.html#cb44-3" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ</span></code></pre></div>
+<p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code>. Note that in this case, if we map spc_latin to the x axis, the x axis tick labels will have long names that will overlap in our plot. In the past we have avoided this by swapping the mappings of x and y in out plots. Here, this gets a bit tedious since we will have to change ymin and ymax as well. Instead of all this, we can just add <code>coord_flip()</code> to our plot, which will swap x and y axes automatically. Also, note that in the aesthetic mappings for <code>ymin</code> and <code>ymax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="summary_statistics.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_summ) <span class="sc">+</span></span>
+<span id="cb45-2"><a href="summary_statistics.html#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
+<span id="cb45-3"><a href="summary_statistics.html#cb45-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(</span>
+<span id="cb45-4"><a href="summary_statistics.html#cb45-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> spc_latin,</span>
+<span id="cb45-5"><a href="summary_statistics.html#cb45-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> mean_height,</span>
+<span id="cb45-6"><a href="summary_statistics.html#cb45-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymin =</span> mean_height <span class="sc">-</span> stdev_height,</span>
+<span id="cb45-7"><a href="summary_statistics.html#cb45-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax =</span> mean_height <span class="sc">+</span> stdev_height</span>
+<span id="cb45-8"><a href="summary_statistics.html#cb45-8" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb45-9"><a href="summary_statistics.html#cb45-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb45-10"><a href="summary_statistics.html#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>()</span></code></pre></div>
+<p>Cool! Just like that we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="summary_statistics.html#cb46-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> ny_trees, spc_latin, boroname)</span>
+<span id="cb46-2"><a href="summary_statistics.html#cb46-2" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> ny_trees_by_spc_boro, <span class="at">mean_diam =</span> <span class="fu">mean</span>(tree_diameter), <span class="at">stdev_diam =</span> <span class="fu">sd</span>(tree_diameter))</span>
+<span id="cb46-3"><a href="summary_statistics.html#cb46-3" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ</span></code></pre></div>
+<p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="summary_statistics.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_boro_summ) <span class="sc">+</span></span>
+<span id="cb47-2"><a href="summary_statistics.html#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
+<span id="cb47-3"><a href="summary_statistics.html#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb47-4"><a href="summary_statistics.html#cb47-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> boroname,</span>
+<span id="cb47-5"><a href="summary_statistics.html#cb47-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> mean_diam,</span>
+<span id="cb47-6"><a href="summary_statistics.html#cb47-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> mean_diam<span class="sc">-</span>stdev_diam,</span>
+<span id="cb47-7"><a href="summary_statistics.html#cb47-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> mean_diam<span class="sc">+</span>stdev_diam</span>
+<span id="cb47-8"><a href="summary_statistics.html#cb47-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb47-9"><a href="summary_statistics.html#cb47-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb47-10"><a href="summary_statistics.html#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(spc_latin<span class="sc">~</span>.) <span class="sc">+</span></span>
+<span id="cb47-11"><a href="summary_statistics.html#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb47-12"><a href="summary_statistics.html#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb47-13"><a href="summary_statistics.html#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>)</span>
+<span id="cb47-14"><a href="summary_statistics.html#cb47-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Excellent! And if we really want to go for something pretty:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="summary_statistics.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb48-2"><a href="summary_statistics.html#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_boro_summ) <span class="sc">+</span></span>
+<span id="cb48-3"><a href="summary_statistics.html#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
+<span id="cb48-4"><a href="summary_statistics.html#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb48-5"><a href="summary_statistics.html#cb48-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> boroname,</span>
+<span id="cb48-6"><a href="summary_statistics.html#cb48-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> mean_diam,</span>
+<span id="cb48-7"><a href="summary_statistics.html#cb48-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> mean_diam<span class="sc">-</span>stdev_diam,</span>
+<span id="cb48-8"><a href="summary_statistics.html#cb48-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> mean_diam<span class="sc">+</span>stdev_diam,</span>
+<span id="cb48-9"><a href="summary_statistics.html#cb48-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> spc_latin</span>
+<span id="cb48-10"><a href="summary_statistics.html#cb48-10" aria-hidden="true" tabindex="-1"></a>    ), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">shape =</span> <span class="dv">21</span></span>
+<span id="cb48-11"><a href="summary_statistics.html#cb48-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb48-12"><a href="summary_statistics.html#cb48-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb48-13"><a href="summary_statistics.html#cb48-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Borough&quot;</span>, </span>
+<span id="cb48-14"><a href="summary_statistics.html#cb48-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Trunk diameter&quot;</span>,</span>
+<span id="cb48-15"><a href="summary_statistics.html#cb48-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="fu">str_wrap</span>(<span class="st">&quot;Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.&quot;</span>, <span class="at">width =</span> <span class="dv">80</span>)</span>
+<span id="cb48-16"><a href="summary_statistics.html#cb48-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb48-17"><a href="summary_statistics.html#cb48-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(spc_latin<span class="sc">~</span>.) <span class="sc">+</span></span>
+<span id="cb48-18"><a href="summary_statistics.html#cb48-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb48-19"><a href="summary_statistics.html#cb48-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Paired&quot;</span>) <span class="sc">+</span></span>
+<span id="cb48-20"><a href="summary_statistics.html#cb48-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb48-21"><a href="summary_statistics.html#cb48-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb48-22"><a href="summary_statistics.html#cb48-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb48-23"><a href="summary_statistics.html#cb48-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>),</span>
+<span id="cb48-24"><a href="summary_statistics.html#cb48-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
+<span id="cb48-25"><a href="summary_statistics.html#cb48-25" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
+</div>
+<div id="the-pipe" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> The pipe (%&gt;%)</h2>
+<p>When we want to get summary statistics for a dataset, we often end up creating lots of new objects, sometimes with convoluted names. For example, what if we want to know and visualize the average temperature across the lakes in each of the three Alaska parks? We might do something like the below:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="summary_statistics.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb49-2"><a href="summary_statistics.html#cb49-2" aria-hidden="true" tabindex="-1"></a>AK_lakes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
+<span id="cb49-3"><a href="summary_statistics.html#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
+<span id="cb49-4"><a href="summary_statistics.html#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb49-5"><a href="summary_statistics.html#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb49-6"><a href="summary_statistics.html#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
+<span id="cb49-7"><a href="summary_statistics.html#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
+<span id="cb49-8"><a href="summary_statistics.html#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb49-9"><a href="summary_statistics.html#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb49-10"><a href="summary_statistics.html#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb49-11"><a href="summary_statistics.html#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes)</span>
+<span id="cb49-12"><a href="summary_statistics.html#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 6 × 7</span></span>
+<span id="cb49-13"><a href="summary_statistics.html#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
+<span id="cb49-14"><a href="summary_statistics.html#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb49-15"><a href="summary_statistics.html#cb49-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
+<span id="cb49-16"><a href="summary_statistics.html#cb49-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
+<span id="cb49-17"><a href="summary_statistics.html#cb49-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
+<span id="cb49-18"><a href="summary_statistics.html#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
+<span id="cb49-19"><a href="summary_statistics.html#cb49-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
+<span id="cb49-20"><a href="summary_statistics.html#cb49-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free</span></span>
+<span id="cb49-21"><a href="summary_statistics.html#cb49-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-22"><a href="summary_statistics.html#cb49-22" aria-hidden="true" tabindex="-1"></a>AK_lakes_by_park <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> AK_lakes, park)</span>
+<span id="cb49-23"><a href="summary_statistics.html#cb49-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-24"><a href="summary_statistics.html#cb49-24" aria-hidden="true" tabindex="-1"></a>AK_lakes_by_park_summ <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">.data =</span> AK_lakes_by_park, <span class="at">mean_temperature =</span> <span class="fu">mean</span>(water_temp))</span>
+<span id="cb49-25"><a href="summary_statistics.html#cb49-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-26"><a href="summary_statistics.html#cb49-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AK_lakes_by_park_summ) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> park, <span class="at">y =</span> mean_temperature))</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-74-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>In order to do that, we created two new objects <code>AK_lakes_by_park</code> and <code>AK_lakes_by_park_summ</code>. In big analysis chains, we can end up creating lots of objects with complicated names. There must be a better way! There is. Meet the pipe: <code>%&gt;%</code>. It sends the output from one command directly to the next, so we neither need to have each command create a new object, nor do we need to start each command by telling it what data to use. With the pipe, the same analysis as above can be done with the text below. Neat! Easier!</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="summary_statistics.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb50-2"><a href="summary_statistics.html#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="summary_statistics.html#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="summary_statistics.html#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(park) <span class="sc">%&gt;%</span></span>
+<span id="cb50-5"><a href="summary_statistics.html#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="summary_statistics.html#cb50-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">mean_temperature =</span> <span class="fu">mean</span>(water_temp)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-7"><a href="summary_statistics.html#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="summary_statistics.html#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> park, <span class="at">y =</span> mean_temperature))</span>
+<span id="cb50-9"><a href="summary_statistics.html#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
+<span id="cb50-10"><a href="summary_statistics.html#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb50-11"><a href="summary_statistics.html#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb50-12"><a href="summary_statistics.html#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
+<span id="cb50-13"><a href="summary_statistics.html#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
+<span id="cb50-14"><a href="summary_statistics.html#cb50-14" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb50-15"><a href="summary_statistics.html#cb50-15" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb50-16"><a href="summary_statistics.html#cb50-16" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-75-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tidy-data" class="section level2" number="8.3">
+<h2><span class="header-section-number">8.3</span> Tidy data</h2>
+<p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="summary_statistics.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb51-2"><a href="summary_statistics.html#cb51-2" aria-hidden="true" tabindex="-1"></a>FAs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/fadb_sample.csv&quot;</span>)</span>
+<span id="cb51-3"><a href="summary_statistics.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 7 Columns: 11</span></span>
+<span id="cb51-4"><a href="summary_statistics.html#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb51-5"><a href="summary_statistics.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb51-6"><a href="summary_statistics.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr  (1): fatty_acid</span></span>
+<span id="cb51-7"><a href="summary_statistics.html#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (10): Agonandra_brasiliensis, Agonandra_silvatica, Agonandra_excelsa, He...</span></span>
+<span id="cb51-8"><a href="summary_statistics.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb51-9"><a href="summary_statistics.html#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb51-10"><a href="summary_statistics.html#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb51-11"><a href="summary_statistics.html#cb51-11" aria-hidden="true" tabindex="-1"></a>FAs</span>
+<span id="cb51-12"><a href="summary_statistics.html#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 11</span></span>
+<span id="cb51-13"><a href="summary_statistics.html#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   fatty_acid Agonandra_brasi… Agonandra_silva… Agonandra_excel… Heisteria_silvi…</span></span>
+<span id="cb51-14"><a href="summary_statistics.html#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></span>
+<span id="cb51-15"><a href="summary_statistics.html#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Hexadecan…              3.4              1                1.2              2.9</span></span>
+<span id="cb51-16"><a href="summary_statistics.html#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Octadecan…              6.2              0.1              0.4              0.1</span></span>
+<span id="cb51-17"><a href="summary_statistics.html#cb51-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Eicosanoi…              4.7              3.5              1.7              0.1</span></span>
+<span id="cb51-18"><a href="summary_statistics.html#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Docosanoi…             77.4              0.4              1                7.4</span></span>
+<span id="cb51-19"><a href="summary_statistics.html#cb51-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Tetracosa…              1.4              1                1.4              1.7</span></span>
+<span id="cb51-20"><a href="summary_statistics.html#cb51-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Hexacosan…              1.9             12.6             23.1             46.6</span></span>
+<span id="cb51-21"><a href="summary_statistics.html#cb51-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 7 Octacosan…              5               81.4             71.3             41.2</span></span>
+<span id="cb51-22"><a href="summary_statistics.html#cb51-22" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 6 more variables: Malania_oleifera &lt;dbl&gt;, Ximenia_americana &lt;dbl&gt;,</span></span>
+<span id="cb51-23"><a href="summary_statistics.html#cb51-23" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Ongokea_gore &lt;dbl&gt;, Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
+<span id="cb51-24"><a href="summary_statistics.html#cb51-24" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
+<p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = FAs</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="summary_statistics.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(<span class="at">data =</span> FAs, <span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">names_to =</span> <span class="st">&quot;plant_species&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relative_abundance&quot;</span>)</span>
+<span id="cb52-2"><a href="summary_statistics.html#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 70 × 3</span></span>
+<span id="cb52-3"><a href="summary_statistics.html#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    fatty_acid        plant_species           relative_abundance</span></span>
+<span id="cb52-4"><a href="summary_statistics.html#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;                                &lt;dbl&gt;</span></span>
+<span id="cb52-5"><a href="summary_statistics.html#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Hexadecanoic acid Agonandra_brasiliensis                 3.4</span></span>
+<span id="cb52-6"><a href="summary_statistics.html#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Hexadecanoic acid Agonandra_silvatica                    1  </span></span>
+<span id="cb52-7"><a href="summary_statistics.html#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Hexadecanoic acid Agonandra_excelsa                      1.2</span></span>
+<span id="cb52-8"><a href="summary_statistics.html#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Hexadecanoic acid Heisteria_silvianii                    2.9</span></span>
+<span id="cb52-9"><a href="summary_statistics.html#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Hexadecanoic acid Malania_oleifera                       0.7</span></span>
+<span id="cb52-10"><a href="summary_statistics.html#cb52-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Hexadecanoic acid Ximenia_americana                      3.3</span></span>
+<span id="cb52-11"><a href="summary_statistics.html#cb52-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Hexadecanoic acid Ongokea_gore                           1  </span></span>
+<span id="cb52-12"><a href="summary_statistics.html#cb52-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Hexadecanoic acid Comandra_pallida                       2.3</span></span>
+<span id="cb52-13"><a href="summary_statistics.html#cb52-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Hexadecanoic acid Buckleya_distichophylla                1.6</span></span>
+<span id="cb52-14"><a href="summary_statistics.html#cb52-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Hexadecanoic acid Nuytsia_floribunda                     3.8</span></span>
+<span id="cb52-15"><a href="summary_statistics.html#cb52-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 60 more rows</span></span></code></pre></div>
+<p>Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+<!-- end --></p>
+<!-- start Exercises 3 -->
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="Exercises_2.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="Exercises_3.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "night",
+"family": "serif",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "fixed"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
