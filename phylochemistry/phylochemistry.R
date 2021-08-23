@@ -3859,7 +3859,7 @@
                                             message("Searching reference library for unknown spectrum...\n")
 
                                                 ## Round to nominal mass spectrum
-                                                    MS_out_1$mz <- round(MS_out_1$mz)
+                                                    MS_out_1$mz <- floor(MS_out_1$mz)
                                                     MS_out_1 %>%
                                                         group_by(mz) %>%
                                                         dplyr::summarize(intensity = sum(intensity)) -> MS_out_1
