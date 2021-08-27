@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -402,7 +403,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="activating-custom-functions" class="section level2" number="27.1">
 <h2><span class="header-section-number">C.1</span> Activating custom functions</h2>
 <p>To activate in your session, run the following in your console:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="custom_functions.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="custom_functions.html#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <p>Once this is run the following will available in your R environment:</p>
 <p><code>algae_data</code></p>
 <p><code>alaska_lake_data</code></p>
@@ -419,37 +420,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="basic-runmatrixanalysis-template" class="section level2" number="27.2">
 <h2><span class="header-section-number">C.2</span> Basic <code>runMatrixAnalysis()</code> template</h2>
 <p>Once you have activated <code>runMatrixAnalysis</code> in your R session (see above), you can use the function by filling out and executing the basic template below. There is also an advanced template further down the page.</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="custom_functions.html#cb114-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb114-2"><a href="custom_functions.html#cb114-2" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb114-3"><a href="custom_functions.html#cb114-3" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb114-4"><a href="custom_functions.html#cb114-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>,</span>
-<span id="cb114-5"><a href="custom_functions.html#cb114-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb114-6"><a href="custom_functions.html#cb114-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
-<span id="cb114-7"><a href="custom_functions.html#cb114-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb114-8"><a href="custom_functions.html#cb114-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
-<span id="cb114-9"><a href="custom_functions.html#cb114-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
-<span id="cb114-10"><a href="custom_functions.html#cb114-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb114-11"><a href="custom_functions.html#cb114-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="cn">NULL</span>,</span>
-<span id="cb114-12"><a href="custom_functions.html#cb114-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb114-13"><a href="custom_functions.html#cb114-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="cn">NULL</span></span>
-<span id="cb114-14"><a href="custom_functions.html#cb114-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb114-15"><a href="custom_functions.html#cb114-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="custom_functions.html#cb116-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-2"><a href="custom_functions.html#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb116-3"><a href="custom_functions.html#cb116-3" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb116-4"><a href="custom_functions.html#cb116-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>,</span>
+<span id="cb116-5"><a href="custom_functions.html#cb116-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-6"><a href="custom_functions.html#cb116-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
+<span id="cb116-7"><a href="custom_functions.html#cb116-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-8"><a href="custom_functions.html#cb116-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb116-9"><a href="custom_functions.html#cb116-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb116-10"><a href="custom_functions.html#cb116-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb116-11"><a href="custom_functions.html#cb116-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="cn">NULL</span>,</span>
+<span id="cb116-12"><a href="custom_functions.html#cb116-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-13"><a href="custom_functions.html#cb116-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="cn">NULL</span></span>
+<span id="cb116-14"><a href="custom_functions.html#cb116-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-15"><a href="custom_functions.html#cb116-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="advanced-runmatrixanalysis-template" class="section level2" number="27.3">
 <h2><span class="header-section-number">C.3</span> Advanced <code>runMatrixAnalysis()</code> template</h2>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="custom_functions.html#cb115-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb115-2"><a href="custom_functions.html#cb115-2" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb115-3"><a href="custom_functions.html#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>, <span class="co"># the data set to work on</span></span>
-<span id="cb115-4"><a href="custom_functions.html#cb115-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>), <span class="co"># the analysis to conduct</span></span>
-<span id="cb115-5"><a href="custom_functions.html#cb115-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with names of multiple analytes</span></span>
-<span id="cb115-6"><a href="custom_functions.html#cb115-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span></span>
-<span id="cb115-7"><a href="custom_functions.html#cb115-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span></span>
-<span id="cb115-8"><a href="custom_functions.html#cb115-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="cn">NULL</span>, <span class="co"># a column with character or numeric information about analytes that was not &quot;measured&quot; as part of the experiment.</span></span>
-<span id="cb115-9"><a href="custom_functions.html#cb115-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="cn">NULL</span>, <span class="co"># a column with information about the sample (i.e. contents from the test tube&#39;s label)</span></span>
-<span id="cb115-10"><a href="custom_functions.html#cb115-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">transpose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb115-11"><a href="custom_functions.html#cb115-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">kmeans =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;elbow&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;etc.&quot;</span>),</span>
-<span id="cb115-12"><a href="custom_functions.html#cb115-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">na_replacement =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;zero&quot;</span>, <span class="st">&quot;drop&quot;</span>)</span>
-<span id="cb115-13"><a href="custom_functions.html#cb115-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="custom_functions.html#cb117-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb117-2"><a href="custom_functions.html#cb117-2" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb117-3"><a href="custom_functions.html#cb117-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>, <span class="co"># the data set to work on</span></span>
+<span id="cb117-4"><a href="custom_functions.html#cb117-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>), <span class="co"># the analysis to conduct</span></span>
+<span id="cb117-5"><a href="custom_functions.html#cb117-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with names of multiple analytes</span></span>
+<span id="cb117-6"><a href="custom_functions.html#cb117-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span></span>
+<span id="cb117-7"><a href="custom_functions.html#cb117-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span></span>
+<span id="cb117-8"><a href="custom_functions.html#cb117-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="cn">NULL</span>, <span class="co"># a column with character or numeric information about analytes that was not &quot;measured&quot; as part of the experiment.</span></span>
+<span id="cb117-9"><a href="custom_functions.html#cb117-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="cn">NULL</span>, <span class="co"># a column with information about the sample (i.e. contents from the test tube&#39;s label)</span></span>
+<span id="cb117-10"><a href="custom_functions.html#cb117-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">transpose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb117-11"><a href="custom_functions.html#cb117-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">kmeans =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;elbow&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;etc.&quot;</span>),</span>
+<span id="cb117-12"><a href="custom_functions.html#cb117-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">na_replacement =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;zero&quot;</span>, <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb117-13"><a href="custom_functions.html#cb117-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 </div>
             </section>
@@ -485,7 +486,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

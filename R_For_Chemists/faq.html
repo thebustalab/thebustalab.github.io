@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -412,39 +413,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="order-categorical-axes" class="section level2" number="28.2">
 <h2><span class="header-section-number">D.2</span> Order categorical axes</h2>
 <p>Under normal plotting scenario:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="faq.html#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb116-2"><a href="faq.html#cb116-2" aria-hidden="true" tabindex="-1"></a>NY_trees <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv&quot;</span>)</span>
-<span id="cb116-3"><a href="faq.html#cb116-3" aria-hidden="true" tabindex="-1"></a>NY_trees</span>
-<span id="cb116-4"><a href="faq.html#cb116-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb116-5"><a href="faq.html#cb116-5" aria-hidden="true" tabindex="-1"></a>tree_data_status <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> NY_trees, status)</span>
-<span id="cb116-6"><a href="faq.html#cb116-6" aria-hidden="true" tabindex="-1"></a>tree_data_status</span>
-<span id="cb116-7"><a href="faq.html#cb116-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb116-8"><a href="faq.html#cb116-8" aria-hidden="true" tabindex="-1"></a>tree_data_status_summary <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> tree_data_status, <span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height), <span class="at">stdev_height =</span> <span class="fu">sd</span>(tree_height))</span>
-<span id="cb116-9"><a href="faq.html#cb116-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb116-10"><a href="faq.html#cb116-10" aria-hidden="true" tabindex="-1"></a>status_color <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;darkorange&quot;</span>,<span class="st">&quot;gold&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>)</span>
-<span id="cb116-11"><a href="faq.html#cb116-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(status_color) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)</span>
-<span id="cb116-12"><a href="faq.html#cb116-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb116-13"><a href="faq.html#cb116-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tree_data_status_summary) <span class="sc">+</span> </span>
-<span id="cb116-14"><a href="faq.html#cb116-14" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">x =</span> status, </span>
-<span id="cb116-15"><a href="faq.html#cb116-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> mean_height, </span>
-<span id="cb116-16"><a href="faq.html#cb116-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin =</span> mean_height <span class="sc">-</span>stdev_height, </span>
-<span id="cb116-17"><a href="faq.html#cb116-17" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> mean_height <span class="sc">+</span> stdev_height), <span class="at">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="sc">+</span></span>
-<span id="cb116-18"><a href="faq.html#cb116-18" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(NY_trees, tree_height <span class="sc">&gt;</span> <span class="dv">150</span>),</span>
-<span id="cb116-19"><a href="faq.html#cb116-19" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">x =</span> status, <span class="at">y =</span> tree_height, <span class="at">fill =</span> status), <span class="at">stroke =</span> <span class="fl">1.5</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
-<span id="cb116-20"><a href="faq.html#cb116-20" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb116-21"><a href="faq.html#cb116-21" aria-hidden="true" tabindex="-1"></a><span class="fu">scale_fill_manual</span>(<span class="at">values =</span> status_color)</span></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="faq.html#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb118-2"><a href="faq.html#cb118-2" aria-hidden="true" tabindex="-1"></a>NY_trees <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv&quot;</span>)</span>
+<span id="cb118-3"><a href="faq.html#cb118-3" aria-hidden="true" tabindex="-1"></a>NY_trees</span>
+<span id="cb118-4"><a href="faq.html#cb118-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-5"><a href="faq.html#cb118-5" aria-hidden="true" tabindex="-1"></a>tree_data_status <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> NY_trees, status)</span>
+<span id="cb118-6"><a href="faq.html#cb118-6" aria-hidden="true" tabindex="-1"></a>tree_data_status</span>
+<span id="cb118-7"><a href="faq.html#cb118-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-8"><a href="faq.html#cb118-8" aria-hidden="true" tabindex="-1"></a>tree_data_status_summary <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> tree_data_status, <span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height), <span class="at">stdev_height =</span> <span class="fu">sd</span>(tree_height))</span>
+<span id="cb118-9"><a href="faq.html#cb118-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-10"><a href="faq.html#cb118-10" aria-hidden="true" tabindex="-1"></a>status_color <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;darkorange&quot;</span>,<span class="st">&quot;gold&quot;</span>,<span class="st">&quot;darkgreen&quot;</span>)</span>
+<span id="cb118-11"><a href="faq.html#cb118-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(status_color) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)</span>
+<span id="cb118-12"><a href="faq.html#cb118-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-13"><a href="faq.html#cb118-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tree_data_status_summary) <span class="sc">+</span> </span>
+<span id="cb118-14"><a href="faq.html#cb118-14" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">x =</span> status, </span>
+<span id="cb118-15"><a href="faq.html#cb118-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> mean_height, </span>
+<span id="cb118-16"><a href="faq.html#cb118-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin =</span> mean_height <span class="sc">-</span>stdev_height, </span>
+<span id="cb118-17"><a href="faq.html#cb118-17" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> mean_height <span class="sc">+</span> stdev_height), <span class="at">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="sc">+</span></span>
+<span id="cb118-18"><a href="faq.html#cb118-18" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(NY_trees, tree_height <span class="sc">&gt;</span> <span class="dv">150</span>),</span>
+<span id="cb118-19"><a href="faq.html#cb118-19" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">x =</span> status, <span class="at">y =</span> tree_height, <span class="at">fill =</span> status), <span class="at">stroke =</span> <span class="fl">1.5</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb118-20"><a href="faq.html#cb118-20" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb118-21"><a href="faq.html#cb118-21" aria-hidden="true" tabindex="-1"></a><span class="fu">scale_fill_manual</span>(<span class="at">values =</span> status_color)</span></code></pre></div>
 <p>But what if we want the order on the x-axis to be from worst <code>status</code> to best? We need to make the <code>status</code> column into factors (a list of characters that has an order other than alphabetical). Here’s how:</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="faq.html#cb117-1" aria-hidden="true" tabindex="-1"></a>tree_data_status_summary<span class="sc">$</span>status <span class="ot">&lt;-</span> <span class="fu">factor</span>(tree_data_status_summary<span class="sc">$</span>status, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)) <span class="co"># note that we specify the order we want right here in &quot;levels&quot;...</span></span>
-<span id="cb117-2"><a href="faq.html#cb117-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb117-3"><a href="faq.html#cb117-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tree_data_status_summary) <span class="sc">+</span> </span>
-<span id="cb117-4"><a href="faq.html#cb117-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">x =</span> status, </span>
-<span id="cb117-5"><a href="faq.html#cb117-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> mean_height, </span>
-<span id="cb117-6"><a href="faq.html#cb117-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin =</span> mean_height <span class="sc">-</span>stdev_height, </span>
-<span id="cb117-7"><a href="faq.html#cb117-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> mean_height <span class="sc">+</span> stdev_height), <span class="at">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="sc">+</span></span>
-<span id="cb117-8"><a href="faq.html#cb117-8" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(NY_trees, tree_height <span class="sc">&gt;</span> <span class="dv">150</span>),</span>
-<span id="cb117-9"><a href="faq.html#cb117-9" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">x =</span> status, <span class="at">y =</span> tree_height, <span class="at">fill =</span> status), <span class="at">stroke =</span> <span class="fl">1.5</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
-<span id="cb117-10"><a href="faq.html#cb117-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb117-11"><a href="faq.html#cb117-11" aria-hidden="true" tabindex="-1"></a><span class="fu">scale_fill_manual</span>(<span class="at">values =</span> status_color)</span></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="faq.html#cb119-1" aria-hidden="true" tabindex="-1"></a>tree_data_status_summary<span class="sc">$</span>status <span class="ot">&lt;-</span> <span class="fu">factor</span>(tree_data_status_summary<span class="sc">$</span>status, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Poor&quot;</span>, <span class="st">&quot;Good&quot;</span>, <span class="st">&quot;Excellent&quot;</span>)) <span class="co"># note that we specify the order we want right here in &quot;levels&quot;...</span></span>
+<span id="cb119-2"><a href="faq.html#cb119-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb119-3"><a href="faq.html#cb119-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> tree_data_status_summary) <span class="sc">+</span> </span>
+<span id="cb119-4"><a href="faq.html#cb119-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">x =</span> status, </span>
+<span id="cb119-5"><a href="faq.html#cb119-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> mean_height, </span>
+<span id="cb119-6"><a href="faq.html#cb119-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymin =</span> mean_height <span class="sc">-</span>stdev_height, </span>
+<span id="cb119-7"><a href="faq.html#cb119-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> mean_height <span class="sc">+</span> stdev_height), <span class="at">color =</span> <span class="st">&quot;navy&quot;</span>) <span class="sc">+</span></span>
+<span id="cb119-8"><a href="faq.html#cb119-8" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(NY_trees, tree_height <span class="sc">&gt;</span> <span class="dv">150</span>),</span>
+<span id="cb119-9"><a href="faq.html#cb119-9" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">x =</span> status, <span class="at">y =</span> tree_height, <span class="at">fill =</span> status), <span class="at">stroke =</span> <span class="fl">1.5</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb119-10"><a href="faq.html#cb119-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb119-11"><a href="faq.html#cb119-11" aria-hidden="true" tabindex="-1"></a><span class="fu">scale_fill_manual</span>(<span class="at">values =</span> status_color)</span></code></pre></div>
 </div>
 </div>
             </section>
@@ -480,7 +481,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

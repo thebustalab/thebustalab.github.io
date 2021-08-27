@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -404,28 +405,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Refer to Chapter 12 for help with PCA and ordination plots.</p></li>
 <li><p>The data sets and the <code>runMatrixAnalysis()</code> function can all be loaded into your R Session by running the command below:</p></li>
 </ol>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="Exercises_5.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="Exercises_5.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>When you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code>colnames()</code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</li>
 </ol>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="Exercises_5.html#cb66-1" aria-hidden="true" tabindex="-1"></a>pts <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv&quot;</span>)</span>
-<span id="cb66-2"><a href="Exercises_5.html#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pts)[<span class="dv">10</span><span class="sc">:</span><span class="dv">20</span>]</span>
-<span id="cb66-3"><a href="Exercises_5.html#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] &quot;electronegativity_pauling&quot;          &quot;first_ionization_poten_eV&quot;         </span></span>
-<span id="cb66-4"><a href="Exercises_5.html#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [3] &quot;second_ionization_poten_eV&quot;         &quot;third_ionization_poten_eV&quot;         </span></span>
-<span id="cb66-5"><a href="Exercises_5.html#cb66-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [5] &quot;electron_affinity_eV&quot;               &quot;atomic_radius_ang&quot;                 </span></span>
-<span id="cb66-6"><a href="Exercises_5.html#cb66-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  [7] &quot;ionic_radius_ang&quot;                   &quot;covalent_radius_ang&quot;               </span></span>
-<span id="cb66-7"><a href="Exercises_5.html#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  [9] &quot;atomic_volume_cm3_per_mol&quot;          &quot;electrical_conductivity_mho_per_cm&quot;</span></span>
-<span id="cb66-8"><a href="Exercises_5.html#cb66-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [11] &quot;specific_heat_J_per_g_K&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="Exercises_5.html#cb68-1" aria-hidden="true" tabindex="-1"></a>pts <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv&quot;</span>)</span>
+<span id="cb68-2"><a href="Exercises_5.html#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pts)[<span class="dv">10</span><span class="sc">:</span><span class="dv">20</span>]</span>
+<span id="cb68-3"><a href="Exercises_5.html#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] &quot;electronegativity_pauling&quot;          &quot;first_ionization_poten_eV&quot;         </span></span>
+<span id="cb68-4"><a href="Exercises_5.html#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [3] &quot;second_ionization_poten_eV&quot;         &quot;third_ionization_poten_eV&quot;         </span></span>
+<span id="cb68-5"><a href="Exercises_5.html#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [5] &quot;electron_affinity_eV&quot;               &quot;atomic_radius_ang&quot;                 </span></span>
+<span id="cb68-6"><a href="Exercises_5.html#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  [7] &quot;ionic_radius_ang&quot;                   &quot;covalent_radius_ang&quot;               </span></span>
+<span id="cb68-7"><a href="Exercises_5.html#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  [9] &quot;atomic_volume_cm3_per_mol&quot;          &quot;electrical_conductivity_mho_per_cm&quot;</span></span>
+<span id="cb68-8"><a href="Exercises_5.html#cb68-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [11] &quot;specific_heat_J_per_g_K&quot;</span></span></code></pre></div>
 <p>We can use that command in the template, as in the example below. With the notation <code>colnames(pts)[c(5:7,9:25)]</code>, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run <code>c(5:7,9:25)</code> in the console, and what happens when you run <code>colnames(pts)[c(5:7,9:25)]</code> in the console). With the notation <code>colnames(pts)[c(1:4, 8)]</code> we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run <code>c(1:4, 8)</code> in the console, and what happens when you run <code>colnames(pts)[c(1:4, 8)]</code> in the console).</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="Exercises_5.html#cb67-1" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb67-2"><a href="Exercises_5.html#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> pts,</span>
-<span id="cb67-3"><a href="Exercises_5.html#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">&quot;pca&quot;</span>,</span>
-<span id="cb67-4"><a href="Exercises_5.html#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
-<span id="cb67-5"><a href="Exercises_5.html#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
-<span id="cb67-6"><a href="Exercises_5.html#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(pts)[<span class="fu">c</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>,<span class="dv">9</span><span class="sc">:</span><span class="dv">25</span>)],</span>
-<span id="cb67-7"><a href="Exercises_5.html#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="cn">NULL</span>,</span>
-<span id="cb67-8"><a href="Exercises_5.html#cb67-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">colnames</span>(pts)[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">8</span>)]</span>
-<span id="cb67-9"><a href="Exercises_5.html#cb67-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="Exercises_5.html#cb69-1" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb69-2"><a href="Exercises_5.html#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> pts,</span>
+<span id="cb69-3"><a href="Exercises_5.html#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">&quot;pca&quot;</span>,</span>
+<span id="cb69-4"><a href="Exercises_5.html#cb69-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb69-5"><a href="Exercises_5.html#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb69-6"><a href="Exercises_5.html#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(pts)[<span class="fu">c</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>,<span class="dv">9</span><span class="sc">:</span><span class="dv">25</span>)],</span>
+<span id="cb69-7"><a href="Exercises_5.html#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="cn">NULL</span>,</span>
+<span id="cb69-8"><a href="Exercises_5.html#cb69-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">colnames</span>(pts)[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">8</span>)]</span>
+<span id="cb69-9"><a href="Exercises_5.html#cb69-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>Use the two suggestions above to help you complete one of the two options below.</p>
 <div id="option-1-human-metabolomics." class="section level2" number="13.1">
 <h2><span class="header-section-number">13.1</span> Option 1: Human metabolomics.</h2>
@@ -433,7 +434,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ol style="list-style-type: decimal">
 <li>Obtain the data and the latest version of <code>runMatrixAnalysis()</code> by running the following in your R console. Once you do that, the data set will be available as <code>ckd_data</code>.</li>
 </ol>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="Exercises_5.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="Exercises_5.html#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Run a PCA analysis of the data (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
 <li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.</li>
@@ -448,7 +449,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ol style="list-style-type: decimal">
 <li>Obtain the data and the latest version of <code>runMatrixAnalysis()</code> by running the following in your R console. Once you do that, the dataset will be available as <code>wine_grape_data</code>.</li>
 </ol>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="Exercises_5.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="Exercises_5.html#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Run a PCA analysis of the data (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
 <li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.</li>
@@ -493,7 +494,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

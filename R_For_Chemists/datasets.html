@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -401,21 +402,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">A</span> Datasets</h1>
 <div id="hawaii_aquifers" class="section level2" number="25.1">
 <h2><span class="header-section-number">A.1</span> hawaii_aquifers</h2>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="datasets.html#cb95-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers</span>
-<span id="cb95-2"><a href="datasets.html#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 990 × 6</span></span>
-<span id="cb95-3"><a href="datasets.html#cb95-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code well_name              longitude latitude analyte      abundance</span></span>
-<span id="cb95-4"><a href="datasets.html#cb95-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;                      &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;            &lt;dbl&gt;</span></span>
-<span id="cb95-5"><a href="datasets.html#cb95-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    Alewa_Heights_Spring          NA       NA SiO2              11  </span></span>
-<span id="cb95-6"><a href="datasets.html#cb95-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_1    Alewa_Heights_Spring          NA       NA Cl                20  </span></span>
-<span id="cb95-7"><a href="datasets.html#cb95-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_1    Alewa_Heights_Spring          NA       NA Mg                 7.6</span></span>
-<span id="cb95-8"><a href="datasets.html#cb95-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_1    Alewa_Heights_Spring          NA       NA Na                14  </span></span>
-<span id="cb95-9"><a href="datasets.html#cb95-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_1    Alewa_Heights_Spring          NA       NA K                  0.6</span></span>
-<span id="cb95-10"><a href="datasets.html#cb95-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_1    Alewa_Heights_Spring          NA       NA SO4                7  </span></span>
-<span id="cb95-11"><a href="datasets.html#cb95-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_1    Alewa_Heights_Spring          NA       NA HCO3              51  </span></span>
-<span id="cb95-12"><a href="datasets.html#cb95-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_1    Alewa_Heights_Spring          NA       NA dissolved_s…     118  </span></span>
-<span id="cb95-13"><a href="datasets.html#cb95-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_1    Alewa_Heights_Spring          NA       NA Ca                 6.3</span></span>
-<span id="cb95-14"><a href="datasets.html#cb95-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_1    Beretania_High_Service        NA       NA SiO2              30  </span></span>
-<span id="cb95-15"><a href="datasets.html#cb95-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 980 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="datasets.html#cb97-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers</span>
+<span id="cb97-2"><a href="datasets.html#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 990 × 6</span></span>
+<span id="cb97-3"><a href="datasets.html#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code well_name              longitude latitude analyte      abundance</span></span>
+<span id="cb97-4"><a href="datasets.html#cb97-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;                      &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;            &lt;dbl&gt;</span></span>
+<span id="cb97-5"><a href="datasets.html#cb97-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    Alewa_Heights_Spring          NA       NA SiO2              11  </span></span>
+<span id="cb97-6"><a href="datasets.html#cb97-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_1    Alewa_Heights_Spring          NA       NA Cl                20  </span></span>
+<span id="cb97-7"><a href="datasets.html#cb97-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_1    Alewa_Heights_Spring          NA       NA Mg                 7.6</span></span>
+<span id="cb97-8"><a href="datasets.html#cb97-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_1    Alewa_Heights_Spring          NA       NA Na                14  </span></span>
+<span id="cb97-9"><a href="datasets.html#cb97-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_1    Alewa_Heights_Spring          NA       NA K                  0.6</span></span>
+<span id="cb97-10"><a href="datasets.html#cb97-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_1    Alewa_Heights_Spring          NA       NA SO4                7  </span></span>
+<span id="cb97-11"><a href="datasets.html#cb97-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_1    Alewa_Heights_Spring          NA       NA HCO3              51  </span></span>
+<span id="cb97-12"><a href="datasets.html#cb97-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_1    Alewa_Heights_Spring          NA       NA dissolved_s…     118  </span></span>
+<span id="cb97-13"><a href="datasets.html#cb97-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_1    Alewa_Heights_Spring          NA       NA Ca                 6.3</span></span>
+<span id="cb97-14"><a href="datasets.html#cb97-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_1    Beretania_High_Service        NA       NA SiO2              30  </span></span>
+<span id="cb97-15"><a href="datasets.html#cb97-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 980 more rows</span></span></code></pre></div>
 <p>This data set contains six columns and 990 rows. Each row provides the <code>abundance</code> of a particular <code>analyte</code> in a particular well (<code>well_name</code>). Each well draws on a particular aquifer (<code>aquifer_code</code>), and is located at a particular <code>latitude</code> and <code>longitude</code>.</p>
 <p>Format: long (i.e. tidy)</p>
 <p>Contains <NA>: TRUE</p>
@@ -454,7 +455,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

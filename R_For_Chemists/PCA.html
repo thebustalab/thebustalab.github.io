@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -406,26 +407,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="https://thebustalab.github.io/R_For_Chemists/figures/PCA.png" style="display: block; margin: auto;" /></p>
 <p>In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).</p>
 <p>We can run and visualize principal components analyses using the <code>runMatrixAnalysis()</code> function as in the example below:</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="PCA.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span>
-<span id="cb61-2"><a href="PCA.html#cb61-2" aria-hidden="true" tabindex="-1"></a>AK_lakes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
-<span id="cb61-3"><a href="PCA.html#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes)</span>
-<span id="cb61-4"><a href="PCA.html#cb61-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-5"><a href="PCA.html#cb61-5" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb61-6"><a href="PCA.html#cb61-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> AK_lakes,</span>
-<span id="cb61-7"><a href="PCA.html#cb61-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
-<span id="cb61-8"><a href="PCA.html#cb61-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb61-9"><a href="PCA.html#cb61-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb61-10"><a href="PCA.html#cb61-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb61-11"><a href="PCA.html#cb61-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb61-12"><a href="PCA.html#cb61-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb61-13"><a href="PCA.html#cb61-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb61-14"><a href="PCA.html#cb61-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-15"><a href="PCA.html#cb61-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
-<span id="cb61-16"><a href="PCA.html#cb61-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-17"><a href="PCA.html#cb61-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> AK_lakes_pca, <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span></span>
-<span id="cb61-18"><a href="PCA.html#cb61-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">fill =</span> park), <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb61-19"><a href="PCA.html#cb61-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> lake), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb61-20"><a href="PCA.html#cb61-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="PCA.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span>
+<span id="cb63-2"><a href="PCA.html#cb63-2" aria-hidden="true" tabindex="-1"></a>AK_lakes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
+<span id="cb63-3"><a href="PCA.html#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes)</span>
+<span id="cb63-4"><a href="PCA.html#cb63-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-5"><a href="PCA.html#cb63-5" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb63-6"><a href="PCA.html#cb63-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> AK_lakes,</span>
+<span id="cb63-7"><a href="PCA.html#cb63-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb63-8"><a href="PCA.html#cb63-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb63-9"><a href="PCA.html#cb63-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb63-10"><a href="PCA.html#cb63-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb63-11"><a href="PCA.html#cb63-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb63-12"><a href="PCA.html#cb63-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb63-13"><a href="PCA.html#cb63-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb63-14"><a href="PCA.html#cb63-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-15"><a href="PCA.html#cb63-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb63-16"><a href="PCA.html#cb63-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-17"><a href="PCA.html#cb63-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> AK_lakes_pca, <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span></span>
+<span id="cb63-18"><a href="PCA.html#cb63-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">fill =</span> park), <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb63-19"><a href="PCA.html#cb63-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> lake), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb63-20"><a href="PCA.html#cb63-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()</span></code></pre></div>
 <p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
 <p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
 </div>
@@ -433,56 +434,56 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">12.2</span> Drivers of PCA dimensions</h2>
 <p>Let’s look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let’s look at an example. We can obtain the ordination plot information using <code>runMatrixAnalysis()</code> with <code>analysis = "pca-ord"</code>:</p>
 <p>We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of <code>geom_label_repel()</code> and <code>filter()</code> to label certain segments in the ordination plot. You do not need to use <code>geom_label_repel()</code>, you could use the built in <code>geom_label()</code>, but <code>geom_label_repel()</code> can make labelling your segments easier.</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="PCA.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span>
-<span id="cb62-2"><a href="PCA.html#cb62-2" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_ord <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb62-3"><a href="PCA.html#cb62-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> AK_lakes,</span>
-<span id="cb62-4"><a href="PCA.html#cb62-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca-ord&quot;</span>),</span>
-<span id="cb62-5"><a href="PCA.html#cb62-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb62-6"><a href="PCA.html#cb62-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb62-7"><a href="PCA.html#cb62-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb62-8"><a href="PCA.html#cb62-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb62-9"><a href="PCA.html#cb62-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb62-10"><a href="PCA.html#cb62-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb62-11"><a href="PCA.html#cb62-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-12"><a href="PCA.html#cb62-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggforce) <span class="co"># Gives access to geom_circle</span></span>
-<span id="cb62-13"><a href="PCA.html#cb62-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel) <span class="co"># Gives access to geom_label_repel</span></span>
-<span id="cb62-14"><a href="PCA.html#cb62-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_ord)</span>
-<span id="cb62-15"><a href="PCA.html#cb62-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AK_lakes_pca_ord) <span class="sc">+</span></span>
-<span id="cb62-16"><a href="PCA.html#cb62-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">xend =</span> Dim<span class="fl">.1</span>, <span class="at">yend =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> analyte), <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb62-17"><a href="PCA.html#cb62-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_circle</span>(<span class="fu">aes</span>(<span class="at">x0 =</span> <span class="dv">0</span>, <span class="at">y0 =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb62-18"><a href="PCA.html#cb62-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
-<span id="cb62-19"><a href="PCA.html#cb62-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.1</span> <span class="sc">&gt;</span> <span class="fl">0.9</span>, Dim<span class="fl">.2</span> <span class="sc">&lt;</span> <span class="fl">0.1</span>, Dim<span class="fl">.2</span> <span class="sc">&gt;</span> <span class="sc">-</span><span class="fl">0.1</span>),</span>
-<span id="cb62-20"><a href="PCA.html#cb62-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> analyte), <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
-<span id="cb62-21"><a href="PCA.html#cb62-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb62-22"><a href="PCA.html#cb62-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
-<span id="cb62-23"><a href="PCA.html#cb62-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.2</span> <span class="sc">&gt;</span> <span class="fl">0.5</span>),</span>
-<span id="cb62-24"><a href="PCA.html#cb62-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> analyte), <span class="at">direction =</span> <span class="st">&quot;y&quot;</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
-<span id="cb62-25"><a href="PCA.html#cb62-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb62-26"><a href="PCA.html#cb62-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>)) <span class="sc">+</span></span>
-<span id="cb62-27"><a href="PCA.html#cb62-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="PCA.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span>
+<span id="cb64-2"><a href="PCA.html#cb64-2" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_ord <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb64-3"><a href="PCA.html#cb64-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> AK_lakes,</span>
+<span id="cb64-4"><a href="PCA.html#cb64-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca-ord&quot;</span>),</span>
+<span id="cb64-5"><a href="PCA.html#cb64-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb64-6"><a href="PCA.html#cb64-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb64-7"><a href="PCA.html#cb64-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb64-8"><a href="PCA.html#cb64-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb64-9"><a href="PCA.html#cb64-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb64-10"><a href="PCA.html#cb64-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb64-11"><a href="PCA.html#cb64-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-12"><a href="PCA.html#cb64-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggforce) <span class="co"># Gives access to geom_circle</span></span>
+<span id="cb64-13"><a href="PCA.html#cb64-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel) <span class="co"># Gives access to geom_label_repel</span></span>
+<span id="cb64-14"><a href="PCA.html#cb64-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_ord)</span>
+<span id="cb64-15"><a href="PCA.html#cb64-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AK_lakes_pca_ord) <span class="sc">+</span></span>
+<span id="cb64-16"><a href="PCA.html#cb64-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">xend =</span> Dim<span class="fl">.1</span>, <span class="at">yend =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> analyte), <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb64-17"><a href="PCA.html#cb64-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_circle</span>(<span class="fu">aes</span>(<span class="at">x0 =</span> <span class="dv">0</span>, <span class="at">y0 =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb64-18"><a href="PCA.html#cb64-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
+<span id="cb64-19"><a href="PCA.html#cb64-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.1</span> <span class="sc">&gt;</span> <span class="fl">0.9</span>, Dim<span class="fl">.2</span> <span class="sc">&lt;</span> <span class="fl">0.1</span>, Dim<span class="fl">.2</span> <span class="sc">&gt;</span> <span class="sc">-</span><span class="fl">0.1</span>),</span>
+<span id="cb64-20"><a href="PCA.html#cb64-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> analyte), <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
+<span id="cb64-21"><a href="PCA.html#cb64-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb64-22"><a href="PCA.html#cb64-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
+<span id="cb64-23"><a href="PCA.html#cb64-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.2</span> <span class="sc">&gt;</span> <span class="fl">0.5</span>),</span>
+<span id="cb64-24"><a href="PCA.html#cb64-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> analyte), <span class="at">direction =</span> <span class="st">&quot;y&quot;</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
+<span id="cb64-25"><a href="PCA.html#cb64-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb64-26"><a href="PCA.html#cb64-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>)) <span class="sc">+</span></span>
+<span id="cb64-27"><a href="PCA.html#cb64-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
 <p>Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.</p>
 </div>
 <div id="comparing-principal-components" class="section level2" number="12.3">
 <h2><span class="header-section-number">12.3</span> Comparing principal components</h2>
 <p>We also can access information about the how much of the variance in the data set is explained by each principal component:</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="PCA.html#cb63-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_ord <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb63-2"><a href="PCA.html#cb63-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> AK_lakes,</span>
-<span id="cb63-3"><a href="PCA.html#cb63-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca-dim&quot;</span>),</span>
-<span id="cb63-4"><a href="PCA.html#cb63-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb63-5"><a href="PCA.html#cb63-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb63-6"><a href="PCA.html#cb63-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb63-7"><a href="PCA.html#cb63-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb63-8"><a href="PCA.html#cb63-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb63-9"><a href="PCA.html#cb63-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb63-10"><a href="PCA.html#cb63-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_ord)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="PCA.html#cb65-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_ord <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb65-2"><a href="PCA.html#cb65-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> AK_lakes,</span>
+<span id="cb65-3"><a href="PCA.html#cb65-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca-dim&quot;</span>),</span>
+<span id="cb65-4"><a href="PCA.html#cb65-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb65-5"><a href="PCA.html#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb65-6"><a href="PCA.html#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb65-7"><a href="PCA.html#cb65-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb65-8"><a href="PCA.html#cb65-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb65-9"><a href="PCA.html#cb65-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb65-10"><a href="PCA.html#cb65-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_ord)</span></code></pre></div>
 <p>And we can now plot that using ggplot:</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="PCA.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb64-2"><a href="PCA.html#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> AK_lakes_pca_ord, </span>
-<span id="cb64-3"><a href="PCA.html#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> principal_component, <span class="at">y =</span> percent_variance_explained)</span>
-<span id="cb64-4"><a href="PCA.html#cb64-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb64-5"><a href="PCA.html#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb64-6"><a href="PCA.html#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb64-7"><a href="PCA.html#cb64-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="PCA.html#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb66-2"><a href="PCA.html#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> AK_lakes_pca_ord, </span>
+<span id="cb66-3"><a href="PCA.html#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> principal_component, <span class="at">y =</span> percent_variance_explained)</span>
+<span id="cb66-4"><a href="PCA.html#cb66-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb66-5"><a href="PCA.html#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb66-6"><a href="PCA.html#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb66-7"><a href="PCA.html#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
 <!-- end --></p>
 <!-- start Exercises 5 -->
@@ -521,7 +522,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

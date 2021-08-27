@@ -9,7 +9,7 @@ output:
       toc:
         collapse: section
       fontsettings:
-        theme: night
+        theme: sepia
         family: sans
         size: 2 
       toolbar:

@@ -8,7 +8,7 @@ output:
       toc:
         collapse: section
       fontsettings:
-        theme: night
+        theme: sepia
         family: serif
         size: 1
       toolbar:
@@ -107,6 +107,23 @@ library(tidyverse)
 
 If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the `tidyverse`. If this still fails, please contact me.
 
+## Installing TeX
+
+In this class we will generate high quality reports suitable for submission to supervisors, academic journals, etc. For this, we need the typesetting engine TeX. There are a few ways to do this. The easiest way is using the following commands:
+
+```{r, message = FALSE, eval = FALSE}
+install.packages(c('tinytex', 'rmarkdown'))
+```
+
+If you are on Mac, you need to now open your terminal and run the following two commands: `sudo chown -R `whoami`:admin /usr/local/bin` and then `~/Library/TinyTeX/bin/*/tlmgr path add`. 
+
+On both Mac and PC, you then need to do:
+```{r, message = FALSE, eval = FALSE}
+tinytex::install_tinytex()
+```
+
+Other options are: if you have Windows, download and install [MikTeX](https://miktex.org/download). If you have OSX, you can download and install MacTeX.
+
 ## Loading `phylochemistry`
 
 In addition to the `tidyverse`, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
@@ -119,11 +136,11 @@ source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Run: installPhylochemistry() to automatically install the required packages."
 
 This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 installPhylochemistry()
 ```
 
-Once that is complete, and assuming it is successful, attemp to load phylochemistry again:
+Once that is complete, and assuming it is successful, attempt to load phylochemistry again:
 ```{r, message = FALSE}
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```

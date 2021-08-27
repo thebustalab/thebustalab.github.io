@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -453,19 +454,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="installation.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
 <p>If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the <code>tidyverse</code>. If this still fails, please contact me.</p>
 </div>
-<div id="loading-phylochemistry" class="section level2" number="2.5">
-<h2><span class="header-section-number">2.5</span> Loading <code>phylochemistry</code></h2>
+<div id="installing-tex" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Installing TeX</h2>
+<p>In this class we will generate high quality reports suitable for submission to supervisors, academic journals, etc. For this, we need the typesetting engine TeX. There are a few ways to do this. The easiest way is using the following commands:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="installation.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&#39;tinytex&#39;</span>, <span class="st">&#39;rmarkdown&#39;</span>))</span></code></pre></div>
+<p>If you are on Mac, you need to now open your terminal and run the following two commands: <code>sudo chown -R</code>whoami<code>:admin /usr/local/bin</code> and then <code>~/Library/TinyTeX/bin/*/tlmgr path add</code>.</p>
+<p>On both Mac and PC, you then need to do:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="installation.html#cb6-1" aria-hidden="true" tabindex="-1"></a>tinytex<span class="sc">::</span><span class="fu">install_tinytex</span>()</span></code></pre></div>
+<p>Other options are: if you have Windows, download and install <a href="https://miktex.org/download">MikTeX</a>. If you have OSX, you can download and install MacTeX.</p>
+</div>
+<div id="loading-phylochemistry" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> Loading <code>phylochemistry</code></h2>
 <p>In addition to the <code>tidyverse</code>, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.</p>
 <p>First, attempt to load <code>phylochemistry</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="installation.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="installation.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Run: installPhylochemistry() to automatically install the required packages.”</p>
 <p>This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="installation.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">installPhylochemistry</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="installation.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">installPhylochemistry</span>()</span></code></pre></div>
 <p>Once that is complete, and assuming it is successful, attemp to load phylochemistry again:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="installation.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="installation.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 </div>
-<div id="updating-r-and-r-packages" class="section level2" number="2.6">
-<h2><span class="header-section-number">2.6</span> Updating R and R Packages</h2>
+<div id="updating-r-and-r-packages" class="section level2" number="2.7">
+<h2><span class="header-section-number">2.7</span> Updating R and R Packages</h2>
 <p>Sometimes when you run <code>installPhylochemistry()</code> you will get a message:</p>
 <p><code>Update all/some/none? [a/s/n]:</code></p>
 <p>In this case, it is generally advisable to enter <code>a</code> into the console and then press enter, indicating to R that you wish to update anything and everything that can be updated.</p>
@@ -473,16 +483,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><code>Do you want to install from sources the packages which need compilation? (Yes/no/cancel)</code></p>
 <p>You can reply <code>yes</code> if you wish, but for simplicity’s sake it is okay to say <code>no</code>. I usually start with saying <code>no</code>, only reverting to <code>yes</code> if things don’t work down the line.</p>
 <p>To update R:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="installation.html#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-2"><a href="installation.html#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&#39;devtools&#39;</span>) <span class="co">#assuming it is not already installed</span></span>
-<span id="cb8-3"><a href="installation.html#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="installation.html#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
-<span id="cb8-5"><a href="installation.html#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="installation.html#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&#39;andreacirilloac/updateR&#39;</span>)</span>
-<span id="cb8-7"><a href="installation.html#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="installation.html#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(updateR)</span>
-<span id="cb8-9"><a href="installation.html#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="installation.html#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">updateR</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="installation.html#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="installation.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&#39;devtools&#39;</span>) <span class="co">#assuming it is not already installed</span></span>
+<span id="cb10-3"><a href="installation.html#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="installation.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb10-5"><a href="installation.html#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="installation.html#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&#39;andreacirilloac/updateR&#39;</span>)</span>
+<span id="cb10-7"><a href="installation.html#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="installation.html#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(updateR)</span>
+<span id="cb10-9"><a href="installation.html#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="installation.html#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">updateR</span>()</span></code></pre></div>
 <!-- end -->
 <!-- start R Basics -->
 </div>
@@ -520,7 +530,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

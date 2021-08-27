@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -443,19 +444,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="question-7-filtering-and-plotting" class="section level3" number="5.1.7">
 <h3><span class="header-section-number">5.1.7</span> Question 7: Filtering and plotting</h3>
 <p>I am going to show you an example of how you can filter and plot at the same time:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="Exercises_1.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb24-2"><a href="Exercises_1.html#cb24-2" aria-hidden="true" tabindex="-1"></a>algae_chemistry_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
-<span id="cb24-3"><a href="Exercises_1.html#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 180 Columns: 5</span></span>
-<span id="cb24-4"><a href="Exercises_1.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb24-5"><a href="Exercises_1.html#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb24-6"><a href="Exercises_1.html#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (3): algae_strain, harvesting_regime, chemical_species</span></span>
-<span id="cb24-7"><a href="Exercises_1.html#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (2): replicate, abundance</span></span>
-<span id="cb24-8"><a href="Exercises_1.html#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb24-9"><a href="Exercises_1.html#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb24-10"><a href="Exercises_1.html#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb24-11"><a href="Exercises_1.html#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(algae_chemistry_data, chemical_species <span class="sc">==</span> <span class="st">&quot;essential_Aas&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb24-12"><a href="Exercises_1.html#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="Exercises_1.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb26-2"><a href="Exercises_1.html#cb26-2" aria-hidden="true" tabindex="-1"></a>algae_chemistry_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
+<span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 180 Columns: 5</span></span>
+<span id="cb26-4"><a href="Exercises_1.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb26-5"><a href="Exercises_1.html#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb26-6"><a href="Exercises_1.html#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (3): algae_strain, harvesting_regime, chemical_species</span></span>
+<span id="cb26-7"><a href="Exercises_1.html#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (2): replicate, abundance</span></span>
+<span id="cb26-8"><a href="Exercises_1.html#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb26-9"><a href="Exercises_1.html#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb26-10"><a href="Exercises_1.html#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb26-11"><a href="Exercises_1.html#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(algae_chemistry_data, chemical_species <span class="sc">==</span> <span class="st">&quot;essential_Aas&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
+<span id="cb26-12"><a href="Exercises_1.html#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-37-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
 </div>
 <div id="question-8-filtering-and-plotting" class="section level3" number="5.1.8">
@@ -469,13 +470,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="question-10-a-peek-at-whats-to-come" class="section level3" number="5.1.10">
 <h3><span class="header-section-number">5.1.10</span> Question 10: A peek at what’s to come…</h3>
 <p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="Exercises_1.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_chemistry_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
-<span id="cb25-2"><a href="Exercises_1.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
-<span id="cb25-3"><a href="Exercises_1.html#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>algae_strain)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="Exercises_1.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_chemistry_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="Exercises_1.html#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="Exercises_1.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>algae_strain)</span></code></pre></div>
 <p>Also try, instead of <code>facet_grid(.~algae_strain)</code>, <code>facet_grid(algae_strain~.)</code> at the end of you plot command. (note the swap in the position of the <code>.~</code> relative to <code>algae_strain</code>). This means your code should look something like:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="Exercises_1.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_chemistry_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
-<span id="cb26-2"><a href="Exercises_1.html#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
-<span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(algae_strain<span class="sc">~</span>.)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="Exercises_1.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_chemistry_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
+<span id="cb28-2"><a href="Exercises_1.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
+<span id="cb28-3"><a href="Exercises_1.html#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(algae_strain<span class="sc">~</span>.)</span></code></pre></div>
 <p>What advantages does this one extra line provide over what you had to do in question 9?</p>
 </div>
 </div>
@@ -512,19 +513,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="question-8-open-ended-plotting" class="section level3" number="5.2.8">
 <h3><span class="header-section-number">5.2.8</span> Question 8: Open-ended Plotting</h3>
 <p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly. Here is an example:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="Exercises_1.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb27-2"><a href="Exercises_1.html#cb27-2" aria-hidden="true" tabindex="-1"></a>lake_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
-<span id="cb27-3"><a href="Exercises_1.html#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
-<span id="cb27-4"><a href="Exercises_1.html#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb27-5"><a href="Exercises_1.html#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb27-6"><a href="Exercises_1.html#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
-<span id="cb27-7"><a href="Exercises_1.html#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
-<span id="cb27-8"><a href="Exercises_1.html#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb27-9"><a href="Exercises_1.html#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb27-10"><a href="Exercises_1.html#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb27-11"><a href="Exercises_1.html#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)) <span class="sc">+</span></span>
-<span id="cb27-12"><a href="Exercises_1.html#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-52-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="Exercises_1.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb29-2"><a href="Exercises_1.html#cb29-2" aria-hidden="true" tabindex="-1"></a>lake_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
+<span id="cb29-3"><a href="Exercises_1.html#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
+<span id="cb29-4"><a href="Exercises_1.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb29-5"><a href="Exercises_1.html#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb29-6"><a href="Exercises_1.html#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
+<span id="cb29-7"><a href="Exercises_1.html#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
+<span id="cb29-8"><a href="Exercises_1.html#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb29-9"><a href="Exercises_1.html#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb29-10"><a href="Exercises_1.html#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb29-11"><a href="Exercises_1.html#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)) <span class="sc">+</span></span>
+<span id="cb29-12"><a href="Exercises_1.html#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span>)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-54-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
 <p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 <!-- end --></p>
@@ -565,7 +566,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

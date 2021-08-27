@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -403,36 +404,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="geoms-1" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Geoms</h2>
 <p>I’d like to introduce you to two new geoms. The first <code>geom_smooth()</code> is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="geoms_facets_scales_themes.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb28-2"><a href="geoms_facets_scales_themes.html#cb28-2" aria-hidden="true" tabindex="-1"></a>solvents <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv&quot;</span>)</span>
-<span id="cb28-3"><a href="geoms_facets_scales_themes.html#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 32 Columns: 14</span></span>
-<span id="cb28-4"><a href="geoms_facets_scales_themes.html#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb28-5"><a href="geoms_facets_scales_themes.html#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb28-6"><a href="geoms_facets_scales_themes.html#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): solvent, formula, CAS_number, category</span></span>
-<span id="cb28-7"><a href="geoms_facets_scales_themes.html#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (9): boiling_point, melting_point, density, solubility_in_water, relativ...</span></span>
-<span id="cb28-8"><a href="geoms_facets_scales_themes.html#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="do">## lgl (1): miscible_with_water</span></span>
-<span id="cb28-9"><a href="geoms_facets_scales_themes.html#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb28-10"><a href="geoms_facets_scales_themes.html#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb28-11"><a href="geoms_facets_scales_themes.html#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb28-12"><a href="geoms_facets_scales_themes.html#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
-<span id="cb28-13"><a href="geoms_facets_scales_themes.html#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
-<span id="cb28-14"><a href="geoms_facets_scales_themes.html#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span>
-<span id="cb28-15"><a href="geoms_facets_scales_themes.html#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-54-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="geoms_facets_scales_themes.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb30-2"><a href="geoms_facets_scales_themes.html#cb30-2" aria-hidden="true" tabindex="-1"></a>solvents <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/solvents.csv&quot;</span>)</span>
+<span id="cb30-3"><a href="geoms_facets_scales_themes.html#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 32 Columns: 14</span></span>
+<span id="cb30-4"><a href="geoms_facets_scales_themes.html#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb30-5"><a href="geoms_facets_scales_themes.html#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb30-6"><a href="geoms_facets_scales_themes.html#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): solvent, formula, CAS_number, category</span></span>
+<span id="cb30-7"><a href="geoms_facets_scales_themes.html#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (9): boiling_point, melting_point, density, solubility_in_water, relativ...</span></span>
+<span id="cb30-8"><a href="geoms_facets_scales_themes.html#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="do">## lgl (1): miscible_with_water</span></span>
+<span id="cb30-9"><a href="geoms_facets_scales_themes.html#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb30-10"><a href="geoms_facets_scales_themes.html#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb30-11"><a href="geoms_facets_scales_themes.html#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb30-12"><a href="geoms_facets_scales_themes.html#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
+<span id="cb30-13"><a href="geoms_facets_scales_themes.html#cb30-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb30-14"><a href="geoms_facets_scales_themes.html#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span>
+<span id="cb30-15"><a href="geoms_facets_scales_themes.html#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-56-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Also, please be aware of <code>geom_tile()</code>, which is nice for situations with two discrete variables and one continuous variable. <code>geom_tile()</code> makes what are often referred to as heat maps. Note that <code>geom_tile()</code> is somewhat similar to <code>geom_point(shape = 21)</code>, in that it has both <code>fill</code> and <code>color</code> aesthetics that control the center color and the border color, respectively.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="geoms_facets_scales_themes.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb29-2"><a href="geoms_facets_scales_themes.html#cb29-2" aria-hidden="true" tabindex="-1"></a>algae <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
-<span id="cb29-3"><a href="geoms_facets_scales_themes.html#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 180 Columns: 5</span></span>
-<span id="cb29-4"><a href="geoms_facets_scales_themes.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb29-5"><a href="geoms_facets_scales_themes.html#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb29-6"><a href="geoms_facets_scales_themes.html#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (3): algae_strain, harvesting_regime, chemical_species</span></span>
-<span id="cb29-7"><a href="geoms_facets_scales_themes.html#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (2): replicate, abundance</span></span>
-<span id="cb29-8"><a href="geoms_facets_scales_themes.html#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb29-9"><a href="geoms_facets_scales_themes.html#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb29-10"><a href="geoms_facets_scales_themes.html#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb29-11"><a href="geoms_facets_scales_themes.html#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(algae, harvesting_regime <span class="sc">==</span> <span class="st">&quot;Heavy&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
-<span id="cb29-12"><a href="geoms_facets_scales_themes.html#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-55-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="geoms_facets_scales_themes.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb31-2"><a href="geoms_facets_scales_themes.html#cb31-2" aria-hidden="true" tabindex="-1"></a>algae <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
+<span id="cb31-3"><a href="geoms_facets_scales_themes.html#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 180 Columns: 5</span></span>
+<span id="cb31-4"><a href="geoms_facets_scales_themes.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb31-5"><a href="geoms_facets_scales_themes.html#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb31-6"><a href="geoms_facets_scales_themes.html#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (3): algae_strain, harvesting_regime, chemical_species</span></span>
+<span id="cb31-7"><a href="geoms_facets_scales_themes.html#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (2): replicate, abundance</span></span>
+<span id="cb31-8"><a href="geoms_facets_scales_themes.html#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb31-9"><a href="geoms_facets_scales_themes.html#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb31-10"><a href="geoms_facets_scales_themes.html#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb31-11"><a href="geoms_facets_scales_themes.html#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(algae, harvesting_regime <span class="sc">==</span> <span class="st">&quot;Heavy&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
+<span id="cb31-12"><a href="geoms_facets_scales_themes.html#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-57-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.</p>
 <p>There is a <a href="https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf">handy cheat sheet</a> that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs…</p>
 </div>
@@ -440,49 +441,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">6.2</span> Facets</h2>
 <p>As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let’s check it out.</p>
 <p>Here, we can facet in the horizontal direction:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="geoms_facets_scales_themes.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
-<span id="cb30-2"><a href="geoms_facets_scales_themes.html#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb30-3"><a href="geoms_facets_scales_themes.html#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>replicate)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-56-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>We can facet in the vertical direction:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="geoms_facets_scales_themes.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
-<span id="cb31-2"><a href="geoms_facets_scales_themes.html#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb31-3"><a href="geoms_facets_scales_themes.html#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(replicate<span class="sc">~</span>.)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-57-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>And we can do both at the same time:</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="geoms_facets_scales_themes.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
 <span id="cb32-2"><a href="geoms_facets_scales_themes.html#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb32-3"><a href="geoms_facets_scales_themes.html#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(harvesting_regime<span class="sc">~</span>replicate)</span></code></pre></div>
+<span id="cb32-3"><a href="geoms_facets_scales_themes.html#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>replicate)</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-58-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>We can facet in the vertical direction:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="geoms_facets_scales_themes.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
+<span id="cb33-2"><a href="geoms_facets_scales_themes.html#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb33-3"><a href="geoms_facets_scales_themes.html#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(replicate<span class="sc">~</span>.)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-59-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>And we can do both at the same time:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="geoms_facets_scales_themes.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
+<span id="cb34-2"><a href="geoms_facets_scales_themes.html#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb34-3"><a href="geoms_facets_scales_themes.html#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(harvesting_regime<span class="sc">~</span>replicate)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-60-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider <code>facet_wrap</code> instead of <code>facet_grid</code>.</p>
 </div>
 <div id="scales" class="section level2" number="6.3">
 <h2><span class="header-section-number">6.3</span> Scales</h2>
 <p>Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the <code>scale_*</code> family of commands. Consider our faceting example above. In it, we use <code>geom_tile(aes(fill = abundance))</code> to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called <code>fill</code> that we can adjust using <code>scale_fill_*</code>. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, <code>scale_fill_gradient()</code> is the command we need to change it. Remember that you could always type <code>?scale_fill_</code> into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: “How to modify color scale ggplot geom_tile”, which will undoubtedly turn up a wealth of help.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="geoms_facets_scales_themes.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
-<span id="cb33-2"><a href="geoms_facets_scales_themes.html#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb33-3"><a href="geoms_facets_scales_themes.html#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(harvesting_regime<span class="sc">~</span>replicate) <span class="sc">+</span></span>
-<span id="cb33-4"><a href="geoms_facets_scales_themes.html#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">&quot;white&quot;</span>, <span class="at">high =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb33-5"><a href="geoms_facets_scales_themes.html#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-59-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="geoms_facets_scales_themes.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> chemical_species)) <span class="sc">+</span> </span>
+<span id="cb35-2"><a href="geoms_facets_scales_themes.html#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> abundance), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb35-3"><a href="geoms_facets_scales_themes.html#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(harvesting_regime<span class="sc">~</span>replicate) <span class="sc">+</span></span>
+<span id="cb35-4"><a href="geoms_facets_scales_themes.html#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">&quot;white&quot;</span>, <span class="at">high =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb35-5"><a href="geoms_facets_scales_themes.html#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-61-1.png" width="384" style="display: block; margin: auto;" /></p>
 <div id="rcolorbrewer" class="section level3" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> RColorBrewer</h3>
 <p>One particularly useful type of scale are those provided by RColorBrewer:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="geoms_facets_scales_themes.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;RColorBrewer&quot;)</span></span>
-<span id="cb34-2"><a href="geoms_facets_scales_themes.html#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-3"><a href="geoms_facets_scales_themes.html#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
-<span id="cb34-4"><a href="geoms_facets_scales_themes.html#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb34-5"><a href="geoms_facets_scales_themes.html#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-6"><a href="geoms_facets_scales_themes.html#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">display.brewer.all</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-60-1.png" width="384" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="geoms_facets_scales_themes.html#cb35-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-2"><a href="geoms_facets_scales_themes.html#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars) <span class="sc">+</span></span>
-<span id="cb35-3"><a href="geoms_facets_scales_themes.html#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb35-4"><a href="geoms_facets_scales_themes.html#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> mpg, <span class="at">y =</span> <span class="fu">factor</span>(cyl), <span class="at">fill =</span> <span class="fu">factor</span>(carb)), </span>
-<span id="cb35-5"><a href="geoms_facets_scales_themes.html#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">6</span></span>
-<span id="cb35-6"><a href="geoms_facets_scales_themes.html#cb35-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb35-7"><a href="geoms_facets_scales_themes.html#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-60-2.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="geoms_facets_scales_themes.html#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;RColorBrewer&quot;)</span></span>
+<span id="cb36-2"><a href="geoms_facets_scales_themes.html#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="geoms_facets_scales_themes.html#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb36-4"><a href="geoms_facets_scales_themes.html#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb36-5"><a href="geoms_facets_scales_themes.html#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="geoms_facets_scales_themes.html#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="fu">display.brewer.all</span>()</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-62-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="geoms_facets_scales_themes.html#cb37-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-2"><a href="geoms_facets_scales_themes.html#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars) <span class="sc">+</span></span>
+<span id="cb37-3"><a href="geoms_facets_scales_themes.html#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb37-4"><a href="geoms_facets_scales_themes.html#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> mpg, <span class="at">y =</span> <span class="fu">factor</span>(cyl), <span class="at">fill =</span> <span class="fu">factor</span>(carb)), </span>
+<span id="cb37-5"><a href="geoms_facets_scales_themes.html#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">6</span></span>
+<span id="cb37-6"><a href="geoms_facets_scales_themes.html#cb37-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb37-7"><a href="geoms_facets_scales_themes.html#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-62-2.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="themes" class="section level2" number="6.4">
@@ -491,49 +492,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="complete-themes" class="section level3" number="6.4.1">
 <h3><span class="header-section-number">6.4.1</span> Complete themes</h3>
 <p><code>ggplot</code> comes with a handful of built in “complete themes”. These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="geoms_facets_scales_themes.html#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
-<span id="cb36-2"><a href="geoms_facets_scales_themes.html#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
-<span id="cb36-3"><a href="geoms_facets_scales_themes.html#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb36-4"><a href="geoms_facets_scales_themes.html#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
-<span id="cb36-5"><a href="geoms_facets_scales_themes.html#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-61-1.png" width="384" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="geoms_facets_scales_themes.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
-<span id="cb37-2"><a href="geoms_facets_scales_themes.html#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
-<span id="cb37-3"><a href="geoms_facets_scales_themes.html#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb37-4"><a href="geoms_facets_scales_themes.html#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dark</span>()</span>
-<span id="cb37-5"><a href="geoms_facets_scales_themes.html#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-62-1.png" width="384" style="display: block; margin: auto;" /></p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="geoms_facets_scales_themes.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
 <span id="cb38-2"><a href="geoms_facets_scales_themes.html#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
 <span id="cb38-3"><a href="geoms_facets_scales_themes.html#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb38-4"><a href="geoms_facets_scales_themes.html#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span>
+<span id="cb38-4"><a href="geoms_facets_scales_themes.html#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
 <span id="cb38-5"><a href="geoms_facets_scales_themes.html#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-63-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="geoms_facets_scales_themes.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
+<span id="cb39-2"><a href="geoms_facets_scales_themes.html#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb39-3"><a href="geoms_facets_scales_themes.html#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb39-4"><a href="geoms_facets_scales_themes.html#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dark</span>()</span>
+<span id="cb39-5"><a href="geoms_facets_scales_themes.html#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-64-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="geoms_facets_scales_themes.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
+<span id="cb40-2"><a href="geoms_facets_scales_themes.html#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb40-3"><a href="geoms_facets_scales_themes.html#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb40-4"><a href="geoms_facets_scales_themes.html#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span>
+<span id="cb40-5"><a href="geoms_facets_scales_themes.html#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-65-1.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 <div id="theme-components" class="section level3" number="6.4.2">
 <h3><span class="header-section-number">6.4.2</span> Theme components</h3>
 <p>You can also change individual components of themes. This can be a bit tricky, but it’s all explained if you run <code>?theme()</code>. Hare is an example (and google will provide many, many more).</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="geoms_facets_scales_themes.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
-<span id="cb39-2"><a href="geoms_facets_scales_themes.html#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
-<span id="cb39-3"><a href="geoms_facets_scales_themes.html#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb39-4"><a href="geoms_facets_scales_themes.html#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb39-5"><a href="geoms_facets_scales_themes.html#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)</span>
-<span id="cb39-6"><a href="geoms_facets_scales_themes.html#cb39-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-7"><a href="geoms_facets_scales_themes.html#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-64-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="geoms_facets_scales_themes.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
+<span id="cb41-2"><a href="geoms_facets_scales_themes.html#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb41-3"><a href="geoms_facets_scales_themes.html#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb41-4"><a href="geoms_facets_scales_themes.html#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb41-5"><a href="geoms_facets_scales_themes.html#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)</span>
+<span id="cb41-6"><a href="geoms_facets_scales_themes.html#cb41-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-7"><a href="geoms_facets_scales_themes.html#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-66-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Last, here is an example of combining <code>scale_*</code> and <code>theme*</code> with previous commands to really get a plot looking sharp.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="geoms_facets_scales_themes.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
-<span id="cb40-2"><a href="geoms_facets_scales_themes.html#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">color =</span> <span class="st">&quot;#4daf4a&quot;</span>) <span class="sc">+</span></span>
-<span id="cb40-3"><a href="geoms_facets_scales_themes.html#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Boiling Point&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">200</span>,<span class="dv">25</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">210</span>)) <span class="sc">+</span></span>
-<span id="cb40-4"><a href="geoms_facets_scales_themes.html#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Vapor Pressure&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">600</span>,<span class="dv">50</span>)) <span class="sc">+</span></span>
-<span id="cb40-5"><a href="geoms_facets_scales_themes.html#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;#377eb8&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb40-6"><a href="geoms_facets_scales_themes.html#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb40-7"><a href="geoms_facets_scales_themes.html#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb40-8"><a href="geoms_facets_scales_themes.html#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
-<span id="cb40-9"><a href="geoms_facets_scales_themes.html#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)</span>
-<span id="cb40-10"><a href="geoms_facets_scales_themes.html#cb40-10" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb40-11"><a href="geoms_facets_scales_themes.html#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-65-1.png" width="384" style="display: block; margin: auto;" />
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="geoms_facets_scales_themes.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> solvents, <span class="fu">aes</span>(<span class="at">x =</span> boiling_point, <span class="at">y =</span> vapor_pressure)) <span class="sc">+</span> </span>
+<span id="cb42-2"><a href="geoms_facets_scales_themes.html#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">color =</span> <span class="st">&quot;#4daf4a&quot;</span>) <span class="sc">+</span></span>
+<span id="cb42-3"><a href="geoms_facets_scales_themes.html#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Boiling Point&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">200</span>,<span class="dv">25</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">210</span>)) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="geoms_facets_scales_themes.html#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Vapor Pressure&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">600</span>,<span class="dv">50</span>)) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="geoms_facets_scales_themes.html#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;#377eb8&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb42-6"><a href="geoms_facets_scales_themes.html#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb42-7"><a href="geoms_facets_scales_themes.html#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb42-8"><a href="geoms_facets_scales_themes.html#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
+<span id="cb42-9"><a href="geoms_facets_scales_themes.html#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)</span>
+<span id="cb42-10"><a href="geoms_facets_scales_themes.html#cb42-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb42-11"><a href="geoms_facets_scales_themes.html#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="do">## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</span></span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-67-1.png" width="384" style="display: block; margin: auto;" />
 <!-- end --></p>
 <!-- start Exercises 2 -->
 </div>
@@ -572,7 +573,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

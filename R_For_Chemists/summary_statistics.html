@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -403,198 +404,198 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">8.1</span> Summary statistics</h2>
 <p>So far, we have been importing and plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <a href="https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv">NY Trees</a> dataset.</p>
 <p>The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="summary_statistics.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb41-2"><a href="summary_statistics.html#cb41-2" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv&quot;</span>)</span>
-<span id="cb41-3"><a href="summary_statistics.html#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 378762 Columns: 14</span></span>
-<span id="cb41-4"><a href="summary_statistics.html#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb41-5"><a href="summary_statistics.html#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb41-6"><a href="summary_statistics.html#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (9): address, tree_loc, pit_type, soil_lvl, status, spc_latin, spc_commo...</span></span>
-<span id="cb41-7"><a href="summary_statistics.html#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (5): tree_height, tree_diameter, zipcode, latitude, longitude</span></span>
-<span id="cb41-8"><a href="summary_statistics.html#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb41-9"><a href="summary_statistics.html#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb41-10"><a href="summary_statistics.html#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb41-11"><a href="summary_statistics.html#cb41-11" aria-hidden="true" tabindex="-1"></a>ny_trees</span>
-<span id="cb41-12"><a href="summary_statistics.html#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 378,762 × 14</span></span>
-<span id="cb41-13"><a href="summary_statistics.html#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="do">##    tree_height tree_diameter address tree_loc pit_type soil_lvl status spc_latin</span></span>
-<span id="cb41-14"><a href="summary_statistics.html#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="do">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    </span></span>
-<span id="cb41-15"><a href="summary_statistics.html#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  1        21.1             6 1139 5… Front    Sidewal… Level    Good   PYRUS CA…</span></span>
-<span id="cb41-16"><a href="summary_statistics.html#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  2        59.0             6 2220 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
-<span id="cb41-17"><a href="summary_statistics.html#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  3        92.4            13 2254 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
-<span id="cb41-18"><a href="summary_statistics.html#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  4        50.2            15 2332 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
-<span id="cb41-19"><a href="summary_statistics.html#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  5        95.0            21 2361 E… Front    Sidewal… Level    Poor   PLATANUS…</span></span>
-<span id="cb41-20"><a href="summary_statistics.html#cb41-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  6        67.5            19 2409 E… Front    Continu… Level    Good   PLATANUS…</span></span>
-<span id="cb41-21"><a href="summary_statistics.html#cb41-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  7        75.3            11 1481 E… Front    Lawn     Level    Excel… PLATANUS…</span></span>
-<span id="cb41-22"><a href="summary_statistics.html#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  8        27.9             7 1129 5… Front    Sidewal… Level    Good   PYRUS CA…</span></span>
-<span id="cb41-23"><a href="summary_statistics.html#cb41-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       111.             26 2076 E… Across   Sidewal… Level    Excel… PLATANUS…</span></span>
-<span id="cb41-24"><a href="summary_statistics.html#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 10        83.9            20 2025 E… Front    Sidewal… Level    Excel… PLATANUS…</span></span>
-<span id="cb41-25"><a href="summary_statistics.html#cb41-25" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 378,752 more rows, and 6 more variables: spc_common &lt;chr&gt;,</span></span>
-<span id="cb41-26"><a href="summary_statistics.html#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="do">## #   trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;, latitude &lt;dbl&gt;,</span></span>
-<span id="cb41-27"><a href="summary_statistics.html#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="do">## #   longitude &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="summary_statistics.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb43-2"><a href="summary_statistics.html#cb43-2" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv&quot;</span>)</span>
+<span id="cb43-3"><a href="summary_statistics.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 378762 Columns: 14</span></span>
+<span id="cb43-4"><a href="summary_statistics.html#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb43-5"><a href="summary_statistics.html#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb43-6"><a href="summary_statistics.html#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (9): address, tree_loc, pit_type, soil_lvl, status, spc_latin, spc_commo...</span></span>
+<span id="cb43-7"><a href="summary_statistics.html#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (5): tree_height, tree_diameter, zipcode, latitude, longitude</span></span>
+<span id="cb43-8"><a href="summary_statistics.html#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb43-9"><a href="summary_statistics.html#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb43-10"><a href="summary_statistics.html#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb43-11"><a href="summary_statistics.html#cb43-11" aria-hidden="true" tabindex="-1"></a>ny_trees</span>
+<span id="cb43-12"><a href="summary_statistics.html#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 378,762 × 14</span></span>
+<span id="cb43-13"><a href="summary_statistics.html#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="do">##    tree_height tree_diameter address tree_loc pit_type soil_lvl status spc_latin</span></span>
+<span id="cb43-14"><a href="summary_statistics.html#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="do">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    </span></span>
+<span id="cb43-15"><a href="summary_statistics.html#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  1        21.1             6 1139 5… Front    Sidewal… Level    Good   PYRUS CA…</span></span>
+<span id="cb43-16"><a href="summary_statistics.html#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  2        59.0             6 2220 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
+<span id="cb43-17"><a href="summary_statistics.html#cb43-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  3        92.4            13 2254 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
+<span id="cb43-18"><a href="summary_statistics.html#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  4        50.2            15 2332 B… Across   Sidewal… Level    Good   PLATANUS…</span></span>
+<span id="cb43-19"><a href="summary_statistics.html#cb43-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  5        95.0            21 2361 E… Front    Sidewal… Level    Poor   PLATANUS…</span></span>
+<span id="cb43-20"><a href="summary_statistics.html#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  6        67.5            19 2409 E… Front    Continu… Level    Good   PLATANUS…</span></span>
+<span id="cb43-21"><a href="summary_statistics.html#cb43-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  7        75.3            11 1481 E… Front    Lawn     Level    Excel… PLATANUS…</span></span>
+<span id="cb43-22"><a href="summary_statistics.html#cb43-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  8        27.9             7 1129 5… Front    Sidewal… Level    Good   PYRUS CA…</span></span>
+<span id="cb43-23"><a href="summary_statistics.html#cb43-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       111.             26 2076 E… Across   Sidewal… Level    Excel… PLATANUS…</span></span>
+<span id="cb43-24"><a href="summary_statistics.html#cb43-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 10        83.9            20 2025 E… Front    Sidewal… Level    Excel… PLATANUS…</span></span>
+<span id="cb43-25"><a href="summary_statistics.html#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 378,752 more rows, and 6 more variables: spc_common &lt;chr&gt;,</span></span>
+<span id="cb43-26"><a href="summary_statistics.html#cb43-26" aria-hidden="true" tabindex="-1"></a><span class="do">## #   trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;, latitude &lt;dbl&gt;,</span></span>
+<span id="cb43-27"><a href="summary_statistics.html#cb43-27" aria-hidden="true" tabindex="-1"></a><span class="do">## #   longitude &lt;dbl&gt;</span></span></code></pre></div>
 <p>More than 300,000 observations of 14 variables! That’s 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don’t even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
 <p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code>mean()</code> and standard deviation can be calculated with <code>sd()</code>. Also, keep in mind that a single column of a dataset can be accessed using <code>$</code>. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="summary_statistics.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(ny_trees<span class="sc">$</span>tree_height)</span>
-<span id="cb42-2"><a href="summary_statistics.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 72.57976</span></span>
-<span id="cb42-3"><a href="summary_statistics.html#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(ny_trees<span class="sc">$</span>tree_height)</span>
-<span id="cb42-4"><a href="summary_statistics.html#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 28.65391</span></span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="summary_statistics.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(ny_trees<span class="sc">$</span>tree_height)</span>
+<span id="cb44-2"><a href="summary_statistics.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 72.57976</span></span>
+<span id="cb44-3"><a href="summary_statistics.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(ny_trees<span class="sc">$</span>tree_height)</span>
+<span id="cb44-4"><a href="summary_statistics.html#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 28.65391</span></span></code></pre></div>
 <p>Great! But how to do this for each species? We need to divide up the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code>group_by()</code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code>summarize()</code> to compute statistics. Please note that both <code>group_by()</code> and <code>summarize()</code> require <code>.data =</code> as an argument, as opposed to <code>data =</code>, which we have been using up to this point.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="summary_statistics.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb43-2"><a href="summary_statistics.html#cb43-2" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
-<span id="cb43-3"><a href="summary_statistics.html#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(spc_latin) <span class="sc">%&gt;%</span></span>
-<span id="cb43-4"><a href="summary_statistics.html#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height))</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="summary_statistics.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb45-2"><a href="summary_statistics.html#cb45-2" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="summary_statistics.html#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(spc_latin) <span class="sc">%&gt;%</span></span>
+<span id="cb45-4"><a href="summary_statistics.html#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height))</span></code></pre></div>
 <p>Bam. Mean height of each tree species. <code>summarize()</code> is more powerful though, we can do many summary statistics at once:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="summary_statistics.html#cb44-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> ny_trees, spc_latin)</span>
-<span id="cb44-2"><a href="summary_statistics.html#cb44-2" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> ny_trees_by_spc, <span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height), <span class="at">stdev_height =</span> <span class="fu">sd</span>(tree_height))</span>
-<span id="cb44-3"><a href="summary_statistics.html#cb44-3" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="summary_statistics.html#cb46-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> ny_trees, spc_latin)</span>
+<span id="cb46-2"><a href="summary_statistics.html#cb46-2" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> ny_trees_by_spc, <span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height), <span class="at">stdev_height =</span> <span class="fu">sd</span>(tree_height))</span>
+<span id="cb46-3"><a href="summary_statistics.html#cb46-3" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ</span></code></pre></div>
 <p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code>. Note that in this case, if we map spc_latin to the x axis, the x axis tick labels will have long names that will overlap in our plot. In the past we have avoided this by swapping the mappings of x and y in out plots. Here, this gets a bit tedious since we will have to change ymin and ymax as well. Instead of all this, we can just add <code>coord_flip()</code> to our plot, which will swap x and y axes automatically. Also, note that in the aesthetic mappings for <code>ymin</code> and <code>ymax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="summary_statistics.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_summ) <span class="sc">+</span></span>
-<span id="cb45-2"><a href="summary_statistics.html#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
-<span id="cb45-3"><a href="summary_statistics.html#cb45-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(</span>
-<span id="cb45-4"><a href="summary_statistics.html#cb45-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> spc_latin,</span>
-<span id="cb45-5"><a href="summary_statistics.html#cb45-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> mean_height,</span>
-<span id="cb45-6"><a href="summary_statistics.html#cb45-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymin =</span> mean_height <span class="sc">-</span> stdev_height,</span>
-<span id="cb45-7"><a href="summary_statistics.html#cb45-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax =</span> mean_height <span class="sc">+</span> stdev_height</span>
-<span id="cb45-8"><a href="summary_statistics.html#cb45-8" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb45-9"><a href="summary_statistics.html#cb45-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb45-10"><a href="summary_statistics.html#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>()</span></code></pre></div>
-<p>Cool! Just like that we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="summary_statistics.html#cb46-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> ny_trees, spc_latin, boroname)</span>
-<span id="cb46-2"><a href="summary_statistics.html#cb46-2" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> ny_trees_by_spc_boro, <span class="at">mean_diam =</span> <span class="fu">mean</span>(tree_diameter), <span class="at">stdev_diam =</span> <span class="fu">sd</span>(tree_diameter))</span>
-<span id="cb46-3"><a href="summary_statistics.html#cb46-3" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ</span></code></pre></div>
-<p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="summary_statistics.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_boro_summ) <span class="sc">+</span></span>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="summary_statistics.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_summ) <span class="sc">+</span></span>
 <span id="cb47-2"><a href="summary_statistics.html#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
-<span id="cb47-3"><a href="summary_statistics.html#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb47-4"><a href="summary_statistics.html#cb47-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> boroname,</span>
-<span id="cb47-5"><a href="summary_statistics.html#cb47-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> mean_diam,</span>
-<span id="cb47-6"><a href="summary_statistics.html#cb47-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> mean_diam<span class="sc">-</span>stdev_diam,</span>
-<span id="cb47-7"><a href="summary_statistics.html#cb47-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> mean_diam<span class="sc">+</span>stdev_diam</span>
-<span id="cb47-8"><a href="summary_statistics.html#cb47-8" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb47-9"><a href="summary_statistics.html#cb47-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb47-10"><a href="summary_statistics.html#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(spc_latin<span class="sc">~</span>.) <span class="sc">+</span></span>
-<span id="cb47-11"><a href="summary_statistics.html#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb47-12"><a href="summary_statistics.html#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb47-13"><a href="summary_statistics.html#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>)</span>
-<span id="cb47-14"><a href="summary_statistics.html#cb47-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<span id="cb47-3"><a href="summary_statistics.html#cb47-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(</span>
+<span id="cb47-4"><a href="summary_statistics.html#cb47-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> spc_latin,</span>
+<span id="cb47-5"><a href="summary_statistics.html#cb47-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> mean_height,</span>
+<span id="cb47-6"><a href="summary_statistics.html#cb47-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymin =</span> mean_height <span class="sc">-</span> stdev_height,</span>
+<span id="cb47-7"><a href="summary_statistics.html#cb47-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax =</span> mean_height <span class="sc">+</span> stdev_height</span>
+<span id="cb47-8"><a href="summary_statistics.html#cb47-8" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb47-9"><a href="summary_statistics.html#cb47-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb47-10"><a href="summary_statistics.html#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>()</span></code></pre></div>
+<p>Cool! Just like that we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="summary_statistics.html#cb48-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> ny_trees, spc_latin, boroname)</span>
+<span id="cb48-2"><a href="summary_statistics.html#cb48-2" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ <span class="ot">&lt;-</span> <span class="fu">summarize</span>(<span class="at">.data =</span> ny_trees_by_spc_boro, <span class="at">mean_diam =</span> <span class="fu">mean</span>(tree_diameter), <span class="at">stdev_diam =</span> <span class="fu">sd</span>(tree_diameter))</span>
+<span id="cb48-3"><a href="summary_statistics.html#cb48-3" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ</span></code></pre></div>
+<p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="summary_statistics.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_boro_summ) <span class="sc">+</span></span>
+<span id="cb49-2"><a href="summary_statistics.html#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
+<span id="cb49-3"><a href="summary_statistics.html#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb49-4"><a href="summary_statistics.html#cb49-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> boroname,</span>
+<span id="cb49-5"><a href="summary_statistics.html#cb49-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> mean_diam,</span>
+<span id="cb49-6"><a href="summary_statistics.html#cb49-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> mean_diam<span class="sc">-</span>stdev_diam,</span>
+<span id="cb49-7"><a href="summary_statistics.html#cb49-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> mean_diam<span class="sc">+</span>stdev_diam</span>
+<span id="cb49-8"><a href="summary_statistics.html#cb49-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb49-9"><a href="summary_statistics.html#cb49-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb49-10"><a href="summary_statistics.html#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(spc_latin<span class="sc">~</span>.) <span class="sc">+</span></span>
+<span id="cb49-11"><a href="summary_statistics.html#cb49-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb49-12"><a href="summary_statistics.html#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb49-13"><a href="summary_statistics.html#cb49-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>)</span>
+<span id="cb49-14"><a href="summary_statistics.html#cb49-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Excellent! And if we really want to go for something pretty:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="summary_statistics.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
-<span id="cb48-2"><a href="summary_statistics.html#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_boro_summ) <span class="sc">+</span></span>
-<span id="cb48-3"><a href="summary_statistics.html#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
-<span id="cb48-4"><a href="summary_statistics.html#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb48-5"><a href="summary_statistics.html#cb48-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> boroname,</span>
-<span id="cb48-6"><a href="summary_statistics.html#cb48-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> mean_diam,</span>
-<span id="cb48-7"><a href="summary_statistics.html#cb48-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> mean_diam<span class="sc">-</span>stdev_diam,</span>
-<span id="cb48-8"><a href="summary_statistics.html#cb48-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> mean_diam<span class="sc">+</span>stdev_diam,</span>
-<span id="cb48-9"><a href="summary_statistics.html#cb48-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> spc_latin</span>
-<span id="cb48-10"><a href="summary_statistics.html#cb48-10" aria-hidden="true" tabindex="-1"></a>    ), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">shape =</span> <span class="dv">21</span></span>
-<span id="cb48-11"><a href="summary_statistics.html#cb48-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb48-12"><a href="summary_statistics.html#cb48-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb48-13"><a href="summary_statistics.html#cb48-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Borough&quot;</span>, </span>
-<span id="cb48-14"><a href="summary_statistics.html#cb48-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Trunk diameter&quot;</span>,</span>
-<span id="cb48-15"><a href="summary_statistics.html#cb48-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="fu">str_wrap</span>(<span class="st">&quot;Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.&quot;</span>, <span class="at">width =</span> <span class="dv">80</span>)</span>
-<span id="cb48-16"><a href="summary_statistics.html#cb48-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb48-17"><a href="summary_statistics.html#cb48-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(spc_latin<span class="sc">~</span>.) <span class="sc">+</span></span>
-<span id="cb48-18"><a href="summary_statistics.html#cb48-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-19"><a href="summary_statistics.html#cb48-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Paired&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-20"><a href="summary_statistics.html#cb48-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb48-21"><a href="summary_statistics.html#cb48-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb48-22"><a href="summary_statistics.html#cb48-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb48-23"><a href="summary_statistics.html#cb48-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>),</span>
-<span id="cb48-24"><a href="summary_statistics.html#cb48-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
-<span id="cb48-25"><a href="summary_statistics.html#cb48-25" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="summary_statistics.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb50-2"><a href="summary_statistics.html#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ny_trees_by_spc_boro_summ) <span class="sc">+</span></span>
+<span id="cb50-3"><a href="summary_statistics.html#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
+<span id="cb50-4"><a href="summary_statistics.html#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb50-5"><a href="summary_statistics.html#cb50-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> boroname,</span>
+<span id="cb50-6"><a href="summary_statistics.html#cb50-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> mean_diam,</span>
+<span id="cb50-7"><a href="summary_statistics.html#cb50-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> mean_diam<span class="sc">-</span>stdev_diam,</span>
+<span id="cb50-8"><a href="summary_statistics.html#cb50-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> mean_diam<span class="sc">+</span>stdev_diam,</span>
+<span id="cb50-9"><a href="summary_statistics.html#cb50-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> spc_latin</span>
+<span id="cb50-10"><a href="summary_statistics.html#cb50-10" aria-hidden="true" tabindex="-1"></a>    ), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">shape =</span> <span class="dv">21</span></span>
+<span id="cb50-11"><a href="summary_statistics.html#cb50-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb50-12"><a href="summary_statistics.html#cb50-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb50-13"><a href="summary_statistics.html#cb50-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Borough&quot;</span>, </span>
+<span id="cb50-14"><a href="summary_statistics.html#cb50-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Trunk diameter&quot;</span>,</span>
+<span id="cb50-15"><a href="summary_statistics.html#cb50-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="fu">str_wrap</span>(<span class="st">&quot;Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.&quot;</span>, <span class="at">width =</span> <span class="dv">80</span>)</span>
+<span id="cb50-16"><a href="summary_statistics.html#cb50-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb50-17"><a href="summary_statistics.html#cb50-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(spc_latin<span class="sc">~</span>.) <span class="sc">+</span></span>
+<span id="cb50-18"><a href="summary_statistics.html#cb50-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span></span>
+<span id="cb50-19"><a href="summary_statistics.html#cb50-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Paired&quot;</span>) <span class="sc">+</span></span>
+<span id="cb50-20"><a href="summary_statistics.html#cb50-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb50-21"><a href="summary_statistics.html#cb50-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb50-22"><a href="summary_statistics.html#cb50-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb50-23"><a href="summary_statistics.html#cb50-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>),</span>
+<span id="cb50-24"><a href="summary_statistics.html#cb50-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
+<span id="cb50-25"><a href="summary_statistics.html#cb50-25" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 </div>
 <div id="the-pipe" class="section level2" number="8.2">
 <h2><span class="header-section-number">8.2</span> The pipe (%&gt;%)</h2>
 <p>When we want to get summary statistics for a dataset, we often end up creating lots of new objects, sometimes with convoluted names. For example, what if we want to know and visualize the average temperature across the lakes in each of the three Alaska parks? We might do something like the below:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="summary_statistics.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb49-2"><a href="summary_statistics.html#cb49-2" aria-hidden="true" tabindex="-1"></a>AK_lakes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
-<span id="cb49-3"><a href="summary_statistics.html#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
-<span id="cb49-4"><a href="summary_statistics.html#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb49-5"><a href="summary_statistics.html#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb49-6"><a href="summary_statistics.html#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
-<span id="cb49-7"><a href="summary_statistics.html#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
-<span id="cb49-8"><a href="summary_statistics.html#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb49-9"><a href="summary_statistics.html#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb49-10"><a href="summary_statistics.html#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb49-11"><a href="summary_statistics.html#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes)</span>
-<span id="cb49-12"><a href="summary_statistics.html#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 6 × 7</span></span>
-<span id="cb49-13"><a href="summary_statistics.html#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb49-14"><a href="summary_statistics.html#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb49-15"><a href="summary_statistics.html#cb49-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
-<span id="cb49-16"><a href="summary_statistics.html#cb49-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
-<span id="cb49-17"><a href="summary_statistics.html#cb49-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
-<span id="cb49-18"><a href="summary_statistics.html#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span id="cb49-19"><a href="summary_statistics.html#cb49-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
-<span id="cb49-20"><a href="summary_statistics.html#cb49-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free</span></span>
-<span id="cb49-21"><a href="summary_statistics.html#cb49-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-22"><a href="summary_statistics.html#cb49-22" aria-hidden="true" tabindex="-1"></a>AK_lakes_by_park <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> AK_lakes, park)</span>
-<span id="cb49-23"><a href="summary_statistics.html#cb49-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-24"><a href="summary_statistics.html#cb49-24" aria-hidden="true" tabindex="-1"></a>AK_lakes_by_park_summ <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">.data =</span> AK_lakes_by_park, <span class="at">mean_temperature =</span> <span class="fu">mean</span>(water_temp))</span>
-<span id="cb49-25"><a href="summary_statistics.html#cb49-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-26"><a href="summary_statistics.html#cb49-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AK_lakes_by_park_summ) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> park, <span class="at">y =</span> mean_temperature))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-74-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="summary_statistics.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb51-2"><a href="summary_statistics.html#cb51-2" aria-hidden="true" tabindex="-1"></a>AK_lakes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
+<span id="cb51-3"><a href="summary_statistics.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
+<span id="cb51-4"><a href="summary_statistics.html#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb51-5"><a href="summary_statistics.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb51-6"><a href="summary_statistics.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
+<span id="cb51-7"><a href="summary_statistics.html#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
+<span id="cb51-8"><a href="summary_statistics.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb51-9"><a href="summary_statistics.html#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb51-10"><a href="summary_statistics.html#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb51-11"><a href="summary_statistics.html#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes)</span>
+<span id="cb51-12"><a href="summary_statistics.html#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 6 × 7</span></span>
+<span id="cb51-13"><a href="summary_statistics.html#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
+<span id="cb51-14"><a href="summary_statistics.html#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb51-15"><a href="summary_statistics.html#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
+<span id="cb51-16"><a href="summary_statistics.html#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
+<span id="cb51-17"><a href="summary_statistics.html#cb51-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
+<span id="cb51-18"><a href="summary_statistics.html#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
+<span id="cb51-19"><a href="summary_statistics.html#cb51-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
+<span id="cb51-20"><a href="summary_statistics.html#cb51-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free</span></span>
+<span id="cb51-21"><a href="summary_statistics.html#cb51-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-22"><a href="summary_statistics.html#cb51-22" aria-hidden="true" tabindex="-1"></a>AK_lakes_by_park <span class="ot">&lt;-</span> <span class="fu">group_by</span>(<span class="at">.data =</span> AK_lakes, park)</span>
+<span id="cb51-23"><a href="summary_statistics.html#cb51-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-24"><a href="summary_statistics.html#cb51-24" aria-hidden="true" tabindex="-1"></a>AK_lakes_by_park_summ <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">.data =</span> AK_lakes_by_park, <span class="at">mean_temperature =</span> <span class="fu">mean</span>(water_temp))</span>
+<span id="cb51-25"><a href="summary_statistics.html#cb51-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-26"><a href="summary_statistics.html#cb51-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AK_lakes_by_park_summ) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> park, <span class="at">y =</span> mean_temperature))</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-76-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>In order to do that, we created two new objects <code>AK_lakes_by_park</code> and <code>AK_lakes_by_park_summ</code>. In big analysis chains, we can end up creating lots of objects with complicated names. There must be a better way! There is. Meet the pipe: <code>%&gt;%</code>. It sends the output from one command directly to the next, so we neither need to have each command create a new object, nor do we need to start each command by telling it what data to use. With the pipe, the same analysis as above can be done with the text below. Neat! Easier!</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="summary_statistics.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb50-2"><a href="summary_statistics.html#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb50-3"><a href="summary_statistics.html#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-4"><a href="summary_statistics.html#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(park) <span class="sc">%&gt;%</span></span>
-<span id="cb50-5"><a href="summary_statistics.html#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-6"><a href="summary_statistics.html#cb50-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">mean_temperature =</span> <span class="fu">mean</span>(water_temp)) <span class="sc">%&gt;%</span></span>
-<span id="cb50-7"><a href="summary_statistics.html#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-8"><a href="summary_statistics.html#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> park, <span class="at">y =</span> mean_temperature))</span>
-<span id="cb50-9"><a href="summary_statistics.html#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
-<span id="cb50-10"><a href="summary_statistics.html#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb50-11"><a href="summary_statistics.html#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb50-12"><a href="summary_statistics.html#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
-<span id="cb50-13"><a href="summary_statistics.html#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
-<span id="cb50-14"><a href="summary_statistics.html#cb50-14" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb50-15"><a href="summary_statistics.html#cb50-15" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb50-16"><a href="summary_statistics.html#cb50-16" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-75-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="summary_statistics.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb52-2"><a href="summary_statistics.html#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb52-3"><a href="summary_statistics.html#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="summary_statistics.html#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="fu">group_by</span>(park) <span class="sc">%&gt;%</span></span>
+<span id="cb52-5"><a href="summary_statistics.html#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="summary_statistics.html#cb52-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">mean_temperature =</span> <span class="fu">mean</span>(water_temp)) <span class="sc">%&gt;%</span></span>
+<span id="cb52-7"><a href="summary_statistics.html#cb52-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-8"><a href="summary_statistics.html#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> park, <span class="at">y =</span> mean_temperature))</span>
+<span id="cb52-9"><a href="summary_statistics.html#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
+<span id="cb52-10"><a href="summary_statistics.html#cb52-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb52-11"><a href="summary_statistics.html#cb52-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb52-12"><a href="summary_statistics.html#cb52-12" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
+<span id="cb52-13"><a href="summary_statistics.html#cb52-13" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
+<span id="cb52-14"><a href="summary_statistics.html#cb52-14" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb52-15"><a href="summary_statistics.html#cb52-15" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb52-16"><a href="summary_statistics.html#cb52-16" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-77-1.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 <div id="tidy-data" class="section level2" number="8.3">
 <h2><span class="header-section-number">8.3</span> Tidy data</h2>
 <p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="summary_statistics.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb51-2"><a href="summary_statistics.html#cb51-2" aria-hidden="true" tabindex="-1"></a>FAs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/fadb_sample.csv&quot;</span>)</span>
-<span id="cb51-3"><a href="summary_statistics.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 7 Columns: 11</span></span>
-<span id="cb51-4"><a href="summary_statistics.html#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb51-5"><a href="summary_statistics.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb51-6"><a href="summary_statistics.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr  (1): fatty_acid</span></span>
-<span id="cb51-7"><a href="summary_statistics.html#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (10): Agonandra_brasiliensis, Agonandra_silvatica, Agonandra_excelsa, He...</span></span>
-<span id="cb51-8"><a href="summary_statistics.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb51-9"><a href="summary_statistics.html#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb51-10"><a href="summary_statistics.html#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb51-11"><a href="summary_statistics.html#cb51-11" aria-hidden="true" tabindex="-1"></a>FAs</span>
-<span id="cb51-12"><a href="summary_statistics.html#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 11</span></span>
-<span id="cb51-13"><a href="summary_statistics.html#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   fatty_acid Agonandra_brasi… Agonandra_silva… Agonandra_excel… Heisteria_silvi…</span></span>
-<span id="cb51-14"><a href="summary_statistics.html#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></span>
-<span id="cb51-15"><a href="summary_statistics.html#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Hexadecan…              3.4              1                1.2              2.9</span></span>
-<span id="cb51-16"><a href="summary_statistics.html#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Octadecan…              6.2              0.1              0.4              0.1</span></span>
-<span id="cb51-17"><a href="summary_statistics.html#cb51-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Eicosanoi…              4.7              3.5              1.7              0.1</span></span>
-<span id="cb51-18"><a href="summary_statistics.html#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Docosanoi…             77.4              0.4              1                7.4</span></span>
-<span id="cb51-19"><a href="summary_statistics.html#cb51-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Tetracosa…              1.4              1                1.4              1.7</span></span>
-<span id="cb51-20"><a href="summary_statistics.html#cb51-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Hexacosan…              1.9             12.6             23.1             46.6</span></span>
-<span id="cb51-21"><a href="summary_statistics.html#cb51-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 7 Octacosan…              5               81.4             71.3             41.2</span></span>
-<span id="cb51-22"><a href="summary_statistics.html#cb51-22" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 6 more variables: Malania_oleifera &lt;dbl&gt;, Ximenia_americana &lt;dbl&gt;,</span></span>
-<span id="cb51-23"><a href="summary_statistics.html#cb51-23" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Ongokea_gore &lt;dbl&gt;, Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
-<span id="cb51-24"><a href="summary_statistics.html#cb51-24" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="summary_statistics.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb53-2"><a href="summary_statistics.html#cb53-2" aria-hidden="true" tabindex="-1"></a>FAs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/fadb_sample.csv&quot;</span>)</span>
+<span id="cb53-3"><a href="summary_statistics.html#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 7 Columns: 11</span></span>
+<span id="cb53-4"><a href="summary_statistics.html#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb53-5"><a href="summary_statistics.html#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
+<span id="cb53-6"><a href="summary_statistics.html#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr  (1): fatty_acid</span></span>
+<span id="cb53-7"><a href="summary_statistics.html#cb53-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (10): Agonandra_brasiliensis, Agonandra_silvatica, Agonandra_excelsa, He...</span></span>
+<span id="cb53-8"><a href="summary_statistics.html#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb53-9"><a href="summary_statistics.html#cb53-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb53-10"><a href="summary_statistics.html#cb53-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb53-11"><a href="summary_statistics.html#cb53-11" aria-hidden="true" tabindex="-1"></a>FAs</span>
+<span id="cb53-12"><a href="summary_statistics.html#cb53-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 11</span></span>
+<span id="cb53-13"><a href="summary_statistics.html#cb53-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   fatty_acid Agonandra_brasi… Agonandra_silva… Agonandra_excel… Heisteria_silvi…</span></span>
+<span id="cb53-14"><a href="summary_statistics.html#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></span>
+<span id="cb53-15"><a href="summary_statistics.html#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Hexadecan…              3.4              1                1.2              2.9</span></span>
+<span id="cb53-16"><a href="summary_statistics.html#cb53-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Octadecan…              6.2              0.1              0.4              0.1</span></span>
+<span id="cb53-17"><a href="summary_statistics.html#cb53-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Eicosanoi…              4.7              3.5              1.7              0.1</span></span>
+<span id="cb53-18"><a href="summary_statistics.html#cb53-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Docosanoi…             77.4              0.4              1                7.4</span></span>
+<span id="cb53-19"><a href="summary_statistics.html#cb53-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Tetracosa…              1.4              1                1.4              1.7</span></span>
+<span id="cb53-20"><a href="summary_statistics.html#cb53-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Hexacosan…              1.9             12.6             23.1             46.6</span></span>
+<span id="cb53-21"><a href="summary_statistics.html#cb53-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 7 Octacosan…              5               81.4             71.3             41.2</span></span>
+<span id="cb53-22"><a href="summary_statistics.html#cb53-22" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 6 more variables: Malania_oleifera &lt;dbl&gt;, Ximenia_americana &lt;dbl&gt;,</span></span>
+<span id="cb53-23"><a href="summary_statistics.html#cb53-23" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Ongokea_gore &lt;dbl&gt;, Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
+<span id="cb53-24"><a href="summary_statistics.html#cb53-24" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
 <p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = FAs</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="summary_statistics.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(<span class="at">data =</span> FAs, <span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">names_to =</span> <span class="st">&quot;plant_species&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relative_abundance&quot;</span>)</span>
-<span id="cb52-2"><a href="summary_statistics.html#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 70 × 3</span></span>
-<span id="cb52-3"><a href="summary_statistics.html#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    fatty_acid        plant_species           relative_abundance</span></span>
-<span id="cb52-4"><a href="summary_statistics.html#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;                                &lt;dbl&gt;</span></span>
-<span id="cb52-5"><a href="summary_statistics.html#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Hexadecanoic acid Agonandra_brasiliensis                 3.4</span></span>
-<span id="cb52-6"><a href="summary_statistics.html#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Hexadecanoic acid Agonandra_silvatica                    1  </span></span>
-<span id="cb52-7"><a href="summary_statistics.html#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Hexadecanoic acid Agonandra_excelsa                      1.2</span></span>
-<span id="cb52-8"><a href="summary_statistics.html#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Hexadecanoic acid Heisteria_silvianii                    2.9</span></span>
-<span id="cb52-9"><a href="summary_statistics.html#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Hexadecanoic acid Malania_oleifera                       0.7</span></span>
-<span id="cb52-10"><a href="summary_statistics.html#cb52-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Hexadecanoic acid Ximenia_americana                      3.3</span></span>
-<span id="cb52-11"><a href="summary_statistics.html#cb52-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Hexadecanoic acid Ongokea_gore                           1  </span></span>
-<span id="cb52-12"><a href="summary_statistics.html#cb52-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Hexadecanoic acid Comandra_pallida                       2.3</span></span>
-<span id="cb52-13"><a href="summary_statistics.html#cb52-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Hexadecanoic acid Buckleya_distichophylla                1.6</span></span>
-<span id="cb52-14"><a href="summary_statistics.html#cb52-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Hexadecanoic acid Nuytsia_floribunda                     3.8</span></span>
-<span id="cb52-15"><a href="summary_statistics.html#cb52-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 60 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="summary_statistics.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(<span class="at">data =</span> FAs, <span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">names_to =</span> <span class="st">&quot;plant_species&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relative_abundance&quot;</span>)</span>
+<span id="cb54-2"><a href="summary_statistics.html#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 70 × 3</span></span>
+<span id="cb54-3"><a href="summary_statistics.html#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    fatty_acid        plant_species           relative_abundance</span></span>
+<span id="cb54-4"><a href="summary_statistics.html#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;                                &lt;dbl&gt;</span></span>
+<span id="cb54-5"><a href="summary_statistics.html#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Hexadecanoic acid Agonandra_brasiliensis                 3.4</span></span>
+<span id="cb54-6"><a href="summary_statistics.html#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Hexadecanoic acid Agonandra_silvatica                    1  </span></span>
+<span id="cb54-7"><a href="summary_statistics.html#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Hexadecanoic acid Agonandra_excelsa                      1.2</span></span>
+<span id="cb54-8"><a href="summary_statistics.html#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Hexadecanoic acid Heisteria_silvianii                    2.9</span></span>
+<span id="cb54-9"><a href="summary_statistics.html#cb54-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Hexadecanoic acid Malania_oleifera                       0.7</span></span>
+<span id="cb54-10"><a href="summary_statistics.html#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Hexadecanoic acid Ximenia_americana                      3.3</span></span>
+<span id="cb54-11"><a href="summary_statistics.html#cb54-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Hexadecanoic acid Ongokea_gore                           1  </span></span>
+<span id="cb54-12"><a href="summary_statistics.html#cb54-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Hexadecanoic acid Comandra_pallida                       2.3</span></span>
+<span id="cb54-13"><a href="summary_statistics.html#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Hexadecanoic acid Buckleya_distichophylla                1.6</span></span>
+<span id="cb54-14"><a href="summary_statistics.html#cb54-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Hexadecanoic acid Nuytsia_floribunda                     3.8</span></span>
+<span id="cb54-15"><a href="summary_statistics.html#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 60 more rows</span></span></code></pre></div>
 <p>Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
 <!-- end --></p>
 <!-- start Exercises 3 -->
@@ -633,7 +634,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },

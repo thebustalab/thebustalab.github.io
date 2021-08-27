@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-23" />
+<meta name="date" content="2021-08-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -140,8 +140,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-rstudio"><i class="fa fa-check"></i><b>2.2</b> Installing <code>RStudio</code></a></li>
 <li class="chapter" data-level="2.3" data-path="installation.html"><a href="installation.html#verifying-installations"><i class="fa fa-check"></i><b>2.3</b> Verifying installations</a></li>
 <li class="chapter" data-level="2.4" data-path="installation.html"><a href="installation.html#installing-the-tidyverse"><i class="fa fa-check"></i><b>2.4</b> Installing the <code>tidyverse</code></a></li>
-<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.5</b> Loading <code>phylochemistry</code></a></li>
-<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.6</b> Updating R and R Packages</a></li>
+<li class="chapter" data-level="2.5" data-path="installation.html"><a href="installation.html#installing-tex"><i class="fa fa-check"></i><b>2.5</b> Installing TeX</a></li>
+<li class="chapter" data-level="2.6" data-path="installation.html"><a href="installation.html#loading-phylochemistry"><i class="fa fa-check"></i><b>2.6</b> Loading <code>phylochemistry</code></a></li>
+<li class="chapter" data-level="2.7" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>2.7</b> Updating R and R Packages</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="R_Basics.html"><a href="R_Basics.html"><i class="fa fa-check"></i><b>3</b> R Basics</a>
 <ul>
@@ -400,43 +401,43 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="pca-and-big-data" class="section level1" number="29">
 <h1><span class="header-section-number">E</span> PCA and Big Data</h1>
 <p>In this course it is possible that you will want to run a clustering or PCA analysis on a data set with hundreds of thousands of observations (like NY_trees, for example). This is not always straightforward, since looking at a dendrogram or a scatter plot with hundreds of thousands of points is not always fruitful. Consider the meteorological dataset below.</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="pca-and-big-data.html#cb118-1" aria-hidden="true" tabindex="-1"></a>mdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv&quot;</span>)</span>
-<span id="cb118-2"><a href="pca-and-big-data.html#cb118-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(mdata)</span>
-<span id="cb118-3"><a href="pca-and-big-data.html#cb118-3" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 234528     15</span></span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="pca-and-big-data.html#cb120-1" aria-hidden="true" tabindex="-1"></a>mdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/meteorological_data.csv&quot;</span>)</span>
+<span id="cb120-2"><a href="pca-and-big-data.html#cb120-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(mdata)</span>
+<span id="cb120-3"><a href="pca-and-big-data.html#cb120-3" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 234528     15</span></span></code></pre></div>
 <p>Nearly a quarter million observations! However, that does not mean that you cannot use those analyses on such a dataset. Consider just running the PCA or cluster analysis on a summary of the dataset. You can even create your own groups by which to summarize directly from large continuous variables in your dataset. In the example below, a new categorical variable <code>WIND_GROUP</code> is created by binning the observations according to <code>WINDSPEED</code> into 20 groups. This is accomplished using the <code>cut()</code> command.</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="pca-and-big-data.html#cb119-1" aria-hidden="true" tabindex="-1"></a>mdata <span class="ot">&lt;-</span> mdata[<span class="sc">!</span><span class="fu">is.na</span>(mdata<span class="sc">$</span>WINDSPEED),]</span>
-<span id="cb119-2"><a href="pca-and-big-data.html#cb119-2" aria-hidden="true" tabindex="-1"></a>mdata<span class="sc">$</span>WIND_GROUP <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">cut</span>(mdata<span class="sc">$</span>WINDSPEED, <span class="at">breaks =</span> <span class="dv">20</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="pca-and-big-data.html#cb121-1" aria-hidden="true" tabindex="-1"></a>mdata <span class="ot">&lt;-</span> mdata[<span class="sc">!</span><span class="fu">is.na</span>(mdata<span class="sc">$</span>WINDSPEED),]</span>
+<span id="cb121-2"><a href="pca-and-big-data.html#cb121-2" aria-hidden="true" tabindex="-1"></a>mdata<span class="sc">$</span>WIND_GROUP <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">cut</span>(mdata<span class="sc">$</span>WINDSPEED, <span class="at">breaks =</span> <span class="dv">20</span>))</span></code></pre></div>
 <p>Cool! Now we can <code>group_by()</code> and <code>summarize()</code> on <code>WIND_GROUP</code>:</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="pca-and-big-data.html#cb120-1" aria-hidden="true" tabindex="-1"></a>mdata_windgroup <span class="ot">&lt;-</span> <span class="fu">group_by</span>(mdata, WIND_GROUP) <span class="sc">%&gt;%</span></span>
-<span id="cb120-2"><a href="pca-and-big-data.html#cb120-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb120-3"><a href="pca-and-big-data.html#cb120-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">TEMPERATURE =</span> <span class="fu">mean</span>(TEMPERATURE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-4"><a href="pca-and-big-data.html#cb120-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">TEMPERATURE_DELTA =</span> <span class="fu">mean</span>(TEMPERATURE_DELTA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-5"><a href="pca-and-big-data.html#cb120-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">RELATIVE_HUMIDITY =</span> <span class="fu">mean</span>(RELATIVE_HUMIDITY, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-6"><a href="pca-and-big-data.html#cb120-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SOLAR_RADIATION =</span> <span class="fu">mean</span>(SOLAR_RADIATION, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-7"><a href="pca-and-big-data.html#cb120-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">OZONE =</span> <span class="fu">mean</span>(OZONE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-8"><a href="pca-and-big-data.html#cb120-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">PRECIPITATION =</span> <span class="fu">mean</span>(PRECIPITATION, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-9"><a href="pca-and-big-data.html#cb120-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">WINDSPEED =</span> <span class="fu">mean</span>(WINDSPEED, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-10"><a href="pca-and-big-data.html#cb120-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">SHELTER_TEMPERATURE =</span> <span class="fu">mean</span>(SHELTER_TEMPERATURE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-11"><a href="pca-and-big-data.html#cb120-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">WIND_DIRECTION =</span> <span class="fu">mean</span>(WIND_DIRECTION, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-12"><a href="pca-and-big-data.html#cb120-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">WINDSPEED_SCALAR =</span> <span class="fu">mean</span>(WINDSPEED_SCALAR, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-13"><a href="pca-and-big-data.html#cb120-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">FLOW_RATE =</span> <span class="fu">mean</span>(FLOW_RATE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-14"><a href="pca-and-big-data.html#cb120-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">WETNESS =</span> <span class="fu">mean</span>(WETNESS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb120-15"><a href="pca-and-big-data.html#cb120-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb120-16"><a href="pca-and-big-data.html#cb120-16" aria-hidden="true" tabindex="-1"></a>mdata_windgroup</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="pca-and-big-data.html#cb122-1" aria-hidden="true" tabindex="-1"></a>mdata_windgroup <span class="ot">&lt;-</span> <span class="fu">group_by</span>(mdata, WIND_GROUP) <span class="sc">%&gt;%</span></span>
+<span id="cb122-2"><a href="pca-and-big-data.html#cb122-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb122-3"><a href="pca-and-big-data.html#cb122-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">TEMPERATURE =</span> <span class="fu">mean</span>(TEMPERATURE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-4"><a href="pca-and-big-data.html#cb122-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">TEMPERATURE_DELTA =</span> <span class="fu">mean</span>(TEMPERATURE_DELTA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-5"><a href="pca-and-big-data.html#cb122-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">RELATIVE_HUMIDITY =</span> <span class="fu">mean</span>(RELATIVE_HUMIDITY, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-6"><a href="pca-and-big-data.html#cb122-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SOLAR_RADIATION =</span> <span class="fu">mean</span>(SOLAR_RADIATION, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-7"><a href="pca-and-big-data.html#cb122-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">OZONE =</span> <span class="fu">mean</span>(OZONE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-8"><a href="pca-and-big-data.html#cb122-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">PRECIPITATION =</span> <span class="fu">mean</span>(PRECIPITATION, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-9"><a href="pca-and-big-data.html#cb122-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">WINDSPEED =</span> <span class="fu">mean</span>(WINDSPEED, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-10"><a href="pca-and-big-data.html#cb122-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">SHELTER_TEMPERATURE =</span> <span class="fu">mean</span>(SHELTER_TEMPERATURE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-11"><a href="pca-and-big-data.html#cb122-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">WIND_DIRECTION =</span> <span class="fu">mean</span>(WIND_DIRECTION, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-12"><a href="pca-and-big-data.html#cb122-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">WINDSPEED_SCALAR =</span> <span class="fu">mean</span>(WINDSPEED_SCALAR, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-13"><a href="pca-and-big-data.html#cb122-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">FLOW_RATE =</span> <span class="fu">mean</span>(FLOW_RATE, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-14"><a href="pca-and-big-data.html#cb122-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">WETNESS =</span> <span class="fu">mean</span>(WETNESS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb122-15"><a href="pca-and-big-data.html#cb122-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb122-16"><a href="pca-and-big-data.html#cb122-16" aria-hidden="true" tabindex="-1"></a>mdata_windgroup</span></code></pre></div>
 <p>With that done, we can run matrix analyses on the summarized data, using our new <code>WIND_GROUP</code> variable as the sample ID, and plot the results!</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="pca-and-big-data.html#cb121-1" aria-hidden="true" tabindex="-1"></a>mdata_windgroup_analyzed <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb121-2"><a href="pca-and-big-data.html#cb121-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata_windgroup,</span>
-<span id="cb121-3"><a href="pca-and-big-data.html#cb121-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
-<span id="cb121-4"><a href="pca-and-big-data.html#cb121-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
-<span id="cb121-5"><a href="pca-and-big-data.html#cb121-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
-<span id="cb121-6"><a href="pca-and-big-data.html#cb121-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;TEMPERATURE&quot;</span>, <span class="st">&quot;TEMPERATURE_DELTA&quot;</span>, <span class="st">&quot;RELATIVE_HUMIDITY&quot;</span>, <span class="st">&quot;SOLAR_RADIATION&quot;</span>, <span class="st">&quot;OZONE&quot;</span>, <span class="st">&quot;PRECIPITATION&quot;</span>, <span class="st">&quot;WINDSPEED&quot;</span>, <span class="st">&quot;SHELTER_TEMPERATURE&quot;</span>, <span class="st">&quot;WIND_DIRECTION&quot;</span>, <span class="st">&quot;WINDSPEED_SCALAR&quot;</span>, <span class="st">&quot;FLOW_RATE&quot;</span>, <span class="st">&quot;WETNESS&quot;</span>),</span>
-<span id="cb121-7"><a href="pca-and-big-data.html#cb121-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="cn">NULL</span>,</span>
-<span id="cb121-8"><a href="pca-and-big-data.html#cb121-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;WIND_GROUP&quot;</span>)</span>
-<span id="cb121-9"><a href="pca-and-big-data.html#cb121-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb121-10"><a href="pca-and-big-data.html#cb121-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-11"><a href="pca-and-big-data.html#cb121-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mdata_windgroup_analyzed) <span class="sc">+</span> </span>
-<span id="cb121-12"><a href="pca-and-big-data.html#cb121-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> WINDSPEED, <span class="at">size =</span> TEMPERATURE), <span class="at">shape =</span> <span class="dv">21</span>) <span class="sc">+</span></span>
-<span id="cb121-13"><a href="pca-and-big-data.html#cb121-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="pca-and-big-data.html#cb123-1" aria-hidden="true" tabindex="-1"></a>mdata_windgroup_analyzed <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb123-2"><a href="pca-and-big-data.html#cb123-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mdata_windgroup,</span>
+<span id="cb123-3"><a href="pca-and-big-data.html#cb123-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb123-4"><a href="pca-and-big-data.html#cb123-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb123-5"><a href="pca-and-big-data.html#cb123-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb123-6"><a href="pca-and-big-data.html#cb123-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;TEMPERATURE&quot;</span>, <span class="st">&quot;TEMPERATURE_DELTA&quot;</span>, <span class="st">&quot;RELATIVE_HUMIDITY&quot;</span>, <span class="st">&quot;SOLAR_RADIATION&quot;</span>, <span class="st">&quot;OZONE&quot;</span>, <span class="st">&quot;PRECIPITATION&quot;</span>, <span class="st">&quot;WINDSPEED&quot;</span>, <span class="st">&quot;SHELTER_TEMPERATURE&quot;</span>, <span class="st">&quot;WIND_DIRECTION&quot;</span>, <span class="st">&quot;WINDSPEED_SCALAR&quot;</span>, <span class="st">&quot;FLOW_RATE&quot;</span>, <span class="st">&quot;WETNESS&quot;</span>),</span>
+<span id="cb123-7"><a href="pca-and-big-data.html#cb123-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="cn">NULL</span>,</span>
+<span id="cb123-8"><a href="pca-and-big-data.html#cb123-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;WIND_GROUP&quot;</span>)</span>
+<span id="cb123-9"><a href="pca-and-big-data.html#cb123-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb123-10"><a href="pca-and-big-data.html#cb123-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb123-11"><a href="pca-and-big-data.html#cb123-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mdata_windgroup_analyzed) <span class="sc">+</span> </span>
+<span id="cb123-12"><a href="pca-and-big-data.html#cb123-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> WINDSPEED, <span class="at">size =</span> TEMPERATURE), <span class="at">shape =</span> <span class="dv">21</span>) <span class="sc">+</span></span>
+<span id="cb123-13"><a href="pca-and-big-data.html#cb123-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
 <!-- end -->
 </div>
 
@@ -478,7 +479,7 @@ gitbook.start({
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
-"theme": "night",
+"theme": "sepia",
 "family": "serif",
 "size": 1
 },
