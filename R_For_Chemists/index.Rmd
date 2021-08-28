@@ -115,14 +115,14 @@ In this class we will generate high quality reports suitable for submission to s
 install.packages(c('tinytex', 'rmarkdown'))
 ```
 
-If you are on Mac, you need to now open your terminal and run the following two commands: `sudo chown -R `whoami`:admin /usr/local/bin` and then `~/Library/TinyTeX/bin/*/tlmgr path add`. 
+If you are on Mac, you may need to now open your terminal and run the following two commands: `sudo chown -R `whoami`:admin /usr/local/bin` and then `~/Library/TinyTeX/bin/*/tlmgr path add`. 
 
 On both Mac and PC, you then need to do:
 ```{r, message = FALSE, eval = FALSE}
 tinytex::install_tinytex()
 ```
 
-Other options are: if you have Windows, download and install [MikTeX](https://miktex.org/download). If you have OSX, you can download and install MacTeX.
+Other options are: if you have Windows, download and install [MikTeX](https://miktex.org/download). If you have OSX, you can download and install [MacTeX](http://www.tug.org/mactex/morepackages.html).
 
 ## Loading `phylochemistry`
 
