@@ -105,7 +105,7 @@ Let's make sure your version of the `tidyverse` is installed correctly. To do th
 library(tidyverse)
 ```
 
-If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the reinstalling the `tidyverse`. If this still fails, please contact me.
+If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the re installing the `tidyverse`. If this still fails, please contact me.
 
 ## Installing TeX
 
@@ -181,11 +181,42 @@ updateR()
 
 Now that we've got R, RStudio, and the `tidyverse` installed, we're going to look at a few core concepts in R.^[test]
 
-## Before we start...
+## Objects
+
+Ok, we've got some bookkeeping out of the way. Let's get down to working with data! In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. To look at one, we can simply type the name of the object into the console:
+
+```{r, message = FALSE}
+algae_data
+```
+
+## Functions
+
+Excellent - we've got data. Now we need to manipulate it. For this we need functions:
+
+* A function is a command that tells R to perform an action!
+* A function begins and ends with parentheses: `this_is_a_function()`
+* The stuff inside the parentheses are the details of how you want the function to perform its action: `run_this_analysis(on_this_data)`
+
+Let's illustrate this with an example. `algae_data` is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_data` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_data` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
+
+```{r, message = FALSE}
+filter(algae_data, chemical_species == "FAs")
+```
+
+Cool! Now it's just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let's write this new, smaller dataset into a new object. For that we use `<-`, remember?
+
+```{r, message = FALSE}
+algae_data_small <- filter(algae_data, chemical_species == "FAs")
+algae_data_small
+```
+
+Now we have a nice, small table that we can use to practice data visualization. We'll do that in the next chapter.
+
+## In case you need to know...
 
 ### Help
 
-Throughout your time with R, you will probably want help. I ceratinly do. You can use a question mark `?` to get help with many different concepts. You can just put it in front of the thing you want help with. We'll see an example in just a minute...
+Throughout your time with R, you will probably want help. I certainly do. In R, you can use a question mark `?` to get help with many different concepts. You can just put it in front of the thing you want help with. We'll see an example in just a minute...
 
 ### Syntax
 
@@ -212,60 +243,27 @@ You can quickly find paths to files via the following:
 * On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
 * On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
 
-On either operating system, if you don't want to type paths into your command line, another option is to define the following function within your R Session. You can do that by pasting the line below into your R Console and pressing enter.
-
-```{r, message = FALSE}
-readCSV <- function() { return(readr::read_csv(file.choose())) }
-```
-
-Once that is done, you can use the command `readCSV()` to open up a navigation window and select your file that way. Cool!
-
-## Functions
-
-Ok, we've got some bookkeeping out of the way. Let's get down to working with data! For this we need functions:
-
-* A function is a command that tells R to perform an action!
-* A function begins and ends with parentheses: `this_is_a_function()`
-* The stuff inside the parentheses are the details of how you want the function to perform its action: `run_this_analysis(on_this_data)`
-
-Let's illustrate this with an example. We're going to use a function from the `tidyverse` called `read_csv`. This means we need to first load the `tidyverse`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
+With these paths, we can read in data. For this, we're going to use a function from the `tidyverse` called `read_csv`. This means we need to first load the `tidyverse`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
 
 ```{r, message = FALSE}
 library(tidyverse)
 read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 ```
-
-** Note, we also could have imported this data by using `readCSV()` and then navigating to and selecting our file.
-
-## Objects
-
-You can think of objects as if they were "files" inside an R session where information can be stored. Let's try making an object. All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
+All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
 
 ```{r, message = FALSE}
-algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 
 # Alternative:
-# algae_chemistry <- readCSV()
+# algae_data <- readCSV()
 ```
 
-Now we have an object called `algae_chemistry`. We can examine the contents of that object by typing its name. For example:
+Now we have an object called `algae_data`. We can examine the contents of that object by typing its name. For example:
 ```{r, message = FALSE}
-algae_chemistry
+algae_data
 ```
 
-Cool! However, this is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_chemistry` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_chemistry` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
-
-```{r, message = FALSE}
-filter(algae_chemistry, chemical_species == "FAs")
-```
-
-Cool! Now it's just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let's write this new, smaller dataset into a new object. For that we use `<-`, remember?
-
-```{r, message = FALSE}
-algae_data_small <- filter(algae_chemistry, chemical_species == "FAs")
-```
-
-Now we have a nice, small table that we can use to practice data visualization. We'll do that in the next chapter.
+On either operating system, if you don't want to type paths into your command line, another option is to use the `readCSV()` function, which is available once you have loaded `phylochemistry`.
 <!-- end -->
 
 <!-- start ggplot2 -->
@@ -275,9 +273,9 @@ For visualization, we're going to use `ggplot2` - a powerful set of commands for
 
 ```{r, message = FALSE}
 library(tidyverse)
-algae_chemistry <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-algae_chemistry_small <- filter(algae_chemistry, chemical_species == "FAs")
-algae_chemistry_small
+algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+algae_data_small <- filter(algae_data, chemical_species == "FAs")
+algae_data_small
 ```
 
 Great! Looks like we're ready to go.
@@ -291,7 +289,7 @@ There are three steps to setting up a ggplot:
 We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
 ```{r, message = FALSE}
-ggplot(data = algae_chemistry_small)
+ggplot(data = algae_data_small)
 ```
 
 ### Step 2: Define how your variables map onto the axes.
@@ -299,7 +297,7 @@ ggplot(data = algae_chemistry_small)
 This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
 
 ```{r, message = FALSE}
-ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance))
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
 ### Step 3: Use geometric shapes to represent other variables in your data.
@@ -307,7 +305,7 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance))
 Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Again, use `aes()` to map your variables onto the geometric features of the shapes. Let's try it:
 
 ```{r, message = FALSE}
-ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime))
 ```
 
@@ -318,14 +316,14 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. Here's an example:
 
 ```{r, message = FALSE}
-ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
 ```{r, message = FALSE}
-ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 	geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
@@ -336,7 +334,7 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
 ```{r}
-ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) + 
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_violin() +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
@@ -344,7 +342,7 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
 ```{r}
-ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 	geom_violin(aes(fill = algae_strain)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
@@ -354,7 +352,7 @@ ggplot(data = algae_chemistry_small, aes(x = algae_strain, y = abundance)) +
 <!-- start Exercises 1 -->
 # Exercises 1 {#Exercises_1}
 
-In this set of exercises we're going to practice importing, filtering, and plotting data. We're going to work with two datasets: (i) [algae_chemistry_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv) and (ii) [alaska_lake_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv). By clicking on those links you can download each dataset.
+In this set of exercises we're going to practice importing, filtering, and plotting data. We're going to work with two datasets: (i) [algae_data_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv) and (ii) [alaska_lake_data.csv](https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv). By clicking on those links you can download each dataset.
 
 **For these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio. Then you will save that file and send it to me. That file comprises your submission for this assignment. I should be able to open and run the file on my computer (after changing the pathnames, if any - so don't worry about compatibility for those). The file should contain both the code that can perform the actions described below and text that answers the questions asked below. You can download an example of what this file might look like [here](https://thebustalab.github.io/R_For_Chemists/sample_data/example_4.R). If you have any questions please let me know**
 
@@ -381,21 +379,21 @@ read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.cs
 
 ### Question 3: Objects
 
-Import the algae chemistry data and send it into a new object called `algae_chemistry_data`. Remember about `<-`. See the [R Basics](#R_Basics) section of this book if you need help.
+Import the algae chemistry data and send it into a new object called `algae_data_data`. Remember about `<-`. See the [R Basics](#R_Basics) section of this book if you need help.
 
 ```{r, include = FALSE}
 library(tidyverse)
-algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+algae_data_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 ```
 
 ### Question 4: Filtering
 
 #### A
 
-Now that you have the algae data imported and stored in an object called `algae_chemistry_data`, filter the data so that only entries are shown for which the `chemical_species` is "FAs". What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+Now that you have the algae data imported and stored in an object called `algae_data_data`, filter the data so that only entries are shown for which the `chemical_species` is "FAs". What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
 ```{r, include = FALSE}
-filter(algae_chemistry_data, chemical_species == "FAs")
+filter(algae_data_data, chemical_species == "FAs")
 # 18 x 5
 ```
 
@@ -405,7 +403,7 @@ filter(algae_chemistry_data, chemical_species == "FAs")
 Now filter the dataset so that only entries for the `algae_strain` "Tsv1" are shown. What are the dimensions of the resulting dataset?
 
 ```{r, include = FALSE}
-filter(algae_chemistry_data, algae_strain == "Tsv1")
+filter(algae_data_data, algae_strain == "Tsv1")
 # 60 x 5
 ```
 
@@ -414,7 +412,7 @@ filter(algae_chemistry_data, algae_strain == "Tsv1")
 Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that `>` can be used in the filter command instead of `==`, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?
 
 ```{r, include = FALSE}
-filter(algae_chemistry_data, abundance > 250)
+filter(algae_data_data, abundance > 250)
 # 71 x 5
 ```
 
@@ -425,7 +423,7 @@ Make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axi
 Which algae strain has the most abundant compound out of all the compounds in the dataset?
 
 ```{r, include = FALSE}
-ggplot(data = algae_chemistry_data, aes(x = algae_strain, y = abundance)) + 
+ggplot(data = algae_data_data, aes(x = algae_strain, y = abundance)) + 
   geom_point()
 #Tsv2
 ```
@@ -437,7 +435,7 @@ Make a ggplot that has `abundance` on the x axis and `chemical_species` on the y
 Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)
 
 ```{r, include = FALSE}
-ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) + 
+ggplot(data = algae_data_data, aes(x = abundance, y = chemical_species)) + 
   geom_point()
 #non_essential_Aas and essential_Aas
 ```
@@ -448,8 +446,8 @@ I am going to show you an example of how you can filter and plot at the same tim
 
 ```{r}
 library(tidyverse)
-algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-ggplot(data = filter(algae_chemistry_data, chemical_species == "essential_Aas"), aes(x = algae_strain, y = abundance)) +
+algae_data_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_data_data, chemical_species == "essential_Aas"), aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
@@ -457,8 +455,8 @@ Using the above as a template, make a plot that shows just `omega_3_polyunsatura
 
 ```{r, include = FALSE}
 library(tidyverse)
-algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-ggplot(data = filter(algae_chemistry_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) +
+algae_data_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_data_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 # light harvesting
 ```
@@ -469,8 +467,8 @@ Use a combination of filtering and plotting to show the abundance of the differe
 
 ```{r, include = FALSE}
 library(tidyverse)
-algae_chemistry_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+algae_data_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_data_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 # light harvesting
 ```
@@ -480,17 +478,17 @@ ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abun
 Make a plot that checks to see which `chemical_species` were more abundant under light as opposed to heavy `harvesting_regime` in all three replicates. Use filtered data so that just one `algae_strain` is shown, an x and a y axis, and points to represent the measurements. Make the points `size = 5` and also set the point's `alpha = 0.6`. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.
 
 ```{r, include = FALSE}
-ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+ggplot(data = filter(algae_data_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv2"), aes(x = abundance, y = chemical_species)) +
+ggplot(data = filter(algae_data_data, algae_strain == "Tsv2"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv11"), aes(x = abundance, y = chemical_species)) +
+ggplot(data = filter(algae_data_data, algae_strain == "Tsv11"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
@@ -499,13 +497,13 @@ ggplot(data = filter(algae_chemistry_data, algae_strain == "Tsv11"), aes(x = abu
 Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
 
 ```{r, eval = FALSE} 
-ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) +
+ggplot(data = algae_data_data, aes(x = <something>, y = <something else>)) +
   geom_point(aes(<some things>), <some here too>) +
   facet_grid(.~algae_strain)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +
+ggplot(data = algae_data_data, aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
   facet_grid(.~algae_strain)
 ```
@@ -513,13 +511,13 @@ ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +
 Also try, instead of `facet_grid(.~algae_strain)`, `facet_grid(algae_strain~.)` at the end of you plot command. (note the swap in the position of the `.~` relative to `algae_strain`). This means your code should look something like:
 
 ```{r, eval = FALSE} 
-ggplot(data = algae_chemistry_data, aes(x = <something>, y = <something else>)) +
+ggplot(data = algae_data_data, aes(x = <something>, y = <something else>)) +
   geom_point(aes(<some things>), <some here too>) +
   facet_grid(algae_strain~.)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = algae_chemistry_data, aes(x = abundance, y = chemical_species)) +
+ggplot(data = algae_data_data, aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
   facet_grid(algae_strain~.)
 ```
@@ -2827,7 +2825,7 @@ mid_strength <- filter(mtcars, cyl %in% c(4, 8))
 
 (base function) Use it to see just the first few lines of a dataframe:
 ```{r}
-head(algae_chemistry_data)
+head(algae_data_data)
 ```
 
 ### `filter()`
