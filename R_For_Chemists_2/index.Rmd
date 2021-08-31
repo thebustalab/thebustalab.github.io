@@ -2,10 +2,12 @@
 title: "R For Chemists"
 author: "Lucas Busta"
 date: "`r Sys.Date()`"
-site: bookdown::bookdown_site
+# site: bookdown::bookdown_site
 output: 
   bookdown::gitbook:
     css: tufte.css
+    # toc:
+    #   collapse: subsection
     fontsettings:
       theme: sepia
       family: sans
@@ -164,4 +166,38 @@ source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 <!-- end -->
 
+<!-- start R Basics-->
+
+# R Basics {#R_Basics}
+
+## Objects
+
+Ok, we've got the installation out of the way. Let's get down to working with data! In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. To look at one, we can simply type the name of the object into the console:
+
+```{r, message = FALSE}
+algae_data
+```
+
+## Functions
+
+Excellent - we've got data. Now we need to manipulate it. For this we need functions:
+
+* A function is a command that tells R to perform an action!
+* A function begins and ends with parentheses: `this_is_a_function()`
+* The stuff inside the parentheses are the details of how you want the function to perform its action: `run_this_analysis(on_this_data)`
+
+Let's illustrate this with an example. `algae_data` is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_data` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_data` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
+
+```{r, message = FALSE}
+filter(algae_data, chemical_species == "FAs")
+```
+
+Cool! Now it's just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let's write this new, smaller dataset into a new object. For that we use `<-`, remember?
+
+```{r, message = FALSE}
+algae_data_small <- filter(algae_data, chemical_species == "FAs")
+algae_data_small
+```
+
+Now we have a nice, small table that we can use to practice data visualization. We'll do that in the next chapter.
 
