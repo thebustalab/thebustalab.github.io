@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-29" />
+<meta name="date" content="2021-08-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -409,7 +409,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <p>footnote: We will use &lt;this notation&gt; quite a bit. It indicates a place where you should insert information, data, or something similar that corresponds to your particular situation. In this example it means insert “your operating system”, i.e. Linux, (Mac) OS X, or Windows.</p>
 <ol start="3" style="list-style-type: decimal">
-<li><p>For Mac: download the .pkg file for the latest release. As of 8/31/2020, this is R-4.0.2.pkg. For PC: click “install R for the first time”, then click “Download R 4.0.2 for Windows”.</p></li>
+<li><p>For Mac: download the .pkg file for the latest release. For PC: click “install R for the first time”, then click “Download R &lt;version&gt; for Windows”.</p></li>
 <li><p>After the executable finishes downloading (in Windows, it is a file with .exe extension; for Mac, it is a .dmg file or a .dmg inside a .pkg file), open the file as an administrator, and follow the installation instructions. R should install without any problems. You can click OK for all of the windows that pop-up during installation, and choose a “regular” installation (if given the choice).</p></li>
 </ol>
 <p>If you have trouble installing R please google “Install R Mac” or “Install R PC” and following one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.</p>
@@ -458,8 +458,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">2.5</span> Installing TeX</h2>
 <p>In this class we will generate high quality reports suitable for submission to supervisors, academic journals, etc. For this, we need the typesetting engine TeX. There are a few ways to do this. The easiest way is using the following commands:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="installation.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&#39;tinytex&#39;</span>, <span class="st">&#39;rmarkdown&#39;</span>))</span></code></pre></div>
-<p>If you are on Mac, you may need to now open your terminal and run the following two commands: <code>sudo chown -R</code>whoami<code>:admin /usr/local/bin</code> and then <code>~/Library/TinyTeX/bin/*/tlmgr path add</code>.</p>
-<p>On both Mac and PC, you then need to do:</p>
+<p>If you are on Mac, you may get an error about “not being able to write to a path” or something like that. In that case you probably need to open your terminal and run the following two commands:</p>
+<p>sudo chown -R `whoami`:admin /usr/local/bin</p>
+<p>and then</p>
+<p>~/Library/TinyTeX/bin/*/tlmgr path add</p>
+<p>Then, on both Mac and PC, you then need to do:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="installation.html#cb6-1" aria-hidden="true" tabindex="-1"></a>tinytex<span class="sc">::</span><span class="fu">install_tinytex</span>()</span></code></pre></div>
 <p>Other options are: if you have Windows, download and install <a href="https://miktex.org/download">MikTeX</a>. If you have OSX, you can download and install <a href="http://www.tug.org/mactex/morepackages.html">MacTeX</a>.</p>
 </div>
