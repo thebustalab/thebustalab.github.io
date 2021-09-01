@@ -36,10 +36,10 @@
         )
 
         Bioconductor_packages <- c(
-            "ggtree",
-            "xcms",
-            "msa",
-            "rtracklayer"
+            # "ggtree",
+            # "xcms",
+            # "msa",
+            # "rtracklayer"
             # "orthologr"
             # c("Biostrings",
             #     "GenomicRanges",
