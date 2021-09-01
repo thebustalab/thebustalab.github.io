@@ -239,7 +239,7 @@ algae_data_small
 
 Now we have a nice, small table that we can use to practice data visualization.
 
-## Markdown Reports
+<!-- ## Markdown Reports -->
 
 
 
