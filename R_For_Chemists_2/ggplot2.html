@@ -167,17 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4" data-path="Exercises_1.html"><a href="Exercises_1.html"><i class="fa fa-check"></i><b>4</b> Exercises 1</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="Exercises_1.html"><a href="Exercises_1.html#part-1-algae-chemistry-dataset"><i class="fa fa-check"></i><b>4.1</b> Part 1: Algae Chemistry Dataset</a></li>
-<li class="chapter" data-level="4.2" data-path="Exercises_1.html"><a href="Exercises_1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>4.2</b> Part 2: Alaska Lakes Dataset</a>
-<ul>
-<li class="chapter" data-level="4.2.1" data-path="Exercises_1.html"><a href="Exercises_1.html#question-1-importing-data"><i class="fa fa-check"></i><b>4.2.1</b> Question 1: Importing Data</a></li>
-<li class="chapter" data-level="4.2.2" data-path="Exercises_1.html"><a href="Exercises_1.html#question-2-objects"><i class="fa fa-check"></i><b>4.2.2</b> Question 2: Objects</a></li>
-<li class="chapter" data-level="4.2.3" data-path="Exercises_1.html"><a href="Exercises_1.html#question-3-filtering"><i class="fa fa-check"></i><b>4.2.3</b> Question 3: Filtering</a></li>
-<li class="chapter" data-level="4.2.4" data-path="Exercises_1.html"><a href="Exercises_1.html#question-4-plotting"><i class="fa fa-check"></i><b>4.2.4</b> Question 4: Plotting</a></li>
-<li class="chapter" data-level="4.2.5" data-path="Exercises_1.html"><a href="Exercises_1.html#question-5-plotting"><i class="fa fa-check"></i><b>4.2.5</b> Question 5: Plotting</a></li>
-<li class="chapter" data-level="4.2.6" data-path="Exercises_1.html"><a href="Exercises_1.html#question-6-filtering-and-plotting"><i class="fa fa-check"></i><b>4.2.6</b> Question 6: Filtering and Plotting</a></li>
-<li class="chapter" data-level="4.2.7" data-path="Exercises_1.html"><a href="Exercises_1.html#question-7-filtering-and-plotting"><i class="fa fa-check"></i><b>4.2.7</b> Question 7: Filtering and Plotting</a></li>
-<li class="chapter" data-level="4.2.8" data-path="Exercises_1.html"><a href="Exercises_1.html#question-8-open-ended-plotting"><i class="fa fa-check"></i><b>4.2.8</b> Question 8: Open-ended Plotting</a></li>
-</ul></li>
+<li class="chapter" data-level="4.2" data-path="Exercises_1.html"><a href="Exercises_1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>4.2</b> Part 2: Alaska Lakes Dataset</a></li>
 </ul></li>
 </ul>
 
@@ -199,30 +189,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="ggplot2" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> ggplot2</h1>
 <p>For visualization, we’re going to use <code>ggplot2</code> - a powerful set of commands for plot generation. Let’s make sure we’ve got our data from the last chapter active in our current session:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="ggplot2.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb15-2"><a href="ggplot2.html#cb15-2" aria-hidden="true" tabindex="-1"></a>algae_data_small <span class="ot">&lt;-</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;FAs&quot;</span>)</span>
-<span id="cb15-3"><a href="ggplot2.html#cb15-3" aria-hidden="true" tabindex="-1"></a>algae_data_small</span>
-<span id="cb15-4"><a href="ggplot2.html#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 18 × 5</span></span>
-<span id="cb15-5"><a href="ggplot2.html#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
-<span id="cb15-6"><a href="ggplot2.html#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
-<span id="cb15-7"><a href="ggplot2.html#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
-<span id="cb15-8"><a href="ggplot2.html#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
-<span id="cb15-9"><a href="ggplot2.html#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
-<span id="cb15-10"><a href="ggplot2.html#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Light             FAs                   580.</span></span>
-<span id="cb15-11"><a href="ggplot2.html#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         2 Tsv1         Light             FAs                   535.</span></span>
-<span id="cb15-12"><a href="ggplot2.html#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         3 Tsv1         Light             FAs                   513.</span></span>
-<span id="cb15-13"><a href="ggplot2.html#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
-<span id="cb15-14"><a href="ggplot2.html#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
-<span id="cb15-15"><a href="ggplot2.html#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
-<span id="cb15-16"><a href="ggplot2.html#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv2         Light             FAs                   490.</span></span>
-<span id="cb15-17"><a href="ggplot2.html#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 11         2 Tsv2         Light             FAs                   541.</span></span>
-<span id="cb15-18"><a href="ggplot2.html#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 12         3 Tsv2         Light             FAs                   461.</span></span>
-<span id="cb15-19"><a href="ggplot2.html#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
-<span id="cb15-20"><a href="ggplot2.html#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
-<span id="cb15-21"><a href="ggplot2.html#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
-<span id="cb15-22"><a href="ggplot2.html#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 16         1 Tsv11        Light             FAs                   526.</span></span>
-<span id="cb15-23"><a href="ggplot2.html#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 17         2 Tsv11        Light             FAs                   514.</span></span>
-<span id="cb15-24"><a href="ggplot2.html#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="ggplot2.html#cb15-1" aria-hidden="true" tabindex="-1"></a>algae_data_small <span class="ot">&lt;-</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;FAs&quot;</span>)</span>
+<span id="cb15-2"><a href="ggplot2.html#cb15-2" aria-hidden="true" tabindex="-1"></a>algae_data_small</span>
+<span id="cb15-3"><a href="ggplot2.html#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 18 × 5</span></span>
+<span id="cb15-4"><a href="ggplot2.html#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
+<span id="cb15-5"><a href="ggplot2.html#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
+<span id="cb15-6"><a href="ggplot2.html#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
+<span id="cb15-7"><a href="ggplot2.html#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
+<span id="cb15-8"><a href="ggplot2.html#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
+<span id="cb15-9"><a href="ggplot2.html#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Light             FAs                   580.</span></span>
+<span id="cb15-10"><a href="ggplot2.html#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         2 Tsv1         Light             FAs                   535.</span></span>
+<span id="cb15-11"><a href="ggplot2.html#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         3 Tsv1         Light             FAs                   513.</span></span>
+<span id="cb15-12"><a href="ggplot2.html#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
+<span id="cb15-13"><a href="ggplot2.html#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
+<span id="cb15-14"><a href="ggplot2.html#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
+<span id="cb15-15"><a href="ggplot2.html#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv2         Light             FAs                   490.</span></span>
+<span id="cb15-16"><a href="ggplot2.html#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 11         2 Tsv2         Light             FAs                   541.</span></span>
+<span id="cb15-17"><a href="ggplot2.html#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 12         3 Tsv2         Light             FAs                   461.</span></span>
+<span id="cb15-18"><a href="ggplot2.html#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
+<span id="cb15-19"><a href="ggplot2.html#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
+<span id="cb15-20"><a href="ggplot2.html#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
+<span id="cb15-21"><a href="ggplot2.html#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 16         1 Tsv11        Light             FAs                   526.</span></span>
+<span id="cb15-22"><a href="ggplot2.html#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 17         2 Tsv11        Light             FAs                   514.</span></span>
+<span id="cb15-23"><a href="ggplot2.html#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
 <p>Great! Looks like we’re ready to go.</p>
 <div id="setting-up-a-ggplot" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Setting up a ggplot</h2>

@@ -167,17 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4" data-path="Exercises_1.html"><a href="Exercises_1.html"><i class="fa fa-check"></i><b>4</b> Exercises 1</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="Exercises_1.html"><a href="Exercises_1.html#part-1-algae-chemistry-dataset"><i class="fa fa-check"></i><b>4.1</b> Part 1: Algae Chemistry Dataset</a></li>
-<li class="chapter" data-level="4.2" data-path="Exercises_1.html"><a href="Exercises_1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>4.2</b> Part 2: Alaska Lakes Dataset</a>
-<ul>
-<li class="chapter" data-level="4.2.1" data-path="Exercises_1.html"><a href="Exercises_1.html#question-1-importing-data"><i class="fa fa-check"></i><b>4.2.1</b> Question 1: Importing Data</a></li>
-<li class="chapter" data-level="4.2.2" data-path="Exercises_1.html"><a href="Exercises_1.html#question-2-objects"><i class="fa fa-check"></i><b>4.2.2</b> Question 2: Objects</a></li>
-<li class="chapter" data-level="4.2.3" data-path="Exercises_1.html"><a href="Exercises_1.html#question-3-filtering"><i class="fa fa-check"></i><b>4.2.3</b> Question 3: Filtering</a></li>
-<li class="chapter" data-level="4.2.4" data-path="Exercises_1.html"><a href="Exercises_1.html#question-4-plotting"><i class="fa fa-check"></i><b>4.2.4</b> Question 4: Plotting</a></li>
-<li class="chapter" data-level="4.2.5" data-path="Exercises_1.html"><a href="Exercises_1.html#question-5-plotting"><i class="fa fa-check"></i><b>4.2.5</b> Question 5: Plotting</a></li>
-<li class="chapter" data-level="4.2.6" data-path="Exercises_1.html"><a href="Exercises_1.html#question-6-filtering-and-plotting"><i class="fa fa-check"></i><b>4.2.6</b> Question 6: Filtering and Plotting</a></li>
-<li class="chapter" data-level="4.2.7" data-path="Exercises_1.html"><a href="Exercises_1.html#question-7-filtering-and-plotting"><i class="fa fa-check"></i><b>4.2.7</b> Question 7: Filtering and Plotting</a></li>
-<li class="chapter" data-level="4.2.8" data-path="Exercises_1.html"><a href="Exercises_1.html#question-8-open-ended-plotting"><i class="fa fa-check"></i><b>4.2.8</b> Question 8: Open-ended Plotting</a></li>
-</ul></li>
+<li class="chapter" data-level="4.2" data-path="Exercises_1.html"><a href="Exercises_1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>4.2</b> Part 2: Alaska Lakes Dataset</a></li>
 </ul></li>
 </ul>
 
@@ -288,54 +278,60 @@ Import the algae chemistry data and send it into a new object called `algae_data
 </div>
 <div id="part-2-alaska-lakes-dataset" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Part 2: Alaska Lakes Dataset</h2>
-<div id="question-1-importing-data" class="section level3" number="4.2.1">
-<h3><span class="header-section-number">4.2.1</span> Question 1: Importing Data</h3>
-<p>Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises.</p>
-</div>
-<div id="question-2-objects" class="section level3" number="4.2.2">
-<h3><span class="header-section-number">4.2.2</span> Question 2: Objects</h3>
+<ol style="list-style-type: decimal">
+<li><strong>Viewing Data</strong></li>
+</ol>
+<p>Use R to view the first few lines of the alaska_lake_data dataset.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Objects</strong></li>
+</ol>
 <p>How many variables are in the Alaska lakes dataset?</p>
-</div>
-<div id="question-3-filtering" class="section level3" number="4.2.3">
-<h3><span class="header-section-number">4.2.3</span> Question 3: Filtering</h3>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Filtering</strong></li>
+</ol>
 <p>Filter the data set so only meausurements of free elements are shown. Remember, it’s <code>==</code>, not <code>=</code>. What are the dimensions of the resulting dataset?</p>
-</div>
-<div id="question-4-plotting" class="section level3" number="4.2.4">
-<h3><span class="header-section-number">4.2.4</span> Question 4: Plotting</h3>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Plotting</strong></li>
+</ol>
 <p>Make a plot that shows the water temperatures of each lake. Don’t worry if you get a warning message from R about “missing values”. Which is the hottest lake? The coolest?</p>
-</div>
-<div id="question-5-plotting" class="section level3" number="4.2.5">
-<h3><span class="header-section-number">4.2.5</span> Question 5: Plotting</h3>
+<ol start="5" style="list-style-type: decimal">
+<li><strong>Plotting</strong></li>
+</ol>
 <p>Make a plot that shows the water temperature of each lake. The x axis should be <code>park</code>, the y axis <code>water temp</code>. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?</p>
-</div>
-<div id="question-6-filtering-and-plotting" class="section level3" number="4.2.6">
-<h3><span class="header-section-number">4.2.6</span> Question 6: Filtering and Plotting</h3>
+<ol start="6" style="list-style-type: decimal">
+<li><strong>Filtering and Plotting</strong></li>
+</ol>
 <p>From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from <code>park == "NOAT"</code> are shown (note the double equals sign and the quotes around NOAT…). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.</p>
-</div>
-<div id="question-7-filtering-and-plotting" class="section level3" number="4.2.7">
-<h3><span class="header-section-number">4.2.7</span> Question 7: Filtering and Plotting</h3>
+<ol start="7" style="list-style-type: decimal">
+<li><strong>Filtering and Plotting</strong></li>
+</ol>
 <p>Make a plot that shows which lake has the highest abundance of sulfur.</p>
-</div>
-<div id="question-8-open-ended-plotting" class="section level3" number="4.2.8">
-<h3><span class="header-section-number">4.2.8</span> Question 8: Open-ended Plotting</h3>
+<ol start="8" style="list-style-type: decimal">
+<li><strong>Open-ended Plotting</strong></li>
+</ol>
 <p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly. Here is an example:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="Exercises_1.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb26-2"><a href="Exercises_1.html#cb26-2" aria-hidden="true" tabindex="-1"></a>lake_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv&quot;</span>)</span>
-<span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Rows: 220 Columns: 7</span></span>
-<span id="cb26-4"><a href="Exercises_1.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb26-5"><a href="Exercises_1.html#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Delimiter: &quot;,&quot;</span></span>
-<span id="cb26-6"><a href="Exercises_1.html#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="do">## chr (4): lake, park, element, element_type</span></span>
-<span id="cb26-7"><a href="Exercises_1.html#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="do">## dbl (3): water_temp, pH, mg_per_L</span></span>
-<span id="cb26-8"><a href="Exercises_1.html#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb26-9"><a href="Exercises_1.html#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb26-10"><a href="Exercises_1.html#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="do">## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb26-11"><a href="Exercises_1.html#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)) <span class="sc">+</span></span>
-<span id="cb26-12"><a href="Exercises_1.html#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span>)</span></code></pre></div>
+<span id="cb26-2"><a href="Exercises_1.html#cb26-2" aria-hidden="true" tabindex="-1"></a>alaska_lake_data</span>
+<span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 7</span></span>
+<span id="cb26-4"><a href="Exercises_1.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    lake                park  water_temp    pH element mg_per_L element_type</span></span>
+<span id="cb26-5"><a href="Exercises_1.html#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb26-6"><a href="Exercises_1.html#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
+<span id="cb26-7"><a href="Exercises_1.html#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
+<span id="cb26-8"><a href="Exercises_1.html#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
+<span id="cb26-9"><a href="Exercises_1.html#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
+<span id="cb26-10"><a href="Exercises_1.html#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
+<span id="cb26-11"><a href="Exercises_1.html#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free        </span></span>
+<span id="cb26-12"><a href="Exercises_1.html#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02  free        </span></span>
+<span id="cb26-13"><a href="Exercises_1.html#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92  free        </span></span>
+<span id="cb26-14"><a href="Exercises_1.html#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></span>
+<span id="cb26-15"><a href="Exercises_1.html#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></span>
+<span id="cb26-16"><a href="Exercises_1.html#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span>
+<span id="cb26-17"><a href="Exercises_1.html#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)) <span class="sc">+</span></span>
+<span id="cb26-18"><a href="Exercises_1.html#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span>)</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-50-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
 <p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 <!-- end --></p>
-</div>
 </div>
 </div>
             </section>

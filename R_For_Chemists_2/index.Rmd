@@ -191,7 +191,7 @@ source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 <!-- start R Markdown-->
 
-# R Markdown {#R_Markdown}
+# ggplot and markdown {#R_Markdown}
 
 ## Objects
 
@@ -237,42 +237,13 @@ algae_data_small <- filter(algae_data, chemical_species == "FAs")
 algae_data_small
 ```
 
-Now we have a nice, small table that we can use to practice data visualization.
+## ggplot
 
-## Markdown Reports
-
-Let's look at how to create an R Markdown report - this is what we will use to submit assignments in this class. You can also use markdown to create reports for your research group or other projects.
-
-First, in RStudio click `File -> New File -> R Markdown`. This will open a default report for you. When you compile it by clicking "knit" it should look something like this:
-
-
-
-  <div class="marginnote">
-
-  You can access a variety of Markdown themes here: [R Markdown Themes](https://www.datadreaming.org/post/r-markdown-theme-gallery/)
-
-  </div>
-
-<!-- end -->
-
-<!-- start ggplot2 -->
-# ggplot2 {#ggplot2}
-
-For visualization, we're going to use `ggplot2` - a powerful set of commands for plot generation. Let's make sure we've got our data from the last chapter active in our current session:
-
-```{r, message = FALSE}
-library(tidyverse)
-algae_data_small <- filter(algae_data, chemical_species == "FAs")
-algae_data_small
-```
-
-Great! Looks like we're ready to go.
-
-## Setting up a ggplot
+Now we have a nice, small table that we can use to practice data visualization. For visualization, we're going to use `ggplot2` - a powerful set of commands for plot generation. 
 
 There are three steps to setting up a ggplot:
 
-### Step 1: Define the data you want to use.
+1. **Define the data you want to use.**
 
 We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
@@ -280,7 +251,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-### Step 2: Define how your variables map onto the axes.
+2. **Define how your variables map onto the axes.**
 
 This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
 
@@ -288,18 +259,23 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-### Step 3: Use geometric shapes to represent other variables in your data.
+3. **Use geometric shapes to represent other variables in your data.**
 
-Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Again, use `aes()` to map your variables onto the geometric features of the shapes. Let's try it:
+Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Let's try it:
+
+```{r, message = FALSE}
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
+  geom_point()
+```
+
+In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
 ```{r, message = FALSE}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime))
 ```
 
-## Geoms
-
-### Modifying geoms
+### modifying geoms
 
 In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. Here's an example:
 
@@ -317,7 +293,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
-### Using multiple geoms
+### multiple geoms
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
@@ -334,6 +310,26 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_violin(aes(fill = algae_strain)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
+
+```{r}
+ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
+  geom_violin(aes(fill = algae_strain)) +
+  geom_point(aes(color = harvesting_regime, size = replicate))
+```
+
+## markdown
+
+Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: `File -> New File -> R Markdown`. You should get a template document that compiles when you press "knit".
+
+Customize this document by modifying the title, and add `author: "your_name"` to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.
+
+You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a "chunk" or R code. That looks like this:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/figures/markdown_1.png', dpi = NA)
+```
+
+
 
 <!-- end -->
 
@@ -431,8 +427,10 @@ I am going to show you an example of how you can filter and plot at the same tim
 ```{r}
 library(tidyverse)
 algae_data_data
-ggplot(data = filter(algae_data_data, chemical_species == "essential_Aas"), aes(x = algae_strain, y = abundance)) +
-  geom_point()
+ggplot(
+  data = filter(algae_data_data, chemical_species == "essential_Aas"),
+  aes(x = algae_strain, y = abundance)) +
+geom_point()
 ```
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
@@ -510,12 +508,12 @@ What advantages does this one extra line provide over what you had to do in ques
 
 ## Part 2: Alaska Lakes Dataset
 
-1. **Importing Data**
+1. **Viewing Data**
 
-Import the Alaska lakes dataset into R and store it in an object. You can download the dataset from the link at the top of this page of exercises.
+Use R to view the first few lines of the alaska_lake_data dataset.
 
 ```{r, include = FALSE, message = FALSE}
-data <- alaska_lake_data
+alaska_lake_data
 ```
 
 2. **Objects**
@@ -523,7 +521,7 @@ data <- alaska_lake_data
 How many variables are in the Alaska lakes dataset?
 
 ```{r, include = FALSE}
-data
+alaska_lake_data
 # 220 x 7
 ```
 
@@ -532,7 +530,7 @@ data
 Filter the data set so only meausurements of free elements are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset?
 
 ```{r, include = FALSE}
-filter(data, element_type == "free")
+filter(alaska_lake_data, element_type == "free")
 # 160 x 7
 ```
 
@@ -541,7 +539,7 @@ filter(data, element_type == "free")
 Make a plot that shows the water temperatures of each lake. Don't worry if you get a warning message from R about "missing values". Which is the hottest lake? The coolest?
 
 ```{r, include = FALSE}
-ggplot(data, aes(x = lake, y = water_temp)) + geom_point() + coord_flip()
+ggplot(alaska_lake_data, aes(x = lake, y = water_temp)) + geom_point() + coord_flip()
 # Lava Lake
 # Desperation Lake
 ```
@@ -551,7 +549,7 @@ ggplot(data, aes(x = lake, y = water_temp)) + geom_point() + coord_flip()
 Make a plot that shows the water temperature of each lake. The x axis should be `park`, the y axis `water temp`. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?
 
 ```{r, include = FALSE}
-ggplot(data, aes(x = park, y = water_temp)) + 
+ggplot(alaska_lake_data, aes(x = park, y = water_temp)) + 
   geom_violin() +
   geom_point(aes(color = water_temp), size = 5)
 # GAAR
@@ -562,7 +560,7 @@ ggplot(data, aes(x = park, y = water_temp)) +
 From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from `park == "NOAT"` are shown (note the double equals sign and the quotes around NOAT...). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.
 
 ```{r, include = FALSE}
-ggplot(filter(data, park == "NOAT"), aes(x = lake, y = water_temp)) + 
+ggplot(filter(alaska_lake_data, park == "NOAT"), aes(x = lake, y = water_temp)) + 
   geom_point()
 # Lake Narvakrak
 ```
@@ -572,7 +570,7 @@ ggplot(filter(data, park == "NOAT"), aes(x = lake, y = water_temp)) +
 Make a plot that shows which lake has the highest abundance of sulfur.
 
 ```{r, include = FALSE}
-ggplot(filter(data, element == "S"), aes(x = lake, y = mg_per_L)) + 
+ggplot(filter(alaska_lake_data, element == "S"), aes(x = lake, y = mg_per_L)) + 
   geom_point()
 ```
 
@@ -582,19 +580,19 @@ Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 2
 
 ```{r}
 library(tidyverse)
-lake_data
-ggplot(data = filter(lake_data, lake == "Lake_Narvakrak"), aes(x = lake, y = mg_per_L)) +
+alaska_lake_data
+ggplot(data = filter(alaska_lake_data, lake == "Lake_Narvakrak"), aes(x = lake, y = mg_per_L)) +
   geom_point(shape = 21, size = 10, color = "black", fill = "green")
 ```
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
 ```{r, include = FALSE}
-ggplot(filter(data, element == "C"), aes(x = park, y = mg_per_L)) + 
+ggplot(filter(alaska_lake_data, element == "C"), aes(x = park, y = mg_per_L)) + 
   geom_point(shape = 21, size = 10, aes(fill = park), color = "black")
 ```
 
-When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1fpw-iyMCwtssBJvQW0mC0NMarqRy2GZY62Kjf6zURGM/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
+When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 <!-- end -->
 
 
