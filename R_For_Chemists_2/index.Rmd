@@ -28,7 +28,7 @@ options(pillar.sigfig = 3)
 # Preface {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/R_For_Chemists_logo.jpg', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/R_For_Chemists_logo.jpg', dpi = NA)
 ```
 
 1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. 
@@ -195,7 +195,7 @@ source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 ## Objects
 
-Ok, we've got the installation out of the way. Let's get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. 
+Ok, we've got the installation out of the way. Let's get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with.
 
 
 Let's look at how to create an object. For this, we can use an arrow: `<-` . The arrow will take something and store it inside an object. For example:
@@ -210,7 +210,7 @@ Now we've got a new object called `new_object`, and inside of it is the number 1
 new_object
 ```
 
-Easy! Let's look at one of the objects that comes with 
+Easy! Let's look at one of the objects that comes with our class code base. What are the dimensions of the "algae_data" data set?
 
 ```{r, message = FALSE}
 algae_data
@@ -326,9 +326,16 @@ Customize this document by modifying the title, and add `author: "your_name"` to
 You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a "chunk" or R code. That looks like this:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/figures/markdown_1.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/markdown_1.png', dpi = NA)
 ```
 
+You should notice a few things when you compile this document:
+
+1. Headings: When you compile that code, the "# My first analysis" creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, "## Part 1" will create a subheading, "### Part 1.1" will create a sub-subheading, and so on.
+
+2. Plain text: Plain text in an R Markdown document creates a plan text entry in your compiled document. You can use this to explain your analyses and your figures, etc.
+
+We can also run R chunks right in markdown and create figures. Dr. Busta will show you how to do this in class.
 
 
 <!-- end -->
