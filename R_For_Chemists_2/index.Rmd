@@ -245,6 +245,8 @@ Let's look at how to create an R Markdown report - this is what we will use to s
 
 First, in RStudio click `File -> New File -> R Markdown`. This will open a default report for you. When you compile it by clicking "knit" it should look something like this:
 
+
+
   <div class="marginnote">
 
   You can access a variety of Markdown themes here: [R Markdown Themes](https://www.datadreaming.org/post/r-markdown-theme-gallery/)
