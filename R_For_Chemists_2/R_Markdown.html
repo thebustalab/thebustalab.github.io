@@ -148,6 +148,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="2.1" data-path="R_Markdown.html"><a href="R_Markdown.html#objects"><i class="fa fa-check"></i><b>2.1</b> Objects</a></li>
 <li class="chapter" data-level="2.2" data-path="R_Markdown.html"><a href="R_Markdown.html#functions"><i class="fa fa-check"></i><b>2.2</b> Functions</a></li>
+<li class="chapter" data-level="2.3" data-path="R_Markdown.html"><a href="R_Markdown.html#markdown-reports"><i class="fa fa-check"></i><b>2.3</b> Markdown Reports</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="ggplot2.html"><a href="ggplot2.html"><i class="fa fa-check"></i><b>3</b> ggplot2</a>
 <ul>
@@ -161,6 +162,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.2.1" data-path="ggplot2.html"><a href="ggplot2.html#modifying-geoms"><i class="fa fa-check"></i><b>3.2.1</b> Modifying geoms</a></li>
 <li class="chapter" data-level="3.2.2" data-path="ggplot2.html"><a href="ggplot2.html#using-multiple-geoms"><i class="fa fa-check"></i><b>3.2.2</b> Using multiple geoms</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="Exercises_1.html"><a href="Exercises_1.html"><i class="fa fa-check"></i><b>4</b> Exercises 1</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="Exercises_1.html"><a href="Exercises_1.html#part-1-algae-chemistry-dataset"><i class="fa fa-check"></i><b>4.1</b> Part 1: Algae Chemistry Dataset</a></li>
+<li class="chapter" data-level="4.2" data-path="Exercises_1.html"><a href="Exercises_1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>4.2</b> Part 2: Alaska Lakes Dataset</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="Exercises_1.html"><a href="Exercises_1.html#question-1-importing-data"><i class="fa fa-check"></i><b>4.2.1</b> Question 1: Importing Data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="Exercises_1.html"><a href="Exercises_1.html#question-2-objects"><i class="fa fa-check"></i><b>4.2.2</b> Question 2: Objects</a></li>
+<li class="chapter" data-level="4.2.3" data-path="Exercises_1.html"><a href="Exercises_1.html#question-3-filtering"><i class="fa fa-check"></i><b>4.2.3</b> Question 3: Filtering</a></li>
+<li class="chapter" data-level="4.2.4" data-path="Exercises_1.html"><a href="Exercises_1.html#question-4-plotting"><i class="fa fa-check"></i><b>4.2.4</b> Question 4: Plotting</a></li>
+<li class="chapter" data-level="4.2.5" data-path="Exercises_1.html"><a href="Exercises_1.html#question-5-plotting"><i class="fa fa-check"></i><b>4.2.5</b> Question 5: Plotting</a></li>
+<li class="chapter" data-level="4.2.6" data-path="Exercises_1.html"><a href="Exercises_1.html#question-6-filtering-and-plotting"><i class="fa fa-check"></i><b>4.2.6</b> Question 6: Filtering and Plotting</a></li>
+<li class="chapter" data-level="4.2.7" data-path="Exercises_1.html"><a href="Exercises_1.html#question-7-filtering-and-plotting"><i class="fa fa-check"></i><b>4.2.7</b> Question 7: Filtering and Plotting</a></li>
+<li class="chapter" data-level="4.2.8" data-path="Exercises_1.html"><a href="Exercises_1.html#question-8-open-ended-plotting"><i class="fa fa-check"></i><b>4.2.8</b> Question 8: Open-ended Plotting</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -184,22 +200,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">2</span> R Markdown</h1>
 <div id="objects" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Objects</h2>
-<p>Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were “files” inside an R session. <code>phylochemistry</code> provides a variety of objects for us to work with. To look at one, we can simply type the name of the object into the console:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="R_Markdown.html#cb10-1" aria-hidden="true" tabindex="-1"></a>algae_data</span>
-<span id="cb10-2"><a href="R_Markdown.html#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 180 × 5</span></span>
-<span id="cb10-3"><a href="R_Markdown.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species           abundance</span></span>
-<span id="cb10-4"><a href="R_Markdown.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                          &lt;dbl&gt;</span></span>
-<span id="cb10-5"><a href="R_Markdown.html#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                            520. </span></span>
-<span id="cb10-6"><a href="R_Markdown.html#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         1 Tsv1         Heavy             saturated_Fas                  123. </span></span>
-<span id="cb10-7"><a href="R_Markdown.html#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         1 Tsv1         Heavy             omega_3_polyunsaturated_F…     186. </span></span>
-<span id="cb10-8"><a href="R_Markdown.html#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Heavy             monounsaturated_Fas             28.4</span></span>
-<span id="cb10-9"><a href="R_Markdown.html#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         1 Tsv1         Heavy             polyunsaturated_Fas            369. </span></span>
-<span id="cb10-10"><a href="R_Markdown.html#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         1 Tsv1         Heavy             omega_6_polyunsaturated_F…     183. </span></span>
-<span id="cb10-11"><a href="R_Markdown.html#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv1         Heavy             lysine                          84.1</span></span>
-<span id="cb10-12"><a href="R_Markdown.html#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         1 Tsv1         Heavy             methionine                      24.1</span></span>
-<span id="cb10-13"><a href="R_Markdown.html#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         1 Tsv1         Heavy             essential_Aas                  692. </span></span>
-<span id="cb10-14"><a href="R_Markdown.html#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv1         Heavy             non_essential_Aas              919. </span></span>
-<span id="cb10-15"><a href="R_Markdown.html#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 170 more rows</span></span></code></pre></div>
+<p>Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were “files” inside an R session. <code>phylochemistry</code> provides a variety of objects for us to work with.</p>
+<p>Let’s look at how to create an object. For this, we can use an arrow: <code>&lt;-</code> . The arrow will take something and store it inside an object. For example:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="R_Markdown.html#cb10-1" aria-hidden="true" tabindex="-1"></a>new_object <span class="ot">&lt;-</span> <span class="dv">1</span></span></code></pre></div>
+<p>Now we’ve got a new object called <code>new_object</code>, and inside of it is the number 1. To look at what’s inside an object, we can simply type the name of the object into the console:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="R_Markdown.html#cb11-1" aria-hidden="true" tabindex="-1"></a>new_object</span>
+<span id="cb11-2"><a href="R_Markdown.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span></code></pre></div>
+<p>Easy! Let’s look at one of the objects that comes with</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="R_Markdown.html#cb12-1" aria-hidden="true" tabindex="-1"></a>algae_data</span>
+<span id="cb12-2"><a href="R_Markdown.html#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 180 × 5</span></span>
+<span id="cb12-3"><a href="R_Markdown.html#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species           abundance</span></span>
+<span id="cb12-4"><a href="R_Markdown.html#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                          &lt;dbl&gt;</span></span>
+<span id="cb12-5"><a href="R_Markdown.html#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                            520. </span></span>
+<span id="cb12-6"><a href="R_Markdown.html#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         1 Tsv1         Heavy             saturated_Fas                  123. </span></span>
+<span id="cb12-7"><a href="R_Markdown.html#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         1 Tsv1         Heavy             omega_3_polyunsaturated_F…     186. </span></span>
+<span id="cb12-8"><a href="R_Markdown.html#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Heavy             monounsaturated_Fas             28.4</span></span>
+<span id="cb12-9"><a href="R_Markdown.html#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         1 Tsv1         Heavy             polyunsaturated_Fas            369. </span></span>
+<span id="cb12-10"><a href="R_Markdown.html#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         1 Tsv1         Heavy             omega_6_polyunsaturated_F…     183. </span></span>
+<span id="cb12-11"><a href="R_Markdown.html#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv1         Heavy             lysine                          84.1</span></span>
+<span id="cb12-12"><a href="R_Markdown.html#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         1 Tsv1         Heavy             methionine                      24.1</span></span>
+<span id="cb12-13"><a href="R_Markdown.html#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         1 Tsv1         Heavy             essential_Aas                  692. </span></span>
+<span id="cb12-14"><a href="R_Markdown.html#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv1         Heavy             non_essential_Aas              919. </span></span>
+<span id="cb12-15"><a href="R_Markdown.html#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 170 more rows</span></span></code></pre></div>
 </div>
 <div id="functions" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Functions</h2>
@@ -210,53 +232,61 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>The stuff inside the parentheses are the details of how you want the function to perform its action: <code>run_this_analysis(on_this_data)</code></li>
 </ul>
 <p>Let’s illustrate this with an example. <code>algae_data</code> is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let’s use another <code>tidyverse</code> command called <code>filter</code> to filter the <code>algae_data</code> object. We will need to tell the filter command what to filter out using “logical predicates” (things like equal to: <code>==</code>, less than: <code>&lt;</code>, greater than: <code>&gt;</code>, greater-than-or-equal-to: <code>&lt;=</code>, etc.). Let’s filter <code>algae_data</code> so that only rows where the <code>chemical_species</code> is equal to <code>FAs</code> (fatty acids) is preserved. This will look like <code>chemical_species == "FAs"</code>. Here we go:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="R_Markdown.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;FAs&quot;</span>)</span>
-<span id="cb11-2"><a href="R_Markdown.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 18 × 5</span></span>
-<span id="cb11-3"><a href="R_Markdown.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
-<span id="cb11-4"><a href="R_Markdown.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
-<span id="cb11-5"><a href="R_Markdown.html#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
-<span id="cb11-6"><a href="R_Markdown.html#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
-<span id="cb11-7"><a href="R_Markdown.html#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
-<span id="cb11-8"><a href="R_Markdown.html#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Light             FAs                   580.</span></span>
-<span id="cb11-9"><a href="R_Markdown.html#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         2 Tsv1         Light             FAs                   535.</span></span>
-<span id="cb11-10"><a href="R_Markdown.html#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         3 Tsv1         Light             FAs                   513.</span></span>
-<span id="cb11-11"><a href="R_Markdown.html#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
-<span id="cb11-12"><a href="R_Markdown.html#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
-<span id="cb11-13"><a href="R_Markdown.html#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
-<span id="cb11-14"><a href="R_Markdown.html#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv2         Light             FAs                   490.</span></span>
-<span id="cb11-15"><a href="R_Markdown.html#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 11         2 Tsv2         Light             FAs                   541.</span></span>
-<span id="cb11-16"><a href="R_Markdown.html#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 12         3 Tsv2         Light             FAs                   461.</span></span>
-<span id="cb11-17"><a href="R_Markdown.html#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
-<span id="cb11-18"><a href="R_Markdown.html#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
-<span id="cb11-19"><a href="R_Markdown.html#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
-<span id="cb11-20"><a href="R_Markdown.html#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 16         1 Tsv11        Light             FAs                   526.</span></span>
-<span id="cb11-21"><a href="R_Markdown.html#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 17         2 Tsv11        Light             FAs                   514.</span></span>
-<span id="cb11-22"><a href="R_Markdown.html#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="R_Markdown.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;FAs&quot;</span>)</span>
+<span id="cb13-2"><a href="R_Markdown.html#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 18 × 5</span></span>
+<span id="cb13-3"><a href="R_Markdown.html#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
+<span id="cb13-4"><a href="R_Markdown.html#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
+<span id="cb13-5"><a href="R_Markdown.html#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
+<span id="cb13-6"><a href="R_Markdown.html#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
+<span id="cb13-7"><a href="R_Markdown.html#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
+<span id="cb13-8"><a href="R_Markdown.html#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Light             FAs                   580.</span></span>
+<span id="cb13-9"><a href="R_Markdown.html#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         2 Tsv1         Light             FAs                   535.</span></span>
+<span id="cb13-10"><a href="R_Markdown.html#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         3 Tsv1         Light             FAs                   513.</span></span>
+<span id="cb13-11"><a href="R_Markdown.html#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
+<span id="cb13-12"><a href="R_Markdown.html#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
+<span id="cb13-13"><a href="R_Markdown.html#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
+<span id="cb13-14"><a href="R_Markdown.html#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv2         Light             FAs                   490.</span></span>
+<span id="cb13-15"><a href="R_Markdown.html#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 11         2 Tsv2         Light             FAs                   541.</span></span>
+<span id="cb13-16"><a href="R_Markdown.html#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 12         3 Tsv2         Light             FAs                   461.</span></span>
+<span id="cb13-17"><a href="R_Markdown.html#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
+<span id="cb13-18"><a href="R_Markdown.html#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
+<span id="cb13-19"><a href="R_Markdown.html#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
+<span id="cb13-20"><a href="R_Markdown.html#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 16         1 Tsv11        Light             FAs                   526.</span></span>
+<span id="cb13-21"><a href="R_Markdown.html#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 17         2 Tsv11        Light             FAs                   514.</span></span>
+<span id="cb13-22"><a href="R_Markdown.html#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
 <p>Cool! Now it’s just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let’s write this new, smaller dataset into a new object. For that we use <code>&lt;-</code>, remember?</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="R_Markdown.html#cb12-1" aria-hidden="true" tabindex="-1"></a>algae_data_small <span class="ot">&lt;-</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;FAs&quot;</span>)</span>
-<span id="cb12-2"><a href="R_Markdown.html#cb12-2" aria-hidden="true" tabindex="-1"></a>algae_data_small</span>
-<span id="cb12-3"><a href="R_Markdown.html#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 18 × 5</span></span>
-<span id="cb12-4"><a href="R_Markdown.html#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
-<span id="cb12-5"><a href="R_Markdown.html#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
-<span id="cb12-6"><a href="R_Markdown.html#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
-<span id="cb12-7"><a href="R_Markdown.html#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
-<span id="cb12-8"><a href="R_Markdown.html#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
-<span id="cb12-9"><a href="R_Markdown.html#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Light             FAs                   580.</span></span>
-<span id="cb12-10"><a href="R_Markdown.html#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         2 Tsv1         Light             FAs                   535.</span></span>
-<span id="cb12-11"><a href="R_Markdown.html#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         3 Tsv1         Light             FAs                   513.</span></span>
-<span id="cb12-12"><a href="R_Markdown.html#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
-<span id="cb12-13"><a href="R_Markdown.html#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
-<span id="cb12-14"><a href="R_Markdown.html#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
-<span id="cb12-15"><a href="R_Markdown.html#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv2         Light             FAs                   490.</span></span>
-<span id="cb12-16"><a href="R_Markdown.html#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 11         2 Tsv2         Light             FAs                   541.</span></span>
-<span id="cb12-17"><a href="R_Markdown.html#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 12         3 Tsv2         Light             FAs                   461.</span></span>
-<span id="cb12-18"><a href="R_Markdown.html#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
-<span id="cb12-19"><a href="R_Markdown.html#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
-<span id="cb12-20"><a href="R_Markdown.html#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
-<span id="cb12-21"><a href="R_Markdown.html#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 16         1 Tsv11        Light             FAs                   526.</span></span>
-<span id="cb12-22"><a href="R_Markdown.html#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 17         2 Tsv11        Light             FAs                   514.</span></span>
-<span id="cb12-23"><a href="R_Markdown.html#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
-<p>Now we have a nice, small table that we can use to practice data visualization. We’ll do that in the next chapter.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="R_Markdown.html#cb14-1" aria-hidden="true" tabindex="-1"></a>algae_data_small <span class="ot">&lt;-</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;FAs&quot;</span>)</span>
+<span id="cb14-2"><a href="R_Markdown.html#cb14-2" aria-hidden="true" tabindex="-1"></a>algae_data_small</span>
+<span id="cb14-3"><a href="R_Markdown.html#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 18 × 5</span></span>
+<span id="cb14-4"><a href="R_Markdown.html#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
+<span id="cb14-5"><a href="R_Markdown.html#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
+<span id="cb14-6"><a href="R_Markdown.html#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
+<span id="cb14-7"><a href="R_Markdown.html#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
+<span id="cb14-8"><a href="R_Markdown.html#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
+<span id="cb14-9"><a href="R_Markdown.html#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Light             FAs                   580.</span></span>
+<span id="cb14-10"><a href="R_Markdown.html#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         2 Tsv1         Light             FAs                   535.</span></span>
+<span id="cb14-11"><a href="R_Markdown.html#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         3 Tsv1         Light             FAs                   513.</span></span>
+<span id="cb14-12"><a href="R_Markdown.html#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
+<span id="cb14-13"><a href="R_Markdown.html#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
+<span id="cb14-14"><a href="R_Markdown.html#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
+<span id="cb14-15"><a href="R_Markdown.html#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv2         Light             FAs                   490.</span></span>
+<span id="cb14-16"><a href="R_Markdown.html#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 11         2 Tsv2         Light             FAs                   541.</span></span>
+<span id="cb14-17"><a href="R_Markdown.html#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 12         3 Tsv2         Light             FAs                   461.</span></span>
+<span id="cb14-18"><a href="R_Markdown.html#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
+<span id="cb14-19"><a href="R_Markdown.html#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
+<span id="cb14-20"><a href="R_Markdown.html#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
+<span id="cb14-21"><a href="R_Markdown.html#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 16         1 Tsv11        Light             FAs                   526.</span></span>
+<span id="cb14-22"><a href="R_Markdown.html#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 17         2 Tsv11        Light             FAs                   514.</span></span>
+<span id="cb14-23"><a href="R_Markdown.html#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
+<p>Now we have a nice, small table that we can use to practice data visualization.</p>
+</div>
+<div id="markdown-reports" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Markdown Reports</h2>
+<p>Let’s look at how to create an R Markdown report - this is what we will use to submit assignments in this class. You can also use markdown to create reports for your research group or other projects.</p>
+<p>First, in RStudio click <code>File -&gt; New File -&gt; R Markdown</code>. This will open a default report for you. When you compile it by clicking “knit” it should look something like this:</p>
+<div class="marginnote">
+<p>You can access a variety of Markdown themes here: <a href="https://www.datadreaming.org/post/r-markdown-theme-gallery/">R Markdown Themes</a></p>
+</div>
 <!-- end -->
 <!-- start ggplot2 -->
 </div>
