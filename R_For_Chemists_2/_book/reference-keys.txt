@@ -1,7 +1,0 @@
-installation
-installing-r
-installing-rstudio
-verifying-installations
-installing-the-tidyverse
-installing-tex
-loading-phylochemistry

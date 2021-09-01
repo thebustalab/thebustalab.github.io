@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>3 ggplot2 | R For Chemists</title>
+  <meta name="description" content="3 ggplot2 | R For Chemists" />
+  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="3 ggplot2 | R For Chemists" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="3 ggplot2 | R For Chemists" />
+  
+  
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2021-09-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="R_Markdown.html"/>
+
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="tufte.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="installation.html"><a href="installation.html#r"><i class="fa fa-check"></i><b>1.1</b> R</a></li>
+<li class="chapter" data-level="1.2" data-path="installation.html"><a href="installation.html#rstudio"><i class="fa fa-check"></i><b>1.2</b> RStudio</a></li>
+<li class="chapter" data-level="1.3" data-path="installation.html"><a href="installation.html#verification"><i class="fa fa-check"></i><b>1.3</b> Verification</a></li>
+<li class="chapter" data-level="1.4" data-path="installation.html"><a href="installation.html#tidyverse"><i class="fa fa-check"></i><b>1.4</b> tidyverse</a></li>
+<li class="chapter" data-level="1.5" data-path="installation.html"><a href="installation.html#tex"><i class="fa fa-check"></i><b>1.5</b> TeX</a></li>
+<li class="chapter" data-level="1.6" data-path="installation.html"><a href="installation.html#phylochemistry"><i class="fa fa-check"></i><b>1.6</b> phylochemistry</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="R_Markdown.html"><a href="R_Markdown.html"><i class="fa fa-check"></i><b>2</b> R Markdown</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="R_Markdown.html"><a href="R_Markdown.html#objects"><i class="fa fa-check"></i><b>2.1</b> Objects</a></li>
+<li class="chapter" data-level="2.2" data-path="R_Markdown.html"><a href="R_Markdown.html#functions"><i class="fa fa-check"></i><b>2.2</b> Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="ggplot2.html"><a href="ggplot2.html"><i class="fa fa-check"></i><b>3</b> ggplot2</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="ggplot2.html"><a href="ggplot2.html#setting-up-a-ggplot"><i class="fa fa-check"></i><b>3.1</b> Setting up a ggplot</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="ggplot2.html"><a href="ggplot2.html#step-1-define-the-data-you-want-to-use."><i class="fa fa-check"></i><b>3.1.1</b> Step 1: Define the data you want to use.</a></li>
+<li class="chapter" data-level="3.1.2" data-path="ggplot2.html"><a href="ggplot2.html#step-2-define-how-your-variables-map-onto-the-axes."><i class="fa fa-check"></i><b>3.1.2</b> Step 2: Define how your variables map onto the axes.</a></li>
+<li class="chapter" data-level="3.1.3" data-path="ggplot2.html"><a href="ggplot2.html#step-3-use-geometric-shapes-to-represent-other-variables-in-your-data."><i class="fa fa-check"></i><b>3.1.3</b> Step 3: Use geometric shapes to represent other variables in your data.</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="ggplot2.html"><a href="ggplot2.html#geoms"><i class="fa fa-check"></i><b>3.2</b> Geoms</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="ggplot2.html"><a href="ggplot2.html#modifying-geoms"><i class="fa fa-check"></i><b>3.2.1</b> Modifying geoms</a></li>
+<li class="chapter" data-level="3.2.2" data-path="ggplot2.html"><a href="ggplot2.html#using-multiple-geoms"><i class="fa fa-check"></i><b>3.2.2</b> Using multiple geoms</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R For Chemists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="ggplot2" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> ggplot2</h1>
+<p>For visualization, we’re going to use <code>ggplot2</code> - a powerful set of commands for plot generation. Let’s make sure we’ve got our data from the last chapter active in our current session:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="ggplot2.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb13-2"><a href="ggplot2.html#cb13-2" aria-hidden="true" tabindex="-1"></a>algae_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv&quot;</span>)</span>
+<span id="cb13-3"><a href="ggplot2.html#cb13-3" aria-hidden="true" tabindex="-1"></a>algae_data_small <span class="ot">&lt;-</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;FAs&quot;</span>)</span>
+<span id="cb13-4"><a href="ggplot2.html#cb13-4" aria-hidden="true" tabindex="-1"></a>algae_data_small</span>
+<span id="cb13-5"><a href="ggplot2.html#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 18 × 5</span></span>
+<span id="cb13-6"><a href="ggplot2.html#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species abundance</span></span>
+<span id="cb13-7"><a href="ggplot2.html#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                &lt;dbl&gt;</span></span>
+<span id="cb13-8"><a href="ggplot2.html#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                   520.</span></span>
+<span id="cb13-9"><a href="ggplot2.html#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         2 Tsv1         Heavy             FAs                   450.</span></span>
+<span id="cb13-10"><a href="ggplot2.html#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         3 Tsv1         Heavy             FAs                   514.</span></span>
+<span id="cb13-11"><a href="ggplot2.html#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Light             FAs                   580.</span></span>
+<span id="cb13-12"><a href="ggplot2.html#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         2 Tsv1         Light             FAs                   535.</span></span>
+<span id="cb13-13"><a href="ggplot2.html#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         3 Tsv1         Light             FAs                   513.</span></span>
+<span id="cb13-14"><a href="ggplot2.html#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv2         Heavy             FAs                   373.</span></span>
+<span id="cb13-15"><a href="ggplot2.html#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         2 Tsv2         Heavy             FAs                   409.</span></span>
+<span id="cb13-16"><a href="ggplot2.html#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         3 Tsv2         Heavy             FAs                   390.</span></span>
+<span id="cb13-17"><a href="ggplot2.html#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv2         Light             FAs                   490.</span></span>
+<span id="cb13-18"><a href="ggplot2.html#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 11         2 Tsv2         Light             FAs                   541.</span></span>
+<span id="cb13-19"><a href="ggplot2.html#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 12         3 Tsv2         Light             FAs                   461.</span></span>
+<span id="cb13-20"><a href="ggplot2.html#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 13         1 Tsv11        Heavy             FAs                   474.</span></span>
+<span id="cb13-21"><a href="ggplot2.html#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 14         2 Tsv11        Heavy             FAs                   331.</span></span>
+<span id="cb13-22"><a href="ggplot2.html#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 15         3 Tsv11        Heavy             FAs                   530.</span></span>
+<span id="cb13-23"><a href="ggplot2.html#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 16         1 Tsv11        Light             FAs                   526.</span></span>
+<span id="cb13-24"><a href="ggplot2.html#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 17         2 Tsv11        Light             FAs                   514.</span></span>
+<span id="cb13-25"><a href="ggplot2.html#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="do">## 18         3 Tsv11        Light             FAs                   544.</span></span></code></pre></div>
+<p>Great! Looks like we’re ready to go.</p>
+<div id="setting-up-a-ggplot" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Setting up a ggplot</h2>
+<p>There are three steps to setting up a ggplot:</p>
+<div id="step-1-define-the-data-you-want-to-use." class="section level3" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> Step 1: Define the data you want to use.</h3>
+<p>We do this using the ggplot function’s data argument. When we run that line, it just shows a grey plot space. Why is this? It’s because all we’ve done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven’t explained how to represent features of the data using ink.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="ggplot2.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div id="step-2-define-how-your-variables-map-onto-the-axes." class="section level3" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> Step 2: Define how your variables map onto the axes.</h3>
+<p>This is called aesthetic mapping and is done with the <code>aes()</code> function. <code>aes()</code> should be placed inside the <code>ggplot</code> command. Now when we run it, we get our axes!</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="ggplot2.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance))</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div id="step-3-use-geometric-shapes-to-represent-other-variables-in-your-data." class="section level3" number="3.1.3">
+<h3><span class="header-section-number">3.1.3</span> Step 3: Use geometric shapes to represent other variables in your data.</h3>
+<p>Map your variables onto the geometric features of the shapes. To define which shape should be used, use a <code>geom_*</code> command. Some options are, for example, <code>geom_point()</code>, <code>geom_boxplot()</code>, and <code>geom_violin()</code>. These functions should be added to your plot using the <code>+</code> sign. We can use a new line to keep the code from getting too wide, just make sure the <code>+</code> sign is at the end fo the top line. Again, use <code>aes()</code> to map your variables onto the geometric features of the shapes. Let’s try it:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="ggplot2.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span> </span>
+<span id="cb16-2"><a href="ggplot2.html#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> harvesting_regime))</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="geoms" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Geoms</h2>
+<div id="modifying-geoms" class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Modifying geoms</h3>
+<p>In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. Here’s an example:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="ggplot2.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span> </span>
+<span id="cb17-2"><a href="ggplot2.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> harvesting_regime), <span class="at">size =</span> <span class="dv">5</span>)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>One powerful aspect of <code>ggplot</code> is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="ggplot2.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
+<span id="cb18-2"><a href="ggplot2.html#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> harvesting_regime), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>** Important note: Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black”.</p>
+</div>
+<div id="using-multiple-geoms" class="section level3" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Using multiple geoms</h3>
+<p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="ggplot2.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span> </span>
+<span id="cb19-2"><a href="ggplot2.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb19-3"><a href="ggplot2.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> harvesting_regime), <span class="at">size =</span> <span class="dv">5</span>)</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="ggplot2.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
+<span id="cb20-2"><a href="ggplot2.html#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> algae_strain)) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="ggplot2.html#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> harvesting_regime, <span class="at">size =</span> replicate))</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="384" style="display: block; margin: auto;" /></p>
+<!-- end -->
+<p><a href="https://www.datadreaming.org/post/r-markdown-theme-gallery/">R Markdown Themes</a></p>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="R_Markdown.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sepia",
+"family": "serif",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
