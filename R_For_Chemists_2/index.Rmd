@@ -313,8 +313,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 ```{r}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
-  geom_violin(aes(fill = algae_strain)) +
-  geom_point(aes(color = harvesting_regime, size = replicate))
+  geom_boxplot()
 ```
 
 ## markdown
