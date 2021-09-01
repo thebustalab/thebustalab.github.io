@@ -343,7 +343,7 @@ We can also run R chunks right in markdown and create figures. Dr. Busta will sh
 <!-- start Exercises 1 -->
 # Exercises 1 {#Exercises_1}
 
-In this set of exercises we're going to practice importing, filtering, and plotting data. We're going to work with two datasets: (i) algae_data_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to any questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
+In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to any questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
 ## Part 1: Algae Chemistry Dataset
 
@@ -368,19 +368,19 @@ read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.cs
 
 3. **Objects**
 
-Import the algae chemistry data and send it into a new object called `algae_data_data`. Remember about `<-`. See the [R Basics](#R_Basics) section of this book if you need help.
+Import the algae chemistry data and send it into a new object called `algae_data`. Remember about `<-`. See the [R Basics](#R_Basics) section of this book if you need help.
 
 ```{r, include = FALSE}
 library(tidyverse)
-algae_data_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 ```
  -->
 1. **Filtering 1**
 
-Now that you have the algae data imported and stored in an object called `algae_data_data`, filter the data so that only entries are shown for which the `chemical_species` is "FAs". What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+The algae data you have stored in an object called `algae_data` as soon as you run the source() command. for this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
 ```{r, include = FALSE}
-filter(algae_data_data, chemical_species == "FAs")
+filter(algae_data, chemical_species == "FAs")
 # 18 x 5
 ```
 
@@ -390,7 +390,7 @@ filter(algae_data_data, chemical_species == "FAs")
 Now filter the dataset so that only entries for the `algae_strain` "Tsv1" are shown. What are the dimensions of the resulting dataset?
 
 ```{r, include = FALSE}
-filter(algae_data_data, algae_strain == "Tsv1")
+filter(algae_data, algae_strain == "Tsv1")
 # 60 x 5
 ```
 
@@ -399,18 +399,18 @@ filter(algae_data_data, algae_strain == "Tsv1")
 Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that `>` can be used in the filter command instead of `==`, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?
 
 ```{r, include = FALSE}
-filter(algae_data_data, abundance > 250)
+filter(algae_data, abundance > 250)
 # 71 x 5
 ```
 
 4. **Plotting**
 
-Make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axis. Remember about `aes()`. Use points (`geom_point()`) to represent each compound. You don't need to color the points. If you need a refresher on how to make a ggplot, please refer to the chapter on [ggplot2](#ggplot2).
+Make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axis. Remember about `aes()`. Use points (`geom_point()`) to represent each compound. You don't need to color the points.
 
 Which algae strain has the most abundant compound out of all the compounds in the dataset?
 
 ```{r, include = FALSE}
-ggplot(data = algae_data_data, aes(x = algae_strain, y = abundance)) + 
+ggplot(data = algae_data, aes(x = algae_strain, y = abundance)) + 
   geom_point()
 #Tsv2
 ```
@@ -422,7 +422,7 @@ Make a ggplot that has `abundance` on the x axis and `chemical_species` on the y
 Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)
 
 ```{r, include = FALSE}
-ggplot(data = algae_data_data, aes(x = abundance, y = chemical_species)) + 
+ggplot(data = algae_data, aes(x = abundance, y = chemical_species)) + 
   geom_point()
 #non_essential_Aas and essential_Aas
 ```
@@ -433,9 +433,9 @@ I am going to show you an example of how you can filter and plot at the same tim
 
 ```{r}
 library(tidyverse)
-algae_data_data
+algae_data
 ggplot(
-  data = filter(algae_data_data, chemical_species == "essential_Aas"),
+  data = filter(algae_data, chemical_species == "essential_Aas"),
   aes(x = algae_strain, y = abundance)) +
 geom_point()
 ```
@@ -444,8 +444,8 @@ Using the above as a template, make a plot that shows just `omega_3_polyunsatura
 
 ```{r, include = FALSE}
 library(tidyverse)
-algae_data_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-ggplot(data = filter(algae_data_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) +
+algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 # light harvesting
 ```
@@ -456,8 +456,8 @@ Use a combination of filtering and plotting to show the abundance of the differe
 
 ```{r, include = FALSE}
 library(tidyverse)
-algae_data_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-ggplot(data = filter(algae_data_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 # light harvesting
 ```
@@ -467,17 +467,17 @@ ggplot(data = filter(algae_data_data, algae_strain == "Tsv1"), aes(x = abundance
 Make a plot that checks to see which `chemical_species` were more abundant under light as opposed to heavy `harvesting_regime` in all three replicates. Use filtered data so that just one `algae_strain` is shown, an x and a y axis, and points to represent the measurements. Make the points `size = 5` and also set the point's `alpha = 0.6`. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.
 
 ```{r, include = FALSE}
-ggplot(data = filter(algae_data_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
+ggplot(data = filter(algae_data, algae_strain == "Tsv1"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = filter(algae_data_data, algae_strain == "Tsv2"), aes(x = abundance, y = chemical_species)) +
+ggplot(data = filter(algae_data, algae_strain == "Tsv2"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = filter(algae_data_data, algae_strain == "Tsv11"), aes(x = abundance, y = chemical_species)) +
+ggplot(data = filter(algae_data, algae_strain == "Tsv11"), aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
@@ -486,13 +486,13 @@ ggplot(data = filter(algae_data_data, algae_strain == "Tsv11"), aes(x = abundanc
 Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
 
 ```{r, eval = FALSE} 
-ggplot(data = algae_data_data, aes(x = <something>, y = <something else>)) +
+ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
   geom_point(aes(<some things>), <some here too>) +
   facet_grid(.~algae_strain)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = algae_data_data, aes(x = abundance, y = chemical_species)) +
+ggplot(data = algae_data, aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
   facet_grid(.~algae_strain)
 ```
@@ -500,13 +500,13 @@ ggplot(data = algae_data_data, aes(x = abundance, y = chemical_species)) +
 Also try, instead of `facet_grid(.~algae_strain)`, `facet_grid(algae_strain~.)` at the end of you plot command. (note the swap in the position of the `.~` relative to `algae_strain`). This means your code should look something like:
 
 ```{r, eval = FALSE} 
-ggplot(data = algae_data_data, aes(x = <something>, y = <something else>)) +
+ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
   geom_point(aes(<some things>), <some here too>) +
   facet_grid(algae_strain~.)
 ```
 
 ```{r, include = FALSE}
-ggplot(data = algae_data_data, aes(x = abundance, y = chemical_species)) +
+ggplot(data = algae_data, aes(x = abundance, y = chemical_species)) +
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6) +
   facet_grid(algae_strain~.)
 ```
