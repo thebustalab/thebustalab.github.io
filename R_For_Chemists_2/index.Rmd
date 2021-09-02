@@ -342,7 +342,7 @@ We can also run R chunks right in markdown and create figures. Dr. Busta will sh
 <!-- start Exercises 1 -->
 # Exercises 1 {#Exercises_1}
 
-In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to any questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
+In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
 ## Part 1: Algae Chemistry Dataset
 
@@ -376,13 +376,12 @@ algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data
  -->
 1. **Filtering 1**
 
-The algae data you have stored in an object called `algae_data` as soon as you run the source() command. for this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+You will have `algae_data` stored in an object called `algae_data` as soon as you run the source() command. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
 ```{r, include = FALSE}
 filter(algae_data, chemical_species == "FAs")
 # 18 x 5
 ```
-
 
 2. **Filtering 2**
 
@@ -428,11 +427,9 @@ ggplot(data = algae_data, aes(x = abundance, y = chemical_species)) +
 
 6. **Filtering and plotting**
 
-I am going to show you an example of how you can filter and plot at the same time:
+I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot's data argument:
 
 ```{r}
-library(tidyverse)
-algae_data
 ggplot(
   data = filter(algae_data, chemical_species == "essential_Aas"),
   aes(x = algae_strain, y = abundance)) +
@@ -442,14 +439,12 @@ geom_point()
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
 ```{r, include = FALSE}
-library(tidyverse)
-algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
 ggplot(data = filter(algae_data, chemical_species == "omega_3_polyunsaturated_Fas"), aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 # light harvesting
 ```
 
-8. **Filtering and plotting**
+7. **Filtering and plotting**
 
 Use a combination of filtering and plotting to show the abundance of the different chemical species in just the `algae_strain` called "Tsv1". Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.
 
@@ -461,7 +456,7 @@ ggplot(data = filter(algae_data, algae_strain == "Tsv1"), aes(x = abundance, y =
 # light harvesting
 ```
 
-9. **Open-ended plotting**
+8. **Open-ended plotting**
 
 Make a plot that checks to see which `chemical_species` were more abundant under light as opposed to heavy `harvesting_regime` in all three replicates. Use filtered data so that just one `algae_strain` is shown, an x and a y axis, and points to represent the measurements. Make the points `size = 5` and also set the point's `alpha = 0.6`. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.
 
@@ -480,7 +475,7 @@ ggplot(data = filter(algae_data, algae_strain == "Tsv11"), aes(x = abundance, y 
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
-10. **A peek at what's to come...**
+9. **A peek at what's to come...**
 
 Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
 
@@ -510,13 +505,13 @@ ggplot(data = algae_data, aes(x = abundance, y = chemical_species)) +
   facet_grid(algae_strain~.)
 ```
 
-What advantages does this one extra line provide over what you had to do in question 9?
+What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?
 
 ## Part 2: Alaska Lakes Dataset
 
 1. **Viewing Data**
 
-Use R to view the first few lines of the alaska_lake_data dataset.
+Use R to view the first few lines of the `alaska_lake_data` dataset. Do your best to describe, in written format, the kind of data that are in this data set.
 
 ```{r, include = FALSE, message = FALSE}
 alaska_lake_data
@@ -533,7 +528,7 @@ alaska_lake_data
 
 3. **Filtering**
 
-Filter the data set so only meausurements of free elements are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset?
+Filter the data set so only meausurements of free elements (i.e. element_type is "free") are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset?
 
 ```{r, include = FALSE}
 filter(alaska_lake_data, element_type == "free")
@@ -582,20 +577,30 @@ ggplot(filter(alaska_lake_data, element == "S"), aes(x = lake, y = mg_per_L)) +
 
 8. **Open-ended Plotting**
 
-Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly. Here is an example:
+Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn't make a very nice plot):
 
 ```{r}
-library(tidyverse)
-alaska_lake_data
-ggplot(data = filter(alaska_lake_data, lake == "Lake_Narvakrak"), aes(x = lake, y = mg_per_L)) +
-  geom_point(shape = 21, size = 10, color = "black", fill = "green")
+ggplot(
+  data = filter(alaska_lake_data, lake == "Lake_Narvakrak"),
+  aes(x = lake, y = mg_per_L)
+) +
+  geom_point(
+    shape = 21, size = 10,
+    color = "black", fill = "green"
+  )
 ```
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
 ```{r, include = FALSE}
-ggplot(filter(alaska_lake_data, element == "C"), aes(x = park, y = mg_per_L)) + 
-  geom_point(shape = 21, size = 10, aes(fill = park), color = "black")
+ggplot(
+  filter(alaska_lake_data, element == "C"),
+  aes(x = park, y = mg_per_L)
+) + 
+  geom_point(
+    shape = 21, size = 10,
+    aes(fill = park), color = "black"
+)
 ```
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.

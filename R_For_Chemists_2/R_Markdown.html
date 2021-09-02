@@ -312,8 +312,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb22-3"><a href="R_Markdown.html#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> harvesting_regime, <span class="at">size =</span> replicate))</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="384" style="display: block; margin: auto;" /></p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="R_Markdown.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data_small, <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb23-2"><a href="R_Markdown.html#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> algae_strain)) <span class="sc">+</span></span>
-<span id="cb23-3"><a href="R_Markdown.html#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> harvesting_regime, <span class="at">size =</span> replicate))</span></code></pre></div>
+<span id="cb23-2"><a href="R_Markdown.html#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 </div>

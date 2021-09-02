@@ -179,7 +179,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="Exercises_1" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Exercises 1</h1>
-<p>In this set of exercises we’re going to practice filtering and plotting data in R Markdown. We’re going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. <strong>For these exercises, you will write your code and answers to any questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know</strong></p>
+<p>In this set of exercises we’re going to practice filtering and plotting data in R Markdown. We’re going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. <strong>For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know</strong></p>
 <div id="part-1-algae-chemistry-dataset" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Part 1: Algae Chemistry Dataset</h2>
 <!-- 1. **Importing data**
@@ -203,7 +203,7 @@ Import the algae chemistry data and send it into a new object called `algae_data
 <ol style="list-style-type: decimal">
 <li><strong>Filtering 1</strong></li>
 </ol>
-<p>The algae data you have stored in an object called <code>algae_data</code> as soon as you run the source() command. for this question, filter the data so that only entries are shown for which the <code>chemical_species</code> is “FAs” (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?</p>
+<p>You will have <code>algae_data</code> stored in an object called <code>algae_data</code> as soon as you run the source() command. For this question, filter the data so that only entries are shown for which the <code>chemical_species</code> is “FAs” (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?</p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Filtering 2</strong></li>
 </ol>
@@ -225,38 +225,22 @@ Import the algae chemistry data and send it into a new object called `algae_data
 <ol start="6" style="list-style-type: decimal">
 <li><strong>Filtering and plotting</strong></li>
 </ol>
-<p>I am going to show you an example of how you can filter and plot at the same time:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="Exercises_1.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb24-2"><a href="Exercises_1.html#cb24-2" aria-hidden="true" tabindex="-1"></a>algae_data</span>
-<span id="cb24-3"><a href="Exercises_1.html#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 180 × 5</span></span>
-<span id="cb24-4"><a href="Exercises_1.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species           abundance</span></span>
-<span id="cb24-5"><a href="Exercises_1.html#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                          &lt;dbl&gt;</span></span>
-<span id="cb24-6"><a href="Exercises_1.html#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                            520. </span></span>
-<span id="cb24-7"><a href="Exercises_1.html#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         1 Tsv1         Heavy             saturated_Fas                  123. </span></span>
-<span id="cb24-8"><a href="Exercises_1.html#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         1 Tsv1         Heavy             omega_3_polyunsaturated_F…     186. </span></span>
-<span id="cb24-9"><a href="Exercises_1.html#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Heavy             monounsaturated_Fas             28.4</span></span>
-<span id="cb24-10"><a href="Exercises_1.html#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         1 Tsv1         Heavy             polyunsaturated_Fas            369. </span></span>
-<span id="cb24-11"><a href="Exercises_1.html#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         1 Tsv1         Heavy             omega_6_polyunsaturated_F…     183. </span></span>
-<span id="cb24-12"><a href="Exercises_1.html#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv1         Heavy             lysine                          84.1</span></span>
-<span id="cb24-13"><a href="Exercises_1.html#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         1 Tsv1         Heavy             methionine                      24.1</span></span>
-<span id="cb24-14"><a href="Exercises_1.html#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         1 Tsv1         Heavy             essential_Aas                  692. </span></span>
-<span id="cb24-15"><a href="Exercises_1.html#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv1         Heavy             non_essential_Aas              919. </span></span>
-<span id="cb24-16"><a href="Exercises_1.html#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 170 more rows</span></span>
-<span id="cb24-17"><a href="Exercises_1.html#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb24-18"><a href="Exercises_1.html#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;essential_Aas&quot;</span>),</span>
-<span id="cb24-19"><a href="Exercises_1.html#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb24-20"><a href="Exercises_1.html#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>()</span></code></pre></div>
+<p>I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot’s data argument:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="Exercises_1.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb24-2"><a href="Exercises_1.html#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;essential_Aas&quot;</span>),</span>
+<span id="cb24-3"><a href="Exercises_1.html#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
+<span id="cb24-4"><a href="Exercises_1.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>()</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
-<ol start="8" style="list-style-type: decimal">
+<ol start="7" style="list-style-type: decimal">
 <li><strong>Filtering and plotting</strong></li>
 </ol>
 <p>Use a combination of filtering and plotting to show the abundance of the different chemical species in just the <code>algae_strain</code> called “Tsv1”. Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.</p>
-<ol start="9" style="list-style-type: decimal">
+<ol start="8" style="list-style-type: decimal">
 <li><strong>Open-ended plotting</strong></li>
 </ol>
 <p>Make a plot that checks to see which <code>chemical_species</code> were more abundant under light as opposed to heavy <code>harvesting_regime</code> in all three replicates. Use filtered data so that just one <code>algae_strain</code> is shown, an x and a y axis, and points to represent the measurements. Make the points <code>size = 5</code> and also set the point’s <code>alpha = 0.6</code>. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.</p>
-<ol start="10" style="list-style-type: decimal">
+<ol start="9" style="list-style-type: decimal">
 <li><strong>A peek at what’s to come…</strong></li>
 </ol>
 <p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
@@ -267,14 +251,14 @@ Import the algae chemistry data and send it into a new object called `algae_data
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="Exercises_1.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
 <span id="cb26-2"><a href="Exercises_1.html#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
 <span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(algae_strain<span class="sc">~</span>.)</span></code></pre></div>
-<p>What advantages does this one extra line provide over what you had to do in question 9?</p>
+<p>What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?</p>
 </div>
 <div id="part-2-alaska-lakes-dataset" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Part 2: Alaska Lakes Dataset</h2>
 <ol style="list-style-type: decimal">
 <li><strong>Viewing Data</strong></li>
 </ol>
-<p>Use R to view the first few lines of the alaska_lake_data dataset.</p>
+<p>Use R to view the first few lines of the <code>alaska_lake_data</code> dataset. Do your best to describe, in written format, the kind of data that are in this data set.</p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Objects</strong></li>
 </ol>
@@ -282,7 +266,7 @@ Import the algae chemistry data and send it into a new object called `algae_data
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Filtering</strong></li>
 </ol>
-<p>Filter the data set so only meausurements of free elements are shown. Remember, it’s <code>==</code>, not <code>=</code>. What are the dimensions of the resulting dataset?</p>
+<p>Filter the data set so only meausurements of free elements (i.e. element_type is “free”) are shown. Remember, it’s <code>==</code>, not <code>=</code>. What are the dimensions of the resulting dataset?</p>
 <ol start="4" style="list-style-type: decimal">
 <li><strong>Plotting</strong></li>
 </ol>
@@ -302,25 +286,15 @@ Import the algae chemistry data and send it into a new object called `algae_data
 <ol start="8" style="list-style-type: decimal">
 <li><strong>Open-ended Plotting</strong></li>
 </ol>
-<p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly. Here is an example:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="Exercises_1.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb27-2"><a href="Exercises_1.html#cb27-2" aria-hidden="true" tabindex="-1"></a>alaska_lake_data</span>
-<span id="cb27-3"><a href="Exercises_1.html#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 7</span></span>
-<span id="cb27-4"><a href="Exercises_1.html#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb27-5"><a href="Exercises_1.html#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb27-6"><a href="Exercises_1.html#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
-<span id="cb27-7"><a href="Exercises_1.html#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
-<span id="cb27-8"><a href="Exercises_1.html#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
-<span id="cb27-9"><a href="Exercises_1.html#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span id="cb27-10"><a href="Exercises_1.html#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
-<span id="cb27-11"><a href="Exercises_1.html#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free        </span></span>
-<span id="cb27-12"><a href="Exercises_1.html#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02  free        </span></span>
-<span id="cb27-13"><a href="Exercises_1.html#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92  free        </span></span>
-<span id="cb27-14"><a href="Exercises_1.html#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></span>
-<span id="cb27-15"><a href="Exercises_1.html#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></span>
-<span id="cb27-16"><a href="Exercises_1.html#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span>
-<span id="cb27-17"><a href="Exercises_1.html#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)) <span class="sc">+</span></span>
-<span id="cb27-18"><a href="Exercises_1.html#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span>)</span></code></pre></div>
+<p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn’t make a very nice plot):</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="Exercises_1.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb27-2"><a href="Exercises_1.html#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>),</span>
+<span id="cb27-3"><a href="Exercises_1.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)</span>
+<span id="cb27-4"><a href="Exercises_1.html#cb27-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="Exercises_1.html#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb27-6"><a href="Exercises_1.html#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>,</span>
+<span id="cb27-7"><a href="Exercises_1.html#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span></span>
+<span id="cb27-8"><a href="Exercises_1.html#cb27-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-52-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
 <p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
