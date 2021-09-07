@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-09-01" />
+<meta name="date" content="2021-09-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="R_Markdown.html"/>
-
+<link rel="next" href="geoms_facets_scales_themes.html"/>
 <script src="libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -157,9 +157,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="3" data-path="Exercises_1.html"><a href="Exercises_1.html"><i class="fa fa-check"></i><b>3</b> Exercises 1</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="Exercises_1.html"><a href="Exercises_1.html#part-1-algae-chemistry-dataset"><i class="fa fa-check"></i><b>3.1</b> Part 1: Algae Chemistry Dataset</a></li>
-<li class="chapter" data-level="3.2" data-path="Exercises_1.html"><a href="Exercises_1.html#part-2-alaska-lakes-dataset"><i class="fa fa-check"></i><b>3.2</b> Part 2: Alaska Lakes Dataset</a></li>
+<li class="chapter" data-level="3.1" data-path="Exercises_1.html"><a href="Exercises_1.html#algae-chemistry-dataset"><i class="fa fa-check"></i><b>3.1</b> Algae Chemistry Dataset</a></li>
+<li class="chapter" data-level="3.2" data-path="Exercises_1.html"><a href="Exercises_1.html#alaska-lakes-dataset"><i class="fa fa-check"></i><b>3.2</b> Alaska Lakes Dataset</a></li>
 </ul></li>
+<li class="chapter" data-level="4" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html"><i class="fa fa-check"></i><b>4</b> geoms, facets, scales, themes</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#geoms"><i class="fa fa-check"></i><b>4.1</b> Geoms</a></li>
+<li class="chapter" data-level="4.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#facets"><i class="fa fa-check"></i><b>4.2</b> Facets</a></li>
+<li class="chapter" data-level="4.3" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#scales"><i class="fa fa-check"></i><b>4.3</b> Scales</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>4.3.1</b> RColorBrewer</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#themes"><i class="fa fa-check"></i><b>4.4</b> Themes</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#complete-themes"><i class="fa fa-check"></i><b>4.4.1</b> Complete themes</a></li>
+<li class="chapter" data-level="4.4.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#theme-components"><i class="fa fa-check"></i><b>4.4.2</b> Theme components</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Exercises_2.html"><a href="Exercises_2.html"><i class="fa fa-check"></i><b>5</b> Exercises 2</a></li>
 </ul>
 
       </nav>
@@ -180,8 +195,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="Exercises_1" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Exercises 1</h1>
 <p>In this set of exercises we’re going to practice filtering and plotting data in R Markdown. We’re going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. <strong>For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know</strong></p>
-<div id="part-1-algae-chemistry-dataset" class="section level2" number="3.1">
-<h2><span class="header-section-number">3.1</span> Part 1: Algae Chemistry Dataset</h2>
+<div id="algae-chemistry-dataset" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Algae Chemistry Dataset</h2>
 <!-- 1. **Importing data**
 
 Import the algae chemistry data. Remember that `read_csv()` is part of the `tidyverse`, so that library needs to be loaded into your `R` session. Also remember that another option is to paste and run `readCSV <- function() { return(readr::read_csv(file.choose())) }` in your R Console, which then gives you access to the function `readCSV()`. That command doesn't require an input path, so you don't need to mess around with slashes and quotes. If you need examples of how to import data, please see the [R Basics](#R_Basics) section of this book.
@@ -253,8 +268,8 @@ Import the algae chemistry data and send it into a new object called `algae_data
 <span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(algae_strain<span class="sc">~</span>.)</span></code></pre></div>
 <p>What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?</p>
 </div>
-<div id="part-2-alaska-lakes-dataset" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> Part 2: Alaska Lakes Dataset</h2>
+<div id="alaska-lakes-dataset" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Alaska Lakes Dataset</h2>
 <ol style="list-style-type: decimal">
 <li><strong>Viewing Data</strong></li>
 </ol>
@@ -299,6 +314,7 @@ Import the algae chemistry data and send it into a new object called `algae_data
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
 <p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 <!-- end --></p>
+<!-- start geoms, facets, scales, themes -->
 </div>
 </div>
             </section>
@@ -306,8 +322,8 @@ Import the algae chemistry data and send it into a new object called `algae_data
           </div>
         </div>
       </div>
-<a href="R_Markdown.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="R_Markdown.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="geoms_facets_scales_themes.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

@@ -344,7 +344,7 @@ We can also run R chunks right in markdown and create figures. Dr. Busta will sh
 
 In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
-## Part 1: Algae Chemistry Dataset
+## Algae Chemistry Dataset
 
 <!-- 1. **Importing data**
 
@@ -507,7 +507,7 @@ ggplot(data = algae_data, aes(x = abundance, y = chemical_species)) +
 
 What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?
 
-## Part 2: Alaska Lakes Dataset
+## Alaska Lakes Dataset
 
 1. **Viewing Data**
 
@@ -606,6 +606,186 @@ ggplot(
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 <!-- end -->
 
+<!-- start geoms, facets, scales, themes -->
+# geoms, facets, scales, themes {#geoms_facets_scales_themes}
+
+We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`.
+
+## Geoms
+
+I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point()
+```
+
+Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
+
+```{r}
+# library(tidyverse)
+# algae <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+ggplot(data = filter(algae_data, harvesting_regime == "Heavy"), aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black", size = 1)
+```
+
+These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
+
+  <div class="marginnote">
+
+  There is a [handy cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+
+  </div>
+
+## Facets
+
+As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
+
+Here, we can facet in the horizontal direction:
+```{r}
+ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(.~replicate)
+```
+
+We can facet in the vertical direction:
+```{r}
+ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(replicate~.)
+```
+
+And we can do both at the same time:
+```{r}
+ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(harvesting_regime~replicate)
+```
+
+Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
+
+## Scales
+
+Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
+
+```{r}
+ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_grid(harvesting_regime~replicate) +
+  scale_fill_gradient(low = "white", high = "black") +
+  theme_classic()
+```
+
+### RColorBrewer
+
+One particularly useful type of scale are those provided by RColorBrewer:
+
+```{r}
+# install.packages("RColorBrewer")
+
+library(RColorBrewer)
+library(ggplot2)
+
+display.brewer.all()
+
+ggplot(mtcars) +
+  geom_point(
+    aes(x = mpg, y = factor(cyl), fill = factor(carb)), 
+    shape = 21, size = 6
+  ) +
+  scale_fill_brewer(palette = "Set1")
+``` 
+  
+## Themes
+  
+So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
+
+### Complete themes
+
+`ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_classic()
+```
+
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_dark()
+```
+  
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme_void()
+```
+
+### Theme components
+
+You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth() +
+  geom_point() +
+  theme(
+    text = element_text(size = 20, color = "black")
+  )
+```
+
+Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
+
+```{r}
+ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
+  geom_smooth(color = "#4daf4a") +
+  scale_x_continuous(name = "Boiling Point", breaks = seq(0,200,25), limits = c(30,210)) +
+  scale_y_continuous(name = "Vapor Pressure", breaks = seq(0,600,50)) +
+  geom_point(color = "#377eb8", size = 4, alpha = 0.6) +
+  theme_bw() +
+  theme(
+    axis.text = element_text(color = "black"),
+    text = element_text(size = 20, color = "black")
+  )
+```
+<!-- end -->
+
+<!-- start Exercises 2 -->
+# Exercises 2 {#Exercises_2}
+
+In this set of exercises we're going to practice making more plots using the dataset `solvents`. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this materal.** Don't forget about the ggplot cheat sheet.
+
+As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio as an R Markdown document. You will compile that file as a pdf and submit it on Canvas. If you have any questions please let me know.
+
+<!-- 0.  -->
+
+1. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted.
+
+
+
+  <div class="marginnote">
+
+  note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized. *Defend* your ideas with argument!
+
+  </div>
+
+
+
+2. Create two plots that are identical except that one uses the `scales = "free"` feature of `facet_grid` while the other does not (i.e. one should use `facet_grid(<things>)`, whiel the other uses `facet_grid(<things>, scales = "free")`). Write a single caption that describes *both* plots, highlighting the advantages provided by each plot over the other.
+
+3. Create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
+
+4. Make a plot that has five aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the five mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape).
+
+5. Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as `theme_classic()`, rather, manually modify components of the theme using `theme()`). This means that inside your `theme()` command, there should be three arguments separated by commas.
+
+<!-- end -->
 
 
 
