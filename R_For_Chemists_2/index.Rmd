@@ -105,7 +105,7 @@ If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and th
 
 ## tidyverse
 
-For us to run our analyses, we need to install a set of add-on functions that expand R's capabilities. These functions are collected in something called the `tidyverse`, a very well-known and widely-used R package. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type `install.packages("tidyverse", repos = "http://cran.us.r-project.org")` to install the tidyverse.
+For us to run our analyses, we need to install a set of add-on functions that expand R's capabilities. These functions are collected in something called the tidyverse, a very well-known and widely-used R package. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type `install.packages("tidyverse", repos = "http://cran.us.r-project.org")` to install the tidyverse. Let's try it:
 
   <div class="marginnote">
 
@@ -117,12 +117,12 @@ For us to run our analyses, we need to install a set of add-on functions that ex
 install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 ```
 
-Let's make sure your version of the `tidyverse` is installed correctly. To do this, we will load the `tidyverse` library/package inside of an R session. We can do this using `library(tidyverse)`. Let's try it:
+Let's make sure your version of the tidyverse is installed correctly. To do this, we will load the `tidyverse` library/package inside of an R session. We can do this using `library(tidyverse)`. Let's try it:
 ```{r, message = FALSE}
 library(tidyverse)
 ```
 
-If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the re installing the `tidyverse`. If this still fails, please contact me.
+If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the re installing the tidyverse. If this still fails, please contact me.
 
 ## TeX
 
@@ -153,9 +153,9 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 
 ## phylochemistry
 
-In addition to the `tidyverse`, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
+In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
-First, attempt to load `phylochemistry`:
+First, attempt to load phylochemistry:
 ```{r, message = FALSE}
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
@@ -792,6 +792,12 @@ Components of a caption:
   * Describe what each bar, point, or error bar represents.
   * If applicable, describe the number of independent samples or measurements (sometimes called “replicates”) that underlie a given geometric feature or summary statistic.
 3. Avoid abbreviations, but if you do use any, specify what they mean.
+
+An example:
+
+```{r}
+ggplot(alaska_lake_data)
+```
 
 # FAQ
 
