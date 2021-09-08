@@ -86,7 +86,7 @@ If you have trouble installing RStudio please google "Install RStudio Mac" or "I
 Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/rstudio_components.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/rstudio_components.png', dpi = NA)
 ```
 
 The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.
@@ -632,7 +632,7 @@ These examples should illustrate that there is, to some degree, correspondence b
 
   <div class="marginnote">
 
-  There is a [handy cheat sheet](https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+  There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
 
   </div>
 
@@ -761,7 +761,6 @@ As before, for these exercises, you will write your code and answers to any ques
 1. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted.
 
 
-
   <div class="marginnote">
 
   note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized. *Defend* your ideas with argument!
@@ -780,5 +779,53 @@ As before, for these exercises, you will write your code and answers to any ques
 
 <!-- end -->
 
+# Writing
 
+## Captions
 
+Components of a caption:
+
+1. Title - an overall description of the what is shown
+2. For each subplot:
+  * The type of plot (line plot, bar chart, etc.)
+  * Describe what is plotted as y vs x in words.
+  * Describe what each bar, point, or error bar represents.
+  * If applicable, describe the number of independent samples or measurements (sometimes called “replicates”) that underlie a given geometric feature or summary statistic.
+3. Avoid abbreviations, but if you do use any, specify what they mean.
+
+# FAQ
+
+### 1. How do I import data into R?
+
+To analyze data on your own computer you can indeed import it into RStudio.
+
+The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with the phylochemistry source command. You run `readCSV()` in your console, then navigate to the data on your hard drive.
+
+Another option is to read the data in from a path. For this, you will need to know the "path" to your data file. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
+
+* On Mac: `/Users/lucasbusta/Documents/sample_data_set.csv` (note the forward slashes!)
+* On PC: `C:\My Computer\Documents\sample_data_set.csv` (note the backward slashes!)
+
+You can quickly find paths to files via the following:
+
+* On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
+* On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
+
+With these paths, we can read in data. For this, we're going to use a function from the `tidyverse` called `read_csv`. This means we need to first load the `tidyverse`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
+
+```{r, message = FALSE}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv")
+```
+All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
+
+```{r, message = FALSE}
+algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv")
+```
+
+Now we have an object called `algae_data`. We can examine the contents of that object by typing its name. For example:
+```{r, message = FALSE}
+algae_data
+```
+
+On either operating system, if you don't want to type paths into your command line, another option is to use the `readCSV()` function, which is available once you have loaded `phylochemistry`.
