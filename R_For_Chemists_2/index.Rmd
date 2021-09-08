@@ -376,7 +376,7 @@ algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data
  -->
 1. **Filtering 1**
 
-You will have `algae_data` stored in an object called `algae_data` as soon as you run the source() command. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+You will have `algae_data` stored in an object called `algae_data` as soon as you run `source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
 
 ```{r, include = FALSE}
 filter(algae_data, chemical_species == "FAs")
@@ -623,9 +623,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
-```{r}
-# library(tidyverse)
-# algae <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
+```{r, fig.width = 5}
 ggplot(data = filter(algae_data, harvesting_regime == "Heavy"), aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black", size = 1)
 ```
@@ -643,21 +641,21 @@ These examples should illustrate that there is, to some degree, correspondence b
 As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
 
 Here, we can facet in the horizontal direction:
-```{r}
+```{r, fig.width = 6}
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(.~replicate)
 ```
 
 We can facet in the vertical direction:
-```{r}
+```{r, fig.width = 5, fig.height = 5}
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(replicate~.)
 ```
 
 And we can do both at the same time:
-```{r}
+```{r, fig.width = 7}
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(harvesting_regime~replicate)
@@ -669,7 +667,7 @@ Faceting is a great way to describe more variation in your plot without having t
 
 Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
 
-```{r}
+```{r, fig.width = 7}
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(harvesting_regime~replicate) +
@@ -681,14 +679,10 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
 
 One particularly useful type of scale are those provided by RColorBrewer:
 
-```{r}
-# install.packages("RColorBrewer")
-
-library(RColorBrewer)
-library(ggplot2)
-
+```{r, fig.height = 8}
 display.brewer.all()
-
+```
+```{r}
 ggplot(mtcars) +
   geom_point(
     aes(x = mpg, y = factor(cyl), fill = factor(carb)), 
@@ -711,7 +705,6 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_point() +
   theme_classic()
 ```
-
 
 ```{r}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
@@ -742,7 +735,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
 
-```{r}
+```{r, fig.height = 5}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth(color = "#4daf4a") +
   scale_x_continuous(name = "Boiling Point", breaks = seq(0,200,25), limits = c(30,210)) +
