@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>7 FAQ | R For Chemists</title>
-  <meta name="description" content="7 FAQ | R For Chemists" />
+  <title>8 Links | R For Chemists</title>
+  <meta name="description" content="8 Links | R For Chemists" />
   <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="7 FAQ | R For Chemists" />
+  <meta property="og:title" content="8 Links | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="7 FAQ | R For Chemists" />
+  <meta name="twitter:title" content="8 Links | R For Chemists" />
   
   
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="writing.html"/>
-<link rel="next" href="links.html"/>
+<link rel="prev" href="faq.html"/>
+
 <script src="libs/header-attrs-2.10/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -205,58 +205,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="faq" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> FAQ</h1>
-<div id="how-do-i-import-data-into-r" class="section level2" number="7.1">
-<h2><span class="header-section-number">7.1</span> 1. How do I import data into R?</h2>
-<p>To analyze data on your own computer you can indeed import it into RStudio.</p>
-<p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
-<p>Another option is to read the data in from a path. For this, you will need to know the “path” to your data file. This is essentially the street address of your data on your computer’s hard drive. Paths look different on Mac and PC.</p>
-<ul>
-<li>On Mac: <code>/Users/lucasbusta/Documents/sample_data_set.csv</code> (note the forward slashes!)</li>
-<li>On PC: <code>C:\My Computer\Documents\sample_data_set.csv</code> (note the backward slashes!)</li>
-</ul>
-<p>You can quickly find paths to files via the following:</p>
-<ul>
-<li>On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click “Copy <file> as Pathname”</li>
-<li>On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click “Copy As Path”</li>
-</ul>
-<p>With these paths, we can read in data. For this, we’re going to use a function from the <code>tidyverse</code> called <code>read_csv</code>. This means we need to first load the <code>tidyverse</code>. We’ll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We’re going to import that tidied version (not the original, untidied version) using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="faq.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb42-2"><a href="faq.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv&quot;</span>)</span>
-<span id="cb42-3"><a href="faq.html#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 180 × 5</span></span>
-<span id="cb42-4"><a href="faq.html#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species           abundance</span></span>
-<span id="cb42-5"><a href="faq.html#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                          &lt;dbl&gt;</span></span>
-<span id="cb42-6"><a href="faq.html#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                            520. </span></span>
-<span id="cb42-7"><a href="faq.html#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         1 Tsv1         Heavy             saturated_Fas                  123. </span></span>
-<span id="cb42-8"><a href="faq.html#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         1 Tsv1         Heavy             omega_3_polyunsaturated_F…     186. </span></span>
-<span id="cb42-9"><a href="faq.html#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Heavy             monounsaturated_Fas             28.4</span></span>
-<span id="cb42-10"><a href="faq.html#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         1 Tsv1         Heavy             polyunsaturated_Fas            369. </span></span>
-<span id="cb42-11"><a href="faq.html#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         1 Tsv1         Heavy             omega_6_polyunsaturated_F…     183. </span></span>
-<span id="cb42-12"><a href="faq.html#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv1         Heavy             lysine                          84.1</span></span>
-<span id="cb42-13"><a href="faq.html#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         1 Tsv1         Heavy             methionine                      24.1</span></span>
-<span id="cb42-14"><a href="faq.html#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         1 Tsv1         Heavy             essential_Aas                  692. </span></span>
-<span id="cb42-15"><a href="faq.html#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv1         Heavy             non_essential_Aas              919. </span></span>
-<span id="cb42-16"><a href="faq.html#cb42-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 170 more rows</span></span></code></pre></div>
-<p>All we have to do is use <code>&lt;-</code> to send the information from our <code>read_csv</code> command into a new object. This will create the object. See the example below.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="faq.html#cb43-1" aria-hidden="true" tabindex="-1"></a>algae_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv&quot;</span>)</span></code></pre></div>
-<p>Now we have an object called <code>algae_data</code>. We can examine the contents of that object by typing its name. For example:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="faq.html#cb44-1" aria-hidden="true" tabindex="-1"></a>algae_data</span>
-<span id="cb44-2"><a href="faq.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 180 × 5</span></span>
-<span id="cb44-3"><a href="faq.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    replicate algae_strain harvesting_regime chemical_species           abundance</span></span>
-<span id="cb44-4"><a href="faq.html#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;                          &lt;dbl&gt;</span></span>
-<span id="cb44-5"><a href="faq.html#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1         1 Tsv1         Heavy             FAs                            520. </span></span>
-<span id="cb44-6"><a href="faq.html#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2         1 Tsv1         Heavy             saturated_Fas                  123. </span></span>
-<span id="cb44-7"><a href="faq.html#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3         1 Tsv1         Heavy             omega_3_polyunsaturated_F…     186. </span></span>
-<span id="cb44-8"><a href="faq.html#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4         1 Tsv1         Heavy             monounsaturated_Fas             28.4</span></span>
-<span id="cb44-9"><a href="faq.html#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5         1 Tsv1         Heavy             polyunsaturated_Fas            369. </span></span>
-<span id="cb44-10"><a href="faq.html#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6         1 Tsv1         Heavy             omega_6_polyunsaturated_F…     183. </span></span>
-<span id="cb44-11"><a href="faq.html#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7         1 Tsv1         Heavy             lysine                          84.1</span></span>
-<span id="cb44-12"><a href="faq.html#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8         1 Tsv1         Heavy             methionine                      24.1</span></span>
-<span id="cb44-13"><a href="faq.html#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9         1 Tsv1         Heavy             essential_Aas                  692. </span></span>
-<span id="cb44-14"><a href="faq.html#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10         1 Tsv1         Heavy             non_essential_Aas              919. </span></span>
-<span id="cb44-15"><a href="faq.html#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 170 more rows</span></span></code></pre></div>
-<p>On either operating system, if you don’t want to type paths into your command line, another option is to use the <code>readCSV()</code> function, which is available once you have loaded <code>phylochemistry</code>.</p>
+<div id="links" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Links</h1>
+<div id="geoms-1" class="section level2" number="8.1">
+<h2><span class="header-section-number">8.1</span> geoms</h2>
+<p><a href="%22https://thebustalab.github.io/R_For_Chemists_2/images/ggplot2_geoms.pdf%22">geoms and ggplot2 cheatsheet</a></p>
+</div>
+<div id="colors" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> colors</h2>
+<p><a href="%22https://colorbrewer2.org/%22">ColorBrewer2</a></p>
 </div>
 </div>
             </section>
@@ -264,8 +221,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="writing.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="links.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="faq.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
