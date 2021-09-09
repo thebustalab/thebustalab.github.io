@@ -251,7 +251,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="tidyverse" class="section level2" number="1.4">
 <h2><span class="header-section-number">1.4</span> tidyverse</h2>
-<p>For us to run our analyses, we need to install a set of add-on functions that expand R’s capabilities. These functions are collected in something called the <code>tidyverse</code>, a very well-known and widely-used R package. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type <code>install.packages("tidyverse", repos = "http://cran.us.r-project.org")</code> to install the tidyverse.</p>
+<p>For us to run our analyses, we need to install a set of add-on functions that expand R’s capabilities. These functions are collected in something called the tidyverse, a very well-known and widely-used R package. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type <code>install.packages("tidyverse", repos = "http://cran.us.r-project.org")</code> to install the tidyverse. Let’s try it:</p>
 <div class="marginnote">
 <p>RSudio might ask you: “Do you want to install from sources the packages which need compilation? (Yes/no/cancel)”, for now, type <code>no</code> and press enter.</p>
 </div>
@@ -259,9 +259,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-2"><a href="installation.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb3-3"><a href="installation.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">## The downloaded binary packages are in</span></span>
 <span id="cb3-4"><a href="installation.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  /var/folders/15/1fz6q06x52jgkfcgvyzpxqzh0000gp/T//Rtmpks3cd5/downloaded_packages</span></span></code></pre></div>
-<p>Let’s make sure your version of the <code>tidyverse</code> is installed correctly. To do this, we will load the <code>tidyverse</code> library/package inside of an R session. We can do this using <code>library(tidyverse)</code>. Let’s try it:</p>
+<p>Let’s make sure your version of the tidyverse is installed correctly. To do this, we will load the <code>tidyverse</code> library/package inside of an R session. We can do this using <code>library(tidyverse)</code>. Let’s try it:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="installation.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
-<p>If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the re installing the <code>tidyverse</code>. If this still fails, please contact me.</p>
+<p>If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the re installing the tidyverse. If this still fails, please contact me.</p>
 </div>
 <div id="tex" class="section level2" number="1.5">
 <h2><span class="header-section-number">1.5</span> TeX</h2>
@@ -279,8 +279,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="phylochemistry" class="section level2" number="1.6">
 <h2><span class="header-section-number">1.6</span> phylochemistry</h2>
-<p>In addition to the <code>tidyverse</code>, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.</p>
-<p>First, attempt to load <code>phylochemistry</code>:</p>
+<p>In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.</p>
+<p>First, attempt to load phylochemistry:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="installation.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 <p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Run: installPhylochemistry() to automatically install the required packages.”</p>
 <p>This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:</p>
