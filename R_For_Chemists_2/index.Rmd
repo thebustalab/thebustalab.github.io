@@ -818,37 +818,54 @@ Some pointers:
 <!-- end -->
 
 <!-- start summaries and wrangling -->
-# summaries and wrangling {#summary_statistics}
+# the pipe and summaries {#summary_statistics}
 
-## subsetting
+## the pipe (%>%)
 
-So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
+We have seen how to create new objects using `<-`, and we have been filtering and plotting data using, for example:
 
 ```{r}
-# To look at a single column (the third column)
-alaska_lake_data[,3]
-
-# To look at select columns:
-alaska_lake_data[,2:5]
-
-# To look at a single row (the second row)
-alaska_lake_data[2,]
-
-# To look at select rows:
-alaska_lake_data[2:5,]
-
-# To look at just a single column, by name
-alaska_lake_data$pH
-
-# To look at select columns by name
-select(alaska_lake_data, park, water_temp)
-
+ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
+
+However, when the plot gets more customized, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
+
+```{r}
+alaska_lake_data %>%
+  filter(park == "BELA") %>%
+  ggplot(aes(x = pH, y = lake)) + geom_col()
+```
+
+Neat! The pipe will become more important as our analyses become more complex, which happens very quickly when we start working with summary statistics.
+
+<!-- When we want to get summary statistics for a dataset, we often end up creating lots of new objects, sometimes with convoluted names. For example, what if we want to know and visualize the average temperature across the lakes in each of the three Alaska parks? We might do something like the below: 
+
+```{r}
+head(alaska_lake_data)
+
+AK_lakes_by_park <- group_by(.data = alaska_lake_data, park)
+
+AK_lakes_by_park_summ <- dplyr::summarize(.data = AK_lakes_by_park, mean_temperature = mean(water_temp))
+
+ggplot(AK_lakes_by_park_summ) + geom_point(aes(x = park, y = mean_temperature))
+```
+
+In order to do that, we created two new objects `AK_lakes_by_park` and `AK_lakes_by_park_summ`. In big analysis chains, we can end up creating lots of objects with complicated names. There must be a better way! There is. Meet the pipe: `%>%`. It sends the output from one command directly to the next, so we neither need to have each command create a new object, nor do we need to start each command by telling it what data to use. With the pipe, the same analysis as above can be done with the text below. Neat! Easier!
+
+```{r}
+library(tidyverse)
+read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv") %>%
+
+group_by(park) %>%
+
+dplyr::summarize(mean_temperature = mean(water_temp)) %>%
+
+ggplot() + geom_point(aes(x = park, y = mean_temperature))
+``` -->
+
 ## summary statistics
 
-So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the [NY Trees](https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv) dataset.
-
-The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
+So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the `ny_trees` dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
 
 ```{r}
 ny_trees
@@ -874,8 +891,12 @@ ny_trees %>%
 Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
 
 ```{r, eval = FALSE}
-ny_trees_by_spc <- group_by(.data = ny_trees, spc_latin)
-ny_trees_by_spc_summ <- summarize(.data = ny_trees_by_spc, mean_height = mean(tree_height), stdev_height = sd(tree_height))
+ny_trees %>%
+  group_by(spc_latin) %>%
+  summarize(
+    mean_height = mean(tree_height),
+    stdev_height = sd(tree_height)
+  ) -> ny_trees_by_spc_summ
 ny_trees_by_spc_summ
 ```
 
@@ -951,33 +972,6 @@ ggplot(data = ny_trees_by_spc_boro_summ) +
 ```
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
-
-## The pipe (%>%)
-
-When we want to get summary statistics for a dataset, we often end up creating lots of new objects, sometimes with convoluted names. For example, what if we want to know and visualize the average temperature across the lakes in each of the three Alaska parks? We might do something like the below: 
-
-```{r}
-head(alaska_lake_data)
-
-AK_lakes_by_park <- group_by(.data = alaska_lake_data, park)
-
-AK_lakes_by_park_summ <- dplyr::summarize(.data = AK_lakes_by_park, mean_temperature = mean(water_temp))
-
-ggplot(AK_lakes_by_park_summ) + geom_point(aes(x = park, y = mean_temperature))
-```
-
-In order to do that, we created two new objects `AK_lakes_by_park` and `AK_lakes_by_park_summ`. In big analysis chains, we can end up creating lots of objects with complicated names. There must be a better way! There is. Meet the pipe: `%>%`. It sends the output from one command directly to the next, so we neither need to have each command create a new object, nor do we need to start each command by telling it what data to use. With the pipe, the same analysis as above can be done with the text below. Neat! Easier!
-
-```{r}
-library(tidyverse)
-read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/alaska_lake_data.csv") %>%
-
-group_by(park) %>%
-
-dplyr::summarize(mean_temperature = mean(water_temp)) %>%
-
-ggplot() + geom_point(aes(x = park, y = mean_temperature))
-```
 
 <!-- end -->
 
@@ -1106,7 +1100,32 @@ ggplot(pt_by_year_summ,
 You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
 
-# Data Wrangling
+# wrangling 2
+
+## subsetting
+
+So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
+
+```{r}
+# To look at a single column (the third column)
+alaska_lake_data[,3]
+
+# To look at select columns:
+alaska_lake_data[,2:5]
+
+# To look at a single row (the second row)
+alaska_lake_data[2,]
+
+# To look at select rows:
+alaska_lake_data[2:5,]
+
+# To look at just a single column, by name
+alaska_lake_data$pH
+
+# To look at select columns by name
+select(alaska_lake_data, park, water_temp)
+
+```
 
 ## Tidy data
 

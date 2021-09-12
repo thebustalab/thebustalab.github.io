@@ -7,7 +7,6 @@
     ## Define necessary libraries
         
         CRAN_packages <- c(
-            "dplyr",
             "gridExtra",
             "ape",
             "rstatix",
@@ -32,6 +31,7 @@
             "ggnetwork",
             "tidyverse",
             "FactoMineR",
+            "dplyr"
             # "stringr", 
             # "progress"
         )
