@@ -31,7 +31,9 @@
             "pracma",
             "ggnetwork",
             "tidyverse",
-            "FactoMineR"
+            "FactoMineR",
+            # "stringr", 
+            # "progress"
         )
 
         Bioconductor_packages <- c(
@@ -99,7 +101,7 @@
         solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv", col_types = cols())
         # periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv", col_types = cols())
         # periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv", col_types = cols())
-        # NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv", col_types = cols())
+        NY_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/NY_trees.csv", col_types = cols())
         # ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv", col_types = cols())
         # wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv", col_types = cols())
         # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv", col_types = cols())
@@ -4592,6 +4594,87 @@
 
                 return(out)
 
+            }
+
+    ##### Text data handling
+
+        #### searchField
+
+            searchField <- function(subject_list, query_list) {
+
+                ## Make query list unique, remove all commas from the subjects so output can be written as csv
+
+                    query_list <- unique(query_list)
+
+                    subject_list <- gsub(",", "", subject_list)
+
+                ## Start the output dataframe
+                
+                    output <- data.frame(
+                        subject = subject_list,
+                        hit_indeces = NA,
+                        hits = NA
+                    )
+
+                    pb <- progress::progress_bar$new(
+                        total = length(query_list),
+                        format = "  analyzing [:bar] :percent eta: :eta"
+                    )
+
+                ## Loop over each query and record what subjects it's found in
+                    
+                    for( i in 1:length(query_list) ) {
+                        
+                        ## Identify where hits are 
+                            
+                            positive_subject_index <- grep(query_list[i], subject_list)
+                        
+                        ## If this query results in hits, start or add them to the list
+
+                            if( length(positive_subject_index) > 0 ) {
+                                
+                                ## If it's the first entry in the list, start the list.
+
+                                    if( any(is.na(output$hit_indeces[positive_subject_index])) ) {
+                                        output$hit_indeces[positive_subject_index] <- i
+                                        output$hits[positive_subject_index] <- as.character(query_list[i])
+                                
+                                ## If it's not the first entry in the list, append to the list.
+
+                                    } else {
+
+                                        # print(i)
+
+                                        ## If adding to the list, run unique on it to remove duplicate names
+                                            
+                                            output$hit_indeces[positive_subject_index] <- 
+                                                paste(
+                                                    unique(
+                                                        stringr::str_split(
+                                                            paste(c(output$hit_indeces[positive_subject_index], i), collapse = ","),
+                                                            pattern = ","
+                                                        )[[1]]
+                                                    ), collapse = ","
+                                                )
+                                            
+                                            output$hits[positive_subject_index] <- 
+                                                paste(
+                                                    unique(
+                                                        stringr::str_split(
+                                                            paste(c(output$hits[positive_subject_index], as.character(query_list[i])), collapse = ","),
+                                                            pattern = ","
+                                                        )[[1]]
+                                                    ), collapse = ","
+                                                )
+                                    }
+                            }
+
+                        ## Move progress bar along
+                            
+                            pb$tick()
+                    }
+
+                return(as_tibble(output))
             }
 
     ##### Plotting
