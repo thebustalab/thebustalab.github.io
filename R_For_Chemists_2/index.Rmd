@@ -1201,16 +1201,15 @@ algae_data
 On either operating system, if you don't want to type paths into your command line, another option is to use the `readCSV()` function, which is available once you have loaded `phylochemistry`.
 
 
-
 # Links
 
 ## geoms
 
-[geoms and ggplot2 cheatsheet]("https://thebustalab.github.io/R_For_Chemists_2/images/ggplot2_geoms.pdf")
+[geoms and ggplot2 cheatsheet](https://thebustalab.github.io/R_For_Chemists_2/images/ggplot2_geoms.pdf)
 
 ## colors
 
-[ColorBrewer2]("https://colorbrewer2.org/")
+[ColorBrewer2](https://colorbrewer2.org/)
 
 
 
