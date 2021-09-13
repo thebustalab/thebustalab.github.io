@@ -802,13 +802,14 @@ Another option is to read the data in from a path. For this, you will need to kn
 
 * On Mac: `/Users/lucasbusta/Documents/sample_data_set.csv` (note the forward slashes!)
 * On PC: `C:\My Computer\Documents\sample_data_set.csv` (note the backward slashes!)
+* note: on PC you will need to type the path in R as `C:\\My Computer\\Documents\\sample_data_set.csv` (note double backslashes!)
 
 You can quickly find paths to files via the following:
 
 * On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
 * On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
 
-With these paths, we can read in data using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system. Finally, if you are on PC, you will need to include double backslashes instead of single backslashes when you type (or ideally paste) the path into your read_csv() command.
+With these paths, we can read in data using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
 
 ## tidy data
 
