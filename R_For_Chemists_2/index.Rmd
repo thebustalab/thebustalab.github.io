@@ -801,8 +801,7 @@ The easiest way to do this is to use the interactive command `readCSV()`, a func
 Another option is to read the data in from a path. For this, you will need to know the "path" to your data file. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
 
 * On Mac: `/Users/lucasbusta/Documents/sample_data_set.csv` (note the forward slashes!)
-* On PC: `C:\My Computer\Documents\sample_data_set.csv` (note the backward slashes!)
-* note: on PC you will need to type the path in R as `C:\\My Computer\\Documents\\sample_data_set.csv` (note double backslashes!)
+* On PC: `C:\\My Computer\\Documents\\sample_data_set.csv` (note double backward slashes!)
 
 You can quickly find paths to files via the following:
 
