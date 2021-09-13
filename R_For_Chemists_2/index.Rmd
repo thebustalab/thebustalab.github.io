@@ -113,12 +113,12 @@ For us to run our analyses, we need to install a set of add-on functions that ex
 
   </div>
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 ```
 
 Let's make sure your version of the tidyverse is installed correctly. To do this, we will load the `tidyverse` library/package inside of an R session. We can do this using `library(tidyverse)`. Let's try it:
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 library(tidyverse)
 ```
 
@@ -156,7 +156,7 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
 First, attempt to load phylochemistry:
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
