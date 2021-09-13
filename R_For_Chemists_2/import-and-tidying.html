@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6 import and tidying | R For Chemists</title>
+  <meta name="description" content="6 import and tidying | R For Chemists" />
+  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6 import and tidying | R For Chemists" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6 import and tidying | R For Chemists" />
+  
+  
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2021-09-12" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="Exercises_2.html"/>
+<link rel="next" href="summary_statistics.html"/>
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="tufte.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="installation.html"><a href="installation.html#r"><i class="fa fa-check"></i><b>1.1</b> R</a></li>
+<li class="chapter" data-level="1.2" data-path="installation.html"><a href="installation.html#rstudio"><i class="fa fa-check"></i><b>1.2</b> RStudio</a></li>
+<li class="chapter" data-level="1.3" data-path="installation.html"><a href="installation.html#verification"><i class="fa fa-check"></i><b>1.3</b> Verification</a></li>
+<li class="chapter" data-level="1.4" data-path="installation.html"><a href="installation.html#tidyverse"><i class="fa fa-check"></i><b>1.4</b> tidyverse</a></li>
+<li class="chapter" data-level="1.5" data-path="installation.html"><a href="installation.html#tex"><i class="fa fa-check"></i><b>1.5</b> TeX</a></li>
+<li class="chapter" data-level="1.6" data-path="installation.html"><a href="installation.html#phylochemistry"><i class="fa fa-check"></i><b>1.6</b> phylochemistry</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="R_Markdown.html"><a href="R_Markdown.html"><i class="fa fa-check"></i><b>2</b> ggplot and markdown</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="R_Markdown.html"><a href="R_Markdown.html#objects"><i class="fa fa-check"></i><b>2.1</b> Objects</a></li>
+<li class="chapter" data-level="2.2" data-path="R_Markdown.html"><a href="R_Markdown.html#functions"><i class="fa fa-check"></i><b>2.2</b> Functions</a></li>
+<li class="chapter" data-level="2.3" data-path="R_Markdown.html"><a href="R_Markdown.html#ggplot"><i class="fa fa-check"></i><b>2.3</b> ggplot</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="R_Markdown.html"><a href="R_Markdown.html#modifying-geoms"><i class="fa fa-check"></i><b>2.3.1</b> modifying geoms</a></li>
+<li class="chapter" data-level="2.3.2" data-path="R_Markdown.html"><a href="R_Markdown.html#multiple-geoms"><i class="fa fa-check"></i><b>2.3.2</b> multiple geoms</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="R_Markdown.html"><a href="R_Markdown.html#markdown"><i class="fa fa-check"></i><b>2.4</b> markdown</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Exercises_1.html"><a href="Exercises_1.html"><i class="fa fa-check"></i><b>3</b> Exercises 1</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Exercises_1.html"><a href="Exercises_1.html#algae-chemistry-dataset"><i class="fa fa-check"></i><b>3.1</b> Algae Chemistry Dataset</a></li>
+<li class="chapter" data-level="3.2" data-path="Exercises_1.html"><a href="Exercises_1.html#alaska-lakes-dataset"><i class="fa fa-check"></i><b>3.2</b> Alaska Lakes Dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html"><i class="fa fa-check"></i><b>4</b> geoms, facets, scales, themes</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#geoms"><i class="fa fa-check"></i><b>4.1</b> Geoms</a></li>
+<li class="chapter" data-level="4.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#facets"><i class="fa fa-check"></i><b>4.2</b> Facets</a></li>
+<li class="chapter" data-level="4.3" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#scales"><i class="fa fa-check"></i><b>4.3</b> Scales</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>4.3.1</b> RColorBrewer</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#themes"><i class="fa fa-check"></i><b>4.4</b> Themes</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#complete-themes"><i class="fa fa-check"></i><b>4.4.1</b> Complete themes</a></li>
+<li class="chapter" data-level="4.4.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#theme-components"><i class="fa fa-check"></i><b>4.4.2</b> Theme components</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Exercises_2.html"><a href="Exercises_2.html"><i class="fa fa-check"></i><b>5</b> Exercises 2</a></li>
+<li class="chapter" data-level="6" data-path="import-and-tidying.html"><a href="import-and-tidying.html"><i class="fa fa-check"></i><b>6</b> import and tidying</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="import-and-tidying.html"><a href="import-and-tidying.html#data-import"><i class="fa fa-check"></i><b>6.1</b> data import</a></li>
+<li class="chapter" data-level="6.2" data-path="import-and-tidying.html"><a href="import-and-tidying.html#tidy-data"><i class="fa fa-check"></i><b>6.2</b> tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="summary_statistics.html"><a href="summary_statistics.html"><i class="fa fa-check"></i><b>7</b> the pipe and summaries</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="summary_statistics.html"><a href="summary_statistics.html#the-pipe"><i class="fa fa-check"></i><b>7.1</b> the pipe (%&gt;%)</a></li>
+<li class="chapter" data-level="7.2" data-path="summary_statistics.html"><a href="summary_statistics.html#summary-statistics"><i class="fa fa-check"></i><b>7.2</b> summary statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="Exercises_3.html"><a href="Exercises_3.html"><i class="fa fa-check"></i><b>8</b> Exercises 3</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="Exercises_3.html"><a href="Exercises_3.html#question-1"><i class="fa fa-check"></i><b>8.1</b> Question 1</a></li>
+<li class="chapter" data-level="8.2" data-path="Exercises_3.html"><a href="Exercises_3.html#question-2"><i class="fa fa-check"></i><b>8.2</b> Question 2</a></li>
+<li class="chapter" data-level="8.3" data-path="Exercises_3.html"><a href="Exercises_3.html#question-3"><i class="fa fa-check"></i><b>8.3</b> Question 3</a></li>
+<li class="chapter" data-level="8.4" data-path="Exercises_3.html"><a href="Exercises_3.html#question-4"><i class="fa fa-check"></i><b>8.4</b> Question 4</a></li>
+<li class="chapter" data-level="8.5" data-path="Exercises_3.html"><a href="Exercises_3.html#question-5"><i class="fa fa-check"></i><b>8.5</b> Question 5</a></li>
+<li class="chapter" data-level="8.6" data-path="Exercises_3.html"><a href="Exercises_3.html#question-6"><i class="fa fa-check"></i><b>8.6</b> Question 6</a></li>
+<li class="chapter" data-level="8.7" data-path="Exercises_3.html"><a href="Exercises_3.html#question-7"><i class="fa fa-check"></i><b>8.7</b> Question 7</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="wrangling-2.html"><a href="wrangling-2.html"><i class="fa fa-check"></i><b>9</b> wrangling 2</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="wrangling-2.html"><a href="wrangling-2.html#subsetting"><i class="fa fa-check"></i><b>9.1</b> subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="writing.html"><a href="writing.html"><i class="fa fa-check"></i><b>10</b> Writing</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="writing.html"><a href="writing.html#captions"><i class="fa fa-check"></i><b>10.1</b> Captions</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="links.html"><a href="links.html"><i class="fa fa-check"></i><b>11</b> Links</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="links.html"><a href="links.html#geoms-1"><i class="fa fa-check"></i><b>11.1</b> geoms</a></li>
+<li class="chapter" data-level="11.2" data-path="links.html"><a href="links.html#colors"><i class="fa fa-check"></i><b>11.2</b> colors</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R For Chemists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="import-and-tidying" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> import and tidying</h1>
+<div id="data-import" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> data import</h2>
+<p>To analyze data that is stored on your own computer you can indeed import it into RStudio.</p>
+<p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
+<p>Another option is to read the data in from a path. For this, you will need to know the “path” to your data file. This is essentially the street address of your data on your computer’s hard drive. Paths look different on Mac and PC.</p>
+<ul>
+<li>On Mac: <code>/Users/lucasbusta/Documents/sample_data_set.csv</code> (note the forward slashes!)</li>
+<li>On PC: <code>C:\My Computer\Documents\sample_data_set.csv</code> (note the backward slashes!)</li>
+</ul>
+<p>You can quickly find paths to files via the following:</p>
+<ul>
+<li>On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click “Copy <file> as Pathname”</li>
+<li>On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click “Copy As Path”</li>
+</ul>
+<p>With these paths, we can read in data using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system. Finally, if you are on PC, you will need to include double backslashes instead of single backslashes when you type (or ideally paste) the path into your read_csv() command.</p>
+</div>
+<div id="tidy-data" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> tidy data</h2>
+<p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="import-and-tidying.html#cb41-1" aria-hidden="true" tabindex="-1"></a>fadb_sample</span>
+<span id="cb41-2"><a href="import-and-tidying.html#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 11</span></span>
+<span id="cb41-3"><a href="import-and-tidying.html#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   fatty_acid Agonandra_brasi… Agonandra_silva… Agonandra_excel… Heisteria_silvi…</span></span>
+<span id="cb41-4"><a href="import-and-tidying.html#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></span>
+<span id="cb41-5"><a href="import-and-tidying.html#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Hexadecan…              3.4              1                1.2              2.9</span></span>
+<span id="cb41-6"><a href="import-and-tidying.html#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Octadecan…              6.2              0.1              0.4              0.1</span></span>
+<span id="cb41-7"><a href="import-and-tidying.html#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Eicosanoi…              4.7              3.5              1.7              0.1</span></span>
+<span id="cb41-8"><a href="import-and-tidying.html#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Docosanoi…             77.4              0.4              1                7.4</span></span>
+<span id="cb41-9"><a href="import-and-tidying.html#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Tetracosa…              1.4              1                1.4              1.7</span></span>
+<span id="cb41-10"><a href="import-and-tidying.html#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Hexacosan…              1.9             12.6             23.1             46.6</span></span>
+<span id="cb41-11"><a href="import-and-tidying.html#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 7 Octacosan…              5               81.4             71.3             41.2</span></span>
+<span id="cb41-12"><a href="import-and-tidying.html#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 6 more variables: Malania_oleifera &lt;dbl&gt;, Ximenia_americana &lt;dbl&gt;,</span></span>
+<span id="cb41-13"><a href="import-and-tidying.html#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Ongokea_gore &lt;dbl&gt;, Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
+<span id="cb41-14"><a href="import-and-tidying.html#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
+<p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="import-and-tidying.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(<span class="at">data =</span> fadb_sample, <span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">names_to =</span> <span class="st">&quot;plant_species&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relative_abundance&quot;</span>)</span>
+<span id="cb42-2"><a href="import-and-tidying.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 70 × 3</span></span>
+<span id="cb42-3"><a href="import-and-tidying.html#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    fatty_acid        plant_species           relative_abundance</span></span>
+<span id="cb42-4"><a href="import-and-tidying.html#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;                                &lt;dbl&gt;</span></span>
+<span id="cb42-5"><a href="import-and-tidying.html#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Hexadecanoic acid Agonandra_brasiliensis                 3.4</span></span>
+<span id="cb42-6"><a href="import-and-tidying.html#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Hexadecanoic acid Agonandra_silvatica                    1  </span></span>
+<span id="cb42-7"><a href="import-and-tidying.html#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Hexadecanoic acid Agonandra_excelsa                      1.2</span></span>
+<span id="cb42-8"><a href="import-and-tidying.html#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Hexadecanoic acid Heisteria_silvianii                    2.9</span></span>
+<span id="cb42-9"><a href="import-and-tidying.html#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Hexadecanoic acid Malania_oleifera                       0.7</span></span>
+<span id="cb42-10"><a href="import-and-tidying.html#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Hexadecanoic acid Ximenia_americana                      3.3</span></span>
+<span id="cb42-11"><a href="import-and-tidying.html#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Hexadecanoic acid Ongokea_gore                           1  </span></span>
+<span id="cb42-12"><a href="import-and-tidying.html#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Hexadecanoic acid Comandra_pallida                       2.3</span></span>
+<span id="cb42-13"><a href="import-and-tidying.html#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Hexadecanoic acid Buckleya_distichophylla                1.6</span></span>
+<span id="cb42-14"><a href="import-and-tidying.html#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Hexadecanoic acid Nuytsia_floribunda                     3.8</span></span>
+<span id="cb42-15"><a href="import-and-tidying.html#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 60 more rows</span></span></code></pre></div>
+<p>Brilliant! Now we have a tidy, long-style table that can be used with ggplot.</p>
+<!-- start summaries and wrangling -->
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="Exercises_2.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="summary_statistics.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sepia",
+"family": "serif",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
