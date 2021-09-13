@@ -104,6 +104,7 @@
         alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv", col_types = cols())
         solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv", col_types = cols())
         periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv", col_types = cols())
+        fadb_sample <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv", col_types = cols())
         # periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv", col_types = cols())
         ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv", col_types = cols())
         # ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv", col_types = cols())

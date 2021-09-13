@@ -788,6 +788,44 @@ Some pointers:
 
 <!-- end -->
 
+<!-- data import and tidying -->
+
+# import and tidying
+
+## data import
+
+To analyze data that is stored on your own computer you can indeed import it into RStudio.
+
+The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with the phylochemistry source command. You run `readCSV()` in your console, then navigate to the data on your hard drive.
+
+Another option is to read the data in from a path. For this, you will need to know the "path" to your data file. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
+
+* On Mac: `/Users/lucasbusta/Documents/sample_data_set.csv` (note the forward slashes!)
+* On PC: `C:\My Computer\Documents\sample_data_set.csv` (note the backward slashes!)
+
+You can quickly find paths to files via the following:
+
+* On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
+* On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
+
+With these paths, we can read in data using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system. Finally, if you are on PC, you will need to include double backslashes instead of single backslashes when you type (or ideally paste) the path into your read_csv() command.
+
+## tidy data
+
+When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
+
+```{r}
+fadb_sample
+```
+
+While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
+
+```{r}
+pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
+```
+
+Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+
 <!-- start summaries and wrangling -->
 # the pipe and summaries {#summary_statistics}
 
@@ -799,7 +837,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-However, when the plot gets more customized, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
+However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
 ```{r}
 alaska_lake_data %>%
@@ -807,7 +845,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-Neat! The pipe will become more important as our analyses become more complex, which happens very quickly when we start working with summary statistics.
+Neat! The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see...
 
 ## summary statistics
 
@@ -819,16 +857,19 @@ ny_trees
 
 More than 300,000 observations of 14 variables! That's 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
 
-Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. Also, keep in mind that a single column of a dataset can be accessed using `$`. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
+Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. We will use the function `summarize()` to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
 
 ```{r}
 ny_trees %>%
   summarize(mean_height = mean(tree_height))
+
+ny_trees %>%
+  summarize(stdev_height = sd(tree_height))
 ```
 
-Great! But how to do this for each species? We need to divide up the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics. Please note that both `group_by()` and `summarize()` require `.data = ` as an argument, as opposed to `data = `, which we have been using up to this point.
+Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics.
 
-```{r, eval = FALSE}
+```{r}
 ny_trees %>%
   group_by(spc_latin) %>%
   summarize(mean_height = mean(tree_height))
@@ -836,7 +877,7 @@ ny_trees %>%
 
 Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
 
-```{r, eval = FALSE}
+```{r}
 ny_trees %>%
   group_by(spc_latin) %>%
   summarize(
@@ -846,9 +887,9 @@ ny_trees %>%
 ny_trees_by_spc_summ
 ```
 
-Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax`. Note that in this case, if we map spc_latin to the x axis, the x axis tick labels will have long names that will overlap in our plot. In the past we have avoided this by swapping the mappings of x and y in out plots. Here, this gets a bit tedious since we will have to change ymin and ymax as well. Instead of all this, we can just add `coord_flip()` to our plot, which will swap x and y axes automatically. Also, note that in the aesthetic mappings for `ymin` and `ymax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
+Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` if you want them to vary along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
 
-```{r, eval = FALSE}
+```{r}
 ny_trees_by_spc_summ %>%
 ggplot() +
   geom_pointrange(
@@ -861,9 +902,9 @@ ggplot() +
     )
 ```
 
-Cool! Just like that we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out.
+Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
-```{r, eval = FALSE}
+```{r}
 ny_trees %>%
   group_by(spc_latin, boroname) %>%
   summarize(
@@ -875,7 +916,7 @@ ny_trees_by_spc_boro_summ
 
 Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let's map boroname to x and facet over tree species, which used to be on x. We'll also manually modify the theme element `strip.text.y` to get the species names in a readable position.
 
-```{r, eval = FALSE}
+```{r, fig.height = 6}
 ny_trees_by_spc_boro_summ %>%
 ggplot() +
   geom_pointrange(
@@ -894,7 +935,7 @@ ggplot() +
 
 Excellent! And if we really want to go for something pretty:
 
-```{r fig.height = 10, eval = FALSE}
+```{r fig.height = 10, fig.width = 6}
 ny_trees_by_spc_boro_summ %>%
 ggplot() +
   geom_pointrange(
@@ -1109,44 +1150,6 @@ ggplot(
 ```
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a publich chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve. 
-
-# FAQ
-
-## data import?
-
-To analyze data on your own computer you can indeed import it into RStudio.
-
-The easiest way to do this is to use the interactive command `readCSV()`, a function that comes with the phylochemistry source command. You run `readCSV()` in your console, then navigate to the data on your hard drive.
-
-Another option is to read the data in from a path. For this, you will need to know the "path" to your data file. This is essentially the street address of your data on your computer's hard drive. Paths look different on Mac and PC.
-
-* On Mac: `/Users/lucasbusta/Documents/sample_data_set.csv` (note the forward slashes!)
-* On PC: `C:\My Computer\Documents\sample_data_set.csv` (note the backward slashes!)
-
-You can quickly find paths to files via the following:
-
-* On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click "Copy <file> as Pathname"
-* On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
-
-With these paths, we can read in data. For this, we're going to use a function from the `tidyverse` called `read_csv`. This means we need to first load the `tidyverse`. We'll use it to read some data from a path on our computer. This is a link to the original, untidied version of the data, but you can download a tidied version of the data by clicking here. We're going to import that tidied version (not the original, untidied version) using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
-
-```{r, message = FALSE}
-library(tidyverse)
-read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv")
-```
-All we have to do is use `<-` to send the information from our `read_csv` command into a new object. This will create the object. See the example below.
-
-```{r, message = FALSE}
-algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv")
-```
-
-Now we have an object called `algae_data`. We can examine the contents of that object by typing its name. For example:
-```{r, message = FALSE}
-algae_data
-```
-
-On either operating system, if you don't want to type paths into your command line, another option is to use the `readCSV()` function, which is available once you have loaded `phylochemistry`.
-
 
 # Links
 

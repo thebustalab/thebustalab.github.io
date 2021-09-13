@@ -231,12 +231,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="summary_statistics.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(alaska_lake_data, park <span class="sc">==</span> <span class="st">&quot;BELA&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> pH, <span class="at">y =</span> lake)) <span class="sc">+</span> <span class="fu">geom_col</span>()</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-64-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>However, when the plot gets more customized, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
+<p>However, as our analyses get more complex, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="summary_statistics.html#cb42-1" aria-hidden="true" tabindex="-1"></a>alaska_lake_data <span class="sc">%&gt;%</span></span>
 <span id="cb42-2"><a href="summary_statistics.html#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(park <span class="sc">==</span> <span class="st">&quot;BELA&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb42-3"><a href="summary_statistics.html#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pH, <span class="at">y =</span> lake)) <span class="sc">+</span> <span class="fu">geom_col</span>()</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-65-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>Neat! The pipe will become more important as our analyses become more complex, which happens very quickly when we start working with summary statistics.</p>
+<p>Neat! The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
 </div>
 <div id="summary-statistics" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> summary statistics</h2>
@@ -259,17 +259,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb43-16"><a href="summary_statistics.html#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="do">## #   trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;, boroname &lt;chr&gt;, latitude &lt;dbl&gt;,</span></span>
 <span id="cb43-17"><a href="summary_statistics.html#cb43-17" aria-hidden="true" tabindex="-1"></a><span class="do">## #   longitude &lt;dbl&gt;</span></span></code></pre></div>
 <p>More than 300,000 observations of 14 variables! That’s 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don’t even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
-<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code>mean()</code> and standard deviation can be calculated with <code>sd()</code>. Also, keep in mind that a single column of a dataset can be accessed using <code>$</code>. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
+<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code>mean()</code> and standard deviation can be calculated with <code>sd()</code>. We will use the function <code>summarize()</code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="summary_statistics.html#cb44-1" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
 <span id="cb44-2"><a href="summary_statistics.html#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height))</span>
 <span id="cb44-3"><a href="summary_statistics.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 1</span></span>
 <span id="cb44-4"><a href="summary_statistics.html#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   mean_height</span></span>
 <span id="cb44-5"><a href="summary_statistics.html#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt;</span></span>
-<span id="cb44-6"><a href="summary_statistics.html#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1        72.6</span></span></code></pre></div>
-<p>Great! But how to do this for each species? We need to divide up the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code>group_by()</code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code>summarize()</code> to compute statistics. Please note that both <code>group_by()</code> and <code>summarize()</code> require <code>.data =</code> as an argument, as opposed to <code>data =</code>, which we have been using up to this point.</p>
+<span id="cb44-6"><a href="summary_statistics.html#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1        72.6</span></span>
+<span id="cb44-7"><a href="summary_statistics.html#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="summary_statistics.html#cb44-8" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
+<span id="cb44-9"><a href="summary_statistics.html#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">stdev_height =</span> <span class="fu">sd</span>(tree_height))</span>
+<span id="cb44-10"><a href="summary_statistics.html#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 1</span></span>
+<span id="cb44-11"><a href="summary_statistics.html#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   stdev_height</span></span>
+<span id="cb44-12"><a href="summary_statistics.html#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="do">##          &lt;dbl&gt;</span></span>
+<span id="cb44-13"><a href="summary_statistics.html#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 1         28.7</span></span></code></pre></div>
+<p>Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code>group_by()</code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code>summarize()</code> to compute statistics.</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="summary_statistics.html#cb45-1" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
 <span id="cb45-2"><a href="summary_statistics.html#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(spc_latin) <span class="sc">%&gt;%</span></span>
-<span id="cb45-3"><a href="summary_statistics.html#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height))</span></code></pre></div>
+<span id="cb45-3"><a href="summary_statistics.html#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height))</span>
+<span id="cb45-4"><a href="summary_statistics.html#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 12 × 2</span></span>
+<span id="cb45-5"><a href="summary_statistics.html#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    spc_latin              mean_height</span></span>
+<span id="cb45-6"><a href="summary_statistics.html#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;                        &lt;dbl&gt;</span></span>
+<span id="cb45-7"><a href="summary_statistics.html#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 ACER PLATANOIDES              82.6</span></span>
+<span id="cb45-8"><a href="summary_statistics.html#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 ACER RUBRUM                  106. </span></span>
+<span id="cb45-9"><a href="summary_statistics.html#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 ACER SACCHARINUM              65.6</span></span>
+<span id="cb45-10"><a href="summary_statistics.html#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 FRAXINUS PENNSYLVANICA        60.6</span></span>
+<span id="cb45-11"><a href="summary_statistics.html#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 GINKGO BILOBA                 90.4</span></span>
+<span id="cb45-12"><a href="summary_statistics.html#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 GLEDITSIA TRIACANTHOS         53.0</span></span>
+<span id="cb45-13"><a href="summary_statistics.html#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 PLATANUS ACERIFOLIA           82.0</span></span>
+<span id="cb45-14"><a href="summary_statistics.html#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 PYRUS CALLERYANA              21.0</span></span>
+<span id="cb45-15"><a href="summary_statistics.html#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 QUERCUS PALUSTRIS             65.5</span></span>
+<span id="cb45-16"><a href="summary_statistics.html#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 QUERCUS RUBRA                111. </span></span>
+<span id="cb45-17"><a href="summary_statistics.html#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 11 TILIA CORDATA                 98.8</span></span>
+<span id="cb45-18"><a href="summary_statistics.html#cb45-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 12 ZELKOVA SERRATA              101.</span></span></code></pre></div>
 <p>Bam. Mean height of each tree species. <code>summarize()</code> is more powerful though, we can do many summary statistics at once:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="summary_statistics.html#cb46-1" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
 <span id="cb46-2"><a href="summary_statistics.html#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(spc_latin) <span class="sc">%&gt;%</span></span>
@@ -277,8 +299,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb46-4"><a href="summary_statistics.html#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_height =</span> <span class="fu">mean</span>(tree_height),</span>
 <span id="cb46-5"><a href="summary_statistics.html#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">stdev_height =</span> <span class="fu">sd</span>(tree_height)</span>
 <span id="cb46-6"><a href="summary_statistics.html#cb46-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">-&gt;</span> ny_trees_by_spc_summ</span>
-<span id="cb46-7"><a href="summary_statistics.html#cb46-7" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ</span></code></pre></div>
-<p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code>. Note that in this case, if we map spc_latin to the x axis, the x axis tick labels will have long names that will overlap in our plot. In the past we have avoided this by swapping the mappings of x and y in out plots. Here, this gets a bit tedious since we will have to change ymin and ymax as well. Instead of all this, we can just add <code>coord_flip()</code> to our plot, which will swap x and y axes automatically. Also, note that in the aesthetic mappings for <code>ymin</code> and <code>ymax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
+<span id="cb46-7"><a href="summary_statistics.html#cb46-7" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ</span>
+<span id="cb46-8"><a href="summary_statistics.html#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 12 × 3</span></span>
+<span id="cb46-9"><a href="summary_statistics.html#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="do">##    spc_latin              mean_height stdev_height</span></span>
+<span id="cb46-10"><a href="summary_statistics.html#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;                        &lt;dbl&gt;        &lt;dbl&gt;</span></span>
+<span id="cb46-11"><a href="summary_statistics.html#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 ACER PLATANOIDES              82.6        17.6 </span></span>
+<span id="cb46-12"><a href="summary_statistics.html#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 ACER RUBRUM                  106.         15.7 </span></span>
+<span id="cb46-13"><a href="summary_statistics.html#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 ACER SACCHARINUM              65.6        16.6 </span></span>
+<span id="cb46-14"><a href="summary_statistics.html#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 FRAXINUS PENNSYLVANICA        60.6        21.3 </span></span>
+<span id="cb46-15"><a href="summary_statistics.html#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 GINKGO BILOBA                 90.4        24.5 </span></span>
+<span id="cb46-16"><a href="summary_statistics.html#cb46-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 GLEDITSIA TRIACANTHOS         53.0        13.0 </span></span>
+<span id="cb46-17"><a href="summary_statistics.html#cb46-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 PLATANUS ACERIFOLIA           82.0        16.0 </span></span>
+<span id="cb46-18"><a href="summary_statistics.html#cb46-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 PYRUS CALLERYANA              21.0         5.00</span></span>
+<span id="cb46-19"><a href="summary_statistics.html#cb46-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 QUERCUS PALUSTRIS             65.5         6.48</span></span>
+<span id="cb46-20"><a href="summary_statistics.html#cb46-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 QUERCUS RUBRA                111.         20.7 </span></span>
+<span id="cb46-21"><a href="summary_statistics.html#cb46-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 11 TILIA CORDATA                 98.8        32.6 </span></span>
+<span id="cb46-22"><a href="summary_statistics.html#cb46-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 12 ZELKOVA SERRATA              101.         10.7</span></span></code></pre></div>
+<p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code> if you want them to vary along x). Also, note that in the aesthetic mappings for <code>xmin</code> and <code>xmax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="summary_statistics.html#cb47-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_summ <span class="sc">%&gt;%</span></span>
 <span id="cb47-2"><a href="summary_statistics.html#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb47-3"><a href="summary_statistics.html#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(</span>
@@ -289,14 +326,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb47-8"><a href="summary_statistics.html#cb47-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">xmax =</span> mean_height <span class="sc">+</span> stdev_height</span>
 <span id="cb47-9"><a href="summary_statistics.html#cb47-9" aria-hidden="true" tabindex="-1"></a>      )</span>
 <span id="cb47-10"><a href="summary_statistics.html#cb47-10" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
-<p>Cool! Just like that we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out.</p>
+<p><img src="index_files/figure-html/unnamed-chunk-70-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="summary_statistics.html#cb48-1" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
 <span id="cb48-2"><a href="summary_statistics.html#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(spc_latin, boroname) <span class="sc">%&gt;%</span></span>
 <span id="cb48-3"><a href="summary_statistics.html#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
 <span id="cb48-4"><a href="summary_statistics.html#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_diam =</span> <span class="fu">mean</span>(tree_diameter),</span>
 <span id="cb48-5"><a href="summary_statistics.html#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">stdev_diam =</span> <span class="fu">sd</span>(tree_diameter)</span>
 <span id="cb48-6"><a href="summary_statistics.html#cb48-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">-&gt;</span> ny_trees_by_spc_boro_summ</span>
-<span id="cb48-7"><a href="summary_statistics.html#cb48-7" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ</span></code></pre></div>
+<span id="cb48-7"><a href="summary_statistics.html#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="do">## `summarise()` has grouped output by &#39;spc_latin&#39;. You can override using the `.groups` argument.</span></span>
+<span id="cb48-8"><a href="summary_statistics.html#cb48-8" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ</span>
+<span id="cb48-9"><a href="summary_statistics.html#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 48 × 4</span></span>
+<span id="cb48-10"><a href="summary_statistics.html#cb48-10" aria-hidden="true" tabindex="-1"></a><span class="do">## # Groups:   spc_latin [12]</span></span>
+<span id="cb48-11"><a href="summary_statistics.html#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="do">##    spc_latin        boroname  mean_diam stdev_diam</span></span>
+<span id="cb48-12"><a href="summary_statistics.html#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;            &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span id="cb48-13"><a href="summary_statistics.html#cb48-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 ACER PLATANOIDES Bronx         13.9        6.74</span></span>
+<span id="cb48-14"><a href="summary_statistics.html#cb48-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 ACER PLATANOIDES Brooklyn      15.4       14.9 </span></span>
+<span id="cb48-15"><a href="summary_statistics.html#cb48-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 ACER PLATANOIDES Manhattan     11.6        8.45</span></span>
+<span id="cb48-16"><a href="summary_statistics.html#cb48-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 ACER PLATANOIDES Queens        15.1       12.9 </span></span>
+<span id="cb48-17"><a href="summary_statistics.html#cb48-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 ACER RUBRUM      Bronx         11.4        7.88</span></span>
+<span id="cb48-18"><a href="summary_statistics.html#cb48-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 ACER RUBRUM      Brooklyn      10.5        7.41</span></span>
+<span id="cb48-19"><a href="summary_statistics.html#cb48-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 ACER RUBRUM      Manhattan      6.63       4.23</span></span>
+<span id="cb48-20"><a href="summary_statistics.html#cb48-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 ACER RUBRUM      Queens        14.1        8.36</span></span>
+<span id="cb48-21"><a href="summary_statistics.html#cb48-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 ACER SACCHARINUM Bronx         19.7       10.5 </span></span>
+<span id="cb48-22"><a href="summary_statistics.html#cb48-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 ACER SACCHARINUM Brooklyn      22.2       10.1 </span></span>
+<span id="cb48-23"><a href="summary_statistics.html#cb48-23" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 38 more rows</span></span></code></pre></div>
 <p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="summary_statistics.html#cb49-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ <span class="sc">%&gt;%</span></span>
 <span id="cb49-2"><a href="summary_statistics.html#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
@@ -312,6 +366,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb49-12"><a href="summary_statistics.html#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
 <span id="cb49-13"><a href="summary_statistics.html#cb49-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>)</span>
 <span id="cb49-14"><a href="summary_statistics.html#cb49-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-72-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Excellent! And if we really want to go for something pretty:</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="summary_statistics.html#cb50-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ <span class="sc">%&gt;%</span></span>
 <span id="cb50-2"><a href="summary_statistics.html#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
@@ -337,6 +392,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb50-22"><a href="summary_statistics.html#cb50-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>),</span>
 <span id="cb50-23"><a href="summary_statistics.html#cb50-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
 <span id="cb50-24"><a href="summary_statistics.html#cb50-24" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-73-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 <!-- end -->
 <!-- start Exercises 3 -->
