@@ -350,37 +350,8 @@ Some pointers:
 
 - Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
 
-
 ## Algae Chemistry Dataset
 
-<!-- 1. **Importing data**
-
-Import the algae chemistry data. Remember that `read_csv()` is part of the `tidyverse`, so that library needs to be loaded into your `R` session. Also remember that another option is to paste and run `readCSV <- function() { return(readr::read_csv(file.choose())) }` in your R Console, which then gives you access to the function `readCSV()`. That command doesn't require an input path, so you don't need to mess around with slashes and quotes. If you need examples of how to import data, please see the [R Basics](#R_Basics) section of this book.
-
-```{r, include = FALSE, message = FALSE}
-library(tidyverse)
-read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-```
-
-2. **Dataset dimensions**
-
-How many rows and columns does the algae chemistry dataset have? (hint: when you display the dataset on your screen by typing its name into the console, dimensions are also displayed). Write the answer to this question in your R Script right below the code you use to find the answer.
-
-```{r, include = FALSE}
-library(tidyverse)
-read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-# 180 x 5
-```
-
-3. **Objects**
-
-Import the algae chemistry data and send it into a new object called `algae_data`. Remember about `<-`. See the [R Basics](#R_Basics) section of this book if you need help.
-
-```{r, include = FALSE}
-library(tidyverse)
-algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/algae_data.csv")
-```
- -->
 1. **Filtering 1**
 
 You will have `algae_data` stored in an object called `algae_data` as soon as you run `source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
@@ -966,8 +937,7 @@ In this set of exercises we are going to use the [Periodic Table](https://thebus
 Make a plot using `geom_point()` that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?
 
 ```{r, include = FALSE}
-library(tidyverse)
-pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
+pt <- periodic_table
 pt_by_year <- group_by(pt, year_discovered)
 pt_by_year_summ <- dplyr::summarize(pt_by_year, mean = mean(atomic_mass_rounded))
 ggplot(pt_by_year_summ, aes(x = year_discovered, y = mean)) + geom_point()
@@ -979,7 +949,6 @@ The column `state_at_RT` indicates the state of each element at room temperate. 
 
 ```{r, include = FALSE, eval = FALSE}
 library(tidyverse)
-pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(pt, state_at_RT)
 pt_by_year_summ <- summarize(pt_by_year, mean = mean(first_ionization_poten_eV), sd = sd(first_ionization_poten_eV))
 pt_by_year_summ
@@ -991,7 +960,6 @@ ggplot(pt_by_year_summ, aes(x = state_at_RT, y = mean)) + geom_point()
 Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of `crystal_structure`? Make a plot using `geom_pointrange()` that shows the mean and standard deviation of each of these groups. What's up with elements that have a cubic crystal structure?
 
 ```{r, include = FALSE}
-pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 85), crystal_structure)
 pt_by_year_summ <- dplyr::summarize(pt_by_year, mean = mean(boiling_point_C), sd = sd(boiling_point_C))
 pt_by_year_summ
@@ -1011,7 +979,6 @@ ggplot(pt_by_year_summ,
 Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four *periods* in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does "CHON" mean? (not the rock band, though they are also excellent, especially that song that features GoYama)
 
 ```{r, include = FALSE, eval = FALSE}
-pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 37), period)
 pt_by_year_summ <- summarize(pt_by_year, mean = mean(mg_per_L_in_seawater))
 pt_by_year_summ
@@ -1028,7 +995,6 @@ ggplot(pt_by_year_summ,
 Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each `group_number`. Use `geom_point()` and `geom_errorbar()` to illustrate the average, minimum, and maximum values for each group number.
 
 ```{r, include = FALSE, eval = FALSE}
-pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 103 & group_number != 18), group_number)
 pt_by_year_summ <- dplyr::summarize(
   pt_by_year,
@@ -1054,7 +1020,6 @@ ggplot(pt_by_year_summ,
 Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by `color`. Now filter out those that have `color == "colorless"`. Of the remaining elements, which has the widest range of specific heats? Use `geom_point()` and `geom_errorbar()` to illustrate the mean and standard deviation of each color's specific heats.
 
 ```{r, include = FALSE, eval = FALSE}
-pt <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv")
 pt_by_year <- group_by(filter(pt, atomic_number < 85 & color != "colorless"), color)
 pt_by_year_summ <- summarize(
   pt_by_year,

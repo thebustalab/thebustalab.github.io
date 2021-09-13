@@ -10,7 +10,6 @@ stringr
 forcats
 gridExtra
 ape
-ggtree
 rstatix
 multcompView
 magrittr
@@ -41,18 +40,3 @@ network
 pracma
 ggnetwork
 FactoMineR
-BiocParallel
-BiocGenerics
-Biobase
-mzR
-S4Vectors
-ProtGenerics
-MSnbase
-xcms
-IRanges
-XVector
-GenomeInfoDb
-Biostrings
-msa
-GenomicRanges
-rtracklayer
