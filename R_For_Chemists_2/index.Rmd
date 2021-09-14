@@ -766,7 +766,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 <!-- start exercises 2 -->
 # Exercises 2 {#Exercises_2}
 
-In this set of exercises we're going to practice making more plots using the dataset `solvents`. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this materal.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
+In this set of exercises we're going to practice making more plots using the dataset `solvents`. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
 
 As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio as an R Markdown document. You will compile that file as a pdf and submit it on Canvas. If you have any questions please let me know.
 
@@ -780,7 +780,7 @@ Some pointers:
 
 2. Create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
 
-3. Make a plot that has five aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the five mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape).
+3. Make a plot that has four aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the four mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape).
 
 4. Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as `theme_classic()`, rather, manually modify components of the theme using `theme()`). This means that inside your `theme()` command, there should be three arguments separated by commas.
 
@@ -788,8 +788,7 @@ Some pointers:
 
 <!-- end -->
 
-<!-- data import and tidying -->
-
+<!-- start data import and tidying -->
 # import and tidying
 
 ## data import
@@ -825,6 +824,8 @@ pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values
 ```
 
 Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+
+<!-- end -->
 
 <!-- start summaries and wrangling -->
 # the pipe and summaries {#summary_statistics}
@@ -1083,6 +1084,70 @@ ggplot(pt_by_year_summ,
 ## Question 7
 
 You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
+<!-- end -->
+
+<!-- start hierarchical clustering -->
+# clustering
+
+So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, and other questions, we need to use matrix analyses. For this, we will use `runMatrixAnalysis()`, a function that is loaded into your R Session when you run the source() command.
+
+Matrix analyses can be a bit difficult to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
+
+```{r, message = FALSE}
+AK_lakes
+```
+
+We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structure. See the image below for an explanation.
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/runMatrixAnalysis1.png', dpi = NA)
+```
+
+With this in mind, let's try out our template:
+
+```{r, message = FALSE}
+AK_lakes_clustered <- runMatrixAnalysis(
+                                
+    data = alaska_lake_data,
+
+    analysis = "hclust",
+
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    
+    columns_w_additional_analyte_info = "element_type",
+
+    columns_w_sample_ID_info = c("lake", "park")
+
+)
+AK_lakes_clustered
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+```{r}
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic()
+```
+
+Cool! Though that plot could use some tweaking... let's try:
+
+```{r}
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,350))
+```
+ 
+Very nice!
 <!-- end -->
 
 # wrangling 2
