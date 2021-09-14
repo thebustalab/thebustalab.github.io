@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-09-13" />
+<meta name="date" content="2021-09-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -185,28 +185,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.1" data-path="summary_statistics.html"><a href="summary_statistics.html#the-pipe"><i class="fa fa-check"></i><b>7.1</b> the pipe (%&gt;%)</a></li>
 <li class="chapter" data-level="7.2" data-path="summary_statistics.html"><a href="summary_statistics.html#summary-statistics"><i class="fa fa-check"></i><b>7.2</b> summary statistics</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="Exercises_3.html"><a href="Exercises_3.html"><i class="fa fa-check"></i><b>8</b> Exercises 3</a>
+<li class="chapter" data-level="8" data-path="Exercises_3.html"><a href="Exercises_3.html"><i class="fa fa-check"></i><b>8</b> Exercises 3</a></li>
+<li class="chapter" data-level="9" data-path="clustering.html"><a href="clustering.html"><i class="fa fa-check"></i><b>9</b> clustering</a></li>
+<li class="chapter" data-level="10" data-path="wrangling-2.html"><a href="wrangling-2.html"><i class="fa fa-check"></i><b>10</b> wrangling 2</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="Exercises_3.html"><a href="Exercises_3.html#question-1"><i class="fa fa-check"></i><b>8.1</b> Question 1</a></li>
-<li class="chapter" data-level="8.2" data-path="Exercises_3.html"><a href="Exercises_3.html#question-2"><i class="fa fa-check"></i><b>8.2</b> Question 2</a></li>
-<li class="chapter" data-level="8.3" data-path="Exercises_3.html"><a href="Exercises_3.html#question-3"><i class="fa fa-check"></i><b>8.3</b> Question 3</a></li>
-<li class="chapter" data-level="8.4" data-path="Exercises_3.html"><a href="Exercises_3.html#question-4"><i class="fa fa-check"></i><b>8.4</b> Question 4</a></li>
-<li class="chapter" data-level="8.5" data-path="Exercises_3.html"><a href="Exercises_3.html#question-5"><i class="fa fa-check"></i><b>8.5</b> Question 5</a></li>
-<li class="chapter" data-level="8.6" data-path="Exercises_3.html"><a href="Exercises_3.html#question-6"><i class="fa fa-check"></i><b>8.6</b> Question 6</a></li>
-<li class="chapter" data-level="8.7" data-path="Exercises_3.html"><a href="Exercises_3.html#question-7"><i class="fa fa-check"></i><b>8.7</b> Question 7</a></li>
+<li class="chapter" data-level="10.1" data-path="wrangling-2.html"><a href="wrangling-2.html#subsetting"><i class="fa fa-check"></i><b>10.1</b> subsetting</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="wrangling-2.html"><a href="wrangling-2.html"><i class="fa fa-check"></i><b>9</b> wrangling 2</a>
+<li class="chapter" data-level="11" data-path="writing.html"><a href="writing.html"><i class="fa fa-check"></i><b>11</b> Writing</a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="wrangling-2.html"><a href="wrangling-2.html#subsetting"><i class="fa fa-check"></i><b>9.1</b> subsetting</a></li>
+<li class="chapter" data-level="11.1" data-path="writing.html"><a href="writing.html#captions"><i class="fa fa-check"></i><b>11.1</b> Captions</a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="writing.html"><a href="writing.html"><i class="fa fa-check"></i><b>10</b> Writing</a>
+<li class="chapter" data-level="12" data-path="links.html"><a href="links.html"><i class="fa fa-check"></i><b>12</b> Links</a>
 <ul>
-<li class="chapter" data-level="10.1" data-path="writing.html"><a href="writing.html#captions"><i class="fa fa-check"></i><b>10.1</b> Captions</a></li>
-</ul></li>
-<li class="chapter" data-level="11" data-path="links.html"><a href="links.html"><i class="fa fa-check"></i><b>11</b> Links</a>
-<ul>
-<li class="chapter" data-level="11.1" data-path="links.html"><a href="links.html#geoms-1"><i class="fa fa-check"></i><b>11.1</b> geoms</a></li>
-<li class="chapter" data-level="11.2" data-path="links.html"><a href="links.html#colors"><i class="fa fa-check"></i><b>11.2</b> colors</a></li>
+<li class="chapter" data-level="12.1" data-path="links.html"><a href="links.html#geoms-1"><i class="fa fa-check"></i><b>12.1</b> geoms</a></li>
+<li class="chapter" data-level="12.2" data-path="links.html"><a href="links.html#colors"><i class="fa fa-check"></i><b>12.2</b> colors</a></li>
 </ul></li>
 </ul>
 
@@ -237,7 +229,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb44-2"><a href="summary_statistics.html#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(park <span class="sc">==</span> <span class="st">&quot;BELA&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb44-3"><a href="summary_statistics.html#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pH, <span class="at">y =</span> lake)) <span class="sc">+</span> <span class="fu">geom_col</span>()</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-67-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>Neat! The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
+<p>Neat! Another way to think about the pipe:</p>
+<p><img src="http://thebustalab.github.io/R_For_Chemists_2/images/pipe.jpg" style="display: block; margin: auto;" /></p>
+<p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
 </div>
 <div id="summary-statistics" class="section level2" number="7.2">
 <h2><span class="header-section-number">7.2</span> summary statistics</h2>
@@ -327,7 +321,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb49-8"><a href="summary_statistics.html#cb49-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">xmax =</span> mean_height <span class="sc">+</span> stdev_height</span>
 <span id="cb49-9"><a href="summary_statistics.html#cb49-9" aria-hidden="true" tabindex="-1"></a>      )</span>
 <span id="cb49-10"><a href="summary_statistics.html#cb49-10" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-72-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-73-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="summary_statistics.html#cb50-1" aria-hidden="true" tabindex="-1"></a>ny_trees <span class="sc">%&gt;%</span></span>
 <span id="cb50-2"><a href="summary_statistics.html#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(spc_latin, boroname) <span class="sc">%&gt;%</span></span>
@@ -367,7 +361,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb51-12"><a href="summary_statistics.html#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
 <span id="cb51-13"><a href="summary_statistics.html#cb51-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>)</span>
 <span id="cb51-14"><a href="summary_statistics.html#cb51-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-74-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-75-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Excellent! And if we really want to go for something pretty:</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="summary_statistics.html#cb52-1" aria-hidden="true" tabindex="-1"></a>ny_trees_by_spc_boro_summ <span class="sc">%&gt;%</span></span>
 <span id="cb52-2"><a href="summary_statistics.html#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
@@ -393,7 +387,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb52-22"><a href="summary_statistics.html#cb52-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>),</span>
 <span id="cb52-23"><a href="summary_statistics.html#cb52-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
 <span id="cb52-24"><a href="summary_statistics.html#cb52-24" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-75-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-76-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 <!-- end -->
 <!-- start Exercises 3 -->

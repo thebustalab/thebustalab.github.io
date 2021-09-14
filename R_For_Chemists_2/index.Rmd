@@ -942,7 +942,7 @@ ggplot() +
 
 Excellent! And if we really want to go for something pretty:
 
-```{r fig.height = 10, fig.width = 6}
+```{r fig.height = 9, fig.width = 6}
 ny_trees_by_spc_boro_summ %>%
 ggplot() +
   geom_pointrange(
@@ -978,11 +978,15 @@ ggplot() +
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
-In this set of exercises we are going to use the [Periodic Table](https://thebustalab.github.io/R_For_Chemists/sample_data/per_table.csv) dataset. Please download and import that dataset into R. Then, open a new powerpoint presentation and make seven empty slides. There are seven questions below. Each will direct you to make a particular type of plot. Copy and paste those plots, in order, into the seven slides in your presentation. Paste the code underlying your figure into the "notes" section for that slide (the little space under the slide where you can write notes). If the question also requires some text to answer properly, put that text in the "notes" section as well. When you are done, email that presentation to me, which will comprise your submission for this assignment. Please let me know if you have any questions. Good luck, and have fun!
+In this set of exercises we are going to use the periodic table. After you run source() you can load that dataset using `periodic_table`. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
 
-## Question 1
+Some pointers:
 
-Make a plot using `geom_point()` that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?
+- If your code goes off the page, don't be afraid to wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.
+
+- Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
+
+1. Make a plot using `geom_point()` that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?
 
 ```{r, include = FALSE}
 pt <- periodic_table
@@ -991,21 +995,16 @@ pt_by_year_summ <- dplyr::summarize(pt_by_year, mean = mean(atomic_mass_rounded)
 ggplot(pt_by_year_summ, aes(x = year_discovered, y = mean)) + geom_point()
 ```
 
-## Question 2
-
-The column `state_at_RT` indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in `state_at_RT` (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?
+2. The column `state_at_RT` indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in `state_at_RT` (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?
 
 ```{r, include = FALSE, eval = FALSE}
-library(tidyverse)
 pt_by_year <- group_by(pt, state_at_RT)
 pt_by_year_summ <- summarize(pt_by_year, mean = mean(first_ionization_poten_eV), sd = sd(first_ionization_poten_eV))
 pt_by_year_summ
 ggplot(pt_by_year_summ, aes(x = state_at_RT, y = mean)) + geom_point()
 ```
 
-## Question 3
-
-Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of `crystal_structure`? Make a plot using `geom_pointrange()` that shows the mean and standard deviation of each of these groups. What's up with elements that have a cubic crystal structure?
+3. Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of `crystal_structure`? Make a plot using `geom_pointrange()` that shows the mean and standard deviation of each of these groups. What's up with elements that have a cubic crystal structure?
 
 ```{r, include = FALSE}
 pt_by_year <- group_by(filter(pt, atomic_number < 85), crystal_structure)
@@ -1022,9 +1021,7 @@ ggplot(pt_by_year_summ,
   coord_flip()
 ```
 
-## Question 4
-
-Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four *periods* in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does "CHON" mean? (not the rock band, though they are also excellent, especially that song that features GoYama)
+4. Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four *periods* in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does "CHON" mean? (not the rock band, though they are also excellent, especially that song that features GoYama)
 
 ```{r, include = FALSE, eval = FALSE}
 pt_by_year <- group_by(filter(pt, atomic_number < 37), period)
@@ -1038,9 +1035,7 @@ ggplot(pt_by_year_summ,
   geom_point()
 ```
 
-## Question 5
-
-Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each `group_number`. Use `geom_point()` and `geom_errorbar()` to illustrate the average, minimum, and maximum values for each group number.
+5. Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each `group_number`. Use `geom_point()` and `geom_errorbar()` to illustrate the average, minimum, and maximum values for each group number.
 
 ```{r, include = FALSE, eval = FALSE}
 pt_by_year <- group_by(filter(pt, atomic_number < 103 & group_number != 18), group_number)
@@ -1063,9 +1058,7 @@ ggplot(pt_by_year_summ,
   coord_flip()
 ```
 
-## Question 6
-
-Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by `color`. Now filter out those that have `color == "colorless"`. Of the remaining elements, which has the widest range of specific heats? Use `geom_point()` and `geom_errorbar()` to illustrate the mean and standard deviation of each color's specific heats.
+6. Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by `color`. Now filter out those that have `color == "colorless"`. Of the remaining elements, which has the widest range of specific heats? Use `geom_point()` and `geom_errorbar()` to illustrate the mean and standard deviation of each color's specific heats.
 
 ```{r, include = FALSE, eval = FALSE}
 pt_by_year <- group_by(filter(pt, atomic_number < 85 & color != "colorless"), color)
@@ -1087,9 +1080,7 @@ ggplot(pt_by_year_summ,
   coord_flip()
 ```
 
-## Question 7
-
-You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
+7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
 
 <!-- start hierarchical clustering -->
@@ -1135,7 +1126,8 @@ It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree
 
 Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
 
-```{r}
+```{r, message = FALSE}
+library(ggtree)
 AK_lakes_clustered %>%
 ggtree() +
   geom_tiplab() +
@@ -1145,12 +1137,12 @@ ggtree() +
 
 Cool! Though that plot could use some tweaking... let's try:
 
-```{r}
+```{r, fig.height = 5, fig.width = 5}
 AK_lakes_clustered %>%
 ggtree() +
     geom_tiplab(aes(label = lake), offset = 10) +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,350))
+    scale_x_continuous(limits = c(0,400))
 ```
  
 Very nice!
