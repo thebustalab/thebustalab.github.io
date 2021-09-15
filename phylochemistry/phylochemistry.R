@@ -38,15 +38,14 @@
 
         Bioconductor_packages <- c(
             "ggtree",
-            "xcms",
-            "msa",
-            "rtracklayer",
+            # "xcms",
+            # "msa",
+            # "rtracklayer",
             # "orthologr",
             "Biostrings",
             # "GenomicRanges",
             # "GenomicFeatures",
-            "Rsamtools",
-            "rtracklayer"
+            # "Rsamtools"
         )
 
         packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
