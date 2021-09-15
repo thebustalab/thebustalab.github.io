@@ -43,8 +43,8 @@
             "rtracklayer",
             # "orthologr",
             "Biostrings",
-            "GenomicRanges",
-            "GenomicFeatures",
+            # "GenomicRanges",
+            # "GenomicFeatures",
             "Rsamtools",
             "rtracklayer"
         )
