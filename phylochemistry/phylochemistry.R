@@ -31,22 +31,22 @@
             "ggnetwork",
             "tidyverse",
             "FactoMineR",
-            "dplyr"
-            # "stringr", 
-            # "progress"
+            "dplyr",
+            "stringr", 
+            "progress"
         )
 
         Bioconductor_packages <- c(
-            # "ggtree",
-            # "xcms",
-            # "msa",
-            # "rtracklayer"
-            # "orthologr"
-            # c("Biostrings",
-            #     "GenomicRanges",
-            #     "GenomicFeatures",
-            #     "Rsamtools",
-            #     "rtracklayer"
+            "ggtree",
+            "xcms",
+            "msa",
+            "rtracklayer",
+            "orthologr",
+            "Biostrings",
+            "GenomicRanges",
+            "GenomicFeatures",
+            "Rsamtools",
+            "rtracklayer"
         )
 
         packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
