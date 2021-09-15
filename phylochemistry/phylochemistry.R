@@ -41,7 +41,7 @@
             "xcms",
             "msa",
             "rtracklayer",
-            "orthologr",
+            # "orthologr",
             "Biostrings",
             "GenomicRanges",
             "GenomicFeatures",
