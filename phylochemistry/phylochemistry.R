@@ -42,7 +42,7 @@
             # "msa",
             # "rtracklayer",
             # "orthologr",
-            "Biostrings",
+            "Biostrings"
             # "GenomicRanges",
             # "GenomicFeatures",
             # "Rsamtools"
