@@ -187,6 +187,17 @@ Once that is complete, and assuming no errors are displayed, attempt to load phy
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
+## xcms
+
+If you wish to run the GC-MS integration app that comes with phylochemistry, please also install XCMS by running the following in your RStudio console:
+
+```{r, message = FALSE, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("xcms")
+```
+
 <!-- end -->
 
 <!-- start R markdown-->
