@@ -83,6 +83,7 @@
     ## Set up prioriy functions
 
         summarize <- dplyr::summarize
+        filter <- dplyr::filter
 
 ###### Datasets
 
