@@ -29,11 +29,11 @@
             "network",
             "pracma",
             "ggnetwork",
-            "tidyverse",
             "FactoMineR",
             "dplyr",
             "stringr", 
-            "progress"
+            "progress",
+            "tidyverse"
         )
 
         Bioconductor_packages <- c(
