@@ -3173,11 +3173,25 @@
                         
                     ## Covert CDF to csv, if necessary
 
-                        paths_to_cdfs <- paste(
-                            CDF_directory_path,
-                            dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
-                            sep = "/"
-                        )
+                        if ( .Platform$OS == "unix") {
+
+                            paths_to_cdfs <- paste(
+                                CDF_directory_path,
+                                dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
+                                sep = "/"
+                            )
+
+                        }
+
+                        if ( .Platform$OS == "windows") {
+
+                            paths_to_cdfs <- paste(
+                                CDF_directory_path,
+                                dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
+                                sep = "\\"
+                            )
+
+                        }
 
                         convertCDFstoCSVs(paths_to_cdfs)
 
