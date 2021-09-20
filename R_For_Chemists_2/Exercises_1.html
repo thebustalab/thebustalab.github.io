@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>3 Exercises 1 | R For Chemists</title>
   <meta name="description" content="3 Exercises 1 | R For Chemists" />
-  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
   <meta property="og:title" content="3 Exercises 1 | R For Chemists" />
   <meta property="og:type" content="book" />
@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-09-14" />
+<meta name="date" content="2021-09-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,8 +33,9 @@
   
 <link rel="prev" href="R_Markdown.html"/>
 <link rel="next" href="geoms_facets_scales_themes.html"/>
-<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -42,7 +43,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
 
 
 
@@ -143,6 +143,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.4" data-path="installation.html"><a href="installation.html#tidyverse"><i class="fa fa-check"></i><b>1.4</b> tidyverse</a></li>
 <li class="chapter" data-level="1.5" data-path="installation.html"><a href="installation.html#tex"><i class="fa fa-check"></i><b>1.5</b> TeX</a></li>
 <li class="chapter" data-level="1.6" data-path="installation.html"><a href="installation.html#phylochemistry"><i class="fa fa-check"></i><b>1.6</b> phylochemistry</a></li>
+<li class="chapter" data-level="1.7" data-path="installation.html"><a href="installation.html#xcms"><i class="fa fa-check"></i><b>1.7</b> xcms</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="R_Markdown.html"><a href="R_Markdown.html"><i class="fa fa-check"></i><b>2</b> ggplot and markdown</a>
 <ul>
@@ -253,11 +254,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><strong>Filtering and plotting</strong></li>
 </ol>
 <p>I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot’s data argument:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="Exercises_1.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb24-2"><a href="Exercises_1.html#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;essential_Aas&quot;</span>),</span>
-<span id="cb24-3"><a href="Exercises_1.html#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb24-4"><a href="Exercises_1.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-32-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="Exercises_1.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb25-2"><a href="Exercises_1.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(algae_data, chemical_species <span class="sc">==</span> <span class="st">&quot;essential_Aas&quot;</span>),</span>
+<span id="cb25-3"><a href="Exercises_1.html#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> algae_strain, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="Exercises_1.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>()</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-33-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
 <ol start="7" style="list-style-type: decimal">
 <li><strong>Filtering and plotting</strong></li>
@@ -271,13 +272,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><strong>A peek at what’s to come…</strong></li>
 </ol>
 <p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="Exercises_1.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
-<span id="cb25-2"><a href="Exercises_1.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
-<span id="cb25-3"><a href="Exercises_1.html#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>algae_strain)</span></code></pre></div>
-<p>Also try, instead of <code>facet_grid(.~algae_strain)</code>, <code>facet_grid(algae_strain~.)</code> at the end of you plot command. (note the swap in the position of the <code>.~</code> relative to <code>algae_strain</code>). This means your code should look something like:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="Exercises_1.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
 <span id="cb26-2"><a href="Exercises_1.html#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
-<span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(algae_strain<span class="sc">~</span>.)</span></code></pre></div>
+<span id="cb26-3"><a href="Exercises_1.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>algae_strain)</span></code></pre></div>
+<p>Also try, instead of <code>facet_grid(.~algae_strain)</code>, <code>facet_grid(algae_strain~.)</code> at the end of you plot command. (note the swap in the position of the <code>.~</code> relative to <code>algae_strain</code>). This means your code should look something like:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="Exercises_1.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="Exercises_1.html#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="Exercises_1.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(algae_strain<span class="sc">~</span>.)</span></code></pre></div>
 <p>What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?</p>
 </div>
 <div id="alaska-lakes-dataset" class="section level2" number="3.2">
@@ -314,15 +315,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><strong>Open-ended Plotting</strong></li>
 </ol>
 <p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn’t make a very nice plot):</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="Exercises_1.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb27-2"><a href="Exercises_1.html#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>),</span>
-<span id="cb27-3"><a href="Exercises_1.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)</span>
-<span id="cb27-4"><a href="Exercises_1.html#cb27-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb27-5"><a href="Exercises_1.html#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb27-6"><a href="Exercises_1.html#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>,</span>
-<span id="cb27-7"><a href="Exercises_1.html#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span></span>
-<span id="cb27-8"><a href="Exercises_1.html#cb27-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-49-1.png" width="384" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="Exercises_1.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb28-2"><a href="Exercises_1.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, lake <span class="sc">==</span> <span class="st">&quot;Lake_Narvakrak&quot;</span>),</span>
+<span id="cb28-3"><a href="Exercises_1.html#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> lake, <span class="at">y =</span> mg_per_L)</span>
+<span id="cb28-4"><a href="Exercises_1.html#cb28-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb28-5"><a href="Exercises_1.html#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb28-6"><a href="Exercises_1.html#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">10</span>,</span>
+<span id="cb28-7"><a href="Exercises_1.html#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;green&quot;</span></span>
+<span id="cb28-8"><a href="Exercises_1.html#cb28-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-50-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
 <p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 <!-- end --></p>
@@ -339,7 +340,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
