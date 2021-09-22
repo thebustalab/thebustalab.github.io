@@ -1094,7 +1094,7 @@ ggplot(pt_by_year_summ,
 7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
 
-<!-- start hierarchical clustering -->
+<!-- start clustering -->
 # clustering
 
 So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, and other questions, we need to use matrix analyses. For this, we will use `runMatrixAnalysis()`, a function that is loaded into your R Session when you run the source() command.
@@ -1148,7 +1148,7 @@ ggtree() +
 
 Cool! Though that plot could use some tweaking... let's try:
 
-```{r, fig.height = 5, fig.width = 5}
+```{r, fig.height = 5, fig.width = 7}
 AK_lakes_clustered %>%
 ggtree() +
     geom_tiplab(aes(label = lake), offset = 10) +
@@ -1159,6 +1159,28 @@ ggtree() +
 Very nice!
 <!-- end -->
 
+
+<!-- start Exercises 4-->
+# Exercises 4 {#Exercises_4}
+
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: algae_data (which algae strains are most similar to each other?), alaska_lake_data (which lakes are most similar to each other?). and solvents (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`.
+
+For this assignment, you may find two things very helpful:
+
+1. Chapter 10. It explains how to use `runMatrixAnalysis()`. Please note that I used some of your feedback in class to make `runMatrixAnalysis()` simpler. Accordingly, in the lecture recording I am explaining a version of that command that is slightly out of date. The book chapter, however, is completely up-to-date.
+
+2. You may find the `colnames()` function and square bracket-subsetting useful for this assignment. It will list all or a subset of the column names in a dataset for you. For example:
+
+```{r}
+colnames(solvents)
+
+colnames(solvents)[1:3]
+
+colnames(solvents)[c(1,5,7)]
+```
+<!-- end -->
+
+<!-- start wrangling -->
 # wrangling 2
 
 ## subsetting

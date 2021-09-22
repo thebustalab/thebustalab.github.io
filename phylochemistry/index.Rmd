@@ -97,6 +97,7 @@ closeRGD("file_share_link_here")
 
 <!-- end -->
 
+<!-- start chemical analyses -->
 # chemical analyses
 
 ## integrationAppLite
@@ -106,6 +107,7 @@ closeRGD("file_share_link_here")
 1. Create a new folder on your hard drive and place your CDF file into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
 2. In RStudio, run the source command to load `phylochemistry`:
+
 ```{r, message = FALSE, eval = FALSE}
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
@@ -113,11 +115,13 @@ source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 3. In RStudio, run the `integrationAppLite` command on the *folder* that contains your CDF file. 
  \
+
 If you are on a Mac, *use single forward slashes*. For example:
 ```{r, message = FALSE, eval = FALSE}
 integrationAppLite("/Volumes/My_Drive/gc_data")
 ```
  \
+
 If you are on a PC, *use double back slashes*. For example:
 ```{r, message = FALSE, eval = FALSE}
 integrationAppLite("C:\\Users\\My Profile\\gc_data")
@@ -157,12 +161,53 @@ To control the mass spectrum window:
 4. Copy the .D files for the samples you wish to analyze to the same folder
 5. Move this folder to your personal computer
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
+<!-- end -->
 
-
+<!-- start transcriptomic analyses -->
 # transcriptomic analyses
 
 ## BLAST
+<!-- end -->
 
+<!-- start genomic analyses -->
 # genomic analyses
 
 ## loading GFF files
+<!-- end -->
+
+<!-- start evolutionary analyses -->
+# evolutionary analyses
+
+## buildTree
+
+### Simple template
+
+```{r, eval = FALSE}
+buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = NULL,
+  members = NULL
+)
+```
+
+### Full template
+
+```{r}
+buildTree(
+  scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
+  scaffold_in_path = NULL,
+  members = NULL,
+  gblocks = FALSE, 
+  gblocks_path = NULL,
+  ml = FALSE, 
+  model_test = FALSE,
+  bootstrap = FALSE,
+  rois = FALSE, 
+  rois_data = NULL,
+  ancestral_states = FALSE,
+  root = NULL
+)
+```
+
+## collapseTree
+<!-- end -->

@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>6 import and tidying | R For Chemists</title>
-  <meta name="description" content="6 import and tidying | R For Chemists" />
+  <title>10 Exercises 4 | R For Chemists</title>
+  <meta name="description" content="10 Exercises 4 | R For Chemists" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="6 import and tidying | R For Chemists" />
+  <meta property="og:title" content="10 Exercises 4 | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="6 import and tidying | R For Chemists" />
+  <meta name="twitter:title" content="10 Exercises 4 | R For Chemists" />
   
   
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="Exercises_2.html"/>
-<link rel="next" href="summary_statistics.html"/>
+<link rel="prev" href="clustering.html"/>
+<link rel="next" href="wrangling-2.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -223,69 +223,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="import-and-tidying" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> import and tidying</h1>
-<div id="data-import" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> data import</h2>
-<p>To analyze data that is stored on your own computer you can indeed import it into RStudio.</p>
-<p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
-<p>Another option is to read the data in from a path. For this, you will need to know the “path” to your data file. This is essentially the street address of your data on your computer’s hard drive. Paths look different on Mac and PC.</p>
-<ul>
-<li>On Mac: <code>/Users/lucasbusta/Documents/sample_data_set.csv</code> (note the forward slashes!)</li>
-<li>On PC: <code>C:\\My Computer\\Documents\\sample_data_set.csv</code> (note double backward slashes!)</li>
-</ul>
-<p>You can quickly find paths to files via the following:</p>
-<ul>
-<li>On Mac: Locate the file in Finder. Right-click on the file, hold the Option key, then click “Copy <file> as Pathname”</li>
-<li>On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click “Copy As Path”</li>
-</ul>
-<p>With these paths, we can read in data using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
-</div>
-<div id="tidy-data" class="section level2" number="6.2">
-<h2><span class="header-section-number">6.2</span> tidy data</h2>
-<p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="import-and-tidying.html#cb42-1" aria-hidden="true" tabindex="-1"></a>fadb_sample</span>
-<span id="cb42-2"><a href="import-and-tidying.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 11</span></span>
-<span id="cb42-3"><a href="import-and-tidying.html#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   fatty_acid Agonandra_brasi… Agonandra_silva… Agonandra_excel… Heisteria_silvi…</span></span>
-<span id="cb42-4"><a href="import-and-tidying.html#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></span>
-<span id="cb42-5"><a href="import-and-tidying.html#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Hexadecan…              3.4              1                1.2              2.9</span></span>
-<span id="cb42-6"><a href="import-and-tidying.html#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Octadecan…              6.2              0.1              0.4              0.1</span></span>
-<span id="cb42-7"><a href="import-and-tidying.html#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Eicosanoi…              4.7              3.5              1.7              0.1</span></span>
-<span id="cb42-8"><a href="import-and-tidying.html#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Docosanoi…             77.4              0.4              1                7.4</span></span>
-<span id="cb42-9"><a href="import-and-tidying.html#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Tetracosa…              1.4              1                1.4              1.7</span></span>
-<span id="cb42-10"><a href="import-and-tidying.html#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Hexacosan…              1.9             12.6             23.1             46.6</span></span>
-<span id="cb42-11"><a href="import-and-tidying.html#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 7 Octacosan…              5               81.4             71.3             41.2</span></span>
-<span id="cb42-12"><a href="import-and-tidying.html#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 6 more variables: Malania_oleifera &lt;dbl&gt;, Ximenia_americana &lt;dbl&gt;,</span></span>
-<span id="cb42-13"><a href="import-and-tidying.html#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Ongokea_gore &lt;dbl&gt;, Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
-<span id="cb42-14"><a href="import-and-tidying.html#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
-<p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="import-and-tidying.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(<span class="at">data =</span> fadb_sample, <span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">names_to =</span> <span class="st">&quot;plant_species&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relative_abundance&quot;</span>)</span>
-<span id="cb43-2"><a href="import-and-tidying.html#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 70 × 3</span></span>
-<span id="cb43-3"><a href="import-and-tidying.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    fatty_acid        plant_species           relative_abundance</span></span>
-<span id="cb43-4"><a href="import-and-tidying.html#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;                                &lt;dbl&gt;</span></span>
-<span id="cb43-5"><a href="import-and-tidying.html#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Hexadecanoic acid Agonandra_brasiliensis                 3.4</span></span>
-<span id="cb43-6"><a href="import-and-tidying.html#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Hexadecanoic acid Agonandra_silvatica                    1  </span></span>
-<span id="cb43-7"><a href="import-and-tidying.html#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Hexadecanoic acid Agonandra_excelsa                      1.2</span></span>
-<span id="cb43-8"><a href="import-and-tidying.html#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Hexadecanoic acid Heisteria_silvianii                    2.9</span></span>
-<span id="cb43-9"><a href="import-and-tidying.html#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Hexadecanoic acid Malania_oleifera                       0.7</span></span>
-<span id="cb43-10"><a href="import-and-tidying.html#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Hexadecanoic acid Ximenia_americana                      3.3</span></span>
-<span id="cb43-11"><a href="import-and-tidying.html#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Hexadecanoic acid Ongokea_gore                           1  </span></span>
-<span id="cb43-12"><a href="import-and-tidying.html#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Hexadecanoic acid Comandra_pallida                       2.3</span></span>
-<span id="cb43-13"><a href="import-and-tidying.html#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Hexadecanoic acid Buckleya_distichophylla                1.6</span></span>
-<span id="cb43-14"><a href="import-and-tidying.html#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Hexadecanoic acid Nuytsia_floribunda                     3.8</span></span>
-<span id="cb43-15"><a href="import-and-tidying.html#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 60 more rows</span></span></code></pre></div>
-<p>Brilliant! Now we have a tidy, long-style table that can be used with ggplot.</p>
+<div id="Exercises_4" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Exercises 4</h1>
+<p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: algae_data (which algae strains are most similar to each other?), alaska_lake_data (which lakes are most similar to each other?). and solvents (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>.</p>
+<p>For this assignment, you may find two things very helpful:</p>
+<ol style="list-style-type: decimal">
+<li><p>Chapter 10. It explains how to use <code>runMatrixAnalysis()</code>. Please note that I used some of your feedback in class to make <code>runMatrixAnalysis()</code> simpler. Accordingly, in the lecture recording I am explaining a version of that command that is slightly out of date. The book chapter, however, is completely up-to-date.</p></li>
+<li><p>You may find the <code>colnames()</code> function and square bracket-subsetting useful for this assignment. It will list all or a subset of the column names in a dataset for you. For example:</p></li>
+</ol>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="Exercises_4.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)</span>
+<span id="cb58-2"><a href="Exercises_4.html#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] &quot;solvent&quot;             &quot;formula&quot;             &quot;boiling_point&quot;      </span></span>
+<span id="cb58-3"><a href="Exercises_4.html#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  [4] &quot;melting_point&quot;       &quot;density&quot;             &quot;miscible_with_water&quot;</span></span>
+<span id="cb58-4"><a href="Exercises_4.html#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [7] &quot;solubility_in_water&quot; &quot;relative_polarity&quot;   &quot;vapor_pressure&quot;     </span></span>
+<span id="cb58-5"><a href="Exercises_4.html#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [10] &quot;CAS_number&quot;          &quot;formula_weight&quot;      &quot;refractive_index&quot;   </span></span>
+<span id="cb58-6"><a href="Exercises_4.html#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [13] &quot;specific_gravity&quot;    &quot;category&quot;</span></span>
+<span id="cb58-7"><a href="Exercises_4.html#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb58-8"><a href="Exercises_4.html#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] &quot;solvent&quot;       &quot;formula&quot;       &quot;boiling_point&quot;</span></span>
+<span id="cb58-9"><a href="Exercises_4.html#cb58-9" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">7</span>)]</span>
+<span id="cb58-10"><a href="Exercises_4.html#cb58-10" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] &quot;solvent&quot;             &quot;density&quot;             &quot;solubility_in_water&quot;</span></span></code></pre></div>
 <!-- end -->
-<!-- start summaries and wrangling -->
-</div>
+<!-- start wrangling -->
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="Exercises_2.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="summary_statistics.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="clustering.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="wrangling-2.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

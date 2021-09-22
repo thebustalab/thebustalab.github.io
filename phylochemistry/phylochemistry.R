@@ -105,7 +105,7 @@
         solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv", col_types = cols())
         periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv", col_types = cols())
         fadb_sample <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv", col_types = cols())
-        # periodic_table_small <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv", col_types = cols())
+        periodic_table_subset <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv", col_types = cols())
         ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv", col_types = cols())
         # ckd_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv", col_types = cols())
         # wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/wine_grape_data.csv", col_types = cols())
@@ -932,8 +932,8 @@
 
             #' Create a high-level cladogram from a low-level tree
             #'
-            #' @param tree The tree to manipulate
-            #' @param associations Relationships bewteen tree tip names and the level on which to summarize
+            #' @param tree The tree to manipulate, must be a phylo object
+            #' @param associations A two-column set of relationships between tree tip names (col 1) and the level on which to summarize (col 2)
             #' @export
             #' @examples
             #' updateCountData()
@@ -3175,21 +3175,51 @@
 
                         if ( .Platform$OS == "unix") {
 
-                            paths_to_cdfs <- paste(
-                                CDF_directory_path,
-                                dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
-                                sep = "/"
-                            )
+                            ## Remove any trailing slashes
+
+                                for ( i in 1:length(paths_to_cdfs)) {
+
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
+                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
+                                    }
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
+                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
+                                    }
+                                
+                                }
+                            
+                            ## Extract paths_to_cdfs
+
+                                paths_to_cdfs <- paste(
+                                    CDF_directory_path,
+                                    dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
+                                    sep = "/"
+                                )
 
                         }
 
                         if ( .Platform$OS == "windows") {
 
-                            paths_to_cdfs <- paste(
-                                CDF_directory_path,
-                                dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
-                                sep = "\\"
-                            )
+                            ## Remove any trailing slashes
+
+                                for ( i in 1:length(paths_to_cdfs)) {
+
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
+                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
+                                    }
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
+                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
+                                    }
+                                
+                                }
+                            
+                            ## Extract paths_to_cdfs
+
+                                paths_to_cdfs <- paste(
+                                    CDF_directory_path,
+                                    dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
+                                    sep = "\\"
+                                )
 
                         }
 
