@@ -1159,17 +1159,12 @@ ggtree() +
 Very nice!
 <!-- end -->
 
-
 <!-- start Exercises 4-->
 # Exercises 4 {#Exercises_4}
 
-For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: algae_data (which algae strains are most similar to each other?), alaska_lake_data (which lakes are most similar to each other?). and solvents (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`.
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
-For this assignment, you may find two things very helpful:
-
-1. Chapter 10. It explains how to use `runMatrixAnalysis()`. Please note that I used some of your feedback in class to make `runMatrixAnalysis()` simpler. Accordingly, in the lecture recording I am explaining a version of that command that is slightly out of date. The book chapter, however, is completely up-to-date.
-
-2. You may find the `colnames()` function and square bracket-subsetting useful for this assignment. It will list all or a subset of the column names in a dataset for you. For example:
+For this assignment, you may find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
 
 ```{r}
 colnames(solvents)
