@@ -3179,7 +3179,7 @@
 
                                 paths_to_cdfs <- paste(
                                     CDF_directory_path,
-                                    dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
+                                    dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path), ignore.case = TRUE)],
                                     sep = "/"
                                 )
 
@@ -3203,7 +3203,7 @@
 
                                 paths_to_cdfs <- paste(
                                     CDF_directory_path,
-                                    dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path))],
+                                    dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path), ignore.case = TRUE)],
                                     sep = "\\"
                                 )
 
