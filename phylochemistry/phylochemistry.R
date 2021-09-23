@@ -3175,20 +3175,7 @@
 
                         if ( .Platform$OS == "unix") {
 
-                            ## Remove any trailing slashes
-
-                                for ( i in 1:length(paths_to_cdfs)) {
-
-                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
-                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
-                                    }
-                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
-                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
-                                    }
-                                
-                                }
-                            
-                            ## Extract paths_to_cdfs
+                             ## Extract paths_to_cdfs
 
                                 paths_to_cdfs <- paste(
                                     CDF_directory_path,
@@ -3196,23 +3183,22 @@
                                     sep = "/"
                                 )
 
-                        }
-
-                        if ( .Platform$OS == "windows") {
-
                             ## Remove any trailing slashes
 
                                 for ( i in 1:length(paths_to_cdfs)) {
 
-                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
                                         paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
                                     }
-                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
                                         paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
                                     }
                                 
                                 }
-                            
+                        }
+
+                        if ( .Platform$OS == "windows") {
+
                             ## Extract paths_to_cdfs
 
                                 paths_to_cdfs <- paste(
@@ -3221,6 +3207,18 @@
                                     sep = "\\"
                                 )
 
+                            ## Remove any trailing slashes
+
+                                for ( i in 1:length(paths_to_cdfs)) {
+
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
+                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
+                                    }
+                                    if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
+                                        paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
+                                    }
+                                
+                                }
                         }
 
                         convertCDFstoCSVs(paths_to_cdfs)
