@@ -204,7 +204,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="14" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>14</b> FAQ</a>
 <ul>
-<li class="chapter" data-level="14.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>14.1</b> Filtering</a></li>
+<li class="chapter" data-level="14.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>14.1</b> filtering</a></li>
+<li class="chapter" data-level="14.2" data-path="faq.html"><a href="faq.html#ordering"><i class="fa fa-check"></i><b>14.2</b> ordering</a></li>
 </ul></li>
 </ul>
 
@@ -232,16 +233,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Go to <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a></p></li>
 <li><p>Click on “Download R for &lt;your operating system&gt;” (see footnote), depending on your operating system you will select “Download R for Linux”, “Download R for (Mac) OS X”, or “Download R for Windows”.</p></li>
 </ol>
-<div class="marginnote">
 <p>We will use &lt;this notation&gt; quite a bit. It indicates a place where you should insert information, data, or something similar that corresponds to your particular situation. In this example it means insert “your operating system”, i.e. Linux, (Mac) OS X, or Windows.</p>
-</div>
 <ol start="3" style="list-style-type: decimal">
 <li><p>For Mac: download the .pkg file for the latest release. For PC: click “install R for the first time”, then click “Download R &lt;version&gt; for Windows”.</p></li>
 <li><p>After the executable finishes downloading (in Windows, it is a file with .exe extension; for Mac, it is a .dmg file or a .dmg inside a .pkg file), open the file as an administrator, and follow the installation instructions. R should install without any problems. You can click OK for all of the windows that pop-up during installation, and choose a “regular” installation (if given the choice).</p></li>
 </ol>
-<div class="marginnote">
 <p>If you have trouble installing R please google “Install R Mac” or “Install R PC” and follow one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.</p>
-</div>
 </div>
 <div id="rstudio" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> RStudio</h2>
@@ -275,9 +272,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="tidyverse" class="section level2" number="1.4">
 <h2><span class="header-section-number">1.4</span> tidyverse</h2>
 <p>For us to run our analyses, we need to install a set of add-on functions that expand R’s capabilities. These functions are collected in something called the tidyverse, a very well-known and widely-used R package. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type <code>install.packages("tidyverse", repos = "http://cran.us.r-project.org")</code> to install the tidyverse. Let’s try it:</p>
-<div class="marginnote">
 <p>RSudio might ask you: “Do you want to install from sources the packages which need compilation? (Yes/no/cancel)”, for now, type <code>no</code> and press enter.</p>
-</div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="installation.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="at">repos =</span> <span class="st">&quot;http://cran.us.r-project.org&quot;</span>)</span></code></pre></div>
 <p>Let’s make sure your version of the tidyverse is installed correctly. To do this, we will load the <code>tidyverse</code> library/package inside of an R session. We can do this using <code>library(tidyverse)</code>. Let’s try it:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="installation.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
@@ -287,12 +282,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.5</span> TeX</h2>
 <p>In this class we will generate high quality reports suitable for submission to supervisors, academic journals, etc. For this, we need the typesetting engine TeX. There are a few ways to do this. The easiest way is using the following commands:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="installation.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&#39;tinytex&#39;</span>, <span class="st">&#39;rmarkdown&#39;</span>))</span></code></pre></div>
-<div class="marginnote">
 <p>If you are on Mac, you may get an error about “not being able to write to a path” or something like that. In that case you probably need to open your terminal and run the following two commands:</p>
 <p>sudo chown -R `whoami`:admin /usr/local/bin</p>
 <p>and then</p>
 <p>~/Library/TinyTeX/bin/*/tlmgr path add</p>
-</div>
 <p>Then, on both Mac and PC, you then need to do:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="installation.html#cb6-1" aria-hidden="true" tabindex="-1"></a>tinytex<span class="sc">::</span><span class="fu">install_tinytex</span>()</span></code></pre></div>
 <p>Other options are: if you have Windows, download and install <a href="https://miktex.org/download">MikTeX</a>. If you have OSX, you can download and install <a href="http://www.tug.org/mactex/morepackages.html">MacTeX</a>.</p>
@@ -305,14 +298,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Run: installPhylochemistry() to automatically install the required packages.”</p>
 <p>This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="installation.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">installPhylochemistry</span>()</span></code></pre></div>
-<div class="marginnote">
 <p>Sometimes when you run <code>installPhylochemistry()</code> you will get a message:</p>
 <p><code>Update all/some/none? [a/s/n]:</code></p>
 <p>In this case, it is generally advisable to enter <code>a</code> into the console and then press enter, indicating to R that you wish to update anything and everything that can be updated.</p>
 <p>Other times you may get this message:</p>
 <p><code>Do you want to install from sources the packages which need compilation? (Yes/no/cancel)</code></p>
 <p>You can reply <code>yes</code> if you wish, but for simplicity’s sake it is okay to say <code>no</code>. I usually start with saying <code>no</code>, only reverting to <code>yes</code> if things don’t work down the line.</p>
-</div>
 <p>Once that is complete, and assuming no errors are displayed, attempt to load phylochemistry again:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="installation.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;http://thebustalab.github.io/phylochemistry/phylochemistry.R&quot;</span>)</span></code></pre></div>
 </div>
@@ -378,7 +369,10 @@ gitbook.start({
 "download": null,
 "search": false,
 "toc": {
-"collapse": "subsection"
+"collapse": "section"
+},
+"toolbar": {
+"position": "fixed"
 }
 });
 });

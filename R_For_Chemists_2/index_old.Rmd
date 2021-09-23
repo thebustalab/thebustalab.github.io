@@ -7,14 +7,10 @@ output:
   bookdown::gitbook:
     css: tufte.css
     config:
-      toc:
-        collapse: section
       fontsettings:
         theme: sepia
         family: serif
         size: 1
-      toolbar:
-        position: fixed
 # documentclass: book
 ---
 
@@ -35,7 +31,7 @@ options(pillar.sigfig = 3)
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/R_For_Chemists_logo.jpg', dpi = NA)
 ```
 
-1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000.
+1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. 
 
 2. One of the largest obstacles facing scientists is communicating about our work with non-scientists. Challenge 2: We must practice oral and written science communication in both technical and non-technical formats.
 
@@ -55,13 +51,21 @@ R is the computing language we will use to run our chemometric analyses and prod
 
 2. Click on "Download R for \<your operating system\>" (see footnote), depending on your operating system you will select "Download R for Linux", "Download R for (Mac) OS X", or "Download R for Windows".
 
-We will use \<this notation\> quite a bit. It indicates a place where you should insert information, data, or something similar that corresponds to your particular situation. In this example it means insert "your operating system", i.e. Linux, (Mac) OS X, or Windows.
+  <div class="marginnote">
+
+  We will use \<this notation\> quite a bit. It indicates a place where you should insert information, data, or something similar that corresponds to your particular situation. In this example it means insert "your operating system", i.e. Linux, (Mac) OS X, or Windows.
+
+  </div>
 
 3. For Mac: download the .pkg file for the latest release. For PC: click "install R for the first time", then click "Download R \<version\> for Windows".
 
 4. After the executable finishes downloading (in Windows, it is a file with .exe extension; for Mac, it is a .dmg file or a .dmg inside a .pkg file), open the file as an administrator, and follow the installation instructions. R should install without any problems. You can click OK for all of the windows that pop-up during installation, and choose a "regular" installation (if given the choice). 
 
-If you have trouble installing R please google "Install R Mac" or "Install R PC" and follow one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.
+  <div class="marginnote">
+
+  If you have trouble installing R please google "Install R Mac" or "Install R PC" and follow one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.
+
+  </div>
 
 ## RStudio
 
@@ -103,7 +107,11 @@ If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and th
 
 For us to run our analyses, we need to install a set of add-on functions that expand R's capabilities. These functions are collected in something called the tidyverse, a very well-known and widely-used R package. You do not need to manually download anything to complete this installation - R will do it for you. In the R Console, type `install.packages("tidyverse", repos = "http://cran.us.r-project.org")` to install the tidyverse. Let's try it:
 
-RSudio might ask you: "Do you want to install from sources the packages which need compilation? (Yes/no/cancel)", for now, type `no` and press enter.
+  <div class="marginnote">
+
+  RSudio might ask you: "Do you want to install from sources the packages which need compilation? (Yes/no/cancel)", for now, type `no` and press enter.
+
+  </div>
 
 ```{r, message = FALSE, eval = FALSE}
 install.packages("tidyverse", repos = "http://cran.us.r-project.org")
@@ -124,13 +132,17 @@ In this class we will generate high quality reports suitable for submission to s
 install.packages(c('tinytex', 'rmarkdown'))
 ```
 
-If you are on Mac, you may get an error about "not being able to write to a path" or something like that. In that case you probably need to open your terminal and run the following two commands: 
+  <div class="marginnote">
+
+  If you are on Mac, you may get an error about "not being able to write to a path" or something like that. In that case you probably need to open your terminal and run the following two commands: 
 
   sudo chown -R \`whoami\`:admin /usr/local/bin 
 
   and then 
 
   ~/Library/TinyTeX/bin/\*/tlmgr path add
+
+  </div>
 
 Then, on both Mac and PC, you then need to do:
 ```{r, message = FALSE, eval = FALSE}
@@ -154,7 +166,9 @@ This means that some of the prerequisite packages that phylochemistry needs are 
 ```{r, message = FALSE, eval = FALSE}
 installPhylochemistry()
 ```
-Sometimes when you run `installPhylochemistry()` you will get a message:
+  <div class="marginnote">
+
+  Sometimes when you run `installPhylochemistry()` you will get a message:
 
   `Update all/some/none? [a/s/n]:`
 
@@ -165,6 +179,8 @@ Sometimes when you run `installPhylochemistry()` you will get a message:
   `Do you want to install from sources the packages which need compilation? (Yes/no/cancel)`
 
   You can reply `yes` if you wish, but for simplicity's sake it is okay to say `no`. I usually start with saying `no`, only reverting to `yes` if things don't work down the line.
+
+  </div>
 
 Once that is complete, and assuming no errors are displayed, attempt to load phylochemistry again:
 ```{r, message = FALSE}
@@ -635,7 +651,11 @@ ggplot(
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
-There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+  <div class="marginnote">
+
+  There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+
+  </div>
 
 ## Facets
 
@@ -1182,7 +1202,6 @@ alaska_lake_data$pH
 select(alaska_lake_data, park, water_temp)
 
 ```
-<!-- end -->
 
 # Writing
 
@@ -1235,7 +1254,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 # FAQ
 
-## filtering
+## Filtering
 
 `filter(<data>, <variable> < 18)` ## less than 18
 
@@ -1251,33 +1270,4 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 `filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
 
-## ordering
-
-A list of numeric element has an inherent order to it: -inf -> +inf. A list of character element also has an inherent order to it: A -> Z, or if it's a mixed number and letter list (which is interpreted by R as a character list): 0 -> 9 -> A -> Z.
-
-However, there are cases where we will want a list of character elements to have some order other than A -> Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -> Z. For example, in the plot below, the y axis is not, perhaps, in the "correct" order:
-
-```{r}
-ggplot(periodic_table) +
-  geom_point(aes(y = group_number, x = atomic_mass_rounded))
-```
-
-How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
-
-```{r}
-periodic_table$group_number <- factor(
-  periodic_table$group_number,
-  levels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "lanthanides", "actinides")
-)
-
-periodic_table
-```
-
-Notice that now when we look at the type of data that is contained in the column `group_number` it says "<fct>". This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?
-
-```{r}
-ggplot(periodic_table) +
-  geom_point(aes(y = group_number, x = atomic_mass_rounded))
-```
-
-VICTORY!
+## ordering 

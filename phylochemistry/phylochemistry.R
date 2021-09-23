@@ -5216,7 +5216,7 @@
                         data <- read_csv(csv_in_path, col_types = cols())
                     }
 
-                ## Clean up data
+                ## Clean up data ### A FOR LOOP HERE THAT RUNS OVER EACH MOLECULE
 
                     data$bond_start_x <- data$x[match(data$bond_start_atom, data$atom_number)]
                     data$bond_start_y <- data$y[match(data$bond_start_atom, data$atom_number)]
