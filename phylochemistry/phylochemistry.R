@@ -2274,7 +2274,7 @@
     	                    cat(paste("Reading data file ", paths_to_cdfs[file], "\n", sep = ""))
     	                        rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
 
-    	                    cat("   Framing data file... \n")
+    	                    cat("   Framing data file ... \n")
     	                        rt <- rawDataFile$rt
     	                        scanindex <- rawDataFile$scanindex
 
@@ -2290,9 +2290,11 @@
     	                        framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
 
     	                    cat("   Merging duplicate rows ...\n")
-    	                        library(plyr)
+    	                        # library(plyr)
     	                        if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
-    	                            framedDataFile <- plyr::ddply(framedDataFile, .(mz, rt), summarize, intensity = sum(intensity))
+    	                            # framedDataFile <- plyr::ddply(framedDataFile, .(mz, rt), summarize, intensity = sum(intensity))
+                                    framedDataFile %>% group_by(mz,rt) %>% summarize(intensity = sum(intensity), .groups = "drop") -> framedDataFile
+                                    framedDataFile <- as.data.frame(framedDataFile)
     	                        }
 
     	                    cat("   Filling in blank m/z values ...\n")
@@ -2311,11 +2313,14 @@
     	                        addition$rt <- as.numeric(addition$rt)
     	                        
                                 framedDataFile <- tidyr::pivot_longer(spreadDataFile, cols = 2:dim(spreadDataFile)[2], names_to = "rt", values_to = "intensity")
+
                             cat("   still working ...\n")
     	                        framedDataFile <- rbind(framedDataFile, addition)
+
                             cat("   still working ... patience please\n")
     	                        framedDataFile$rt <- as.numeric(framedDataFile$rt)
     	                        framedDataFile <- framedDataFile[sort.list(framedDataFile$mz),]
+
                             cat("   still working ... almost done\n")
     	                        framedDataFile <- framedDataFile[sort.list(framedDataFile$rt),]
     	                        rownames(framedDataFile) <- NULL
