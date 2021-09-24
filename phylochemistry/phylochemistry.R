@@ -940,6 +940,9 @@
 
             collapseTree <- function(tree, associations) {
 
+                ## Convert assocaitions into data.frame
+                    associations <- as.data.frame(associations)
+
                 ## Drop all species names not in association list
                     tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% associations[,1]])
 
@@ -947,7 +950,12 @@
                     tip_labels <- associations[associations[,1] %in% tree$tip.label,]
 
                 ## Collapse tree, rename tips, return
-                    collapsed_tree <- ape::drop.tip(tree, tip_labels[,1][duplicated(tip_labels[,2])])
+                    if ( length(duplicated(tip_labels[,2])) > 0 ) {
+                        collapsed_tree <- ape::drop.tip(tree, tip_labels[,1][duplicated(tip_labels[,2])])
+                    } else {
+                        collapsed_tree <- tree
+                    }
+                    
                     collapsed_tree$tip.label <- associations[,2][match(collapsed_tree$tip.label, associations[,1])]
                     return(collapsed_tree)
             }
