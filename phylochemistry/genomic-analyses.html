@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>4 genomic analyses | Phylochemistry</title>
   <meta name="description" content="Vingette for the R Package Phylochemistry." />
-  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
   <meta property="og:title" content="4 genomic analyses | Phylochemistry" />
   <meta property="og:type" content="book" />
@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-26" />
+<meta name="date" content="2021-09-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,9 +32,10 @@
   
   
 <link rel="prev" href="transcriptomic-analyses.html"/>
-
-<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<link rel="next" href="evolutionary-analyses.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -42,7 +43,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
 
 
 
@@ -155,6 +155,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="4.1" data-path="genomic-analyses.html"><a href="genomic-analyses.html#loading-gff-files"><i class="fa fa-check"></i><b>4.1</b> loading GFF files</a></li>
 </ul></li>
+<li class="chapter" data-level="5" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html"><i class="fa fa-check"></i><b>5</b> evolutionary analyses</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#buildtree"><i class="fa fa-check"></i><b>5.1</b> buildTree</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#simple-template"><i class="fa fa-check"></i><b>5.1.1</b> Simple template</a></li>
+<li class="chapter" data-level="5.1.2" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#full-template"><i class="fa fa-check"></i><b>5.1.2</b> Full template</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#collapsetree"><i class="fa fa-check"></i><b>5.2</b> collapseTree</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -176,6 +185,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">4</span> genomic analyses</h1>
 <div id="loading-gff-files" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> loading GFF files</h2>
+<!-- end -->
+<!-- start evolutionary analyses -->
 </div>
 </div>
             </section>
@@ -183,12 +194,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="transcriptomic-analyses.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="transcriptomic-analyses.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="evolutionary-analyses.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>

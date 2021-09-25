@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>2 chemical analyses | Phylochemistry</title>
   <meta name="description" content="Vingette for the R Package Phylochemistry." />
-  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
   <meta property="og:title" content="2 chemical analyses | Phylochemistry" />
   <meta property="og:type" content="book" />
@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-08-26" />
+<meta name="date" content="2021-09-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,8 +33,9 @@
   
 <link rel="prev" href="phylochemistry.html"/>
 <link rel="next" href="transcriptomic-analyses.html"/>
-<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -42,7 +43,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
 
 
 
@@ -155,6 +155,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="4.1" data-path="genomic-analyses.html"><a href="genomic-analyses.html#loading-gff-files"><i class="fa fa-check"></i><b>4.1</b> loading GFF files</a></li>
 </ul></li>
+<li class="chapter" data-level="5" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html"><i class="fa fa-check"></i><b>5</b> evolutionary analyses</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#buildtree"><i class="fa fa-check"></i><b>5.1</b> buildTree</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#simple-template"><i class="fa fa-check"></i><b>5.1.1</b> Simple template</a></li>
+<li class="chapter" data-level="5.1.2" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#full-template"><i class="fa fa-check"></i><b>5.1.2</b> Full template</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="evolutionary-analyses.html"><a href="evolutionary-analyses.html#collapsetree"><i class="fa fa-check"></i><b>5.2</b> collapseTree</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -186,16 +195,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </p>
 <ol start="3" style="list-style-type: decimal">
 <li>In RStudio, run the <code>integrationAppLite</code> command on the <em>folder</em> that contains your CDF file.<br />
-If you are on a Mac, <em>use single forward slashes</em>. For example:</li>
+</li>
 </ol>
+<p>If you are on a Mac, <em>use single forward slashes</em>. For example:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="chemical-analyses.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">integrationAppLite</span>(<span class="st">&quot;/Volumes/My_Drive/gc_data&quot;</span>)</span></code></pre></div>
 <p><br />
-If you are on a PC, <em>use double back slashes</em>. For example:</p>
+</p>
+<p>If you are on a PC, <em>use double back slashes</em>. For example:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="chemical-analyses.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">integrationAppLite</span>(<span class="st">&quot;C:</span><span class="sc">\\</span><span class="st">Users</span><span class="sc">\\</span><span class="st">My Profile</span><span class="sc">\\</span><span class="st">gc_data&quot;</span>)</span></code></pre></div>
 <p><br />
 </p>
 <p>The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long.</p>
-<p>Please watch this overview video for a demonstration of how to use the integration app.</p>
+<p>Please watch this <a href="https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing">overview video</a> for a demonstration of how to use the integration app.</p>
 <p>As a reference, below are the key commands used to operate the integration app. This is the information that is covered in the overview video.</p>
 <p>To control the chromatogram window:</p>
 <ul>
@@ -224,8 +235,10 @@ If you are on a PC, <em>use double back slashes</em>. For example:</p>
 <li>Select all the datafiles you wish to analyze and process them, saving the output into the folder you just created</li>
 <li>Copy the .D files for the samples you wish to analyze to the same folder</li>
 <li>Move this folder to your personal computer</li>
-<li>Create one folder for each sample, and put the corresponding .CDF file into that folder.</li>
+<li>Create one folder for each sample, and put the corresponding .CDF file into that folder.
+<!-- end --></li>
 </ol>
+<!-- start transcriptomic analyses -->
 </div>
 </div>
             </section>
@@ -238,7 +251,6 @@ If you are on a PC, <em>use double back slashes</em>. For example:</p>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>

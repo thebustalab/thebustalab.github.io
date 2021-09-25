@@ -130,7 +130,7 @@ integrationAppLite("C:\\Users\\My Profile\\gc_data")
 
 The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long.
 
-Please watch this overview video for a demonstration of how to use the integration app.
+Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app.
 
 As a reference, below are the key commands used to operate the integration app. This is the information that is covered in the overview video.
 
@@ -192,7 +192,7 @@ buildTree(
 
 ### Full template
 
-```{r}
+```{r, eval = FALSE}
 buildTree(
   scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
   scaffold_in_path = NULL,

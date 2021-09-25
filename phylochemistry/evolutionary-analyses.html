@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>3 transcriptomic analyses | Phylochemistry</title>
+  <title>5 evolutionary analyses | Phylochemistry</title>
   <meta name="description" content="Vingette for the R Package Phylochemistry." />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="3 transcriptomic analyses | Phylochemistry" />
+  <meta property="og:title" content="5 evolutionary analyses | Phylochemistry" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="3 transcriptomic analyses | Phylochemistry" />
+  <meta name="twitter:title" content="5 evolutionary analyses | Phylochemistry" />
   
   <meta name="twitter:description" content="Vingette for the R Package Phylochemistry." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="chemical-analyses.html"/>
-<link rel="next" href="genomic-analyses.html"/>
+<link rel="prev" href="genomic-analyses.html"/>
+
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -181,12 +181,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="transcriptomic-analyses" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> transcriptomic analyses</h1>
-<div id="blast" class="section level2" number="3.1">
-<h2><span class="header-section-number">3.1</span> BLAST</h2>
+<div id="evolutionary-analyses" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> evolutionary analyses</h1>
+<div id="buildtree" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> buildTree</h2>
+<div id="simple-template" class="section level3" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> Simple template</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="evolutionary-analyses.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">buildTree</span>(</span>
+<span id="cb9-2"><a href="evolutionary-analyses.html#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">scaffold_type =</span> <span class="st">&quot;newick&quot;</span>,</span>
+<span id="cb9-3"><a href="evolutionary-analyses.html#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">scaffold_in_path =</span> <span class="cn">NULL</span>,</span>
+<span id="cb9-4"><a href="evolutionary-analyses.html#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">members =</span> <span class="cn">NULL</span></span>
+<span id="cb9-5"><a href="evolutionary-analyses.html#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="full-template" class="section level3" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> Full template</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="evolutionary-analyses.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">buildTree</span>(</span>
+<span id="cb10-2"><a href="evolutionary-analyses.html#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">scaffold_type =</span> <span class="fu">c</span>(<span class="st">&quot;amin_alignment&quot;</span>, <span class="st">&quot;nucl_alignment&quot;</span>, <span class="st">&quot;newick&quot;</span>),</span>
+<span id="cb10-3"><a href="evolutionary-analyses.html#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">scaffold_in_path =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-4"><a href="evolutionary-analyses.html#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">members =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-5"><a href="evolutionary-analyses.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">gblocks =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb10-6"><a href="evolutionary-analyses.html#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">gblocks_path =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-7"><a href="evolutionary-analyses.html#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">ml =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb10-8"><a href="evolutionary-analyses.html#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_test =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-9"><a href="evolutionary-analyses.html#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-10"><a href="evolutionary-analyses.html#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">rois =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb10-11"><a href="evolutionary-analyses.html#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">rois_data =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-12"><a href="evolutionary-analyses.html#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ancestral_states =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-13"><a href="evolutionary-analyses.html#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">root =</span> <span class="cn">NULL</span></span>
+<span id="cb10-14"><a href="evolutionary-analyses.html#cb10-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="collapsetree" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> collapseTree</h2>
 <!-- end -->
-<!-- start genomic analyses -->
 </div>
 </div>
             </section>
@@ -194,8 +221,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="chemical-analyses.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="genomic-analyses.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="genomic-analyses.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

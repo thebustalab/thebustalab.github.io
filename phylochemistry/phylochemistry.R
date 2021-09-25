@@ -562,6 +562,94 @@
                 file.rename(from = from,  to = to)
             }
 
+        #### openRGD
+
+                #' Open an RScript stored on Google Drive
+                #'
+                #' @param drive_share_link
+                #' @examples
+                #' @export
+                #' openRGD
+
+                openRGD <- function(drive_share_link) {
+
+                    file_name <- googledrive::drive_get(
+                        id = googledrive::as_id(drive_share_link)
+                    )$name
+
+                    googledrive::drive_rename(
+                        file = googledrive::as_id(drive_share_link),
+                        name = paste0("IN_USE___", file_name)
+                    )
+
+                    googledrive::drive_download(
+                        file = googledrive::as_id(drive_share_link),
+                        path = paste0("IN_USE___", file_name),
+                        overwrite = TRUE
+                    )
+
+                    file.edit(paste0("IN_USE___", file_name))
+
+                }
+
+        #### closeRGD
+
+            #' Save and close the current RScript to Google Drive
+            #'
+            #' @param drive_share_link
+            #' @examples
+            #' @export
+            #' closeRGD
+
+            closeRGD <- function(drive_share_link){
+
+                rstudioapi::documentSave()
+
+                file_name <- googledrive::drive_get(
+                    id = googledrive::as_id(drive_share_link)
+                )$name
+
+                googledrive::drive_update(
+                    file = googledrive::as_id(drive_share_link),
+                    media = paste0(file_name)
+                )
+
+                googledrive::drive_rename(
+                    file = googledrive::as_id(drive_share_link),
+                    name = paste0(gsub("IN_USE___", "", file_name))
+                )
+
+                rstudioapi::documentClose()
+
+                file.remove(paste0(file_name))
+
+            }
+
+        #### readFastaGD
+
+            #' Load a fasta file from Google Drive into R
+            #'
+            #' @param drive_share_link
+            #' @examples
+            #' @export
+            #' loadFastaGD
+
+            loadFastaGD <- function(drive_share_link){
+
+                suppressMessages(googledrive::drive_download(
+                    file = googledrive::as_id(drive_share_link),
+                    path = "TEMP___fasta",
+                    overwrite = TRUE
+                ))
+
+                temp_fasta <- Biostrings::readDNAStringSet("TEMP___fasta")
+                
+                file.remove("TEMP___fasta")
+
+                return(temp_fasta)
+
+            }
+
     ##### Polylist construction and manipulation
 
         #### buildPolylist
@@ -1066,69 +1154,6 @@
             dropNA <- function( x ) {
 
                 return(x[!is.na(x)])
-
-            }
-
-        #### openRGD
-
-            #' Open an RScript stored on Google Drive
-            #'
-            #' @param drive_share_link
-            #' @examples
-            #' @export
-            #' openRGD
-
-            openRGD <- function(drive_share_link) {
-
-                file_name <- googledrive::drive_get(
-                    id = googledrive::as_id(drive_share_link)
-                )$name
-
-                googledrive::drive_rename(
-                    file = googledrive::as_id(drive_share_link),
-                    name = paste0("IN_USE___", file_name)
-                )
-
-                googledrive::drive_download(
-                    file = googledrive::as_id(drive_share_link),
-                    path = paste0("IN_USE___", file_name),
-                    overwrite = TRUE
-                )
-
-                file.edit(paste0("IN_USE___", file_name))
-
-            }
-
-        #### closeRGD
-
-            #' Save and close the current RScript to Google Drive
-            #'
-            #' @param drive_share_link
-            #' @examples
-            #' @export
-            #' closeRGD
-
-            closeRGD <- function(drive_share_link){
-
-                rstudioapi::documentSave()
-
-                file_name <- googledrive::drive_get(
-                    id = googledrive::as_id(drive_share_link)
-                )$name
-
-                googledrive::drive_update(
-                    file = googledrive::as_id(drive_share_link),
-                    media = paste0(file_name)
-                )
-
-                googledrive::drive_rename(
-                    file = googledrive::as_id(drive_share_link),
-                    name = paste0(gsub("IN_USE___", "", file_name))
-                )
-
-                rstudioapi::documentClose()
-
-                file.remove(paste0(file_name))
 
             }
 
