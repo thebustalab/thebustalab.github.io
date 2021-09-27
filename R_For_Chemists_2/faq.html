@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-09-22" />
+<meta name="date" content="2021-09-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -206,6 +206,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="14.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>14.1</b> filtering</a></li>
 <li class="chapter" data-level="14.2" data-path="faq.html"><a href="faq.html#ordering"><i class="fa fa-check"></i><b>14.2</b> ordering</a></li>
+<li class="chapter" data-level="14.3" data-path="faq.html"><a href="faq.html#matrix-analyses"><i class="fa fa-check"></i><b>14.3</b> matrix analyses</a>
+<ul>
+<li class="chapter" data-level="14.3.1" data-path="faq.html"><a href="faq.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>14.3.1</b> basic <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="14.3.2" data-path="faq.html"><a href="faq.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>14.3.2</b> advanced <code>runMatrixAnalysis()</code> template</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -275,6 +280,41 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb63-2"><a href="faq.html#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-94-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>VICTORY!</p>
+</div>
+<div id="matrix-analyses" class="section level2" number="14.3">
+<h2><span class="header-section-number">14.3</span> matrix analyses</h2>
+<div id="basic-runmatrixanalysis-template" class="section level3" number="14.3.1">
+<h3><span class="header-section-number">14.3.1</span> basic <code>runMatrixAnalysis()</code> template</h3>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="faq.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb64-2"><a href="faq.html#cb64-2" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb64-3"><a href="faq.html#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>,</span>
+<span id="cb64-4"><a href="faq.html#cb64-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-5"><a href="faq.html#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
+<span id="cb64-6"><a href="faq.html#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-7"><a href="faq.html#cb64-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb64-8"><a href="faq.html#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
+<span id="cb64-9"><a href="faq.html#cb64-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb64-10"><a href="faq.html#cb64-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="cn">NULL</span>,</span>
+<span id="cb64-11"><a href="faq.html#cb64-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-12"><a href="faq.html#cb64-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="cn">NULL</span></span>
+<span id="cb64-13"><a href="faq.html#cb64-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-14"><a href="faq.html#cb64-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="advanced-runmatrixanalysis-template" class="section level3" number="14.3.2">
+<h3><span class="header-section-number">14.3.2</span> advanced <code>runMatrixAnalysis()</code> template</h3>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="faq.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb65-2"><a href="faq.html#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>, <span class="co"># the data set to work on</span></span>
+<span id="cb65-3"><a href="faq.html#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>), <span class="co"># the analysis to conduct</span></span>
+<span id="cb65-4"><a href="faq.html#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with names of multiple analytes</span></span>
+<span id="cb65-5"><a href="faq.html#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span></span>
+<span id="cb65-6"><a href="faq.html#cb65-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span></span>
+<span id="cb65-7"><a href="faq.html#cb65-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="cn">NULL</span>, <span class="co"># a column with character or numeric information about analytes that was not &quot;measured&quot; as part of the experiment.</span></span>
+<span id="cb65-8"><a href="faq.html#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="cn">NULL</span>, <span class="co"># a column with information about the sample (i.e. contents from the test tube&#39;s label)</span></span>
+<span id="cb65-9"><a href="faq.html#cb65-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">transpose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb65-10"><a href="faq.html#cb65-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">kmeans =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;auto&quot;</span>, <span class="st">&quot;elbow&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;etc.&quot;</span>),</span>
+<span id="cb65-11"><a href="faq.html#cb65-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">na_replacement =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;zero&quot;</span>, <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb65-12"><a href="faq.html#cb65-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
 </div>
 </div>
             </section>

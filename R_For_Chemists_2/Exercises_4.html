@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-09-22" />
+<meta name="date" content="2021-09-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -206,6 +206,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="14.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>14.1</b> filtering</a></li>
 <li class="chapter" data-level="14.2" data-path="faq.html"><a href="faq.html#ordering"><i class="fa fa-check"></i><b>14.2</b> ordering</a></li>
+<li class="chapter" data-level="14.3" data-path="faq.html"><a href="faq.html#matrix-analyses"><i class="fa fa-check"></i><b>14.3</b> matrix analyses</a>
+<ul>
+<li class="chapter" data-level="14.3.1" data-path="faq.html"><a href="faq.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>14.3.1</b> basic <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="14.3.2" data-path="faq.html"><a href="faq.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>14.3.2</b> advanced <code>runMatrixAnalysis()</code> template</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -226,7 +231,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="Exercises_4" class="section level1" number="10">
 <h1><span class="header-section-number">10</span> Exercises 4</h1>
-<p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: <code>algae_data</code> (which algae strains are most similar to each other?), <code>alaska_lake_data</code> (which lakes are most similar to each other?). and <code>solvents</code> (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>. For each of these, create a tree diagram that shows how the “samples” in each data set are related to each other based on the numerical data associated with them. You can ignore columns that contain categorical data, or you can list those columns as “additional_analyte_info”.</p>
+<p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: <code>algae_data</code> (which algae strains are most similar to each other?), <code>alaska_lake_data</code> (which lakes are most similar to each other?). and <code>solvents</code> (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>. For each of these, create (i) a tree diagram that shows how the “samples” in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as “additional_analyte_info”.</p>
 <p>For this assignment, you may find the <code>colnames()</code> function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:</p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="Exercises_4.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)</span>
 <span id="cb58-2"><a href="Exercises_4.html#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] &quot;solvent&quot;             &quot;formula&quot;             &quot;boiling_point&quot;      </span></span>
