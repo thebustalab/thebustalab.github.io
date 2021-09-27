@@ -5605,6 +5605,17 @@
                                 }
                             }
 
+                            if( length(column_w_names_of_multiple_analytes) == 1 ) {
+                                n_unique_groups <- table(duplicated(data[,colnames(data) %in% columns_w_sample_ID_info]))[1]
+
+                                analyte_breakdown <- table(duplicated(data[,colnames(data) == column_w_names_of_multiple_analytes]))
+                                n_unique_groups_of_analytes <- sum(analyte_breakdown)/analyte_breakdown[1]
+
+                                if (n_unique_groups != n_unique_groups_of_analytes) {
+                                  stop("The variables you have specified in columns_w_sample_ID_info do not define groups of samples with unique sets of analytes. You probably need to add more variables to columns_w_sample_ID_info.")
+                                }
+                            }
+
                         # Remove analyte annotation columns before pivoting
 
                             if( length(columns_w_additional_analyte_info) > 0 ) {
