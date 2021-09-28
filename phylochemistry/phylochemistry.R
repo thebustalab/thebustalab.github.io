@@ -33,7 +33,8 @@
             "dplyr",
             "stringr", 
             "progress",
-            "tidyverse"
+            "tidyverse",
+            "ggrepel"
         )
 
         Bioconductor_packages <- c(

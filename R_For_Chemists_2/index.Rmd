@@ -964,8 +964,8 @@ ggplot() +
 
 <!-- end -->
 
-<!-- start Exercises 3 -->
-# Exercises 3 {#Exercises_3}
+<!-- start exercises 3 -->
+# exercises 3 {#Exercises_3}
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
@@ -1139,8 +1139,8 @@ ggtree() +
 Very nice!
 <!-- end -->
 
-<!-- start Exercises 4-->
-# Exercises 4 {#Exercises_4}
+<!-- start exercises 4-->
+# exercises 4 {#Exercises_4}
 
 For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
@@ -1154,6 +1154,278 @@ colnames(solvents)[1:3]
 colnames(solvents)[c(1,5,7)]
 ```
 <!-- end -->
+
+<!-- start principal components analysis-->
+# pca {#PCA}
+
+In addition to heirarchical clustering, there is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA). 
+
+## pca 
+
+PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/R_For_Chemists_2/images/PCA.png', dpi = NA)
+```
+
+In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
+
+We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below:
+
+```{r, message = FALSE, fig.align = "center"}
+AK_lakes_pca <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
+  geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
+  geom_label_repel(aes(label = lake), alpha = 0.5) +
+  theme_classic()
+```
+
+Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
+
+Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that's the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?
+
+## ordination plots
+
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca-ord"`:
+
+```{r, echo = FALSE, message = FALSE}
+AK_lakes_pca_ord <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_ord"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+head(AK_lakes_pca_ord)
+```
+
+We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
+
+```{r, fig.align = "center", fig.height = 3, fig.width = 4, message = FALSE}
+AK_lakes_pca_ord <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_ord"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+head(AK_lakes_pca_ord)
+
+ggplot(AK_lakes_pca_ord) +
+  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
+  geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.1 > 0.9, Dim.2 < 0.1, Dim.2 > -0.1),
+    aes(x = Dim.1, y = Dim.2, label = analyte), xlim = c(1,1.5)
+  ) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.2 > 0.5),
+    aes(x = Dim.1, y = Dim.2, label = analyte), direction = "y", ylim = c(1,1.5)
+  ) +
+  coord_cartesian(xlim = c(-1,1.5), ylim = c(-1,1.5)) +
+  theme_bw()
+```
+
+Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
+
+## principal components
+
+We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
+
+```{r, message = FALSE, fig.height = 2.5, fig.width = 3, fig.align = "center"}
+AK_lakes_pca_ord <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_dim"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+head(AK_lakes_pca_ord)
+
+ggplot(
+  data = AK_lakes_pca_ord, 
+  aes(x = principal_component, y = percent_variance_explained)
+) +
+  geom_line() +
+  geom_point() +
+  theme_bw()
+```
+
+Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
+<!-- end -->
+
+<!-- start Exercises 5 -->
+# Exercises 5 {#Exercises_5}
+
+In this set of exercises you will choose to complete one of the following options. For either option please note the following:
+
+1. Refer to Chapter 12 for help with PCA and ordination plots.
+
+2. The data sets and the `runMatrixAnalysis()` function can all be loaded into your R Session by running the command below:
+
+```{r, message = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```
+
+3. When you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
+
+```{r, message = FALSE}
+pts <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
+colnames(pts)[10:20]
+```
+
+We can use that command in the template, as in the example below. With the notation `colnames(pts)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(pts)[c(5:7,9:25)]` in the console). With the notation `colnames(pts)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(pts)[c(1:4, 8)]` in the console).
+
+```{r, eval = FALSE, message = FALSE}
+pca <- runMatrixAnalysis(
+  data = pts,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(pts)[c(5:7,9:25)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(pts)[c(1:4, 8)]
+)
+```
+
+Use the two suggestions above to help you complete one of the two options below.
+
+## Option 1: Human metabolomics.
+
+This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
+
+1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the data set will be available as `ckd_data`.
+
+```{r, eval = FALSE, message = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```
+2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
+5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+6. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
+
+```{r, eval = FALSE, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center", echo = FALSE}
+library(tidyverse)
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
+
+pca <- runMatrixAnalysis(
+  data = metabolomics_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
+)
+
+pca$Label <- factor(pca$patient_status)
+
+ggplot(pca) +
+  geom_point(
+    aes(x = Dim.1, y = Dim.2, fill = patient_status),
+    shape = 21, size = 5, alpha = 0.8
+  ) +
+  theme_bw() +
+  scale_fill_manual(values = c("#e41a1c", "#377eb8")) +
+  theme(
+    text = element_text(size = 16)
+  )
+
+## The first dimension
+
+pca_ord <- runMatrixAnalysis(
+  data = metabolomics_data,
+  analysis = "pca-ord",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
+)
+
+
+ggplot() +
+  geom_segment(data = pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label(data = filter(pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
+
+## Citrulline
+
+```
+
+## Option 2: Grape vine varieties
+
+This second option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
+
+1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the dataset will be available as `wine_grape_data`.
+
+```{r, eval = FALSE, message = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```
+2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
+5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+6. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
+
+```{r, message = FALSE, echo = FALSE, eval = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+
+head(wine_grape_data)
+
+wine_grape_data_pca <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment")
+)
+
+head(wine_grape_data_pca)
+
+ggplot(
+  wine_grape_data_pca,
+  aes(x = Dim.1, y = Dim.2, fill = cultivar)
+) + 
+  geom_point(shape = 21, size = 5) +
+  scale_fill_manual(values = c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00"))
+
+wine_grape_data_pca_ord <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca-ord",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment")
+)
+
+head(wine_grape_data_pca_ord)
+
+ggplot() +
+  geom_segment(data = wine_grape_data_pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label(data = filter(wine_grape_data_pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
+```
+<!-- end -->
+
 
 <!-- start wrangling -->
 # wrangling 2
@@ -1184,6 +1456,8 @@ select(alaska_lake_data, park, water_temp)
 ```
 <!-- end -->
 
+
+<!-- start writing -->
 # Writing
 
 ## Captions
@@ -1222,7 +1496,9 @@ ggplot(
 ```
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a publich chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve. 
+<!-- end -->
 
+<!-- start Links -->
 # Links
 
 ## geoms
@@ -1233,6 +1509,9 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 [ColorBrewer2](https://colorbrewer2.org/)
 
+<!-- end -->
+
+<!-- start FAQ -->
 # FAQ
 
 ## filtering
@@ -1281,7 +1560,9 @@ ggplot(periodic_table) +
 ```
 
 VICTORY!
+<!-- end -->
 
+<!-- start templates -->
 # templates
 
 ## matrix analyses
@@ -1323,3 +1604,5 @@ runMatrixAnalysis(
   na_replacement = c("none", "mean", "zero", "drop")
 )
 ```
+
+<!-- end -->
