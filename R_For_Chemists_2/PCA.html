@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>11 pca | R For Chemists</title>
+  <meta name="description" content="11 pca | R For Chemists" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="11 pca | R For Chemists" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="11 pca | R For Chemists" />
+  
+  
+  
+
+<meta name="author" content="Lucas Busta" />
+
+
+<meta name="date" content="2021-09-28" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="Exercises_4.html"/>
+<link rel="next" href="Exercises_5.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="tufte.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="installation.html"><a href="installation.html#r"><i class="fa fa-check"></i><b>1.1</b> R</a></li>
+<li class="chapter" data-level="1.2" data-path="installation.html"><a href="installation.html#rstudio"><i class="fa fa-check"></i><b>1.2</b> RStudio</a></li>
+<li class="chapter" data-level="1.3" data-path="installation.html"><a href="installation.html#verification"><i class="fa fa-check"></i><b>1.3</b> Verification</a></li>
+<li class="chapter" data-level="1.4" data-path="installation.html"><a href="installation.html#tidyverse"><i class="fa fa-check"></i><b>1.4</b> tidyverse</a></li>
+<li class="chapter" data-level="1.5" data-path="installation.html"><a href="installation.html#tex"><i class="fa fa-check"></i><b>1.5</b> TeX</a></li>
+<li class="chapter" data-level="1.6" data-path="installation.html"><a href="installation.html#phylochemistry"><i class="fa fa-check"></i><b>1.6</b> phylochemistry</a></li>
+<li class="chapter" data-level="1.7" data-path="installation.html"><a href="installation.html#xcms"><i class="fa fa-check"></i><b>1.7</b> xcms</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="R_Markdown.html"><a href="R_Markdown.html"><i class="fa fa-check"></i><b>2</b> ggplot and markdown</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="R_Markdown.html"><a href="R_Markdown.html#objects"><i class="fa fa-check"></i><b>2.1</b> Objects</a></li>
+<li class="chapter" data-level="2.2" data-path="R_Markdown.html"><a href="R_Markdown.html#functions"><i class="fa fa-check"></i><b>2.2</b> Functions</a></li>
+<li class="chapter" data-level="2.3" data-path="R_Markdown.html"><a href="R_Markdown.html#ggplot"><i class="fa fa-check"></i><b>2.3</b> ggplot</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="R_Markdown.html"><a href="R_Markdown.html#modifying-geoms"><i class="fa fa-check"></i><b>2.3.1</b> modifying geoms</a></li>
+<li class="chapter" data-level="2.3.2" data-path="R_Markdown.html"><a href="R_Markdown.html#multiple-geoms"><i class="fa fa-check"></i><b>2.3.2</b> multiple geoms</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="R_Markdown.html"><a href="R_Markdown.html#markdown"><i class="fa fa-check"></i><b>2.4</b> markdown</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="Exercises_1.html"><a href="Exercises_1.html"><i class="fa fa-check"></i><b>3</b> Exercises 1</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="Exercises_1.html"><a href="Exercises_1.html#algae-chemistry-dataset"><i class="fa fa-check"></i><b>3.1</b> Algae Chemistry Dataset</a></li>
+<li class="chapter" data-level="3.2" data-path="Exercises_1.html"><a href="Exercises_1.html#alaska-lakes-dataset"><i class="fa fa-check"></i><b>3.2</b> Alaska Lakes Dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html"><i class="fa fa-check"></i><b>4</b> geoms, facets, scales, themes</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#geoms"><i class="fa fa-check"></i><b>4.1</b> Geoms</a></li>
+<li class="chapter" data-level="4.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#facets"><i class="fa fa-check"></i><b>4.2</b> Facets</a></li>
+<li class="chapter" data-level="4.3" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#scales"><i class="fa fa-check"></i><b>4.3</b> Scales</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#rcolorbrewer"><i class="fa fa-check"></i><b>4.3.1</b> RColorBrewer</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#themes"><i class="fa fa-check"></i><b>4.4</b> Themes</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#complete-themes"><i class="fa fa-check"></i><b>4.4.1</b> Complete themes</a></li>
+<li class="chapter" data-level="4.4.2" data-path="geoms_facets_scales_themes.html"><a href="geoms_facets_scales_themes.html#theme-components"><i class="fa fa-check"></i><b>4.4.2</b> Theme components</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="Exercises_2.html"><a href="Exercises_2.html"><i class="fa fa-check"></i><b>5</b> Exercises 2</a></li>
+<li class="chapter" data-level="6" data-path="import-and-tidying.html"><a href="import-and-tidying.html"><i class="fa fa-check"></i><b>6</b> import and tidying</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="import-and-tidying.html"><a href="import-and-tidying.html#data-import"><i class="fa fa-check"></i><b>6.1</b> data import</a></li>
+<li class="chapter" data-level="6.2" data-path="import-and-tidying.html"><a href="import-and-tidying.html#tidy-data"><i class="fa fa-check"></i><b>6.2</b> tidy data</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="summary_statistics.html"><a href="summary_statistics.html"><i class="fa fa-check"></i><b>7</b> the pipe and summaries</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="summary_statistics.html"><a href="summary_statistics.html#the-pipe"><i class="fa fa-check"></i><b>7.1</b> the pipe (%&gt;%)</a></li>
+<li class="chapter" data-level="7.2" data-path="summary_statistics.html"><a href="summary_statistics.html#summary-statistics"><i class="fa fa-check"></i><b>7.2</b> summary statistics</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="Exercises_3.html"><a href="Exercises_3.html"><i class="fa fa-check"></i><b>8</b> exercises 3</a></li>
+<li class="chapter" data-level="9" data-path="clustering.html"><a href="clustering.html"><i class="fa fa-check"></i><b>9</b> clustering</a></li>
+<li class="chapter" data-level="10" data-path="Exercises_4.html"><a href="Exercises_4.html"><i class="fa fa-check"></i><b>10</b> exercises 4</a></li>
+<li class="chapter" data-level="11" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>11</b> pca</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="PCA.html"><a href="PCA.html#pca"><i class="fa fa-check"></i><b>11.1</b> pca</a></li>
+<li class="chapter" data-level="11.2" data-path="PCA.html"><a href="PCA.html#ordination-plots"><i class="fa fa-check"></i><b>11.2</b> ordination plots</a></li>
+<li class="chapter" data-level="11.3" data-path="PCA.html"><a href="PCA.html#principal-components"><i class="fa fa-check"></i><b>11.3</b> principal components</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="Exercises_5.html"><a href="Exercises_5.html"><i class="fa fa-check"></i><b>12</b> exercises 5</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="Exercises_5.html"><a href="Exercises_5.html#option-1-human-metabolomics."><i class="fa fa-check"></i><b>12.1</b> option 1: Human metabolomics.</a></li>
+<li class="chapter" data-level="12.2" data-path="Exercises_5.html"><a href="Exercises_5.html#option-2-grape-vine-varieties"><i class="fa fa-check"></i><b>12.2</b> option 2: Grape vine varieties</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="wrangling-2.html"><a href="wrangling-2.html"><i class="fa fa-check"></i><b>13</b> wrangling 2</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="wrangling-2.html"><a href="wrangling-2.html#subsetting"><i class="fa fa-check"></i><b>13.1</b> subsetting</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="writing.html"><a href="writing.html"><i class="fa fa-check"></i><b>14</b> Writing</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="writing.html"><a href="writing.html#captions"><i class="fa fa-check"></i><b>14.1</b> Captions</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="links.html"><a href="links.html"><i class="fa fa-check"></i><b>15</b> Links</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="links.html"><a href="links.html#geoms-1"><i class="fa fa-check"></i><b>15.1</b> geoms</a></li>
+<li class="chapter" data-level="15.2" data-path="links.html"><a href="links.html#colors"><i class="fa fa-check"></i><b>15.2</b> colors</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>16</b> FAQ</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>16.1</b> filtering</a></li>
+<li class="chapter" data-level="16.2" data-path="faq.html"><a href="faq.html#ordering"><i class="fa fa-check"></i><b>16.2</b> ordering</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="templates.html"><a href="templates.html"><i class="fa fa-check"></i><b>17</b> templates</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="templates.html"><a href="templates.html#matrix-analyses"><i class="fa fa-check"></i><b>17.1</b> matrix analyses</a>
+<ul>
+<li class="chapter" data-level="17.1.1" data-path="templates.html"><a href="templates.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>17.1.1</b> basic <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="17.1.2" data-path="templates.html"><a href="templates.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>17.1.2</b> advanced <code>runMatrixAnalysis()</code> template</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R For Chemists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="PCA" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> pca</h1>
+<p>In addition to heirarchical clustering, there is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA).</p>
+<div id="pca" class="section level2" number="11.1">
+<h2><span class="header-section-number">11.1</span> pca</h2>
+<p>PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let’s look at an example:</p>
+<p><img src="https://thebustalab.github.io/R_For_Chemists_2/images/PCA.png" style="display: block; margin: auto;" /></p>
+<p>In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).</p>
+<p>We can run and visualize principal components analyses using the <code>runMatrixAnalysis()</code> function as in the example below:</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="PCA.html#cb59-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb59-2"><a href="PCA.html#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> alaska_lake_data,</span>
+<span id="cb59-3"><a href="PCA.html#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca&quot;</span>),</span>
+<span id="cb59-4"><a href="PCA.html#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb59-5"><a href="PCA.html#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb59-6"><a href="PCA.html#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb59-7"><a href="PCA.html#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb59-8"><a href="PCA.html#cb59-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb59-9"><a href="PCA.html#cb59-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb59-10"><a href="PCA.html#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Analytes are all numeric and compatible with the analysis selected.</span></span>
+<span id="cb59-11"><a href="PCA.html#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> AK_lakes_pca, <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>)) <span class="sc">+</span></span>
+<span id="cb59-12"><a href="PCA.html#cb59-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">fill =</span> park), <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb59-13"><a href="PCA.html#cb59-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> lake), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb59-14"><a href="PCA.html#cb59-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-91-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
+<p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
+</div>
+<div id="ordination-plots" class="section level2" number="11.2">
+<h2><span class="header-section-number">11.2</span> ordination plots</h2>
+<p>Let’s look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let’s look at an example. We can obtain the ordination plot information using <code>runMatrixAnalysis()</code> with <code>analysis = "pca-ord"</code>:</p>
+<pre><code>## Analytes are all numeric and compatible with the analysis selected.
+## # A tibble: 6 × 3
+##   analyte      Dim.1   Dim.2
+##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;
+## 1 water_temp 0.0769  -0.267 
+## 2 pH         0.704    0.0190
+## 3 C          0.297   -0.248 
+## 4 N          0.00446  0.732 
+## 5 P          0.485   -0.0817
+## 6 Cl         0.978    0.0152</code></pre>
+<p>We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of <code>geom_label_repel()</code> and <code>filter()</code> to label certain segments in the ordination plot. You do not need to use <code>geom_label_repel()</code>, you could use the built in <code>geom_label()</code>, but <code>geom_label_repel()</code> can make labelling your segments easier.</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="PCA.html#cb61-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_ord <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb61-2"><a href="PCA.html#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> alaska_lake_data,</span>
+<span id="cb61-3"><a href="PCA.html#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca_ord&quot;</span>),</span>
+<span id="cb61-4"><a href="PCA.html#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb61-5"><a href="PCA.html#cb61-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb61-6"><a href="PCA.html#cb61-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb61-7"><a href="PCA.html#cb61-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb61-8"><a href="PCA.html#cb61-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb61-9"><a href="PCA.html#cb61-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb61-10"><a href="PCA.html#cb61-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Analytes are all numeric and compatible with the analysis selected.</span></span>
+<span id="cb61-11"><a href="PCA.html#cb61-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_ord)</span>
+<span id="cb61-12"><a href="PCA.html#cb61-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 6 × 3</span></span>
+<span id="cb61-13"><a href="PCA.html#cb61-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   analyte      Dim.1   Dim.2</span></span>
+<span id="cb61-14"><a href="PCA.html#cb61-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb61-15"><a href="PCA.html#cb61-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 water_temp 0.0769  -0.267 </span></span>
+<span id="cb61-16"><a href="PCA.html#cb61-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 pH         0.704    0.0190</span></span>
+<span id="cb61-17"><a href="PCA.html#cb61-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 C          0.297   -0.248 </span></span>
+<span id="cb61-18"><a href="PCA.html#cb61-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 N          0.00446  0.732 </span></span>
+<span id="cb61-19"><a href="PCA.html#cb61-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 P          0.485   -0.0817</span></span>
+<span id="cb61-20"><a href="PCA.html#cb61-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Cl         0.978    0.0152</span></span>
+<span id="cb61-21"><a href="PCA.html#cb61-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(AK_lakes_pca_ord) <span class="sc">+</span></span>
+<span id="cb61-22"><a href="PCA.html#cb61-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">xend =</span> Dim<span class="fl">.1</span>, <span class="at">yend =</span> Dim<span class="fl">.2</span>, <span class="at">color =</span> analyte), <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb61-23"><a href="PCA.html#cb61-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_circle</span>(<span class="fu">aes</span>(<span class="at">x0 =</span> <span class="dv">0</span>, <span class="at">y0 =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb61-24"><a href="PCA.html#cb61-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
+<span id="cb61-25"><a href="PCA.html#cb61-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.1</span> <span class="sc">&gt;</span> <span class="fl">0.9</span>, Dim<span class="fl">.2</span> <span class="sc">&lt;</span> <span class="fl">0.1</span>, Dim<span class="fl">.2</span> <span class="sc">&gt;</span> <span class="sc">-</span><span class="fl">0.1</span>),</span>
+<span id="cb61-26"><a href="PCA.html#cb61-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> analyte), <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
+<span id="cb61-27"><a href="PCA.html#cb61-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb61-28"><a href="PCA.html#cb61-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
+<span id="cb61-29"><a href="PCA.html#cb61-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> <span class="fu">filter</span>(AK_lakes_pca_ord, Dim<span class="fl">.2</span> <span class="sc">&gt;</span> <span class="fl">0.5</span>),</span>
+<span id="cb61-30"><a href="PCA.html#cb61-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> analyte), <span class="at">direction =</span> <span class="st">&quot;y&quot;</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">1.5</span>)</span>
+<span id="cb61-31"><a href="PCA.html#cb61-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb61-32"><a href="PCA.html#cb61-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>)) <span class="sc">+</span></span>
+<span id="cb61-33"><a href="PCA.html#cb61-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-93-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.</p>
+</div>
+<div id="principal-components" class="section level2" number="11.3">
+<h2><span class="header-section-number">11.3</span> principal components</h2>
+<p>We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="PCA.html#cb62-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_ord <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb62-2"><a href="PCA.html#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> alaska_lake_data,</span>
+<span id="cb62-3"><a href="PCA.html#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca_dim&quot;</span>),</span>
+<span id="cb62-4"><a href="PCA.html#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
+<span id="cb62-5"><a href="PCA.html#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
+<span id="cb62-6"><a href="PCA.html#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
+<span id="cb62-7"><a href="PCA.html#cb62-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
+<span id="cb62-8"><a href="PCA.html#cb62-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
+<span id="cb62-9"><a href="PCA.html#cb62-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-10"><a href="PCA.html#cb62-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Analytes are all numeric and compatible with the analysis selected.</span></span>
+<span id="cb62-11"><a href="PCA.html#cb62-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_ord)</span>
+<span id="cb62-12"><a href="PCA.html#cb62-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 6 × 2</span></span>
+<span id="cb62-13"><a href="PCA.html#cb62-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   principal_component percent_variance_explained</span></span>
+<span id="cb62-14"><a href="PCA.html#cb62-14" aria-hidden="true" tabindex="-1"></a><span class="do">##                 &lt;dbl&gt;                      &lt;dbl&gt;</span></span>
+<span id="cb62-15"><a href="PCA.html#cb62-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1                   1                      48.8 </span></span>
+<span id="cb62-16"><a href="PCA.html#cb62-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2                   2                      18.6 </span></span>
+<span id="cb62-17"><a href="PCA.html#cb62-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3                   3                      11.6 </span></span>
+<span id="cb62-18"><a href="PCA.html#cb62-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4                   4                       7.88</span></span>
+<span id="cb62-19"><a href="PCA.html#cb62-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5                   5                       4.68</span></span>
+<span id="cb62-20"><a href="PCA.html#cb62-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6                   6                       3.33</span></span>
+<span id="cb62-21"><a href="PCA.html#cb62-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb62-22"><a href="PCA.html#cb62-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> AK_lakes_pca_ord, </span>
+<span id="cb62-23"><a href="PCA.html#cb62-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> principal_component, <span class="at">y =</span> percent_variance_explained)</span>
+<span id="cb62-24"><a href="PCA.html#cb62-24" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb62-25"><a href="PCA.html#cb62-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb62-26"><a href="PCA.html#cb62-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb62-27"><a href="PCA.html#cb62-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-94-1.png" width="288" style="display: block; margin: auto;" /></p>
+<p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
+<!-- end --></p>
+<!-- start Exercises 5 -->
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="Exercises_4.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="Exercises_5.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "sepia",
+"family": "serif",
+"size": 1
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": false,
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "fixed"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

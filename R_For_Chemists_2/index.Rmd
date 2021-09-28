@@ -1195,7 +1195,7 @@ Important question: what makes the lakes listed above different from the others?
 
 ## ordination plots
 
-Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca-ord"`:
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
 
 ```{r, echo = FALSE, message = FALSE}
 AK_lakes_pca_ord <- runMatrixAnalysis(
@@ -1270,60 +1270,28 @@ Cool! We can see that the first principal component retains nearly 50% of the va
 <!-- end -->
 
 <!-- start Exercises 5 -->
-# Exercises 5 {#Exercises_5}
+# exercises 5 {#Exercises_5}
 
-In this set of exercises you will choose to complete one of the following options. For either option please note the following:
-
-1. Refer to Chapter 12 for help with PCA and ordination plots.
-
-2. The data sets and the `runMatrixAnalysis()` function can all be loaded into your R Session by running the command below:
+In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
 ```{r, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+colnames(periodic_table_subset)[10:20]
+colnames(periodic_table_subset)[c(18:20, 23:25)]
 ```
+We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
 
-3. When you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
-
-```{r, message = FALSE}
-pts <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/per_table_small.csv")
-colnames(pts)[10:20]
-```
-
-We can use that command in the template, as in the example below. With the notation `colnames(pts)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(pts)[c(5:7,9:25)]` in the console). With the notation `colnames(pts)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(pts)[c(1:4, 8)]` in the console).
-
-```{r, eval = FALSE, message = FALSE}
-pca <- runMatrixAnalysis(
-  data = pts,
-  analysis = "pca",
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(pts)[c(5:7,9:25)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(pts)[c(1:4, 8)]
-)
-```
-
-Use the two suggestions above to help you complete one of the two options below.
-
-## Option 1: Human metabolomics.
+## option 1: human metabolomics.
 
 This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
 
-1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the data set will be available as `ckd_data`.
-
-```{r, eval = FALSE, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-```
-2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
-3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
-5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-6. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
+1. Run a PCA analysis on `metabolomics_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`).
+4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+5. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
 
 ```{r, eval = FALSE, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center", echo = FALSE}
-library(tidyverse)
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/ckd_metabolomics.csv")
+head(metabolomics_data)
 
 pca <- runMatrixAnalysis(
   data = metabolomics_data,
@@ -1369,24 +1337,17 @@ ggplot() +
 
 ```
 
-## Option 2: Grape vine varieties
+## option 2: grape vine chemistry
 
 This second option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
 
-1. Obtain the data and the latest version of `runMatrixAnalysis()` by running the following in your R console. Once you do that, the dataset will be available as `wine_grape_data`.
-
-```{r, eval = FALSE, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-```
-2. Run a PCA analysis of the data (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
-3. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
-4. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca-ord"`).
-5. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
-6. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
+1. Run a PCA analysis on `wine_grape_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`).
+4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+5. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
 
 ```{r, message = FALSE, echo = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-
 head(wine_grape_data)
 
 wine_grape_data_pca <- runMatrixAnalysis(
