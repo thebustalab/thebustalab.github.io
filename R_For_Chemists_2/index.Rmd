@@ -1246,7 +1246,7 @@ Great! With this ordination plot we can now see that the abundances of K, Cl, Br
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
 ```{r, message = FALSE, fig.height = 2.5, fig.width = 3, fig.align = "center"}
-AK_lakes_pca_ord <- runMatrixAnalysis(
+AK_lakes_pca_dim <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca_dim"),
   column_w_names_of_multiple_analytes = "element",
@@ -1255,10 +1255,10 @@ AK_lakes_pca_ord <- runMatrixAnalysis(
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
 )
-head(AK_lakes_pca_ord)
+head(AK_lakes_pca_dim)
 
 ggplot(
-  data = AK_lakes_pca_ord, 
+  data = AK_lakes_pca_dim, 
   aes(x = principal_component, y = percent_variance_explained)
 ) +
   geom_line() +

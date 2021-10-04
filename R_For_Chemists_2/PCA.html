@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-09-28" />
+<meta name="date" content="2021-10-04" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -323,7 +323,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="principal-components" class="section level2" number="11.3">
 <h2><span class="header-section-number">11.3</span> principal components</h2>
 <p>We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="PCA.html#cb62-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_ord <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="PCA.html#cb62-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_pca_dim <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
 <span id="cb62-2"><a href="PCA.html#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> alaska_lake_data,</span>
 <span id="cb62-3"><a href="PCA.html#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;pca_dim&quot;</span>),</span>
 <span id="cb62-4"><a href="PCA.html#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
@@ -333,7 +333,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb62-8"><a href="PCA.html#cb62-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
 <span id="cb62-9"><a href="PCA.html#cb62-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb62-10"><a href="PCA.html#cb62-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Analytes are all numeric and compatible with the analysis selected.</span></span>
-<span id="cb62-11"><a href="PCA.html#cb62-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_ord)</span>
+<span id="cb62-11"><a href="PCA.html#cb62-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AK_lakes_pca_dim)</span>
 <span id="cb62-12"><a href="PCA.html#cb62-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 6 × 2</span></span>
 <span id="cb62-13"><a href="PCA.html#cb62-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   principal_component percent_variance_explained</span></span>
 <span id="cb62-14"><a href="PCA.html#cb62-14" aria-hidden="true" tabindex="-1"></a><span class="do">##                 &lt;dbl&gt;                      &lt;dbl&gt;</span></span>
@@ -344,7 +344,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb62-19"><a href="PCA.html#cb62-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5                   5                       4.68</span></span>
 <span id="cb62-20"><a href="PCA.html#cb62-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6                   6                       3.33</span></span>
 <span id="cb62-21"><a href="PCA.html#cb62-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb62-22"><a href="PCA.html#cb62-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> AK_lakes_pca_ord, </span>
+<span id="cb62-22"><a href="PCA.html#cb62-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> AK_lakes_pca_dim, </span>
 <span id="cb62-23"><a href="PCA.html#cb62-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> principal_component, <span class="at">y =</span> percent_variance_explained)</span>
 <span id="cb62-24"><a href="PCA.html#cb62-24" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
 <span id="cb62-25"><a href="PCA.html#cb62-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
