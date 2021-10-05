@@ -1388,6 +1388,8 @@ ggplot() +
 <!-- start k-means -->
 # k-means
 
+## theory
+
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
@@ -1401,8 +1403,6 @@ Let's try k-means using `runMatrixAnalysis`. We can use it in conjunction with `
 With `kmeans = "auto"` and `na_replacement = "drop"`, we can now run our analyssis. The output now has an additional column called `kmeans_cluster`, which indicates what cluster each sample is in:
 
 ```{r, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-
 solvents_pca_kmeans <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
@@ -1457,11 +1457,9 @@ ggplot(
   geom_line()
 ```
 
-Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse` from the `ggforce` package.
+Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse`.
 
 ```{r, message = FALSE}
-library(ggforce)
-
 runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
@@ -1518,8 +1516,7 @@ ggplot() +
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
-```{r, fig.width = 8, fig.height = 4, message = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```{r, fig.width = 8, fig.height = 4, message = FALSE}
 solvents_clustered <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
@@ -1580,23 +1577,17 @@ cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 
 Now we are really rockin!!
 
-
-<!-- end -->
-
-<!-- start Exercises 6 -->
-# Exercises 6 {#Exercises_6}
+## exercises
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
 
 Put your answers to the following questions into a powerpoint file - the plots in the slide, and the code in the notes section. Please email me the powerpoint file and let me know if you have any questions. Good luck and have fun!
 
-## Question 1
+### Question 1
 
 Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-
 runMatrixAnalysis(
   data = wine_grape_data,
   analysis = "pca",
@@ -1614,9 +1605,9 @@ ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape
 
 ```
 
-## Question 2
+### Question 2
 
-Modify your code from Question 1 so that only two clusters are generated. Plot the results. Install ggforce (`install.packages(ggforce)`), then load that package (`library(ggforce)`), and use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
+Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
@@ -1641,16 +1632,15 @@ ggplot(aes(x = Dim.1, y = Dim.2)) +
 
 ```
 
-## Question 3
+### Question 3
 
 Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
-library(ggrepel)
 runMatrixAnalysis(
   data = wine_grape_data,
-  analysis = "pca-ord",
+  analysis = "pca_ord",
   column_w_names_of_multiple_analytes = "metabolite",
   column_w_values_for_multiple_analytes = "log_abundance",
   columns_w_values_for_single_analyte = NULL,
@@ -1660,22 +1650,19 @@ runMatrixAnalysis(
   kmeans = "none",
   na_replacement = "drop"
 ) %>%
-
 dplyr::filter(Dim.1 > 0.9) %>%
-
 ggplot() +
   geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
   geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
 
 ```
 
-## Question 4
+### Question 4
 
-Modify your code from Question 2 so that three clusters are generated. Plot the results. Install ggforce (`install.packages(ggforce)`), then load that package (`library(ggforce)`), and use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, bewteen dry and well-watered conditions?
+Modify your code from Question 2 so that three clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, bewteen dry and well-watered conditions?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
-
 da <- runMatrixAnalysis(
   data = wine_grape_data,
   analysis = "pca",
@@ -1697,7 +1684,7 @@ plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
 plot0
 ```
 
-## Question 5
+### Question 5
 
 Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create three groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances bewteen nodes and tips, the y-axis is meaningless).
 
@@ -1726,7 +1713,7 @@ plot1 <- ggtree(dat, aes(color = kmeans_cluster)) +
 
 ```
 
-## Question 6
+### Question 6
 
 Google "Quercetin". What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using `geom_pointrange` and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, `theme_classic()`).
 
@@ -1741,7 +1728,7 @@ plot2 <- dat %>%
   plot2
 ```
 
-## Question 7
+### Question 7
 
 Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
 
@@ -1749,7 +1736,7 @@ Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to ea
 cowplot::plot_grid(plot1, plot2)
 ```
 
-## Challenge (optional)
+### Challenge (optional)
 
 Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
 
