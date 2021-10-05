@@ -2305,7 +2305,7 @@
 
     	                for (file in 1:length(paths_to_cdfs)) {
 
-    	                    cat(paste("Reading data file ", paths_to_cdfs[file], "\n", sep = ""))
+    	                    cat(paste("Reading data file ", paths_to_cdfs[file], sep = ""))
     	                        rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
 
     	                    cat("   Framing data file ... \n")
@@ -2367,7 +2367,7 @@
     	                            framedDataFile <- dplyr::filter(framedDataFile, rt < max_rt)    
     	                    }
 
-    	                    cat("   Writing out data file as CSV... \n")
+    	                    cat("   Writing out data file as CSV... \n\n")
     	                        data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
     	                }
     	            }
@@ -4283,6 +4283,8 @@
                     CDF_directory_path = getwd(),
                     zoom_and_scroll_rate = 100,
                     baseline_window = 400,
+                    x_axis_start = NULL,
+                    x_axis_end = NULL,
                     path_to_reference_library = busta_spectral_library,
                     samples_monolist_subset = NULL
                 ) {
@@ -4293,6 +4295,11 @@
                         ######## HERE MERGE CSV CONVERSION WITH CHROMATOGRAM EXTRACTION ########
                         ######################################################################## 
 
+                        ##################################################################################################################
+                        ######## ALSO - IS IT TOTOALLY NECESSARY TO FILL IN ALL BLANK MZ VALUES? TAKES SO LONG! SEEMS UNNECESSARY ########
+                        ##################################################################################################################
+
+                        setwd(CDF_directory_path)
                         paths_to_cdfs <- dir()[grep("*.CDF$", dir())]
                         convertCDFstoCSVs(paths_to_cdfs)
                         paths_to_cdf_csvs <- paste0(paths_to_cdfs, ".csv")
@@ -4402,19 +4409,17 @@
                                 }
                             }
 
+                    ## Filter chromatograms so only the CDFs in this folder are included
+
+                        chromatograms <- chromatograms[chromatograms$path_to_cdf_csv %in% dir()[grep(".CDF.csv", dir())],]
+
                     ## Set up several variables, plot_height, and x_axis limits if not specified in function call
                         
                         peak_data <- NULL
                         peak_points <- NULL
-                        
-                        if ( length(samples_monolist_subset) > 0 ) {
-                            plot_height <- 200 + 100*length(samples_monolist_subset)    
-                        } else {
-                            plot_height <- 200 + 100*dim(samples_monolist)[1]
-                        }
-
-                        x_axis_start <<- min(chromatograms$rt)
-                        x_axis_end <<- max(chromatograms$rt)
+                        plot_height <- 200 + 100*length(unique(chromatograms$path_to_cdf_csv))
+                        if (length(x_axis_start) == 0) {x_axis_start <<- min(chromatograms$rt)}
+                        if (length(x_axis_end) == 0) {x_axis_end <<- max(chromatograms$rt)}
                         
                     ## Set up new peak monolist if it doesn't exist
                         
@@ -4533,7 +4538,7 @@
                                             hot = isolate(input$peak_table)
                                             if (!is.null(hot)) {
                                                 writeMonolist(rhandsontable::hot_to_r(input$peak_table), "peaks_monolist.csv")
-                                                print("peaks_monolist.csv")
+                                                cat("Peak list saved!\n")
                                             }
 
                                     }
@@ -4769,9 +4774,10 @@
                                                                     )
                                                 }
 
-                                            ## Draw the plot
+                                            ## Draw the plot and communicate
                                                 
                                                 p
+                                                cat("Chromatogram updated.\n")
                                         })
                                     }
                                 })
@@ -4825,6 +4831,7 @@
                                                 col.names = TRUE,
                                                 sep = ","
                                             )
+                                            cat("Removed peaks.\n")
                                         }
                                     }
                                 })
@@ -4860,6 +4867,7 @@
                                                 peak_table2 <- read.csv("peaks_monolist.csv")
                                                 peak_table2
                                             }))
+                                            cat("Added peak.\n")
                                         }
                                 })
 
@@ -4899,6 +4907,7 @@
                                                 peak_table <- read.csv("peaks_monolist.csv")
                                                 peak_table
                                             }))
+                                            cat("Added global peak.\n")
                                         }
                                 })
 
@@ -4909,33 +4918,39 @@
                                     ## If "shift+1", MS from chromatogram brush -> MS_out_1
                                         if( input$keypress == 33 ) {
 
-                                            # skip <<- chromatograms_updated$rt_first_row_in_raw[which.min(abs(
-                                            #                             filter(chromatograms_updated, path_to_cdf_csv == as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]))$rt - 
-                                            #                             min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                            #                         ))] - 5000
+                                            ret_start_MS <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                            ret_end_MS <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                            sample_name_MS <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
 
-                                            # nrows <<- chromatograms_updated$rt_last_row_in_raw[which.min(abs(
-                                            #                             filter(chromatograms_updated, path_to_cdf_csv == as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]))$rt - 
-                                            #                             max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                            #                         ))] + 5000 - skip
-                                            
-                                            framedDataFile <<- isolate(as.data.frame(
-                                                                data.table::fread(
-                                                                    as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
-                                                                    # skip = skip,
-                                                                    # nrows = nrows
-                                                                )
-                                            ))
-                                            colnames(framedDataFile) <- colnames(read.csv(as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]), nrows = 1))
-                                            framedDataFile <- isolate(dplyr::filter(
-                                                                    framedDataFile, 
-                                                                    rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                    rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                                ))
+                                            # ret_start_MS <- 3000
+                                            # ret_end_MS <- 3100
+                                            # MS_ret_start <- 27808993
+                                            # MS_ret_end <- 28007417
+                                            # sample_name_MS <- "JBC_1.CDF.csv"
+
+                                            chromatogram_updated_MS <- filter(chromatograms_updated, path_to_cdf_csv == sample_name_MS)
+
+                                            MS_ret_start_line <<- chromatogram_updated_MS$rt_first_row_in_raw[which.min(abs(
+                                                chromatogram_updated_MS$rt - ret_start_MS
+                                            ))] + 1
+
+                                            MS_ret_end_line <<- chromatogram_updated_MS$rt_last_row_in_raw[which.min(abs(
+                                                chromatogram_updated_MS$rt - ret_end_MS
+                                            ))] + 1
+
+                                            # cat(paste0("ret_start_MS ", ret_start_MS, "\n"))
+                                            # cat(paste0("ret_end_MS ", ret_end_MS, "\n"))
+                                            # cat(paste0("MS_ret_start_line ", MS_ret_start_line, "\n"))
+                                            # cat(paste0("MS_ret_end_line ", MS_ret_end_line, "\n"))
+
+                                            system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
+                                            system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))
+
+                                            framedDataFile <- readMonolist(paste0(CDF_directory_path, "/temp_MS.csv"))
+                                            framedDataFile <- isolate(dplyr::filter(framedDataFile, rt > ret_start_MS, rt < ret_end_MS))
                                             framedDataFile$mz <- round(framedDataFile$mz, 1)
                                             framedDataFile <- framedDataFile %>% group_by(mz) %>% summarize(intensity = sum(intensity))
-                                            framedDataFile <- as.data.frame(framedDataFile)
-                                            MS_out_1 <<- framedDataFile
+                                            MS_out_1 <<- as.data.frame(framedDataFile)
                                         }
 
                                     ## If "shift+3" subtract chromatogram brush from MS_out_1 -> MS_out_1

@@ -45,7 +45,7 @@ This course is a set of first steps toward meeting both challenges outlined abov
 
 <!-- start installation-->
 
-# Installation
+# installation
 
 ## R
 
@@ -613,7 +613,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`.
 
-## Geoms
+## geoms
 
 I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
@@ -637,7 +637,7 @@ These examples should illustrate that there is, to some degree, correspondence b
 
 There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
 
-## Facets
+## facets
 
 As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
 
@@ -664,7 +664,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
 
-## Scales
+## scales
 
 Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
 
@@ -692,7 +692,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ``` 
   
-## Themes
+## themes
   
 So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
 
@@ -752,10 +752,8 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
     text = element_text(size = 20, color = "black")
   )
 ```
-<!-- end -->
 
-<!-- start exercises 2 -->
-# Exercises 2 {#Exercises_2}
+## exercises
 
 In this set of exercises we're going to practice making more plots using the dataset `solvents`. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
 
@@ -1387,6 +1385,453 @@ ggplot() +
 ```
 <!-- end -->
 
+<!-- start k-means -->
+# k-means
+
+One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/kmeans.png', dpi = NA)
+```
+
+One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
+
+Let's try k-means using `runMatrixAnalysis`. We can use it in conjunction with `analysis = "pca"` or `analysis = "hclust"`. Let's do PCA first. To include k-means, we can just set `kmeans = "auto"`. It's important to note that kmeans cannot handle NAs. We must set something for the `na_replacement` argument. One solution is to ignore variables that have NAs for some values, which can be done by setting `na_replacement = "drop"`.
+
+With `kmeans = "auto"` and `na_replacement = "drop"`, we can now run our analyssis. The output now has an additional column called `kmeans_cluster`, which indicates what cluster each sample is in:
+
+```{r, message = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+
+solvents_pca_kmeans <- runMatrixAnalysis(
+  data = solvents,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+  transpose = FALSE,
+  kmeans = "auto",
+  na_replacement = "drop"
+)
+
+solvents_pca_kmeans
+```
+
+We can plot the results and color them according to the group that kmeans suggested:
+
+```{r}
+ggplot(solvents_pca_kmeans) +
+  geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
+```
+
+Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set `kmeans = "elbow"`:
+
+```{r, message = FALSE}
+solvents_pca_kmeans_elbow <- runMatrixAnalysis(
+  data = solvents,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+  transpose = FALSE,
+  kmeans = "elbow",
+  na_replacement = "drop"
+)
+
+solvents_pca_kmeans_elbow
+```
+
+This gives us the maximum variance within a cluster for each number of clusters. Let's plot that:
+
+```{r}
+ggplot(
+  solvents_pca_kmeans_elbow,
+  aes(x = cluster_number, y = variance_within_cluster)
+) +
+  geom_col() +
+  geom_point() +
+  geom_line()
+```
+
+Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse` from the `ggforce` package.
+
+```{r, message = FALSE}
+library(ggforce)
+
+runMatrixAnalysis(
+  data = solvents,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+  transpose = FALSE,
+  kmeans = 3,
+  na_replacement = "drop"
+) %>%
+
+ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
+  geom_point(shape = 21, size = 5) +
+  geom_mark_ellipse(aes(label = kmeans_cluster), alpha = 0.2) +
+  theme_classic() +
+  coord_cartesian(xlim = c(-4,4), ylim = c(-4,4))
+```
+
+Cool! 
+
+One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:
+
+```{r}
+solvents_clustered <- runMatrixAnalysis(
+  data = solvents,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+  transpose = FALSE,
+  kmeans = 2,
+  na_replacement = "drop"
+)
+
+solvents_clustered_summary <- solvents_clustered %>%
+  group_by(kmeans_cluster) %>%
+  dplyr::summarize(mean_bp = mean(boiling_point))
+
+ggplot() + 
+  geom_col(
+    data = solvents_clustered_summary,
+    aes(x = kmeans_cluster, y = mean_bp),
+    color = "black", fill = "white"
+  ) +
+  geom_point(
+    data = solvents_clustered,
+    aes(x = kmeans_cluster, y = boiling_point)
+  )
+```
+
+Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
+
+```{r, fig.width = 8, fig.height = 4, message = FALSE, eval = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+solvents_clustered <- runMatrixAnalysis(
+  data = solvents,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+  transpose = FALSE,
+  kmeans = 4,
+  na_replacement = "drop"
+)
+
+colors <- c("maroon", "gold", "grey", "white")
+
+pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
+  geom_mark_ellipse(
+    aes(label = kmeans_cluster), 
+    alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
+  geom_point(shape = 21, size = 2) +
+  theme_classic() +
+  guides(fill = "none") +
+  scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
+  scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
+  scale_fill_manual(values = colors) +
+  coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
+
+solvents_clustered_summary <- solvents_clustered %>%
+  group_by(kmeans_cluster) %>%
+  summarize(mean_bp = mean(boiling_point))
+
+bar_plot <- ggplot() + 
+  geom_violin(
+    data = solvents_clustered,
+    aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
+    size = 0.5, color = "black", alpha = 0.6, width = 0.5
+  ) +
+  geom_crossbar(
+    data = solvents_clustered_summary,
+    aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
+    color = "black", width = 0.5
+  ) +
+  geom_point(
+    data = solvents_clustered,
+    aes(x = kmeans_cluster, y = boiling_point),
+    size = 2, color = "black", alpha = 0.6
+  ) +
+  scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
+  scale_x_discrete(name = "Cluster") +
+  scale_fill_manual(values = colors) +
+  theme_classic() +
+  coord_flip() +
+  guides(fill = "none") +
+  theme(legend.position = "bottom")
+
+cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
+```
+
+Now we are really rockin!!
+
+
+<!-- end -->
+
+<!-- start Exercises 6 -->
+# Exercises 6 {#Exercises_6}
+
+Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
+
+Put your answers to the following questions into a powerpoint file - the plots in the slide, and the code in the notes section. Please email me the powerpoint file and let me know if you have any questions. Good luck and have fun!
+
+## Question 1
+
+Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+
+runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = "auto",
+  na_replacement = "drop"
+) %>%
+
+ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
+
+```
+
+## Question 2
+
+Modify your code from Question 1 so that only two clusters are generated. Plot the results. Install ggforce (`install.packages(ggforce)`), then load that package (`library(ggforce)`), and use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+wine_grape_data
+
+runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = "2",
+  na_replacement = "drop"
+) %>%
+
+ggplot(aes(x = Dim.1, y = Dim.2)) +
+  geom_text(aes(label = sample_unique_ID)) +
+  geom_mark_ellipse(aes(fill = kmeans_cluster)) +
+  geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
+
+```
+
+## Question 3
+
+Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+wine_grape_data
+library(ggrepel)
+runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca-ord",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = "none",
+  na_replacement = "drop"
+) %>%
+
+dplyr::filter(Dim.1 > 0.9) %>%
+
+ggplot() +
+  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
+
+```
+
+## Question 4
+
+Modify your code from Question 2 so that three clusters are generated. Plot the results. Install ggforce (`install.packages(ggforce)`), then load that package (`library(ggforce)`), and use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, bewteen dry and well-watered conditions?
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+wine_grape_data
+
+da <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = "3",
+  na_replacement = "drop"
+)
+
+plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
+  geom_text(aes(label = sample_unique_ID)) +
+  geom_mark_ellipse(aes(fill = kmeans_cluster)) +
+  geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
+
+plot0
+```
+
+## Question 5
+
+Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create three groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances bewteen nodes and tips, the y-axis is meaningless).
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+wine_grape_data
+
+dat <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "hclust",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  transpose = FALSE,
+  kmeans = "3",
+  na_replacement = "drop"
+)
+
+plot1 <- ggtree(dat, aes(color = kmeans_cluster)) +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic() +
+  coord_cartesian(xlim = c(0,20))
+  plot1
+
+```
+
+## Question 6
+
+Google "Quercetin". What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using `geom_pointrange` and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, `theme_classic()`).
+
+Does one cluster have a large amount of variation in Quercetin abundance? How can this be? Aren't all the samples (i.e. grape varieties) in that cluster are closely related in terms of their chemistry?
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+plot2 <- dat %>%
+  group_by(kmeans_cluster) %>%
+  summarize(mean = mean(Quercetin), sd = sd(Quercetin)) %>%
+  ggplot(aes(x = kmeans_cluster, y = mean, ymin = mean-sd, ymax = mean+sd)) + geom_pointrange() +
+  theme_classic()
+  plot2
+```
+
+## Question 7
+
+Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+cowplot::plot_grid(plot1, plot2)
+```
+
+## Challenge (optional)
+
+Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
+
+`align = TRUE` inside `geom_tiplab()`
+
+`nrow = 1` inside `plot_grid()`
+
+`rel_widths = <your_choice>` inside `plot_grid()`
+
+`name = <your_choice>` inside `scale_*_*`
+
+`label = kmeans_cluster` inside `geom_mark_ellipse()`
+
+`breaks = <your_choice>` inside `scale_x_continuous()` or `scale_y_continuous()` (as an example, `breaks = seq(0,10,1)`)
+
+Also, consider using:
+
+`guides(fill = "none", color = "none")`
+
+Install the RColorBrewer package, and use one of its color schemes. As an example with the color scheme `Set1`:
+
+`scale_fill_brewer(palette = "Set1", na.value = "grey")`
+
+`scale_color_brewer(palette = "Set1", na.value = "grey")`
+
+Save your plot as a png using `ggsave()`.
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+library(RColorBrewer)
+
+plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
+  geom_mark_ellipse(aes(fill = kmeans_cluster, label = kmeans_cluster)) +
+  scale_x_continuous(breaks = seq(-10,12,2), name = "Dimension 1", limits = c(-9, 12)) + 
+  scale_y_continuous(breaks = seq(-10,10,1), name = "Dimension 2", limits = c(-9, 6)) + 
+  geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 ) +
+  # geom_label_repel(aes(label = sample_unique_ID), label.size = 0) +
+  scale_fill_brewer(palette = "Set1", na.value = "grey") +
+  scale_color_brewer(palette = "Set1", na.value = "grey") +
+  guides(fill = "none", color = "none") +
+  theme_classic()
+
+plot1 <- ggtree(dat, aes(color = kmeans_cluster), size = 1.5) +
+  geom_tiplab(align = TRUE, offset = 2) +
+  geom_tippoint() +
+  theme_classic() +
+  scale_x_continuous(breaks = seq(-100,120,5), name = "Distance") + 
+  coord_cartesian(xlim = c(-5,35)) +
+  guides(fill = "none", color = "none") +
+  scale_fill_brewer(palette = "Set1", na.value = "grey") +
+  scale_color_brewer(palette = "Set1", na.value = "grey") +
+  theme_tree2()
+
+plot2 <- dat %>%
+  group_by(kmeans_cluster) %>%
+  summarize(mean = mean(Quercetin), sd = sd(Quercetin)) %>%
+  filter(kmeans_cluster != "NA") %>%
+  ggplot(aes(x = kmeans_cluster, y = mean, ymin = mean-sd, ymax = mean+sd)) + geom_linerange() + geom_point(shape = 21, aes(fill = kmeans_cluster), size = 4) +
+  theme_classic() +
+  guides(fill = "none", color = "none") +
+  scale_fill_brewer(palette = "Set1", na.value = "grey") +
+  scale_color_brewer(palette = "Set1", na.value = "grey") +
+  scale_x_discrete(name = "Cluster") + 
+  scale_y_continuous(breaks = seq(-10,10,0.2), name = "Quercetin concentration", limits = c(-0.1, 1.6))
+
+ggsave(
+  plot = cowplot::plot_grid(plot0, plot1, plot2, align = "h", axis = "b", nrow = 1, rel_widths = c(0.8, 1, 0.5), labels = "AUTO"),
+  filename = "/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/figures/Ex6Challenge.png",
+  height = 4, 
+  width = 12,
+  dpi = 300,
+  units = "in"
+  )
+```
+
+Maybe something like this:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/Ex6Challenge.png', dpi = NA)
+```
+
+
+<!-- end -->
 
 <!-- start wrangling -->
 # wrangling 2
@@ -1416,7 +1861,6 @@ select(alaska_lake_data, park, water_temp)
 
 ```
 <!-- end -->
-
 
 <!-- start writing -->
 # Writing
@@ -1460,7 +1904,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 <!-- end -->
 
 <!-- start Links -->
-# Links
+# links
 
 ## geoms
 
