@@ -1812,7 +1812,7 @@ ggsave(
 Maybe something like this:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists/figures/Ex6Challenge.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/Ex6Challenge.png', dpi = NA)
 ```
 
 
