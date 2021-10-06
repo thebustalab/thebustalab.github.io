@@ -1581,8 +1581,6 @@ Now we are really rockin!!
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
 
-Put your answers to the following questions into a powerpoint file - the plots in the slide, and the code in the notes section. Please email me the powerpoint file and let me know if you have any questions. Good luck and have fun!
-
 ### Question 1
 
 Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
@@ -1686,7 +1684,7 @@ plot0
 
 ### Question 5
 
-Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create three groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances bewteen nodes and tips, the y-axis is meaningless).
+Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create three groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless).
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
