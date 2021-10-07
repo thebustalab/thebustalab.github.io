@@ -1657,7 +1657,7 @@ ggplot() +
 
 ### Question 4
 
-Modify your code from Question 2 so that three clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, bewteen dry and well-watered conditions?
+Modify your code from Question 2 so that five clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
@@ -1684,7 +1684,7 @@ plot0
 
 ### Question 5
 
-Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create three groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless).
+Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
 wine_grape_data
@@ -1814,7 +1814,6 @@ Maybe something like this:
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/Ex6Challenge.png', dpi = NA)
 ```
-
 
 <!-- end -->
 
