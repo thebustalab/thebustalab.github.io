@@ -34,7 +34,8 @@
             "stringr", 
             "progress",
             "tidyverse",
-            "ggrepel"
+            "ggrepel",
+            "cowplot"
         )
 
         Bioconductor_packages <- c(
