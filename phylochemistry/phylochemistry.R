@@ -35,7 +35,9 @@
             "progress",
             "tidyverse",
             "ggrepel",
-            "cowplot"
+            "cowplot",
+            "rstatix",
+            "agricolae"
         )
 
         Bioconductor_packages <- c(
@@ -112,9 +114,9 @@
         metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv", col_types = cols())
         wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv", col_types = cols())
         # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv", col_types = cols())
-        # hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hawaii_aquifer_data.csv", col_types = cols())
-        # beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/beer_components.csv", col_types = cols())
-        # hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/hops_components.csv", col_types = cols())
+        hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv", col_types = cols())
+        beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv", col_types = cols())
+        hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv", col_types = cols())
         busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
 
     }
