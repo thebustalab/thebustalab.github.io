@@ -332,10 +332,8 @@ You should notice a few things when you compile this document:
 We can also run R chunks right in markdown and create figures. Dr. Busta will show you how to do this in class.
 
 
-<!-- end -->
 
-<!-- start exercises 1 -->
-# Exercises 1 {#Exercises_1}
+## exercises
 
 In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
@@ -345,7 +343,7 @@ Some pointers:
 
 - Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
 
-## Algae Chemistry Dataset
+### Algae Chemistry Dataset
 
 1. **Filtering 1**
 
@@ -960,10 +958,8 @@ ggplot() +
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
-<!-- end -->
 
-<!-- start exercises 3 -->
-# exercises 3 {#Exercises_3}
+## exercises
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
@@ -1135,10 +1131,8 @@ ggtree() +
 ```
  
 Very nice!
-<!-- end -->
 
-<!-- start exercises 4-->
-# exercises 4 {#Exercises_4}
+## exercises
 
 For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
@@ -1265,10 +1259,8 @@ ggplot(
 ```
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
-<!-- end -->
 
-<!-- start Exercises 5 -->
-# exercises 5 {#Exercises_5}
+## exercises
 
 In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
@@ -1278,7 +1270,7 @@ colnames(periodic_table_subset)[c(18:20, 23:25)]
 ```
 We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
 
-## option 1: human metabolomics.
+### option 1: human metabolomics.
 
 This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
 
@@ -1335,7 +1327,7 @@ ggplot() +
 
 ```
 
-## option 2: grape vine chemistry
+### option 2: grape vine chemistry
 
 This second option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
 

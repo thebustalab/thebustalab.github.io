@@ -4753,9 +4753,9 @@
                                                 } else {
 
                                                     ## Make chromatogram plot object
-
-                                                        chromatograms_updated <- dplyr::filter(chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end)
-                                                    
+                                                        cat("yes here")
+                                                        # chromatograms_updated <- dplyr::filter(chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end)
+                                                        cat("yes here")
                                                             # Make their labels easy to read
                                                                 facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated$path_to_cdf_csv))
                                                                 names(facet_labels) <- chromatograms_updated$path_to_cdf_csv
