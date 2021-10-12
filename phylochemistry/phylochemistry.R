@@ -37,7 +37,8 @@
             "ggrepel",
             "cowplot",
             "rstatix",
-            "agricolae"
+            "agricolae",
+            "ggpmisc"
         )
 
         Bioconductor_packages <- c(
@@ -7511,6 +7512,16 @@
 
         #### analyzeMolecularDiversity
 
+            #' analyzeMolecularDiversity
+            #'
+            #' @param x
+            #' @param y
+            #' @param smoothing_order
+            #' @param smoothing_window
+            #' @export
+            #' @examples
+            #' analyzeMolecularDiversity()
+
             analyzeMolecularDiversity <- function( data, scale = TRUE ) {
 
                 ## Check for NAs
@@ -7607,6 +7618,95 @@
                     return(output)
 
             }
+
+        #### buildLinearModel
+
+            #' buildLinearModel
+            #'
+            #' @param data
+            #' @param formula
+            #' @export
+            #' @examples
+            #' buildLinearModel()
+
+                buildLinearModel <- function(data, formula) {
+
+                    ## Correct the formula
+                        formula <- gsub("=", "~", formula)
+
+                    ## Run the fit and start the output
+                        fit <- lm(
+                            data = data,
+                            formula = formula,
+                            x = TRUE, y = TRUE, model = TRUE, qr = TRUE
+                        )
+                        output <- fit$model
+                        output$residuals <- fit$residuals
+                        output$model_y <- fit$model[,1] - output$residuals
+
+                        out <- list()
+                        
+                        coefficients <- data.frame(
+                            variable = names(coefficients(fit)),
+                            value = as.numeric(coefficients(fit)),
+                            type = "coefficient",
+                            p_value = round(summary(fit)$coefficients[,4], 4)
+                        )
+
+                        statistics <- rbind(
+                            c("r_squared", summary(fit)$r.squared, "statistic", NA),
+                            c("median_residual", median(summary(fit)$residuals), "statistic", NA)
+                        )
+                        colnames(statistics) <- c("variable", "value", "type", "p_value")
+
+                        metrics <- rbind(coefficients, statistics)
+                        metrics$value <- round(as.numeric(metrics$value), 4)
+                        rownames(metrics) <- NULL
+                        metrics
+
+                        out$metrics <- metrics
+
+                    ## Determine input x values
+                        eqn_side <- gsub(".*~ ", "", formula)
+                        for (j in 1:length(colnames(data))) {
+                            result <- grep(colnames(data)[j], eqn_side)
+                            if (length(result) > 0) {
+                                index <- gregexpr(pattern = colnames(data)[j],eqn_side)[[1]][1]
+                                eqn_side <- paste0(
+                                    substr(eqn_side, 0, index-1),
+                                    "data$",
+                                    substr(eqn_side, index, nchar(eqn_side))
+                                )
+                            }
+                        }
+                        input_x <- eval(parse(text=eqn_side))
+
+                    ## Determine input y values
+                        eqn_side <- gsub(" ~ .*$", "", formula)
+                        for (j in 1:length(colnames(data))) {
+                            result <- grep(colnames(data)[j], eqn_side)
+                            if (length(result) > 0) {
+                                index <- gregexpr(pattern = colnames(data)[j],eqn_side)[[1]][1]
+                                eqn_side <- paste0(
+                                    substr(eqn_side, 0, index-1),
+                                    "data$",
+                                    substr(eqn_side, index, nchar(eqn_side))
+                                )
+                            }
+                        }
+                        input_y <- eval(parse(text=eqn_side))
+
+                        output <- cbind(
+                            cbind(input_x, input_y)[!apply(apply(cbind(input_x, input_y), 2, is.na), 1, any),],
+                            output
+                        )
+
+                        output$model_x <- output$input_x
+
+                        out$data <- output
+
+                    return(out)
+                }
 
     ##### Phylogenetic statistical testing
 
