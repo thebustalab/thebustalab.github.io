@@ -1811,6 +1811,8 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/E
 
 # models
 
+## theory
+
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildLinearModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.
 
 Let's look at an example. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:
@@ -1900,7 +1902,7 @@ top <- ggplot(model$data) +
   geom_point(aes(x = input_x, y = input_y)) +
   geom_line(aes(x = model_x, y = model_y)) +
   annotate(geom = "table",
-    x = 13,
+    x = 11.4,
     y = 16,
     label = list(model$metrics)
   ) +
@@ -1928,7 +1930,7 @@ To practice creating linear models, try the following:
 3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildLinearModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated. Enhance the plots by including in them a visual represetation of the residuals.
 
 
-```{r}
+```{r, echo = FALSE, eval = FALSE}
 runMatrixAnalysis(
   data = wine_grape_data,
   analysis = "pca_ord",
