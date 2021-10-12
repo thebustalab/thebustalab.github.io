@@ -42,6 +42,10 @@ readr
 purrr
 forcats
 ggrepel
+cowplot
+agricolae
+ggpp
+ggpmisc
 ggtree
 BiocGenerics
 S4Vectors

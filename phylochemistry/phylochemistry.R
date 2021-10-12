@@ -7632,9 +7632,11 @@
                 buildLinearModel <- function(data, formula) {
 
                     ## Correct the formula
+
                         formula <- gsub("=", "~", formula)
 
                     ## Run the fit and start the output
+
                         fit <- lm(
                             data = data,
                             formula = formula,
@@ -7644,29 +7646,8 @@
                         output$residuals <- fit$residuals
                         output$model_y <- fit$model[,1] - output$residuals
 
-                        out <- list()
-                        
-                        coefficients <- data.frame(
-                            variable = names(coefficients(fit)),
-                            value = as.numeric(coefficients(fit)),
-                            type = "coefficient",
-                            p_value = round(summary(fit)$coefficients[,4], 4)
-                        )
-
-                        statistics <- rbind(
-                            c("r_squared", summary(fit)$r.squared, "statistic", NA),
-                            c("median_residual", median(summary(fit)$residuals), "statistic", NA)
-                        )
-                        colnames(statistics) <- c("variable", "value", "type", "p_value")
-
-                        metrics <- rbind(coefficients, statistics)
-                        metrics$value <- round(as.numeric(metrics$value), 4)
-                        rownames(metrics) <- NULL
-                        metrics
-
-                        out$metrics <- metrics
-
                     ## Determine input x values
+
                         eqn_side <- gsub(".*~ ", "", formula)
                         for (j in 1:length(colnames(data))) {
                             result <- grep(colnames(data)[j], eqn_side)
@@ -7682,6 +7663,7 @@
                         input_x <- eval(parse(text=eqn_side))
 
                     ## Determine input y values
+
                         eqn_side <- gsub(" ~ .*$", "", formula)
                         for (j in 1:length(colnames(data))) {
                             result <- grep(colnames(data)[j], eqn_side)
@@ -7700,6 +7682,37 @@
                             cbind(input_x, input_y)[!apply(apply(cbind(input_x, input_y), 2, is.na), 1, any),],
                             output
                         )
+
+                    ## Start the master output and put the coefficients and stats in it
+
+                        out <- list()
+                        
+                        coefficients <- data.frame(
+                            variable = names(coefficients(fit)),
+                            value = as.numeric(coefficients(fit)),
+                            type = "coefficient",
+                            p_value = round(summary(fit)$coefficients[,4], 4)
+                        )
+
+                        total_sum_squares <- sum((input_y - mean(input_y, na.rm = TRUE))^2, na.rm = TRUE)
+                        residual_sum_squares <- sum((summary(fit)$residuals)^2, na.rm = TRUE)
+
+                        statistics <- rbind(
+                            c("median_residual", median(summary(fit)$residuals), "statistic", NA),
+                            c("total_sum_squares", total_sum_squares, "statistic", NA),
+                            c("residual_sum_squares", residual_sum_squares, "statistic", NA),
+                            c("r_squared", summary(fit)$r.squared, "statistic", NA)
+                        )
+                        colnames(statistics) <- c("variable", "value", "type", "p_value")
+
+                        # round(1-(residual_sum_squares/total_sum_squares), 4) == round(summary(fit)$r.squared, 4)
+
+                        metrics <- rbind(coefficients, statistics)
+                        metrics$value <- round(as.numeric(metrics$value), 4)
+                        rownames(metrics) <- NULL
+                        metrics
+
+                        out$metrics <- metrics
 
                         output$model_x <- output$input_x
 
