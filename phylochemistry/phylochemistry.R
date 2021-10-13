@@ -7633,7 +7633,10 @@
 
                     ## Correct the formula
 
+                        # formula <- gsub(" = ", "~", formula)
                         formula <- gsub("=", "~", formula)
+                        formula <- gsub("~", " ~ ", formula)
+                        formula <- gsub("  ", " ", formula)
 
                     ## Run the fit and start the output
 
