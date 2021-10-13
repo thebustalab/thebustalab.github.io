@@ -1979,10 +1979,10 @@ out <- runMatrixAnalysis(
 )
 
 model <- buildLinearModel(
-  data = out,
+  data = solvents,
   # formula = "Dim.1 = Aspartic_acid_3TMS"
   # formula = "Dim.1 = Tyrosine_2TMS"
-  formula = "Dim.1 = Arabitol_5TMS"
+  formula = "refractive_index = formula_weight"
 )
 
 

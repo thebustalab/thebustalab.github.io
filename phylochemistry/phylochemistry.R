@@ -7631,9 +7631,9 @@
 
                 buildLinearModel <- function(data, formula) {
 
-                    ## Correct the formula
+                    ## Correct the formula and the data
 
-                        # formula <- gsub(" = ", "~", formula)
+                        data <- as.data.frame(data)
                         formula <- gsub("=", "~", formula)
                         formula <- gsub("~", " ~ ", formula)
                         formula <- gsub("  ", " ", formula)
