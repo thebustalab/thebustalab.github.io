@@ -7653,8 +7653,9 @@
 
                         eqn_side <- gsub(".*~ ", "", formula)
                         for (j in 1:length(colnames(data))) {
-                            result <- grep(colnames(data)[j], eqn_side)
+                            result <- grep(colnames(data)[j], eqn_side, fixed = TRUE)
                             if (length(result) > 0) {
+                                print(j)
                                 index <- gregexpr(pattern = colnames(data)[j],eqn_side)[[1]][1]
                                 eqn_side <- paste0(
                                     substr(eqn_side, 0, index-1),
@@ -7685,6 +7686,7 @@
                             cbind(input_x, input_y)[!apply(apply(cbind(input_x, input_y), 2, is.na), 1, any),],
                             output
                         )
+                        # colnames(output)[1]
 
                     ## Start the master output and put the coefficients and stats in it
 
