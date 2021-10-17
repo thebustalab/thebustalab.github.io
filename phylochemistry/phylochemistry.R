@@ -114,7 +114,6 @@
         ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv", col_types = cols())
         metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv", col_types = cols())
         wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv", col_types = cols())
-        # data <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/housing.csv", col_types = cols())
         hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv", col_types = cols())
         beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv", col_types = cols())
         hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv", col_types = cols())
@@ -124,6 +123,8 @@
 
     cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
     cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
+
+        message("\n")
 
 ###### Functions
 
@@ -7878,4 +7879,4 @@
                 }
 
 message("Done!")
-message("Reminder: you can open/save .R scripts on Google Drive directly using:\nopenRGD(\"share_link\")\ncloseRGD(\"share_link\")")
+# message("Reminder: you can open/save .R scripts on Google Drive directly using:\nopenRGD(\"share_link\")\ncloseRGD(\"share_link\")")
