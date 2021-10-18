@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-10-14" />
+<meta name="date" content="2021-10-18" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -291,7 +291,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb105-2"><a href="templates.html#cb105-2" aria-hidden="true" tabindex="-1"></a>                </span>
 <span id="cb105-3"><a href="templates.html#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>,</span>
 <span id="cb105-4"><a href="templates.html#cb105-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-5"><a href="templates.html#cb105-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>),</span>
+<span id="cb105-5"><a href="templates.html#cb105-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca_ord&quot;</span>, <span class="st">&quot;pca_dim&quot;</span>),</span>
 <span id="cb105-6"><a href="templates.html#cb105-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb105-7"><a href="templates.html#cb105-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
 <span id="cb105-8"><a href="templates.html#cb105-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>,</span>
@@ -306,7 +306,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3><span class="header-section-number">15.1.2</span> advanced <code>runMatrixAnalysis()</code> template</h3>
 <div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="templates.html#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
 <span id="cb106-2"><a href="templates.html#cb106-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="cn">NULL</span>, <span class="co"># the data set to work on</span></span>
-<span id="cb106-3"><a href="templates.html#cb106-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca-ord&quot;</span>, <span class="st">&quot;pca-dim&quot;</span>), <span class="co"># the analysis to conduct</span></span>
+<span id="cb106-3"><a href="templates.html#cb106-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">&quot;hclust&quot;</span>, <span class="st">&quot;pca&quot;</span>, <span class="st">&quot;pca_ord&quot;</span>, <span class="st">&quot;pca_dim&quot;</span>), <span class="co"># the analysis to conduct</span></span>
 <span id="cb106-4"><a href="templates.html#cb106-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_names_of_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with names of multiple analytes</span></span>
 <span id="cb106-5"><a href="templates.html#cb106-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_w_values_for_multiple_analytes =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span></span>
 <span id="cb106-6"><a href="templates.html#cb106-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span></span>
