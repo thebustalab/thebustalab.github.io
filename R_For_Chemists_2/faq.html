@@ -299,7 +299,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>However, there are cases where we will want a list of character elements to have some order other than A -&gt; Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -&gt; Z. For example, in the plot below, the y axis is not, perhaps, in the “correct” order:</p>
 <div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="faq.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
 <span id="cb102-2"><a href="faq.html#cb102-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-149-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-148-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>How do we fix this? We need to convert the column <code>group_number</code> into a list of factors that have the correct order (see below). For this, we will use the command <code>factor</code>, which will accept an argument called <code>levels</code> in which we can define the order the the characters should be in:</p>
 <div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="faq.html#cb103-1" aria-hidden="true" tabindex="-1"></a>periodic_table<span class="sc">$</span>group_number <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb103-2"><a href="faq.html#cb103-2" aria-hidden="true" tabindex="-1"></a>  periodic_table<span class="sc">$</span>group_number,</span>
@@ -330,7 +330,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Notice that now when we look at the type of data that is contained in the column <code>group_number</code> it says “<fct>”. This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?</p>
 <div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="faq.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
 <span id="cb104-2"><a href="faq.html#cb104-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-151-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-150-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>VICTORY!
 <!-- end --></p>
 <!-- start templates -->

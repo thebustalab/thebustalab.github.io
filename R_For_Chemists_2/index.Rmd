@@ -1069,6 +1069,8 @@ ggplot(pt_by_year_summ,
 <!-- start clustering -->
 # clustering
 
+"Which of my samples are most closely related?"
+
 So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, and other questions, we need to use matrix analyses. For this, we will use `runMatrixAnalysis()`, a function that is loaded into your R Session when you run the source() command.
 
 Matrix analyses can be a bit difficult to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
@@ -1147,6 +1149,8 @@ colnames(solvents)[c(1,5,7)]
 
 <!-- start principal components analysis-->
 # pca {#PCA}
+
+"Which analytes are driving differences among my samples?"
 
 In addition to heirarchical clustering, there is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA). 
 
@@ -1377,6 +1381,8 @@ ggplot() +
 
 <!-- start k-means -->
 # k-means
+
+"Do my samples fall into definable clusters?"
 
 ## theory
 
@@ -1819,7 +1825,7 @@ Let's look at an example. Suppose we want to know if the abundances of ADP and A
 
 ```{r}
 ggplot(metabolomics_data) +
-  geom_point(aes(x = ADP, y = AMP))
+  geom_point(aes(x = AMP, y = ADP))
 ```
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
@@ -2015,16 +2021,18 @@ model$metrics
 <!-- start comparing means -->
 # comparing means
 
+"Are these two things the same?"
+
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
 
-To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
-
-```{r, echo = FALSE, message = FALSE}
+<!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
+ -->
+<!-- ```{r, echo = FALSE, message = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 library(rstatix)
 library(agricolae)
 library(multcompView)
-```
+``` -->
 
 ## Getting Ready
 

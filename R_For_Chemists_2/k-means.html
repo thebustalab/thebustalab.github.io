@@ -283,6 +283,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="k-means" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> k-means</h1>
+<p>“Do my samples fall into definable clusters?”</p>
 <div id="theory" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> theory</h2>
 <p>One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in <strong>A</strong> below:</p>
