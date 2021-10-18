@@ -7654,10 +7654,10 @@
 
                         eqn_side <- gsub(".*~ ", "", formula)
                         for (j in 1:length(colnames(data))) {
-                            result <- grep(colnames(data)[j], eqn_side, fixed = TRUE)
+                            result <- grep(paste0(" ", colnames(data)[j]), paste0(" ", eqn_side), fixed = TRUE)
                             if (length(result) > 0) {
-                                print(j)
-                                index <- gregexpr(pattern = colnames(data)[j],eqn_side)[[1]][1]
+                                # print(j)
+                                index <- gregexpr(pattern = paste0(" ", colnames(data)[j]),paste0(" ", eqn_side))[[1]][1]
                                 eqn_side <- paste0(
                                     substr(eqn_side, 0, index-1),
                                     "data$",
@@ -7671,9 +7671,10 @@
 
                         eqn_side <- gsub(" ~ .*$", "", formula)
                         for (j in 1:length(colnames(data))) {
-                            result <- grep(colnames(data)[j], eqn_side)
+                            result <- grep(paste0(" ", colnames(data)[j]), paste0(" ", eqn_side), fixed = TRUE)
                             if (length(result) > 0) {
-                                index <- gregexpr(pattern = colnames(data)[j],eqn_side)[[1]][1]
+                                # print(j)
+                                index <- gregexpr(pattern = paste0(" ", colnames(data)[j]),paste0(" ", eqn_side))[[1]][1]
                                 eqn_side <- paste0(
                                     substr(eqn_side, 0, index-1),
                                     "data$",
