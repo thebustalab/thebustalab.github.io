@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>6 clustering | R For Chemists</title>
-  <meta name="description" content="6 clustering | R For Chemists" />
+  <title>GETTING STARTED | R For Chemists</title>
+  <meta name="description" content="GETTING STARTED | R For Chemists" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="6 clustering | R For Chemists" />
+  <meta property="og:title" content="GETTING STARTED | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="6 clustering | R For Chemists" />
+  <meta name="twitter:title" content="GETTING STARTED | R For Chemists" />
   
   
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="chemometrics.html"/>
-<link rel="next" href="PCA.html"/>
+<link rel="prev" href="section.html"/>
+<link rel="next" href="installation.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -277,105 +277,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="clustering" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> clustering</h1>
-<p>“Which of my samples are most closely related?”</p>
-<p>So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, and other questions, we need to use matrix analyses. For this, we will use <code>runMatrixAnalysis()</code>, a function that is loaded into your R Session when you run the source() command.</p>
-<p>Matrix analyses can be a bit difficult to set up. There are two things that we can do to help us with this: (i) we will use a template for <code>runMatrixAnalysis()</code> (see below) and (ii) it is <em>critical</em> that we think about our data in terms of <strong>samples</strong> and <strong>analytes</strong>. Let’s consider our Alaska lakes data set:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="clustering.html#cb54-1" aria-hidden="true" tabindex="-1"></a>alaska_lake_data</span>
-<span id="cb54-2"><a href="clustering.html#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 7</span></span>
-<span id="cb54-3"><a href="clustering.html#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb54-4"><a href="clustering.html#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb54-5"><a href="clustering.html#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4   bound       </span></span>
-<span id="cb54-6"><a href="clustering.html#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
-<span id="cb54-7"><a href="clustering.html#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
-<span id="cb54-8"><a href="clustering.html#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span id="cb54-9"><a href="clustering.html#cb54-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free        </span></span>
-<span id="cb54-10"><a href="clustering.html#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04  free        </span></span>
-<span id="cb54-11"><a href="clustering.html#cb54-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02  free        </span></span>
-<span id="cb54-12"><a href="clustering.html#cb54-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92  free        </span></span>
-<span id="cb54-13"><a href="clustering.html#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2   free        </span></span>
-<span id="cb54-14"><a href="clustering.html#cb54-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73  free        </span></span>
-<span id="cb54-15"><a href="clustering.html#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
-<p>We can see that this dataset is comprised of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
-<p><img src="http://thebustalab.github.io/R_For_Chemists_2/images/runMatrixAnalysis1.png" style="display: block; margin: auto;" /></p>
-<p>With this in mind, let’s try out our template:</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="clustering.html#cb55-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_clustered <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb55-2"><a href="clustering.html#cb55-2" aria-hidden="true" tabindex="-1"></a>                                </span>
-<span id="cb55-3"><a href="clustering.html#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> alaska_lake_data,</span>
-<span id="cb55-4"><a href="clustering.html#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-5"><a href="clustering.html#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">analysis =</span> <span class="st">&quot;hclust&quot;</span>,</span>
-<span id="cb55-6"><a href="clustering.html#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-7"><a href="clustering.html#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_names_of_multiple_analytes =</span> <span class="st">&quot;element&quot;</span>,</span>
-<span id="cb55-8"><a href="clustering.html#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_w_values_for_multiple_analytes =</span> <span class="st">&quot;mg_per_L&quot;</span>,</span>
-<span id="cb55-9"><a href="clustering.html#cb55-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb55-10"><a href="clustering.html#cb55-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">c</span>(<span class="st">&quot;water_temp&quot;</span>, <span class="st">&quot;pH&quot;</span>),</span>
-<span id="cb55-11"><a href="clustering.html#cb55-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb55-12"><a href="clustering.html#cb55-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_additional_analyte_info =</span> <span class="st">&quot;element_type&quot;</span>,</span>
-<span id="cb55-13"><a href="clustering.html#cb55-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-14"><a href="clustering.html#cb55-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">&quot;lake&quot;</span>, <span class="st">&quot;park&quot;</span>)</span>
-<span id="cb55-15"><a href="clustering.html#cb55-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-16"><a href="clustering.html#cb55-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb55-17"><a href="clustering.html#cb55-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Analytes are all numeric and compatible with the analysis selected.</span></span>
-<span id="cb55-18"><a href="clustering.html#cb55-18" aria-hidden="true" tabindex="-1"></a>AK_lakes_clustered</span>
-<span id="cb55-19"><a href="clustering.html#cb55-19" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 39 × 25</span></span>
-<span id="cb55-20"><a href="clustering.html#cb55-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    sample_unique_ID  lake    park  parent  node branch.length label  isTip     x</span></span>
-<span id="cb55-21"><a href="clustering.html#cb55-21" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;   &lt;chr&gt;  &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;  &lt;lgl&gt; &lt;dbl&gt;</span></span>
-<span id="cb55-22"><a href="clustering.html#cb55-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Devil_Mountain_L… Devil_… BELA      33     1          7.25 Devil… TRUE   204.</span></span>
-<span id="cb55-23"><a href="clustering.html#cb55-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Imuruk_Lake_BELA  Imuruk… BELA      32     2          4.91 Imuru… TRUE   204.</span></span>
-<span id="cb55-24"><a href="clustering.html#cb55-24" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Kuzitrin_Lake_BE… Kuzitr… BELA      36     3          3.27 Kuzit… TRUE   204.</span></span>
-<span id="cb55-25"><a href="clustering.html#cb55-25" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Lava_Lake_BELA    Lava_L… BELA      35     4          3.02 Lava_… TRUE   204.</span></span>
-<span id="cb55-26"><a href="clustering.html#cb55-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 North_Killeak_La… North_… BELA      21     5        204.   North… TRUE   204.</span></span>
-<span id="cb55-27"><a href="clustering.html#cb55-27" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 White_Fish_Lake_… White_… BELA      22     6         65.2  White… TRUE   204.</span></span>
-<span id="cb55-28"><a href="clustering.html#cb55-28" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Iniakuk_Lake_GAAR Iniaku… GAAR      29     7          3.60 Iniak… TRUE   204.</span></span>
-<span id="cb55-29"><a href="clustering.html#cb55-29" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Kurupa_Lake_GAAR  Kurupa… GAAR      31     8          8.57 Kurup… TRUE   204.</span></span>
-<span id="cb55-30"><a href="clustering.html#cb55-30" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Lake_Matcharak_G… Lake_M… GAAR      29     9          3.60 Lake_… TRUE   204.</span></span>
-<span id="cb55-31"><a href="clustering.html#cb55-31" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Lake_Selby_GAAR   Lake_S… GAAR      30    10          5.24 Lake_… TRUE   204.</span></span>
-<span id="cb55-32"><a href="clustering.html#cb55-32" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 29 more rows, and 16 more variables: y &lt;dbl&gt;, branch &lt;dbl&gt;,</span></span>
-<span id="cb55-33"><a href="clustering.html#cb55-33" aria-hidden="true" tabindex="-1"></a><span class="do">## #   angle &lt;dbl&gt;, water_temp &lt;dbl&gt;, pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;, P &lt;dbl&gt;,</span></span>
-<span id="cb55-34"><a href="clustering.html#cb55-34" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;, K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
-<p>It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We’ve seen that ggplot takes a “data” argument (i.e. <code>ggplot(data = &lt;some_data&gt;) + geom_*()</code> etc.). In contrast, ggtree takes an argument called <code>tr</code>, though if you’re using the <code>runMatrixAnalysis()</code> function, you can treat these two (<code>data</code> and <code>tr</code>) the same, so, use: <code>ggtree(tr = &lt;output_from_runMatrixAnalysis&gt;) + geom_*()</code> etc.</p>
-<p>Note that <code>ggtree</code> also comes with several great new geoms: <code>geom_tiplab()</code> and <code>geom_tippoint()</code>. Let’s try those out:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="clustering.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtree)</span>
-<span id="cb56-2"><a href="clustering.html#cb56-2" aria-hidden="true" tabindex="-1"></a>AK_lakes_clustered <span class="sc">%&gt;%</span></span>
-<span id="cb56-3"><a href="clustering.html#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtree</span>() <span class="sc">+</span></span>
-<span id="cb56-4"><a href="clustering.html#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tiplab</span>() <span class="sc">+</span></span>
-<span id="cb56-5"><a href="clustering.html#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tippoint</span>() <span class="sc">+</span></span>
-<span id="cb56-6"><a href="clustering.html#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-87-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>Cool! Though that plot could use some tweaking… let’s try:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="clustering.html#cb57-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_clustered <span class="sc">%&gt;%</span></span>
-<span id="cb57-2"><a href="clustering.html#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtree</span>() <span class="sc">+</span></span>
-<span id="cb57-3"><a href="clustering.html#cb57-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tiplab</span>(<span class="fu">aes</span>(<span class="at">label =</span> lake), <span class="at">offset =</span> <span class="dv">10</span>) <span class="sc">+</span></span>
-<span id="cb57-4"><a href="clustering.html#cb57-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tippoint</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="fu">aes</span>(<span class="at">fill =</span> park), <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb57-5"><a href="clustering.html#cb57-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">400</span>))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-88-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Very nice!</p>
-<div id="exercises-3" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> exercises</h2>
-<p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: <code>algae_data</code> (which algae strains are most similar to each other?), <code>alaska_lake_data</code> (which lakes are most similar to each other?). and <code>solvents</code> (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>. For each of these, create (i) a tree diagram that shows how the “samples” in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as “additional_analyte_info”.</p>
-<p>For this assignment, you may find the <code>colnames()</code> function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="clustering.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)</span>
-<span id="cb58-2"><a href="clustering.html#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] &quot;solvent&quot;             &quot;formula&quot;             &quot;boiling_point&quot;      </span></span>
-<span id="cb58-3"><a href="clustering.html#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  [4] &quot;melting_point&quot;       &quot;density&quot;             &quot;miscible_with_water&quot;</span></span>
-<span id="cb58-4"><a href="clustering.html#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [7] &quot;solubility_in_water&quot; &quot;relative_polarity&quot;   &quot;vapor_pressure&quot;     </span></span>
-<span id="cb58-5"><a href="clustering.html#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [10] &quot;CAS_number&quot;          &quot;formula_weight&quot;      &quot;refractive_index&quot;   </span></span>
-<span id="cb58-6"><a href="clustering.html#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [13] &quot;specific_gravity&quot;    &quot;category&quot;</span></span>
-<span id="cb58-7"><a href="clustering.html#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
-<span id="cb58-8"><a href="clustering.html#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] &quot;solvent&quot;       &quot;formula&quot;       &quot;boiling_point&quot;</span></span>
-<span id="cb58-9"><a href="clustering.html#cb58-9" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">7</span>)]</span>
-<span id="cb58-10"><a href="clustering.html#cb58-10" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] &quot;solvent&quot;             &quot;density&quot;             &quot;solubility_in_water&quot;</span></span></code></pre></div>
-<!-- end -->
-<!-- start principal components analysis-->
-</div>
+<div id="getting-started" class="section level1 unnumbered">
+<h1>GETTING STARTED</h1>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="chemometrics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="PCA.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="section.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="installation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
