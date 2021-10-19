@@ -1206,7 +1206,7 @@ head(AK_lakes_pca_ord)
 
 We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
 
-```{r, fig.align = "center", fig.height = 3, fig.width = 4, message = FALSE}
+```{r, fig.align = "center", fig.height = 4, fig.width = 5, message = FALSE}
 AK_lakes_pca_ord <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca_ord"),
@@ -1233,7 +1233,13 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-Great! With this ordination plot we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
+Great! Here is how to read the ordination plot:
+
+1. When considering one analyte's vector: the vector's projected value on an axis shows how much its variance is aligned with that principal component.
+
+2. When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. If say that one analyte is "1.9" with respect to dimension 2 and another is "-1.9" with respect to dimension 2. Let's also say that these vectors are ~"0" with respect to dimension 1.
+
+With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
 
 ## principal components
 
