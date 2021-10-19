@@ -233,6 +233,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10.4.2" data-path="comparing-means.html"><a href="comparing-means.html#kruskal-dunn-tests"><i class="fa fa-check"></i><b>10.4.2</b> Kruskal, Dunn tests</a></li>
 </ul></li>
 <li class="chapter" data-level="10.5" data-path="comparing-means.html"><a href="comparing-means.html#further-reading"><i class="fa fa-check"></i><b>10.5</b> further reading</a></li>
+<li class="chapter" data-level="10.6" data-path="comparing-means.html"><a href="comparing-means.html#exercises-7"><i class="fa fa-check"></i><b>10.6</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="11" data-path="wrangling-2.html"><a href="wrangling-2.html"><i class="fa fa-check"></i><b>11</b> wrangling 2</a>
 <ul>
@@ -596,6 +597,16 @@ library(multcompView)
 <p>For more on comparing multiple means in R: <a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">www.datanovia.com</a></p>
 <p>For more on parametric versus non-parametric tests: <a href="https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/">Statistics by Jim</a></p>
 <p>For more on interpreting <em>p</em> values: [<a href="https://link.springer.com/article/10.1007/s00259-019-04467-5">The p value wars (again) by Ulrich Dirnagl</a>]</p>
+</div>
+<div id="exercises-7" class="section level2" number="10.6">
+<h2><span class="header-section-number">10.6</span> exercises</h2>
+<p>Using the <code>hawaii_aquifers</code> data set, please complete the following:</p>
+<ol style="list-style-type: decimal">
+<li><p>Choose one analyte and filter the data so only the rows for that analyte are shown.</p></li>
+<li><p>Choose two of the aquifers. Are the mean abundances for your chosen analyte different in these two aquifers? Don’t forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.</p></li>
+<li><p>Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don’t forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.</p></li>
+<li><p>Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the <em>p</em> values and <em>p</em> groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?</p></li>
+</ol>
 <!-- end -->
 <!-- start wrangling -->
 </div>
