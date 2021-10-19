@@ -194,7 +194,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="chemometrics.html"><a href="chemometrics.html"><i class="fa fa-check"></i>CHEMOMETRICS</a></li>
 <li class="chapter" data-level="6" data-path="clustering.html"><a href="clustering.html"><i class="fa fa-check"></i><b>6</b> clustering</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.1</b> exercises</a></li>
+<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#theory"><i class="fa fa-check"></i><b>6.1</b> theory</a></li>
+<li class="chapter" data-level="6.2" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>7</b> pca</a>
 <ul>
@@ -209,7 +210,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>8</b> k-means</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
+<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory-1"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
 <li class="chapter" data-level="8.2" data-path="k-means.html"><a href="k-means.html#exercises-5"><i class="fa fa-check"></i><b>8.2</b> exercises</a>
 <ul>
 <li class="chapter" data-level="8.2.1" data-path="k-means.html"><a href="k-means.html#question-1"><i class="fa fa-check"></i><b>8.2.1</b> Question 1</a></li>
@@ -224,7 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="9" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>9</b> models</a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-1"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
+<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-2"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
 <li class="chapter" data-level="9.2" data-path="models.html"><a href="models.html#exercises-6"><i class="fa fa-check"></i><b>9.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>10</b> comparing means</a>
@@ -280,7 +281,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="k-means" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> k-means</h1>
 <p>“Do my samples fall into definable clusters?”</p>
-<div id="theory" class="section level2" number="8.1">
+<div id="theory-1" class="section level2" number="8.1">
 <h2><span class="header-section-number">8.1</span> theory</h2>
 <p>One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in <strong>A</strong> below:</p>
 <p><img src="http://thebustalab.github.io/R_For_Chemists_2/images/kmeans.png" style="display: block; margin: auto;" /></p>
@@ -323,7 +324,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>We can plot the results and color them according to the group that kmeans suggested:</p>
 <div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="k-means.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(solvents_pca_kmeans) <span class="sc">+</span></span>
 <span id="cb65-2"><a href="k-means.html#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">fill =</span> kmeans_cluster), <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-100-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-101-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let’s look at the elbow plot itself. For this, we can just set <code>kmeans = "elbow"</code>:</p>
 <div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="k-means.html#cb66-1" aria-hidden="true" tabindex="-1"></a>solvents_pca_kmeans_elbow <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
 <span id="cb66-2"><a href="k-means.html#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> solvents,</span>
@@ -364,7 +365,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb67-5"><a href="k-means.html#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
 <span id="cb67-6"><a href="k-means.html#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb67-7"><a href="k-means.html#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-102-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-103-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Hmm, it looks like there aren’t any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set <code>kmeans = 3</code> if we want three clusters in the output. Below, let’s do just that. Let’s also plot the results and use <code>geom_mark_ellipse</code>.</p>
 <div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="k-means.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
 <span id="cb68-2"><a href="k-means.html#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> solvents,</span>
@@ -388,7 +389,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb68-20"><a href="k-means.html#cb68-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Dropping any variables in your dataset that have NA as a value.</span></span>
 <span id="cb68-21"><a href="k-means.html#cb68-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Variables dropped:</span></span>
 <span id="cb68-22"><a href="k-means.html#cb68-22" aria-hidden="true" tabindex="-1"></a><span class="do">## solubility_in_water vapor_pressure</span></span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-103-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-104-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Cool!</p>
 <p>One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:</p>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="k-means.html#cb69-1" aria-hidden="true" tabindex="-1"></a>solvents_clustered <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
@@ -421,7 +422,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb69-28"><a href="k-means.html#cb69-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> solvents_clustered,</span>
 <span id="cb69-29"><a href="k-means.html#cb69-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> kmeans_cluster, <span class="at">y =</span> boiling_point)</span>
 <span id="cb69-30"><a href="k-means.html#cb69-30" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-104-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-105-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it’s possible that we’ll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the <code>plot_grid</code> function from the <code>cowplot</code> package. Let’s check it out:</p>
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="k-means.html#cb70-1" aria-hidden="true" tabindex="-1"></a>solvents_clustered <span class="ot">&lt;-</span> <span class="fu">runMatrixAnalysis</span>(</span>
 <span id="cb70-2"><a href="k-means.html#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> solvents,</span>
@@ -482,7 +483,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb70-57"><a href="k-means.html#cb70-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</span>
 <span id="cb70-58"><a href="k-means.html#cb70-58" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb70-59"><a href="k-means.html#cb70-59" aria-hidden="true" tabindex="-1"></a>cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(pca_plot, bar_plot, <span class="at">align =</span> <span class="st">&quot;h&quot;</span>, <span class="at">axis =</span> <span class="st">&quot;b&quot;</span>, <span class="at">labels =</span> <span class="st">&quot;AUTO&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-105-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-106-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Now we are really rockin!!</p>
 </div>
 <div id="exercises-5" class="section level2" number="8.2">

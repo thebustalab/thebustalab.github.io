@@ -194,7 +194,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="chemometrics.html"><a href="chemometrics.html"><i class="fa fa-check"></i>CHEMOMETRICS</a></li>
 <li class="chapter" data-level="6" data-path="clustering.html"><a href="clustering.html"><i class="fa fa-check"></i><b>6</b> clustering</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.1</b> exercises</a></li>
+<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#theory"><i class="fa fa-check"></i><b>6.1</b> theory</a></li>
+<li class="chapter" data-level="6.2" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>7</b> pca</a>
 <ul>
@@ -209,7 +210,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>8</b> k-means</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
+<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory-1"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
 <li class="chapter" data-level="8.2" data-path="k-means.html"><a href="k-means.html#exercises-5"><i class="fa fa-check"></i><b>8.2</b> exercises</a>
 <ul>
 <li class="chapter" data-level="8.2.1" data-path="k-means.html"><a href="k-means.html#question-1"><i class="fa fa-check"></i><b>8.2.1</b> Question 1</a></li>
@@ -224,7 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="9" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>9</b> models</a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-1"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
+<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-2"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
 <li class="chapter" data-level="9.2" data-path="models.html"><a href="models.html#exercises-6"><i class="fa fa-check"></i><b>9.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>10</b> comparing means</a>
@@ -301,7 +302,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb59-12"><a href="PCA.html#cb59-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">fill =</span> park), <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
 <span id="cb59-13"><a href="PCA.html#cb59-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> lake), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
 <span id="cb59-14"><a href="PCA.html#cb59-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-91-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-92-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
 <p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
 </div>
@@ -352,7 +353,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb61-31"><a href="PCA.html#cb61-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb61-32"><a href="PCA.html#cb61-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="fl">1.5</span>)) <span class="sc">+</span></span>
 <span id="cb61-33"><a href="PCA.html#cb61-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-93-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-94-1.png" width="480" style="display: block; margin: auto;" /></p>
 <p>Great! Here is how to read the ordination plot:</p>
 <ol style="list-style-type: decimal">
 <li><p>When considering one analyte’s vector: the vector’s projected value on an axis shows how much its variance is aligned with that principal component.</p></li>
@@ -390,7 +391,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb62-25"><a href="PCA.html#cb62-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
 <span id="cb62-26"><a href="PCA.html#cb62-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb62-27"><a href="PCA.html#cb62-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-94-1.png" width="288" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-95-1.png" width="288" style="display: block; margin: auto;" /></p>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.</p>
 </div>
 <div id="exercises-4" class="section level2" number="7.4">

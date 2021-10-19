@@ -194,7 +194,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="chemometrics.html"><a href="chemometrics.html"><i class="fa fa-check"></i>CHEMOMETRICS</a></li>
 <li class="chapter" data-level="6" data-path="clustering.html"><a href="clustering.html"><i class="fa fa-check"></i><b>6</b> clustering</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.1</b> exercises</a></li>
+<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#theory"><i class="fa fa-check"></i><b>6.1</b> theory</a></li>
+<li class="chapter" data-level="6.2" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>7</b> pca</a>
 <ul>
@@ -209,7 +210,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>8</b> k-means</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
+<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory-1"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
 <li class="chapter" data-level="8.2" data-path="k-means.html"><a href="k-means.html#exercises-5"><i class="fa fa-check"></i><b>8.2</b> exercises</a>
 <ul>
 <li class="chapter" data-level="8.2.1" data-path="k-means.html"><a href="k-means.html#question-1"><i class="fa fa-check"></i><b>8.2.1</b> Question 1</a></li>
@@ -224,7 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="9" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>9</b> models</a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-1"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
+<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-2"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
 <li class="chapter" data-level="9.2" data-path="models.html"><a href="models.html#exercises-6"><i class="fa fa-check"></i><b>9.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>10</b> comparing means</a>
@@ -322,7 +323,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb83-18"><a href="comparing-means.html#cb83-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8          3</span></span>
 <span id="cb83-19"><a href="comparing-means.html#cb83-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9         30</span></span>
 <span id="cb83-20"><a href="comparing-means.html#cb83-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(aquifers_summarized) <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> n_wells, <span class="at">y =</span> aquifer_code))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-129-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-130-1.png" width="384" style="display: block; margin: auto;" /></p>
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
@@ -385,14 +386,14 @@ library(multcompView)
 <span id="cb85-19"><a href="comparing-means.html#cb85-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(K_data_1_2, <span class="fu">aes</span>(<span class="at">x =</span> aquifer_code, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
 <span id="cb85-20"><a href="comparing-means.html#cb85-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb85-21"><a href="comparing-means.html#cb85-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-132-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-133-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Are these data normally distributed? Do they have similar variance? Let’s get a first approximation by looking at a plot:</p>
 <div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="comparing-means.html#cb86-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="sc">%&gt;%</span></span>
 <span id="cb86-2"><a href="comparing-means.html#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> abundance)) <span class="sc">+</span> </span>
 <span id="cb86-3"><a href="comparing-means.html#cb86-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
 <span id="cb86-4"><a href="comparing-means.html#cb86-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>aquifer_code) <span class="sc">+</span></span>
 <span id="cb86-5"><a href="comparing-means.html#cb86-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..<span class="sc">*</span><span class="dv">10</span>), <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-133-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-134-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
 <div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="comparing-means.html#cb87-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="sc">%&gt;%</span></span>
 <span id="cb87-2"><a href="comparing-means.html#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span> </span>
@@ -453,7 +454,7 @@ library(multcompView)
 <span id="cb91-19"><a href="comparing-means.html#cb91-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> K_data, <span class="fu">aes</span>(<span class="at">y =</span> aquifer_code, <span class="at">x =</span> abundance)) <span class="sc">+</span></span>
 <span id="cb91-20"><a href="comparing-means.html#cb91-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb91-21"><a href="comparing-means.html#cb91-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">size =</span> <span class="dv">3</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-138-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-139-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Let’s check visually to see if each group is normally distributed and to see if they have roughly equal variance:</p>
 <div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="comparing-means.html#cb92-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
 <span id="cb92-2"><a href="comparing-means.html#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span></span>
@@ -461,7 +462,7 @@ library(multcompView)
 <span id="cb92-4"><a href="comparing-means.html#cb92-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
 <span id="cb92-5"><a href="comparing-means.html#cb92-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>aquifer_code) <span class="sc">+</span></span>
 <span id="cb92-6"><a href="comparing-means.html#cb92-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..<span class="sc">*</span><span class="dv">10</span>), <span class="at">colour =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-139-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-140-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let’s check using the Shapiro and Levene tests. Don’t forget: with the Shaprio test, we are looking within each group and so need to <code>group_by()</code>, with the Levene test, we are looking across groups, and so need to provide a <code>y~x</code> formula:</p>
 <div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="comparing-means.html#cb93-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
 <span id="cb93-2"><a href="comparing-means.html#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span> </span>
@@ -535,7 +536,7 @@ library(multcompView)
 <span id="cb98-2"><a href="comparing-means.html#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb98-3"><a href="comparing-means.html#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
 <span id="cb98-4"><a href="comparing-means.html#cb98-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> groups_based_on_tukey, <span class="fu">aes</span>(<span class="at">y =</span> treatment, <span class="at">x =</span> <span class="dv">9</span>, <span class="at">label =</span> group))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-145-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-146-1.png" width="480" style="display: block; margin: auto;" /></p>
 <p>Excellent! This plot shows us, using the letters above each aquifer, which means are the same and which are different. If a letter is shared among the labels above two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
 <div id="kruskal-dunn-tests" class="section level3" number="10.4.2">
@@ -587,7 +588,7 @@ library(multcompView)
 <span id="cb101-20"><a href="comparing-means.html#cb101-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Aquifer code&quot;</span>) <span class="sc">+</span></span>
 <span id="cb101-21"><a href="comparing-means.html#cb101-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> groups_based_on_tukey, <span class="fu">aes</span>(<span class="at">y =</span> treatment, <span class="at">x =</span> <span class="dv">9</span>, <span class="at">label =</span> group)) <span class="sc">+</span></span>
 <span id="cb101-22"><a href="comparing-means.html#cb101-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-148-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-149-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Note that these groupings are different from those generated by ANOVA/Tukey.</p>
 </div>
 </div>
@@ -737,7 +738,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="576" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-151-1.png" width="576" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a publich chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 <!-- end -->

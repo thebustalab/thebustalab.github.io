@@ -194,7 +194,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="chemometrics.html"><a href="chemometrics.html"><i class="fa fa-check"></i>CHEMOMETRICS</a></li>
 <li class="chapter" data-level="6" data-path="clustering.html"><a href="clustering.html"><i class="fa fa-check"></i><b>6</b> clustering</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.1</b> exercises</a></li>
+<li class="chapter" data-level="6.1" data-path="clustering.html"><a href="clustering.html#theory"><i class="fa fa-check"></i><b>6.1</b> theory</a></li>
+<li class="chapter" data-level="6.2" data-path="clustering.html"><a href="clustering.html#exercises-3"><i class="fa fa-check"></i><b>6.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="PCA.html"><a href="PCA.html"><i class="fa fa-check"></i><b>7</b> pca</a>
 <ul>
@@ -209,7 +210,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>8</b> k-means</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
+<li class="chapter" data-level="8.1" data-path="k-means.html"><a href="k-means.html#theory-1"><i class="fa fa-check"></i><b>8.1</b> theory</a></li>
 <li class="chapter" data-level="8.2" data-path="k-means.html"><a href="k-means.html#exercises-5"><i class="fa fa-check"></i><b>8.2</b> exercises</a>
 <ul>
 <li class="chapter" data-level="8.2.1" data-path="k-means.html"><a href="k-means.html#question-1"><i class="fa fa-check"></i><b>8.2.1</b> Question 1</a></li>
@@ -224,7 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="9" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>9</b> models</a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-1"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
+<li class="chapter" data-level="9.1" data-path="models.html"><a href="models.html#theory-2"><i class="fa fa-check"></i><b>9.1</b> theory</a></li>
 <li class="chapter" data-level="9.2" data-path="models.html"><a href="models.html#exercises-6"><i class="fa fa-check"></i><b>9.2</b> exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>10</b> comparing means</a>
@@ -279,6 +280,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="clustering" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> clustering</h1>
+<div id="theory" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> theory</h2>
 <p>“Which of my samples are most closely related?”</p>
 <p>So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, and other questions, we need to use matrix analyses. For this, we will use <code>runMatrixAnalysis()</code>, a function that is loaded into your R Session when you run the source() command.</p>
 <p>Matrix analyses can be a bit difficult to set up. There are two things that we can do to help us with this: (i) we will use a template for <code>runMatrixAnalysis()</code> (see below) and (ii) it is <em>critical</em> that we think about our data in terms of <strong>samples</strong> and <strong>analytes</strong>. Let’s consider our Alaska lakes data set:</p>
@@ -342,17 +345,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb56-4"><a href="clustering.html#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tiplab</span>() <span class="sc">+</span></span>
 <span id="cb56-5"><a href="clustering.html#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tippoint</span>() <span class="sc">+</span></span>
 <span id="cb56-6"><a href="clustering.html#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-87-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-88-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
 <div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="clustering.html#cb57-1" aria-hidden="true" tabindex="-1"></a>AK_lakes_clustered <span class="sc">%&gt;%</span></span>
 <span id="cb57-2"><a href="clustering.html#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtree</span>() <span class="sc">+</span></span>
 <span id="cb57-3"><a href="clustering.html#cb57-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tiplab</span>(<span class="fu">aes</span>(<span class="at">label =</span> lake), <span class="at">offset =</span> <span class="dv">10</span>) <span class="sc">+</span></span>
 <span id="cb57-4"><a href="clustering.html#cb57-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tippoint</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="fu">aes</span>(<span class="at">fill =</span> park), <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
 <span id="cb57-5"><a href="clustering.html#cb57-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">400</span>))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-88-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="index_files/figure-html/unnamed-chunk-89-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Very nice!</p>
-<div id="exercises-3" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> exercises</h2>
+</div>
+<div id="exercises-3" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> exercises</h2>
 <p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: <code>algae_data</code> (which algae strains are most similar to each other?), <code>alaska_lake_data</code> (which lakes are most similar to each other?). and <code>solvents</code> (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>. For each of these, create (i) a tree diagram that shows how the “samples” in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as “additional_analyte_info”.</p>
 <p>For this assignment, you may find the <code>colnames()</code> function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:</p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="clustering.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(solvents)</span>
