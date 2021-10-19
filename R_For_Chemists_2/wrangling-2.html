@@ -224,14 +224,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>10</b> comparing means</a>
 <ul>
-<li class="chapter" data-level="10.1" data-path="comparing-means.html"><a href="comparing-means.html#getting-ready"><i class="fa fa-check"></i><b>10.1</b> Getting Ready</a>
+<li class="chapter" data-level="10.1" data-path="comparing-means.html"><a href="comparing-means.html#definitions"><i class="fa fa-check"></i><b>10.1</b> definitions</a>
 <ul>
-<li class="chapter" data-level="10.1.1" data-path="comparing-means.html"><a href="comparing-means.html#the-null-hypothesis"><i class="fa fa-check"></i><b>10.1.1</b> The null hypothesis</a></li>
-<li class="chapter" data-level="10.1.2" data-path="comparing-means.html"><a href="comparing-means.html#the-p-value"><i class="fa fa-check"></i><b>10.1.2</b> The p value</a></li>
-<li class="chapter" data-level="10.1.3" data-path="comparing-means.html"><a href="comparing-means.html#the-plan"><i class="fa fa-check"></i><b>10.1.3</b> The plan</a></li>
+<li class="chapter" data-level="10.1.1" data-path="comparing-means.html"><a href="comparing-means.html#test-selection"><i class="fa fa-check"></i><b>10.1.1</b> test selection</a></li>
 </ul></li>
-<li class="chapter" data-level="10.2" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>10.2</b> Two means</a></li>
-<li class="chapter" data-level="10.3" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>10.3</b> More than two means</a>
+<li class="chapter" data-level="10.2" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>10.2</b> two means</a></li>
+<li class="chapter" data-level="10.3" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>10.3</b> more than two means</a>
 <ul>
 <li class="chapter" data-level="10.3.1" data-path="comparing-means.html"><a href="comparing-means.html#anova-tukey-tests"><i class="fa fa-check"></i><b>10.3.1</b> ANOVA, Tukey tests</a></li>
 <li class="chapter" data-level="10.3.2" data-path="comparing-means.html"><a href="comparing-means.html#kruskal-dunn-tests"><i class="fa fa-check"></i><b>10.3.2</b> Kruskal, Dunn tests</a></li>
@@ -286,86 +284,86 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="subsetting" class="section level2" number="11.1">
 <h2><span class="header-section-number">11.1</span> subsetting</h2>
 <p>So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="wrangling-2.html#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at a single column (the third column)</span></span>
-<span id="cb100-2"><a href="wrangling-2.html#cb100-2" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[,<span class="dv">3</span>]</span>
-<span id="cb100-3"><a href="wrangling-2.html#cb100-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 1</span></span>
-<span id="cb100-4"><a href="wrangling-2.html#cb100-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    water_temp</span></span>
-<span id="cb100-5"><a href="wrangling-2.html#cb100-5" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt;</span></span>
-<span id="cb100-6"><a href="wrangling-2.html#cb100-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1       6.46</span></span>
-<span id="cb100-7"><a href="wrangling-2.html#cb100-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2       6.46</span></span>
-<span id="cb100-8"><a href="wrangling-2.html#cb100-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3       6.46</span></span>
-<span id="cb100-9"><a href="wrangling-2.html#cb100-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4       6.46</span></span>
-<span id="cb100-10"><a href="wrangling-2.html#cb100-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5       6.46</span></span>
-<span id="cb100-11"><a href="wrangling-2.html#cb100-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6       6.46</span></span>
-<span id="cb100-12"><a href="wrangling-2.html#cb100-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7       6.46</span></span>
-<span id="cb100-13"><a href="wrangling-2.html#cb100-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8       6.46</span></span>
-<span id="cb100-14"><a href="wrangling-2.html#cb100-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       6.46</span></span>
-<span id="cb100-15"><a href="wrangling-2.html#cb100-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10       6.46</span></span>
-<span id="cb100-16"><a href="wrangling-2.html#cb100-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span>
-<span id="cb100-17"><a href="wrangling-2.html#cb100-17" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at select columns:</span></span>
-<span id="cb100-18"><a href="wrangling-2.html#cb100-18" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[,<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>]</span>
-<span id="cb100-19"><a href="wrangling-2.html#cb100-19" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 4</span></span>
-<span id="cb100-20"><a href="wrangling-2.html#cb100-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    park  water_temp    pH element</span></span>
-<span id="cb100-21"><a href="wrangling-2.html#cb100-21" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  </span></span>
-<span id="cb100-22"><a href="wrangling-2.html#cb100-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 BELA        6.46  7.69 C      </span></span>
-<span id="cb100-23"><a href="wrangling-2.html#cb100-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 BELA        6.46  7.69 N      </span></span>
-<span id="cb100-24"><a href="wrangling-2.html#cb100-24" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 BELA        6.46  7.69 P      </span></span>
-<span id="cb100-25"><a href="wrangling-2.html#cb100-25" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 BELA        6.46  7.69 Cl     </span></span>
-<span id="cb100-26"><a href="wrangling-2.html#cb100-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 BELA        6.46  7.69 S      </span></span>
-<span id="cb100-27"><a href="wrangling-2.html#cb100-27" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 BELA        6.46  7.69 F      </span></span>
-<span id="cb100-28"><a href="wrangling-2.html#cb100-28" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 BELA        6.46  7.69 Br     </span></span>
-<span id="cb100-29"><a href="wrangling-2.html#cb100-29" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 BELA        6.46  7.69 Na     </span></span>
-<span id="cb100-30"><a href="wrangling-2.html#cb100-30" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 BELA        6.46  7.69 K      </span></span>
-<span id="cb100-31"><a href="wrangling-2.html#cb100-31" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 BELA        6.46  7.69 Ca     </span></span>
-<span id="cb100-32"><a href="wrangling-2.html#cb100-32" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span>
-<span id="cb100-33"><a href="wrangling-2.html#cb100-33" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at a single row (the second row)</span></span>
-<span id="cb100-34"><a href="wrangling-2.html#cb100-34" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[<span class="dv">2</span>,]</span>
-<span id="cb100-35"><a href="wrangling-2.html#cb100-35" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 7</span></span>
-<span id="cb100-36"><a href="wrangling-2.html#cb100-36" aria-hidden="true" tabindex="-1"></a><span class="do">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb100-37"><a href="wrangling-2.html#cb100-37" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb100-38"><a href="wrangling-2.html#cb100-38" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound</span></span>
-<span id="cb100-39"><a href="wrangling-2.html#cb100-39" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at select rows:</span></span>
-<span id="cb100-40"><a href="wrangling-2.html#cb100-40" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>,]</span>
-<span id="cb100-41"><a href="wrangling-2.html#cb100-41" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 4 × 7</span></span>
-<span id="cb100-42"><a href="wrangling-2.html#cb100-42" aria-hidden="true" tabindex="-1"></a><span class="do">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
-<span id="cb100-43"><a href="wrangling-2.html#cb100-43" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb100-44"><a href="wrangling-2.html#cb100-44" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
-<span id="cb100-45"><a href="wrangling-2.html#cb100-45" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
-<span id="cb100-46"><a href="wrangling-2.html#cb100-46" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span id="cb100-47"><a href="wrangling-2.html#cb100-47" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free</span></span>
-<span id="cb100-48"><a href="wrangling-2.html#cb100-48" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at just a single column, by name</span></span>
-<span id="cb100-49"><a href="wrangling-2.html#cb100-49" aria-hidden="true" tabindex="-1"></a>alaska_lake_data<span class="sc">$</span>pH</span>
-<span id="cb100-50"><a href="wrangling-2.html#cb100-50" aria-hidden="true" tabindex="-1"></a><span class="do">##   [1] 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 6.44 6.44 6.44 6.44</span></span>
-<span id="cb100-51"><a href="wrangling-2.html#cb100-51" aria-hidden="true" tabindex="-1"></a><span class="do">##  [16] 6.44 6.44 6.44 6.44 6.44 6.44 6.44 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45</span></span>
-<span id="cb100-52"><a href="wrangling-2.html#cb100-52" aria-hidden="true" tabindex="-1"></a><span class="do">##  [31] 7.45 7.45 7.45 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 8.04</span></span>
-<span id="cb100-53"><a href="wrangling-2.html#cb100-53" aria-hidden="true" tabindex="-1"></a><span class="do">##  [46] 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 7.82 7.82 7.82 7.82 7.82</span></span>
-<span id="cb100-54"><a href="wrangling-2.html#cb100-54" aria-hidden="true" tabindex="-1"></a><span class="do">##  [61] 7.82 7.82 7.82 7.82 7.82 7.82 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01</span></span>
-<span id="cb100-55"><a href="wrangling-2.html#cb100-55" aria-hidden="true" tabindex="-1"></a><span class="do">##  [76] 7.01 7.01 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 6.95 6.95</span></span>
-<span id="cb100-56"><a href="wrangling-2.html#cb100-56" aria-hidden="true" tabindex="-1"></a><span class="do">##  [91] 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 7.15 7.15 7.15 7.15 7.15 7.15</span></span>
-<span id="cb100-57"><a href="wrangling-2.html#cb100-57" aria-hidden="true" tabindex="-1"></a><span class="do">## [106] 7.15 7.15 7.15 7.15 7.15 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88</span></span>
-<span id="cb100-58"><a href="wrangling-2.html#cb100-58" aria-hidden="true" tabindex="-1"></a><span class="do">## [121] 6.88 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.88 6.88 6.88</span></span>
-<span id="cb100-59"><a href="wrangling-2.html#cb100-59" aria-hidden="true" tabindex="-1"></a><span class="do">## [136] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 7.22 7.22 7.22 7.22 7.22 7.22 7.22</span></span>
-<span id="cb100-60"><a href="wrangling-2.html#cb100-60" aria-hidden="true" tabindex="-1"></a><span class="do">## [151] 7.22 7.22 7.22 7.22 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98</span></span>
-<span id="cb100-61"><a href="wrangling-2.html#cb100-61" aria-hidden="true" tabindex="-1"></a><span class="do">## [166] 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 7.24 7.24 7.24 7.24</span></span>
-<span id="cb100-62"><a href="wrangling-2.html#cb100-62" aria-hidden="true" tabindex="-1"></a><span class="do">## [181] 7.24 7.24 7.24 7.24 7.24 7.24 7.24 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56</span></span>
-<span id="cb100-63"><a href="wrangling-2.html#cb100-63" aria-hidden="true" tabindex="-1"></a><span class="do">## [196] 6.56 6.56 6.56 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 6.87</span></span>
-<span id="cb100-64"><a href="wrangling-2.html#cb100-64" aria-hidden="true" tabindex="-1"></a><span class="do">## [211] 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87</span></span>
-<span id="cb100-65"><a href="wrangling-2.html#cb100-65" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at select columns by name</span></span>
-<span id="cb100-66"><a href="wrangling-2.html#cb100-66" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(alaska_lake_data, park, water_temp)</span>
-<span id="cb100-67"><a href="wrangling-2.html#cb100-67" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 2</span></span>
-<span id="cb100-68"><a href="wrangling-2.html#cb100-68" aria-hidden="true" tabindex="-1"></a><span class="do">##    park  water_temp</span></span>
-<span id="cb100-69"><a href="wrangling-2.html#cb100-69" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;      &lt;dbl&gt;</span></span>
-<span id="cb100-70"><a href="wrangling-2.html#cb100-70" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 BELA        6.46</span></span>
-<span id="cb100-71"><a href="wrangling-2.html#cb100-71" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 BELA        6.46</span></span>
-<span id="cb100-72"><a href="wrangling-2.html#cb100-72" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 BELA        6.46</span></span>
-<span id="cb100-73"><a href="wrangling-2.html#cb100-73" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 BELA        6.46</span></span>
-<span id="cb100-74"><a href="wrangling-2.html#cb100-74" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 BELA        6.46</span></span>
-<span id="cb100-75"><a href="wrangling-2.html#cb100-75" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 BELA        6.46</span></span>
-<span id="cb100-76"><a href="wrangling-2.html#cb100-76" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 BELA        6.46</span></span>
-<span id="cb100-77"><a href="wrangling-2.html#cb100-77" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 BELA        6.46</span></span>
-<span id="cb100-78"><a href="wrangling-2.html#cb100-78" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 BELA        6.46</span></span>
-<span id="cb100-79"><a href="wrangling-2.html#cb100-79" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 BELA        6.46</span></span>
-<span id="cb100-80"><a href="wrangling-2.html#cb100-80" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="wrangling-2.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at a single column (the third column)</span></span>
+<span id="cb102-2"><a href="wrangling-2.html#cb102-2" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[,<span class="dv">3</span>]</span>
+<span id="cb102-3"><a href="wrangling-2.html#cb102-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 1</span></span>
+<span id="cb102-4"><a href="wrangling-2.html#cb102-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    water_temp</span></span>
+<span id="cb102-5"><a href="wrangling-2.html#cb102-5" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt;</span></span>
+<span id="cb102-6"><a href="wrangling-2.html#cb102-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1       6.46</span></span>
+<span id="cb102-7"><a href="wrangling-2.html#cb102-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2       6.46</span></span>
+<span id="cb102-8"><a href="wrangling-2.html#cb102-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3       6.46</span></span>
+<span id="cb102-9"><a href="wrangling-2.html#cb102-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4       6.46</span></span>
+<span id="cb102-10"><a href="wrangling-2.html#cb102-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5       6.46</span></span>
+<span id="cb102-11"><a href="wrangling-2.html#cb102-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6       6.46</span></span>
+<span id="cb102-12"><a href="wrangling-2.html#cb102-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7       6.46</span></span>
+<span id="cb102-13"><a href="wrangling-2.html#cb102-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8       6.46</span></span>
+<span id="cb102-14"><a href="wrangling-2.html#cb102-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       6.46</span></span>
+<span id="cb102-15"><a href="wrangling-2.html#cb102-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10       6.46</span></span>
+<span id="cb102-16"><a href="wrangling-2.html#cb102-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span>
+<span id="cb102-17"><a href="wrangling-2.html#cb102-17" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at select columns:</span></span>
+<span id="cb102-18"><a href="wrangling-2.html#cb102-18" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[,<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb102-19"><a href="wrangling-2.html#cb102-19" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 4</span></span>
+<span id="cb102-20"><a href="wrangling-2.html#cb102-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    park  water_temp    pH element</span></span>
+<span id="cb102-21"><a href="wrangling-2.html#cb102-21" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  </span></span>
+<span id="cb102-22"><a href="wrangling-2.html#cb102-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 BELA        6.46  7.69 C      </span></span>
+<span id="cb102-23"><a href="wrangling-2.html#cb102-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 BELA        6.46  7.69 N      </span></span>
+<span id="cb102-24"><a href="wrangling-2.html#cb102-24" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 BELA        6.46  7.69 P      </span></span>
+<span id="cb102-25"><a href="wrangling-2.html#cb102-25" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 BELA        6.46  7.69 Cl     </span></span>
+<span id="cb102-26"><a href="wrangling-2.html#cb102-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 BELA        6.46  7.69 S      </span></span>
+<span id="cb102-27"><a href="wrangling-2.html#cb102-27" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 BELA        6.46  7.69 F      </span></span>
+<span id="cb102-28"><a href="wrangling-2.html#cb102-28" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 BELA        6.46  7.69 Br     </span></span>
+<span id="cb102-29"><a href="wrangling-2.html#cb102-29" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 BELA        6.46  7.69 Na     </span></span>
+<span id="cb102-30"><a href="wrangling-2.html#cb102-30" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 BELA        6.46  7.69 K      </span></span>
+<span id="cb102-31"><a href="wrangling-2.html#cb102-31" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 BELA        6.46  7.69 Ca     </span></span>
+<span id="cb102-32"><a href="wrangling-2.html#cb102-32" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span>
+<span id="cb102-33"><a href="wrangling-2.html#cb102-33" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at a single row (the second row)</span></span>
+<span id="cb102-34"><a href="wrangling-2.html#cb102-34" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[<span class="dv">2</span>,]</span>
+<span id="cb102-35"><a href="wrangling-2.html#cb102-35" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 7</span></span>
+<span id="cb102-36"><a href="wrangling-2.html#cb102-36" aria-hidden="true" tabindex="-1"></a><span class="do">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
+<span id="cb102-37"><a href="wrangling-2.html#cb102-37" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb102-38"><a href="wrangling-2.html#cb102-38" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound</span></span>
+<span id="cb102-39"><a href="wrangling-2.html#cb102-39" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at select rows:</span></span>
+<span id="cb102-40"><a href="wrangling-2.html#cb102-40" aria-hidden="true" tabindex="-1"></a>alaska_lake_data[<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>,]</span>
+<span id="cb102-41"><a href="wrangling-2.html#cb102-41" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 4 × 7</span></span>
+<span id="cb102-42"><a href="wrangling-2.html#cb102-42" aria-hidden="true" tabindex="-1"></a><span class="do">##   lake                park  water_temp    pH element mg_per_L element_type</span></span>
+<span id="cb102-43"><a href="wrangling-2.html#cb102-43" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb102-44"><a href="wrangling-2.html#cb102-44" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028 bound       </span></span>
+<span id="cb102-45"><a href="wrangling-2.html#cb102-45" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Devil_Mountain_Lake BELA        6.46  7.69 P          0     bound       </span></span>
+<span id="cb102-46"><a href="wrangling-2.html#cb102-46" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4   free        </span></span>
+<span id="cb102-47"><a href="wrangling-2.html#cb102-47" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62  free</span></span>
+<span id="cb102-48"><a href="wrangling-2.html#cb102-48" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at just a single column, by name</span></span>
+<span id="cb102-49"><a href="wrangling-2.html#cb102-49" aria-hidden="true" tabindex="-1"></a>alaska_lake_data<span class="sc">$</span>pH</span>
+<span id="cb102-50"><a href="wrangling-2.html#cb102-50" aria-hidden="true" tabindex="-1"></a><span class="do">##   [1] 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 6.44 6.44 6.44 6.44</span></span>
+<span id="cb102-51"><a href="wrangling-2.html#cb102-51" aria-hidden="true" tabindex="-1"></a><span class="do">##  [16] 6.44 6.44 6.44 6.44 6.44 6.44 6.44 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45</span></span>
+<span id="cb102-52"><a href="wrangling-2.html#cb102-52" aria-hidden="true" tabindex="-1"></a><span class="do">##  [31] 7.45 7.45 7.45 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 8.04</span></span>
+<span id="cb102-53"><a href="wrangling-2.html#cb102-53" aria-hidden="true" tabindex="-1"></a><span class="do">##  [46] 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 7.82 7.82 7.82 7.82 7.82</span></span>
+<span id="cb102-54"><a href="wrangling-2.html#cb102-54" aria-hidden="true" tabindex="-1"></a><span class="do">##  [61] 7.82 7.82 7.82 7.82 7.82 7.82 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01</span></span>
+<span id="cb102-55"><a href="wrangling-2.html#cb102-55" aria-hidden="true" tabindex="-1"></a><span class="do">##  [76] 7.01 7.01 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 6.95 6.95</span></span>
+<span id="cb102-56"><a href="wrangling-2.html#cb102-56" aria-hidden="true" tabindex="-1"></a><span class="do">##  [91] 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 7.15 7.15 7.15 7.15 7.15 7.15</span></span>
+<span id="cb102-57"><a href="wrangling-2.html#cb102-57" aria-hidden="true" tabindex="-1"></a><span class="do">## [106] 7.15 7.15 7.15 7.15 7.15 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88</span></span>
+<span id="cb102-58"><a href="wrangling-2.html#cb102-58" aria-hidden="true" tabindex="-1"></a><span class="do">## [121] 6.88 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.88 6.88 6.88</span></span>
+<span id="cb102-59"><a href="wrangling-2.html#cb102-59" aria-hidden="true" tabindex="-1"></a><span class="do">## [136] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 7.22 7.22 7.22 7.22 7.22 7.22 7.22</span></span>
+<span id="cb102-60"><a href="wrangling-2.html#cb102-60" aria-hidden="true" tabindex="-1"></a><span class="do">## [151] 7.22 7.22 7.22 7.22 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98</span></span>
+<span id="cb102-61"><a href="wrangling-2.html#cb102-61" aria-hidden="true" tabindex="-1"></a><span class="do">## [166] 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 7.24 7.24 7.24 7.24</span></span>
+<span id="cb102-62"><a href="wrangling-2.html#cb102-62" aria-hidden="true" tabindex="-1"></a><span class="do">## [181] 7.24 7.24 7.24 7.24 7.24 7.24 7.24 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56</span></span>
+<span id="cb102-63"><a href="wrangling-2.html#cb102-63" aria-hidden="true" tabindex="-1"></a><span class="do">## [196] 6.56 6.56 6.56 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 6.87</span></span>
+<span id="cb102-64"><a href="wrangling-2.html#cb102-64" aria-hidden="true" tabindex="-1"></a><span class="do">## [211] 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87</span></span>
+<span id="cb102-65"><a href="wrangling-2.html#cb102-65" aria-hidden="true" tabindex="-1"></a><span class="co"># To look at select columns by name</span></span>
+<span id="cb102-66"><a href="wrangling-2.html#cb102-66" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(alaska_lake_data, park, water_temp)</span>
+<span id="cb102-67"><a href="wrangling-2.html#cb102-67" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 2</span></span>
+<span id="cb102-68"><a href="wrangling-2.html#cb102-68" aria-hidden="true" tabindex="-1"></a><span class="do">##    park  water_temp</span></span>
+<span id="cb102-69"><a href="wrangling-2.html#cb102-69" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span id="cb102-70"><a href="wrangling-2.html#cb102-70" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 BELA        6.46</span></span>
+<span id="cb102-71"><a href="wrangling-2.html#cb102-71" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 BELA        6.46</span></span>
+<span id="cb102-72"><a href="wrangling-2.html#cb102-72" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 BELA        6.46</span></span>
+<span id="cb102-73"><a href="wrangling-2.html#cb102-73" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 BELA        6.46</span></span>
+<span id="cb102-74"><a href="wrangling-2.html#cb102-74" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 BELA        6.46</span></span>
+<span id="cb102-75"><a href="wrangling-2.html#cb102-75" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 BELA        6.46</span></span>
+<span id="cb102-76"><a href="wrangling-2.html#cb102-76" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 BELA        6.46</span></span>
+<span id="cb102-77"><a href="wrangling-2.html#cb102-77" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 BELA        6.46</span></span>
+<span id="cb102-78"><a href="wrangling-2.html#cb102-78" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 BELA        6.46</span></span>
+<span id="cb102-79"><a href="wrangling-2.html#cb102-79" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 BELA        6.46</span></span>
+<span id="cb102-80"><a href="wrangling-2.html#cb102-80" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
 <!-- end -->
 <!-- start writing -->
 </div>

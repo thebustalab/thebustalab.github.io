@@ -224,14 +224,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="10" data-path="comparing-means.html"><a href="comparing-means.html"><i class="fa fa-check"></i><b>10</b> comparing means</a>
 <ul>
-<li class="chapter" data-level="10.1" data-path="comparing-means.html"><a href="comparing-means.html#getting-ready"><i class="fa fa-check"></i><b>10.1</b> Getting Ready</a>
+<li class="chapter" data-level="10.1" data-path="comparing-means.html"><a href="comparing-means.html#definitions"><i class="fa fa-check"></i><b>10.1</b> definitions</a>
 <ul>
-<li class="chapter" data-level="10.1.1" data-path="comparing-means.html"><a href="comparing-means.html#the-null-hypothesis"><i class="fa fa-check"></i><b>10.1.1</b> The null hypothesis</a></li>
-<li class="chapter" data-level="10.1.2" data-path="comparing-means.html"><a href="comparing-means.html#the-p-value"><i class="fa fa-check"></i><b>10.1.2</b> The p value</a></li>
-<li class="chapter" data-level="10.1.3" data-path="comparing-means.html"><a href="comparing-means.html#the-plan"><i class="fa fa-check"></i><b>10.1.3</b> The plan</a></li>
+<li class="chapter" data-level="10.1.1" data-path="comparing-means.html"><a href="comparing-means.html#test-selection"><i class="fa fa-check"></i><b>10.1.1</b> test selection</a></li>
 </ul></li>
-<li class="chapter" data-level="10.2" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>10.2</b> Two means</a></li>
-<li class="chapter" data-level="10.3" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>10.3</b> More than two means</a>
+<li class="chapter" data-level="10.2" data-path="comparing-means.html"><a href="comparing-means.html#two-means"><i class="fa fa-check"></i><b>10.2</b> two means</a></li>
+<li class="chapter" data-level="10.3" data-path="comparing-means.html"><a href="comparing-means.html#more-than-two-means"><i class="fa fa-check"></i><b>10.3</b> more than two means</a>
 <ul>
 <li class="chapter" data-level="10.3.1" data-path="comparing-means.html"><a href="comparing-means.html#anova-tukey-tests"><i class="fa fa-check"></i><b>10.3.1</b> ANOVA, Tukey tests</a></li>
 <li class="chapter" data-level="10.3.2" data-path="comparing-means.html"><a href="comparing-means.html#kruskal-dunn-tests"><i class="fa fa-check"></i><b>10.3.2</b> Kruskal, Dunn tests</a></li>
@@ -301,24 +299,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Avoid abbreviations, but if you do use any, specify what they mean.</li>
 </ol>
 <p>An example:</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="writing.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb101-2"><a href="writing.html#cb101-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, element_type <span class="sc">==</span> <span class="st">&quot;bound&quot;</span>),</span>
-<span id="cb101-3"><a href="writing.html#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> lake, <span class="at">x =</span> mg_per_L)</span>
-<span id="cb101-4"><a href="writing.html#cb101-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb101-5"><a href="writing.html#cb101-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(</span>
-<span id="cb101-6"><a href="writing.html#cb101-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">fill =</span> element),</span>
-<span id="cb101-7"><a href="writing.html#cb101-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>,</span>
-<span id="cb101-8"><a href="writing.html#cb101-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span></span>
-<span id="cb101-9"><a href="writing.html#cb101-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb101-10"><a href="writing.html#cb101-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(park<span class="sc">~</span>., <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">space =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
-<span id="cb101-11"><a href="writing.html#cb101-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb101-12"><a href="writing.html#cb101-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>) <span class="sc">+</span></span>
-<span id="cb101-13"><a href="writing.html#cb101-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Lake Name&quot;</span>) <span class="sc">+</span></span>
-<span id="cb101-14"><a href="writing.html#cb101-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Abundance mg/L)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb101-15"><a href="writing.html#cb101-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb101-16"><a href="writing.html#cb101-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
-<span id="cb101-17"><a href="writing.html#cb101-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-147-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="writing.html#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb103-2"><a href="writing.html#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, element_type <span class="sc">==</span> <span class="st">&quot;bound&quot;</span>),</span>
+<span id="cb103-3"><a href="writing.html#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> lake, <span class="at">x =</span> mg_per_L)</span>
+<span id="cb103-4"><a href="writing.html#cb103-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb103-5"><a href="writing.html#cb103-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(</span>
+<span id="cb103-6"><a href="writing.html#cb103-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">fill =</span> element),</span>
+<span id="cb103-7"><a href="writing.html#cb103-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>,</span>
+<span id="cb103-8"><a href="writing.html#cb103-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb103-9"><a href="writing.html#cb103-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb103-10"><a href="writing.html#cb103-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(park<span class="sc">~</span>., <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">space =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb103-11"><a href="writing.html#cb103-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb103-12"><a href="writing.html#cb103-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>) <span class="sc">+</span></span>
+<span id="cb103-13"><a href="writing.html#cb103-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Lake Name&quot;</span>) <span class="sc">+</span></span>
+<span id="cb103-14"><a href="writing.html#cb103-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Abundance mg/L)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb103-15"><a href="writing.html#cb103-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb103-16"><a href="writing.html#cb103-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb103-17"><a href="writing.html#cb103-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-150-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a publich chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve.
 <!-- end --></p>
 <!-- start Links -->
