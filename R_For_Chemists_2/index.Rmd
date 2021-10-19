@@ -2036,7 +2036,7 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/h
 
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
 
-I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, we are going to use a new data set, `hawaii_aquifers`. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
+I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose that you are an analytical chemist on Hawaii that is studying the chemistry of the island's aquifers. you have the data set `hawaii_aquifers`. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
 
 ```{r}
 hawaii_aquifers
@@ -2068,22 +2068,21 @@ library(multcompView)
 
 1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
 
-2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference bewteen the means (hence the name "null"). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of magnesium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of magnesium.
+2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference bewteen the means (hence the name "null"). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.
 
-3. **the p value**: The p value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the p value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure magnesium levels in 10% of the wells that access each aquifer and find that aquifer_1 has magnesium levels of 14 +/- 2 and aquifer_2 has magnesium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same magneisum levels (i.e. assuming the null hypothesis is true), there is a 4% chance that we would get the measured values that we did. In other words, IF the aquifers have the same magnesium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
+3. **the *p* value**: The *p* value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the *p* value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same magneisum levels (i.e. assuming the null hypothesis is true), there is a 4% chance that we would get the measured values that we did. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
 
-### test selection
+Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
-There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are 
+## test selection
 
+There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/stats.png', dpi = NA)
 ```
 
-## two means
-
-When we are comparing two means, we need to first determine what kind of statistical test we can use on our data. If (i) our data can be modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use a more powerful test (i.e. a test that will be more likely to detect a difference in means, assuming one exists).
+When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
 
 We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
 
@@ -2113,7 +2112,7 @@ K_data_1_2 %>%
   ggplot(aes(x = abundance)) + 
     geom_histogram(bins = 30) +
     facet_wrap(~aquifer_code) +
-    geom_density(aes(y = ..density..*10), colour = "blue")
+    geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
@@ -2131,7 +2130,11 @@ K_data_1_2 %>%
   levene_test(abundance ~ aquifer_code)
 ```
 
-The p-value from this test is 0.596! This means that their variances are not significantly different. Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
+The p-value from this test is 0.596! This means that their variances are not significantly different.
+
+## two means
+
+Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
 ```{r}
 K_data_1_2 %>%
@@ -2157,7 +2160,7 @@ K_data <- hawaii_aquifers %>%
 
 K_data
 
-ggplot(data = K_data, aes(x = aquifer_code, y = abundance)) +
+ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
@@ -2186,7 +2189,7 @@ K_data %>%
   levene_test(abundance ~ aquifer_code)
 ```
 
-Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the means are certainly different from one another (Levene test p = 0.002).
+Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the variances are certainly different from one another (Levene test p = 0.002).
 
 Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
 
@@ -2209,7 +2212,6 @@ K_data %>%
 Using the output from our tukey test, we can determine which means are similar. We can do this using the p_groups function:
 
 ```{r, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 groups_based_on_tukey <- K_data %>%
   tukey_hsd(abundance ~ aquifer_code) %>%
   p_groups()
@@ -2218,11 +2220,11 @@ groups_based_on_tukey
 
 We can use the output from `p_groups` to annotate our plot:
 
-```{r}
-ggplot(data = K_data, aes(x = aquifer_code, y = abundance)) +
+```{r, fig.width = 5}
+ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
   geom_point(color = "maroon", alpha = 0.6, size = 3) +
-  geom_text(data = groups_based_on_tukey, aes(x = treatment, y = 9, label = group))
+  geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
 Excellent! This plot shows us, using the letters above each aquifer, which means are the same and which are different. If a letter is shared among the labels above two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
@@ -2245,25 +2247,30 @@ K_data %>%
 
 This gives us adjusted p-values for all pairwise comparisons. Once again, we can use `p_groups()` to give us a compact letter display for each group, which can then be used to annotate the plot:
 
-```{r}
+```{r, fig.width = 6}
 groups_based_on_tukey <- K_data %>%
   dunn_test(abundance ~ aquifer_code) %>%
   p_groups()
 groups_based_on_tukey
 
-ggplot(data = K_data, aes(x = aquifer_code, y = abundance)) +
+ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
-  geom_point(color = "maroon", alpha = 0.6, size = 3) +
-  geom_text(data = groups_based_on_tukey, aes(x = treatment, y = 9, label = group))
+  geom_point(color = "black", alpha = 0.4, size = 2) +
+  scale_x_continuous(name = "Potassium abundance", breaks = seq(0,10,1)) +
+  scale_y_discrete(name = "Aquifer code") +
+  geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group)) +
+  theme_bw()
 ```
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
-## Further reading
+## further reading
 
 For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
 
 For more on parametric versus non-parametric tests: [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/)
+
+For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
 
 <!-- end -->
 
