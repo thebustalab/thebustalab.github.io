@@ -2268,17 +2268,17 @@ K_data %>%
 This gives us adjusted p-values for all pairwise comparisons. Once again, we can use `p_groups()` to give us a compact letter display for each group, which can then be used to annotate the plot:
 
 ```{r, fig.width = 6}
-groups_based_on_tukey <- K_data %>%
+groups_based_on_dunn <- K_data %>%
   dunn_test(abundance ~ aquifer_code) %>%
   p_groups()
-groups_based_on_tukey
+groups_based_on_dunn
 
 ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
   geom_point(color = "black", alpha = 0.4, size = 2) +
   scale_x_continuous(name = "Potassium abundance", breaks = seq(0,10,1)) +
   scale_y_discrete(name = "Aquifer code") +
-  geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group)) +
+  geom_text(data = groups_based_on_dunn, aes(y = treatment, x = 9, label = group)) +
   theme_bw()
 ```
 
@@ -2308,6 +2308,358 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- end -->
 
+<!-- start Mid Term Exam -->
+
+# Mid Term Exam
+
+For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
+
+The person that previously worked in your postion, Mr. Porter, recently completed a chemical analysis of the major ingredients that Fireside Brewing uses. However, Mr. Porter didn't have time to finish analyzing the data that was collected.
+
+At Fireside Brewing, your boss is Mrs. Pilsner, a woman who has worked in the brewing industry for decades and is a certified cicerone (a professional beer taster). As an expert taster, she is familiar with all the classes of compounds in beer ingredients and their corresponding flavors, but she is not an expert in chemistry or data analysis.
+
+For your first task in this new position, Mrs. Pilsner wants you to finish analyzing Mr. Porter's data. Mrs. Pilsner has not given you specific instructions on how to analyze the data, rather, she has a set of specific questions that she wants answered so that she can improve Fireside Brewing. Mr. Porter left some notes about how to perform the analyses, but, since he was close to retirement and spent too much time riding his bicycle and drinking beer, the notes are not complete. Use Mr. Porter's incomplete notes to help you answer the questions below.
+
+**Answer each question with both (i) at least one high quality plot that provides a visual answer and (ii) a caption that provides a written answer. If a question necessitates an answer that is difficult to show with a plot (for example, a single *p* value), include that answer in the caption.**
+
+Write your answers in an R Markdown document, compile the document so that everything is shown: the code, your writing, and the plots. Submit the compiled pdf on Canvas.
+
+*note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/plot_quality.pdf', dpi = NA)
+```
+
+
+## Data set 1: beer_components
+
+Load this data set by running our source() command. It will then be present in your environment as `beer_components`.
+
+### Question 1:
+
+Mrs. Pilsner: *We are having problems with our Pale Ale. Its flavor is not consistent from batch to batch. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf group_by, summarize, plot
+beer_components %>%
+    group_by(ingredient, analyte_class) %>%
+    summarize(mean_abundance = mean(abundance), stdev = sd(abundance)) %>%
+    ggplot(aes(x = analyte_class, y = mean_abundance)) + 
+      geom_point() +
+      geom_errorbar(aes(ymin = mean_abundance - stdev, ymax = mean_abundance + stdev), width = 0.5) +
+      facet_grid(.~ingredient) +
+      coord_flip() +
+      scale_y_continuous(limits = c(-5000, 7000), breaks = seq(-4000, 5000, 3000)) +
+      theme_linedraw()
+```
+
+### Question 2:
+
+Mrs. Pilsner: *We are experimenting with a new beer that uses a 1:1:1 mixture of all the hop products that we use (hops, hop oil, and hop extract). I want to try to predict what type of flavor profile this beer might have. Using Mr. Porter's data for those three ingredients (hops, hop oil, and hop extract), can you predict what the relative abundance of each analyte class will be in the mixture?*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf filter, group_by, summarize, plot
+beer_components %>%
+    filter(ingredient %in% c("hop extract", "hops", "hop oil")) %>%
+    group_by(analyte_class) %>%
+    summarize(sum = sum(abundance)) %>%
+    ggplot(aes(x = analyte_class, y = sum)) +
+      geom_col(aes(fill = analyte_class), color = "black") +
+      geom_text(aes(y = sum + 20, label = floor(sum))) +
+      coord_flip() +
+      theme_linedraw() +
+      scale_y_continuous(expand = c(0,0), limits = c(0,200000), name = "Abundance") +
+      scale_x_discrete(name = "Analyte Class") +
+      scale_fill_brewer(palette = "Paired")
+```
+
+### Question 3:
+
+Mrs. Pilsner: *I recently heard a rumor from other cicerones that, compared to other types of barley, barley containing significantly more 3-methylbutanal than all other aldehydes leads to a maltier flavor. Statistically speaking, does our barley currently contain significantly more 3-methylbutanal than all other aldehydes?*
+
+note from Mr. Porter: *Reminder to self: before conducting statistical tests, filter out analytes whose abundance == 0 in all five replicates, otherwise the tests will be biased.*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf filter, plot, stats
+beer_components %>%
+  filter(ingredient %in% c("barley")) %>%
+  filter(analyte_class %in% c("Aldehyde")) %>%
+  ggplot(aes(x = analyte, y = abundance)) +
+    geom_boxplot() +
+    geom_point(size = 1, alpha = 1) +
+    coord_flip()
+
+beer_thing <- beer_components %>%
+  filter(ingredient %in% c("barley")) %>%
+  filter(analyte_class %in% c("Aldehyde")) %>%
+  filter(abundance != 0) ### Mr. Porter note
+
+  ggplot() +
+    geom_jitter(
+      data = beer_thing, aes(x = analyte, y = log(abundance), fill = analyte),
+      size = 3, alpha = 0.6, shape = 21, color = "black"
+    ) +
+    geom_text(data = p_data, aes(x = treatment, y = 6, label = group)) +
+    coord_flip() +
+    theme_linedraw() +
+    scale_x_discrete(name = "Analyte") +
+    scale_y_continuous(name = "Abundance (log scale)", breaks = seq(1,6,1), limits = c(1,6))
+
+  beer_thing %>%
+  group_by(analyte) %>%
+  shapiro_test(abundance)
+  
+  beer_thing %>%
+  levene_test(abundance ~ analyte)
+
+  # anova_test(abundance ~ analyte)
+  p_data <- beer_thing %>%
+  tukey_hsd(abundance ~ analyte) %>%
+  p_groups()
+```
+
+### Question 4:
+
+Mrs. Pilsner: *When I taste our beers made with hop extract, they don't taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do all our different ingredients cluster according to their average chemical composition?*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf group_by_summarize, pca
+some_beer_components <- beer_components %>%
+  group_by(ingredient, analyte) %>%
+  summarize(abundance = mean(abundance))
+
+beer_analyzed <- runMatrixAnalysis(
+  data = some_beer_components, # the data set to work on
+  analysis = c("pca"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = "analyte", # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = "abundance", # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = NULL, # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = c("ingredient"), # a column with information about the sample (i.e. contents from the test tube's label)
+  transpose = FALSE,
+  kmeans = c("auto"),
+  na_replacement = c("none"),
+  output_format = c("wide")
+)
+
+ggplot(beer_analyzed, size = 1) +
+  geom_mark_ellipse(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster, label = kmeans_cluster), alpha = 0.2) +
+  geom_jitter(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 4, alpha = 0.8) +
+  geom_label_repel(aes(x = Dim.1, y = Dim.2, label = sample_unique_ID)) +
+  scale_x_continuous(limits = c(-10, 15), name = "Dimension 1") +
+  scale_y_continuous(limits = c(-15, 15), name = "Dimension 2") +
+  theme_classic() +
+  guides(fill = "none")
+```
+
+### Question 5 [extra credit]:
+
+Mrs. Pilsner: *We are trying to reduce the price of our India Session Ale by replacing its hops with either hop extract or hop oil. Chemically speaking, which is more similar to hops - hop extract, or hop oil?*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf filter, hclust, ggtree
+some_beer_components <- filter(beer_components, ingredient %in% c("hops", "hop extract", "hop oil"))
+beer_analyzed <- runMatrixAnalysis(
+  data = some_beer_components, # the data set to work on
+  analysis = c("hclust"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = "analyte", # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = "abundance", # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = NULL, # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = c("analyte_class", "analyte_odor"), # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = c("ingredient", "replicate"), # a column with information about the sample (i.e. contents from the test tube's label)
+  transpose = FALSE,
+  kmeans = c("none"),
+  na_replacement = c("drop"),
+  output_format = c("long")
+)
+ggtree(beer_analyzed, size = 1) +
+  geom_tiplab(aes(label = ingredient), offset = 2500, align = TRUE, hjust = 1, geom = "label", label.size = 0) +
+  geom_tippoint(aes(fill = ingredient), shape = 21, color = "black", size = 4) +
+  scale_fill_brewer(palette = "Set1") +
+  guides(fill = "none", color = "none") +
+  theme_void() +
+  scale_x_continuous(limits = c(0, 15000))
+```
+
+## Data set 2: hops_components
+
+After you answer all Mrs. Pilsner's questions about Mr. Porter's data, Mrs. Pilsner tells you about another data set that Fireside Brewing has. This data set was collected by Mr. Porter's intern, an undergraduate named Ms. Amber Stout. Amber measured the chemical composition of many different hop varieties. Please answer Mrs. Pilsner's questions below about the hops data in the same way you did for the questions above.
+
+To load this second data set, the hops data set, ensure you have run our source() command. It will then be present in your environment as `hops_components`.
+
+### Question 1
+
+Mrs. Pilsner: *There are three major types of hops - aroma hops, dry hopping hops, and bittering hops. We had an emergency scenario last month where we ran out of bittering hops due to covid-related supply line problems. We needed to substitute either aroma hops or dry hopping hops into the recipe in place of bittering hops. At the time, we used aroma hops. Was that a good decision? If that emergency were to arise again, should we substitute aroma hops again, or should we use dry hopping hops instead? As much as possible, we would want the product from the emergency-substituted batch to be as similar to the normal batch made with bittering hops.*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf group_by_summarize, hclust
+
+some_hops_components <- hops_components %>%
+  group_by(hop_brewing_usage) %>%
+  summarize(
+    total_oil = mean(total_oil),
+    alpha_acids = mean(alpha_acids),
+    beta_acids = mean(beta_acids),
+    humulene = mean(humulene),
+    myrcene = mean(myrcene),
+    humulone = mean(humulone),
+    caryophyllene = mean(caryophyllene),
+    farnesene = mean(farnesene)
+  )
+
+beer_analyzed <- runMatrixAnalysis(
+  data = some_hops_components, # the data set to work on
+  analysis = c("hclust"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = colnames(some_hops_components)[2:9], # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = colnames(some_hops_components)[1], # a column with information about the sample (i.e. contents from the test tube's label)
+  transpose = FALSE,
+  kmeans = c("none"), ## Mr. Pilsner note (kmeans cannot be used for sample size of 3)
+  na_replacement = c("none"),
+  output_format = c("wide")
+)
+
+ggtree(beer_analyzed) +
+  geom_tiplab() +
+  geom_tippoint(aes(fill = sample_unique_ID), shape = 21)
+```
+
+### Question 2:
+
+Mrs. Pilsner: *We buy our hops from many different countries of origin. I've always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the chemical profiles of other countries' hops (as a proxy for flavor profiles)? What chemical(s) largely drive this difference?*
+
+note from Mr. Porter: *note to self... by reducing the dimensionality of the chemical dataset to two dimensions, it should be possible to draw ellipses that encapsulate the chemical profile (as a proxy for "flavor profile") of each country's hops.*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf pca, pca ord
+# library(ggforce)
+
+# hops_components <- filter(hops_components, hop_origin %in% c("USA", "Germany"))
+
+beer_analyzed <- runMatrixAnalysis(
+  data = hops_components, # the data set to work on
+  analysis = c("pca"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = colnames(hops_components)[5:12], # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = colnames(hops_components)[1:4], # a column with information about the sample (i.e. contents from the test tube's label)
+  transpose = FALSE,
+  kmeans = c("auto"),
+  na_replacement = c("none"),
+  output_format = c("wide")
+)
+
+plot1 <- ggplot(beer_analyzed) +
+  geom_point(
+    aes(x = Dim.1, y = Dim.2, fill = hop_origin),
+    size = 4, shape = 21, alpha = 0.8
+  ) +
+  scale_x_continuous(limits = c(-4,4)) +
+  geom_mark_ellipse(aes(x = Dim.1, y = Dim.2, fill = hop_origin, label = hop_origin), alpha = 0.2) +
+  scale_y_continuous(limits = c(-6,5)) +
+  scale_fill_brewer(palette = "Set1") +
+  geom_text(aes(x = Dim.1, y = Dim.2, fill = hop_origin, label = hop_variety)) +
+  theme_bw() +
+  guides(fill = "none")
+
+# library(ggforce)
+
+beer_analyzed2 <- runMatrixAnalysis(
+  data = hops_components, # the data set to work on
+  analysis = c("pca_ord"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = colnames(hops_components)[5:12], # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = colnames(hops_components)[1:4], # a column with information about the sample (i.e. contents from the test tube's label)
+  transpose = FALSE,
+  kmeans = c("auto"),
+  na_replacement = c("none"),
+  output_format = c("wide")
+)
+
+plot2 <- ggplot(beer_analyzed2) +
+  geom_segment(aes(xend = Dim.1, yend = Dim.2, x = 0, y = 0)) +
+  geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_text_repel(aes(x = Dim.1, y = Dim.2, label = analyte)) +
+  scale_x_continuous(limits = c(-1.2,1.2)) +
+  scale_y_continuous(limits = c(-1.2,1.2)) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_bw()
+
+plot3 <- ggplot(beer_analyzed) +
+  geom_point(aes(x = hop_origin, y = beta_acids))
+
+hops_components$beta_acids
+
+cowplot::plot_grid(plot1, plot2, plot3, nrow = 1, rel_widths = c(1,1,0.4))
+```
+
+### Question 3:
+
+Mrs. Pilsner: *If we wanted to prepare our own hop oil, which type of hops should we use - aroma hops, bittering hops, or dry hopping hops? In other words, is there a statistical difference in the amount of total oil that each type of hops has? We want to pick the type of hops that would maximize our oil yield.*
+
+Mr. Porter: *Note to self: here we are **not** interested in comparing `total_oil` from different `hop_varieties`, but instead in comparing `total_oil` from hops with different `hop_brewing_usage`.*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+#asdfasdf group_by, stats
+hops_components %>%
+  ggplot(aes(x = hop_brewing_usage, y = total_oil)) +
+  geom_boxplot()
+
+hops_components %>%
+  group_by(hop_brewing_usage) %>%
+  shapiro_test(total_oil)
+
+hops_components %>%
+  kruskal_test(total_oil ~ hop_brewing_usage)
+
+dat <- hops_components %>%
+  dunn_test(total_oil ~ hop_brewing_usage) %>%
+  p_groups()
+
+ggplot(data = hops_components,aes(x = hop_brewing_usage, y = total_oil)) +
+  geom_boxplot() +
+  geom_text(data = dat, aes(x = treatment, y = 3, label = group))
+```
+
+### Question 4:
+
+Mrs. Pilsner: *Cascade hops are a very popular variety, and also a variety we use in producing our flagship IPA. However, due to COVID-19, cascade hops are on back order for six months. What style of hop is most similar to cascade? I would like to order it to use in place of cascade hops for the batch of IPA we will brew two weeks from now.*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+beer_analyzed <- runMatrixAnalysis(
+  data = hops_components, # the data set to work on
+  analysis = c("hclust"), # the analysis to conduct
+  column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
+  column_w_values_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
+  columns_w_values_for_single_analyte = colnames(hops_components)[5:12], # a column with quantities measured for a single analyte
+  columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
+  columns_w_sample_ID_info = colnames(hops_components)[1:4], # a column with information about the sample (i.e. contents from the test tube's label)
+  transpose = FALSE,
+  kmeans = c("none"),
+  na_replacement = c("none"),
+  output_format = c("wide")
+)
+ggtree(beer_analyzed) + geom_tiplab()
+```
+
+### Question 5 [extra credit]:
+
+Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?*
+
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
+mutate(hops_components, acids = alpha_acids + beta_acids) %>%
+  ggplot(aes(x = hop_variety, y = acids)) + geom_col() +
+  coord_flip()
+```
+
+<!-- end -->
+
+
 <!-- start wrangling -->
 <!-- # wrangling 2
 
@@ -2334,7 +2686,7 @@ alaska_lake_data$pH
 # To look at select columns by name
 select(alaska_lake_data, park, water_temp)
 
-``` 
+```
 <!-- end -->
 
 <!-- start writing -->

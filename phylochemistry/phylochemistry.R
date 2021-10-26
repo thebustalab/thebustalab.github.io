@@ -90,6 +90,13 @@
         summarize <- dplyr::summarize
         filter <- dplyr::filter
 
+    ## Set up lookups
+
+        ## Phred_ascii_33 lookup
+            phred33_lookup <- data.frame(rbind(
+                c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89")
+            ))
+
 ###### Datasets
 
     if (exists("MS_library")) { # You can choose to load MS library if you define MS_library = TRUE before running source()
@@ -1776,7 +1783,7 @@
                                     monolist, 
                                     subset, 
                                     alignment_directory_path, 
-                                    sequences_of_interest_directory_path, 
+                                    sequences_of_interest_directory_path,
                                     input_sequence_type = c("nucl", "amin"), 
                                     mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
                                     base_fragment = NULL
@@ -2168,11 +2175,6 @@
                 output <- list()
                 total_read_number <- 0
 
-                ## Phred_ascii_33 lookup
-                lookup <- data.frame(rbind(
-                    c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89")
-                ))
-
                 for ( fastq in 1:length(fastqs) ) {
 
                     cat(paste("Analyzing file ", fastqs[fastq], "\n", sep = ""))
@@ -2196,9 +2198,9 @@
 
                         total_read_number <- total_read_number + 1
 
-                        read_score <- mean(as.numeric(lookup$X2[match(
+                        read_score <- mean(as.numeric(phred33_lookup$X2[match(
                                             strsplit(as.character(unlist(data[4,])), split = "")[[1]],
-                                            lookup$X1
+                                            phred33_lookup$X1
                                         )]))
                         read_info <- data.frame(
                             # read_name = 
