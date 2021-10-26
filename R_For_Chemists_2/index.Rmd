@@ -2310,7 +2310,8 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- start Mid Term Exam -->
 
-# Mid Term Exam
+# {-}
+# MIDTERM EXAM {-}
 
 For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
 
@@ -2327,7 +2328,7 @@ Write your answers in an R Markdown document, compile the document so that every
 *note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/plot_quality.pdf', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/plot_quality.png', dpi = NA)
 ```
 
 
