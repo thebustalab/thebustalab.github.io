@@ -2454,7 +2454,7 @@
                     
                     if ( file.exists(paths_to_peak_monolists[i]) ) {
     	               
-                       peak_list[[i]] <- readMonolist(paths_to_peak_monolists[i])
+                       peak_list[[i]] <- readMonolist(paths_to_peak_monolists[i])[,1:9]
                     
                     }
     	        
