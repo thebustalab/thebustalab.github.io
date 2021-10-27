@@ -2328,7 +2328,7 @@ Write your answers in an R Markdown document, compile the document so that every
 *note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/plot_quality.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/plot_quality.jpg', dpi = NA)
 ```
 
 
