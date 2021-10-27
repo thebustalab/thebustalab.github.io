@@ -2451,10 +2451,16 @@
 
     	        peak_list <- list()
     	        for (i in 1:length(paths_to_peak_monolists)) {
+
+                    # print(i)
                     
                     if ( file.exists(paths_to_peak_monolists[i]) ) {
-    	               
-                       peak_list[[i]] <- readMonolist(paths_to_peak_monolists[i])[,1:9]
+
+                        data <- readMonolist(paths_to_peak_monolists[i])
+
+                        if (dim(data)[1] > 0) {
+                            peak_list[[i]] <- data[,1:9]
+                        }
                     
                     }
     	        
