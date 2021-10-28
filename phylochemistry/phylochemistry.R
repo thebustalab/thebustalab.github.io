@@ -2451,8 +2451,6 @@
 
     	        peak_list <- list()
     	        for (i in 1:length(paths_to_peak_monolists)) {
-
-                    # print(i)
                     
                     if ( file.exists(paths_to_peak_monolists[i]) ) {
 
