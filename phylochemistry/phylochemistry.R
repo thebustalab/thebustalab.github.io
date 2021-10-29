@@ -1170,6 +1170,34 @@
 
             }
 
+        #### rotate_coord
+
+            #' rotates a set of x,y coordinates
+            #'
+            #' @param x The x values
+            #' @param y The y values
+            #' @param angle The angle to rotate (in degrees)
+            #' @param center The center about which to rotate
+            #' @examples
+            #' @export
+            #' rotate_coord
+
+            rotate_coord <- function( x, y, angle, center = c(0,0) ){
+  
+                x <- x - center[1]
+                y <- y - center[2]
+                angle <- angle*pi/180
+
+                conversionmatrix <- matrix(c(cos(angle),sin(angle),-sin(angle),cos(angle)), ncol=2, nrow=2)
+                xy <- cbind(x,y)%*%conversionmatrix
+
+                xy[,1] <- xy[,1]+center[1]
+                xy[,2] <- xy[,2]+center[2]
+
+                return(xy)
+
+            }
+
     ##### Sequence data handling
 
         #### extractORFs
@@ -6953,6 +6981,18 @@
 
                         }
 
+                    ## tSNE
+
+                        # library(Rtsne)
+                        # out <- Rtsne(matrix, theta = 0.0)
+                        # out <- out$Y
+                        # colnames(out) <- c("x","y")
+                        # out <- as.data.frame(out)
+                        # ggplot(out) +
+                        #     geom_point(aes(x = x, y = y), shape = 21, size= 4)
+
+                    ## Density-based clustering = DBSCAN and OPTICS
+
                     ## MCA ##
 
                         if( analysis == "mca" ) {
@@ -7168,7 +7208,7 @@
 
                                 return( clustering )
                         }
-            }
+                }
 
         #### pGroups
 
@@ -7733,6 +7773,33 @@
 
                     return(out)
                 }
+
+        #### mode
+
+            #' mode
+            #'
+            #' @param x
+            #' @param ignore_zero
+            #' @export
+            #' @examples
+            #' mode()
+
+            mode <- function(x, ignore_zero = FALSE) {
+                
+                x <- as.data.frame(table(x))
+                x <- x[order(x$Freq, decreasing = TRUE),]
+                if (ignore_zero) {
+                  x <- filter(x, x != 0)
+                }
+                
+                ## If it can be numeric, return numeric, otherwise, return character
+                    if(any(is.na(as.numeric(as.character(x$x))))) {
+                        return(as.character(x$x[1]))
+                    } else {
+                        return(as.numeric(as.character(x$x[1])))
+                    }
+            }
+          
 
     ##### Phylogenetic statistical testing
 

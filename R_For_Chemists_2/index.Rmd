@@ -1339,7 +1339,7 @@ ggplot(pca) +
 
 pca_ord <- runMatrixAnalysis(
   data = metabolomics_data,
-  analysis = "pca-ord",
+  analysis = "pca_ord",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
