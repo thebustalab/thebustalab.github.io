@@ -2666,23 +2666,17 @@ mutate(hops_components, acids = alpha_acids + beta_acids) %>%
 
 <!-- start final project -->
 
-*Final Project “Data”*
-Data set: Large! >10ish variables, >5ish categories
-Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
-Tool development: A reusable pipeline analysis of experimental data
-E.g. comparing experimental/library MS
-E.g. fitting fluorescence curves with exponential models
-Relevant to your research or interests (ideally)
-Requires approval from Dr. Busta
+# final project
 
+1. Find a data set: Large! >10ish variables, >5ish categories
+  + Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
+  + Relevant to your research or interests (ideally)
+  + Requires approval from Dr. Busta
 
-Your R code and written work will be your final project (“final exam”)
+2. Analyze your data
 
-
-*Communicate*
-data update
-mini-manuscript
-
+3. Create a written overview of your analysis
+  + A mini-manuscript in R Markdown
 
 <!-- end -->
 
