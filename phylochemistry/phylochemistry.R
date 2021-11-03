@@ -1453,26 +1453,26 @@
 
                     }
                     
-                ### Read in query, set initial hit number for iterative BLAST
-                    query_seqs <- Biostrings::readDNAStringSet(filepath = initial_query_in_path, format = "fasta")
-
-                    if ( iterative_blast ) {
-                        change_in_hit_number <- 1
-                        initial_hit_number <- length(query_seqs)
-                        iteration_number <- 0
-                        cat("\nStarting iterative BLAST process\n\n")
-                    } else {
-                        change_in_hit_number <- 1
-                    }
-
                 ### Start BLAST process
-
+                    change_in_hit_number <- 1
+                    iteration_number <- 0
+                    query_seqs <- Biostrings::readDNAStringSet(filepath = initial_query_in_path, format = "fasta")
                     while ( change_in_hit_number > 0 ) {
 
-                        ## Iteration number
+                        ### Read in query, set initial hit number for iterative BLAST
+
+                            ### Be careful!!! ITERATIVE BLAST IS GOING TO BE TRICKY TO PROGRAM!
+
                             if ( iterative_blast ) {
+                                cat("\nStarting iterative BLAST process\n\n")
                                 iteration_number <- iteration_number + 1 
                                 cat(paste0("Iteration number: ", iteration_number, "\n"))
+                                if ( iteration_number > 1 ) {
+                                    query_seqs <- readManyFastas(paste0(sequences_of_interest_directory_path, monolist$accession, ".fa"))
+                                }
+                                initial_hit_number <- length(query_seqs[query_seqs@ranges@width > iterative_blast_length_cutoff])
+                            } else {
+                                # change_in_hit_number <- 1
                             }
 
                         ## Loop over each member of the query and use it to blast each transcriptome
@@ -1736,21 +1736,20 @@
                                     if (queries_in_output == TRUE) {
                                         
                                         monolist <- rbind(monolist, data.frame(
-                                                                        accession = query_seqs@ranges@NAMES[query_seq],
-                                                                        Genus = "Query",
-                                                                        species = "query",
-                                                                        annotation = "query",
-                                                                        length = query_seqs@ranges@width,
-                                                                        longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1],
-                                                                        length_aligned_with_query = 100,
-                                                                        percent_identity = 100,
-                                                                        e_value = 0,
-                                                                        subset_all = TRUE,
-                                                                        query = query_seqs@ranges@NAMES,
-                                                                        query_length = query_seqs@ranges@width,
-                                                                        query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
-                                                                    )
-                                        )
+                                            accession = query_seqs@ranges@NAMES[query_seq],
+                                            Genus = "Query",
+                                            species = "query",
+                                            annotation = "query",
+                                            length = query_seqs@ranges@width,
+                                            longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1],
+                                            length_aligned_with_query = 100,
+                                            percent_identity = 100,
+                                            e_value = 0,
+                                            subset_all = TRUE,
+                                            query = query_seqs@ranges@NAMES,
+                                            query_length = query_seqs@ranges@width,
+                                            query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                        ))
 
                                         Biostrings::writeXStringSet(
                                             query_seqs[query_seq], 
@@ -1760,7 +1759,15 @@
                                     }
 
                                 ## Remove individual query files
-                                    if (file.exists(paste(query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))) {file.remove(paste(query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))}
+                                    if (
+                                        file.exists(
+                                            paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = "")
+                                        )
+                                    ) {
+                                        file.remove(
+                                            paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = "")
+                                        )
+                                    }
                             }
 
                         ## Write out the monolist
@@ -1774,7 +1781,7 @@
                             
                             ## Should iterations continue?
                                 monolist <- readMonolist(monolist_out_path)
-                                final_hit_number <- dim(monolist[monolist$longestORF > iterative_blast_length_cutoff,])[1]
+                                final_hit_number <- dim(monolist[monolist$length > iterative_blast_length_cutoff,])[1]
                                 change_in_hit_number <- final_hit_number - initial_hit_number
                                 cat(paste0(query_seq, ": "))
                                 cat(paste0(change_in_hit_number, " new hits above cutoff length!\n\n"))
@@ -2305,6 +2312,23 @@
                 output@ranges@NAMES <- amin_seqs@ranges@NAMES
                 Biostrings::writeXStringSet(output, fasta_out_path)
 
+            }
+
+        #### fastqToFasta
+
+            #' Convert fastq to fasta
+            #'
+            #' @param file_in_path
+            #' @param file_out_path
+            #' @examples
+            #' @export
+            #' fastqToFasta
+
+            fastqToFasta <- function(file_in_path, file_out_path) {
+                data <- readLines(file_in_path)
+                fasta <- DNAStringSet(data[seq(1,length(data),4)+1])
+                names(fasta) <- data[seq(1,length(data),4)]
+                writeXStringSet(fasta, file_out_path)
             }
 
     ##### Chemical data handling
@@ -6984,7 +7008,7 @@
                     ## tSNE
 
                         # library(Rtsne)
-                        # out <- Rtsne(matrix, theta = 0.0)
+                        # out <- Rtsne(matrix, theta = 0.0, perplexity = 2)
                         # out <- out$Y
                         # colnames(out) <- c("x","y")
                         # out <- as.data.frame(out)
@@ -6992,6 +7016,16 @@
                         #     geom_point(aes(x = x, y = y), shape = 21, size= 4)
 
                     ## Density-based clustering = DBSCAN and OPTICS
+
+                        # out <- dbscan::optics(matrix, minPts = 5)
+                        # out <- data.frame(
+                        #     order = out$order,
+                        #     reach_dist = out$reachdist,
+                        #     name = rownames(matrix)
+                        # )
+                        # out$name <- factor(out$name, levels = rev(rownames(matrix)[out$order]))
+                        # ggplot(out[2:19,]) +
+                        #     geom_col(aes(x = name, y = reach_dist))
 
                     ## MCA ##
 
@@ -7799,7 +7833,6 @@
                         return(as.numeric(as.character(x$x[1])))
                     }
             }
-          
 
     ##### Phylogenetic statistical testing
 

@@ -41,6 +41,10 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/R
 
 This course is a set of first steps toward meeting both challenges outlined above. In the first half, we’ll explore, critique, and practice methods of handling and communicating about the data generated in large analytical chemistry projects. In the second half, we’ll apply the methods to large datasets and hone our writing skills by developing mini manuscripts that incorporate our large datasets.
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/overview.png', dpi = NA)
+```
+
 <!-- end -->
 
 <!-- start installation-->
@@ -2660,6 +2664,27 @@ mutate(hops_components, acids = alpha_acids + beta_acids) %>%
 
 <!-- end -->
 
+<!-- start final project -->
+
+*Final Project “Data”*
+Data set: Large! >10ish variables, >5ish categories
+Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
+Tool development: A reusable pipeline analysis of experimental data
+E.g. comparing experimental/library MS
+E.g. fitting fluorescence curves with exponential models
+Relevant to your research or interests (ideally)
+Requires approval from Dr. Busta
+
+
+Your R code and written work will be your final project (“final exam”)
+
+
+*Communicate*
+data update
+mini-manuscript
+
+
+<!-- end -->
 
 <!-- start wrangling -->
 <!-- # wrangling 2
@@ -2687,7 +2712,7 @@ alaska_lake_data$pH
 # To look at select columns by name
 select(alaska_lake_data, park, water_temp)
 
-```
+```-->
 <!-- end -->
 
 <!-- start writing -->
