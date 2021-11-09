@@ -4656,7 +4656,7 @@
                                     input$keypress
                                 })
 
-                             ## Keys to move chromatogram view - zoom in and out, move L and R
+                            ## Keys to move chromatogram view - zoom in and out, move L and R
                                 observeEvent(input$keypress, {
                                     if( input$keypress == 70 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Forward on "F"
                                     if( input$keypress == 70 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Forward on "F"
@@ -5104,12 +5104,6 @@
                                             ret_end_MS <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
                                             sample_name_MS <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
 
-                                            # ret_start_MS <- 3000
-                                            # ret_end_MS <- 3100
-                                            # MS_ret_start <- 27808993
-                                            # MS_ret_end <- 28007417
-                                            # sample_name_MS <- "JBC_1.CDF.csv"
-
                                             chromatogram_updated_MS <- filter(chromatograms_updated, path_to_cdf_csv == sample_name_MS)
 
                                             MS_ret_start_line <<- chromatogram_updated_MS$rt_first_row_in_raw[which.min(abs(
@@ -5120,13 +5114,19 @@
                                                 chromatogram_updated_MS$rt - ret_end_MS
                                             ))] + 1
 
-                                            # cat(paste0("ret_start_MS ", ret_start_MS, "\n"))
-                                            # cat(paste0("ret_end_MS ", ret_end_MS, "\n"))
-                                            # cat(paste0("MS_ret_start_line ", MS_ret_start_line, "\n"))
-                                            # cat(paste0("MS_ret_end_line ", MS_ret_end_line, "\n"))
+                                            if (.Platform$OS.type == "unix") {
+                                                
+                                                system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
+                                                system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))    
+                                            
+                                            }
 
-                                            system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
-                                            system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))
+                                            if (.Platform$OS.type == "windows") {
+                                                
+                                                system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
+                                                system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))    
+                                            
+                                            }
 
                                             framedDataFile <- readMonolist(paste0(CDF_directory_path, "/temp_MS.csv"))
                                             framedDataFile <- isolate(dplyr::filter(framedDataFile, rt > ret_start_MS, rt < ret_end_MS))
@@ -5156,8 +5156,10 @@
                                                                     ))
                                                 framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
                                                 framedDataFile_to_subtract <- framedDataFile_to_subtract %>% group_by(mz) %>% summarize(intensity = sum(intensity))
-                                                framedDataFile_to_subtract <- as.data.frame(framedDataFile_to_subtract)
-                                                MS_out_1$intensity <- MS_out_1$intensity - framedDataFile_to_subtract$intensity
+                                                framedDataFile_to_subtract <<- as.data.frame(framedDataFile_to_subtract)
+                                                joined <- left_join(MS_out_1, framedDataFile_to_subtract, by = "mz")
+                                                joined$intensity.y[is.na(joined$intensity.y)] <- 0
+                                                MS_out_1$intensity <- joined$intensity.x - joined$intensity.y
                                                 MS_out_1$intensity[MS_out_1$intensity < 0] <- 0
                                                 MS_out_1 <<- MS_out_1
                                             }
@@ -5235,7 +5237,7 @@
                                                     MS_out_1$intensity <- MS_out_1$intensity/max(MS_out_1$intensity)*100
 
                                                 ## Add zeros for mz values missing from unknown spectrum if necessary
-                                                    mz_missing <- seq(min(MS_out_1$mz), max(MS_out_1$mz), 1)[!seq(min(MS_out_1$mz), max(MS_out_1$mz), 1) %in% MS_out_1$mz]
+                                                    mz_missing <- seq(1, 800, 1)[!seq(1, 800, 1) %in% MS_out_1$mz]
                                                     if (length(mz_missing) > 0) {
                                                         MS_out_1 <- rbind(MS_out_1, data.frame(mz = mz_missing, intensity = 0))
                                                         MS_out_1 <- MS_out_1[order(MS_out_1$mz),]
@@ -5250,14 +5252,9 @@
                                                             SMILES = NA,
                                                             Source = "unknown"
                                                         ),
-                                                        t(
-                                                            c(
-                                                                rep(0,min(MS_out_1$mz)-1),
-                                                                MS_out_1$intensity
-                                                            )
-                                                        )
+                                                        t(MS_out_1$intensity)
                                                     )
-                                                    colnames(unknown)[6:805] <- paste("mz_", c(seq(1,min(MS_out_1$mz)-1,1), MS_out_1$mz), sep = "")
+                                                    colnames(unknown)[6:805] <- paste("mz_", seq(1,800, 1), sep = "")
 
                                                 ## Bind it to the library and run the lookup
                                                     lookup_data <- rbind(busta_spectral_library, unknown)
