@@ -4346,145 +4346,223 @@
                     CDF_directory_path = getwd(),
                     zoom_and_scroll_rate = 100,
                     baseline_window = 400,
-                    x_axis_start = NULL,
-                    x_axis_end = NULL,
+                    x_axis_start_default = NULL,
+                    x_axis_end_default = NULL,
                     path_to_reference_library = busta_spectral_library,
-                    samples_monolist_subset = NULL
+                    samples_monolist_subset = NULL,
+                    ions = "tic"
                 ) {
 
-                    ## Covert CDF to csv, if necessary
+                    setwd(CDF_directory_path)
+                    paths_to_cdfs <- dir()[grep("*.CDF$", dir())]
+                    paths_to_cdf_csvs <- paste0(paths_to_cdfs, ".csv")
 
-                        ########################################################################
-                        ######## HERE MERGE CSV CONVERSION WITH CHROMATOGRAM EXTRACTION ########
-                        ######################################################################## 
+                    ## PREPARE DATA: Check for CDF to CSV conversion, check chromatograms
 
-                        ##################################################################################################################
-                        ######## ALSO - IS IT TOTOALLY NECESSARY TO FILL IN ALL BLANK MZ VALUES? TAKES SO LONG! SEEMS UNNECESSARY ########
-                        ##################################################################################################################
+                        if (length(paths_to_cdfs) == 0) {
 
-                        setwd(CDF_directory_path)
-                        paths_to_cdfs <- dir()[grep("*.CDF$", dir())]
-                        convertCDFstoCSVs(paths_to_cdfs)
-                        paths_to_cdf_csvs <- paste0(paths_to_cdfs, ".csv")
+                            stop("The directory specified does not contain any .CDF files.")
 
-                    ## Determine if any chromatograms have not been extracted
-
-                        if ( file.exists("chromatograms.csv") ) {
-                            missing_from_chromatograms_csv <- paths_to_cdf_csvs[!paths_to_cdf_csvs %in% unique(readMonolist("chromatograms.csv")$path_to_cdf_csv)]
                         } else {
-                            missing_from_chromatograms_csv <- paths_to_cdf_csvs
-                        }
 
-                    ## If any are missing, extract the chromatograms to add and write them out
-                        
-                        if ( length(missing_from_chromatograms_csv) > 0 ) {
-                            
-                            chromatograms_to_add <- list()
-                            
-                            for ( file in 1:length(missing_from_chromatograms_csv) ) {
+                            if ( !file.exists("chromatograms.csv") ) {
 
-                                cat(paste("Reading data file ", missing_from_chromatograms_csv[file], "\n", sep = ""))
-                                    framedDataFile <- as.data.frame(data.table::fread(missing_from_chromatograms_csv[file]))
-
-                                cat("   Extracting the total ion chromatogram...\n")
-                                    framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
-                                    framedDataFile %>% 
-                                        group_by(rt) %>% summarize(
-                                        tic = sum(intensity),
-                                        rt_first_row_in_raw = min(row_number),
-                                        rt_last_row_in_raw = max(row_number)
-                                    ) -> chromatogram
-                                    chromatogram <- as.data.frame(chromatogram)
-                                    chromatogram$rt <- as.numeric(chromatogram$rt)
-                                    chromatogram$path_to_cdf_csv <- missing_from_chromatograms_csv[file]
-
-                                cat("   Appending chromatogram to list...\n")
-                                    chromatograms_to_add[[file]] <- chromatogram
-                            }
-
-                            chromatograms_to_add <- do.call(rbind, chromatograms_to_add)
-
-                            ## If the chromatograms file already exists, append to it, else create it
-
-                                if ( file.exists("chromatograms.csv") ) {
-                                
-                                    writeMonolist(
-                                        monolist = rbind( readMonolist("chromatograms.csv"), chromatograms_to_add),
-                                        monolist_out_path = "chromatograms.csv"
-                                    )
-
-                                } else {
-
-                                    writeMonolist(chromatograms_to_add, "chromatograms.csv")
-
-                                }
-                        }
-
-                    ## Read in chromatograms
-
-                        chromatograms <- readMonolist("chromatograms.csv")
-                                
-                    ## Set up new samples monolist
-
-                        ## If it doesn't exist, create it
-                        
-                            if (!file.exists("samples_monolist.csv")) {
-
-                                samples_monolist <- data.frame(
-                                    Sample_ID = unique(chromatograms$path_to_cdf_csv),
-                                    rt_offset = 0,
-                                    baseline_window = baseline_window,
-                                    path_to_cdf_csv = unique(chromatograms$path_to_cdf_csv)
-                                )
-
-                                write.table(
-                                    x = samples_monolist,
-                                    file = "samples_monolist.csv",
-                                    row.names = FALSE,
-                                    sep = ","
-                                )
-
-                        # If it exists, check to see if all cdfs in this folder are in it, if not, add them
+                                chromatograms <- list()
 
                             } else {
 
-                                samples_monolist <- readMonolist("samples_monolist.csv")
+                                chromatograms <- readMonolist("chromatograms.csv")
 
-                                missing_from_samples_monolist <- paths_to_cdf_csvs[!paths_to_cdf_csvs %in% unique(readMonolist("samples_monolist.csv")$path_to_cdf_csv)]
+                            }
 
-                                if ( length(missing_from_samples_monolist) > 0 ) {
+                            chromatograms_to_add <- list()
 
-                                    samples_monolist_additions <- data.frame(
-                                        Sample_ID = gsub("\\..*$", "", gsub(".*/", "", missing_from_samples_monolist)),
+                            for (file in 1:length(paths_to_cdfs)) {
+
+                                ## If the cdf.csv doesn't exist for this cdf, create it.
+
+                                    if ( !file.exists(paths_to_cdf_csvs[file]) ) {
+
+                                        cat(paste("CDF to CSV conversion. Reading data file ", paths_to_cdfs[file], "\n", sep = ""))
+                                            rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
+
+                                        cat("   Framing data file ... \n")
+                                            rt <- rawDataFile$rt
+                                            scanindex <- rawDataFile$scanindex
+
+                                            filteredRawDataFile <- list()
+                                            for ( i in 1:(length(rt)-1) ) {
+                                                filteredRawDataFile[[i]] <- data.frame(
+                                                    mz = rawDataFile$mz[(scanindex[i]+1):(scanindex[i+1])],
+                                                    intensity = rawDataFile$intensity[(scanindex[i]+1):(scanindex[i+1])],
+                                                    rt = rt[i]
+                                                )
+                                            }
+                                            framedDataFile <- do.call(rbind, filteredRawDataFile)
+                                            framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
+
+                                        cat("   Merging duplicate rows ...\n")
+                                            if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
+                                                framedDataFile %>% group_by(mz,rt) %>% summarize(intensity = sum(intensity), .groups = "drop") -> framedDataFile
+                                                framedDataFile <- as.data.frame(framedDataFile)
+                                            }
+
+                                        cat("   Writing out data file as CSV... \n")
+                                            data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
+
+                                        cat("   Extracting chromatograms...\n")
+                                            
+                                            if ("tic" %in% ions) {
+                                                framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
+                                                framedDataFile %>% 
+                                                    group_by(rt) %>% summarize(
+                                                    abundance = sum(intensity),
+                                                    ion = "tic",
+                                                    rt_first_row_in_raw = min(row_number),
+                                                    rt_last_row_in_raw = max(row_number)
+                                                ) -> chromatogram
+                                                chromatogram <- as.data.frame(chromatogram)
+                                                chromatogram$rt <- as.numeric(chromatogram$rt)
+                                                chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
+                                                chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
+                                            }
+
+                                            if ( length(ions[ions != "tic"]) > 0 ) {
+
+                                                ions <- as.numeric(as.character(ions[ions != "tic"]))
+                                                for (ion in 1:length(ions[ions != "tic"])) {
+                                                    framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
+                                                    framedDataFile %>% 
+                                                        group_by(rt) %>% 
+                                                        filter(mz > (ions[ion] - 0.6)) %>%
+                                                        filter(mz < (ions[ion] + 0.6)) %>%
+                                                        summarize(
+                                                            abundance = sum(intensity),
+                                                            ion = ions[ion],
+                                                            rt_first_row_in_raw = min(row_number),
+                                                            rt_last_row_in_raw = max(row_number)
+                                                        ) -> chromatogram
+                                                    chromatogram <- as.data.frame(chromatogram)
+                                                    chromatogram$rt <- as.numeric(chromatogram$rt)
+                                                    chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
+                                                    chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)   
+                                                }
+                                            }
+
+                                ## Otherwise, check to see if the chromatogram needs to be updated
+                                    
+                                    } else {
+
+                                    # If any are missing, extract the chromatograms to add and write them out
+
+                                        # Determine if any chromatograms have not been extracted
+
+                                            # if ( file.exists("chromatograms.csv") ) {
+                                            #     missing_from_chromatograms_csv <- paths_to_cdf_csvs[!paths_to_cdf_csvs %in% unique(readMonolist("chromatograms.csv")$path_to_cdf_csv)]
+                                            # } else {
+                                            #     missing_from_chromatograms_csv <- paths_to_cdf_csvs
+                                            # }
+
+                                            # if ()
+
+                                            # cat(paste("Chromatogram extraction. Reading data file ", missing_from_chromatograms_csv[file], "\n", sep = ""))
+                                            #     framedDataFile <- as.data.frame(data.table::fread(missing_from_chromatograms_csv[file]))
+
+                                            # cat("   Extracting the total ion chromatogram...\n")
+                                            #     framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
+                                            #     framedDataFile %>% 
+                                            #         group_by(rt) %>% summarize(
+                                            #         tic = sum(intensity),
+                                            #         rt_first_row_in_raw = min(row_number),
+                                            #         rt_last_row_in_raw = max(row_number)
+                                            #     ) -> chromatogram
+                                            #     chromatogram <- as.data.frame(chromatogram)
+                                            #     chromatogram$rt <- as.numeric(chromatogram$rt)
+                                            #     chromatogram$path_to_cdf_csv <- missing_from_chromatograms_csv[file]
+                                            #     chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
+                                                
+                                    }
+
+                                        ## If the chromatograms file already exists, append to it, else create it
+
+                                            if ( file.exists("chromatograms.csv") ) {
+                                            
+                                                writeMonolist(
+                                                    monolist = rbind( chromatograms, chromatograms_to_add ),
+                                                    monolist_out_path = "chromatograms.csv"
+                                                )
+
+                                            } else {
+
+                                                writeMonolist(chromatograms_to_add, "chromatograms.csv")
+
+                                            }
+                            }
+                        }
+
+                        ## Read in chromatograms
+
+                            chromatograms <- readMonolist("chromatograms.csv")
+                                    
+                        ## Set up new samples monolist
+
+                            ## If it doesn't exist, create it
+                            
+                                if (!file.exists("samples_monolist.csv")) {
+
+                                    samples_monolist <- data.frame(
+                                        Sample_ID = unique(chromatograms$path_to_cdf_csv),
                                         rt_offset = 0,
                                         baseline_window = baseline_window,
-                                        path_to_cdf_csv = missing_from_samples_monolist
+                                        path_to_cdf_csv = unique(chromatograms$path_to_cdf_csv)
                                     )
 
                                     write.table(
-                                        x = samples_monolist_additions,
+                                        x = samples_monolist,
                                         file = "samples_monolist.csv",
                                         row.names = FALSE,
-                                        col.names = FALSE,
-                                        sep = ",",
-                                        append = TRUE
+                                        sep = ","
                                     )
+
+                            # If it exists, check to see if all cdfs in this folder are in it, if not, add them
+
+                                } else {
+
+                                    samples_monolist <- readMonolist("samples_monolist.csv")
+
+                                    missing_from_samples_monolist <- paths_to_cdf_csvs[!paths_to_cdf_csvs %in% unique(readMonolist("samples_monolist.csv")$path_to_cdf_csv)]
+
+                                    if ( length(missing_from_samples_monolist) > 0 ) {
+
+                                        samples_monolist_additions <- data.frame(
+                                            Sample_ID = gsub("\\..*$", "", gsub(".*/", "", missing_from_samples_monolist)),
+                                            rt_offset = 0,
+                                            baseline_window = baseline_window,
+                                            path_to_cdf_csv = missing_from_samples_monolist
+                                        )
+
+                                        write.table(
+                                            x = samples_monolist_additions,
+                                            file = "samples_monolist.csv",
+                                            row.names = FALSE,
+                                            col.names = FALSE,
+                                            sep = ",",
+                                            append = TRUE
+                                        )
+                                    }
                                 }
-                            }
 
-                    ## Filter chromatograms so only the CDFs in this folder are included
+                        ## Filter chromatograms so only the CDFs in this folder are included
 
-                        chromatograms <- chromatograms[chromatograms$path_to_cdf_csv %in% dir()[grep(".CDF.csv", dir())],]
+                            chromatograms <- chromatograms[chromatograms$path_to_cdf_csv %in% dir()[grep(".CDF.csv", dir())],]
 
-                    ## Set up several variables, plot_height, and x_axis limits if not specified in function call
-                        
-                        peak_data <- NULL
-                        peak_points <- NULL
-                        plot_height <- 200 + 100*length(unique(chromatograms$path_to_cdf_csv))
-                        if (length(x_axis_start) == 0) {x_axis_start <<- min(chromatograms$rt)}
-                        if (length(x_axis_end) == 0) {x_axis_end <<- max(chromatograms$rt)}
-                        
-                    ## Set up new peak monolist if it doesn't exist
+                        ## Set up several variables, plot_height, and x_axis limits if not specified in function call
+                            
+                            peak_data <- NULL
+                            peak_points <- NULL
+                            plot_height <- 200 + 100*length(unique(chromatograms$path_to_cdf_csv))
+                            
+                        ## Set up new peak monolist if it doesn't exist
                         
                         if ( !file.exists("peaks_monolist.csv") ) {
                             
@@ -4507,7 +4585,7 @@
 
                         }
 
-                    ## Set up user interface
+                    ## SET UP USER INTERFACE
 
                         ui <- fluidPage(
 
@@ -4569,7 +4647,7 @@
                             )
                         )
 
-                    ## Set up the server
+                    ## SET UP SERVER
 
                         server <- function(input, output, session) {
 
@@ -4578,16 +4656,16 @@
                                     input$keypress
                                 })
 
-                            ## Keys to move chromatogram view - zoom in and out, move L and R
+                             ## Keys to move chromatogram view - zoom in and out, move L and R
                                 observeEvent(input$keypress, {
-                                    if( input$keypress == 70 ) { x_axis_start <<- x_axis_start + zoom_and_scroll_rate } # Forward on "F"
-                                    if( input$keypress == 70 ) { x_axis_end <<- x_axis_end + zoom_and_scroll_rate } # Forward on "F"
-                                    if( input$keypress == 68 ) { x_axis_start <<- x_axis_start - zoom_and_scroll_rate } # Backward on "D"
-                                    if( input$keypress == 68 ) { x_axis_end <<- x_axis_end - zoom_and_scroll_rate } # Backward on "D"
-                                    if( input$keypress == 86 ) { x_axis_start <<- x_axis_start - zoom_and_scroll_rate } # Wider on "V"
-                                    if( input$keypress == 86 ) { x_axis_end <<- x_axis_end + zoom_and_scroll_rate } # Wider on "V"
-                                    if( input$keypress == 67 ) { x_axis_start <<- x_axis_start + zoom_and_scroll_rate } # Closer on "C"
-                                    if( input$keypress == 67 ) { x_axis_end <<- x_axis_end - zoom_and_scroll_rate } # Closer on "C"
+                                    if( input$keypress == 70 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Forward on "F"
+                                    if( input$keypress == 70 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Forward on "F"
+                                    if( input$keypress == 68 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Backward on "D"
+                                    if( input$keypress == 68 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Backward on "D"
+                                    if( input$keypress == 86 ) { x_axis_start_default <<- x_axis_start_default - zoom_and_scroll_rate } # Wider on "V"
+                                    if( input$keypress == 86 ) { x_axis_end_default <<- x_axis_end_default + zoom_and_scroll_rate } # Wider on "V"
+                                    if( input$keypress == 67 ) { x_axis_start_default <<- x_axis_start_default + zoom_and_scroll_rate } # Closer on "C"
+                                    if( input$keypress == 67 ) { x_axis_end_default <<- x_axis_end_default - zoom_and_scroll_rate } # Closer on "C"
                                 })
 
                             ## Save manual changes to table on "Z" (90) keystroke
@@ -4605,7 +4683,7 @@
                                             }
 
                                     }
-
+                                
                                 })
 
                             ## Update chromatogram on "Q" (81) keystroke
@@ -4613,235 +4691,275 @@
                                 observeEvent(input$keypress, {      
                                     
                                     if( input$keypress == 81 ) { # Update on "Q"
-                                        
-                                        output$chromatograms <- renderPlot({
 
-                                            ## Read in samples monolist and put chromatograms into chromatograms_updated
-                                                
-                                                samples_monolist <- read.csv("samples_monolist.csv")
-                                                if ( length(samples_monolist_subset) > 0 ) {
-                                                    samples_monolist <- samples_monolist[samples_monolist_subset,]    
-                                                }
-                                                chromatograms_updated <- dplyr::filter(chromatograms, path_to_cdf_csv %in% samples_monolist$path_to_cdf_csv)
+                                        ## Read in samples monolist and put chromatograms into chromatograms_updated
+                                            
+                                            samples_monolist <- read.csv("samples_monolist.csv")
+                                            if ( length(samples_monolist_subset) > 0 ) {
+                                                samples_monolist <- samples_monolist[samples_monolist_subset,]    
+                                            }
+                                            chromatograms_updated <- dplyr::filter(chromatograms, path_to_cdf_csv %in% samples_monolist$path_to_cdf_csv)
 
-                                            ## Calculate baseline for each sample
+                                        ## Calculate baseline for each sample
 
-                                                baselined_chromatograms <- list()
+                                            baselined_chromatograms <- list()
 
-                                                for ( chrom in 1:length(unique(chromatograms_updated$path_to_cdf_csv)) ) {
-                                          
-                                                    chromatogram <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == unique(chromatograms_updated$path_to_cdf_csv)[chrom])
+                                            for ( chrom in 1:length(unique(chromatograms_updated$path_to_cdf_csv)) ) {
+                                      
+                                                chromatogram <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == unique(chromatograms_updated$path_to_cdf_csv)[chrom])
+                                                tic <- filter(chromatogram, ion == "tic")
 
-                                                    prelim_baseline_window <- samples_monolist$baseline_window[match(chromatogram$path_to_cdf_csv[1], samples_monolist$path_to_cdf_csv)]
+                                                prelim_baseline_window <- samples_monolist$baseline_window[match(chromatogram$path_to_cdf_csv[1], samples_monolist$path_to_cdf_csv)]
 
-                                                    n_prelim_baseline_windows <- floor(length(chromatogram$rt)/prelim_baseline_window)
-                                                    prelim_baseline <- list()
-                                                    for ( i in 1:n_prelim_baseline_windows ) {
-                                                      min <- min(chromatogram$tic[((prelim_baseline_window*(i-1))+1):(prelim_baseline_window*i)])
-                                                      prelim_baseline[[i]] <-     data.frame(
-                                                                              rt = chromatogram$rt[chromatogram$tic == min],
-                                                                              min = min
-                                                                          )
-                                                    }
-                                                    prelim_baseline <- do.call(rbind, prelim_baseline)
-                                                    chromatogram$in_prelim_baseline <- FALSE
-                                                    chromatogram$in_prelim_baseline[chromatogram$rt %in% prelim_baseline$rt] <- TRUE
-
-                                                    y = prelim_baseline$min
-                                                    x = prelim_baseline$rt
-
-                                                    baseline2 <- data.frame(
-                                                                  rt = chromatogram$rt,
-                                                                  y = approx(x, y, xout = chromatogram$rt)$y
-                                                              )
-                                                    baseline2 <- baseline2[!is.na(baseline2$y),]
-                                                    chromatogram <- chromatogram[chromatogram$rt %in% baseline2$rt,]
-                                                    chromatogram$baseline <- baseline2$y
-
-                                                    baselined_chromatograms[[chrom]] <- data.frame(
-                                                        rt = chromatogram$rt,
-                                                        tic = chromatogram$tic,
-                                                        path_to_cdf_csv = chromatogram$path_to_cdf_csv,
-                                                        rt_first_row_in_raw = chromatogram$rt_first_row_in_raw,
-                                                        rt_last_row_in_raw = chromatogram$rt_last_row_in_raw,
-                                                        in_prelim_baseline = chromatogram$in_prelim_baseline,
-                                                        baseline = chromatogram$baseline
+                                                n_prelim_baseline_windows <- floor(length(tic$rt)/prelim_baseline_window)
+                                                prelim_baseline <- list()
+                                                for ( i in 1:n_prelim_baseline_windows ) {
+                                                    abundances_in_window <- tic$abundance[((prelim_baseline_window*(i-1))+1):(prelim_baseline_window*i)]
+                                                    prelim_baseline[[i]] <- data.frame(
+                                                        rt = tic$rt[(which.min(abundances_in_window)+((i-1)*prelim_baseline_window))],
+                                                        min = min(abundances_in_window)
                                                     )
+                                                }
+                                                prelim_baseline <- do.call(rbind, prelim_baseline)
+                                                tic$in_prelim_baseline <- FALSE
+                                                tic$in_prelim_baseline[tic$rt %in% prelim_baseline$rt] <- TRUE
 
+                                                y = prelim_baseline$min
+                                                x = prelim_baseline$rt
+
+                                                baseline2 <- data.frame(
+                                                    rt = tic$rt,
+                                                    y = approx(x, y, xout = tic$rt)$y
+                                                )
+                                                baseline2 <- baseline2[!is.na(baseline2$y),]
+                                                tic <- tic[tic$rt %in% baseline2$rt,]
+                                                tic$baseline <- baseline2$y
+
+                                                baselined_chromatograms[[chrom]] <- data.frame(
+                                                    rt = tic$rt,
+                                                    abundance = tic$baseline,
+                                                    ion = "baseline",
+                                                    path_to_cdf_csv = tic$path_to_cdf_csv,
+                                                    rt_first_row_in_raw = tic$rt_first_row_in_raw,
+                                                    rt_last_row_in_raw = tic$rt_last_row_in_raw
+                                                )
+                                            }
+
+                                            baselined_chromatograms <- do.call(rbind, baselined_chromatograms)
+                                            chromatograms_updated <- rbind(chromatograms, baselined_chromatograms)
+
+                                        ## Add rt offset information for all chromatograms
+
+                                            chromatograms_updated$rt_offset <- samples_monolist$rt_offset[match(chromatograms_updated$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
+                                            chromatograms_updated$rt_rt_offset <- chromatograms_updated$rt + chromatograms_updated$rt_offset
+                                            chromatograms_updated <<- chromatograms_updated
+
+                                        ## Subset x_axis according to selection in chromatogram
+
+                                            ## If null from initial start up, assign extreme values
+
+                                                if ( is.null(x_axis_start_default) ) {
+                                                    x_axis_start_default <<- min(chromatograms$rt)
+                                                    cat(paste("x_axis_start_default is ", x_axis_start_default, "\n"))
                                                 }
 
-                                                chromatograms_updated <- do.call(rbind, baselined_chromatograms)
+                                                if ( is.null(x_axis_end_default) ) {
+                                                    x_axis_end_default <<- max(chromatograms$rt)
+                                                    cat(paste("x_axis_end_default is ", x_axis_end_default, "\n"))
+                                                }
 
-                                            ## Add rt offset information for all chromatograms
+                                            ## If brush is null, assign default values to start and end
 
-                                                chromatograms_updated$rt_offset <- samples_monolist$rt_offset[match(chromatograms_updated$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
-                                                chromatograms_updated$rt_rt_offset <- chromatograms_updated$rt + chromatograms_updated$rt_offset
-                                                chromatograms_updated <<- chromatograms_updated
+                                                if ( is.null(input$chromatogram_brush) ) {
+                                                    x_axis_start <<- x_axis_start_default
+                                                    x_axis_end <<- x_axis_end_default
+                                                }
 
-                                            ## Plot with peaks, if any
+                                            ## If brush is not null, assign brush values to start and end
+
+                                                if ( !is.null(input$chromatogram_brush) ) {
+                                                    peak_points <<- isolate(brushedPoints(chromatograms_updated, input$chromatogram_brush))
+                                                    x_axis_start <<- min(peak_points$rt)
+                                                    x_axis_end <<- max(peak_points$rt)
+                                                }
+                                            
+                                            ## Filter chromatogram
                                                 
-                                                peak_table <- read.csv("peaks_monolist.csv")
+                                                chromatograms_updated <- dplyr::filter(
+                                                    chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end
+                                                )
+
+                                        ## Plot
+                                                
+                                            facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated$path_to_cdf_csv))
+                                            names(facet_labels) <- chromatograms_updated$path_to_cdf_csv
+
+                                            chromatogram_plot <- ggplot() +
+                                                geom_line(
+                                                    data = filter(chromatograms_updated, ion == "baseline"),
+                                                    mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
+                                                ) +
+                                                # geom_line(
+                                                #     data = filter(chromatograms_updated, ion != "baseline"),
+                                                #     mapping = aes(x = rt_rt_offset, y = abundance, color = ion),
+                                                #     alpha = 0.8
+                                                # ) +
+                                                scale_x_continuous(limits = c(x_axis_start, x_axis_end), name = "Retention (Scan number)") +
+                                                scale_y_continuous(name = "Abundance (counts)") +
+                                                facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
+                                                theme_classic() +
+                                                guides(fill = "none") +
+                                                scale_fill_continuous(type = "viridis") +
+                                                scale_color_brewer(palette = "Set1")
+
+                                        ## Add peaks, if any
+                                            
+                                            peak_table <- read.csv("peaks_monolist.csv")
+                                    
+                                            if (dim(peak_table)[1] > 0) {
+
+                                                ## Filter out duplicate peaks and NA peaks
+                                                    
+                                                    peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>% mutate(duplicated = duplicated(peak_start))
+                                                    peak_table <- as.data.frame(peak_table)
+                                                    peak_table <- dplyr::filter(peak_table, duplicated == FALSE)
+                                                    peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>% mutate(duplicated = duplicated(peak_end))
+                                                    peak_table <- as.data.frame(peak_table)
+                                                    peak_table <- dplyr::filter(peak_table, duplicated == FALSE)
+                                                    peak_table <- peak_table[,!colnames(peak_table) == "duplicated"]
+                                                    peak_table <- peak_table[!is.na(peak_table$peak_start),]
+
+                                                ## Update with peak_number_within_sample
+                                                    
+                                                    peak_table_updated <- list()
+                                                    for (sample_number in 1:length(unique(peak_table$path_to_cdf_csv))) {
+                                                      peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == unique(peak_table$path_to_cdf_csv)[sample_number],]
+                                                      peaks_in_this_sample <- peaks_in_this_sample[order(peaks_in_this_sample$peak_start),]
+                                                      peaks_in_this_sample$peak_number_within_sample <- seq(1,length(peaks_in_this_sample$path_to_cdf_csv),1)
+                                                      peak_table_updated[[sample_number]] <- peaks_in_this_sample
+                                                    }
+                                                    peak_table_updated <- do.call(rbind, peak_table_updated)
+                                                    peak_table <- peak_table_updated
+
+                                                ## Modify peaks with RT offset
+                                                    
+                                                    # for (sample_number in 1:length(unique(samples_monolist$path_to_cdf_csv))) {
+                                                      
+                                                    #   peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_monolist$path_to_cdf_csv[sample_number],]
+                                                      
+                                                    #   rt_offsets <- samples_monolist$rt_offset[match(peaks_in_this_sample$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
+                                                    #   peak_start_rt_offsets <- peak_table$peak_start + peak_table$rt_offset
+                                                    #   peak_end_rt_offsets <- peak_table$peak_end + peak_table$rt_offset
+                                                      
+                                                    #   peak_table$rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- rt_offsets
+                                                    #   peak_table$peak_start_rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- peak_start_rt_offsets
+                                                    #   peak_table$peak_end_rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- peak_end_rt_offsets
+
+                                                    # }
+
+                                                    peak_table$rt_offset <- samples_monolist$rt_offset[match(peak_table$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
+                                                    peak_table$peak_start_rt_offset <- peak_table$peak_start + peak_table$rt_offset
+                                                    peak_table$peak_end_rt_offset <- peak_table$peak_end + peak_table$rt_offset
+                                                    peak_table$path_to_cdf_csv <- as.character(peak_table$path_to_cdf_csv)
                                         
-                                                if (dim(peak_table)[1] > 0) {
+                                                ## Update all peak areas in case baseline was adjusted
+                                                    
+                                                    for (sample_number in 1:length(unique(samples_monolist$path_to_cdf_csv))) {
+                                                      
+                                                      peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_monolist$path_to_cdf_csv[sample_number],]
+                                                      
+                                                      areas <- vector()
+                                                      for (peak in 1:length(peaks_in_this_sample$peak_number_within_sample)) {
+                                                        areas <- append(areas, 
+                                                          sum(dplyr::filter(
+                                                            chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
+                                                            rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak])$tic
+                                                          ) - 
+                                                          sum(dplyr::filter(
+                                                            chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
+                                                            rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak])$baseline
+                                                          )
+                                                        )
+                                                      }
 
-                                                    ## Filter out duplicate peaks and NA peaks
+                                                      peak_table$area[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- areas
+
+                                                      # peaks_in_this_sample$area <- areas
+                                                      # peak_table_updated[[sample_number]] <- peaks_in_this_sample
+                                                    }
+                                                    # peak_table_updated <- do.call(rbind, peak_table_updated)
+                                                    # peak_table <- peak_table_updated
+                                      
+                                                ## Write out peaks now with assigned peak_number_within_sample and RT offset, update the peak_table in ui
+                                        
+                                                    write.table(peak_table, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
+
+                                                    output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
+                                                        peak_table2 <- read.csv("peaks_monolist.csv")
+                                                        peak_table2
+                                                    }))
+
+                                                ## Add peaks
+
+                                                    print(x_axis_start)
+                                                    print(x_axis_end)
+                                                    if (length(x_axis_start) == 0) {x_axis_start <<- min(chromatograms$rt)}
+                                                    if (length(x_axis_end) == 0) {x_axis_end <<- max(chromatograms$rt)}
+                                                    print(x_axis_start)
+                                                    print(x_axis_end)
+
+                                                    peak_table <- dplyr::filter(peak_table, peak_start_rt_offset > x_axis_start & peak_end_rt_offset < x_axis_end)
+                                                    print("filter passed")
+
+                                                    for (peak in 1:dim(peak_table)[1]) {
                                                         
-                                                        peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>% mutate(duplicated = duplicated(peak_start))
-                                                        peak_table <- as.data.frame(peak_table)
-                                                        peak_table <- dplyr::filter(peak_table, duplicated == FALSE)
-                                                        peak_table <- peak_table %>% group_by(path_to_cdf_csv) %>% mutate(duplicated = duplicated(peak_end))
-                                                        peak_table <- as.data.frame(peak_table)
-                                                        peak_table <- dplyr::filter(peak_table, duplicated == FALSE)
-                                                        peak_table <- peak_table[,!colnames(peak_table) == "duplicated"]
-                                                        peak_table <- peak_table[!is.na(peak_table$peak_start),]
+                                                        signal_for_this_peak <- dplyr::filter(
+                                                            chromatograms_updated[chromatograms_updated$path_to_cdf_csv == peak_table[peak,]$path_to_cdf_csv,], 
+                                                            rt_rt_offset > peak_table[peak,]$peak_start_rt_offset, 
+                                                            rt_rt_offset < peak_table[peak,]$peak_end_rt_offset
+                                                        )
 
-                                                    ## Update with peak_number_within_sample
-                                                        
-                                                        peak_table_updated <- list()
-                                                        for (sample_number in 1:length(unique(peak_table$path_to_cdf_csv))) {
-                                                          peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == unique(peak_table$path_to_cdf_csv)[sample_number],]
-                                                          peaks_in_this_sample <- peaks_in_this_sample[order(peaks_in_this_sample$peak_start),]
-                                                          peaks_in_this_sample$peak_number_within_sample <- seq(1,length(peaks_in_this_sample$path_to_cdf_csv),1)
-                                                          peak_table_updated[[sample_number]] <- peaks_in_this_sample
-                                                        }
-                                                        peak_table_updated <- do.call(rbind, peak_table_updated)
-                                                        peak_table <- peak_table_updated
+                                                        if (dim(signal_for_this_peak)[1] > 0) {
 
-                                                    ## Modify peaks with RT offset
-                                                        
-                                                        # for (sample_number in 1:length(unique(samples_monolist$path_to_cdf_csv))) {
-                                                          
-                                                        #   peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_monolist$path_to_cdf_csv[sample_number],]
-                                                          
-                                                        #   rt_offsets <- samples_monolist$rt_offset[match(peaks_in_this_sample$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
-                                                        #   peak_start_rt_offsets <- peak_table$peak_start + peak_table$rt_offset
-                                                        #   peak_end_rt_offsets <- peak_table$peak_end + peak_table$rt_offset
-                                                          
-                                                        #   peak_table$rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- rt_offsets
-                                                        #   peak_table$peak_start_rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- peak_start_rt_offsets
-                                                        #   peak_table$peak_end_rt_offset[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- peak_end_rt_offsets
+                                                            signal_for_this_peak$peak_number_within_sample <- peak_table$peak_number_within_sample[peak]
+                                                            
+                                                            ribbon <- filter(signal_for_this_peak, ion == "tic")
+                                                            ribbon$baseline <- filter(signal_for_this_peak, ion == "baseline")$abundance
 
-                                                        # }
-
-                                                        peak_table$rt_offset <- samples_monolist$rt_offset[match(peak_table$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
-                                                        peak_table$peak_start_rt_offset <- peak_table$peak_start + peak_table$rt_offset
-                                                        peak_table$peak_end_rt_offset <- peak_table$peak_end + peak_table$rt_offset
-                                                        peak_table$path_to_cdf_csv <- as.character(peak_table$path_to_cdf_csv)
-                                            
-                                                    ## Update all peak areas in case baseline was adjusted
-                                                        
-                                                        for (sample_number in 1:length(unique(samples_monolist$path_to_cdf_csv))) {
-                                                          
-                                                          peaks_in_this_sample <- peak_table[peak_table$path_to_cdf_csv == samples_monolist$path_to_cdf_csv[sample_number],]
-                                                          
-                                                          areas <- vector()
-                                                          for (peak in 1:length(peaks_in_this_sample$peak_number_within_sample)) {
-                                                            areas <- append(areas, 
-                                                              sum(dplyr::filter(
-                                                                chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
-                                                                rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak])$tic
-                                                              ) - 
-                                                              sum(dplyr::filter(
-                                                                chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
-                                                                rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak])$baseline
-                                                              )
-                                                            )
-                                                          }
-
-                                                          peak_table$area[peak_table$path_to_cdf_csv == as.character(samples_monolist$path_to_cdf_csv[sample_number])] <- areas
-
-                                                          # peaks_in_this_sample$area <- areas
-                                                          # peak_table_updated[[sample_number]] <- peaks_in_this_sample
-                                                        }
-                                                        # peak_table_updated <- do.call(rbind, peak_table_updated)
-                                                        # peak_table <- peak_table_updated
-                                          
-                                                    ## Write out peaks now with assigned peak_number_within_sample and RT offset, update the peak_table in ui
-                                            
-                                                        write.table(peak_table, file = "peaks_monolist.csv", col.names = TRUE, sep = ",", row.names = FALSE)
-
-                                                        output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
-                                                            peak_table2 <- read.csv("peaks_monolist.csv")
-                                                            peak_table2
-                                                        }))
-
-                                                    ## Create the plot with subsetted data to make it faster
-
-                                                        ## Subset the chromatograms and peaks
-
-                                                            chromatograms_updated <- dplyr::filter(chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end)
-                                                            peak_table <- dplyr::filter(peak_table, peak_start_rt_offset > x_axis_start & peak_end_rt_offset < x_axis_end)
-
-                                                        ## Make chromatogram plot object
-
-                                                            # Make their labels easy to read
-                                                                facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated$path_to_cdf_csv))
-                                                                names(facet_labels) <- chromatograms_updated$path_to_cdf_csv
-
-                                                                p <-    ggplot() + 
-                                                                    geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = baseline), color = "grey") +
-                                                                    geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = tic)) +
-                                                                    scale_x_continuous(limits = c(x_axis_start, x_axis_end)) +
-                                                                    facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
-                                                                    # facet_grid(path_to_cdf_csv~., labeller = labeller(path_to_cdf_csv = facet_labels)) +
-                                                                    # scale_y_continuous(limits = c(0, max(dplyr::filter(chromatograms_updated, rt > x_axis_start & rt < x_axis_end)$tic))) +
-                                                                    theme_classic() +
-                                                                    scale_fill_continuous(type = "viridis") +
-                                                                    theme(
-                                                                      legend.position = 'none',
-                                                                      legend.title = element_blank()
-                                                                    )
-
-                                                        ## Add peaks
-
-                                                            for (peak in 1:dim(peak_table)[1]) {
-                                                                
-                                                                signal_for_this_peak <- dplyr::filter(
-                                                                    chromatograms_updated[chromatograms_updated$path_to_cdf_csv == peak_table[peak,]$path_to_cdf_csv,], 
-                                                                    rt_rt_offset > peak_table[peak,]$peak_start_rt_offset, 
-                                                                    rt_rt_offset < peak_table[peak,]$peak_end_rt_offset
+                                                            chromatogram_plot <- chromatogram_plot +
+                                                                geom_vline(data = signal_for_this_peak[1,], mapping = aes(xintercept = rt_rt_offset), alpha = 0.3) +
+                                                                geom_ribbon(
+                                                                    data = ribbon,
+                                                                    mapping = aes(x = rt_rt_offset, ymax = abundance, ymin = baseline, fill = peak_number_within_sample),
+                                                                    alpha = 0.8
+                                                                ) +
+                                                                geom_text(
+                                                                    data = filter(signal_for_this_peak, ion == "tic"),
+                                                                    mapping = aes(label = peak_number_within_sample, x = median(rt_rt_offset), y = max(abundance))
                                                                 )
+                                                        }
+                                                    }
+                                            }
 
-                                                                if (dim(signal_for_this_peak)[1] > 0) {
+                                        ## Draw the plot and communicate
 
-                                                                    signal_for_this_peak$peak_number_within_sample <- peak_table$peak_number_within_sample[peak]
-                                                                    
-                                                                    p <- p +  geom_vline(data = signal_for_this_peak[1,], mapping = aes(xintercept = rt_rt_offset), alpha = 0.3) +
-                                                                              geom_ribbon(data = signal_for_this_peak, mapping = aes(x = rt_rt_offset, ymax = tic, ymin = baseline, fill = peak_number_within_sample)) +
-                                                                              geom_text(data = signal_for_this_peak, mapping = aes(label = peak_number_within_sample, x = median(rt_rt_offset), y = max(tic)))
-                                                                }
-                                                            }
+                                            chromatogram_plot <- chromatogram_plot +
+                                                # geom_line(
+                                                #     data = filter(chromatograms_updated, ion == "baseline"),
+                                                #     mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
+                                                # ) +
+                                                geom_line(
+                                                    data = filter(chromatograms_updated, ion != "baseline"),
+                                                    mapping = aes(x = rt_rt_offset, y = abundance, color = ion),
+                                                    alpha = 0.8
+                                                )
+                                            #     scale_x_continuous(limits = c(x_axis_start, x_axis_end), name = "Retention (Scan number)") +
+                                            #     scale_y_continuous(name = "Abundance (counts)") +
+                                            #     facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels))
+                                            
+                                            output$chromatograms <- renderPlot({chromatogram_plot})
 
-                                                } else {
-
-                                                    ## Make chromatogram plot object
-                                                        cat("yes here")
-                                                        # chromatograms_updated <- dplyr::filter(chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end)
-                                                        cat("yes here")
-                                                            # Make their labels easy to read
-                                                                facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated$path_to_cdf_csv))
-                                                                names(facet_labels) <- chromatograms_updated$path_to_cdf_csv
-
-                                                            p <-  ggplot() + 
-                                                                    geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = baseline), color = "grey") +
-                                                                    geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = tic)) +
-                                                                    scale_x_continuous(limits = c(x_axis_start, x_axis_end)) +
-                                                                    facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
-                                                                    # facet_grid(path_to_cdf_csv~., labeller = labeller(path_to_cdf_csv = facet_labels)) +
-                                                                    # scale_y_continuous(limits = c(0, max(dplyr::filter(chromatograms_updated, rt > x_axis_start & rt < x_axis_end)$tic))) +
-                                                                    theme_classic() +
-                                                                    scale_fill_continuous(type = "viridis") +
-                                                                    theme(
-                                                                      legend.position = 'none',
-                                                                      legend.title = element_blank()
-                                                                    )
-                                                }
-
-                                            ## Draw the plot and communicate
-                                                
-                                                p
-                                                cat("Chromatogram updated.\n")
-                                        })
+                                            cat("Chromatogram updated.\n")
                                     }
                                 })
 
@@ -4979,6 +5097,7 @@
                                 observeEvent(input$keypress, {
 
                                     ## If "shift+1", MS from chromatogram brush -> MS_out_1
+                                        
                                         if( input$keypress == 33 ) {
 
                                             ret_start_MS <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
@@ -5274,164 +5393,6 @@
                                             }
                                         }
                                 })
-
-                            ## [MS1 Subtract] Subtract selected MS as background from MS panel one on "shift+3" (35) keypress
-                                # observeEvent(input$keypress, {
-
-                                #     # Do nothing if no selection
-                                #         if(is.null(input$chromatogram_brush)) {
-                                #             return()
-                                #         }
-
-                                #     # If selection and "35" is pressed, extract and print mass spectra
-                                #         if( input$keypress == 35 ) {
-
-                                #             output$massSpectra_1 <- renderPlot({
-                                #                 framedDataFile_to_subtract <- isolate(as.data.frame(
-                                #                                     data.table::fread(as.character(
-                                #                                         brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                #                                     ))
-                                #                 ))
-                                #                 framedDataFile_to_subtract <- isolate(dplyr::filter(
-                                #                                         framedDataFile_to_subtract, 
-                                #                                         rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                #                                         rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                #                                     ))
-                                #                 library(plyr)
-                                #                 framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 0)
-                                #                 framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
-                                #                 framedDataFile_1$intensity <- framedDataFile_1$intensity - framedDataFile_to_subtract$intensity
-                                #                 framedDataFile_1 <<- framedDataFile_1
-                                #                 framedDataFile_1$intensity <- framedDataFile_1$intensity*100/max(framedDataFile_1$intensity)
-
-                                #                 # Set ranges on mass spec (allow zooming in with selection)
-                                #                     if(isolate(is.null(input$massSpectra_1_brush))) {
-                                #                         MS1_low_x_limit <- 0
-                                #                         MS1_high_x_limit <- 800
-                                #                         MS1_high_y_limit <- 110
-                                #                     } else {
-                                #                         MS1_low_x_limit <- isolate(min(brushedPoints(framedDataFile_1, input$massSpectra_1_brush)$mz))
-                                #                         MS1_high_x_limit <- isolate(max(brushedPoints(framedDataFile_1, input$massSpectra_1_brush)$mz))
-                                #                         MS1_high_y_limit <- max(dplyr::filter(framedDataFile_1, intensity > MS1_low_x_limit & intensity < MS1_high_x_limit)$intensity) + 10
-                                #                     }
-
-                                #                 ggplot() + 
-                                #                     geom_bar(
-                                #                         data = framedDataFile_1,
-                                #                         mapping = aes(x = mz, y = intensity),
-                                #                         stat = "identity", width = 1,
-                                #                         color = "black", fill = "grey"
-                                #                     ) +
-                                #                     theme_classic() +
-                                #                     scale_x_continuous(expand = c(0,0)) +
-                                #                     scale_y_continuous(expand = c(0,0)) +
-                                #                     coord_cartesian(xlim = c(MS1_low_x_limit, MS1_high_x_limit), ylim = c(0, MS1_high_y_limit)) +
-                                #                     geom_text(
-                                #                         data = 
-                                #                             dplyr::filter(framedDataFile_1, mz > MS1_low_x_limit, mz < MS1_high_x_limit)[
-                                #                                 order(
-                                #                                     dplyr::filter(framedDataFile_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)$intensity,
-                                #                                     decreasing = TRUE
-                                #                                 )[1:10]
-                                #                             ,],
-                                #                         mapping = aes(x = mz, y = intensity + 5, label = mz)
-                                #                     )
-                                #             })
-                                #         }
-                                # })
-                                
-                               
-
-                            ## Extract selected MS to MS panel two on "shift+2" (64) keypress
-                                
-                            #     observeEvent(input$keypress, {
-
-                            #         # Do nothing if no selection
-                            #             if(is.null(input$chromatogram_brush)) {
-                            #                 return()
-                            #             }
-
-                            #         # If selection and "shift+22" is pressed, extract and print mass spectra
-                            #             if( input$keypress == 64 ) {
-
-                            #                 output$massSpectra_2 <- renderPlot({
-                            #                     framedDataFile <- isolate(as.data.frame(
-                            #                                         data.table::fread(as.character(
-                            #                                             brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                            #                                         ))
-                            #                 ))
-                            #                 framedDataFile <- isolate(dplyr::filter(
-                            #                                             framedDataFile, 
-                            #                                             rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                            #                                             rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                            #                                         ))
-                            #                 library(plyr)
-                            #                 framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
-                            #                 framedDataFile_2 <<- framedDataFile
-                            #                 framedDataFile$intensity <- framedDataFile$intensity*100/max(framedDataFile$intensity)
-                            #                 ggplot() + 
-                            #                     geom_bar(data = framedDataFile, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
-                            #                     theme_classic() +
-                            #                     scale_x_continuous(expand = c(0,0)) +
-                            #                     scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
-                            #                     geom_text(data = dplyr::filter(framedDataFile, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
-                            #                 })
-                            #             }
-                            #     })
-
-                            # ## Subtract selected MS as background from MS panel one on "shift+4" (36) keypress
-                                
-                            #     observeEvent(input$keypress, {
-
-                            #         # Do nothing if no selection
-                            #             if(is.null(input$chromatogram_brush)) {
-                            #                 return()
-                            #             }
-
-                            #             # If selection and "shift+4" is pressed, extract and print mass spectra
-                            #                 if( input$keypress == 36 ) {
-
-                            #                     output$massSpectra_2 <- renderPlot({
-                            #                         framedDataFile_to_subtract <- isolate(as.data.frame(
-                            #                                             data.table::fread(as.character(
-                            #                                                 brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                            #                                             ))
-                            #                         ))
-                            #                         framedDataFile_to_subtract <- isolate(dplyr::filter(
-                            #                                                 framedDataFile_to_subtract, 
-                            #                                                 rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                            #                                                 rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                            #                                             ))
-                            #                         library(plyr)
-                            #                         framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
-                            #                         framedDataFile_2$intensity <- framedDataFile_2$intensity - framedDataFile_to_subtract$intensity
-                            #                         framedDataFile_2 <<- framedDataFile_2
-                            #                         framedDataFile_2$intensity <- framedDataFile_2$intensity*100/max(framedDataFile_2$intensity)
-                            #                         ggplot() + 
-                            #                             geom_bar(data = framedDataFile_2, mapping = aes(x = mz, y = intensity), stat = "identity", width = 1) +
-                            #                             theme_classic() +
-                            #                             scale_x_continuous(expand = c(0,0)) +
-                            #                             scale_y_continuous(expand = c(0,0), limits = c(0,110)) +
-                            #                             geom_text(data = dplyr::filter(framedDataFile_2, intensity > 10), mapping = aes(x = mz, y = intensity+5, label = mz))
-                            #                     })
-                            #                 }
-                            #         })
-
-                            # ## Save MS in MS panel one on "shift+6" (94) keypress
-
-                            #     observeEvent(input$keypress, {
-
-                            #         # Do nothing if no selection
-                            #             if(is.null(input$chromatogram_brush)) {
-                            #                 return()
-                            #             }
-
-                            #         # If selection and "shift+6" is pressed, extract and print mass spectra
-                            #             if( input$keypress == 96 ) {
-                            #                 framedDataFile_2$intensity[framedDataFile_2$intensity < 0] <- 0
-                            #                 write.csv(framedDataFile_2, "integration_app_spectrum_2.csv")
-                            #             }
-                            #     })
 
                         }
 
