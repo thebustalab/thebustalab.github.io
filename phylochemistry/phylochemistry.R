@@ -110,21 +110,29 @@
 
     } else {
 
-        message("Loading datasets...")
+        if ( exists("datasets") ) {
 
-        algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv", col_types = cols())
-        alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv", col_types = cols())
-        solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv", col_types = cols())
-        periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv", col_types = cols())
-        fadb_sample <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv", col_types = cols())
-        periodic_table_subset <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv", col_types = cols())
-        ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv", col_types = cols())
-        metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv", col_types = cols())
-        wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv", col_types = cols())
-        hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv", col_types = cols())
-        beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv", col_types = cols())
-        hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv", col_types = cols())
-        busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+            message("Object 'datasets' exists, not loading phylochemistry datasets....")
+
+        } else {
+
+            message("Loading datasets...")
+
+            algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv", col_types = cols())
+            alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv", col_types = cols())
+            solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv", col_types = cols())
+            periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv", col_types = cols())
+            fadb_sample <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv", col_types = cols())
+            periodic_table_subset <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv", col_types = cols())
+            ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv", col_types = cols())
+            metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv", col_types = cols())
+            wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv", col_types = cols())
+            hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv", col_types = cols())
+            beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv", col_types = cols())
+            hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv", col_types = cols())
+            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+
+        }
 
     }
 
