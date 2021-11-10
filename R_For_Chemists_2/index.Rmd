@@ -2731,9 +2731,15 @@ select(alaska_lake_data, park, water_temp)
 <!-- end -->
 
 <!-- start writing -->
-<!-- # Writing
+# Writing
 
-## Captions
+## figures & captions
+
+A high quality figure is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional.
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/plot_quality.jpg', dpi = NA)
+```
 
 Components of a caption:
 
@@ -2741,7 +2747,7 @@ Components of a caption:
 2. For each subplot:
   * The type of plot (line plot, bar chart, etc.)
   * Describe what is plotted as y vs x in words.
-  * Describe where the data is from.
+  * Describe where the data are from.
   * Describe what each bar, point, or error bar represents.
   * If applicable, describe the number of independent samples or measurements (sometimes called “replicates”) that underlie a given geometric feature or summary statistic.
 3. Avoid abbreviations, but if you do use any, specify what they mean.
@@ -2768,7 +2774,7 @@ ggplot(
   )
 ```
 
-Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a publich chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
+Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 <!-- end -->
 
 <!-- start Links -->
