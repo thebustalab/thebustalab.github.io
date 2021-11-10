@@ -5127,10 +5127,10 @@
                                                 # system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
                                                 # system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))    
                                                 framedDataFile <-   isolate(
-                                                                        as.data.frame(
-                                                                            data.table::fread(sample_name_MS)
-                                                                        )
-                                                                    )
+                                                    as.data.frame(
+                                                        data.table::fread(sample_name_MS)
+                                                    )
+                                                )
                                             
                                             }
 
@@ -6392,16 +6392,22 @@
                         data <- read_csv(csv_in_path, col_types = cols())
                     }
 
-                ## Clean up data ### A FOR LOOP HERE THAT RUNS OVER EACH MOLECULE
+                ## Clean up data
+                    output <- list()
+                    for (i in 1:length(unique(data$molecule_name))) {
 
-                    data$bond_start_x <- data$x[match(data$bond_start_atom, data$atom_number)]
-                    data$bond_start_y <- data$y[match(data$bond_start_atom, data$atom_number)]
-                    data$bond_end_x <- data$x[match(data$bond_end_atom, data$atom_number)]
-                    data$bond_end_y <- data$y[match(data$bond_end_atom, data$atom_number)]
-                    data$bond_start_element_or_group <- data$element_or_group[match(data$bond_start_atom, data$atom_number)]
-                    data$bond_end_element_or_group <- data$element_or_group[match(data$bond_end_atom, data$atom_number)]
+                        temp <- filter(data, molecule_name == unique(data$molecule_name)[i])
+                        temp$bond_start_x <- temp$x[match(temp$bond_start_atom, temp$atom_number)]
+                        temp$bond_start_y <- temp$y[match(temp$bond_start_atom, temp$atom_number)]
+                        temp$bond_end_x <- temp$x[match(temp$bond_end_atom, temp$atom_number)]
+                        temp$bond_end_y <- temp$y[match(temp$bond_end_atom, temp$atom_number)]
+                        temp$bond_start_element_or_group <- temp$element_or_group[match(temp$bond_start_atom, temp$atom_number)]
+                        temp$bond_end_element_or_group <- temp$element_or_group[match(temp$bond_end_atom, temp$atom_number)]
+                        output[[i]] <- temp
+                    
+                    }
 
-                    plot_data <- data
+                    plot_data <- do.call(rbind, output)
 
                 ## Define color schemes
 
@@ -6603,7 +6609,8 @@
                             scale_x_continuous(breaks = seq(0,20,1)) +
                             # scale_linetype_manual(values = bond_line_types) +
                             scale_y_continuous(breaks = seq(0,20,1)) +
-                            facet_wrap(.~molecule_name, ncol = 4) +
+                            facet_wrap(.~molecule_name, ncol = 3) +
+                            # facet_wrap(.~molecule_name) +
                             theme_void() +
                             guides(size = "none", alpha = "none") +
                             coord_fixed() +
