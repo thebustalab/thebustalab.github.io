@@ -2670,34 +2670,6 @@ hops_components %>%
 <!-- start final project -->
 
 # {-}
-# FINAL PROJECT
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/project_overview.png', dpi = NA)
-```
-
-1. Find a data set: Large! >10ish variables, >5ish categories
-  + Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
-  + Relevant to your research or interests (ideally)
-  + Requires approval from Dr. Busta
-
-2. Analyze your data
-
-3. Create a written overview of your analysis
-  + A mini-manuscript in R Markdown
-
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/writing_order.png', dpi = NA)
-```
-
-Orders are not the same!
-
-Minimize revision with strategic order of composition.
-
-Compare to class schedule
-
-
 
 <!-- end -->
 
@@ -2732,6 +2704,18 @@ select(alaska_lake_data, park, water_temp)
 
 <!-- start writing -->
 # Writing
+
+## order of operations
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/writing_order.png', dpi = NA)
+```
+
+Orders are not the same!
+
+Minimize revision with strategic order of composition.
+
+Compare to class schedule
 
 ## figures & captions
 

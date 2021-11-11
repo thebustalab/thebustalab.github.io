@@ -4465,29 +4465,34 @@
 
                                         # Determine if any chromatograms have not been extracted
 
-                                            # if ( file.exists("chromatograms.csv") ) {
-                                            #     missing_from_chromatograms_csv <- paths_to_cdf_csvs[!paths_to_cdf_csvs %in% unique(readMonolist("chromatograms.csv")$path_to_cdf_csv)]
-                                            # } else {
-                                            #     missing_from_chromatograms_csv <- paths_to_cdf_csvs
-                                            # }
 
-                                            # if ()
+                                            if ( file.exists("chromatograms.csv") ) {
+                                                ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
+                                                missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv]))
 
-                                            # cat(paste("Chromatogram extraction. Reading data file ", missing_from_chromatograms_csv[file], "\n", sep = ""))
-                                            #     framedDataFile <- as.data.frame(data.table::fread(missing_from_chromatograms_csv[file]))
-
-                                            # cat("   Extracting the total ion chromatogram...\n")
-                                            #     framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
-                                            #     framedDataFile %>% 
-                                            #         group_by(rt) %>% summarize(
-                                            #         tic = sum(intensity),
-                                            #         rt_first_row_in_raw = min(row_number),
-                                            #         rt_last_row_in_raw = max(row_number)
-                                            #     ) -> chromatogram
-                                            #     chromatogram <- as.data.frame(chromatogram)
-                                            #     chromatogram$rt <- as.numeric(chromatogram$rt)
-                                            #     chromatogram$path_to_cdf_csv <- missing_from_chromatograms_csv[file]
-                                            #     chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
+                                                if (length(missing_ions) > 0) {
+                                                    cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))    
+                                                    framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
+                                                    for (ion in 1:length(missing_ions)) {
+                                                        framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
+                                                        framedDataFile %>% 
+                                                            group_by(rt) %>% 
+                                                            filter(mz > (missing_ions[ion] - 0.6)) %>%
+                                                            filter(mz < (missing_ions[ion] + 0.6)) %>%
+                                                            summarize(
+                                                                abundance = sum(intensity),
+                                                                ion = missing_ions[ion],
+                                                                rt_first_row_in_raw = min(row_number),
+                                                                rt_last_row_in_raw = max(row_number)
+                                                            ) -> chromatogram
+                                                        chromatogram <- as.data.frame(chromatogram)
+                                                        chromatogram$rt <- as.numeric(chromatogram$rt)
+                                                        chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
+                                                        chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
+                                                    }
+                                                }
+                                            
+                                            }
                                                 
                                     }
 
@@ -7964,4 +7969,3 @@
                 }
 
 message("Done!")
-# message("Reminder: you can open/save .R scripts on Google Drive directly using:\nopenRGD(\"share_link\")\ncloseRGD(\"share_link\")")
