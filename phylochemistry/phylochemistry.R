@@ -4463,53 +4463,48 @@
 
                                     # If any are missing, extract the chromatograms to add and write them out
 
-                                        # Determine if any chromatograms have not been extracted
+                                        if ( file.exists("chromatograms.csv") ) {
+                                            ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
+                                            missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv]))
 
-
-                                            if ( file.exists("chromatograms.csv") ) {
-                                                ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
-                                                missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv]))
-
-                                                if (length(missing_ions) > 0) {
-                                                    cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))    
-                                                    framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
-                                                    for (ion in 1:length(missing_ions)) {
-                                                        framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
-                                                        framedDataFile %>% 
-                                                            group_by(rt) %>% 
-                                                            filter(mz > (missing_ions[ion] - 0.6)) %>%
-                                                            filter(mz < (missing_ions[ion] + 0.6)) %>%
-                                                            summarize(
-                                                                abundance = sum(intensity),
-                                                                ion = missing_ions[ion],
-                                                                rt_first_row_in_raw = min(row_number),
-                                                                rt_last_row_in_raw = max(row_number)
-                                                            ) -> chromatogram
-                                                        chromatogram <- as.data.frame(chromatogram)
-                                                        chromatogram$rt <- as.numeric(chromatogram$rt)
-                                                        chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
-                                                        chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
-                                                    }
+                                            if (length(missing_ions) > 0) {
+                                                cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))    
+                                                framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
+                                                for (ion in 1:length(missing_ions)) {
+                                                    framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
+                                                    framedDataFile %>% 
+                                                        group_by(rt) %>% 
+                                                        filter(mz > (missing_ions[ion] - 0.6)) %>%
+                                                        filter(mz < (missing_ions[ion] + 0.6)) %>%
+                                                        summarize(
+                                                            abundance = sum(intensity),
+                                                            ion = missing_ions[ion],
+                                                            rt_first_row_in_raw = min(row_number),
+                                                            rt_last_row_in_raw = max(row_number)
+                                                        ) -> chromatogram
+                                                    chromatogram <- as.data.frame(chromatogram)
+                                                    chromatogram$rt <- as.numeric(chromatogram$rt)
+                                                    chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
+                                                    chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
                                                 }
-                                            
                                             }
-                                                
+                                        }
                                     }
 
-                                        ## If the chromatograms file already exists, append to it, else create it
+                                    ## If the chromatograms file already exists, append to it, else create it
 
-                                            if ( file.exists("chromatograms.csv") ) {
-                                            
-                                                writeMonolist(
-                                                    monolist = rbind( chromatograms, chromatograms_to_add ),
-                                                    monolist_out_path = "chromatograms.csv"
-                                                )
+                                        if ( file.exists("chromatograms.csv") ) {
+                                        
+                                            writeMonolist(
+                                                monolist = rbind( chromatograms, chromatograms_to_add ),
+                                                monolist_out_path = "chromatograms.csv"
+                                            )
 
-                                            } else {
+                                        } else {
 
-                                                writeMonolist(chromatograms_to_add, "chromatograms.csv")
+                                            writeMonolist(chromatograms_to_add, "chromatograms.csv")
 
-                                            }
+                                        }
                             }
                         }
 
@@ -7568,9 +7563,19 @@
 
                     print(plot)
 
-                ## Return gaussians
+                ## Return gaussians and fit parameters
 
-                    return(gaussians)
+                    output <- list()
+
+                    output$fit_data <- data.frame(
+                        peak_height = C.fit,
+                        peak_mean = mean.fit,
+                        peak_sd = sigma.fit,
+                        peak_number = seq(1,length(C.fit),1)
+                    )
+                    output$gaussians <- gaussians
+                    
+                    return(output)
 
             }
 
