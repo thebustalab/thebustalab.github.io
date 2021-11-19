@@ -4,7 +4,7 @@
 
 ###### Libraries
 
-    if ( !exists("functions") ) {
+    if ( !exists("packages") ) {
 
         ## Define necessary libraries
             
