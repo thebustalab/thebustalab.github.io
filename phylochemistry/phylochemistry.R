@@ -4,86 +4,90 @@
 
 ###### Libraries
 
-    ## Define necessary libraries
-        
-        CRAN_packages <- c(
-            "gridExtra",
-            "ape",
-            "rstatix",
-            "multcompView",
-            "imager",
-            "shiny",
-            "DT",
-            "RColorBrewer",
-            "data.table",
-            "rhandsontable",
-            "ips",
-            "phangorn",
-            "seqinr",
-            "Rfast",
-            "picante",
-            "BiocManager",
-            "googlesheets4",
-            "Hmisc",
-            "ggforce",
-            "network",
-            "pracma",
-            "ggnetwork",
-            "FactoMineR",
-            "dplyr",
-            "stringr", 
-            "progress",
-            "tidyverse",
-            "ggrepel",
-            "cowplot",
-            "rstatix",
-            "agricolae",
-            "ggpmisc"
-        )
+    if ( !exists("functions") ) {
 
-        Bioconductor_packages <- c(
-            "ggtree",
-            # "xcms",
-            # "msa",
-            # "rtracklayer",
-            # "orthologr",
-            "Biostrings"
-            # "GenomicRanges",
-            # "GenomicFeatures",
-            # "Rsamtools"
-        )
-
-        packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
-
-    ## Define function to auto install them
-        
-        installPhylochemistry <- function() {
+        ## Define necessary libraries
             
-            if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
-                install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
+            CRAN_packages <- c(
+                "gridExtra",
+                "ape",
+                "rstatix",
+                "multcompView",
+                "imager",
+                "shiny",
+                "DT",
+                "RColorBrewer",
+                "data.table",
+                "rhandsontable",
+                "ips",
+                "phangorn",
+                "seqinr",
+                "Rfast",
+                "picante",
+                "BiocManager",
+                "googlesheets4",
+                "Hmisc",
+                "ggforce",
+                "network",
+                "pracma",
+                "ggnetwork",
+                "FactoMineR",
+                "dplyr",
+                "stringr", 
+                "progress",
+                "tidyverse",
+                "ggrepel",
+                "cowplot",
+                "rstatix",
+                "agricolae",
+                "ggpmisc"
+            )
+
+            Bioconductor_packages <- c(
+                "ggtree",
+                # "xcms",
+                # "msa",
+                # "rtracklayer",
+                # "orthologr",
+                "Biostrings"
+                # "GenomicRanges",
+                # "GenomicFeatures",
+                # "Rsamtools"
+            )
+
+            packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
+
+        ## Define function to auto install them
+            
+            installPhylochemistry <- function() {
+                
+                if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
+                    install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
+                }
+
+                if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
+                    BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed])
+                }
+
+                message("\n\n\nIf the packages installed without error, you should be ready to run source() again to load the phylochemistry package.")
+            
+            }
+       
+        ## Determine if anything needs to be installed
+            
+            if (length(packages_needed) > 0) {
+                stop(paste(
+                    "You need to install the following packages before proceeding:\n",
+                    paste(packages_needed, collapse = ", "),
+                    "\n", "\n",
+                    "Run: installPhylochemistry() to automatically install the required packages."
+                ))
+            } else {
+                message("Loading packages...")
+                invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
             }
 
-            if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
-                BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed])
-            }
-
-            message("\n\n\nIf the packages installed without error, you should be ready to run source() again to load the phylochemistry package.")
-        
-        }
-   
-    ## Determine if anything needs to be installed
-        
-        if (length(packages_needed) > 0) {
-            stop(paste(
-                "You need to install the following packages before proceeding:\n",
-                paste(packages_needed, collapse = ", "),
-                "\n", "\n",
-                "Run: installPhylochemistry() to automatically install the required packages."
-            ))
-        } else {
-            message("Loading packages...")
-            invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
-        }
+    }
 
     ## Set up prioriy functions
 
@@ -7013,7 +7017,7 @@
                             clustering <- as_tibble(coords)
                             clustering$sample_unique_ID <- rownames(coords)
                             colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                            cat("Done!")
+                            cat("Done!\n")
                         }
 
                         if( analysis == "mca_ord" ) {
@@ -7266,7 +7270,7 @@
                 return(output)
             }
 
-        #### fitGaussian
+        #### fitGaussians
 
             #' Fit a Gaussian curve to a set of x y data
             #'
@@ -7282,90 +7286,104 @@
             fitGaussians <- function(
                                 x, 
                                 y, 
-                                peak_detection_threshold = 10
+                                peak_detection_threshold = 10,
+                                peak_means_stdevs_heights = NULL
                             ) {
 
-                ## Find peaks
+                ## Find peaks, if peak number is not provided.
 
-                    ## Find "change points" maxima and minima in first derivative = peak half heights
-                        deriv1_y <- as.vector(stats::predict(pspline::sm.spline(x, y), x, 1))
-                        deriv1_extreme_indices <- c(cumsum(rle(abs(diff(deriv1_y)) > median(diff(deriv1_y))*2)$lengths)+1) # This from https://stackoverflow.com/questions/46029090/how-to-find-changing-points-in-a-dataset
-                        deriv1_extremes <- x[deriv1_extreme_indices]
+                    if (is.null(peak_means_stdevs_heights)) {
 
-                    ## Find peaks using second derivative - better at detecting shoulder peaks v. 1st derivative
-                        deriv2_y <- stats::predict(pspline::sm.spline(x, deriv1_y), x, 1)
+                        ## Find "change points" maxima and minima in first derivative = peak half heights
+                            deriv1_y <- as.vector(stats::predict(pspline::sm.spline(x, y), x, 1))
+                            deriv1_extreme_indices <- c(cumsum(rle(abs(diff(deriv1_y)) > median(diff(deriv1_y))*2)$lengths)+1) # This from https://stackoverflow.com/questions/46029090/how-to-find-changing-points-in-a-dataset
+                            deriv1_extremes <- x[deriv1_extreme_indices]
 
-                        peak_means <- list()
-                        for (i in peak_detection_threshold:(length(x)-peak_detection_threshold)) {
-                            if ( # Find all points in 2nd derivative where values on either side of it are increasing for n points in a row
-                                all(
-                                    all(deriv2_y[(i-(peak_detection_threshold-1)):(i-1)] > deriv2_y[i]), 
-                                    all(deriv2_y[(i+1):(i+peak_detection_threshold)] > deriv2_y[i])
-                                )
-                            ) {
-                                peak_means[[i]] <- x[i]
+                        ## Find peaks using second derivative - better at detecting shoulder peaks v. 1st derivative
+                            deriv2_y <- stats::predict(pspline::sm.spline(x, deriv1_y), x, 1)
+
+                            peak_means <- list()
+                            for (i in peak_detection_threshold:(length(x)-peak_detection_threshold)) {
+                                if ( # Find all points in 2nd derivative where values on either side of it are increasing for n points in a row
+                                    all(
+                                        all(deriv2_y[(i-(peak_detection_threshold-1)):(i-1)] > deriv2_y[i]), 
+                                        all(deriv2_y[(i+1):(i+peak_detection_threshold)] > deriv2_y[i])
+                                    )
+                                ) {
+                                    peak_means[[i]] <- x[i]
+                                }
                             }
-                        }
-                        peak_means <- unlist(peak_means)
+                            peak_means <- unlist(peak_means)
 
-                    ## Find sigma for each peak based on mean and "change points"
-                        peak_sigma <- vector()
-                        for (peak in 1:length(peak_means)) {
-                            peak_sigma[[peak]] <- 1.5*min(abs(deriv1_extremes - peak_means[peak]))
-                        }
-                        
-                    ## Peak heights are just the height at the mean
-                        peak_heights <- y[x %in% peak_means]
+                        ## Find sigma for each peak based on mean and "change points"
+                            peak_sigma <- vector()
+                            for (peak in 1:length(peak_means)) {
+                                peak_sigma[[peak]] <- 1.5*min(abs(deriv1_extremes - peak_means[peak]))
+                            }
+                            
+                        ## Peak heights are just the height at the mean
+                            peak_heights <- y[x %in% peak_means]
 
-                    ## Report on peaks found and plot them
-                        cat(paste0("Found ", length(peak_heights), " peaks at peak_detection_threshold = ", peak_detection_threshold, "\n"))
+                        ## Report on peaks found and plot them
+                            cat(paste0("Found ", length(peak_heights), " peaks at peak_detection_threshold = ", peak_detection_threshold, "\n"))
 
-                        plot <- ggplot() +
-                            geom_line(data = data.frame(x = x, y = y), aes(x = x, y = y), color = "red") +
-                            geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv1_y), color = "black") +
-                            geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv2_y), color = "blue") +
-                            geom_vline(aes(xintercept = peak_means)) +
-                            geom_vline(aes(xintercept = peak_means + peak_sigma), color = "red") +
-                            geom_vline(aes(xintercept = peak_means - peak_sigma), color = "red")
-                        print(plot)
+                            plot <- ggplot() +
+                                geom_line(data = data.frame(x = x, y = y), aes(x = x, y = y), color = "red") +
+                                geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv1_y), color = "black") +
+                                geom_line(data = data.frame(x = x, y = y), aes(x = x, y = deriv2_y), color = "blue") +
+                                geom_vline(aes(xintercept = peak_means)) +
+                                geom_vline(aes(xintercept = peak_means + peak_sigma), color = "red") +
+                                geom_vline(aes(xintercept = peak_means - peak_sigma), color = "red")
+                            print(plot)
 
-                ## If nls, fit peaks with gaussians using nls and extract fit data
+                    }
 
-                        algorithm = "port"
-                        fit <- NULL
+                ## If peak_means_stdevs_heights provided, then use those
 
-                        if (length(peak_means) == 1) {
-                            try(
-                                fit <-  nls(    y ~ (
-                                                C1*exp(-(x-mean1)**2/(2 * sigma1**2))
-                                            ),
-                                        data = data.frame(x = x, y = y),
-                                        start = list(
-                                                    mean1 = peak_means[1],
-                                                    sigma1 = peak_sigma[1],
-                                                    C1 = peak_heights[1]
-                                                ),
-                                        algorithm = algorithm, control = list(maxiter = 5000000))
-                            , silent = TRUE)
-                        }
+                    if (!is.null(peak_means_stdevs_heights)) {
+                        n_peaks <- length(peak_means_stdevs_heights)/3
+                        peak_means <- peak_means_stdevs_heights[1:n_peaks]
+                        peak_sigma <- peak_means_stdevs_heights[(n_peaks+1):(n_peaks*2)]
+                        peak_heights <- peak_means_stdevs_heights[((n_peaks*2)+1):(n_peaks*3)]
+                    }
 
-                        if (length(peak_means) == 2) {
-                            try(
-                                fit <- nls( y ~ (
-                                                C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
-                                                C2*exp(-(x-mean2)**2/(2 * sigma2**2))
-                                            ),
+                ## Fit peaks with gaussians using nls or manually and extract fit data
+
+                    algorithm = "port"
+                    fit <- NULL
+
+                    if (length(peak_means) == 1) {
+                        try(
+                            fit <-  nls(    y ~ (
+                                            C1*exp(-(x-mean1)**2/(2 * sigma1**2))
+                                        ),
                                     data = data.frame(x = x, y = y),
                                     start = list(
                                                 mean1 = peak_means[1],
-                                                mean2 = peak_means[2],
                                                 sigma1 = peak_sigma[1],
-                                                sigma2 = peak_sigma[2],
-                                                C1 = peak_heights[1],
-                                                C2 = peak_heights[2]
+                                                C1 = peak_heights[1]
                                             ),
-                                    algorithm = algorithm, control = list(maxiter = 500000000))
+                                    algorithm = algorithm, control = list(maxiter = 5000000))
                         , silent = TRUE)
+                    }
+
+                    if (length(peak_means) == 2) {
+                        try(
+                            fit <- nls( y ~ (
+                                            C1*exp(-(x-mean1)**2/(2 * sigma1**2)) +
+                                            C2*exp(-(x-mean2)**2/(2 * sigma2**2))
+                                        ),
+                                data = data.frame(x = x, y = y),
+                                start = list(
+                                            mean1 = peak_means[1],
+                                            mean2 = peak_means[2],
+                                            sigma1 = peak_sigma[1],
+                                            sigma2 = peak_sigma[2],
+                                            C1 = peak_heights[1],
+                                            C2 = peak_heights[2]
+                                        ),
+                                algorithm = algorithm, control = list(maxiter = 500000000))
+                    , silent = TRUE)
                     }
                     
                     if (length(peak_means) == 3) {
@@ -7535,8 +7553,96 @@
                         C.fit <- coef.fit[((2*length(peak_means))+1):(3*length(peak_means))]
                         
                     } else {
-                        cat(paste0("Couldn't fit gaussian(s) at this peak detection threshold"))
+                        
+                        cat(paste0("Couldn't fit gaussian(s) at this peak detection threshold\n"))
                         gaussians <- NULL
+                        cat(paste0("Trying to fit manually using least squares starting from initial values\n"))
+
+                        # ## Generate gaussian curves, using least squares to optimize
+
+                            options(dplyr.summarise.inform = FALSE)
+
+                            mean.fit <- peak_means
+                            sigma.fit <- peak_sigma
+                            C.fit <- peak_heights
+
+                            init_step <- 0.9
+                            step_size <- 0.05
+                            final_step <- 1.1
+
+                            grid <- expand.grid(
+                                x = seq(sigma.fit[1]*init_step, sigma.fit[1]*final_step, sigma.fit[1]*step_size),
+                                y = seq(sigma.fit[2]*init_step, sigma.fit[2]*final_step, sigma.fit[2]*step_size),
+                                z = seq(sigma.fit[3]*init_step, sigma.fit[3]*final_step, sigma.fit[3]*step_size),
+                                l = seq(mean.fit[1]*init_step, mean.fit[1]*final_step, mean.fit[1]*step_size),
+                                m = seq(mean.fit[2]*init_step, mean.fit[2]*final_step, mean.fit[2]*step_size),
+                                n = seq(mean.fit[3]*init_step, mean.fit[3]*final_step, mean.fit[3]*step_size),
+                                a = seq(C.fit[1]*init_step, C.fit[1]*final_step, C.fit[1]*step_size),
+                                b = seq(C.fit[2]*init_step, C.fit[2]*final_step, C.fit[2]*step_size),
+                                c = seq(C.fit[3]*init_step, C.fit[3]*final_step, C.fit[3]*step_size)
+                            )
+
+                        #     # grid <- expand.grid(
+                        #     #     x = seq(sigma.fit[1]*0.999, sigma.fit[1]*1.001, sigma.fit[1]*0.001),
+                        #     #     y = seq(sigma.fit[2]*0.999, sigma.fit[2]*1.001, sigma.fit[2]*0.001),
+                        #     #     z = seq(sigma.fit[3]*0.999, sigma.fit[3]*1.001, sigma.fit[3]*0.001),
+                        #     #     l = seq(mean.fit[1]*0.999, mean.fit[1]*1.001, mean.fit[1]*0.001),
+                        #     #     m = seq(mean.fit[2]*0.999, mean.fit[2]*1.001, mean.fit[2]*0.001),
+                        #     #     n = seq(mean.fit[3]*0.999, mean.fit[3]*1.001, mean.fit[3]*0.001)
+                        #     # )
+
+                        #     # # grid <- expand.grid(
+                        #     # #     x = seq(sigma.fit[1]*0.9999, sigma.fit[1]*1.0001, sigma.fit[1]*0.0001),
+                        #     # #     y = seq(sigma.fit[2]*0.9999, sigma.fit[2]*1.0001, sigma.fit[2]*0.0001),
+                        #     # #     z = seq(sigma.fit[3]*0.9999, sigma.fit[3]*1.0001, sigma.fit[3]*0.0001),
+                        #     # #     l = seq(mean.fit[1]*0.9999, mean.fit[1]*1.0001, mean.fit[1]*0.0001),
+                        #     # #     m = seq(mean.fit[2]*0.9999, mean.fit[2]*1.0001, mean.fit[2]*0.0001),
+                        #     # #     n = seq(mean.fit[3]*0.9999, mean.fit[3]*1.0001, mean.fit[3]*0.0001)
+                        #     # # )
+
+                            out <- list()
+                            pb <- progress::progress_bar$new(total = dim(grid)[1])
+                            for (i in 1:dim(grid)[1]) {
+                                pb$tick()
+                                gaussians <- list()
+                                for (peak in 1:length(peak_means)) {
+                                    peak_data <-    data.frame(
+                                                        x = x,
+                                                        # y = C.fit[peak] * exp(-((x)-mean.fit[peak])**2/(2 * sigma.fit[peak]**2)),
+                                                        # y = C.fit[peak] * exp(-((x)-grid[i,peak])**2/(2 * sigma.fit[peak]**2)),
+                                                        # y = C.fit[peak] * exp(-((x)-mean.fit[peak])**2/(2 * grid[i,peak]**2)),
+                                                        y = grid[i,peak+6] * exp(-((x)-grid[i,peak+3])**2/(2 * grid[i,peak]**2)),
+                                                        peak_number = peak
+                                                    )
+                                    peak_data$peak_area <- sum(peak_data$y)
+                                    gaussians[[peak]] <- peak_data
+                                }
+                                gaussians <- do.call(rbind, gaussians)
+
+                                test_set <- gaussians
+                                test_set$ref <- y
+                                test_set %>%
+                                    group_by(x) %>%
+                                    summarize(sum = abs(sum(y) - ref)) %>%
+                                    ungroup() %>%
+                                    select(sum) %>%
+                                    summarize(total = sum(sum)) -> qual
+
+                                out[[i]] <- qual
+
+                            }
+
+                            totals <- as.numeric(as.data.frame(do.call(rbind, out))[,1])
+
+                            out <- data.frame(
+                                x = seq(1,length(totals), 1),
+                                y = totals
+                            )
+
+                            fit_data <- as.numeric(grid[which.min(out$y),])
+                            sigma.fit <- fit_data[1:n_peaks]
+                            mean.fit <- fit_data[(n_peaks+1):(n_peaks*2)]
+                            C.fit <- fit_data[((n_peaks*2)+1):(n_peaks*3)]
                     }
 
                 ## Generate gaussian curves
