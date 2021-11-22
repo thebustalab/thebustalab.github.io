@@ -2317,7 +2317,7 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- start Mid Term Exam -->
 
-# {-}
+<!-- # {-}
 # MIDTERM EXAM {-}
 
 For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
@@ -2664,8 +2664,10 @@ hops_components %>%
   ggplot(aes(x = hop_variety, y = alpha_acids + beta_acids)) + geom_col() +
   coord_flip()
 ```
-
+-->
 <!-- end -->
+
+
 
 <!-- start final project -->
 
@@ -2703,9 +2705,7 @@ select(alaska_lake_data, park, water_temp)
 <!-- end -->
 
 <!-- start writing -->
-# Writing
-
-## order of operations
+# WRITING {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/writing_order.png', dpi = NA)
@@ -2717,7 +2717,7 @@ Minimize revision with strategic order of composition.
 
 Compare to class schedule
 
-## figures & captions
+# figures & captions
 
 A high quality figure is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional.
 
@@ -2759,6 +2759,191 @@ ggplot(
 ```
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
+
+# results and discussion
+
+* Objective of this section: Walk your reader through your results, making interpretations as you go.
+
+<!-- * Tense: past tense and passive voice, because we are talking about what happened in the experiments, and reflecting with distance on the results.
+ -->
+* As you go: make notes of what should go into the introduction.
+
+## structure
+
+* Key: **number of suggested sentences**: *purpose*: "example"
+
+* Introductory paragraph:
+  + **1**: *Review the aim of the paper*: "In order to understand…"
+  + **3-4**: *Combine a methods summary (with generalized summary of results?) to call out subsections*: "We used method X to quantify property Y of our study subject (section 2.1)"
+    <!-- + *Keep it as short as possible! No details are required*  -->
+    <!-- + *Some exceptions:*
+      + including method details to avoid topic switching in later paragraphs (i.e. FID v. MS) -->
+
+* Each subsection paragraph:
+  <!-- + 1: *Statement of observation or lead-in*: "Based on the observation of X..." -->
+  + **1**: *Purpose of the work described in this paragraph*: "In order to determine..."
+  + **1**: *Review methods or experimental design specific to this subsection (if necessary)*
+  + **4-5**: *Results of that method or experiment (i.e. data features)*
+  + **1-2**: *Comparison of new results against those in literature (if possible)*
+  + **1-2**: *Conclusion from the combined results or some other concluding remark* "Thus, analysis X revealed that..."
+  + **1**: *Interpretation of the conclusion in a larger context (if possible / reasonable)*
+
+* Let's look at an example:
+
+> **2. Results and Discussion.**\
+>
+>
+>In order to better understand pollution in the state of Minnesota, this study focused on a detailed analyses of chemical measurements from soil samples from 300 sites around the state. The analyses consisted of a principal components analysis to determine which sites were similar to one another (Section 2.1) followed by statistical tests to see whether differences could be detected in the sites' chemistry (Section 2.2).\
+>
+>
+>*2.1 Principal Components Analysis*\
+>
+>
+>To understand relationships between the sites from which soil chemistry was sampled, a principal components analysis was used. Each of the 20 different analytes, all of which contained halogen atoms, were included in the analysis. A scatter plot showing the position of each of the 300 samples in a space defined by dimesions 1 and 2 (which explain 54% and 35% of the total variance of the dataset, respectively), revealed that two major clusters are present, with a small number of outliers (Fig. 1). By color coding these two clusters according to whether the samples were collected from rural versus urban areas, it was possible to see that the first cluster was made out of almost exclusively samples from urban areas, while the second cluster was made up of almost entirely samples from rural areas. This suggested that variance in pollutant chemistry among the samples collected was assocaited with urban versus rural environments.\
+>
+>
+>*2.2 Statistical Analyses*\
+>
+>
+>Using the groupings that were identified via principal components analysis, statistical tests were conducted to determine if chemical abundances differed between groups. Tests for normality and homogeneity of variance (Shapiro and Levene tests) revealed that the data could not be assessed using ANOVA but instead required the use of a non-parametric test. Accordingly, the Kruskall-Wallis test followed by post-hoc Dunn tests were applied, which showed that the abundances of halogenated pollutants is significantly higher in urban versus rural areas (p = 0.0035, Fig. 2A). These direct observations are consistent with conclusions drawn by others in recent literature reviews focused on hydrocarbon compounds (Petrucci et al., 2018; Hendrix et al., 2019). *Thus, the new chemical analyses presented here demonstrate that the discrepancy in urban versus rural pollution is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds.* Together, these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.\
+>
+
+## suggestions
+
+1. **Create paragraph outlines:**
+  + Identify "data features" in your figures, then possible conclusions those could lead to. Example:
+    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1)," (a data feature)
+    + "suggesting that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities." (a conclusion)
+  + Expand your "data feature" -> "conclusion" combinations with "supplementary information" or "literature information". Example:
+    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas." (data feature)
+    + "These direct observations are consistent with conclusions drawn by others in recent literature reviews (Petrucci., 2018; Hendrix et al., 2019)"
+    + "Overall, this suggests that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities."
+
+2. **Write drafts of your paragraphs:**
+
+  + Combine each of your "data feature" -> "supp/lit info" -> "conclusion" combinations into a single paragraph.
+  + Consider editing each paragraph so that it highlights what new contribution your data makes to the situation. Example (note the sentence in italics that highlights the new findings):
+    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1). These direct observations are consistent with meta-analyses of previously published observations (Supplemental Figure 1), as well as with conclusions drawn by others in recent literature reviews (So and so et al., 2018; The other person et al., 2019). *The new chemical analyses presented here demonstrate that this is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds in the atmosphere.* Together these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.
+
+3. **Order your paragraphs:**
+
+  + Identify characteristics of your paragraphs that can help determine what order they should go in:
+    + Whether any of your paragraphs are prerequisites for others.
+    + Whether any paragraphs can be grouped according to topic.
+
+  + Group paragraphs according to topic and prerequisite dependencies (putting prereq dependencies as close to eachother as possible.)
+
+  + Rearrange groups for what seems like the most natural flow. Consider:
+    + Starting with group of paragraphs most relevant to the overall pitch/goal of the paper
+    + Ending on the group of paragraphs that has the most future perspective
+    + Ending in a strong suit (i.e. not something too speculative)
+
+  + After this, if you have any orphaned paragraphs, consider putting them (or a shortened version of them) into the conclusion section.
+
+  + Throughout this process, read lots of literature and incorporate it into your discussion section. Place your research into the context of what has been done previously.
+
+4. **Edit your results and discussion section as a whole:**
+
+  + Edit each paragraph, particularly its first and last sentences, to connect the paragraphs into a flowing document. Specifically, this means several things:
+    + There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exhibited other interesting properties.").
+    + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
+    + The discussion should not require the reader to go back and read its first half in order to understand its second half.
+<!-- end -->
+
+<!-- start Conclusions -->
+# conclusion
+
+## General 
+
+* Objective: to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study? 
+
+## Suggestions
+
+* Summarize over-arching conclusions from each section of the paper (omit details from results or discussion)
+    + Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses.
+    + Suggest experiments to test these hypotheses.
+    + Be clear about what is speculation
+    + Describe future directions
+<!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. -->
+<!-- end -->
+
+<!-- start Introduction -->
+# introduction
+
+## General
+
+* Objective: to prepare the reader by giving the reader sufficient background to understand the study as a whole. It therefore should only contain information pertinent to understanding the study and its broader significance. 
+
+## Suggestions: 
+
+Try this outline:
+  
+* Paragraph 1: Introduce the topic
+  + Introduce a topic, ideally, an application of the research you will describe (grab attention of reader with an important fact or relationship).
+  + State why the topic is important.
+  + Describe what is known about the topic (at least, as pertains to the work at hand).
+  + Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic."
+  + List the negative things that will happen if we don't fill this gap in knowledge.
+  
+* Paragraph 2: Provide background information
+  + Describe, in moderate detail, the background information (concepts, literature) relevant to the study.
+  + End by saying how the details you just described relate to the application/topic described in the first paragraph.
+
+* Paragraph 3: Objectives of this study
+  + State the objective of this study.
+  + Briefly describe what was done and the techniques or instruments used.
+  + For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc.
+  + (optional - personal preference) State the conclusions from the work and what they mean for the application described in paragraph 1.
+
+* Other tips:
+  + If something is well-established, say so.
+  + Last paragraph can mention objectives in list form.
+  + Last sentence can briefly mention methods (specific techniques or instruments) that were used.
+<!-- end -->
+
+<!-- start Abstract -->
+# abstract and title
+
+## General
+
+* Objective of the abstract: prove a short summary of the entire study.
+* Objective of the title: Capture attention and highlight the research question.
+
+The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study.
+
+* Purposes of an Abstract
+  + Informs readers about the article’s content
+  + Summarizes complex information in a clear, concise manner
+  + Helps readers decide whether or not to read the article
+  + Used in conferences to summarize what the speaker will say during his/her presentation
+
+## Suggestions
+  
+* Use one or more well-developed, concise paragraphs that are able to stand alone.
+* Use about 200 - 500 words (ideally no more than 400 words)
+* Use an introduction-body-conclusion structure in which the parts of the paper are discussed in order:
+  + Introduction (1-2 sentences): Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?)
+  + Research Objective (1-2 sentences): Specific research objective, and potentially hypotheses/predictions
+  + Methods (1-2 sentences): Very concise overview of the methods used to address the research questions
+  + Results (1-3 sentences): Describe the major results (what you found) and interpretation of the results (what the results mean)
+  + Conclusions (1-2 sentences): Synthesizes the major contributions of the study in light of the new information provided by the results of the study – what does it all mean? Why is the result important, What did we learn in the bigger picture from doing this study?)
+
+* There are essentially two types of titles: descriptive titles and conclusive titles. 
+  + If your manuscript is exploratory research, consider using a descriptive title. For example:
+    + "Comparative analysis of the chemical composition and water permeability of the cuticular wax barrier in Welsh onion (Allium fistulosum L.)"
+  + If your manuscript is hypothesis-driven research, consider using a conclusive title. For example:
+    + "The Rice Gene "OsGL1-6" Is Involved in Leaf Cuticular Wax Accumulation and Drought Resistance"
+
+* A good title should:
+  + Be indicative of the content of the paper
+  + Attract the interest of potential readers
+  + Reflect whether the article is formal or casual
+  + Include important keywords
+
+## Further reading
+
+* [Titles Guide](https://libguides.usc.edu/writingguide/title)
+
 <!-- end -->
 
 <!-- start Links -->

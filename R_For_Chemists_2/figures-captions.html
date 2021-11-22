@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>17 faq | R For Chemists</title>
-  <meta name="description" content="17 faq | R For Chemists" />
+  <title>11 figures &amp; captions | R For Chemists</title>
+  <meta name="description" content="11 figures &amp; captions | R For Chemists" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="17 faq | R For Chemists" />
+  <meta property="og:title" content="11 figures &amp; captions | R For Chemists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="17 faq | R For Chemists" />
+  <meta name="twitter:title" content="11 figures &amp; captions | R For Chemists" />
   
   
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="links.html"/>
-<link rel="next" href="templates.html"/>
+<link rel="prev" href="writing.html"/>
+<link rel="next" href="results-and-discussion.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -304,68 +304,53 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="faq" class="section level1" number="17">
-<h1><span class="header-section-number">17</span> faq</h1>
-<div id="filtering" class="section level2" number="17.1">
-<h2><span class="header-section-number">17.1</span> filtering</h2>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt; 18)</code> ## less than 18</p>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18)</code> ## less than or equal to 18</p>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt; 18)</code> ## greater than 18</p>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt;= 18)</code> ## greater than or equal to 18</p>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18)</code> ## equals than 18</p>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; != 18)</code> ## not equal to 18</p>
-<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
-</div>
-<div id="ordering" class="section level2" number="17.2">
-<h2><span class="header-section-number">17.2</span> ordering</h2>
-<p>A list of numeric element has an inherent order to it: -inf -&gt; +inf. A list of character element also has an inherent order to it: A -&gt; Z, or if it’s a mixed number and letter list (which is interpreted by R as a character list): 0 -&gt; 9 -&gt; A -&gt; Z.</p>
-<p>However, there are cases where we will want a list of character elements to have some order other than A -&gt; Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -&gt; Z. For example, in the plot below, the y axis is not, perhaps, in the “correct” order:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="faq.html#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
-<span id="cb103-2"><a href="faq.html#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-166-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>How do we fix this? We need to convert the column <code>group_number</code> into a list of factors that have the correct order (see below). For this, we will use the command <code>factor</code>, which will accept an argument called <code>levels</code> in which we can define the order the the characters should be in:</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="faq.html#cb104-1" aria-hidden="true" tabindex="-1"></a>periodic_table<span class="sc">$</span>group_number <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
-<span id="cb104-2"><a href="faq.html#cb104-2" aria-hidden="true" tabindex="-1"></a>  periodic_table<span class="sc">$</span>group_number,</span>
-<span id="cb104-3"><a href="faq.html#cb104-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;6&quot;</span>, <span class="st">&quot;7&quot;</span>, <span class="st">&quot;8&quot;</span>, <span class="st">&quot;9&quot;</span>, <span class="st">&quot;10&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;12&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;14&quot;</span>, <span class="st">&quot;15&quot;</span>, <span class="st">&quot;16&quot;</span>, <span class="st">&quot;17&quot;</span>, <span class="st">&quot;18&quot;</span>, <span class="st">&quot;lanthanides&quot;</span>, <span class="st">&quot;actinides&quot;</span>)</span>
-<span id="cb104-4"><a href="faq.html#cb104-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb104-5"><a href="faq.html#cb104-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-6"><a href="faq.html#cb104-6" aria-hidden="true" tabindex="-1"></a>periodic_table</span>
-<span id="cb104-7"><a href="faq.html#cb104-7" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 118 × 41</span></span>
-<span id="cb104-8"><a href="faq.html#cb104-8" aria-hidden="true" tabindex="-1"></a><span class="do">##    atomic_number element_name atomic_symbol group_number period atomic_mass_rou…</span></span>
-<span id="cb104-9"><a href="faq.html#cb104-9" aria-hidden="true" tabindex="-1"></a><span class="do">##            &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;         &lt;fct&gt;         &lt;dbl&gt;            &lt;dbl&gt;</span></span>
-<span id="cb104-10"><a href="faq.html#cb104-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  1             1 hydrogen     H             1                 1             1.01</span></span>
-<span id="cb104-11"><a href="faq.html#cb104-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  2             2 helium       He            18                1             4.00</span></span>
-<span id="cb104-12"><a href="faq.html#cb104-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  3             3 lithium      Li            1                 2             6.97</span></span>
-<span id="cb104-13"><a href="faq.html#cb104-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  4             4 beryllium    Be            2                 2             9.01</span></span>
-<span id="cb104-14"><a href="faq.html#cb104-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  5             5 boron        B             13                2            10.8 </span></span>
-<span id="cb104-15"><a href="faq.html#cb104-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  6             6 carbon       C             14                2            12.0 </span></span>
-<span id="cb104-16"><a href="faq.html#cb104-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  7             7 nitrogen     N             15                2            14.0 </span></span>
-<span id="cb104-17"><a href="faq.html#cb104-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  8             8 oxygen       O             16                2            16   </span></span>
-<span id="cb104-18"><a href="faq.html#cb104-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  9             9 fluorine     F             17                2            19   </span></span>
-<span id="cb104-19"><a href="faq.html#cb104-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 10            10 neon         Ne            18                2            20.2 </span></span>
-<span id="cb104-20"><a href="faq.html#cb104-20" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 108 more rows, and 35 more variables: melting_point_C &lt;dbl&gt;,</span></span>
-<span id="cb104-21"><a href="faq.html#cb104-21" aria-hidden="true" tabindex="-1"></a><span class="do">## #   boiling_point_C &lt;dbl&gt;, state_at_RT &lt;chr&gt;, density_g_per_mL &lt;dbl&gt;,</span></span>
-<span id="cb104-22"><a href="faq.html#cb104-22" aria-hidden="true" tabindex="-1"></a><span class="do">## #   electronegativity_pauling &lt;dbl&gt;, first_ionization_poten_eV &lt;dbl&gt;,</span></span>
-<span id="cb104-23"><a href="faq.html#cb104-23" aria-hidden="true" tabindex="-1"></a><span class="do">## #   second_ionization_poten_eV &lt;dbl&gt;, third_ionization_poten_eV &lt;dbl&gt;,</span></span>
-<span id="cb104-24"><a href="faq.html#cb104-24" aria-hidden="true" tabindex="-1"></a><span class="do">## #   electron_affinity_eV &lt;dbl&gt;, atomic_radius_ang &lt;dbl&gt;,</span></span>
-<span id="cb104-25"><a href="faq.html#cb104-25" aria-hidden="true" tabindex="-1"></a><span class="do">## #   ionic_radius_ang &lt;dbl&gt;, covalent_radius_ang &lt;dbl&gt;,</span></span>
-<span id="cb104-26"><a href="faq.html#cb104-26" aria-hidden="true" tabindex="-1"></a><span class="do">## #   atomic_volume_cm3_per_mol &lt;dbl&gt;, crystal_structure &lt;chr&gt;, …</span></span></code></pre></div>
-<p>Notice that now when we look at the type of data that is contained in the column <code>group_number</code> it says “<fct>”. This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="faq.html#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
-<span id="cb105-2"><a href="faq.html#cb105-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-168-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>VICTORY!
-<!-- end --></p>
-<!-- start templates -->
-</div>
+<div id="figures-captions" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> figures &amp; captions</h1>
+<p>A high quality figure is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional.</p>
+<p><img src="http://thebustalab.github.io/R_For_Chemists_2/images/plot_quality.jpg" style="display: block; margin: auto;" /></p>
+<p>Components of a caption:</p>
+<ol style="list-style-type: decimal">
+<li>Title - an overall description of the what is shown</li>
+<li>For each subplot:</li>
+</ol>
+<ul>
+<li>The type of plot (line plot, bar chart, etc.)</li>
+<li>Describe what is plotted as y vs x in words.</li>
+<li>Describe where the data are from.</li>
+<li>Describe what each bar, point, or error bar represents.</li>
+<li>If applicable, describe the number of independent samples or measurements (sometimes called “replicates”) that underlie a given geometric feature or summary statistic.</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Avoid abbreviations, but if you do use any, specify what they mean.</li>
+</ol>
+<p>An example:</p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="figures-captions.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb102-2"><a href="figures-captions.html#cb102-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, element_type <span class="sc">==</span> <span class="st">&quot;bound&quot;</span>),</span>
+<span id="cb102-3"><a href="figures-captions.html#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> lake, <span class="at">x =</span> mg_per_L)</span>
+<span id="cb102-4"><a href="figures-captions.html#cb102-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb102-5"><a href="figures-captions.html#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(</span>
+<span id="cb102-6"><a href="figures-captions.html#cb102-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">fill =</span> element),</span>
+<span id="cb102-7"><a href="figures-captions.html#cb102-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>,</span>
+<span id="cb102-8"><a href="figures-captions.html#cb102-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb102-9"><a href="figures-captions.html#cb102-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb102-10"><a href="figures-captions.html#cb102-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(park<span class="sc">~</span>., <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">space =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb102-11"><a href="figures-captions.html#cb102-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb102-12"><a href="figures-captions.html#cb102-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>) <span class="sc">+</span></span>
+<span id="cb102-13"><a href="figures-captions.html#cb102-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Lake Name&quot;</span>) <span class="sc">+</span></span>
+<span id="cb102-14"><a href="figures-captions.html#cb102-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Abundance mg/L)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb102-15"><a href="figures-captions.html#cb102-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb102-16"><a href="figures-captions.html#cb102-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb102-17"><a href="figures-captions.html#cb102-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-165-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve. –&gt;</p>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="links.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="templates.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="writing.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="results-and-discussion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
