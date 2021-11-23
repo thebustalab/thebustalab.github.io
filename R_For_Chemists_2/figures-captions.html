@@ -240,8 +240,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10.4.1" data-path="comparing-means.html"><a href="comparing-means.html#anova-tukey-tests"><i class="fa fa-check"></i><b>10.4.1</b> ANOVA, Tukey tests</a></li>
 <li class="chapter" data-level="10.4.2" data-path="comparing-means.html"><a href="comparing-means.html#kruskal-dunn-tests"><i class="fa fa-check"></i><b>10.4.2</b> Kruskal, Dunn tests</a></li>
 </ul></li>
-<li class="chapter" data-level="10.5" data-path="comparing-means.html"><a href="comparing-means.html#further-reading"><i class="fa fa-check"></i><b>10.5</b> further reading</a></li>
-<li class="chapter" data-level="10.6" data-path="comparing-means.html"><a href="comparing-means.html#exercises-7"><i class="fa fa-check"></i><b>10.6</b> exercises</a></li>
+<li class="chapter" data-level="10.5" data-path="comparing-means.html"><a href="comparing-means.html#pairs-of-means"><i class="fa fa-check"></i><b>10.5</b> pairs of means</a></li>
+<li class="chapter" data-level="10.6" data-path="comparing-means.html"><a href="comparing-means.html#further-reading"><i class="fa fa-check"></i><b>10.6</b> further reading</a></li>
+<li class="chapter" data-level="10.7" data-path="comparing-means.html"><a href="comparing-means.html#exercises-7"><i class="fa fa-check"></i><b>10.7</b> exercises</a></li>
 </ul></li>
 <li><a href="section-4.html#section-4"></a></li>
 <li class="chapter" data-level="" data-path="writing.html"><a href="writing.html"><i class="fa fa-check"></i>WRITING</a></li>
@@ -324,24 +325,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Avoid abbreviations, but if you do use any, specify what they mean.</li>
 </ol>
 <p>An example:</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="figures-captions.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
-<span id="cb102-2"><a href="figures-captions.html#cb102-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, element_type <span class="sc">==</span> <span class="st">&quot;bound&quot;</span>),</span>
-<span id="cb102-3"><a href="figures-captions.html#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> lake, <span class="at">x =</span> mg_per_L)</span>
-<span id="cb102-4"><a href="figures-captions.html#cb102-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb102-5"><a href="figures-captions.html#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(</span>
-<span id="cb102-6"><a href="figures-captions.html#cb102-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">fill =</span> element),</span>
-<span id="cb102-7"><a href="figures-captions.html#cb102-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>,</span>
-<span id="cb102-8"><a href="figures-captions.html#cb102-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span></span>
-<span id="cb102-9"><a href="figures-captions.html#cb102-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb102-10"><a href="figures-captions.html#cb102-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(park<span class="sc">~</span>., <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">space =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
-<span id="cb102-11"><a href="figures-captions.html#cb102-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb102-12"><a href="figures-captions.html#cb102-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>) <span class="sc">+</span></span>
-<span id="cb102-13"><a href="figures-captions.html#cb102-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Lake Name&quot;</span>) <span class="sc">+</span></span>
-<span id="cb102-14"><a href="figures-captions.html#cb102-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Abundance mg/L)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb102-15"><a href="figures-captions.html#cb102-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb102-16"><a href="figures-captions.html#cb102-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
-<span id="cb102-17"><a href="figures-captions.html#cb102-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-165-1.png" width="576" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="figures-captions.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb107-2"><a href="figures-captions.html#cb107-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">filter</span>(alaska_lake_data, element_type <span class="sc">==</span> <span class="st">&quot;bound&quot;</span>),</span>
+<span id="cb107-3"><a href="figures-captions.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">y =</span> lake, <span class="at">x =</span> mg_per_L)</span>
+<span id="cb107-4"><a href="figures-captions.html#cb107-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb107-5"><a href="figures-captions.html#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(</span>
+<span id="cb107-6"><a href="figures-captions.html#cb107-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">fill =</span> element),</span>
+<span id="cb107-7"><a href="figures-captions.html#cb107-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>,</span>
+<span id="cb107-8"><a href="figures-captions.html#cb107-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb107-9"><a href="figures-captions.html#cb107-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb107-10"><a href="figures-captions.html#cb107-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(park<span class="sc">~</span>., <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">space =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb107-11"><a href="figures-captions.html#cb107-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb107-12"><a href="figures-captions.html#cb107-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Set1&quot;</span>) <span class="sc">+</span></span>
+<span id="cb107-13"><a href="figures-captions.html#cb107-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Lake Name&quot;</span>) <span class="sc">+</span></span>
+<span id="cb107-14"><a href="figures-captions.html#cb107-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Abundance mg/L)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb107-15"><a href="figures-captions.html#cb107-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb107-16"><a href="figures-captions.html#cb107-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb107-17"><a href="figures-captions.html#cb107-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-170-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve. –&gt;</p>
 </div>
             </section>

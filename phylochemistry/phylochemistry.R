@@ -91,6 +91,7 @@
 
     ## Set up prioriy functions
 
+        mutate <- dplyr::mutate
         summarize <- dplyr::summarize
         filter <- dplyr::filter
 
