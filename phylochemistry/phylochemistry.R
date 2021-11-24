@@ -6821,7 +6821,7 @@
 
                                 if ( all(unlist(are_they_numeric)) ) {
                                     if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
-                                        cat("Analytes are all numeric and compatible with the analysis selected.\n")
+                                        # cat("Analytes are all numeric and compatible with the analysis selected.\n")
                                     }
                                     if ( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
                                         stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
@@ -6830,7 +6830,7 @@
 
                                 if ( !all(unlist(are_they_numeric)) ) {
                                     if (analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                        cat("Analytes are all categorical and compatible with the analysis selected.\n")
+                                        # cat("Analytes are all categorical and compatible with the analysis selected.\n")
                                     }
                                     if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
                                         stop("Analytes are all categorical, but the analysis selected is for numeric variables. Please choose a different analysis method.\n")
