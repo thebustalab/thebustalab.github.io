@@ -95,6 +95,26 @@
         summarize <- dplyr::summarize
         filter <- dplyr::filter
 
+    ## Set up better warning messages for some functions
+
+        shapiroTest <- function( data, ... ) {
+
+            if ( any(summarize(data, size = n())$size < 3) ) {
+                stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
+            } else {
+                rstatix::shapiro_test(data = data, ...)
+            }
+
+        }
+
+        leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
+        tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
+        wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
+        anovaTest <- function( data, ... ) {rstatix::anova_test( data = data, ... )}
+        tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
+        kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = data, ... )}
+        dunnTest <- function( data, ... ) {rstatix::dunn_test( data = data, ... )}
+
     ## Set up lookups
 
         ## Phred_ascii_33 lookup
@@ -6703,7 +6723,7 @@
                                             transpose = FALSE,
                                             unknown_sample_ID_info = NULL,
                                             scale_variance = TRUE,
-                                            kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
+                                            kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc.", "pca"),
                                             na_replacement = c("none", "mean", "zero", "drop"),
                                             output_format = c("wide", "long"),
                                             ...
@@ -7112,6 +7132,13 @@
                                     stop("kmeans cannot handle NA. Please choose an option for na_replacement.")
                                 }
 
+                            ## If kmeans = "pca", substitute the matrix kmeans sees with the first two dimensions of the PCA
+
+                                if ( kmeans[1] == "pca") {
+                                    matrix <- as.matrix(clustering[,1:2])
+                                    rownames(matrix) <- as.character(as.data.frame(clustering)[,3])
+                                }
+
                             ## Run k-means
                                 kmeans_results <- list()
                                 for( i in 1:(dim(matrix)[1]-1) ) {
@@ -7122,7 +7149,7 @@
 
                             ## If auto, determine sharpest angle and return clusters
 
-                                if( kmeans[1] == "auto" ) {
+                                if( kmeans[1] == "auto" | kmeans[1] == "pca" ) {
                                     angles <- list()
                                     for( i in 1:(length(kmeans_results)-2) ) {
                                         slope_1 <- kmeans_results[i+1] - kmeans_results[i]
@@ -7149,8 +7176,8 @@
 
                             ## If a number, return that many clusters
 
-                                if( !kmeans[1] %in% c("auto", "elbow") ) {
-                                    if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', or a number.")}
+                                if( !kmeans[1] %in% c("auto", "elbow", "pca") ) {
+                                    if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', 'pca' or a number.")}
                                     kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(kmeans[1]), nstart = 25, iter.max = 1000)$cluster
                                 }
 
@@ -7187,11 +7214,13 @@
                                 rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
                                 colnames(rownames_matrix)[1] <- "sample_unique_ID"
 
-                                clustering <- full_join(
-                                    clustering,
-                                    as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
-                                    by = "sample_unique_ID"
-                                )
+                                if (analysis != "pca") {
+                                    clustering <- full_join(
+                                        clustering,
+                                        as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
+                                        by = "sample_unique_ID"
+                                    )
+                                }
                                 clustering
 
                                 clustering <- select(clustering, sample_unique_ID, everything())
