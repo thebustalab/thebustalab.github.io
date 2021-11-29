@@ -2904,46 +2904,49 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 # conclusion and introduction
 
-## General 
-
 * Objective (conclusion): to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study?
 
 * Objective (introduciton): to prepare the reader by giving the reader sufficient background to understand the study as a whole. It therefore should only contain information pertinent to understanding the study and its broader significance. 
 
 * Make sure that the scope of your introduction is in-line with the scope of the conclusion. That way, the reader will not be underwhelmed, nor will your work be undersold.
 
-## Suggestions
+## structure
 
-* For the introduction, try this outline:
-  
-  1. **Paragraph 1: Introduce the topic**
-    + (1 sentence) Introduce a topic, ideally, an application of the research you will describe (grab attention of reader with an important fact or relationship).
-    + (1 sentence) State why the topic is important.
-    + (1 sentence) Describe what is known about the topic (at least, as pertains to the work at hand).
-    + (1 sentence) Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic."
-    + (1 sentence) List the negative things that will happen if we don't fill this gap in knowledge.
-    
-  2. **Paragraph 2: Provide background information**
-    + (3-5 sentences) Describe, in moderate detail, the background information (concepts, literature) relevant to the study.
-    + (1 sentence) End by saying how the details you just described relate to the application/topic described in the first paragraph.
+**Conclusion:**
 
-  3. **Paragraph 3: Objectives of this study**
-    + (1 sentence) State the objective of this study.
-    + (2-3 sentences) Briefly describe what was done and the techniques or instruments used.
-    + (1-2 sentences) For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc.
-    + (optional - personal preference) State the conclusions from the work and what they mean for the application described in paragraph 1.
-
-  * Other tips:
-    + If something is well-established, say so.
-    + Last paragraph can mention objectives in list form.
-    + Last sentence can briefly mention methods (specific techniques or instruments) that were used.
-
-* For the conclusion: summarize over-arching conclusions from each section of the paper (omit the details described in results or discussion)
-  + Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses.
-  + Suggest experiments to test these hypotheses.
-  + Be clear about what is speculation.
-  + Describe future directions.
+* *One paragraph*
+  + **2-3**: Summarize over-arching conclusions from each section of the paper (omit the details described in results or discussion)
+  + **2-3**: Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses.
+  + **1-2**: Suggest experiments to test these hypotheses.
+  + **1-2**: Describe future directions.
 <!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. -->
+
+**Introduction:**
+  
+* *Paragraph 1: Introduce the topic*
+  + **1**: Introduce a topic and, ideally, an application of the research you will describe. Grab reader's attention.
+  + **1**: State why the topic is important.
+  + **1**: Describe what is known about the topic (at least, as pertains to the work at hand).
+  + **1**: Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic."
+  + **1**: List the negative things that will happen if we don't fill this gap in knowledge.
+    
+* *Paragraph 2: Provide background information*
+  + **3-5**: Describe, in moderate detail, the background information (concepts, literature) relevant to the study.
+  + **1**: End by saying how the details you just described relate to the application/topic described in the first paragraph.
+
+* *Paragraph 3: Objectives of this study*
+  + **1**: State the objective of this study.
+  + **1**: Briefly describe what was done and the techniques or instruments used.
+  + **1-2**: For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc.
+  + **1**: (optional) State the major conclusion from the work and what it means for the application described in paragraph 1.
+
+
+## suggestions
+
+  + If something is well-established, say so.
+  + Be clear about what is speculation.
+  + Last paragraph can mention objectives in list form.
+  + Last sentence can briefly mention methods (specific techniques or instruments) that were used.
 
 <!-- end -->
 
