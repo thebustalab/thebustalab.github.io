@@ -3061,6 +3061,23 @@ ggplot(periodic_table) +
 ```
 
 VICTORY!
+
+## column manipulation
+
+
+How to select specific columns:
+
+```{r}
+alaska_lake_data %>%
+  select(water_temp, pH)
+```
+
+How to remove certain columns:
+```{r}
+alaska_lake_data %>%
+  select(!water_temp)
+```
+
 <!-- end -->
 
 <!-- start templates -->

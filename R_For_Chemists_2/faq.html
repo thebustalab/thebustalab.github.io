@@ -274,6 +274,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="16.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>16.1</b> filtering</a></li>
 <li class="chapter" data-level="16.2" data-path="faq.html"><a href="faq.html#ordering"><i class="fa fa-check"></i><b>16.2</b> ordering</a></li>
+<li class="chapter" data-level="16.3" data-path="faq.html"><a href="faq.html#column-manipulation"><i class="fa fa-check"></i><b>16.3</b> column manipulation</a></li>
 </ul></li>
 <li class="chapter" data-level="17" data-path="templates.html"><a href="templates.html"><i class="fa fa-check"></i><b>17</b> templates</a>
 <ul>
@@ -350,8 +351,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="faq.html#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
 <span id="cb110-2"><a href="faq.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-173-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>VICTORY!
-<!-- end --></p>
+<p>VICTORY!</p>
+</div>
+<div id="column-manipulation" class="section level2" number="16.3">
+<h2><span class="header-section-number">16.3</span> column manipulation</h2>
+<p>How to select specific columns:</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="faq.html#cb111-1" aria-hidden="true" tabindex="-1"></a>alaska_lake_data <span class="sc">%&gt;%</span></span>
+<span id="cb111-2"><a href="faq.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(water_temp, pH)</span>
+<span id="cb111-3"><a href="faq.html#cb111-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 2</span></span>
+<span id="cb111-4"><a href="faq.html#cb111-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    water_temp    pH</span></span>
+<span id="cb111-5"><a href="faq.html#cb111-5" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb111-6"><a href="faq.html#cb111-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1       6.46  7.69</span></span>
+<span id="cb111-7"><a href="faq.html#cb111-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2       6.46  7.69</span></span>
+<span id="cb111-8"><a href="faq.html#cb111-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3       6.46  7.69</span></span>
+<span id="cb111-9"><a href="faq.html#cb111-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4       6.46  7.69</span></span>
+<span id="cb111-10"><a href="faq.html#cb111-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5       6.46  7.69</span></span>
+<span id="cb111-11"><a href="faq.html#cb111-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6       6.46  7.69</span></span>
+<span id="cb111-12"><a href="faq.html#cb111-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7       6.46  7.69</span></span>
+<span id="cb111-13"><a href="faq.html#cb111-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8       6.46  7.69</span></span>
+<span id="cb111-14"><a href="faq.html#cb111-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       6.46  7.69</span></span>
+<span id="cb111-15"><a href="faq.html#cb111-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10       6.46  7.69</span></span>
+<span id="cb111-16"><a href="faq.html#cb111-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
+<p>How to remove certain columns:</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="faq.html#cb112-1" aria-hidden="true" tabindex="-1"></a>alaska_lake_data <span class="sc">%&gt;%</span></span>
+<span id="cb112-2"><a href="faq.html#cb112-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span>water_temp)</span>
+<span id="cb112-3"><a href="faq.html#cb112-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 6</span></span>
+<span id="cb112-4"><a href="faq.html#cb112-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    lake                park     pH element mg_per_L element_type</span></span>
+<span id="cb112-5"><a href="faq.html#cb112-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;               &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb112-6"><a href="faq.html#cb112-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Devil_Mountain_Lake BELA   7.69 C          3.4   bound       </span></span>
+<span id="cb112-7"><a href="faq.html#cb112-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Devil_Mountain_Lake BELA   7.69 N          0.028 bound       </span></span>
+<span id="cb112-8"><a href="faq.html#cb112-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Devil_Mountain_Lake BELA   7.69 P          0     bound       </span></span>
+<span id="cb112-9"><a href="faq.html#cb112-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Devil_Mountain_Lake BELA   7.69 Cl        10.4   free        </span></span>
+<span id="cb112-10"><a href="faq.html#cb112-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Devil_Mountain_Lake BELA   7.69 S          0.62  free        </span></span>
+<span id="cb112-11"><a href="faq.html#cb112-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Devil_Mountain_Lake BELA   7.69 F          0.04  free        </span></span>
+<span id="cb112-12"><a href="faq.html#cb112-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Devil_Mountain_Lake BELA   7.69 Br         0.02  free        </span></span>
+<span id="cb112-13"><a href="faq.html#cb112-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Devil_Mountain_Lake BELA   7.69 Na         8.92  free        </span></span>
+<span id="cb112-14"><a href="faq.html#cb112-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Devil_Mountain_Lake BELA   7.69 K          1.2   free        </span></span>
+<span id="cb112-15"><a href="faq.html#cb112-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Devil_Mountain_Lake BELA   7.69 Ca         5.73  free        </span></span>
+<span id="cb112-16"><a href="faq.html#cb112-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
+<!-- end -->
 <!-- start templates -->
 </div>
 </div>
