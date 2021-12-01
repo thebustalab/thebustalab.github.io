@@ -6654,6 +6654,171 @@
                     return(plot)
             }           
 
+    ##### Image Analysis
+
+        #### analyzeImage
+
+            #' Create major and minor axes ticks and labels
+            #'
+            #' @param major_ticks Values at which major ticks should be generated
+            #' @param minor_freq Number of minor ticks between each major tick 
+            #' @examples
+            #' @export
+            #' analyzeImage
+
+            analyzeImage <- function(share_link) {
+
+                ui <- fluidPage(
+                    tabsetPanel(type = "tabs",
+                        tabPanel("Main",
+                            sidebarLayout(
+                                sidebarPanel(
+                                    verbatimTextOutput("metadata1", placeholder = TRUE),
+                                    verbatimTextOutput("metadata2", placeholder = TRUE),
+                                    actionButton("rgb_select", "RGB Selected"),
+                                    actionButton("sample_select", "Sample Window Selected"),
+                                    plotOutput(
+                                        outputId = "rgb_window",
+                                        height = 200
+                                    ),
+                                    plotOutput(
+                                        outputId = "rgb_histogram",
+                                        height = 200
+                                    ),
+                                    plotOutput(
+                                        outputId = "sample_window",
+                                        height = 300
+                                    )
+                                ),
+                                mainPanel(
+                                    plotOutput(
+                                        outputId = "photograph",
+                                        brush = brushOpts(
+                                            id = "photograph_brush"
+                                        ),
+                                        click = "photograph_click", 
+                                        dblclick = "photograph_double_click",
+                                        height = 700
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+
+                server <- function(input, output, session) {
+
+                    ## Read in and process image
+
+                        googledrive::drive_download(
+                          # file = files[image_number],
+                          file = share_link,
+                          path = "temp.JPEG",
+                          overwrite = TRUE
+                        )
+
+                        path_to_image <- "temp.JPEG"
+
+                        image <- imager::load.image(path_to_image)
+                        image <- as_tibble(as.data.frame(as.cimg(image)))
+                        image$y <- -as.numeric(image$y)
+                        image$y <- image$y + -min(image$y)
+                        image <- pivot_wider(image, names_from = cc, values_from = value)
+                        names(image)[3:5] <- c("R", "G", "B")
+                        image$hex <- rgb(image$R, image$G, image$B)
+                        image <- image
+
+                    ## Extract and print QR code data and timestamp
+
+                        metadata <- list()
+                        qr_location_data <- quadrangle::qr_scan_cpp(magick::image_read(path_to_image), lighten = TRUE, darken = TRUE)
+                        metadata$name <- quadrangle::qr_scan_js_from_corners(magick::image_read(path_to_image), qr_location_data$points)$data
+                        metadata$time_stamp <- exifr::read_exif(path_to_image)$SubSecCreateDate
+                        output$metadata1 <- renderText({ metadata$name })
+                        output$metadata2 <- renderPrint({ metadata$time_stamp })
+
+                    ## Draw photograph
+
+                        photograph <- ggplot() +
+                            geom_tile(data = filter(image), aes(x = x, y = y), fill = image$hex) + theme_classic()
+                        output$photograph <- renderPlot({photograph})
+
+                    ## Extract sample spot
+
+                        observeEvent(input$sample_select, {
+
+                            if ( isolate(!is.null(input$photograph_brush)) ) {
+                                
+                                image_points <- isolate(brushedPoints(image, input$photograph_brush))
+                                
+                                sample_window <- ggplot() +
+                                    geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
+                                    theme_classic()
+
+                                output$sample_window <- renderPlot({ sample_window })
+                                    
+                            } else { NULL }
+
+                        })
+
+                    ## Extract rgb_window
+
+                        observeEvent(input$rgb_select, {
+
+                            if ( isolate(!is.null(input$photograph_brush)) ) {
+                                
+                                image_points <- isolate(brushedPoints(image, input$photograph_brush))
+                                
+                                Rmax <- cbind(
+                                    data.frame(color_swatch = "red"),
+                                    image_points[order(image_points$R, decreasing = TRUE),][1:50,]
+                                )
+                                Gmax <- cbind(
+                                    data.frame(color_swatch = "green"),
+                                    image_points[order(image_points$G, decreasing = TRUE),][1:50,]
+                                )
+                                Bmax <- cbind(
+                                    data.frame(color_swatch = "blue"),
+                                    image_points[order(image_points$B, decreasing = TRUE),][1:50,]
+                                )
+                                
+                                rgb_window <- ggplot() +
+                                    geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
+                                    geom_rect(aes(xmin = min(Rmax$x), xmax = max(Rmax$x), ymin = min(Rmax$y), ymax = max(Rmax$y)), alpha = 0.5) +
+                                    geom_rect(aes(xmin = min(Gmax$x), xmax = max(Gmax$x), ymin = min(Gmax$y), ymax = max(Gmax$y)), alpha = 0.5) +
+                                    geom_rect(aes(xmin = min(Bmax$x), xmax = max(Bmax$x), ymin = min(Bmax$y), ymax = max(Bmax$y)), alpha = 0.5)
+
+                                output$rgb_window <- renderPlot({ rgb_window })
+
+                                swatch_data <- rbind(
+                                    select(Rmax, color_swatch, x, y, R) %>%
+                                    set_colnames(c("color_swatch", "x", "y", "value")),
+                                    select(Gmax, color_swatch, x, y, G) %>%
+                                    set_colnames(c("color_swatch", "x", "y", "value")),
+                                    select(Bmax, color_swatch, x, y, B) %>%
+                                    set_colnames(c("color_swatch", "x", "y", "value"))
+                                )
+                                swatch_data$color_swatch <- factor(swatch_data$color_swatch, levels = c("red", "green", "blue"))
+
+                                rgb_histogram <- ggplot(data = swatch_data) + 
+                                    geom_histogram(aes(x = value, fill = color_swatch), binwidth = 0.01, color = "black") +
+                                    scale_fill_manual(values = c("red", "green", "blue")) +
+                                    facet_grid(color_swatch~.) +
+                                    scale_x_continuous(limits = c(-0.1,1.1)) +
+                                    theme_bw()
+
+                                output$rgb_histogram <- renderPlot({ rgb_histogram })
+                                    
+                            } else { NULL }
+
+                        })
+
+                }
+
+                shinyApp(ui = ui, server = server)
+
+            }
+
     ##### Mathematics, Statistical Testing, and Modeling
 
         #### normalize
