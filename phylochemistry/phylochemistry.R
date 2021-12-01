@@ -40,7 +40,8 @@
                 "cowplot",
                 "rstatix",
                 "agricolae",
-                "ggpmisc"
+                "ggpmisc",
+                "exifr"
             )
 
             Bioconductor_packages <- c(
