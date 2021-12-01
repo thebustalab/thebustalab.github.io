@@ -6678,6 +6678,7 @@
                                     verbatimTextOutput("metadata2", placeholder = TRUE),
                                     actionButton("rgb_select", "RGB Selected"),
                                     actionButton("sample_select", "Sample Window Selected"),
+                                    actionButton("write_out", "Append to Spreadsheet"),
                                     plotOutput(
                                         outputId = "rgb_window",
                                         height = 200
@@ -6686,10 +6687,16 @@
                                         outputId = "rgb_histogram",
                                         height = 200
                                     ),
+                                    verbatimTextOutput("mode_reference_value_R", placeholder = TRUE),
+                                    verbatimTextOutput("mode_reference_value_G", placeholder = TRUE),
+                                    verbatimTextOutput("mode_reference_value_B", placeholder = TRUE),
                                     plotOutput(
                                         outputId = "sample_window",
                                         height = 300
-                                    )
+                                    ),
+                                    verbatimTextOutput("mean_sample_value_R", placeholder = TRUE),
+                                    verbatimTextOutput("mean_sample_value_G", placeholder = TRUE),
+                                    verbatimTextOutput("mean_sample_value_B", placeholder = TRUE)
                                 ),
                                 mainPanel(
                                     plotOutput(
@@ -6750,13 +6757,21 @@
 
                             if ( isolate(!is.null(input$photograph_brush)) ) {
                                 
-                                image_points <- isolate(brushedPoints(image, input$photograph_brush))
+                                image_points <<- isolate(brushedPoints(image, input$photograph_brush))
                                 
                                 sample_window <- ggplot() +
                                     geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
                                     theme_classic()
 
                                 output$sample_window <- renderPlot({ sample_window })
+
+                                mean_sample_value_R <<- mean(image_points$R)
+                                mean_sample_value_G <<- mean(image_points$G)
+                                mean_sample_value_B <<- mean(image_points$B)
+
+                                output$mean_sample_value_R <- renderText({ mean_sample_value_R })
+                                output$mean_sample_value_G <- renderText({ mean_sample_value_G })
+                                output$mean_sample_value_B <- renderText({ mean_sample_value_B })
                                     
                             } else { NULL }
 
@@ -6791,7 +6806,7 @@
 
                                 output$rgb_window <- renderPlot({ rgb_window })
 
-                                swatch_data <- rbind(
+                                swatch_data <<- rbind(
                                     select(Rmax, color_swatch, x, y, R) %>%
                                     set_colnames(c("color_swatch", "x", "y", "value")),
                                     select(Gmax, color_swatch, x, y, G) %>%
@@ -6809,9 +6824,37 @@
                                     theme_bw()
 
                                 output$rgb_histogram <- renderPlot({ rgb_histogram })
-                                    
+
+                                mode_reference_value_R <<- mode(swatch_data$value[swatch_data$color_swatch == "red"])
+                                mode_reference_value_G <<- mode(swatch_data$value[swatch_data$color_swatch == "green"])
+                                mode_reference_value_B <<- mode(swatch_data$value[swatch_data$color_swatch == "blue"])
+
+                                output$mode_reference_value_R <- renderText({ mode_reference_value_R })
+                                output$mode_reference_value_G <- renderText({ mode_reference_value_G })
+                                output$mode_reference_value_B <- renderText({ mode_reference_value_B })
+
                             } else { NULL }
 
+                        })
+
+                    ## Write out
+
+                        observeEvent(input$write_out, {
+
+                            out <<- data.frame(
+                                    QR = metadata$name,
+                                    Time = metadata$time_stamp,
+                                    reference_R = mode_reference_value_R,
+                                    reference_G = mode_reference_value_G,
+                                    reference_B = mode_reference_value_B,
+                                    sample_R = mean_sample_value_R,
+                                    sample_G = mean_sample_value_G,
+                                    sample_B = mean_sample_value_B
+                                )
+
+                            write_csv(out, append = TRUE, file = "test_output.csv")
+                            cat("Appended to Spreadsheet")
+                                
                         })
 
                 }
@@ -6819,6 +6862,8 @@
                 shinyApp(ui = ui, server = server)
 
             }
+
+            
 
     ##### Mathematics, Statistical Testing, and Modeling
 
