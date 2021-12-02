@@ -41,7 +41,8 @@
                 "rstatix",
                 "agricolae",
                 "ggpmisc",
-                "exifr"
+                "exifr",
+                "lubridate"
             )
 
             Bioconductor_packages <- c(
@@ -228,8 +229,12 @@
             #' @export
             #' writeMonolist
 
-            writeMonolist <- function( monolist, monolist_out_path ) {
-                write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, col.names = TRUE)
+            writeMonolist <- function( monolist, monolist_out_path, ... ) {
+                if( file.exists(monolist_out_path) ) {
+                    write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, col.names = FALSE, ...)    
+                } else {
+                    write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, col.names = TRUE, ...)
+                }
             }
 
         #### readPolylist
@@ -6667,7 +6672,10 @@
             #' @export
             #' analyzeImage
 
-            analyzeImage <- function(share_link) {
+            analyzeImage <- function(
+                                share_link,
+                                monolist_out_path
+                            ) {
 
                 ui <- fluidPage(
                     tabsetPanel(type = "tabs",
@@ -6744,6 +6752,10 @@
                         metadata$time_stamp <- exifr::read_exif(path_to_image)$SubSecCreateDate
                         output$metadata1 <- renderText({ metadata$name })
                         output$metadata2 <- renderPrint({ metadata$time_stamp })
+                        metadata$date <- gsub(":", "/", gsub(" .*$", "", metadata2))
+                        metadata$year <- lubridate::year(gsub(":", "/", gsub(" .*$", "", metadata2)))
+                        metadata$month <- lubridate::month(gsub(":", "/", gsub(" .*$", "", metadata2)))
+                        metadata$day <- lubridate::day(gsub(":", "/", gsub(" .*$", "", metadata2)))
 
                     ## Draw photograph
 
@@ -6772,6 +6784,20 @@
                                 output$mean_sample_value_R <- renderText({ mean_sample_value_R })
                                 output$mean_sample_value_G <- renderText({ mean_sample_value_G })
                                 output$mean_sample_value_B <- renderText({ mean_sample_value_B })
+
+                                sample_pixel_output <<- data.frame(
+                                    QR = metadata$name,
+                                    Year = metadata$year,
+                                    Month = metadata$month,
+                                    Day = metadata$day,
+                                    Date = metadata$date,
+                                    type = "sample",
+                                    x = image_points$x,
+                                    y = image_points$y,
+                                    R = image_points$R,
+                                    G = image_points$G,
+                                    B = image_points$B
+                                )
                                     
                             } else { NULL }
 
@@ -6833,6 +6859,20 @@
                                 output$mode_reference_value_G <- renderText({ mode_reference_value_G })
                                 output$mode_reference_value_B <- renderText({ mode_reference_value_B })
 
+                                reference_pixel_output <<- data.frame(
+                                    QR = metadata$name,
+                                    Year = metadata$year,
+                                    Month = metadata$month,
+                                    Day = metadata$day,
+                                    Date = metadata$date,
+                                    type = "reference",
+                                    x = image_points$x,
+                                    y = image_points$y,
+                                    R = image_points$R,
+                                    G = image_points$G,
+                                    B = image_points$B
+                                )
+
                             } else { NULL }
 
                         })
@@ -6841,18 +6881,11 @@
 
                         observeEvent(input$write_out, {
 
-                            out <<- data.frame(
-                                    QR = metadata$name,
-                                    Time = metadata$time_stamp,
-                                    reference_R = mode_reference_value_R,
-                                    reference_G = mode_reference_value_G,
-                                    reference_B = mode_reference_value_B,
-                                    sample_R = mean_sample_value_R,
-                                    sample_G = mean_sample_value_G,
-                                    sample_B = mean_sample_value_B
-                                )
-
-                            write_csv(out, append = TRUE, file = "test_output.csv")
+                            writeMonolist(
+                                rbind(reference_pixel_output, sample_pixel_output),
+                                append = TRUE,
+                                monolist_out_path = monolist_out_path
+                            )
                             cat("Appended to Spreadsheet")
                                 
                         })
@@ -6862,7 +6895,6 @@
                 shinyApp(ui = ui, server = server)
 
             }
-
             
 
     ##### Mathematics, Statistical Testing, and Modeling
