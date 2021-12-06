@@ -2940,7 +2940,6 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
   + **1-2**: For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc.
   + **1**: (optional) State the major conclusion from the work and what it means for the application described in paragraph 1.
 
-
 ## suggestions
 
   + If something is well-established, say so.
@@ -2951,12 +2950,11 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 <!-- end -->
 
 <!-- start Abstract -->
+
 # abstract and title
 
-## General
-
 * Objective of the abstract: prove a short summary of the entire study.
-* Objective of the title: Capture attention and highlight the research question.
+* Objective of the title: capture attention and highlight the research question(s).
 
 The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study.
 
@@ -2966,10 +2964,8 @@ The abstract should include the motivation or reason for conducting the study, w
   + Helps readers decide whether or not to read the article
   + Used in conferences to summarize what the speaker will say during his/her presentation
 
-## Suggestions
-  
-* Use one or more well-developed, concise paragraphs that are able to stand alone.
-* Use about 200 - 500 words (ideally no more than 400 words)
+## structure
+
 * Use an introduction-body-conclusion structure in which the parts of the paper are discussed in order:
   + Introduction (1-2 sentences): Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?)
   + Research Objective (1-2 sentences): Specific research objective, and potentially hypotheses/predictions
@@ -2977,19 +2973,24 @@ The abstract should include the motivation or reason for conducting the study, w
   + Results (1-3 sentences): Describe the major results (what you found) and interpretation of the results (what the results mean)
   + Conclusions (1-2 sentences): Synthesizes the major contributions of the study in light of the new information provided by the results of the study – what does it all mean? Why is the result important, What did we learn in the bigger picture from doing this study?)
 
-* There are essentially two types of titles: descriptive titles and conclusive titles. 
+## suggestions
+  
+* Use one or more well-developed, concise paragraphs that are able to stand alone.
+* Use about 200 - 500 words (ideally no more than 400 words)
+
+* There are essentially two types of titles: descriptive titles and mechanistic titles. 
   + If your manuscript is exploratory research, consider using a descriptive title. For example:
     + "Comparative analysis of the chemical composition and water permeability of the cuticular wax barrier in Welsh onion (Allium fistulosum L.)"
-  + If your manuscript is hypothesis-driven research, consider using a conclusive title. For example:
+  + If your manuscript is hypothesis-driven research, consider using a mechanistic title. For example:
     + "The Rice Gene "OsGL1-6" Is Involved in Leaf Cuticular Wax Accumulation and Drought Resistance"
 
 * A good title should:
   + Be indicative of the content of the paper
   + Attract the interest of potential readers
-  + Reflect whether the article is formal or casual
+  + Reflect whether the article is deascriptive or mechanistic
   + Include important keywords
 
-## Further reading
+## further reading
 
 * [Titles Guide](https://libguides.usc.edu/writingguide/title)
 
