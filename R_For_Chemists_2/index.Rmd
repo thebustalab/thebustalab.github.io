@@ -2973,42 +2973,36 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 # abstract and title
 
-* Objective of the abstract: prove a short summary of the entire study.
-* Objective of the title: capture attention and highlight the research question(s).
+## abstract
 
-The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study.
+* **Structure** *One paragraph* Use about 200 - 500 words (ideally no more than 400 words)
+  + **1-2 sentences**: Introduction: Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?)
+  + **1-2 sentences**: Objective: Specific research objective, and potentially hypotheses/predictions, if any.
+  + **1-2 sentences**: Methods: Very concise overview of the methods used to address the research questions.
+  + **2-3 sentences**: Results/Discussion: Describe the major results (what you found) and interpretation of the results (what the results mean).
+  + **1-2 sentences**: Conclusions: Synthesizes the major contributions of the study into the context of the larger field to which the study belongs. What did we learn about the bigger picture of this field in general from doing this study?
 
-* Purposes of an Abstract
-  + Informs readers about the article’s content
-  + Summarizes complex information in a clear, concise manner
-  + Helps readers decide whether or not to read the article
+* **Function: an abstract proves a short summary of the entire study.** The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study. A good abstract should:
+  + Inform readers about the article’s content
+  + Summarize complex information in a clear, concise manner
+  + Help readers decide whether or not to read the article
   + Used in conferences to summarize what the speaker will say during his/her presentation
 
-## structure
 
-* Use an introduction-body-conclusion structure in which the parts of the paper are discussed in order:
-  + Introduction (1-2 sentences): Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?)
-  + Research Objective (1-2 sentences): Specific research objective, and potentially hypotheses/predictions
-  + Methods (1-2 sentences): Very concise overview of the methods used to address the research questions
-  + Results (1-3 sentences): Describe the major results (what you found) and interpretation of the results (what the results mean)
-  + Conclusions (1-2 sentences): Synthesizes the major contributions of the study in light of the new information provided by the results of the study – what does it all mean? Why is the result important, What did we learn in the bigger picture from doing this study?)
+## title
 
-## suggestions
-  
-* Use one or more well-developed, concise paragraphs that are able to stand alone.
-* Use about 200 - 500 words (ideally no more than 400 words)
-
-* There are essentially two types of titles: descriptive titles and mechanistic titles. 
+* **Structure** *One sentence* Use about 75-140 characters (ideally no more than 125 characters). There are essentially two types of titles: descriptive titles and mechanistic titles. 
   + If your manuscript is exploratory research, consider using a descriptive title. For example:
-    + "Comparative analysis of the chemical composition and water permeability of the cuticular wax barrier in Welsh onion (Allium fistulosum L.)"
+    + "Comparative analysis of carbon, sulfur, and phoshorous chemistry in six Alaskan lakes."
   + If your manuscript is hypothesis-driven research, consider using a mechanistic title. For example:
-    + "The Rice Gene "OsGL1-6" Is Involved in Leaf Cuticular Wax Accumulation and Drought Resistance"
+    + "Dissolved organic carbon in Alaskan lakes is heavily influenced by water pH and temperature."
 
-* A good title should:
+* **Function: a title captures attention and highlight the research question(s).** A good title should:
   + Be indicative of the content of the paper
   + Attract the interest of potential readers
   + Reflect whether the article is deascriptive or mechanistic
   + Include important keywords
+
 
 ## further reading
 
