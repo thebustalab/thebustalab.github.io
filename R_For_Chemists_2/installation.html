@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-11-29" />
+<meta name="date" content="2021-12-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -147,6 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.5" data-path="installation.html"><a href="installation.html#tex"><i class="fa fa-check"></i><b>1.5</b> TeX</a></li>
 <li class="chapter" data-level="1.6" data-path="installation.html"><a href="installation.html#phylochemistry"><i class="fa fa-check"></i><b>1.6</b> phylochemistry</a></li>
 <li class="chapter" data-level="1.7" data-path="installation.html"><a href="installation.html#xcms"><i class="fa fa-check"></i><b>1.7</b> xcms</a></li>
+<li class="chapter" data-level="1.8" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>1.8</b> Updating R and R Packages</a></li>
 </ul></li>
 <li><a href="section-2.html#section-2"></a></li>
 <li class="chapter" data-level="" data-path="data-visualization.html"><a href="data-visualization.html"><i class="fa fa-check"></i>DATA VISUALIZATION</a></li>
@@ -259,9 +260,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="14" data-path="abstract-and-title.html"><a href="abstract-and-title.html"><i class="fa fa-check"></i><b>14</b> abstract and title</a>
 <ul>
-<li class="chapter" data-level="14.1" data-path="abstract-and-title.html"><a href="abstract-and-title.html#general"><i class="fa fa-check"></i><b>14.1</b> General</a></li>
-<li class="chapter" data-level="14.2" data-path="abstract-and-title.html"><a href="abstract-and-title.html#suggestions-2"><i class="fa fa-check"></i><b>14.2</b> Suggestions</a></li>
-<li class="chapter" data-level="14.3" data-path="abstract-and-title.html"><a href="abstract-and-title.html#further-reading-1"><i class="fa fa-check"></i><b>14.3</b> Further reading</a></li>
+<li class="chapter" data-level="14.1" data-path="abstract-and-title.html"><a href="abstract-and-title.html#structure-2"><i class="fa fa-check"></i><b>14.1</b> structure</a></li>
+<li class="chapter" data-level="14.2" data-path="abstract-and-title.html"><a href="abstract-and-title.html#suggestions-2"><i class="fa fa-check"></i><b>14.2</b> suggestions</a></li>
+<li class="chapter" data-level="14.3" data-path="abstract-and-title.html"><a href="abstract-and-title.html#further-reading-1"><i class="fa fa-check"></i><b>14.3</b> further reading</a></li>
 </ul></li>
 <li><a href="section-5.html#section-5"></a></li>
 <li class="chapter" data-level="" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i>APPENDIX</a></li>
@@ -392,6 +393,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-2"><a href="installation.html#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
 <span id="cb10-3"><a href="installation.html#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-4"><a href="installation.html#cb10-4" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;xcms&quot;</span>)</span></code></pre></div>
+</div>
+<div id="updating-r-and-r-packages" class="section level2" number="1.8">
+<h2><span class="header-section-number">1.8</span> Updating R and R Packages</h2>
+<p>To update R:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="installation.html#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="installation.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&#39;devtools&#39;</span>) <span class="co">#assuming it is not already installed</span></span>
+<span id="cb11-3"><a href="installation.html#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="installation.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb11-5"><a href="installation.html#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="installation.html#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&#39;andreacirilloac/updateR&#39;</span>)</span>
+<span id="cb11-7"><a href="installation.html#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="installation.html#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(updateR)</span>
+<span id="cb11-9"><a href="installation.html#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="installation.html#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">updateR</span>()</span></code></pre></div>
 <!-- end -->
 <!-- start markdown-->
 </div>

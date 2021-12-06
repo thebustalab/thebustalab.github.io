@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-11-29" />
+<meta name="date" content="2021-12-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -147,6 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.5" data-path="installation.html"><a href="installation.html#tex"><i class="fa fa-check"></i><b>1.5</b> TeX</a></li>
 <li class="chapter" data-level="1.6" data-path="installation.html"><a href="installation.html#phylochemistry"><i class="fa fa-check"></i><b>1.6</b> phylochemistry</a></li>
 <li class="chapter" data-level="1.7" data-path="installation.html"><a href="installation.html#xcms"><i class="fa fa-check"></i><b>1.7</b> xcms</a></li>
+<li class="chapter" data-level="1.8" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>1.8</b> Updating R and R Packages</a></li>
 </ul></li>
 <li><a href="section-2.html#section-2"></a></li>
 <li class="chapter" data-level="" data-path="data-visualization.html"><a href="data-visualization.html"><i class="fa fa-check"></i>DATA VISUALIZATION</a></li>
@@ -259,9 +260,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="14" data-path="abstract-and-title.html"><a href="abstract-and-title.html"><i class="fa fa-check"></i><b>14</b> abstract and title</a>
 <ul>
-<li class="chapter" data-level="14.1" data-path="abstract-and-title.html"><a href="abstract-and-title.html#general"><i class="fa fa-check"></i><b>14.1</b> General</a></li>
-<li class="chapter" data-level="14.2" data-path="abstract-and-title.html"><a href="abstract-and-title.html#suggestions-2"><i class="fa fa-check"></i><b>14.2</b> Suggestions</a></li>
-<li class="chapter" data-level="14.3" data-path="abstract-and-title.html"><a href="abstract-and-title.html#further-reading-1"><i class="fa fa-check"></i><b>14.3</b> Further reading</a></li>
+<li class="chapter" data-level="14.1" data-path="abstract-and-title.html"><a href="abstract-and-title.html#structure-2"><i class="fa fa-check"></i><b>14.1</b> structure</a></li>
+<li class="chapter" data-level="14.2" data-path="abstract-and-title.html"><a href="abstract-and-title.html#suggestions-2"><i class="fa fa-check"></i><b>14.2</b> suggestions</a></li>
+<li class="chapter" data-level="14.3" data-path="abstract-and-title.html"><a href="abstract-and-title.html#further-reading-1"><i class="fa fa-check"></i><b>14.3</b> further reading</a></li>
 </ul></li>
 <li><a href="section-5.html#section-5"></a></li>
 <li class="chapter" data-level="" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i>APPENDIX</a></li>
@@ -317,78 +318,78 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">16.2</span> ordering</h2>
 <p>A list of numeric element has an inherent order to it: -inf -&gt; +inf. A list of character element also has an inherent order to it: A -&gt; Z, or if it’s a mixed number and letter list (which is interpreted by R as a character list): 0 -&gt; 9 -&gt; A -&gt; Z.</p>
 <p>However, there are cases where we will want a list of character elements to have some order other than A -&gt; Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -&gt; Z. For example, in the plot below, the y axis is not, perhaps, in the “correct” order:</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="faq.html#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
-<span id="cb108-2"><a href="faq.html#cb108-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-171-1.png" width="384" style="display: block; margin: auto;" /></p>
-<p>How do we fix this? We need to convert the column <code>group_number</code> into a list of factors that have the correct order (see below). For this, we will use the command <code>factor</code>, which will accept an argument called <code>levels</code> in which we can define the order the the characters should be in:</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="faq.html#cb109-1" aria-hidden="true" tabindex="-1"></a>periodic_table<span class="sc">$</span>group_number <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
-<span id="cb109-2"><a href="faq.html#cb109-2" aria-hidden="true" tabindex="-1"></a>  periodic_table<span class="sc">$</span>group_number,</span>
-<span id="cb109-3"><a href="faq.html#cb109-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;6&quot;</span>, <span class="st">&quot;7&quot;</span>, <span class="st">&quot;8&quot;</span>, <span class="st">&quot;9&quot;</span>, <span class="st">&quot;10&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;12&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;14&quot;</span>, <span class="st">&quot;15&quot;</span>, <span class="st">&quot;16&quot;</span>, <span class="st">&quot;17&quot;</span>, <span class="st">&quot;18&quot;</span>, <span class="st">&quot;lanthanides&quot;</span>, <span class="st">&quot;actinides&quot;</span>)</span>
-<span id="cb109-4"><a href="faq.html#cb109-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb109-5"><a href="faq.html#cb109-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb109-6"><a href="faq.html#cb109-6" aria-hidden="true" tabindex="-1"></a>periodic_table</span>
-<span id="cb109-7"><a href="faq.html#cb109-7" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 118 × 41</span></span>
-<span id="cb109-8"><a href="faq.html#cb109-8" aria-hidden="true" tabindex="-1"></a><span class="do">##    atomic_number element_name atomic_symbol group_number period atomic_mass_rou…</span></span>
-<span id="cb109-9"><a href="faq.html#cb109-9" aria-hidden="true" tabindex="-1"></a><span class="do">##            &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;         &lt;fct&gt;         &lt;dbl&gt;            &lt;dbl&gt;</span></span>
-<span id="cb109-10"><a href="faq.html#cb109-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  1             1 hydrogen     H             1                 1             1.01</span></span>
-<span id="cb109-11"><a href="faq.html#cb109-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  2             2 helium       He            18                1             4.00</span></span>
-<span id="cb109-12"><a href="faq.html#cb109-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  3             3 lithium      Li            1                 2             6.97</span></span>
-<span id="cb109-13"><a href="faq.html#cb109-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  4             4 beryllium    Be            2                 2             9.01</span></span>
-<span id="cb109-14"><a href="faq.html#cb109-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  5             5 boron        B             13                2            10.8 </span></span>
-<span id="cb109-15"><a href="faq.html#cb109-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  6             6 carbon       C             14                2            12.0 </span></span>
-<span id="cb109-16"><a href="faq.html#cb109-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  7             7 nitrogen     N             15                2            14.0 </span></span>
-<span id="cb109-17"><a href="faq.html#cb109-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  8             8 oxygen       O             16                2            16   </span></span>
-<span id="cb109-18"><a href="faq.html#cb109-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  9             9 fluorine     F             17                2            19   </span></span>
-<span id="cb109-19"><a href="faq.html#cb109-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 10            10 neon         Ne            18                2            20.2 </span></span>
-<span id="cb109-20"><a href="faq.html#cb109-20" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 108 more rows, and 35 more variables: melting_point_C &lt;dbl&gt;,</span></span>
-<span id="cb109-21"><a href="faq.html#cb109-21" aria-hidden="true" tabindex="-1"></a><span class="do">## #   boiling_point_C &lt;dbl&gt;, state_at_RT &lt;chr&gt;, density_g_per_mL &lt;dbl&gt;,</span></span>
-<span id="cb109-22"><a href="faq.html#cb109-22" aria-hidden="true" tabindex="-1"></a><span class="do">## #   electronegativity_pauling &lt;dbl&gt;, first_ionization_poten_eV &lt;dbl&gt;,</span></span>
-<span id="cb109-23"><a href="faq.html#cb109-23" aria-hidden="true" tabindex="-1"></a><span class="do">## #   second_ionization_poten_eV &lt;dbl&gt;, third_ionization_poten_eV &lt;dbl&gt;,</span></span>
-<span id="cb109-24"><a href="faq.html#cb109-24" aria-hidden="true" tabindex="-1"></a><span class="do">## #   electron_affinity_eV &lt;dbl&gt;, atomic_radius_ang &lt;dbl&gt;,</span></span>
-<span id="cb109-25"><a href="faq.html#cb109-25" aria-hidden="true" tabindex="-1"></a><span class="do">## #   ionic_radius_ang &lt;dbl&gt;, covalent_radius_ang &lt;dbl&gt;,</span></span>
-<span id="cb109-26"><a href="faq.html#cb109-26" aria-hidden="true" tabindex="-1"></a><span class="do">## #   atomic_volume_cm3_per_mol &lt;dbl&gt;, crystal_structure &lt;chr&gt;, …</span></span></code></pre></div>
-<p>Notice that now when we look at the type of data that is contained in the column <code>group_number</code> it says “<fct>”. This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?</p>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="faq.html#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
-<span id="cb110-2"><a href="faq.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="faq.html#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
+<span id="cb109-2"><a href="faq.html#cb109-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
 <p><img src="index_files/figure-html/unnamed-chunk-173-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>How do we fix this? We need to convert the column <code>group_number</code> into a list of factors that have the correct order (see below). For this, we will use the command <code>factor</code>, which will accept an argument called <code>levels</code> in which we can define the order the the characters should be in:</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="faq.html#cb110-1" aria-hidden="true" tabindex="-1"></a>periodic_table<span class="sc">$</span>group_number <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb110-2"><a href="faq.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  periodic_table<span class="sc">$</span>group_number,</span>
+<span id="cb110-3"><a href="faq.html#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;6&quot;</span>, <span class="st">&quot;7&quot;</span>, <span class="st">&quot;8&quot;</span>, <span class="st">&quot;9&quot;</span>, <span class="st">&quot;10&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;12&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;14&quot;</span>, <span class="st">&quot;15&quot;</span>, <span class="st">&quot;16&quot;</span>, <span class="st">&quot;17&quot;</span>, <span class="st">&quot;18&quot;</span>, <span class="st">&quot;lanthanides&quot;</span>, <span class="st">&quot;actinides&quot;</span>)</span>
+<span id="cb110-4"><a href="faq.html#cb110-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb110-5"><a href="faq.html#cb110-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-6"><a href="faq.html#cb110-6" aria-hidden="true" tabindex="-1"></a>periodic_table</span>
+<span id="cb110-7"><a href="faq.html#cb110-7" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 118 × 41</span></span>
+<span id="cb110-8"><a href="faq.html#cb110-8" aria-hidden="true" tabindex="-1"></a><span class="do">##    atomic_number element_name atomic_symbol group_number period atomic_mass_rou…</span></span>
+<span id="cb110-9"><a href="faq.html#cb110-9" aria-hidden="true" tabindex="-1"></a><span class="do">##            &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;         &lt;fct&gt;         &lt;dbl&gt;            &lt;dbl&gt;</span></span>
+<span id="cb110-10"><a href="faq.html#cb110-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  1             1 hydrogen     H             1                 1             1.01</span></span>
+<span id="cb110-11"><a href="faq.html#cb110-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  2             2 helium       He            18                1             4.00</span></span>
+<span id="cb110-12"><a href="faq.html#cb110-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  3             3 lithium      Li            1                 2             6.97</span></span>
+<span id="cb110-13"><a href="faq.html#cb110-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  4             4 beryllium    Be            2                 2             9.01</span></span>
+<span id="cb110-14"><a href="faq.html#cb110-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  5             5 boron        B             13                2            10.8 </span></span>
+<span id="cb110-15"><a href="faq.html#cb110-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  6             6 carbon       C             14                2            12.0 </span></span>
+<span id="cb110-16"><a href="faq.html#cb110-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  7             7 nitrogen     N             15                2            14.0 </span></span>
+<span id="cb110-17"><a href="faq.html#cb110-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  8             8 oxygen       O             16                2            16   </span></span>
+<span id="cb110-18"><a href="faq.html#cb110-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  9             9 fluorine     F             17                2            19   </span></span>
+<span id="cb110-19"><a href="faq.html#cb110-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 10            10 neon         Ne            18                2            20.2 </span></span>
+<span id="cb110-20"><a href="faq.html#cb110-20" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 108 more rows, and 35 more variables: melting_point_C &lt;dbl&gt;,</span></span>
+<span id="cb110-21"><a href="faq.html#cb110-21" aria-hidden="true" tabindex="-1"></a><span class="do">## #   boiling_point_C &lt;dbl&gt;, state_at_RT &lt;chr&gt;, density_g_per_mL &lt;dbl&gt;,</span></span>
+<span id="cb110-22"><a href="faq.html#cb110-22" aria-hidden="true" tabindex="-1"></a><span class="do">## #   electronegativity_pauling &lt;dbl&gt;, first_ionization_poten_eV &lt;dbl&gt;,</span></span>
+<span id="cb110-23"><a href="faq.html#cb110-23" aria-hidden="true" tabindex="-1"></a><span class="do">## #   second_ionization_poten_eV &lt;dbl&gt;, third_ionization_poten_eV &lt;dbl&gt;,</span></span>
+<span id="cb110-24"><a href="faq.html#cb110-24" aria-hidden="true" tabindex="-1"></a><span class="do">## #   electron_affinity_eV &lt;dbl&gt;, atomic_radius_ang &lt;dbl&gt;,</span></span>
+<span id="cb110-25"><a href="faq.html#cb110-25" aria-hidden="true" tabindex="-1"></a><span class="do">## #   ionic_radius_ang &lt;dbl&gt;, covalent_radius_ang &lt;dbl&gt;,</span></span>
+<span id="cb110-26"><a href="faq.html#cb110-26" aria-hidden="true" tabindex="-1"></a><span class="do">## #   atomic_volume_cm3_per_mol &lt;dbl&gt;, crystal_structure &lt;chr&gt;, …</span></span></code></pre></div>
+<p>Notice that now when we look at the type of data that is contained in the column <code>group_number</code> it says “<fct>”. This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="faq.html#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(periodic_table) <span class="sc">+</span></span>
+<span id="cb111-2"><a href="faq.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> group_number, <span class="at">x =</span> atomic_mass_rounded))</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-175-1.png" width="384" style="display: block; margin: auto;" /></p>
 <p>VICTORY!</p>
 </div>
 <div id="column-manipulation" class="section level2" number="16.3">
 <h2><span class="header-section-number">16.3</span> column manipulation</h2>
 <p>How to select specific columns:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="faq.html#cb111-1" aria-hidden="true" tabindex="-1"></a>alaska_lake_data <span class="sc">%&gt;%</span></span>
-<span id="cb111-2"><a href="faq.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(water_temp, pH)</span>
-<span id="cb111-3"><a href="faq.html#cb111-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 2</span></span>
-<span id="cb111-4"><a href="faq.html#cb111-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    water_temp    pH</span></span>
-<span id="cb111-5"><a href="faq.html#cb111-5" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb111-6"><a href="faq.html#cb111-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1       6.46  7.69</span></span>
-<span id="cb111-7"><a href="faq.html#cb111-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2       6.46  7.69</span></span>
-<span id="cb111-8"><a href="faq.html#cb111-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3       6.46  7.69</span></span>
-<span id="cb111-9"><a href="faq.html#cb111-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4       6.46  7.69</span></span>
-<span id="cb111-10"><a href="faq.html#cb111-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5       6.46  7.69</span></span>
-<span id="cb111-11"><a href="faq.html#cb111-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6       6.46  7.69</span></span>
-<span id="cb111-12"><a href="faq.html#cb111-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7       6.46  7.69</span></span>
-<span id="cb111-13"><a href="faq.html#cb111-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8       6.46  7.69</span></span>
-<span id="cb111-14"><a href="faq.html#cb111-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       6.46  7.69</span></span>
-<span id="cb111-15"><a href="faq.html#cb111-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10       6.46  7.69</span></span>
-<span id="cb111-16"><a href="faq.html#cb111-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
-<p>How to remove certain columns:</p>
 <div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="faq.html#cb112-1" aria-hidden="true" tabindex="-1"></a>alaska_lake_data <span class="sc">%&gt;%</span></span>
-<span id="cb112-2"><a href="faq.html#cb112-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span>water_temp)</span>
-<span id="cb112-3"><a href="faq.html#cb112-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 6</span></span>
-<span id="cb112-4"><a href="faq.html#cb112-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    lake                park     pH element mg_per_L element_type</span></span>
-<span id="cb112-5"><a href="faq.html#cb112-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;               &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span id="cb112-6"><a href="faq.html#cb112-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Devil_Mountain_Lake BELA   7.69 C          3.4   bound       </span></span>
-<span id="cb112-7"><a href="faq.html#cb112-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Devil_Mountain_Lake BELA   7.69 N          0.028 bound       </span></span>
-<span id="cb112-8"><a href="faq.html#cb112-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Devil_Mountain_Lake BELA   7.69 P          0     bound       </span></span>
-<span id="cb112-9"><a href="faq.html#cb112-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Devil_Mountain_Lake BELA   7.69 Cl        10.4   free        </span></span>
-<span id="cb112-10"><a href="faq.html#cb112-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Devil_Mountain_Lake BELA   7.69 S          0.62  free        </span></span>
-<span id="cb112-11"><a href="faq.html#cb112-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Devil_Mountain_Lake BELA   7.69 F          0.04  free        </span></span>
-<span id="cb112-12"><a href="faq.html#cb112-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Devil_Mountain_Lake BELA   7.69 Br         0.02  free        </span></span>
-<span id="cb112-13"><a href="faq.html#cb112-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Devil_Mountain_Lake BELA   7.69 Na         8.92  free        </span></span>
-<span id="cb112-14"><a href="faq.html#cb112-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Devil_Mountain_Lake BELA   7.69 K          1.2   free        </span></span>
-<span id="cb112-15"><a href="faq.html#cb112-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Devil_Mountain_Lake BELA   7.69 Ca         5.73  free        </span></span>
+<span id="cb112-2"><a href="faq.html#cb112-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(water_temp, pH)</span>
+<span id="cb112-3"><a href="faq.html#cb112-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 2</span></span>
+<span id="cb112-4"><a href="faq.html#cb112-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    water_temp    pH</span></span>
+<span id="cb112-5"><a href="faq.html#cb112-5" aria-hidden="true" tabindex="-1"></a><span class="do">##         &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb112-6"><a href="faq.html#cb112-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1       6.46  7.69</span></span>
+<span id="cb112-7"><a href="faq.html#cb112-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2       6.46  7.69</span></span>
+<span id="cb112-8"><a href="faq.html#cb112-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3       6.46  7.69</span></span>
+<span id="cb112-9"><a href="faq.html#cb112-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4       6.46  7.69</span></span>
+<span id="cb112-10"><a href="faq.html#cb112-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5       6.46  7.69</span></span>
+<span id="cb112-11"><a href="faq.html#cb112-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6       6.46  7.69</span></span>
+<span id="cb112-12"><a href="faq.html#cb112-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7       6.46  7.69</span></span>
+<span id="cb112-13"><a href="faq.html#cb112-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8       6.46  7.69</span></span>
+<span id="cb112-14"><a href="faq.html#cb112-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9       6.46  7.69</span></span>
+<span id="cb112-15"><a href="faq.html#cb112-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10       6.46  7.69</span></span>
 <span id="cb112-16"><a href="faq.html#cb112-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
+<p>How to remove certain columns:</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="faq.html#cb113-1" aria-hidden="true" tabindex="-1"></a>alaska_lake_data <span class="sc">%&gt;%</span></span>
+<span id="cb113-2"><a href="faq.html#cb113-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span>water_temp)</span>
+<span id="cb113-3"><a href="faq.html#cb113-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 220 × 6</span></span>
+<span id="cb113-4"><a href="faq.html#cb113-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    lake                park     pH element mg_per_L element_type</span></span>
+<span id="cb113-5"><a href="faq.html#cb113-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;               &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
+<span id="cb113-6"><a href="faq.html#cb113-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Devil_Mountain_Lake BELA   7.69 C          3.4   bound       </span></span>
+<span id="cb113-7"><a href="faq.html#cb113-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Devil_Mountain_Lake BELA   7.69 N          0.028 bound       </span></span>
+<span id="cb113-8"><a href="faq.html#cb113-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Devil_Mountain_Lake BELA   7.69 P          0     bound       </span></span>
+<span id="cb113-9"><a href="faq.html#cb113-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Devil_Mountain_Lake BELA   7.69 Cl        10.4   free        </span></span>
+<span id="cb113-10"><a href="faq.html#cb113-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Devil_Mountain_Lake BELA   7.69 S          0.62  free        </span></span>
+<span id="cb113-11"><a href="faq.html#cb113-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Devil_Mountain_Lake BELA   7.69 F          0.04  free        </span></span>
+<span id="cb113-12"><a href="faq.html#cb113-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Devil_Mountain_Lake BELA   7.69 Br         0.02  free        </span></span>
+<span id="cb113-13"><a href="faq.html#cb113-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Devil_Mountain_Lake BELA   7.69 Na         8.92  free        </span></span>
+<span id="cb113-14"><a href="faq.html#cb113-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Devil_Mountain_Lake BELA   7.69 K          1.2   free        </span></span>
+<span id="cb113-15"><a href="faq.html#cb113-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Devil_Mountain_Lake BELA   7.69 Ca         5.73  free        </span></span>
+<span id="cb113-16"><a href="faq.html#cb113-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 210 more rows</span></span></code></pre></div>
 <!-- end -->
 <!-- start templates -->
 </div>

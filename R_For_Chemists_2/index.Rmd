@@ -191,6 +191,24 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("xcms")
 ```
 
+## Updating R and R Packages
+
+
+To update R:
+
+```{r, eval = FALSE}
+
+install.packages('devtools') #assuming it is not already installed
+
+library(devtools)
+
+install_github('andreacirilloac/updateR')
+
+library(updateR)
+
+updateR()
+```
+
 <!-- end -->
 
 <!-- start markdown-->
@@ -2717,8 +2735,6 @@ hops_components %>%
 -->
 <!-- end -->
 
-
-
 <!-- start final project -->
 
 # {-}
@@ -2757,15 +2773,19 @@ select(alaska_lake_data, park, water_temp)
 <!-- start writing -->
 # WRITING {-}
 
+For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results.
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/project_overview.png', dpi = NA)
+```
+
+The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript:
+
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_2/images/writing_order.png', dpi = NA)
 ```
 
-Orders are not the same!
-
-Minimize revision with strategic order of composition.
-
-Compare to class schedule
+The orders of presentation and preparation do not have to be the same! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
 
 # figures & captions
 

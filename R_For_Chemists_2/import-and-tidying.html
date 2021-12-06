@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-11-29" />
+<meta name="date" content="2021-12-06" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -147,6 +147,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.5" data-path="installation.html"><a href="installation.html#tex"><i class="fa fa-check"></i><b>1.5</b> TeX</a></li>
 <li class="chapter" data-level="1.6" data-path="installation.html"><a href="installation.html#phylochemistry"><i class="fa fa-check"></i><b>1.6</b> phylochemistry</a></li>
 <li class="chapter" data-level="1.7" data-path="installation.html"><a href="installation.html#xcms"><i class="fa fa-check"></i><b>1.7</b> xcms</a></li>
+<li class="chapter" data-level="1.8" data-path="installation.html"><a href="installation.html#updating-r-and-r-packages"><i class="fa fa-check"></i><b>1.8</b> Updating R and R Packages</a></li>
 </ul></li>
 <li><a href="section-2.html#section-2"></a></li>
 <li class="chapter" data-level="" data-path="data-visualization.html"><a href="data-visualization.html"><i class="fa fa-check"></i>DATA VISUALIZATION</a></li>
@@ -259,9 +260,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="14" data-path="abstract-and-title.html"><a href="abstract-and-title.html"><i class="fa fa-check"></i><b>14</b> abstract and title</a>
 <ul>
-<li class="chapter" data-level="14.1" data-path="abstract-and-title.html"><a href="abstract-and-title.html#general"><i class="fa fa-check"></i><b>14.1</b> General</a></li>
-<li class="chapter" data-level="14.2" data-path="abstract-and-title.html"><a href="abstract-and-title.html#suggestions-2"><i class="fa fa-check"></i><b>14.2</b> Suggestions</a></li>
-<li class="chapter" data-level="14.3" data-path="abstract-and-title.html"><a href="abstract-and-title.html#further-reading-1"><i class="fa fa-check"></i><b>14.3</b> Further reading</a></li>
+<li class="chapter" data-level="14.1" data-path="abstract-and-title.html"><a href="abstract-and-title.html#structure-2"><i class="fa fa-check"></i><b>14.1</b> structure</a></li>
+<li class="chapter" data-level="14.2" data-path="abstract-and-title.html"><a href="abstract-and-title.html#suggestions-2"><i class="fa fa-check"></i><b>14.2</b> suggestions</a></li>
+<li class="chapter" data-level="14.3" data-path="abstract-and-title.html"><a href="abstract-and-title.html#further-reading-1"><i class="fa fa-check"></i><b>14.3</b> further reading</a></li>
 </ul></li>
 <li><a href="section-5.html#section-5"></a></li>
 <li class="chapter" data-level="" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i>APPENDIX</a></li>
@@ -322,36 +323,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="tidy-data" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> tidy data</h2>
 <p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="import-and-tidying.html#cb42-1" aria-hidden="true" tabindex="-1"></a>fadb_sample</span>
-<span id="cb42-2"><a href="import-and-tidying.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 11</span></span>
-<span id="cb42-3"><a href="import-and-tidying.html#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   fatty_acid Agonandra_brasi… Agonandra_silva… Agonandra_excel… Heisteria_silvi…</span></span>
-<span id="cb42-4"><a href="import-and-tidying.html#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></span>
-<span id="cb42-5"><a href="import-and-tidying.html#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Hexadecan…              3.4              1                1.2              2.9</span></span>
-<span id="cb42-6"><a href="import-and-tidying.html#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Octadecan…              6.2              0.1              0.4              0.1</span></span>
-<span id="cb42-7"><a href="import-and-tidying.html#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Eicosanoi…              4.7              3.5              1.7              0.1</span></span>
-<span id="cb42-8"><a href="import-and-tidying.html#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Docosanoi…             77.4              0.4              1                7.4</span></span>
-<span id="cb42-9"><a href="import-and-tidying.html#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Tetracosa…              1.4              1                1.4              1.7</span></span>
-<span id="cb42-10"><a href="import-and-tidying.html#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Hexacosan…              1.9             12.6             23.1             46.6</span></span>
-<span id="cb42-11"><a href="import-and-tidying.html#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 7 Octacosan…              5               81.4             71.3             41.2</span></span>
-<span id="cb42-12"><a href="import-and-tidying.html#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 6 more variables: Malania_oleifera &lt;dbl&gt;, Ximenia_americana &lt;dbl&gt;,</span></span>
-<span id="cb42-13"><a href="import-and-tidying.html#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Ongokea_gore &lt;dbl&gt;, Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
-<span id="cb42-14"><a href="import-and-tidying.html#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="import-and-tidying.html#cb43-1" aria-hidden="true" tabindex="-1"></a>fadb_sample</span>
+<span id="cb43-2"><a href="import-and-tidying.html#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 11</span></span>
+<span id="cb43-3"><a href="import-and-tidying.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   fatty_acid Agonandra_brasi… Agonandra_silva… Agonandra_excel… Heisteria_silvi…</span></span>
+<span id="cb43-4"><a href="import-and-tidying.html#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span></span>
+<span id="cb43-5"><a href="import-and-tidying.html#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Hexadecan…              3.4              1                1.2              2.9</span></span>
+<span id="cb43-6"><a href="import-and-tidying.html#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 Octadecan…              6.2              0.1              0.4              0.1</span></span>
+<span id="cb43-7"><a href="import-and-tidying.html#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 Eicosanoi…              4.7              3.5              1.7              0.1</span></span>
+<span id="cb43-8"><a href="import-and-tidying.html#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 Docosanoi…             77.4              0.4              1                7.4</span></span>
+<span id="cb43-9"><a href="import-and-tidying.html#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 Tetracosa…              1.4              1                1.4              1.7</span></span>
+<span id="cb43-10"><a href="import-and-tidying.html#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 Hexacosan…              1.9             12.6             23.1             46.6</span></span>
+<span id="cb43-11"><a href="import-and-tidying.html#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 7 Octacosan…              5               81.4             71.3             41.2</span></span>
+<span id="cb43-12"><a href="import-and-tidying.html#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 6 more variables: Malania_oleifera &lt;dbl&gt;, Ximenia_americana &lt;dbl&gt;,</span></span>
+<span id="cb43-13"><a href="import-and-tidying.html#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Ongokea_gore &lt;dbl&gt;, Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
+<span id="cb43-14"><a href="import-and-tidying.html#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="do">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
 <p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="import-and-tidying.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(<span class="at">data =</span> fadb_sample, <span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">names_to =</span> <span class="st">&quot;plant_species&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relative_abundance&quot;</span>)</span>
-<span id="cb43-2"><a href="import-and-tidying.html#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 70 × 3</span></span>
-<span id="cb43-3"><a href="import-and-tidying.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    fatty_acid        plant_species           relative_abundance</span></span>
-<span id="cb43-4"><a href="import-and-tidying.html#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;                                &lt;dbl&gt;</span></span>
-<span id="cb43-5"><a href="import-and-tidying.html#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Hexadecanoic acid Agonandra_brasiliensis                 3.4</span></span>
-<span id="cb43-6"><a href="import-and-tidying.html#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Hexadecanoic acid Agonandra_silvatica                    1  </span></span>
-<span id="cb43-7"><a href="import-and-tidying.html#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Hexadecanoic acid Agonandra_excelsa                      1.2</span></span>
-<span id="cb43-8"><a href="import-and-tidying.html#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Hexadecanoic acid Heisteria_silvianii                    2.9</span></span>
-<span id="cb43-9"><a href="import-and-tidying.html#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Hexadecanoic acid Malania_oleifera                       0.7</span></span>
-<span id="cb43-10"><a href="import-and-tidying.html#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Hexadecanoic acid Ximenia_americana                      3.3</span></span>
-<span id="cb43-11"><a href="import-and-tidying.html#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Hexadecanoic acid Ongokea_gore                           1  </span></span>
-<span id="cb43-12"><a href="import-and-tidying.html#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Hexadecanoic acid Comandra_pallida                       2.3</span></span>
-<span id="cb43-13"><a href="import-and-tidying.html#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Hexadecanoic acid Buckleya_distichophylla                1.6</span></span>
-<span id="cb43-14"><a href="import-and-tidying.html#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Hexadecanoic acid Nuytsia_floribunda                     3.8</span></span>
-<span id="cb43-15"><a href="import-and-tidying.html#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 60 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="import-and-tidying.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(<span class="at">data =</span> fadb_sample, <span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">11</span>, <span class="at">names_to =</span> <span class="st">&quot;plant_species&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;relative_abundance&quot;</span>)</span>
+<span id="cb44-2"><a href="import-and-tidying.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 70 × 3</span></span>
+<span id="cb44-3"><a href="import-and-tidying.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    fatty_acid        plant_species           relative_abundance</span></span>
+<span id="cb44-4"><a href="import-and-tidying.html#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;             &lt;chr&gt;                                &lt;dbl&gt;</span></span>
+<span id="cb44-5"><a href="import-and-tidying.html#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 Hexadecanoic acid Agonandra_brasiliensis                 3.4</span></span>
+<span id="cb44-6"><a href="import-and-tidying.html#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 Hexadecanoic acid Agonandra_silvatica                    1  </span></span>
+<span id="cb44-7"><a href="import-and-tidying.html#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 Hexadecanoic acid Agonandra_excelsa                      1.2</span></span>
+<span id="cb44-8"><a href="import-and-tidying.html#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 Hexadecanoic acid Heisteria_silvianii                    2.9</span></span>
+<span id="cb44-9"><a href="import-and-tidying.html#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 Hexadecanoic acid Malania_oleifera                       0.7</span></span>
+<span id="cb44-10"><a href="import-and-tidying.html#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 Hexadecanoic acid Ximenia_americana                      3.3</span></span>
+<span id="cb44-11"><a href="import-and-tidying.html#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 Hexadecanoic acid Ongokea_gore                           1  </span></span>
+<span id="cb44-12"><a href="import-and-tidying.html#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 Hexadecanoic acid Comandra_pallida                       2.3</span></span>
+<span id="cb44-13"><a href="import-and-tidying.html#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 Hexadecanoic acid Buckleya_distichophylla                1.6</span></span>
+<span id="cb44-14"><a href="import-and-tidying.html#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 Hexadecanoic acid Nuytsia_floribunda                     3.8</span></span>
+<span id="cb44-15"><a href="import-and-tidying.html#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 60 more rows</span></span></code></pre></div>
 <p>Brilliant! Now we have a tidy, long-style table that can be used with ggplot.</p>
 <!-- end -->
 <!-- start the pipe and summaries -->
