@@ -1097,7 +1097,7 @@ ggplot(pt_by_year_summ,
 7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
 
-<!-- start -->
+<!-- start CHEMOMETRICS -->
 
 # {-}
 
@@ -2770,7 +2770,7 @@ select(alaska_lake_data, park, water_temp)
 ```
 <!-- end -->
 
-<!-- start writing -->
+<!-- start WRITING -->
 # WRITING {-}
 
 For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results.
@@ -3007,6 +3007,14 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 ## further reading
 
 * [Titles Guide](https://libguides.usc.edu/writingguide/title)
+
+<!-- end -->
+
+<!-- start IMAGE ANALYSIS -->
+
+# analyzing RGB images
+
+
 
 <!-- end -->
 

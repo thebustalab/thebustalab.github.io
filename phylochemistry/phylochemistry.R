@@ -6513,24 +6513,24 @@
                                 ## Add nearly horizontal double bonds
                                     plot <- plot + geom_segment(
                                         data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
-                                        aes(x = bond_start_x, y = bond_start_y-0.2, xend = bond_end_x, yend = bond_end_y-0.2),
+                                        aes(x = bond_start_x-0.35, y = bond_start_y-0.15, xend = bond_end_x-0.35, yend = bond_end_y-0.15),
                                         size = 1.5, alpha = 0.7
                                     ) +
                                     geom_segment(
                                         data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
-                                        aes(x = bond_start_x, y = bond_start_y+0.2, xend = bond_end_x, yend = bond_end_y+0.2),
+                                        aes(x = bond_start_x+0.35, y = bond_start_y+0.15, xend = bond_end_x+0.35, yend = bond_end_y+0.15),
                                         size = 1.5, alpha = 0.7
                                     )
 
                                 ## Add vertical double bonds
                                     plot <- plot + geom_segment(
                                         data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x == bond_end_x),
-                                        aes(x = bond_start_x-0.18, y = bond_start_y, xend = bond_end_x-0.18, yend = bond_end_y),
+                                        aes(x = bond_start_x-0.25, y = bond_start_y, xend = bond_end_x-0.25, yend = bond_end_y),
                                         size = 1.5, alpha = 0.7
                                     ) +
                                     geom_segment(
                                         data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x == bond_end_x),
-                                        aes(x = bond_start_x+0.18, y = bond_start_y, xend = bond_end_x+0.18, yend = bond_end_y),
+                                        aes(x = bond_start_x+0.25, y = bond_start_y, xend = bond_end_x+0.25, yend = bond_end_y),
                                         size = 1.5, alpha = 0.7
                                     )
 
