@@ -6752,10 +6752,10 @@
                         metadata$time_stamp <- exifr::read_exif(path_to_image)$SubSecCreateDate
                         output$metadata1 <- renderText({ metadata$name })
                         output$metadata2 <- renderPrint({ metadata$time_stamp })
-                        metadata$date <- gsub(":", "/", gsub(" .*$", "", metadata2))
-                        metadata$year <- lubridate::year(gsub(":", "/", gsub(" .*$", "", metadata2)))
-                        metadata$month <- lubridate::month(gsub(":", "/", gsub(" .*$", "", metadata2)))
-                        metadata$day <- lubridate::day(gsub(":", "/", gsub(" .*$", "", metadata2)))
+                        metadata$date <- gsub(":", "/", gsub(" .*$", "", metadata$time_stamp))
+                        metadata$year <- lubridate::year(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
+                        metadata$month <- lubridate::month(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
+                        metadata$day <- lubridate::day(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
 
                     ## Draw photograph
 
@@ -6896,7 +6896,6 @@
 
             }
             
-
     ##### Mathematics, Statistical Testing, and Modeling
 
         #### normalize
