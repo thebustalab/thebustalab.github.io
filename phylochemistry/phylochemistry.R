@@ -230,11 +230,7 @@
             #' writeMonolist
 
             writeMonolist <- function( monolist, monolist_out_path, ... ) {
-                if( file.exists(monolist_out_path) ) {
-                    write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, col.names = FALSE, ...)    
-                } else {
-                    write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, col.names = TRUE, ...)
-                }
+                    write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
             }
 
         #### readPolylist
@@ -4497,6 +4493,7 @@
                                         if ( file.exists("chromatograms.csv") ) {
                                             ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
                                             missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv]))
+                                            missing_ions <- dropNA(missing_ions)
 
                                             if (length(missing_ions) > 0) {
                                                 cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))    
@@ -6881,12 +6878,27 @@
 
                         observeEvent(input$write_out, {
 
-                            writeMonolist(
-                                rbind(reference_pixel_output, sample_pixel_output),
-                                append = TRUE,
-                                monolist_out_path = monolist_out_path
-                            )
-                            cat("Appended to Spreadsheet")
+                            if (file.exists(monolist_out_path)) {
+
+                                writeMonolist(
+                                    rbind(reference_pixel_output, sample_pixel_output),
+                                    append = TRUE,
+                                    monolist_out_path = monolist_out_path,
+                                    col.names = FALSE
+                                )
+                                cat("Appended to Spreadsheet")
+
+                            } else {
+
+                                writeMonolist(
+                                    rbind(reference_pixel_output, sample_pixel_output),
+                                    append = TRUE,
+                                    monolist_out_path = monolist_out_path,
+                                    col.names = TRUE
+                                )
+                                cat("Appended to Spreadsheet")
+
+                            }
                                 
                         })
 

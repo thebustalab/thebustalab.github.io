@@ -3012,7 +3012,26 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- start IMAGE ANALYSIS -->
 
-# analyzing RGB images
+# {-}
+
+# IMAGE ANALYSIS {-}
+
+# image color analysis
+
+For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
+
+```{r}
+analyzeImage(
+  share_link = "https://drive.google.com/file/d/1rvfh9_DqEWlpaegGwfLZLdjjYEDlM0ZL/view?usp=sharing",
+  monolist_out_path = "/Users/bust0037/Desktop/output.csv"
+)
+```
+
+# images of mass spectra
+
+```{r}
+analyzeMassSpectralImages()
+```
 
 
 

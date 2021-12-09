@@ -46,6 +46,8 @@ cowplot
 agricolae
 ggpp
 ggpmisc
+exifr
+lubridate
 ggtree
 BiocGenerics
 S4Vectors
