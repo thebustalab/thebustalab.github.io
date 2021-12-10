@@ -24,7 +24,7 @@
 <meta name="author" content="Lucas Busta" />
 
 
-<meta name="date" content="2021-12-06" />
+<meta name="date" content="2021-12-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -265,24 +265,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="14.3" data-path="abstract-and-title.html"><a href="abstract-and-title.html#further-reading-1"><i class="fa fa-check"></i><b>14.3</b> further reading</a></li>
 </ul></li>
 <li><a href="section-5.html#section-5"></a></li>
+<li class="chapter" data-level="" data-path="image-analysis.html"><a href="image-analysis.html"><i class="fa fa-check"></i>IMAGE ANALYSIS</a></li>
+<li class="chapter" data-level="15" data-path="image-color-analysis.html"><a href="image-color-analysis.html"><i class="fa fa-check"></i><b>15</b> image color analysis</a></li>
+<li class="chapter" data-level="16" data-path="images-of-mass-spectra.html"><a href="images-of-mass-spectra.html"><i class="fa fa-check"></i><b>16</b> images of mass spectra</a></li>
+<li><a href="section-6.html#section-6"></a></li>
 <li class="chapter" data-level="" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i>APPENDIX</a></li>
-<li class="chapter" data-level="15" data-path="links.html"><a href="links.html"><i class="fa fa-check"></i><b>15</b> links</a>
+<li class="chapter" data-level="17" data-path="links.html"><a href="links.html"><i class="fa fa-check"></i><b>17</b> links</a>
 <ul>
-<li class="chapter" data-level="15.1" data-path="links.html"><a href="links.html#geoms-1"><i class="fa fa-check"></i><b>15.1</b> geoms</a></li>
-<li class="chapter" data-level="15.2" data-path="links.html"><a href="links.html#colors"><i class="fa fa-check"></i><b>15.2</b> colors</a></li>
+<li class="chapter" data-level="17.1" data-path="links.html"><a href="links.html#geoms-1"><i class="fa fa-check"></i><b>17.1</b> geoms</a></li>
+<li class="chapter" data-level="17.2" data-path="links.html"><a href="links.html#colors"><i class="fa fa-check"></i><b>17.2</b> colors</a></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>16</b> faq</a>
+<li class="chapter" data-level="18" data-path="faq.html"><a href="faq.html"><i class="fa fa-check"></i><b>18</b> faq</a>
 <ul>
-<li class="chapter" data-level="16.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>16.1</b> filtering</a></li>
-<li class="chapter" data-level="16.2" data-path="faq.html"><a href="faq.html#ordering"><i class="fa fa-check"></i><b>16.2</b> ordering</a></li>
-<li class="chapter" data-level="16.3" data-path="faq.html"><a href="faq.html#column-manipulation"><i class="fa fa-check"></i><b>16.3</b> column manipulation</a></li>
+<li class="chapter" data-level="18.1" data-path="faq.html"><a href="faq.html#filtering"><i class="fa fa-check"></i><b>18.1</b> filtering</a></li>
+<li class="chapter" data-level="18.2" data-path="faq.html"><a href="faq.html#ordering"><i class="fa fa-check"></i><b>18.2</b> ordering</a></li>
+<li class="chapter" data-level="18.3" data-path="faq.html"><a href="faq.html#column-manipulation"><i class="fa fa-check"></i><b>18.3</b> column manipulation</a></li>
 </ul></li>
-<li class="chapter" data-level="17" data-path="templates.html"><a href="templates.html"><i class="fa fa-check"></i><b>17</b> templates</a>
+<li class="chapter" data-level="19" data-path="templates.html"><a href="templates.html"><i class="fa fa-check"></i><b>19</b> templates</a>
 <ul>
-<li class="chapter" data-level="17.1" data-path="templates.html"><a href="templates.html#matrix-analyses"><i class="fa fa-check"></i><b>17.1</b> matrix analyses</a>
+<li class="chapter" data-level="19.1" data-path="templates.html"><a href="templates.html#matrix-analyses"><i class="fa fa-check"></i><b>19.1</b> matrix analyses</a>
 <ul>
-<li class="chapter" data-level="17.1.1" data-path="templates.html"><a href="templates.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>17.1.1</b> basic <code>runMatrixAnalysis()</code> template</a></li>
-<li class="chapter" data-level="17.1.2" data-path="templates.html"><a href="templates.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>17.1.2</b> advanced <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="19.1.1" data-path="templates.html"><a href="templates.html#basic-runmatrixanalysis-template"><i class="fa fa-check"></i><b>19.1.1</b> basic <code>runMatrixAnalysis()</code> template</a></li>
+<li class="chapter" data-level="19.1.2" data-path="templates.html"><a href="templates.html#advanced-runmatrixanalysis-template"><i class="fa fa-check"></i><b>19.1.2</b> advanced <code>runMatrixAnalysis()</code> template</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -697,22 +701,51 @@ library(multcompView)
 <div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="comparing-means.html#cb107-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
 <span id="cb107-2"><a href="comparing-means.html#cb107-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb107-3"><a href="comparing-means.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb107-4"><a href="comparing-means.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairwise_t_test</span>(abundance<span class="sc">~</span>analyte)</span>
-<span id="cb107-5"><a href="comparing-means.html#cb107-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 10 × 10</span></span>
-<span id="cb107-6"><a href="comparing-means.html#cb107-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code .y.       group1 group2    n1    n2         p p.signif     p.adj</span></span>
-<span id="cb107-7"><a href="comparing-means.html#cb107-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  * &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;</span></span>
-<span id="cb107-8"><a href="comparing-means.html#cb107-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    abundance Cl     Na        12    12 0.0469    *        0.0469   </span></span>
-<span id="cb107-9"><a href="comparing-means.html#cb107-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10   abundance Cl     Na         7     7 0.882     ns       0.882    </span></span>
-<span id="cb107-10"><a href="comparing-means.html#cb107-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2    abundance Cl     Na         6     6 0.0000375 ****     0.0000375</span></span>
-<span id="cb107-11"><a href="comparing-means.html#cb107-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3    abundance Cl     Na         3     3 0.683     ns       0.683    </span></span>
-<span id="cb107-12"><a href="comparing-means.html#cb107-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4    abundance Cl     Na        17    17 0.103     ns       0.103    </span></span>
-<span id="cb107-13"><a href="comparing-means.html#cb107-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5    abundance Cl     Na         5     5 0.145     ns       0.145    </span></span>
-<span id="cb107-14"><a href="comparing-means.html#cb107-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6    abundance Cl     Na        12    12 0.566     ns       0.566    </span></span>
-<span id="cb107-15"><a href="comparing-means.html#cb107-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7    abundance Cl     Na         9     9 0.521     ns       0.521    </span></span>
-<span id="cb107-16"><a href="comparing-means.html#cb107-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8    abundance Cl     Na         3     3 0.428     ns       0.428    </span></span>
-<span id="cb107-17"><a href="comparing-means.html#cb107-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9    abundance Cl     Na        36    36 0.948     ns       0.948    </span></span>
-<span id="cb107-18"><a href="comparing-means.html#cb107-18" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
-<p>Excellent, now we see how to run parametric and non-parametric pairwise comparisons.</p>
+<span id="cb107-4"><a href="comparing-means.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairwise_t_test</span>(abundance<span class="sc">~</span>analyte) <span class="ot">-&gt;</span> test_output</span>
+<span id="cb107-5"><a href="comparing-means.html#cb107-5" aria-hidden="true" tabindex="-1"></a>  test_output</span>
+<span id="cb107-6"><a href="comparing-means.html#cb107-6" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 10 × 10</span></span>
+<span id="cb107-7"><a href="comparing-means.html#cb107-7" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code .y.       group1 group2    n1    n2         p p.signif     p.adj</span></span>
+<span id="cb107-8"><a href="comparing-means.html#cb107-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  * &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;</span></span>
+<span id="cb107-9"><a href="comparing-means.html#cb107-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    abundance Cl     Na        12    12 0.0469    *        0.0469   </span></span>
+<span id="cb107-10"><a href="comparing-means.html#cb107-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10   abundance Cl     Na         7     7 0.882     ns       0.882    </span></span>
+<span id="cb107-11"><a href="comparing-means.html#cb107-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2    abundance Cl     Na         6     6 0.0000375 ****     0.0000375</span></span>
+<span id="cb107-12"><a href="comparing-means.html#cb107-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3    abundance Cl     Na         3     3 0.683     ns       0.683    </span></span>
+<span id="cb107-13"><a href="comparing-means.html#cb107-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4    abundance Cl     Na        17    17 0.103     ns       0.103    </span></span>
+<span id="cb107-14"><a href="comparing-means.html#cb107-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5    abundance Cl     Na         5     5 0.145     ns       0.145    </span></span>
+<span id="cb107-15"><a href="comparing-means.html#cb107-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6    abundance Cl     Na        12    12 0.566     ns       0.566    </span></span>
+<span id="cb107-16"><a href="comparing-means.html#cb107-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7    abundance Cl     Na         9     9 0.521     ns       0.521    </span></span>
+<span id="cb107-17"><a href="comparing-means.html#cb107-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8    abundance Cl     Na         3     3 0.428     ns       0.428    </span></span>
+<span id="cb107-18"><a href="comparing-means.html#cb107-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9    abundance Cl     Na        36    36 0.948     ns       0.948    </span></span>
+<span id="cb107-19"><a href="comparing-means.html#cb107-19" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 1 more variable: p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
+<p>Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="comparing-means.html#cb108-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-2"><a href="comparing-means.html#cb108-2" aria-hidden="true" tabindex="-1"></a>anno <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb108-3"><a href="comparing-means.html#cb108-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">xmin =</span> test_output<span class="sc">$</span>group1,</span>
+<span id="cb108-4"><a href="comparing-means.html#cb108-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">xmax =</span> test_output<span class="sc">$</span>group2,</span>
+<span id="cb108-5"><a href="comparing-means.html#cb108-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_position =</span> <span class="fu">c</span>(<span class="dv">150</span>, <span class="dv">150</span>, <span class="dv">150</span>, <span class="dv">175</span>, <span class="dv">80</span>, <span class="dv">50</span>, <span class="dv">300</span>, <span class="dv">150</span>, <span class="dv">50</span>, <span class="dv">125</span>),</span>
+<span id="cb108-6"><a href="comparing-means.html#cb108-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">text =</span> test_output<span class="sc">$</span>p.signif,</span>
+<span id="cb108-7"><a href="comparing-means.html#cb108-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_size =</span> <span class="dv">10</span>,</span>
+<span id="cb108-8"><a href="comparing-means.html#cb108-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_vert_offset =</span> <span class="dv">10</span>,</span>
+<span id="cb108-9"><a href="comparing-means.html#cb108-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_horiz_offset =</span> <span class="fl">1.5</span>,</span>
+<span id="cb108-10"><a href="comparing-means.html#cb108-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">tip_length_xmin =</span> <span class="dv">5</span>,</span>
+<span id="cb108-11"><a href="comparing-means.html#cb108-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">tip_length_xmax =</span> <span class="dv">5</span>,</span>
+<span id="cb108-12"><a href="comparing-means.html#cb108-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">aquifer_code =</span> test_output<span class="sc">$</span>aquifer_code</span>
+<span id="cb108-13"><a href="comparing-means.html#cb108-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb108-14"><a href="comparing-means.html#cb108-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-15"><a href="comparing-means.html#cb108-15" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
+<span id="cb108-16"><a href="comparing-means.html#cb108-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb108-17"><a href="comparing-means.html#cb108-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> analyte, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
+<span id="cb108-18"><a href="comparing-means.html#cb108-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">fill =</span> <span class="st">&quot;gold&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb108-19"><a href="comparing-means.html#cb108-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">&quot;maroon&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb108-20"><a href="comparing-means.html#cb108-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>aquifer_code) <span class="sc">+</span></span>
+<span id="cb108-21"><a href="comparing-means.html#cb108-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geomSignif</span>(<span class="at">data =</span> anno) <span class="sc">+</span></span>
+<span id="cb108-22"><a href="comparing-means.html#cb108-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Analyte&quot;</span>) <span class="sc">+</span></span>
+<span id="cb108-23"><a href="comparing-means.html#cb108-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Abundance&quot;</span>) <span class="sc">+</span></span>
+<span id="cb108-24"><a href="comparing-means.html#cb108-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb108-25"><a href="comparing-means.html#cb108-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb108-26"><a href="comparing-means.html#cb108-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>)</span>
+<span id="cb108-27"><a href="comparing-means.html#cb108-27" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-157-1.png" width="384" style="display: block; margin: auto;" /></p>
 </div>
 <div id="further-reading" class="section level2" number="10.6">
 <h2><span class="header-section-number">10.6</span> further reading</h2>
