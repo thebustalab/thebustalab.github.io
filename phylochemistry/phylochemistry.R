@@ -7287,185 +7287,187 @@
 
                         }
 
-                    ## tSNE
+                    # Run the matrix analysis selected
 
-                        # library(Rtsne)
-                        # out <- Rtsne(matrix, theta = 0.0, perplexity = 2)
-                        # out <- out$Y
-                        # colnames(out) <- c("x","y")
-                        # out <- as.data.frame(out)
-                        # ggplot(out) +
-                        #     geom_point(aes(x = x, y = y), shape = 21, size= 4)
+                        ## tSNE
 
-                    ## Density-based clustering = DBSCAN and OPTICS
+                            # library(Rtsne)
+                            # out <- Rtsne(matrix, theta = 0.0, perplexity = 2)
+                            # out <- out$Y
+                            # colnames(out) <- c("x","y")
+                            # out <- as.data.frame(out)
+                            # ggplot(out) +
+                            #     geom_point(aes(x = x, y = y), shape = 21, size= 4)
 
-                        # out <- dbscan::optics(matrix, minPts = 5)
-                        # out <- data.frame(
-                        #     order = out$order,
-                        #     reach_dist = out$reachdist,
-                        #     name = rownames(matrix)
-                        # )
-                        # out$name <- factor(out$name, levels = rev(rownames(matrix)[out$order]))
-                        # ggplot(out[2:19,]) +
-                        #     geom_col(aes(x = name, y = reach_dist))
+                        ## Density-based clustering = DBSCAN and OPTICS
 
-                    ## MCA ##
+                            # out <- dbscan::optics(matrix, minPts = 5)
+                            # out <- data.frame(
+                            #     order = out$order,
+                            #     reach_dist = out$reachdist,
+                            #     name = rownames(matrix)
+                            # )
+                            # out$name <- factor(out$name, levels = rev(rownames(matrix)[out$order]))
+                            # ggplot(out[2:19,]) +
+                            #     geom_col(aes(x = name, y = reach_dist))
 
-                        if( analysis == "mca" ) {
-                            cat("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
-                            coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
-                            clustering <- as_tibble(coords)
-                            clustering$sample_unique_ID <- rownames(coords)
-                            colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                            cat("Done!\n")
-                        }
+                        ## MCA ##
 
-                        if( analysis == "mca_ord" ) {
-                            cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
-                            coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
-                            clustering <- as_tibble(coords)
-                            clustering$analyte <- rownames(coords)
-                            colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
-                            clustering <- select(clustering, analyte, Dim_1, Dim_2)
-                            return(clustering)
-                            stop("Returning ordination plot coordinates. \nDone!")
-                        }
-
-                        if( analysis == "mca_dim" ) {
-                            cat("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
-                            coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
-                            clustering <- tibble::enframe(coords, name = NULL)
-                            clustering$principal_component <- names(coords)
-                            clustering$principal_component <- as.numeric(gsub("dim ", "", clustering$principal_component))
-                            colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                            clustering <- select(clustering, principal_component, percent_variance_explained)
-                            return(clustering)
-                            stop("Returning eigenvalues. \nDone!")
-                        }
-
-                    ## HCLUST, HCLUST_PHYLO ##
-
-                        if( analysis == "hclust" ) {                        
-                            phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
-                            clustering <- ggtree::fortify(phylo)
-                            clustering$sample_unique_ID <- clustering$label
-                        }
-
-                        if( analysis == "hclust_phylo" ) {                        
-                            phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
-                            # clustering <- ggtree::fortify(phylo)
-                            # clustering$sample_unique_ID <- clustering$label
-                            return(phylo)
-                            stop("Returning hclust_phylo.")
-                        }
-
-                    ## PCA, PCA_ORD, PCA_DIM ## 
-
-                        if( analysis == "pca" ) {
-                            if( scale_variance == TRUE ) {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]    
-                            } else {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
+                            if( analysis == "mca" ) {
+                                cat("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
+                                coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
+                                clustering <- as_tibble(coords)
+                                clustering$sample_unique_ID <- rownames(coords)
+                                colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
+                                cat("Done!\n")
                             }
-                            clustering <- as_tibble(coords)
-                            clustering$sample_unique_ID <- rownames(coords)
-                        }
 
-                        if( analysis == "pca_ord" ) {
-                            if( scale_variance == TRUE ) {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
-                            } else {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
+                            if( analysis == "mca_ord" ) {
+                                cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
+                                coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
+                                clustering <- as_tibble(coords)
+                                clustering$analyte <- rownames(coords)
+                                colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
+                                clustering <- select(clustering, analyte, Dim_1, Dim_2)
+                                return(clustering)
+                                stop("Returning ordination plot coordinates. \nDone!")
                             }
-                            clustering <- as_tibble(coords)
-                            clustering$analyte <- rownames(coords)
-                            clustering <- select(clustering, analyte, Dim.1, Dim.2)
-                            return(clustering)
-                            stop("Returning ordination plot coordinates.")
-                        }
 
-                        if( analysis == "pca_dim" ) {
-                            if( scale_variance == TRUE ) {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
-                            } else {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
+                            if( analysis == "mca_dim" ) {
+                                cat("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
+                                coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
+                                clustering <- tibble::enframe(coords, name = NULL)
+                                clustering$principal_component <- names(coords)
+                                clustering$principal_component <- as.numeric(gsub("dim ", "", clustering$principal_component))
+                                colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                                clustering <- select(clustering, principal_component, percent_variance_explained)
+                                return(clustering)
+                                stop("Returning eigenvalues. \nDone!")
                             }
-                            clustering <- tibble::enframe(coords, name = NULL)
-                            clustering$principal_component <- names(coords)
-                            clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
-                            colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                            clustering <- select(clustering, principal_component, percent_variance_explained)
-                            return(clustering)
-                            stop("Returning eigenvalues.")
-                        }
 
-                    ## K-MEANS ##
+                        ## HCLUST, HCLUST_PHYLO ##
 
-                        if( kmeans[1] %in% c("none", FALSE) ) {}
+                            if( analysis == "hclust" ) {                        
+                                phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
+                                clustering <- ggtree::fortify(phylo)
+                                clustering$sample_unique_ID <- clustering$label
+                            }
 
-                        if( !kmeans[1] %in% c("none", FALSE) ) {
+                            if( analysis == "hclust_phylo" ) {                        
+                                phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
+                                # clustering <- ggtree::fortify(phylo)
+                                # clustering$sample_unique_ID <- clustering$label
+                                return(phylo)
+                                stop("Returning hclust_phylo.")
+                            }
 
-                            ## Check for NAs
+                        ## PCA, PCA_ORD, PCA_DIM ## 
 
-                                if( any(is.na(matrix)) == TRUE ) {
-                                    stop("kmeans cannot handle NA. Please choose an option for na_replacement.")
+                            if( analysis == "pca" ) {
+                                if( scale_variance == TRUE ) {
+                                    coords <- FactoMineR::PCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]    
+                                } else {
+                                    coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
                                 }
+                                clustering <- as_tibble(coords)
+                                clustering$sample_unique_ID <- rownames(coords)
+                            }
 
-                            ## If kmeans = "pca", substitute the matrix kmeans sees with the first two dimensions of the PCA
-
-                                if ( kmeans[1] == "pca") {
-                                    matrix <- as.matrix(clustering[,1:2])
-                                    rownames(matrix) <- as.character(as.data.frame(clustering)[,3])
+                            if( analysis == "pca_ord" ) {
+                                if( scale_variance == TRUE ) {
+                                    coords <- FactoMineR::PCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
+                                } else {
+                                    coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
                                 }
+                                clustering <- as_tibble(coords)
+                                clustering$analyte <- rownames(coords)
+                                clustering <- select(clustering, analyte, Dim.1, Dim.2)
+                                return(clustering)
+                                stop("Returning ordination plot coordinates.")
+                            }
 
-                            ## Run k-means
-                                kmeans_results <- list()
-                                for( i in 1:(dim(matrix)[1]-1) ) {
-                                    kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
+                            if( analysis == "pca_dim" ) {
+                                if( scale_variance == TRUE ) {
+                                    coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
+                                } else {
+                                    coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
                                 }
-                                kmeans_results <- do.call(rbind, kmeans_results)
-                                kmeans_results
+                                clustering <- tibble::enframe(coords, name = NULL)
+                                clustering$principal_component <- names(coords)
+                                clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
+                                colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                                clustering <- select(clustering, principal_component, percent_variance_explained)
+                                return(clustering)
+                                stop("Returning eigenvalues.")
+                            }
 
-                            ## If auto, determine sharpest angle and return clusters
+                        ## K-MEANS ##
 
-                                if( kmeans[1] == "auto" | kmeans[1] == "pca" ) {
-                                    angles <- list()
-                                    for( i in 1:(length(kmeans_results)-2) ) {
-                                        slope_1 <- kmeans_results[i+1] - kmeans_results[i]
-                                        slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
-                                        angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
+                            if( kmeans[1] %in% c("none", FALSE) ) {}
+
+                            if( !kmeans[1] %in% c("none", FALSE) ) {
+
+                                ## Check for NAs
+
+                                    if( any(is.na(matrix)) == TRUE ) {
+                                        stop("kmeans cannot handle NA. Please choose an option for na_replacement.")
                                     }
-                                    angles <- do.call(rbind, angles)
 
-                                    cluster_number <- which(angles == min(angles)) + 1
+                                ## If kmeans = "pca", substitute the matrix kmeans sees with the first two dimensions of the PCA
 
-                                    kmeans_clusters <- stats::kmeans(x = matrix, centers = cluster_number, nstart = 25, iter.max = 1000)$cluster
-                                }
+                                    if ( kmeans[1] == "pca") {
+                                        matrix <- as.matrix(clustering[,1:2])
+                                        rownames(matrix) <- as.character(as.data.frame(clustering)[,3])
+                                    }
 
-                            ## If scree, return raw results
+                                ## Run k-means
+                                    kmeans_results <- list()
+                                    for( i in 1:(dim(matrix)[1]-1) ) {
+                                        kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
+                                    }
+                                    kmeans_results <- do.call(rbind, kmeans_results)
+                                    kmeans_results
 
-                                if( kmeans[1] == "elbow" ) {
-                                    results <- as_tibble(data.frame(
-                                        cluster_number = seq(1, dim(kmeans_results)[1], 1),
-                                        variance_within_cluster = kmeans_results
-                                    ))
-                                    return( results )
-                                    stop("Returning elbow plot.")
-                                }
+                                ## If auto, determine sharpest angle and return clusters
 
-                            ## If a number, return that many clusters
+                                    if( kmeans[1] == "auto" | kmeans[1] == "pca" ) {
+                                        angles <- list()
+                                        for( i in 1:(length(kmeans_results)-2) ) {
+                                            slope_1 <- kmeans_results[i+1] - kmeans_results[i]
+                                            slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
+                                            angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
+                                        }
+                                        angles <- do.call(rbind, angles)
 
-                                if( !kmeans[1] %in% c("auto", "elbow", "pca") ) {
-                                    if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', 'pca' or a number.")}
-                                    kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(kmeans[1]), nstart = 25, iter.max = 1000)$cluster
-                                }
+                                        cluster_number <- which(angles == min(angles)) + 1
 
-                            ## Bind kmeans cluster numbers to output
+                                        kmeans_clusters <- stats::kmeans(x = matrix, centers = cluster_number, nstart = 25, iter.max = 1000)$cluster
+                                    }
 
-                                kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = paste0("cluster_", kmeans_clusters)))
-                                clustering$kmeans_cluster <- kmeans_clusters$kmeans_cluster[match(clustering$sample_unique_ID, kmeans_clusters$sample_unique_ID)]
+                                ## If scree, return raw results
 
-                        }
+                                    if( kmeans[1] == "elbow" ) {
+                                        results <- as_tibble(data.frame(
+                                            cluster_number = seq(1, dim(kmeans_results)[1], 1),
+                                            variance_within_cluster = kmeans_results
+                                        ))
+                                        return( results )
+                                        stop("Returning elbow plot.")
+                                    }
+
+                                ## If a number, return that many clusters
+
+                                    if( !kmeans[1] %in% c("auto", "elbow", "pca") ) {
+                                        if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', 'pca' or a number.")}
+                                        kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(kmeans[1]), nstart = 25, iter.max = 1000)$cluster
+                                    }
+
+                                ## Bind kmeans cluster numbers to output
+
+                                    kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = paste0("cluster_", kmeans_clusters)))
+                                    clustering$kmeans_cluster <- kmeans_clusters$kmeans_cluster[match(clustering$sample_unique_ID, kmeans_clusters$sample_unique_ID)]
+
+                            }
 
                     # If transpose = TRUE, then return without annotations
 
@@ -7493,16 +7495,18 @@
                                 rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
                                 colnames(rownames_matrix)[1] <- "sample_unique_ID"
 
-                                if (analysis != "pca") {
+                                # if (analysis != "pca") { ## Don't do this for pca for some reason?? I don't understand why...
                                     clustering <- full_join(
                                         clustering,
                                         as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
                                         by = "sample_unique_ID"
                                     )
-                                }
+                                # }
                                 clustering
 
-                                clustering <- select(clustering, sample_unique_ID, everything())
+                                ## Order the returned matrix so that the sample_unique_ID comes first
+
+                                    clustering <- select(clustering, sample_unique_ID, everything())
 
                             # Annotate internal branches if tree output
 
