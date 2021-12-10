@@ -2354,10 +2354,42 @@ What would we have done if our Shaprio and Levene tests had revealed no signific
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
-  pairwise_t_test(abundance~analyte)
+  pairwise_t_test(abundance~analyte) -> test_output
+  test_output
 ```
 
-Excellent, now we see how to run parametric and non-parametric pairwise comparisons.
+Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:
+
+```{r}
+
+anno <- data.frame(
+  xmin = test_output$group1,
+  xmax = test_output$group2,
+  y_position = c(150, 150, 150, 175, 80, 50, 300, 150, 50, 125),
+  text = test_output$p.signif,
+  text_size = 10,
+  text_vert_offset = 10,
+  text_horiz_offset = 1.5,
+  tip_length_xmin = 5,
+  tip_length_xmax = 5,
+  aquifer_code = test_output$aquifer_code
+)
+
+hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  ggplot(aes(x = analyte, y = abundance)) +
+  geom_violin(fill = "gold", color = "black") +
+  geom_point(shape = 21, fill = "maroon", color = "black") +
+  facet_grid(.~aquifer_code) +
+  geomSignif(data = anno) +
+  scale_x_discrete(name = "Analyte") +
+  scale_y_continuous(name = "Abundance") +
+  theme_bw() +
+  theme(
+    text = element_text(size = 16)
+    )
+
+```
 
 ## further reading
 

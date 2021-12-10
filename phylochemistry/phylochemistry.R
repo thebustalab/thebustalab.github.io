@@ -6507,15 +6507,39 @@
                                         ), color = "grey0"
                                     )
 
-                                ## Add nearly horizontal double bonds
+                                ## Add steep non-horizontal double bonds
                                     plot <- plot + geom_segment(
-                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
-                                        aes(x = bond_start_x-0.35, y = bond_start_y-0.15, xend = bond_end_x-0.35, yend = bond_end_y-0.15),
+                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x & bond_start_y != bond_end_y & abs(bond_start_y- bond_end_y) != 1),
+                                        aes(x = bond_start_x-0.25, y = bond_start_y-0.15, xend = bond_end_x-0.25, yend = bond_end_y-0.15),
                                         size = 1.5, alpha = 0.7
                                     ) +
                                     geom_segment(
-                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x),
-                                        aes(x = bond_start_x+0.35, y = bond_start_y+0.15, xend = bond_end_x+0.35, yend = bond_end_y+0.15),
+                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x & bond_start_y != bond_end_y & abs(bond_start_y- bond_end_y) != 1),
+                                        aes(x = bond_start_x+0.25, y = bond_start_y+0.15, xend = bond_end_x+0.25, yend = bond_end_y+0.15),
+                                        size = 1.5, alpha = 0.7
+                                    )
+
+                                ## Add nearly horizontal double bonds
+                                    plot <- plot + geom_segment(
+                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x & abs(bond_start_y- bond_end_y) == 1),
+                                        aes(x = bond_start_x, y = bond_start_y-0.3, xend = bond_end_x, yend = bond_end_y-0.3),
+                                        size = 1.5, alpha = 0.7
+                                    ) +
+                                    geom_segment(
+                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_x != bond_end_x & abs(bond_start_y- bond_end_y) == 1),
+                                        aes(x = bond_start_x, y = bond_start_y+0.3, xend = bond_end_x, yend = bond_end_y+0.3),
+                                        size = 1.5, alpha = 0.7
+                                    )
+
+                                ## Add horizontal double bonds
+                                    plot <- plot + geom_segment(
+                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_y == bond_end_y),
+                                        aes(x = bond_start_x, y = bond_start_y-0.2, xend = bond_end_x, yend = bond_end_y-0.2),
+                                        size = 1.5, alpha = 0.7
+                                    ) +
+                                    geom_segment(
+                                        data = filter(plot_data, molecule_component == "bond" & bond_type == "double" & bond_start_y == bond_end_y),
+                                        aes(x = bond_start_x, y = bond_start_y+0.2, xend = bond_end_x, yend = bond_end_y+0.2),
                                         size = 1.5, alpha = 0.7
                                     )
 
@@ -6723,8 +6747,9 @@
 
                     ## Read in and process image
 
+                        # if (share_link == )
+
                         googledrive::drive_download(
-                          # file = files[image_number],
                           file = share_link,
                           path = "temp.JPEG",
                           overwrite = TRUE
@@ -8210,6 +8235,41 @@
                     } else {
                         return(as.numeric(as.character(x$x[1])))
                     }
+            }
+
+        #### geomSignif
+
+            #' geomSignif
+            #'
+            #' @param data
+            #' @export
+            #' @examples
+            #' geomSignif()
+
+            geomSignif <- function(data) {
+                
+                list(
+                    geom_segment(
+                        data = data,
+                        aes(x = xmin, xend = xmax, y = y_position, yend = y_position),
+                        inherit.aes = FALSE
+                    ),
+                    geom_segment(
+                        data = data,
+                        aes(x = xmin, xend = xmin, y = y_position, yend = y_position - tip_length_xmin),
+                        inherit.aes = FALSE
+                    ),
+                    geom_segment(
+                        data = data,
+                        aes(x = xmax, xend = xmax, y = y_position, yend = y_position - tip_length_xmax),
+                        inherit.aes = FALSE
+                    ),
+                    geom_text(
+                        data = data,
+                        aes(x = text_horiz_offset, y = y_position+text_vert_offset, label = text, size = text_size),
+                        show.legend = FALSE, inherit.aes = FALSE, hjust = 0.5
+                    )
+                )
             }
 
     ##### Phylogenetic statistical testing
