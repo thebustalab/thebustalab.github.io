@@ -282,3 +282,7 @@ and Katy Gregg, who proofread every chapter and greatly improved the readability
 Countless others could be mentioned who contributed in myriad ways.
 The final thank you is for all the software developers who make geocomputation with R possible.
 Edzer Pebesma (who created the **sf** package), Robert Hijmans (who created **raster**) and Roger Bivand (who laid the foundations for much R-spatial software) have made high performance geographic computing possible in R.
+
+# New
+
+asdf

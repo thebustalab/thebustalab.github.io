@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 5 the pipe and summaries | phylochemistry</title>
+<meta name="author" content="Lucas Busta">
+<meta name="description" content='5.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
+<meta name="generator" content="bookdown 0.24.4 with bs4_book()">
+<meta property="og:title" content="Chapter 5 the pipe and summaries | phylochemistry">
+<meta property="og:type" content="book">
+<meta property="og:description" content='5.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 5 the pipe and summaries | phylochemistry">
+<meta name="twitter:description" content='5.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">phylochemistry</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"></a></li>
+<li><a class="" href="phylochemistry.html">phylochemistry</a></li>
+<li><a class="" href="section-1.html"></a></li>
+<li><a class="" href="getting-started.html">GETTING STARTED</a></li>
+<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
+<li><a class="" href="section-2.html"></a></li>
+<li><a class="" href="data-visualization.html">DATA VISUALIZATION</a></li>
+<li><a class="" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li class="book-part">data visualization</li>
+<li><a class="" href="data-visualization-1.html">data visualization</a></li>
+<li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">3</span> geoms, facets, scales, themes</a></li>
+<li><a class="" href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></li>
+<li><a class="active" href="summary_statistics.html"><span class="header-section-number">5</span> the pipe and summaries</a></li>
+<li class="book-part">chemometrics</li>
+<li><a class="" href="chemometrics.html">chemometrics</a></li>
+<li><a class="" href="clustering.html"><span class="header-section-number">6</span> clustering</a></li>
+<li><a class="" href="PCA.html"><span class="header-section-number">7</span> pca</a></li>
+<li><a class="" href="k-means.html"><span class="header-section-number">8</span> k-means</a></li>
+<li><a class="" href="models.html"><span class="header-section-number">9</span> models</a></li>
+<li><a class="" href="comparing-means.html"><span class="header-section-number">10</span> comparing means</a></li>
+<li><a class="" href="section-3.html"></a></li>
+<li class="book-part">chemometrics</li>
+<li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">11</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">12</span> results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">13</span> conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html"><span class="header-section-number">14</span> abstract and title</a></li>
+<li><a class="" href="section-4.html"></a></li>
+<li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
+<li><a class="" href="image-color-analysis.html"><span class="header-section-number">15</span> image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">16</span> images of mass spectra</a></li>
+<li><a class="" href="phylochemistry-2.html"><span class="header-section-number">17</span> phylochemistry</a></li>
+<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">18</span> mass spectrometric analysis</a></li>
+<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">19</span> transcriptomic analyses</a></li>
+<li><a class="" href="genomic-analyses.html"><span class="header-section-number">20</span> genomic analyses</a></li>
+<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">21</span> evolutionary analyses</a></li>
+<li><a class="" href="section-5.html"></a></li>
+<li><a class="" href="appendix.html">APPENDIX</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">22</span> links</a></li>
+<li><a class="" href="faq.html"><span class="header-section-number">23</span> faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">24</span> templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/rstudio/bookdown-demo">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="summary_statistics" class="section level1" number="5">
+<h1>
+<span class="header-section-number">5</span> the pipe and summaries<a class="anchor" aria-label="anchor" href="#summary_statistics"><i class="fas fa-link"></i></a>
+</h1>
+<div id="the-pipe" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> the pipe (%&gt;%)<a class="anchor" aria-label="anchor" href="#the-pipe"><i class="fas fa-link"></i></a>
+</h2>
+<p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-69-1.png" width="384" style="display: block; margin: auto;"></div>
+<p>However, as our analyses get more complex, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-70-1.png" width="384" style="display: block; margin: auto;"></div>
+<p>Neat! Another way to think about the pipe:</p>
+<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/pipe.jpg" style="display: block; margin: auto;"></div>
+<p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
+</div>
+<div id="summary-statistics" class="section level2" number="5.2">
+<h2>
+<span class="header-section-number">5.2</span> summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"><i class="fas fa-link"></i></a>
+</h2>
+<p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees</span>
+<span class="co">## # A tibble: 378,762 × 14</span>
+<span class="co">##    tree_height tree_diameter address      tree_loc pit_type </span>
+<span class="co">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;    </span>
+<span class="co">##  1        21.1             6 1139 57 STR… Front    Sidewalk…</span>
+<span class="co">##  2        59.0             6 2220 BERGEN… Across   Sidewalk…</span>
+<span class="co">##  3        92.4            13 2254 BERGEN… Across   Sidewalk…</span>
+<span class="co">##  4        50.2            15 2332 BERGEN… Across   Sidewalk…</span>
+<span class="co">##  5        95.0            21 2361 EAST  … Front    Sidewalk…</span>
+<span class="co">##  6        67.5            19 2409 EAST  … Front    Continuo…</span>
+<span class="co">##  7        75.3            11 1481 EAST  … Front    Lawn     </span>
+<span class="co">##  8        27.9             7 1129 57 STR… Front    Sidewalk…</span>
+<span class="co">##  9       111.             26 2076 EAST  … Across   Sidewalk…</span>
+<span class="co">## 10        83.9            20 2025 EAST  … Front    Sidewalk…</span>
+<span class="co">## # … with 378,752 more rows, and 9 more variables:</span>
+<span class="co">## #   soil_lvl &lt;chr&gt;, status &lt;chr&gt;, spc_latin &lt;chr&gt;,</span>
+<span class="co">## #   spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;,</span>
+<span class="co">## #   boroname &lt;chr&gt;, latitude &lt;dbl&gt;, longitude &lt;dbl&gt;</span></code></pre></div>
+<p>More than 300,000 observations of 14 variables! That’s 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don’t even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code>. Let’s get to it.</p>
+<p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and standard deviation can be calculated with <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>. We will use the function <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span>
+<span class="co">## # A tibble: 1 × 1</span>
+<span class="co">##   mean_height</span>
+<span class="co">##         &lt;dbl&gt;</span>
+<span class="co">## 1        72.6</span>
+
+<span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>stdev_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span>
+<span class="co">## # A tibble: 1 × 1</span>
+<span class="co">##   stdev_height</span>
+<span class="co">##          &lt;dbl&gt;</span>
+<span class="co">## 1         28.7</span></code></pre></div>
+<p>Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> to compute statistics.</p>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span>
+<span class="co">## # A tibble: 12 × 2</span>
+<span class="co">##    spc_latin              mean_height</span>
+<span class="co">##    &lt;chr&gt;                        &lt;dbl&gt;</span>
+<span class="co">##  1 ACER PLATANOIDES              82.6</span>
+<span class="co">##  2 ACER RUBRUM                  106. </span>
+<span class="co">##  3 ACER SACCHARINUM              65.6</span>
+<span class="co">##  4 FRAXINUS PENNSYLVANICA        60.6</span>
+<span class="co">##  5 GINKGO BILOBA                 90.4</span>
+<span class="co">##  6 GLEDITSIA TRIACANTHOS         53.0</span>
+<span class="co">##  7 PLATANUS ACERIFOLIA           82.0</span>
+<span class="co">##  8 PYRUS CALLERYANA              21.0</span>
+<span class="co">##  9 QUERCUS PALUSTRIS             65.5</span>
+<span class="co">## 10 QUERCUS RUBRA                111. </span>
+<span class="co">## 11 TILIA CORDATA                 98.8</span>
+<span class="co">## 12 ZELKOVA SERRATA              101.</span></code></pre></div>
+<p>Bam. Mean height of each tree species. <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> is more powerful though, we can do many summary statistics at once:</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>
+    mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span>,
+    stdev_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">-&gt;</span> <span class="va">ny_trees_by_spc_summ</span>
+<span class="va">ny_trees_by_spc_summ</span>
+<span class="co">## # A tibble: 12 × 3</span>
+<span class="co">##    spc_latin              mean_height stdev_height</span>
+<span class="co">##    &lt;chr&gt;                        &lt;dbl&gt;        &lt;dbl&gt;</span>
+<span class="co">##  1 ACER PLATANOIDES              82.6        17.6 </span>
+<span class="co">##  2 ACER RUBRUM                  106.         15.7 </span>
+<span class="co">##  3 ACER SACCHARINUM              65.6        16.6 </span>
+<span class="co">##  4 FRAXINUS PENNSYLVANICA        60.6        21.3 </span>
+<span class="co">##  5 GINKGO BILOBA                 90.4        24.5 </span>
+<span class="co">##  6 GLEDITSIA TRIACANTHOS         53.0        13.0 </span>
+<span class="co">##  7 PLATANUS ACERIFOLIA           82.0        16.0 </span>
+<span class="co">##  8 PYRUS CALLERYANA              21.0         5.00</span>
+<span class="co">##  9 QUERCUS PALUSTRIS             65.5         6.48</span>
+<span class="co">## 10 QUERCUS RUBRA                111.         20.7 </span>
+<span class="co">## 11 TILIA CORDATA                 98.8        32.6 </span>
+<span class="co">## 12 ZELKOVA SERRATA              101.         10.7</span></code></pre></div>
+<p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code> if you want them to vary along x). Also, note that in the aesthetic mappings for <code>xmin</code> and <code>xmax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees_by_spc_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span>
+      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>
+        y <span class="op">=</span> <span class="va">spc_latin</span>,
+        x <span class="op">=</span> <span class="va">mean_height</span>,
+        xmin <span class="op">=</span> <span class="va">mean_height</span> <span class="op">-</span> <span class="va">stdev_height</span>,
+        xmax <span class="op">=</span> <span class="va">mean_height</span> <span class="op">+</span> <span class="va">stdev_height</span>
+      <span class="op">)</span>
+    <span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-76-1.png" width="384" style="display: block; margin: auto;"></div>
+<p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">spc_latin</span>, <span class="va">boroname</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>
+    mean_diam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_diameter</span><span class="op">)</span>,
+    stdev_diam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_diameter</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">-&gt;</span> <span class="va">ny_trees_by_spc_boro_summ</span>
+<span class="co">## `summarise()` has grouped output by 'spc_latin'. You can override using the `.groups` argument.</span>
+<span class="va">ny_trees_by_spc_boro_summ</span>
+<span class="co">## # A tibble: 48 × 4</span>
+<span class="co">## # Groups:   spc_latin [12]</span>
+<span class="co">##    spc_latin        boroname  mean_diam stdev_diam</span>
+<span class="co">##    &lt;chr&gt;            &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;</span>
+<span class="co">##  1 ACER PLATANOIDES Bronx         13.9        6.74</span>
+<span class="co">##  2 ACER PLATANOIDES Brooklyn      15.4       14.9 </span>
+<span class="co">##  3 ACER PLATANOIDES Manhattan     11.6        8.45</span>
+<span class="co">##  4 ACER PLATANOIDES Queens        15.1       12.9 </span>
+<span class="co">##  5 ACER RUBRUM      Bronx         11.4        7.88</span>
+<span class="co">##  6 ACER RUBRUM      Brooklyn      10.5        7.41</span>
+<span class="co">##  7 ACER RUBRUM      Manhattan      6.63       4.23</span>
+<span class="co">##  8 ACER RUBRUM      Queens        14.1        8.36</span>
+<span class="co">##  9 ACER SACCHARINUM Bronx         19.7       10.5 </span>
+<span class="co">## 10 ACER SACCHARINUM Brooklyn      22.2       10.1 </span>
+<span class="co">## # … with 38 more rows</span></code></pre></div>
+<p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>
+      y <span class="op">=</span> <span class="va">boroname</span>,
+      x <span class="op">=</span> <span class="va">mean_diam</span>,
+      xmin <span class="op">=</span> <span class="va">mean_diam</span><span class="op">-</span><span class="va">stdev_diam</span>,
+      xmax <span class="op">=</span> <span class="va">mean_diam</span><span class="op">+</span><span class="va">stdev_diam</span>
+    <span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">~</span><span class="va">.</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>
+    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
+  <span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-78-1.png" width="384" style="display: block; margin: auto;"></div>
+<p>Excellent! And if we really want to go for something pretty:</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>
+      y <span class="op">=</span> <span class="va">boroname</span>,
+      x <span class="op">=</span> <span class="va">mean_diam</span>,
+      xmin <span class="op">=</span> <span class="va">mean_diam</span><span class="op">-</span><span class="va">stdev_diam</span>,
+      xmax <span class="op">=</span> <span class="va">mean_diam</span><span class="op">+</span><span class="va">stdev_diam</span>,
+      fill <span class="op">=</span> <span class="va">spc_latin</span>
+    <span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span>, shape <span class="op">=</span> <span class="fl">21</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>
+    y <span class="op">=</span> <span class="st">"Borough"</span>, 
+    x <span class="op">=</span> <span class="st">"Trunk diameter"</span>,
+    caption <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_wrap.html">str_wrap</a></span><span class="op">(</span><span class="st">"Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species."</span>, width <span class="op">=</span> <span class="fl">80</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">spc_latin</span><span class="op">~</span><span class="va">.</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Paired"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>
+    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
+    plot.caption <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
+  <span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-79-1.png" width="576" style="display: block; margin: auto;"></div>
+<p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
+</div>
+<div id="exercises-2" class="section level2" number="5.3">
+<h2>
+<span class="header-section-number">5.3</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
+</h2>
+<p>Isn’t seven the most powerfully magical number? <em>Isn’t seven the most powerfully magical number?</em> Yes… I think the idea of a seven-part assignment would greatly appeal to an alchemist.</p>
+<p>In this set of exercises we are going to use the periodic table. After you run source() you can load that dataset using <code>periodic_table</code>. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!</p>
+<p>Some pointers:</p>
+<ul>
+<li><p>If your code goes off the page, don’t be afraid to wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.</p></li>
+<li><p>Don’t be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.</p></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>Make a plot using <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?</p></li>
+<li><p>The column <code>state_at_RT</code> indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in <code>state_at_RT</code> (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?</p></li>
+<li><p>Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of <code>crystal_structure</code>? Make a plot using <code><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange()</a></code> that shows the mean and standard deviation of each of these groups. What’s up with elements that have a cubic crystal structure?</p></li>
+<li><p>Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four <em>periods</em> in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does “CHON” mean? (not the rock band, though they are also excellent, especially that song that features GoYama)</p></li>
+<li><p>Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each <code>group_number</code>. Use <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_errorbar()</a></code> to illustrate the average, minimum, and maximum values for each group number.</p></li>
+<li><p>Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by <code>color</code>. Now filter out those that have <code>color == "colorless"</code>. Of the remaining elements, which has the widest range of specific heats? Use <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_errorbar()</a></code> to illustrate the mean and standard deviation of each color’s specific heats.</p></li>
+<li><p>You have learned many things in this course so far. <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code>, and now <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code>. Using <strong>all</strong> these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
+<!-- end --></p></li>
+</ol>
+<!-- start CHEMOMETRICS -->
+</div>
+</div>
+
+
+
+  <div class="chapter-nav">
+<div class="prev"><a href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></div>
+<div class="next"><a href="chemometrics.html">chemometrics</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#summary_statistics"><span class="header-section-number">5</span> the pipe and summaries</a></li>
+<li><a class="nav-link" href="#the-pipe"><span class="header-section-number">5.1</span> the pipe (%&gt;%)</a></li>
+<li><a class="nav-link" href="#summary-statistics"><span class="header-section-number">5.2</span> summary statistics</a></li>
+<li><a class="nav-link" href="#exercises-2"><span class="header-section-number">5.3</span> exercises</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/rstudio/bookdown-demo/blob/master/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/rstudio/bookdown-demo/edit/master/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>phylochemistry</strong>" was written by Lucas Busta. It was last built on 2021-12-18.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

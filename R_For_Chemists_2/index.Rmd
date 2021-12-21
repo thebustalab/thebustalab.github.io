@@ -2967,6 +2967,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 **Conclusion:**
 
 * *One paragraph*
+  <!-- first sentence of the conclusion should be a restatment of the goal -->
   + **2-3**: Summarize over-arching conclusions from each section of the paper (omit the details described in results or discussion)
   + **2-3**: Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses.
   + **1-2**: Suggest experiments to test these hypotheses.

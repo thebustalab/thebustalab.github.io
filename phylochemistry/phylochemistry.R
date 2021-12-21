@@ -42,53 +42,61 @@
                 "agricolae",
                 "ggpmisc",
                 "exifr",
-                "lubridate"
+                "lubridate",
+                "bio3d",
+                # "shipunov",
+                "remotes"
             )
 
             Bioconductor_packages <- c(
                 "ggtree",
-                # "xcms",
-                # "msa",
-                # "rtracklayer",
-                # "orthologr",
-                "Biostrings"
-                # "GenomicRanges",
-                # "GenomicFeatures",
-                # "Rsamtools"
+                "xcms",
+                "msa",
+                "rtracklayer",
+                "Biostrings",
+                "GenomicRanges",
+                "GenomicFeatures",
+                "Rsamtools"
             )
 
-            packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
+            Github_packages <- c(
+                "HajkD/orthologr"
+            )
 
-        ## Define function to auto install them
-            
-            installPhylochemistry <- function() {
-                
-                if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
-                    install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
-                }
+            packages_needed <- c(CRAN_packages, Bioconductor_packages, Github_packages)[!c(CRAN_packages, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
 
-                if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
-                    BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed])
-                }
-
-                message("\n\n\nIf the packages installed without error, you should be ready to run source() again to load the phylochemistry package.")
-            
-            }
-       
         ## Determine if anything needs to be installed
             
             if (length(packages_needed) > 0) {
-                stop(paste(
-                    "You need to install the following packages before proceeding:\n",
-                    paste(packages_needed, collapse = ", "),
-                    "\n", "\n",
-                    "Run: installPhylochemistry() to automatically install the required packages."
-                ))
-            } else {
-                message("Loading packages...")
-                invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
-            }
+                if(
+                    askYesNo(
+                        cat(
+                            "You need to install the following packages before proceeding:\n",
+                            paste(packages_needed, collapse = ", "),
+                            "\n", "\n",
+                            "Is it okay if phylochemistry installs them for you?",
+                            "\n", "\n"
+                        )
+                    )
+                ) {
+                    if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
+                    install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
+                    }
 
+                    if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
+                        BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed])
+                    }
+
+                    if (length(Github_packages[Github_packages %in% packages_needed]) > 0) {
+                        remotes::install_github(Github_packages[Github_packages %in% packages_needed])
+                    }
+
+                    message("Loading packages...")
+                    invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
+                } else {
+                    stop("Cannot load phylochemistry without the required packages. Exiting.")
+                }
+            }
     }
 
     ## Set up prioriy functions
@@ -1239,21 +1247,27 @@
 
             #' Extract open reading frames from multifasta files
             #'
-            #' @param file The multifasta file to analyze
+            #' @param file_in_path The multifasta file to analyze
             #' @param write_out_ORFs TRUE/FALSE whether to write out a new fasta that contains the ORFs
             #' @param overwrite TRUE/FALSE Optionally overwrite the input file with the ORF file
+            ####### Searching for ORFs in the reverse direction leads to issues during codon alignment...
             #' @examples
             #' @export
             #' extractORFs
 
-            extractORFs <- function(file, write_out_ORFs = FALSE, overwrite = FALSE) {
+            extractORFs <- function(
+                file_in_path,
+                write_out_ORFs = FALSE,
+                overwrite = FALSE,
+                alternative_ORFs = FALSE
+            ) {
 
-                fasta <- seqinr::read.fasta(file)
+                fasta <- seqinr::read.fasta(file_in_path)
                 ORFs <- list()
                 ORFs_to_write_out <- Biostrings::DNAStringSet()
 
                 if ( write_out_ORFs == TRUE ) {
-                    if (file.exists(paste(file, "_orfs", sep = ""))) { file.remove(paste(file, "_orfs", sep = "")) }
+                    if (file.exists(paste(file_in_path, "_orfs", sep = ""))) { file.remove(paste(file_in_path, "_orfs", sep = "")) }
                 }
 
                 for (j in 1:length(fasta)) {
@@ -1313,60 +1327,174 @@
                                 }
                             }
 
-                    ####### Searching for ORFs in the reverse direction leads to issues during codon alignment...
-                    ## Search for ORFs in the reverse direction
-                        # mRNA <- rev(mRNA)
-                        # data <- seqinr::translate(mRNA, frame = 0, sens = "F")
-                        #     S <- grep("\\*", data) # find all stop codons
-                        #     M <- grep("M", data) # find all start codons
-                        #     if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
-                        #         M <- M[!M > max(S)] # remove all start codons after the last stop codon
-                        #     }
-                        #     if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
-                        #         for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
-                        #             F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
-                        #             orf_coordinates <-  rbind(orf_coordinates,   data.frame(
-                        #                                                             start_codon = (M[i]*3-2), 
-                        #                                                             stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
-                        #                                                             direction = "reverse"
-                        #                                                         )
-                        #                                 )
-                        #         }
-                        #     }
-                        # data <- seqinr::translate(mRNA, frame = 1, sens = "F")
-                        #     S <- grep("\\*", data) # find all stop codons
-                        #     M <- grep("M", data) # find all start codons
-                        #     if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
-                        #         M <- M[!M > max(S)] # remove all start codons after the last stop codon
-                        #     }
-                        #     if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
-                        #         for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
-                        #             F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
-                        #             orf_coordinates <-  rbind(orf_coordinates,   data.frame(
-                        #                                                             start_codon = (M[i]*3-2), 
-                        #                                                             stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
-                        #                                                             direction = "reverse"
-                        #                                                         )
-                        #                                 )
-                        #         }
-                        #     }
-                        # data <- seqinr::translate(mRNA, frame = 2, sens = "F")
-                        #     S <- grep("\\*", data) # find all stop codons
-                        #     M <- grep("M", data) # find all start codons
-                        #     if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
-                        #         M <- M[!M > max(S)] # remove all start codons after the last stop codon
-                        #     }
-                        #     if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
-                        #         for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
-                        #             F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
-                        #             orf_coordinates <-  rbind(orf_coordinates,   data.frame(
-                        #                                                             start_codon = (M[i]*3-2), 
-                        #                                                             stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
-                        #                                                             direction = "reverse"
-                        #                                                         )
-                        #                                 )
-                        #         }
-                        #     }
+                    if (alternative_ORFs) {
+
+                        # Search for ORFs in the compliment mRNA
+                            mRNA_comp <- chartr("ATGC","TACG", mRNA)
+                            mRNA_comp <- chartr("atcg","tacg", mRNA_comp)
+                            data <- seqinr::translate(mRNA_comp, frame = 0, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "compliment"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+                            data <- seqinr::translate(mRNA_comp, frame = 1, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "compliment"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+                            data <- seqinr::translate(mRNA_comp, frame = 2, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "compliment"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+
+                        # Search for ORFs in the reverse mRNA
+                            mRNA_rev <- rev(mRNA)
+                            data <- seqinr::translate(mRNA_rev, frame = 0, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "reverse"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+                            data <- seqinr::translate(mRNA_rev, frame = 1, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "reverse"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+                            data <- seqinr::translate(mRNA_rev, frame = 2, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "reverse"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+
+                        # Search for ORFs in the reverse compliment mRNA
+                            mRNA_rev_comp <- chartr("ATGC","TACG", mRNA)
+                            mRNA_rev_comp <- chartr("atcg","tacg", mRNA_rev_comp)
+                            mRNA_rev_comp <- rev(mRNA_rev_comp)
+                            data <- seqinr::translate(mRNA_rev_comp, frame = 0, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "reverse_compliment"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+                            data <- seqinr::translate(mRNA_rev_comp, frame = 1, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "reverse_compliment"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+                            data <- seqinr::translate(mRNA_rev_comp, frame = 2, sens = "F")
+                                S <- grep("\\*", data) # find all stop codons
+                                M <- grep("M", data) # find all start codons
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    M <- M[!M > max(S)] # remove all start codons after the last stop codon
+                                }
+                                if (length(S)>0 & length(M)>0) { # if there are stop codons, extract orfs
+                                    for (i in 1:length(M)) { # extract all cds in this frame and put them in a list
+                                        F1_amin <- c(M[i],cbind(S, S > M[i])[,1][cbind(S, S > M[i])[,2]==1][1])
+                                        orf_coordinates <-  rbind(orf_coordinates,   data.frame(
+                                                                                        start_codon = (M[i]*3-2), 
+                                                                                        stop_codon = ((M[i]*3-2)+((F1_amin[2] - F1_amin[1])+1)*3-1),
+                                                                                        direction = "reverse_compliment"
+                                                                                    )
+                                                            )
+                                    }
+                                }
+
+                    }
 
                     ## Process discovered ORFs
 
@@ -1405,10 +1533,10 @@
                 # seqinr::write.fasta(fake_orf, names = attr(fasta[j], "name"), file = paste(file, "_orfs", sep = ""), open = "a") # append fake_ORF to the list
                 if ( write_out_ORFs == TRUE) {
                     if (overwrite == TRUE) {
-                        Biostrings::writeXStringSet(ORFs_to_write_out, file = file)
+                        Biostrings::writeXStringSet(ORFs_to_write_out, file = file_in_path)
                         # seqinr::write.fasta(orf, names = attr(fasta[j], "name"), file = paste(file, "_orfs", sep = ""), open = "w") # overwrite transcript file
                     } else {
-                        Biostrings::writeXStringSet(ORFs_to_write_out, file = paste(file, "_orfs", sep = ""))
+                        Biostrings::writeXStringSet(ORFs_to_write_out, file = paste(file_in_path, "_orfs", sep = ""))
                         # seqinr::write.fasta(orf, names = attr(fasta[j], "name"), file = paste(file, "_orfs", sep = ""), open = "a") # append ORF to the list        
                     }
                 }
@@ -5938,7 +6066,7 @@
                 return(as_tibble(output))
             }
 
-    ##### Plotting
+    ##### Data Visualization
         
         #### drawAlignment
 
@@ -5946,7 +6074,7 @@
             #'
             #' Allows the user to plot a multiple alignent using ggplot's grammar of graphics
             #' @param infile The alignment to use (fasta file)
-            #' @param seqlist A dataframe with metadata for the alignment
+            #' @param monolist A dataframe with metadata for the alignment
             #' @param alignment_labels The name of the column to label the entries in the alignment with
             #' @param wrap TRUE/FALSE whether to use a column of plots to show the alignment
             #' @param wrap_length Length at which to cut the wrap
@@ -5975,7 +6103,7 @@
 
             drawAlignment <- function(   
                                 infile,
-                                seqlist,
+                                monolist,
                                 alignment_labels,
 
                                 wrap = FALSE,
@@ -6024,9 +6152,9 @@
                     colnames(AA_phydat) <- as.character(seq(1,dim(AA_phydat)[2],1))
                     AA_alignment_df <-  cbind(  
                                             data.frame(protein = paste(
-                                                seqlist[,which(colnames(seqlist) == alignment_labels)][match(rownames(as.matrix(AA_phydat)), seqlist$accession)]
+                                                monolist[,which(colnames(monolist) == alignment_labels)][match(rownames(as.matrix(AA_phydat)), monolist$accession)]
                                             )),
-                                            data.frame(funct = seqlist[,colnames(seqlist)=="Function"][match(rownames(as.matrix(AA_phydat)), seqlist[,1])]),
+                                            # data.frame(funct = monolist[,colnames(monolist)=="Function"][match(rownames(as.matrix(AA_phydat)), monolist[,1])]),
                                             data.frame(y = rep(0,dim(AA_phydat)[1])),
                                             AA_phydat
                                         )
@@ -6146,12 +6274,12 @@
                                 alignment_matrix <- toupper(t(as.data.frame(as.character(phangorn::read.aa(file = infile, format = "fasta")))))
                                 
                                 spec1 <- list()
-                                spec1[[1]] <- seqlist[,colnames(seqlist) == funct_assoc_data[j]] == as.character(gsub("~.*$", "", funct_assoc_data[j]))
+                                spec1[[1]] <- monolist[,colnames(monolist) == funct_assoc_data[j]] == as.character(gsub("~.*$", "", funct_assoc_data[j]))
                                 alignment_matrix_dim1 <- alignment_matrix[Reduce("&", spec1),]
                                 dim(alignment_matrix_dim1)
 
                                 spec2 <- list()
-                                spec2[[1]] <- seqlist[,colnames(seqlist)==funct_assoc_data[j]] == as.character(gsub(".*~", "", funct_assoc_data[j]))
+                                spec2[[1]] <- monolist[,colnames(monolist)==funct_assoc_data[j]] == as.character(gsub(".*~", "", funct_assoc_data[j]))
                                 alignment_matrix_dim2 <- alignment_matrix[Reduce("&", spec2),]
                                 dim(alignment_matrix_dim2)
 
@@ -6292,11 +6420,11 @@
                             plot_list[[i]] <- plot_list[[i]] + theme_classic()
                             plot_list[[i]] <- plot_list[[i]] +  scale_x_continuous(
                                                                     expand = c(0.005,0.005),
-                                                                    name = "",
+                                                                    name = ""
                                                                     # breaks = as.numeric(generateTicks(seq(0,5000,tick_spacing))$all_breaks),
                                                                     # labels = as.character(generateTicks(seq(0,5000,tick_spacing))$all_labels)
                                                                 )
-                            plot_list[[i]] <- plot_list[[i]] + scale_y_continuous(name = "")
+                            plot_list[[i]] <- plot_list[[i]] + scale_y_continuous(name = "", breaks = 0)
                             plot_list[[i]] <- plot_list[[i]] + scale_color_manual(values = color_pal)
                             plot_list[[i]] <- plot_list[[i]] + theme(
                                         panel.spacing.y = unit(0.01, "lines"),
@@ -6304,7 +6432,6 @@
                                         panel.border = element_blank(),
                                         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
                                         axis.text.y = element_blank(),
-                                        strip.text.y = element_text(angle = 180),
                                         text = element_text(size = ticks_text_size),
                                         legend.position = "none",
                                         axis.title = element_text(color = "#737373", face = "bold", size = 40),
@@ -6313,6 +6440,7 @@
                                         axis.text = element_text(color = "#737373", face = "bold", size = ticks_text_size),
                                         axis.line = element_line(color = "#737373", size = 1),
                                         strip.text = element_text(hjust = 1, size = ticks_text_size),
+                                        strip.text.y.left = element_text(angle = 0),
                                         strip.background = element_blank(),
                                         strip.placement = "outside"
                                     )
@@ -6327,7 +6455,7 @@
                                     data = AA_alignment_df_plottable[AA_alignment_df_plottable$position %in% 
                                         as.numeric(as.character(unlist(wrap_break_points)[i]-wrap_length)):
                                         as.numeric(as.character(unlist(wrap_break_points)[i])),],
-                                    geom = "text", 
+                                    geom = "text",
                                     mapping = aes(label = residue),
                                     stat = "identity",
                                     position = "identity")
@@ -6680,6 +6808,111 @@
 
                     return(plot)
             }           
+
+        #### annotatePDB
+
+            #### annotatePDB
+
+                #' Import chemcial data
+                #'
+                #' Allows the user to plot a multiple alignent using ggplot's grammar of graphics
+                #' @param infile The multiple alignment to (analyze and) plot.
+                #' @param roi Plot a subset of the alignment. 
+                #' @param consensus Include in the output graphic a line plot corresponding to the degree of conservation at each site in the alignment.
+                #' @param funct_assoc Include in the output graphic a line plot of the association between AA residues and 
+                #' @importFrom phangorn read.aa
+                #' @import phangorn
+                #' @import ggtree  
+                #' @export
+                #' @examples
+                #' annotatePDB()
+
+                    annotatePDB <- function(pdb_path, alignment, pdb_name_in_alignment, highlights_data, out_file) {
+
+                        ## Read in PDB file
+                            pdb <- bio3d::read.pdb(pdb_path)
+                            pdb$atom
+                            pdb_sequence <- bio3d::aa321(pdb$atom$resid[bio3d::atom.select(pdb, "calpha")$atom])
+                            pdb_frame <- data.frame(pdb_sequence=pdb_sequence, pdb_position=seq(1,length(pdb_sequence),1))
+                            pdb_frame$pdb_position <- as.numeric(pdb_frame$pdb_position)
+                            head(pdb_frame)
+
+                        ## Read in alignment
+                            AA_phydat <- as.data.frame(as.character(phangorn::read.aa(file=alignment, format="fasta")))
+                            alignment_sequence <- as.data.frame(AA_phydat)[,grep(pdb_name_in_alignment, colnames(as.data.frame(AA_phydat)))]
+                            alignment_frame <- data.frame(alignment_sequence = alignment_sequence, alignment_position = seq(1,length(alignment_sequence),1))
+                            head(alignment_frame)
+
+                        ## Add spaces at the front of the PDB frame until its first AA lines up with alignment
+
+                            head(pdb_frame)
+                            head(alignment_frame)
+
+                            space <- data.frame(pdb_sequence = "-", pdb_position = "NA")
+                            space$pdb_position <- as.numeric(as.character(space$pdb_position))
+
+                            for (i in 1:length(pdb_sequence)) {
+                                if ( as.character(alignment_frame[i,1]) == as.character(pdb_frame[i,1]) ) {
+                                } else {
+                                    pdb_frame <- rbind(pdb_frame[0:(i-1),],space,pdb_frame[i:dim(pdb_frame)[1],])
+                                }
+                            }
+
+                            head(pdb_frame, 30)
+                            head(alignment_frame, 30)
+
+                        ## Add spaces to the end of the PDB frame until it lines up with alignment
+
+                            tail(pdb_frame)
+                            tail(alignment_frame)
+
+                            final_space <- data.frame(pdb_sequence="-", pdb_position="NA")
+                            final_space$pdb_position <- as.numeric(as.character(final_space$pdb_position))        
+                            
+                            if (((dim(alignment_frame)[1]-dim(pdb_frame)[1])-1) > 0) {
+                                for (i in 1:((dim(alignment_frame)[1]-dim(pdb_frame)[1])-1)) {
+                                    final_space <- rbind(final_space, space)
+                                }
+                                pdb_frame <- rbind(pdb_frame, final_space)
+                            } else {
+                                pdb_frame <- rbind(pdb_frame, final_space)
+                            }            
+
+                            tail(pdb_frame, 20)
+                            tail(alignment_frame, 20)
+                            
+                        ## Bind them together - they should have the same dimensions at this point
+                            
+                            dim(pdb_frame)
+                            dim(alignment_frame)
+                            translational_frame <- cbind(alignment_frame, pdb_frame)
+
+                        ## Write it out
+
+                            if (file.exists(out_file)) { file.remove(out_file) }
+
+                            write("## set background", file=out_file, append=TRUE)
+                            write("set bg_rgb, white", file=out_file, append=TRUE)
+                            write("", file=out_file, append=TRUE)
+                            write("## Set base color", file=out_file, append=TRUE)
+                            write("set_color myblue = [55,126,184]", file=out_file, append=TRUE)
+                            write("select base, resi 1-800", file=out_file, append=TRUE)
+                            write("color myblue, base", file=out_file, append=TRUE)
+                            write("", file=out_file, append=TRUE)
+                            write("## General image improvement", file=out_file, append=TRUE)
+                            write("set spec_reflect, 0.2", file=out_file, append=TRUE)
+
+                            for (i in 1:dim(highlights_data)[1]) {
+                                color <- paste("[", col2rgb(highlights_data$color[i])[1], ",", col2rgb(highlights_data$color[i])[2], ",", col2rgb(highlights_data$color[i])[3], "]", sep = "") 
+                                write(paste("set_color ", paste("COLOR", i, sep = ""), " = ", color, sep = ""), file=out_file, append=TRUE)
+                                write(paste("select ", paste("RES", i, sep = ""), paste(", resi", translational_frame$pdb_position[match(highlights_data$xint[i], translational_frame$alignment_position)]), sep = ""), file=out_file, append=TRUE)
+                                write(paste("color ", paste("COLOR", i, sep = ""), paste(", RES", i, sep = ""), sep = ""), file=out_file, append=TRUE)
+                                write(paste("show sticks", paste(", RES", i, sep = ""), sep = ""), file=out_file, append=TRUE)
+                                write(paste(""), file=out_file, append=TRUE)
+                            }
+
+                            return(translational_frame)
+                    }
 
     ##### Image Analysis
 
