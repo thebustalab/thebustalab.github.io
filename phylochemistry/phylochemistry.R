@@ -111,6 +111,7 @@
         mutate <- dplyr::mutate
         summarize <- dplyr::summarize
         filter <- dplyr::filter
+        select <- dplyr::select
 
     ## Set up options
 
