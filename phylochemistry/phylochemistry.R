@@ -91,12 +91,18 @@
                         remotes::install_github(Github_packages[Github_packages %in% packages_needed])
                     }
 
-                    message("Loading packages...")
-                    invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
                 } else {
                     stop("Cannot load phylochemistry without the required packages. Exiting.")
                 }
             }
+
+            message("Loading packages...")
+            invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
+    
+    } else {
+    
+        message("Object 'packages' exists, not loading phylochemistry packages...")
+    
     }
 
     ## Set up prioriy functions
