@@ -45,7 +45,8 @@
                 "lubridate",
                 "bio3d",
                 # "shipunov",
-                "remotes"
+                "remotes",
+                "gdata"
             )
 
             Bioconductor_packages <- c(
@@ -111,6 +112,11 @@
         summarize <- dplyr::summarize
         filter <- dplyr::filter
 
+    ## Set up options
+
+        options(readr.show_progress = FALSE)
+        options(dplyr.summarise.inform = FALSE)
+
     ## Set up better warning messages for some functions
 
         shapiroTest <- function( data, ... ) {
@@ -159,19 +165,27 @@
 
             message("Loading datasets...")
 
-            algae_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv", col_types = cols())
-            alaska_lake_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv", col_types = cols())
-            solvents <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv", col_types = cols())
-            periodic_table <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv", col_types = cols())
-            fadb_sample <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv", col_types = cols())
-            periodic_table_subset <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv", col_types = cols())
-            ny_trees <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv", col_types = cols())
-            metabolomics_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv", col_types = cols())
-            wine_grape_data <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv", col_types = cols())
-            hawaii_aquifers <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv", col_types = cols())
-            beer_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv", col_types = cols())
-            hops_components <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv", col_types = cols())
-            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+            sample_datasets <- as.data.frame(rbind(
+                c("algae_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv"),
+                c("alaska_lake_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv"),
+                c("solvents", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv"),
+                c("periodic_table", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv"),
+                c("fadb_sample", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv"),
+                c("periodic_table_subset", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv"),
+                c("ny_trees", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv"),
+                c("metabolomics_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv"),
+                c("wine_grape_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv"),
+                c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
+                c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
+                c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
+            ))
+
+            pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
+            for (i in 1:dim(sample_datasets)[1]) {
+                temp_obj <- read_csv(sample_datasets[i,2])
+                gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
+                pb$tick()
+            }
 
         }
 
@@ -8111,8 +8125,6 @@
                         cat(paste0("Trying to fit manually using least squares starting from initial values\n"))
 
                         # ## Generate gaussian curves, using least squares to optimize
-
-                            options(dplyr.summarise.inform = FALSE)
 
                             mean.fit <- peak_means
                             sigma.fit <- peak_sigma
