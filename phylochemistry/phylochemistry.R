@@ -455,8 +455,8 @@
             #' @export
             #' writeFasta
 
-            writeFasta <- function( XStringSet, fasta_out_path ) {
-            	Biostrings::writeXStringSet( x = XStringSet, filepath = fasta_out_path )
+            writeFasta <- function( XStringSet, fasta_out_path, append = FALSE) {
+            	Biostrings::writeXStringSet( x = XStringSet, filepath = fasta_out_path, append = append )
             }
 
         #### writeSupplementalTable
