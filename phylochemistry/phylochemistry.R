@@ -182,7 +182,7 @@
 
             pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
             for (i in 1:dim(sample_datasets)[1]) {
-                temp_obj <- read_csv(sample_datasets[i,2])
+                temp_obj <- read_csv(sample_datasets[i,2], show_col_types = FALSE)
                 gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
                 pb$tick()
             }
@@ -191,10 +191,12 @@
 
     }
 
+    ## Load color schemes
+
     cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
     cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
 
-        message("\n")
+        # message("\n")
 
 ###### Functions
 
