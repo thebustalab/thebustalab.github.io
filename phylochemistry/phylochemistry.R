@@ -72,19 +72,19 @@
                 if(
                     if (OS == "unix"){
 
+                        message <- paste0(
+                            "You need to install the following packages before proceeding: ",
+                            paste(packages_needed, collapse = ", "),
+                            " Is it okay if phylochemistry installs them for you?"
+                        )
+
                         askYesNo(
-                            cat(
-                                "You need to install the following packages before proceeding:\n",
-                                paste(packages_needed, collapse = ", "),
-                                "\n", "\n",
-                                "Is it okay if phylochemistry installs them for you?",
-                                "\n", "\n"
-                            )
+                            message
                         )
                     }
 
                     if (OS == "windows") {
-                        askYesNo("yesnocancel", msg = "You need to install several packages before proceeding. Is it okay if phylochemistry installs them for you?")
+                        askYesNo("yesnocancel", msg = message)
                     }
 
                 ) {
