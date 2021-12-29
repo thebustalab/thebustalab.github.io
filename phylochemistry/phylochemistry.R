@@ -70,22 +70,16 @@
             
             if (length(packages_needed) > 0) {
                 if(
-                    if (OS == "unix"){
 
-                        message <- paste0(
-                            "You need to install the following packages before proceeding: ",
-                            paste(packages_needed, collapse = ", "),
-                            " Is it okay if phylochemistry installs them for you?"
-                        )
+                    message <- paste0(
+                        "You need to install the following packages before proceeding: ",
+                        paste(packages_needed, collapse = ", "),
+                        " Is it okay if phylochemistry installs them for you?"
+                    )
 
-                        askYesNo(
-                            message
-                        )
-                    }
+                    if (OS == "unix"){ askYesNo( message ) }
 
-                    if (OS == "windows") {
-                        askYesNo("yesnocancel", msg = message)
-                    }
+                    if (OS == "windows") { askYesNo("yesnocancel", msg = message) }
 
                 ) {
                     if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
