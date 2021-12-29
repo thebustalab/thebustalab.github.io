@@ -69,13 +69,14 @@
         ## Determine if anything needs to be installed
             
             if (length(packages_needed) > 0) {
-                if(
 
-                    message <- paste0(
-                        "You need to install the following packages before proceeding: ",
-                        paste(packages_needed, collapse = ", "),
-                        " Is it okay if phylochemistry installs them for you?"
-                    )
+                message <- paste0(
+                    "You need to install the following packages before proceeding: ",
+                    paste(packages_needed, collapse = ", "),
+                    " Is it okay if phylochemistry installs them for you?"
+                )
+
+                if(
 
                     if (OS == "unix"){ askYesNo( message ) }
 
