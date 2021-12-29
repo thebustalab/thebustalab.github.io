@@ -76,13 +76,12 @@
                     " Is it okay if phylochemistry installs them for you?"
                 )
 
-                if(
+                if (.Platform$OS.type == "unix"){ response <- askYesNo( message ) }
 
-                    if (.Platform$OS.type == "unix"){ askYesNo( message ) }
+                if (.Platform$OS.type == "windows") { response <- askYesNo("yesnocancel", msg = message) }
 
-                    if (.Platform$OS.type == "windows") { askYesNo("yesnocancel", msg = message) }
-
-                ) {
+                if(response) {
+                    
                     if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
                         install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
                     }
