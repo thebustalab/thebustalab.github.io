@@ -70,15 +70,23 @@
             
             if (length(packages_needed) > 0) {
                 if(
-                    askYesNo(
-                        cat(
-                            "You need to install the following packages before proceeding:\n",
-                            paste(packages_needed, collapse = ", "),
-                            "\n", "\n",
-                            "Is it okay if phylochemistry installs them for you?",
-                            "\n", "\n"
+                    if (OS == "unix"){
+
+                        askYesNo(
+                            cat(
+                                "You need to install the following packages before proceeding:\n",
+                                paste(packages_needed, collapse = ", "),
+                                "\n", "\n",
+                                "Is it okay if phylochemistry installs them for you?",
+                                "\n", "\n"
+                            )
                         )
-                    )
+                    }
+
+                    if (OS == "windows") {
+                        askYesNo("yesnocancel", msg = "You need to install several packages before proceeding. Is it okay if phylochemistry installs them for you?")
+                    }
+
                 ) {
                     if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
                     install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
