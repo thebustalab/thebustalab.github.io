@@ -78,13 +78,13 @@
 
                 if(
 
-                    if (OS == "unix"){ askYesNo( message ) }
+                    if (.Platform$OS.type == "unix"){ askYesNo( message ) }
 
-                    if (OS == "windows") { askYesNo("yesnocancel", msg = message) }
+                    if (.Platform$OS.type == "windows") { askYesNo("yesnocancel", msg = message) }
 
                 ) {
                     if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
-                    install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
+                        install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
                     }
 
                     if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
