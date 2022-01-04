@@ -138,7 +138,7 @@
 <span class="co">## # … with 210 more rows, and 1 more variable:</span>
 <span class="co">## #   element_type &lt;chr&gt;</span></code></pre></div>
 <p>We can see that this dataset is comprised of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
-<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/runMatrixAnalysis1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>With this in mind, let’s try out our template:</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">AK_lakes_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>

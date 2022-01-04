@@ -34,7 +34,6 @@ output:
       in_header: style/ga.html
     template: style/bs4_book.html
     css: style/style.css
-  bookdown::epub_book: default
 ---
 
 ```{r setup, include=FALSE}
@@ -52,7 +51,7 @@ options(pillar.sigfig = 3)
 <!-- start preface-->
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.width = 2}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/R_For_Chemists_logo.jpg', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/R_For_Chemists_logo.jpg', dpi = NA)
 ```
 
 1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000.
@@ -67,7 +66,7 @@ questionnaire("formative1.csv")
 This course is a set of first steps toward meeting both challenges outlined above. In the first half, we’ll explore, critique, and practice methods of handling and communicating about the data generated in large analytical chemistry projects. In the second half, we’ll apply the methods to large datasets and hone our writing skills by developing mini manuscripts that incorporate our large datasets.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/overview.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/overview.png', dpi = NA)
 ```
 
 <!-- end -->
@@ -109,7 +108,7 @@ There are two common methods for bringing the mobile phase and the stationary ph
 
 
 ```{r out.width = "50%", fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system."}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/mobile_stat_phase.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/mobile_stat_phase.png', dpi = NA)
 ```
 
 Below is an app:
@@ -187,7 +186,7 @@ If you have trouble installing RStudio please google "Install RStudio Mac" or "I
 Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/rstudio_components.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/rstudio_components.png', dpi = NA)
 ```
 
 The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.
@@ -443,7 +442,7 @@ Customize this document by modifying the title, and add `author: "your_name"` to
 You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a "chunk" or R code. That looks like this:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/markdown_1.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png', dpi = NA)
 ```
 
 You should notice a few things when you compile this document:
@@ -966,7 +965,7 @@ alaska_lake_data %>%
 Neat! Another way to think about the pipe:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/pipe.jpg', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg', dpi = NA)
 ```
 
 The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see...
@@ -1243,7 +1242,7 @@ ________________________________________________________________________________
 # overview
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/R_For_Chemists_3/images/chemometrics.jpeg', dpi = NA)
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg', dpi = NA)
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at leo sit amet odio rhoncus tempor. Suspendisse et dolor eu mi lacinia scelerisque sed ut est. Ut vitae tortor sit amet urna scelerisque volutpat non non turpis. Ut mollis massa sed sem elementum pharetra. Donec at metus malesuada, dictum orci id, laoreet massa. Sed eros augue, dapibus at sem ut, scelerisque dictum erat. Proin dictum mattis libero, ut venenatis velit porttitor et. Pellentesque bibendum nunc nec neque dictum faucibus. Suspendisse placerat a dolor at tristique. Integer vel sem pharetra, consequat nunc at, tempor dui.
@@ -1270,7 +1269,7 @@ alaska_lake_data
 We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structure. See the image below for an explanation.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/runMatrixAnalysis1.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png', dpi = NA)
 ```
 
 With this in mind, let's try out our template:
@@ -1352,7 +1351,7 @@ hclust is "who is most closely related to whom?", PCA is about clustering
 PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/R_For_Chemists_3/images/PCA.png', dpi = NA)
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png', dpi = NA)
 ```
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
@@ -1588,7 +1587,7 @@ ggplot() +
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/kmeans.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png', dpi = NA)
 ```
 
 One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
@@ -2007,7 +2006,7 @@ ggsave(
 Maybe something like this:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/Ex6Challenge.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
 ```
 
 <!-- end -->
@@ -2221,7 +2220,7 @@ model$metrics
 # comparing means
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/hawaii_aquifers.jpeg', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
 ```
 
 shapiroTest
@@ -2280,7 +2279,7 @@ Please note that the the *p* value is not the probability of a detected differen
 There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/stats.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/stats.png', dpi = NA)
 ```
 
 When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
@@ -2591,7 +2590,7 @@ Write your answers in an R Markdown document, compile the document so that every
 *note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/plot_quality.jpg', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg', dpi = NA)
 ```
 
 
@@ -3071,17 +3070,17 @@ ________________________________________________________________________________
 For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/project_overview.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/project_overview.png', dpi = NA)
 ```
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/scope.jpeg', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/scope.jpeg', dpi = NA)
 ```
 
 The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/writing_order.png', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/writing_order.png', dpi = NA)
 ```
 
 The orders of presentation and preparation do not have to be the same! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
@@ -3091,7 +3090,7 @@ The orders of presentation and preparation do not have to be the same! While in 
 A high quality figure is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/plot_quality.jpg', dpi = NA)
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg', dpi = NA)
 ```
 
 Components of a caption:
@@ -3427,7 +3426,7 @@ ________________________________________________________________________________
 
 ## geoms
 
-[geoms and ggplot2 cheatsheet](https://thebustalab.github.io/R_For_Chemists_3/images/ggplot2_geoms.pdf)
+[geoms and ggplot2 cheatsheet](https://thebustalab.github.io/integrated_bioanalytics/images/ggplot2_geoms.pdf)
 
 ## colors
 
