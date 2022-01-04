@@ -36,7 +36,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={phylochemistry},
+  pdftitle={Integrated Bioanalytical Chemistry},
   pdfauthor={Lucas Busta},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
@@ -115,9 +115,9 @@
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
 
-\title{phylochemistry}
+\title{Integrated Bioanalytical Chemistry}
 \author{Lucas Busta}
-\date{2021-12-18}
+\date{2022-01-03}
 
 \begin{document}
 \maketitle
@@ -126,26 +126,121 @@
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
-\hypertarget{section}{%
-\section*{}\label{section}}
-\addcontentsline{toc}{section}{}
-
-\hypertarget{phylochemistry}{%
-\section*{phylochemistry}\label{phylochemistry}}
-\addcontentsline{toc}{section}{phylochemistry}
+\hypertarget{integrated-bioanalytical-chemistry}{%
+\section*{integrated bioanalytical chemistry}\label{integrated-bioanalytical-chemistry}}
+\addcontentsline{toc}{section}{integrated bioanalytical chemistry}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
+\tightlist
 \item
   Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it's 10 data points or 10,000.
+\end{enumerate}
+
+\textbf{Question 1:}
+The error term (\(\epsilon_i\)) in regression equations reflects how much the observed scores of individuals differ from their predicted scores.
+
+TRUE
+
+FALSE
+
+\hypertarget{collapseExample1}{}
+\hypertarget{answerFeedback1}{}
+
+\textbf{Question 2:}
+In the equation \(Y_i = a + bX_i + e_i\), what are the `model parameters'?
+
+\(Y\) and \(X\)
+
+\(a\) and \(bX_i\)
+
+\(Y_i, X_i\) and \(e_i\)
+
+\(a\) and \(b\)
+
+\hypertarget{collapseExample2}{}
+\hypertarget{answerFeedback2}{}
+
+\textbf{Question 3:}
+A model with more degrees of freedom will\ldots{}
+
+fit the data better
+
+fit the data worse
+
+\hypertarget{collapseExample3}{}
+\hypertarget{answerFeedback3}{}
+
+\textbf{Question 4:}
+A model with more degrees of freedom is\ldots{}
+
+more complex
+
+more simple
+
+\hypertarget{collapseExample4}{}
+\hypertarget{answerFeedback4}{}
+
+\textbf{Question 5:}
+Multiple regression and ANCOVA are statistically equivalent.
+
+FALSE
+
+TRUE
+
+\hypertarget{collapseExample5}{}
+\hypertarget{answerFeedback5}{}
+
+\textbf{Question 6:}
+In OLS regression, a model is fit to the individual participant data. By contrast, regression in structural equation modeling fits a model to the observed covariance matrix.
+
+FALSE
+
+TRUE
+
+\hypertarget{collapseExample6}{}
+\hypertarget{answerFeedback6}{}
+
+\textbf{Question 7:}
+What are degrees of freedom?
+
+The number of unique pieces of information
+
+The number of unique pieces of information minus number of parameters
+
+The number of parameters
+
+Number of participants minus number of parameters
+
+\hypertarget{collapseExample7}{}
+\hypertarget{answerFeedback7}{}
+
+\textbf{Question 8:}
+A psychologist administers a test intended to measure intelligence. Participants complete different puzzles and answer different questions. From a measurement theory point of view, what kind of variable is intelligence in this context?
+
+A latent variable
+
+An observed variable
+
+A measurement variable
+
+A dependent variable
+
+\hypertarget{collapseExample8}{}
+\hypertarget{answerFeedback8}{}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
 \item
   One of the largest obstacles facing scientists is communicating about our work with non-scientists. Challenge 2: We must practice oral and written science communication in both technical and non-technical formats.
 \end{enumerate}
 
 This course is a set of first steps toward meeting both challenges outlined above. In the first half, we'll explore, critique, and practice methods of handling and communicating about the data generated in large analytical chemistry projects. In the second half, we'll apply the methods to large datasets and hone our writing skills by developing mini manuscripts that incorporate our large datasets.
 
-\hypertarget{section-1}{%
-\section*{}\label{section-1}}
+\hypertarget{section}{%
+\section*{}\label{section}}
 \addcontentsline{toc}{section}{}
 
 \hypertarget{getting-started}{%
@@ -210,6 +305,7 @@ The R Console window should have a \texttt{\textgreater{}} in it. Type \texttt{h
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{head}\NormalTok{(Indometh)}
+\DocumentationTok{\#\# Grouped Data: conc \textasciitilde{} time | Subject}
 \DocumentationTok{\#\#   Subject time conc}
 \DocumentationTok{\#\# 1       1 0.25 1.50}
 \DocumentationTok{\#\# 2       1 0.50 0.94}
@@ -228,7 +324,7 @@ Next, type \texttt{plot(Indometh)} into the R Console. This will plot the indome
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-5-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-6-1} \end{center}
 
 If both the above commands (\texttt{head(Indometh)} and \texttt{plot(Indometh)}) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -284,8 +380,8 @@ Then, on both Mac and PC, you then need to do:
 
 Other options are: if you have Windows, download and install \href{https://miktex.org/download}{MikTeX}. If you have OSX, you can download and install \href{http://www.tug.org/mactex/morepackages.html}{MacTeX}.
 
-\hypertarget{phylochemistry-1}{%
-\subsection{phylochemistry}\label{phylochemistry-1}}
+\hypertarget{phylochemistry}{%
+\subsection{phylochemistry}\label{phylochemistry}}
 
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
@@ -361,8 +457,8 @@ To update R:
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{section-2}{%
-\section*{}\label{section-2}}
+\hypertarget{section-1}{%
+\section*{}\label{section-1}}
 \addcontentsline{toc}{section}{}
 
 \hypertarget{data-visualization}{%
@@ -515,7 +611,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-20-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-21-1} \end{center}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -533,7 +629,7 @@ This is called aesthetic mapping and is done with the \texttt{aes()} function. \
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-21-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-22-1} \end{center}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -552,7 +648,7 @@ Map your variables onto the geometric features of the shapes. To define which sh
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-22-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-23-1} \end{center}
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use \texttt{aes()} to map your variables onto the geometric features of the shapes:
 
@@ -563,7 +659,7 @@ In the same way that we mapped variables in our dataset to the plot axes, we can
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-23-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-24-1} \end{center}
 
 \hypertarget{modifying-geoms}{%
 \subsubsection{modifying geoms}\label{modifying-geoms}}
@@ -577,7 +673,7 @@ In the last plot in the previous section, the points were a bit small, how could
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-24-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-25-1} \end{center}
 
 One powerful aspect of \texttt{ggplot} is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting\_regime is mapped:
 
@@ -588,7 +684,7 @@ One powerful aspect of \texttt{ggplot} is the ability to quickly change mappings
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-25-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-26-1} \end{center}
 
 ** Important note: Inside the \texttt{aes()} function, map aesthetics (the features of the geom's shape) to a \emph{variable}. Outside the \texttt{aes()} function, map aesthetics to \emph{constants}. You can see this in the above two plots - in the first one, color is inside \texttt{aes()} and mapped to the variable called harvesting\_regime, while size is outside the \texttt{aes()} call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the \texttt{aes()} function and mapped to the variable harvesting\_regime, while color is outside the \texttt{aes()} call and is mapped to the constant ``black''.
 
@@ -605,7 +701,7 @@ We can also stack geoms on top of one another by using multiple \texttt{+} signs
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-26-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-27-1} \end{center}
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
@@ -617,7 +713,7 @@ As you can probably guess right now, there are lots of mappings that can be done
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-27-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-28-1} \end{center}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -626,7 +722,7 @@ As you can probably guess right now, there are lots of mappings that can be done
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-28-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-29-1} \end{center}
 
 \hypertarget{markdown}{%
 \subsection{markdown}\label{markdown}}
@@ -738,7 +834,7 @@ I am going to show you an example of how you can filter and plot at the same tim
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-35-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-36-1} \end{center}
 
 Using the above as a template, make a plot that shows just \texttt{omega\_3\_polyunsaturated\_Fas}, with algae\_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to \texttt{harvesting\_regime}. Remember that mapping a feature of a shape onto a variable must be done inside \texttt{aes()}. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside \texttt{aes()}. Which harvesting regime leads to higher levels of \texttt{omega\_3\_polyunsaturated\_Fas}?
 
@@ -887,7 +983,7 @@ Make a plot that uses geom\_point(). Set the ``shape'' aesthetic of the points t
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-52-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-53-1} \end{center}
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -921,7 +1017,7 @@ I'd like to introduce you to two new geoms. The first \texttt{geom\_smooth()} is
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-54-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-55-1} \end{center}
 
 Also, please be aware of \texttt{geom\_tile()}, which is nice for situations with two discrete variables and one continuous variable. \texttt{geom\_tile()} makes what are often referred to as heat maps. Note that \texttt{geom\_tile()} is somewhat similar to \texttt{geom\_point(shape\ =\ 21)}, in that it has both \texttt{fill} and \texttt{color} aesthetics that control the fill color and the border color, respectively.
 
@@ -935,7 +1031,7 @@ Also, please be aware of \texttt{geom\_tile()}, which is nice for situations wit
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-55-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-56-1} \end{center}
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -956,7 +1052,7 @@ Here, we can facet in the horizontal direction:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-56-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-57-1} \end{center}
 
 We can facet in the vertical direction:
 
@@ -968,7 +1064,7 @@ We can facet in the vertical direction:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-57-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-58-1} \end{center}
 
 And we can do both at the same time:
 
@@ -980,7 +1076,7 @@ And we can do both at the same time:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-58-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-59-1} \end{center}
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider \texttt{facet\_wrap} instead of \texttt{facet\_grid}.
 
@@ -999,7 +1095,7 @@ Every time you define an aesthetic mapping (e.g.~aes(x = algae\_strain)), you ar
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-59-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-60-1} \end{center}
 
 \hypertarget{rcolorbrewer}{%
 \subsubsection{RColorBrewer}\label{rcolorbrewer}}
@@ -1012,7 +1108,7 @@ One particularly useful type of scale are those provided by RColorBrewer:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-60-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-61-1} \end{center}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1025,7 +1121,7 @@ One particularly useful type of scale are those provided by RColorBrewer:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-61-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-62-1} \end{center}
 
 \hypertarget{themes}{%
 \subsection{themes}\label{themes}}
@@ -1047,7 +1143,7 @@ So far we've just looked at how to control the means by which your \emph{data} i
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-62-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-63-1} \end{center}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1059,7 +1155,7 @@ So far we've just looked at how to control the means by which your \emph{data} i
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-63-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-64-1} \end{center}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1071,7 +1167,7 @@ So far we've just looked at how to control the means by which your \emph{data} i
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-64-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-65-1} \end{center}
 
 \hypertarget{theme-components}{%
 \subsubsection{Theme components}\label{theme-components}}
@@ -1090,7 +1186,7 @@ You can also change individual components of themes. This can be a bit tricky, b
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-65-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-66-1} \end{center}
 
 Last, here is an example of combining \texttt{scale\_*} and \texttt{theme*} with previous commands to really get a plot looking sharp.
 
@@ -1114,7 +1210,7 @@ Last, here is an example of combining \texttt{scale\_*} and \texttt{theme*} with
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-66-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-67-1} \end{center}
 
 \hypertarget{exercises-1}{%
 \subsection{exercises}\label{exercises-1}}
@@ -1244,7 +1340,7 @@ We have seen how to create new objects using \texttt{\textless{}-}, and we have 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-69-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-70-1} \end{center}
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe \texttt{\%\textgreater{}\%} to help us with this. Check it out:
 
@@ -1256,7 +1352,7 @@ However, as our analyses get more complex, the code can get long and hard to rea
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-70-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-71-1} \end{center}
 
 Neat! Another way to think about the pipe:
 
@@ -1383,7 +1479,7 @@ Now we can use this data in plotting. For this, we will use a new geom, \texttt{
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-76-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-77-1} \end{center}
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use \texttt{group\_by()} and \texttt{summarize()} on multiple variables (i.e.~more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1395,7 +1491,6 @@ Cool! Just like that, we've found (and visualized) the average and standard devi
     \AttributeTok{mean\_diam =} \FunctionTok{mean}\NormalTok{(tree\_diameter),}
     \AttributeTok{stdev\_diam =} \FunctionTok{sd}\NormalTok{(tree\_diameter)}
 \NormalTok{  ) }\OtherTok{{-}\textgreater{}}\NormalTok{ ny\_trees\_by\_spc\_boro\_summ}
-\DocumentationTok{\#\# \textasciigrave{}summarise()\textasciigrave{} has grouped output by \textquotesingle{}spc\_latin\textquotesingle{}. You can override using the \textasciigrave{}.groups\textasciigrave{} argument.}
 \NormalTok{ny\_trees\_by\_spc\_boro\_summ}
 \DocumentationTok{\#\# \# A tibble: 48 x 4}
 \DocumentationTok{\#\# \# Groups:   spc\_latin [12]}
@@ -1436,7 +1531,7 @@ Now we have summary statistics for each tree species within each borough. This i
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-78-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-79-1} \end{center}
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1469,7 +1564,7 @@ Excellent! And if we really want to go for something pretty:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-79-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-80-1} \end{center}
 
 \emph{Now} we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1606,7 +1701,7 @@ Note that \texttt{ggtree} also comes with several great new geoms: \texttt{geom\
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-90-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-91-1} \end{center}
 
 Cool! Though that plot could use some tweaking\ldots{} let's try:
 
@@ -1620,7 +1715,7 @@ Cool! Though that plot could use some tweaking\ldots{} let's try:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-91-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-92-1} \end{center}
 
 Very nice!
 
@@ -1690,7 +1785,7 @@ We can run and visualize principal components analyses using the \texttt{runMatr
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-94-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-95-1} \end{center}
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e.~the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e.~the second principal component).
 
@@ -1753,7 +1848,7 @@ We can now visualize the ordination plot using our standard ggplot plotting tech
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-96-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-97-1} \end{center}
 
 Great! Here is how to read the ordination plot:
 
@@ -1804,7 +1899,7 @@ We also can access information about the how much of the variance in the data se
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-97-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-98-1} \end{center}
 
 Cool! We can see that the first principal component retains nearly 50\% of the variance in the original dataset, while the second dimension contains only about 20\%.
 
@@ -1945,7 +2040,7 @@ We can plot the results and color them according to the group that kmeans sugges
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-103-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-104-1} \end{center}
 
 Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set \texttt{kmeans\ =\ "elbow"}:
 
@@ -1977,10 +2072,10 @@ Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is t
 \DocumentationTok{\#\#  4              4                  38964.}
 \DocumentationTok{\#\#  5              5                  30702.}
 \DocumentationTok{\#\#  6              6                  25212.}
-\DocumentationTok{\#\#  7              7                  20188.}
+\DocumentationTok{\#\#  7              7                  20591.}
 \DocumentationTok{\#\#  8              8                  16508.}
 \DocumentationTok{\#\#  9              9                  14346.}
-\DocumentationTok{\#\# 10             10                  12788.}
+\DocumentationTok{\#\# 10             10                  12265.}
 \DocumentationTok{\#\# \# ... with 21 more rows}
 \end{Highlighting}
 \end{Shaded}
@@ -1999,7 +2094,7 @@ This gives us the maximum variance within a cluster for each number of clusters.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-105-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-106-1} \end{center}
 
 Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set \texttt{kmeans\ =\ 3} if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use \texttt{geom\_mark\_ellipse}.
 
@@ -2029,7 +2124,7 @@ Hmm, it looks like there aren't any strong elbows in this plot - probably the re
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-106-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-107-1} \end{center}
 
 Cool!
 
@@ -2070,7 +2165,7 @@ One more important point: when using kmeans, the output of runMatrixAnalysis (sp
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-107-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-108-1} \end{center}
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the \texttt{plot\_grid} function from the \texttt{cowplot} package. Let's check it out:
 
@@ -2138,7 +2233,7 @@ Very good! Since we can use the outputs of our k-means analyses to run and visua
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-108-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-109-1} \end{center}
 
 Now we are really rockin!!
 
@@ -2232,7 +2327,7 @@ Let's look at an example. Suppose we want to know if the abundances of ADP and A
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-118-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-119-1} \end{center}
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -2307,7 +2402,7 @@ Let's plot the model!
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-122-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-123-1} \end{center}
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -2320,7 +2415,7 @@ Very good. Now let's talk about evaluating the quality of our model. For this we
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-123-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-124-1} \end{center}
 
 We can calculate the sum of the squared residuals:
 
@@ -2343,7 +2438,7 @@ We can calculate the sum of the squared residuals:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-125-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-126-1} \end{center}
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -2361,7 +2456,7 @@ A pretty bad model, I agree. How much better is our linear model that the flat l
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-126-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-127-1} \end{center}
 
 40.32! Wow. Let's call that the ``total sum of the squares'', and now we can compare that to our ``residual sum of the squares'':
 
@@ -2398,7 +2493,7 @@ A pretty bad model, I agree. How much better is our linear model that the flat l
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-128-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-129-1} \end{center}
 
 \hypertarget{exercises-6}{%
 \subsection{exercises}\label{exercises-6}}
@@ -2486,7 +2581,7 @@ Importantly, there are many wells that draw on each aquifer, as shown in the gra
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-132-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-133-1} \end{center}
 
 \hypertarget{definitions}{%
 \subsection{definitions}\label{definitions}}
@@ -2565,7 +2660,7 @@ To work with two means, let's just look at aquifers 1 and 6:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-135-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-136-1} \end{center}
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2579,7 +2674,7 @@ Are these data normally distributed? Do they have similar variance? Let's get a 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-136-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-137-1} \end{center}
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is ``aquifer\_code'', i.e.~aquifer\_1 and aquifer\_6). This means we need to \texttt{group\_by(aquifer\_code)} before we run the test:
 
@@ -2675,7 +2770,7 @@ In the previous section we compared two means. What if we want to compare means 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-141-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-142-1} \end{center}
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2690,7 +2785,7 @@ Let's check visually to see if each group is normally distributed and to see if 
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-142-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-143-1} \end{center}
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to \texttt{group\_by()}, with the Levene test, we are looking across groups, and so need to provide a \texttt{y\textasciitilde{}x} formula:
 
@@ -2804,7 +2899,7 @@ We can use the output from \texttt{p\_groups} to annotate our plot:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-148-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-149-1} \end{center}
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have ``b'' in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -2878,7 +2973,7 @@ This gives us adjusted p-values for all pairwise comparisons. Once again, we can
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-151-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-152-1} \end{center}
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -2895,7 +2990,7 @@ Oftentimes we have more than two means to compare, but rather than wanting to co
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-152-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-153-1} \end{center}
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3044,7 +3139,7 @@ Excellent, now we see how to run parametric and non-parametric pairwise comparis
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-157-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-158-1} \end{center}
 
 \hypertarget{further-reading}{%
 \subsection{further reading}\label{further-reading}}
@@ -3072,8 +3167,8 @@ Using the \texttt{hawaii\_aquifers} data set, please complete the following:
   Repeat \#3 above, but switch the type of test used (i.e.~use non-parametric if you used parametric for \#3 and vice-versa). Compare the \emph{p} values and \emph{p} groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
 \end{enumerate}
 
-\hypertarget{section-3}{%
-\section*{}\label{section-3}}
+\hypertarget{section-2}{%
+\section*{}\label{section-2}}
 \addcontentsline{toc}{section}{}
 
 \hypertarget{part-chemometrics-1}{%
@@ -3151,7 +3246,7 @@ An example:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-174-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-175-1} \end{center}
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park \& Preserve, NOAT - Noatak National Preserve. --\textgreater{}
 
@@ -3531,8 +3626,8 @@ Using the groupings that were identified via principal components analysis, stat
   \href{https://libguides.usc.edu/writingguide/title}{Titles Guide}
 \end{itemize}
 
-\hypertarget{section-4}{%
-\section*{}\label{section-4}}
+\hypertarget{section-3}{%
+\section*{}\label{section-3}}
 \addcontentsline{toc}{section}{}
 
 \hypertarget{image-analysis}{%
@@ -3562,8 +3657,8 @@ For analyze color images we use an interactive app called by \texttt{analyzeImag
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{phylochemistry-2}{%
-\section{phylochemistry}\label{phylochemistry-2}}
+\hypertarget{phylochemistry-1}{%
+\section{phylochemistry}\label{phylochemistry-1}}
 
 \texttt{phylochemistry} is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of \texttt{phylochemistry}.
 
@@ -3848,8 +3943,8 @@ To control the mass spectrum window:
 \hypertarget{collapsetree}{%
 \subsection{collapseTree}\label{collapsetree}}
 
-\hypertarget{section-5}{%
-\section*{}\label{section-5}}
+\hypertarget{section-4}{%
+\section*{}\label{section-4}}
 \addcontentsline{toc}{section}{}
 
 \hypertarget{appendix}{%
@@ -3903,7 +3998,7 @@ However, there are cases where we will want a list of character elements to have
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-187-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-188-1} \end{center}
 
 How do we fix this? We need to convert the column \texttt{group\_number} into a list of factors that have the correct order (see below). For this, we will use the command \texttt{factor}, which will accept an argument called \texttt{levels} in which we can define the order the the characters should be in:
 
@@ -3947,7 +4042,7 @@ Notice that now when we look at the type of data that is contained in the column
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-189-1} \end{center}
+\begin{center}\includegraphics{index_files/figure-latex/unnamed-chunk-190-1} \end{center}
 
 VICTORY!
 

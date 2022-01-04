@@ -4,15 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 2 ggplot and markdown | phylochemistry</title>
+<title>Chapter 2 ggplot and markdown | Integrated Bioanalytical Chemistry</title>
 <meta name="author" content="Lucas Busta">
 <meta name="description" content="2.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="Chapter 2 ggplot and markdown | phylochemistry">
+<meta property="og:title" content="Chapter 2 ggplot and markdown | Integrated Bioanalytical Chemistry">
 <meta property="og:type" content="book">
 <meta property="og:description" content="2.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 2 ggplot and markdown | phylochemistry">
+<meta name="twitter:title" content="Chapter 2 ggplot and markdown | Integrated Bioanalytical Chemistry">
 <meta name="twitter:description" content="2.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="">phylochemistry</a>
+        <a href="index.html" title="">Integrated Bioanalytical Chemistry</a>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -39,16 +39,11 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html"></a></li>
-<li><a class="" href="phylochemistry.html">phylochemistry</a></li>
-<li><a class="" href="section-1.html"></a></li>
-<li><a class="" href="getting-started.html">GETTING STARTED</a></li>
-<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
-<li><a class="" href="section-2.html"></a></li>
-<li><a class="" href="data-visualization.html">DATA VISUALIZATION</a></li>
-<li><a class="active" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li><a class="" href="index.html">integrated bioanalytical chemistry</a></li>
 <li class="book-part">data visualization</li>
-<li><a class="" href="data-visualization-1.html">data visualization</a></li>
+<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
+<li><a class="active" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li><a class="" href="data-visualization.html">data visualization</a></li>
 <li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">3</span> geoms, facets, scales, themes</a></li>
 <li><a class="" href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></li>
 <li><a class="" href="summary_statistics.html"><span class="header-section-number">5</span> the pipe and summaries</a></li>
@@ -59,27 +54,31 @@
 <li><a class="" href="k-means.html"><span class="header-section-number">8</span> k-means</a></li>
 <li><a class="" href="models.html"><span class="header-section-number">9</span> models</a></li>
 <li><a class="" href="comparing-means.html"><span class="header-section-number">10</span> comparing means</a></li>
-<li><a class="" href="section-3.html"></a></li>
-<li class="book-part">chemometrics</li>
+<li class="book-part">instrumental analysis</li>
+<li><a class="" href="chromatography-and-separations.html"><span class="header-section-number">12</span> chromatography and separations</a></li>
+<li><a class="" href="mass-spectrometry.html"><span class="header-section-number">13</span> mass spectrometry</a></li>
+<li><a class="" href="spectroscopy.html"><span class="header-section-number">14</span> spectroscopy</a></li>
+<li><a class="" href="electrochemistry.html"><span class="header-section-number">15</span> electrochemistry</a></li>
+<li class="book-part">writing</li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">11</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">12</span> results and discussion</a></li>
-<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">13</span> conclusion and introduction</a></li>
-<li><a class="" href="abstract-and-title.html"><span class="header-section-number">14</span> abstract and title</a></li>
-<li><a class="" href="section-4.html"></a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">16</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">17</span> results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">18</span> conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html"><span class="header-section-number">19</span> abstract and title</a></li>
+<li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
-<li><a class="" href="image-color-analysis.html"><span class="header-section-number">15</span> image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">16</span> images of mass spectra</a></li>
-<li><a class="" href="phylochemistry-2.html"><span class="header-section-number">17</span> phylochemistry</a></li>
-<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">18</span> mass spectrometric analysis</a></li>
-<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">19</span> transcriptomic analyses</a></li>
-<li><a class="" href="genomic-analyses.html"><span class="header-section-number">20</span> genomic analyses</a></li>
-<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">21</span> evolutionary analyses</a></li>
-<li><a class="" href="section-5.html"></a></li>
+<li><a class="" href="image-color-analysis.html"><span class="header-section-number">20</span> image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">21</span> images of mass spectra</a></li>
+<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">22</span> phylochemistry</a></li>
+<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">23</span> mass spectrometric analysis</a></li>
+<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">24</span> transcriptomic analyses</a></li>
+<li><a class="" href="genomic-analyses.html"><span class="header-section-number">25</span> genomic analyses</a></li>
+<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">26</span> evolutionary analyses</a></li>
+<li><a class="" href="section-1.html"></a></li>
 <li><a class="" href="appendix.html">APPENDIX</a></li>
-<li><a class="" href="links.html"><span class="header-section-number">22</span> links</a></li>
-<li><a class="" href="faq.html"><span class="header-section-number">23</span> faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">24</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">27</span> links</a></li>
+<li><a class="" href="faq.html"><span class="header-section-number">28</span> faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">29</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -198,14 +197,14 @@
 <p>We do this using the ggplot function’s data argument. When we run that line, it just shows a grey plot space. Why is this? It’s because all we’ve done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven’t explained how to represent features of the data using ink.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-20-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-21-1.png" width="80%" style="display: block; margin: auto;"></div>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Define how your variables map onto the axes.</strong></li>
 </ol>
 <p>This is called aesthetic mapping and is done with the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function. <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> should be placed inside the <code>ggplot</code> command. Now when we run it, we get our axes!</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-21-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="80%" style="display: block; margin: auto;"></div>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Use geometric shapes to represent other variables in your data.</strong></li>
 </ol>
@@ -213,12 +212,12 @@
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-23-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> to map your variables onto the geometric features of the shapes:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-23-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="80%" style="display: block; margin: auto;"></div>
 <div id="modifying-geoms" class="section level3" number="2.3.1">
 <h3>
 <span class="header-section-number">2.3.1</span> modifying geoms<a class="anchor" aria-label="anchor" href="#modifying-geoms"><i class="fas fa-link"></i></a>
@@ -227,12 +226,12 @@
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-25-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>One powerful aspect of <code>ggplot</code> is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>** Important note: Inside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> and mapped to the variable called harvesting_regime, while size is outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function and mapped to the variable harvesting_regime, while color is outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> call and is mapped to the constant “black.”</p>
 </div>
 <div id="multiple-geoms" class="section level3" number="2.3.2">
@@ -244,17 +243,17 @@
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">algae_strain</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span>, size <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-28-1.png" width="80%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-28-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-29-1.png" width="80%" style="display: block; margin: auto;"></div>
 </div>
 </div>
 <div id="markdown" class="section level2" number="2.4">
@@ -264,7 +263,7 @@
 <p>Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: <code>File -&gt; New File -&gt; R Markdown</code>. You should get a template document that compiles when you press “knit.”</p>
 <p>Customize this document by modifying the title, and add <code>author: "your_name"</code> to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.</p>
 <p>You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a “chunk” or R code. That looks like this:</p>
-<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/markdown_1.png" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/markdown_1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>You should notice a few things when you compile this document:</p>
 <ol style="list-style-type: decimal">
 <li><p>Headings: When you compile that code, the “# My first analysis” creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, “## Part 1” will create a subheading, “### Part 1.1” will create a sub-subheading, and so on.</p></li>
@@ -317,7 +316,7 @@
   data <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"essential_Aas"</span><span class="op">)</span>,
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-35-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-36-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
 <ol start="7" style="list-style-type: decimal">
 <li><strong>Filtering and plotting</strong></li>
@@ -386,19 +385,14 @@
     shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">10</span>,
     color <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> <span class="st">"green"</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-52-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-53-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
-<p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
-<!-- end --></p>
-<!-- start DATA VISUALIZATION -->
+<p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.</p>
 </div>
 </div>
-
-
-
   <div class="chapter-nav">
-<div class="prev"><a href="data-visualization.html">DATA VISUALIZATION</a></div>
-<div class="next"><a href="data-visualization-1.html">data visualization</a></div>
+<div class="prev"><a href="installation.html"><span class="header-section-number">1</span> installation</a></div>
+<div class="next"><a href="data-visualization.html">data visualization</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
@@ -433,7 +427,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>phylochemistry</strong>" was written by Lucas Busta. It was last built on 2021-12-18.</p>
+    <p>"<strong>Integrated Bioanalytical Chemistry</strong>" was written by Lucas Busta. It was last built on 2022-01-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -441,6 +435,34 @@
   </div>
 
 </div></div>
-</footer>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
 </body>
 </html>

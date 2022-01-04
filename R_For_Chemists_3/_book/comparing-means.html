@@ -4,15 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 10 comparing means | phylochemistry</title>
+<title>Chapter 10 comparing means | Integrated Bioanalytical Chemistry</title>
 <meta name="author" content="Lucas Busta">
 <meta name="description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="Chapter 10 comparing means | phylochemistry">
+<meta property="og:title" content="Chapter 10 comparing means | Integrated Bioanalytical Chemistry">
 <meta property="og:type" content="book">
 <meta property="og:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 10 comparing means | phylochemistry">
+<meta name="twitter:title" content="Chapter 10 comparing means | Integrated Bioanalytical Chemistry">
 <meta name="twitter:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="">phylochemistry</a>
+        <a href="index.html" title="">Integrated Bioanalytical Chemistry</a>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -39,16 +39,11 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html"></a></li>
-<li><a class="" href="phylochemistry.html">phylochemistry</a></li>
-<li><a class="" href="section-1.html"></a></li>
-<li><a class="" href="getting-started.html">GETTING STARTED</a></li>
-<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
-<li><a class="" href="section-2.html"></a></li>
-<li><a class="" href="data-visualization.html">DATA VISUALIZATION</a></li>
-<li><a class="" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li><a class="" href="index.html">integrated bioanalytical chemistry</a></li>
 <li class="book-part">data visualization</li>
-<li><a class="" href="data-visualization-1.html">data visualization</a></li>
+<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
+<li><a class="" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li><a class="" href="data-visualization.html">data visualization</a></li>
 <li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">3</span> geoms, facets, scales, themes</a></li>
 <li><a class="" href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></li>
 <li><a class="" href="summary_statistics.html"><span class="header-section-number">5</span> the pipe and summaries</a></li>
@@ -59,27 +54,31 @@
 <li><a class="" href="k-means.html"><span class="header-section-number">8</span> k-means</a></li>
 <li><a class="" href="models.html"><span class="header-section-number">9</span> models</a></li>
 <li><a class="active" href="comparing-means.html"><span class="header-section-number">10</span> comparing means</a></li>
-<li><a class="" href="section-3.html"></a></li>
-<li class="book-part">chemometrics</li>
+<li class="book-part">instrumental analysis</li>
+<li><a class="" href="chromatography-and-separations.html"><span class="header-section-number">12</span> chromatography and separations</a></li>
+<li><a class="" href="mass-spectrometry.html"><span class="header-section-number">13</span> mass spectrometry</a></li>
+<li><a class="" href="spectroscopy.html"><span class="header-section-number">14</span> spectroscopy</a></li>
+<li><a class="" href="electrochemistry.html"><span class="header-section-number">15</span> electrochemistry</a></li>
+<li class="book-part">writing</li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">11</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">12</span> results and discussion</a></li>
-<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">13</span> conclusion and introduction</a></li>
-<li><a class="" href="abstract-and-title.html"><span class="header-section-number">14</span> abstract and title</a></li>
-<li><a class="" href="section-4.html"></a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">16</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">17</span> results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">18</span> conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html"><span class="header-section-number">19</span> abstract and title</a></li>
+<li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
-<li><a class="" href="image-color-analysis.html"><span class="header-section-number">15</span> image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">16</span> images of mass spectra</a></li>
-<li><a class="" href="phylochemistry-2.html"><span class="header-section-number">17</span> phylochemistry</a></li>
-<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">18</span> mass spectrometric analysis</a></li>
-<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">19</span> transcriptomic analyses</a></li>
-<li><a class="" href="genomic-analyses.html"><span class="header-section-number">20</span> genomic analyses</a></li>
-<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">21</span> evolutionary analyses</a></li>
-<li><a class="" href="section-5.html"></a></li>
+<li><a class="" href="image-color-analysis.html"><span class="header-section-number">20</span> image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">21</span> images of mass spectra</a></li>
+<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">22</span> phylochemistry</a></li>
+<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">23</span> mass spectrometric analysis</a></li>
+<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">24</span> transcriptomic analyses</a></li>
+<li><a class="" href="genomic-analyses.html"><span class="header-section-number">25</span> genomic analyses</a></li>
+<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">26</span> evolutionary analyses</a></li>
+<li><a class="" href="section-1.html"></a></li>
 <li><a class="" href="appendix.html">APPENDIX</a></li>
-<li><a class="" href="links.html"><span class="header-section-number">22</span> links</a></li>
-<li><a class="" href="faq.html"><span class="header-section-number">23</span> faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">24</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">27</span> links</a></li>
+<li><a class="" href="faq.html"><span class="header-section-number">28</span> faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">29</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -91,7 +90,7 @@
 <h1>
 <span class="header-section-number">10</span> comparing means<a class="anchor" aria-label="anchor" href="#comparing-means"><i class="fas fa-link"></i></a>
 </h1>
-<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/hawaii_aquifers.jpeg" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/hawaii_aquifers.jpeg" width="80%" style="display: block; margin: auto;"></div>
 <p>shapiroTest
 leveneTest
 tTest
@@ -147,7 +146,7 @@ dunnTest</p>
 <span class="co">## 10 aquifer_9         30</span>
 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">aquifers_summarized</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_wells</span>, y <span class="op">=</span> <span class="va">aquifer_code</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-132-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-133-1.png" width="80%" style="display: block; margin: auto;"></div>
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
@@ -172,7 +171,7 @@ library(multcompView)
 <span class="header-section-number">10.2</span> test selection<a class="anchor" aria-label="anchor" href="#test-selection"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):</p>
-<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/stats.png" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/stats.png" width="80%" style="display: block; margin: auto;"></div>
 <p>When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful “parametric” tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful “non-parametric” tests.</p>
 <p>We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let’s use the <code>hawaii_aquifers</code> data as an example, and let’s consider only the element potassium:</p>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
@@ -218,7 +217,7 @@ library(multcompView)
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">K_data_1_2</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">aquifer_code</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-135-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-136-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Are these data normally distributed? Do they have similar variance? Let’s get a first approximation by looking at a plot:</p>
 <div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
@@ -226,7 +225,7 @@ library(multcompView)
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-136-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-137-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is “aquifer_code,” i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
@@ -298,7 +297,7 @@ library(multcompView)
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-141-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-142-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Let’s check visually to see if each group is normally distributed and to see if they have roughly equal variance:</p>
 <div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
@@ -307,7 +306,7 @@ library(multcompView)
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-142-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-143-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let’s check using the Shapiro and Levene tests. Don’t forget: with the Shaprio test, we are looking within each group and so need to <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code>, with the Levene test, we are looking across groups, and so need to provide a <code>y~x</code> formula:</p>
 <div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
@@ -390,7 +389,7 @@ library(multcompView)
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_tukey</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-148-1.png" width="480" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-149-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
 <div id="kruskal-dunn-tests" class="section level3" number="10.4.2">
@@ -449,7 +448,7 @@ library(multcompView)
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_y_discrete</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Aquifer code"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_dunn</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-151-1.png" width="576" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-152-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Note that these groupings are different from those generated by ANOVA/Tukey.</p>
 </div>
 </div>
@@ -462,7 +461,7 @@ library(multcompView)
 <code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-152-1.png" width="672" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-153-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>Fortunately, we can use an approach that is very similar to the what we’ve learned in the earlier portions of this chapter, just with minor modifications. Let’s have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):</p>
 <div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
@@ -584,7 +583,7 @@ library(multcompView)
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>
     text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span>
     <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-157-1.png" width="384" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-158-1.png" width="80%" style="display: block; margin: auto;"></div>
 </div>
 <div id="further-reading" class="section level2" number="10.6">
 <h2>
@@ -622,7 +621,7 @@ Write your answers in an R Markdown document, compile the document so that every
 
 *note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
 
-<img src="http://thebustalab.github.io/R_For_Chemists_3/images/plot_quality.jpg" style="display: block; margin: auto;" />
+<img src="http://thebustalab.github.io/R_For_Chemists_3/images/plot_quality.jpg" width="80%" style="display: block; margin: auto;" />
 
 
 ## Data set 1: beer_components
@@ -700,12 +699,14 @@ Mrs. Pilsner: *Cascade hops are a very popular variety, and also a variety we us
 Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?*
 
 
---><!-- end --><!-- start final project -->
+--><!-- end --><!-- start final project --><hr>
+<hr>
+<hr>
 </div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="models.html"><span class="header-section-number">9</span> models</a></div>
-<div class="next"><a href="section-3.html"></a></div>
+<div class="next"><a href="chromatography-and-separations.html"><span class="header-section-number">12</span> chromatography and separations</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
@@ -739,7 +740,7 @@ Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>phylochemistry</strong>" was written by Lucas Busta. It was last built on 2021-12-18.</p>
+    <p>"<strong>Integrated Bioanalytical Chemistry</strong>" was written by Lucas Busta. It was last built on 2022-01-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -747,6 +748,34 @@ Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest
   </div>
 
 </div></div>
-</footer>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
 </body>
 </html>

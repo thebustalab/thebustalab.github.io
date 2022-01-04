@@ -1,5 +1,5 @@
 ########################
-## PHYLOCHEMISTRY 0.9 ##
+## PHYLOCHEMISTRY 1.0 ##
 ########################
 
 ###### Libraries
@@ -1265,6 +1265,89 @@
                 return(xy)
 
             }
+
+        #### question
+
+            question <- function(question, distractors, correct, no, fb = "", print_question = TRUE){
+                allanswers <- c(distractors, correct)[sample.int(length(distractors)+1)]
+                correctanswer <- which(allanswers == correct)
+                
+                answercode <- paste0(sapply(1:length(allanswers), function(i){
+                
+                    x <- allanswers[i]
+                    paste0('<div class="radio">\n  <label>\n    <input type="radio" name="question', no, '" id="opt', i,'" value="', i, '" onchange="check_answer', no, '()">\n    ', x, '\n  </label>\n</div>')
+                
+                }), collapse = "\n\n")
+
+                out <- paste0(question, "\n\n", answercode,
+                    '<div class="collapse" id="collapseExample', no,'">
+                    <div class="card card-body" id="answerFeedback', no, '">
+                    </div>
+                    </div>',
+                    paste0('<script type="text/javascript">
+                    function check_answer', no, '()
+                    {
+                    var radioButtons', no, ' = document.getElementsByName("question', no, '");
+                    document.getElementById("answerFeedback', no, '").innerHTML = "Try selecting an answer!!";
+                    for(var i = 0; i < radioButtons', no, '.length; i++)
+                    {
+                    if(radioButtons', no, '[i].checked == true)
+                    {
+                    var feedback', no, ' = "<p style=\'color:red\'>Wrong', ifelse(fb == "", ".", paste0("; ", fb)),  '</p>";
+                    if(radioButtons', no, '[i].value == "', correctanswer, '") {
+                    feedback', no, ' = "<p style=\'color:green\'>Correct!</p>"
+                    }
+                    document.getElementById("answerFeedback', no, '").innerHTML = feedback', no, ';
+                    return true;
+                    }
+                    }
+                    }
+                    </script>
+                    '))
+                
+                if(print_question){
+                    cat(out)
+                } else {
+                    return(out)
+                }
+            }
+
+        #### questionnaire
+
+            questionnaire <- function(x, shuffle = TRUE, print_question = TRUE){
+                
+                if(inherits(x, "character")) x <- read.csv(x, stringsAsFactors = FALSE, fileEncoding="UTF-8-BOM")
+                
+                if(!all(names(x) == c("question", "distractors", "correct", "fb"))){
+                    stop("Incorrect column names")
+                }
+                
+                if(shuffle){
+                    x <- x[sample.int(nrow(x)), ]
+                }
+                
+                out <- ""
+                for(i in 1:nrow(x)){
+                    out <- paste0(out,
+                    "**Question ",
+                    i,
+                    ":**\n",
+                    question(question = x$question[i],
+                    distractors = eval(parse(text = x$distractors[i])),
+                    correct = x$correct[i],
+                    no = i,
+                    fb = ifelse(is.na(x$fb[i]), "", x$fb[i]),
+                    print_question = FALSE),
+                    "\n\n"
+                    )
+                }
+                if(print_question){
+                    cat(out)
+                } else {
+                    return(out)
+                }
+            }
+
 
     ##### Sequence data handling
 
@@ -6183,7 +6266,9 @@
                                             data.frame(y = rep(0,dim(AA_phydat)[1])),
                                             AA_phydat
                                         )
-                    AA_alignment_df_plottable <- tidyr::gather(AA_alignment_df, position, residue, 4:dim(AA_alignment_df)[2])
+                    # AA_alignment_df_plottable <- tidyr::gather(AA_alignment_df
+                    first_number_col <- min(which(is.na(suppressWarnings(as.numeric(colnames(AA_alignment_df)))) == FALSE))
+                    AA_alignment_df_plottable <- as.data.frame(tidyr::pivot_longer(AA_alignment_df, cols = first_number_col:dim(AA_alignment_df)[2], names_to = "position", values_to = "residue"))
                     AA_alignment_df_plottable$position <- as.numeric(as.character(AA_alignment_df_plottable$position))
                     AA_alignment_df_plottable <- AA_alignment_df_plottable[order(AA_alignment_df_plottable$protein, AA_alignment_df_plottable$position),]
                     head(AA_alignment_df_plottable)
@@ -6997,193 +7082,348 @@
                                     )
                                 )
                             )
+                        ),
+                        tabPanel("Meta Analysis",
+                            sidebarLayout(
+                                sidebarPanel(
+                                    fileInput("metadata_file", "Choose File:")
+                                ),
+                                mainPanel(
+                                    plotOutput(
+                                        outputId = "metaplot",
+                                        height = 700
+                                    )
+                                )
+                            )
                         )
                     )
                 )
 
                 server <- function(input, output, session) {
 
-                    ## Read in and process image
+                    ## Analyze images (main) tab
 
-                        # if (share_link == )
+                        ## Read in and process image
 
-                        googledrive::drive_download(
-                          file = share_link,
-                          path = "temp.JPEG",
-                          overwrite = TRUE
-                        )
+                            # if (share_link == )
 
-                        path_to_image <- "temp.JPEG"
+                            googledrive::drive_download(
+                              file = share_link,
+                              path = "temp.JPEG",
+                              overwrite = TRUE
+                            )
 
-                        image <- imager::load.image(path_to_image)
-                        image <- as_tibble(as.data.frame(as.cimg(image)))
-                        image$y <- -as.numeric(image$y)
-                        image$y <- image$y + -min(image$y)
-                        image <- pivot_wider(image, names_from = cc, values_from = value)
-                        names(image)[3:5] <- c("R", "G", "B")
-                        image$hex <- rgb(image$R, image$G, image$B)
-                        image <- image
+                            path_to_image <- "temp.JPEG"
 
-                    ## Extract and print QR code data and timestamp
+                            image <- imager::load.image(path_to_image)
+                            image <- as_tibble(as.data.frame(as.cimg(image)))
+                            image$y <- -as.numeric(image$y)
+                            image$y <- image$y + -min(image$y)
+                            image <- pivot_wider(image, names_from = cc, values_from = value)
+                            names(image)[3:5] <- c("R", "G", "B")
+                            image$hex <- rgb(image$R, image$G, image$B)
+                            image <- image
 
-                        metadata <- list()
-                        qr_location_data <- quadrangle::qr_scan_cpp(magick::image_read(path_to_image), lighten = TRUE, darken = TRUE)
-                        metadata$name <- quadrangle::qr_scan_js_from_corners(magick::image_read(path_to_image), qr_location_data$points)$data
-                        metadata$time_stamp <- exifr::read_exif(path_to_image)$SubSecCreateDate
-                        output$metadata1 <- renderText({ metadata$name })
-                        output$metadata2 <- renderPrint({ metadata$time_stamp })
-                        metadata$date <- gsub(":", "/", gsub(" .*$", "", metadata$time_stamp))
-                        metadata$year <- lubridate::year(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
-                        metadata$month <- lubridate::month(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
-                        metadata$day <- lubridate::day(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
+                        ## Extract and print QR code data and timestamp
 
-                    ## Draw photograph
+                            metadata <- list()
+                            qr_location_data <- quadrangle::qr_scan_cpp(magick::image_read(path_to_image), lighten = TRUE, darken = TRUE)
+                            metadata$name <- quadrangle::qr_scan_js_from_corners(magick::image_read(path_to_image), qr_location_data$points)$data
+                            metadata$time_stamp <- exifr::read_exif(path_to_image)$SubSecCreateDate
+                            output$metadata1 <- renderText({ metadata$name })
+                            output$metadata2 <- renderPrint({ metadata$time_stamp })
+                            metadata$date <- gsub(":", "/", gsub(" .*$", "", metadata$time_stamp))
+                            metadata$year <- lubridate::year(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
+                            metadata$month <- lubridate::month(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
+                            metadata$day <- lubridate::day(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
 
-                        photograph <- ggplot() +
-                            geom_tile(data = filter(image), aes(x = x, y = y), fill = image$hex) + theme_classic()
-                        output$photograph <- renderPlot({photograph})
+                        ## Draw photograph
 
-                    ## Extract sample spot
+                            photograph <- ggplot() +
+                                geom_tile(data = filter(image), aes(x = x, y = y), fill = image$hex) + theme_classic()
+                            output$photograph <- renderPlot({photograph})
 
-                        observeEvent(input$sample_select, {
+                        ## Extract sample spot
 
-                            if ( isolate(!is.null(input$photograph_brush)) ) {
-                                
-                                image_points <<- isolate(brushedPoints(image, input$photograph_brush))
-                                
-                                sample_window <- ggplot() +
-                                    geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
-                                    theme_classic()
+                            observeEvent(input$sample_select, {
 
-                                output$sample_window <- renderPlot({ sample_window })
-
-                                mean_sample_value_R <<- mean(image_points$R)
-                                mean_sample_value_G <<- mean(image_points$G)
-                                mean_sample_value_B <<- mean(image_points$B)
-
-                                output$mean_sample_value_R <- renderText({ mean_sample_value_R })
-                                output$mean_sample_value_G <- renderText({ mean_sample_value_G })
-                                output$mean_sample_value_B <- renderText({ mean_sample_value_B })
-
-                                sample_pixel_output <<- data.frame(
-                                    QR = metadata$name,
-                                    Year = metadata$year,
-                                    Month = metadata$month,
-                                    Day = metadata$day,
-                                    Date = metadata$date,
-                                    type = "sample",
-                                    x = image_points$x,
-                                    y = image_points$y,
-                                    R = image_points$R,
-                                    G = image_points$G,
-                                    B = image_points$B
-                                )
+                                if ( isolate(!is.null(input$photograph_brush)) ) {
                                     
-                            } else { NULL }
+                                    image_points <<- isolate(brushedPoints(image, input$photograph_brush))
+                                    
+                                    sample_window <- ggplot() +
+                                        geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
+                                        theme_classic()
 
-                        })
+                                    output$sample_window <- renderPlot({ sample_window })
 
-                    ## Extract rgb_window
+                                    mean_sample_value_R <<- mean(image_points$R)
+                                    mean_sample_value_G <<- mean(image_points$G)
+                                    mean_sample_value_B <<- mean(image_points$B)
 
-                        observeEvent(input$rgb_select, {
+                                    output$mean_sample_value_R <- renderText({ mean_sample_value_R })
+                                    output$mean_sample_value_G <- renderText({ mean_sample_value_G })
+                                    output$mean_sample_value_B <- renderText({ mean_sample_value_B })
 
-                            if ( isolate(!is.null(input$photograph_brush)) ) {
-                                
-                                image_points <- isolate(brushedPoints(image, input$photograph_brush))
-                                
-                                Rmax <- cbind(
-                                    data.frame(color_swatch = "red"),
-                                    image_points[order(image_points$R, decreasing = TRUE),][1:50,]
-                                )
-                                Gmax <- cbind(
-                                    data.frame(color_swatch = "green"),
-                                    image_points[order(image_points$G, decreasing = TRUE),][1:50,]
-                                )
-                                Bmax <- cbind(
-                                    data.frame(color_swatch = "blue"),
-                                    image_points[order(image_points$B, decreasing = TRUE),][1:50,]
-                                )
-                                
-                                rgb_window <- ggplot() +
-                                    geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
-                                    geom_rect(aes(xmin = min(Rmax$x), xmax = max(Rmax$x), ymin = min(Rmax$y), ymax = max(Rmax$y)), alpha = 0.5) +
-                                    geom_rect(aes(xmin = min(Gmax$x), xmax = max(Gmax$x), ymin = min(Gmax$y), ymax = max(Gmax$y)), alpha = 0.5) +
-                                    geom_rect(aes(xmin = min(Bmax$x), xmax = max(Bmax$x), ymin = min(Bmax$y), ymax = max(Bmax$y)), alpha = 0.5)
+                                    sample_pixel_output <<- data.frame(
+                                        QR = metadata$name,
+                                        Year = metadata$year,
+                                        Month = metadata$month,
+                                        Day = metadata$day,
+                                        Date = metadata$date,
+                                        type = "sample",
+                                        x = image_points$x,
+                                        y = image_points$y,
+                                        R = image_points$R,
+                                        G = image_points$G,
+                                        B = image_points$B
+                                    )
+                                        
+                                } else { NULL }
 
-                                output$rgb_window <- renderPlot({ rgb_window })
+                            })
 
-                                swatch_data <<- rbind(
-                                    select(Rmax, color_swatch, x, y, R) %>%
-                                    set_colnames(c("color_swatch", "x", "y", "value")),
-                                    select(Gmax, color_swatch, x, y, G) %>%
-                                    set_colnames(c("color_swatch", "x", "y", "value")),
-                                    select(Bmax, color_swatch, x, y, B) %>%
-                                    set_colnames(c("color_swatch", "x", "y", "value"))
-                                )
-                                swatch_data$color_swatch <- factor(swatch_data$color_swatch, levels = c("red", "green", "blue"))
+                        ## Extract rgb_window
 
-                                rgb_histogram <- ggplot(data = swatch_data) + 
-                                    geom_histogram(aes(x = value, fill = color_swatch), binwidth = 0.01, color = "black") +
-                                    scale_fill_manual(values = c("red", "green", "blue")) +
-                                    facet_grid(color_swatch~.) +
-                                    scale_x_continuous(limits = c(-0.1,1.1)) +
-                                    theme_bw()
+                            observeEvent(input$rgb_select, {
 
-                                output$rgb_histogram <- renderPlot({ rgb_histogram })
+                                if ( isolate(!is.null(input$photograph_brush)) ) {
+                                    
+                                    image_points <- isolate(brushedPoints(image, input$photograph_brush))
+                                    
+                                    Rmax <- cbind(
+                                        data.frame(color_swatch = "red"),
+                                        image_points[order(image_points$R, decreasing = TRUE),][1:50,]
+                                    )
+                                    Gmax <- cbind(
+                                        data.frame(color_swatch = "green"),
+                                        image_points[order(image_points$G, decreasing = TRUE),][1:50,]
+                                    )
+                                    Bmax <- cbind(
+                                        data.frame(color_swatch = "blue"),
+                                        image_points[order(image_points$B, decreasing = TRUE),][1:50,]
+                                    )
+                                    
+                                    rgb_window <- ggplot() +
+                                        geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
+                                        geom_rect(aes(xmin = min(Rmax$x), xmax = max(Rmax$x), ymin = min(Rmax$y), ymax = max(Rmax$y)), alpha = 0.5) +
+                                        geom_rect(aes(xmin = min(Gmax$x), xmax = max(Gmax$x), ymin = min(Gmax$y), ymax = max(Gmax$y)), alpha = 0.5) +
+                                        geom_rect(aes(xmin = min(Bmax$x), xmax = max(Bmax$x), ymin = min(Bmax$y), ymax = max(Bmax$y)), alpha = 0.5)
 
-                                mode_reference_value_R <<- mode(swatch_data$value[swatch_data$color_swatch == "red"])
-                                mode_reference_value_G <<- mode(swatch_data$value[swatch_data$color_swatch == "green"])
-                                mode_reference_value_B <<- mode(swatch_data$value[swatch_data$color_swatch == "blue"])
+                                    output$rgb_window <- renderPlot({ rgb_window })
 
-                                output$mode_reference_value_R <- renderText({ mode_reference_value_R })
-                                output$mode_reference_value_G <- renderText({ mode_reference_value_G })
-                                output$mode_reference_value_B <- renderText({ mode_reference_value_B })
+                                    swatch_data <<- rbind(
+                                        select(Rmax, color_swatch, x, y, R) %>%
+                                        set_colnames(c("color_swatch", "x", "y", "value")),
+                                        select(Gmax, color_swatch, x, y, G) %>%
+                                        set_colnames(c("color_swatch", "x", "y", "value")),
+                                        select(Bmax, color_swatch, x, y, B) %>%
+                                        set_colnames(c("color_swatch", "x", "y", "value"))
+                                    )
+                                    swatch_data$color_swatch <- factor(swatch_data$color_swatch, levels = c("red", "green", "blue"))
 
-                                reference_pixel_output <<- data.frame(
-                                    QR = metadata$name,
-                                    Year = metadata$year,
-                                    Month = metadata$month,
-                                    Day = metadata$day,
-                                    Date = metadata$date,
-                                    type = "reference",
-                                    x = image_points$x,
-                                    y = image_points$y,
-                                    R = image_points$R,
-                                    G = image_points$G,
-                                    B = image_points$B
-                                )
+                                    rgb_histogram <- ggplot(data = swatch_data) + 
+                                        geom_histogram(aes(x = value, fill = color_swatch), binwidth = 0.01, color = "black") +
+                                        scale_fill_manual(values = c("red", "green", "blue")) +
+                                        facet_grid(color_swatch~.) +
+                                        scale_x_continuous(limits = c(-0.1,1.1)) +
+                                        theme_bw()
 
-                            } else { NULL }
+                                    output$rgb_histogram <- renderPlot({ rgb_histogram })
 
-                        })
+                                    mode_reference_value_R <<- mode(swatch_data$value[swatch_data$color_swatch == "red"])
+                                    mode_reference_value_G <<- mode(swatch_data$value[swatch_data$color_swatch == "green"])
+                                    mode_reference_value_B <<- mode(swatch_data$value[swatch_data$color_swatch == "blue"])
 
-                    ## Write out
+                                    output$mode_reference_value_R <- renderText({ mode_reference_value_R })
+                                    output$mode_reference_value_G <- renderText({ mode_reference_value_G })
+                                    output$mode_reference_value_B <- renderText({ mode_reference_value_B })
 
-                        observeEvent(input$write_out, {
+                                    reference_pixel_output <<- data.frame(
+                                        QR = metadata$name,
+                                        Year = metadata$year,
+                                        Month = metadata$month,
+                                        Day = metadata$day,
+                                        Date = metadata$date,
+                                        type = "reference",
+                                        x = image_points$x,
+                                        y = image_points$y,
+                                        R = image_points$R,
+                                        G = image_points$G,
+                                        B = image_points$B
+                                    )
 
-                            if (file.exists(monolist_out_path)) {
+                                } else { NULL }
 
-                                writeMonolist(
-                                    rbind(reference_pixel_output, sample_pixel_output),
-                                    append = TRUE,
-                                    monolist_out_path = monolist_out_path,
-                                    col.names = FALSE
-                                )
-                                cat("Appended to Spreadsheet")
+                            })
 
-                            } else {
+                        ## Write out
 
-                                writeMonolist(
-                                    rbind(reference_pixel_output, sample_pixel_output),
-                                    append = TRUE,
-                                    monolist_out_path = monolist_out_path,
-                                    col.names = TRUE
-                                )
-                                cat("Appended to Spreadsheet")
+                            observeEvent(input$write_out, {
 
-                            }
-                                
-                        })
+                                if (file.exists(monolist_out_path)) {
+
+                                    writeMonolist(
+                                        rbind(reference_pixel_output, sample_pixel_output),
+                                        append = TRUE,
+                                        monolist_out_path = monolist_out_path,
+                                        col.names = FALSE
+                                    )
+                                    cat("Appended to Spreadsheet")
+
+                                } else {
+
+                                    writeMonolist(
+                                        rbind(reference_pixel_output, sample_pixel_output),
+                                        append = TRUE,
+                                        monolist_out_path = monolist_out_path,
+                                        col.names = TRUE
+                                    )
+                                    cat("Appended to Spreadsheet")
+
+                                }
+                                    
+                            })
+
+                    ## Meta analysis tab
+
+                            observeEvent(input$metadata_file, {
+
+                                ## Read in metadata file
+                                    metadata_file <<- input$metadata_file
+                                    print(metadata_file)
+                                    prelim_data <<- readMonolist(metadata_file$datapath)
+                                    print(head(prelim_data))
+                            
+                                ## Extract swatches
+
+                                    prelim_data %>%
+                                        pivot_longer(cols = 9:11, names_to = "color", values_to = "value") %>%
+                                        group_by(QR, color) %>%
+                                        arrange(desc(value), .by_group = TRUE) %>%
+                                        dplyr::slice(1:25) -> swatch_data
+
+                                ## Determine global means
+                                    swatch_data$global_mean <- 0  
+                                    swatch_data$global_mean[swatch_data$color == "R"] <- mean(swatch_data$value[swatch_data$color == "R"])
+                                    swatch_data$global_mean[swatch_data$color == "G"] <- mean(swatch_data$value[swatch_data$color == "B"])
+                                    swatch_data$global_mean[swatch_data$color == "B"] <- mean(swatch_data$value[swatch_data$color == "G"])
+
+                                ## Create dataframe according to which normalization should be performed
+                                    swatch_data %>%
+                                    group_by(QR, color) %>%
+                                    summarize(difference = unique(global_mean) - unique(mean(value))) %>%
+                                    # mutate(unique_id = paste(QR, "_", color)) %>%
+                                    pivot_wider(names_from = color, values_from = difference, names_prefix = "adjust_") -> normalization_data
+
+                                ## Modify swatch data according to global means
+                                    swatch_data %>%
+                                    group_by(QR, color) %>%
+                                    mutate(modified_value = value + (global_mean - mean(value))) %>%
+                                    pivot_longer(cols = 10:12, names_to = "value_type", values_to = "value") %>%
+                                    ggplot() +
+                                        geom_histogram(aes(x = value, fill = value_type), bins = 30, alpha = 0.7, color = "black") +
+                                        facet_grid(QR~color) +
+                                        theme_bw() -> global_means_plot
+
+                                    output$metaplot <- renderPlot({ global_means_plot })
+
+                            })
+
+                        ## Modify reference data according to global means
+                            
+                            # prelim_data %>%
+                            #     mutate(
+                            #         R_adjusted = R + normalization_data$adjust_R[match(QR, normalization_data$QR)],
+                            #         G_adjusted = G + normalization_data$adjust_G[match(QR, normalization_data$QR)],
+                            #         B_adjusted = B + normalization_data$adjust_B[match(QR, normalization_data$QR)]
+                            #     ) -> prelim_data_processed
+
+                            # prelim_data_processed$R_adjusted[prelim_data_processed$R_adjusted < 0] <- 0
+                            # prelim_data_processed$G_adjusted[prelim_data_processed$G_adjusted < 0] <- 0
+                            # prelim_data_processed$B_adjusted[prelim_data_processed$B_adjusted < 0] <- 0
+
+                            # prelim_data_processed$R_adjusted[prelim_data_processed$R_adjusted > 1] <- 1
+                            # prelim_data_processed$G_adjusted[prelim_data_processed$G_adjusted > 1] <- 1
+                            # prelim_data_processed$B_adjusted[prelim_data_processed$B_adjusted > 1] <- 1
+
+                            # prelim_data_processed %>%
+                            # filter(type == "reference") %>%
+                            # mutate(
+                            # hex_before = rgb(R, G, B),
+                            # hex_after = rgb(R_adjusted, G_adjusted, B_adjusted)
+                            # ) %>%
+                            # pivot_longer(cols = c("hex_before", "hex_after"), names_to = "state", values_to = "hex") %>%
+                            # filter(QR %in% unique(prelim_data_processed$QR)) -> plot_data
+
+                            # ggplot() +
+                            # geom_tile(data = plot_data, aes(x = x, y = y), fill = plot_data$hex) +
+                            # facet_grid(QR~state, space = "free", scales = "free") -> plot
+
+                            # png(filename = "test.png", width = 10, height = 10, units = "in", res = 300)
+                            # plot
+                            # dev.off()
+
+                            # ## Plot swatches before and after
+                            #     ggplot() +
+                            #         geom_tile(
+                            #         data = filter(swatch_data, value_type == "value"),
+                            #         aes(x = x, y = y, fill = hex)
+                            #     )
+
+                            # swatch_data %>%
+                            #     group_by(QR, color) %>%
+                            #     mutate(modified_value = value + (global_mean - mean(value))) %>%
+                            #     pivot_longer(cols = 11:13, names_to = "value_type", values_to = "value") %>%
+                            #     filter(value_type == "value")
+                            #     ggplot() +
+                            #     geom_tile(aes(x = x, y = y, fill = hex)) +
+                            #     facet_grid(QR~color) +
+                            #     theme_bw()
+
+                            #     out <- list()
+                            #     seq <- seq(0.6,0.8,0.001)
+                            #     for (i in 1:length(seq)) {
+                            #     test$black_v_white <- 0
+                            #     test$black_v_white[test$greyscale > seq[i]] <- 1
+                            #     out[[i]] <- data.frame(
+                            #     ratio = 
+                            #     as.data.frame(table(test$black_v_white))$Freq[1]/
+                            #     as.data.frame(table(test$black_v_white))$Freq[2],
+                            #     i = i
+                            #     )
+                            #     }
+                            #     out <- do.call(rbind, out)
+
+                            #     ggplot(out, aes(x = i, y = ratio)) + geom_col()
+
+
+
+                            #     plot_a <- test %>%
+                            #     ggplot(aes(x = x, y = y)) +
+                            #     geom_tile(
+                            #     aes(fill = greyscale),
+                            #     show.legend = FALSE
+                            #     ) +
+                            #     scale_fill_gradient(low = "black", high = "white")
+
+                            #     plot_b <- test %>%
+                            #     ggplot(aes(x = x, y = y)) +
+                            #     geom_tile(
+                            #     aes(fill = black_v_white),
+                            #     show.legend = FALSE
+                            #     ) +
+                            #     scale_fill_gradient(low = "black", high = "white")
+
+                            #     plot_c <- ggplot(test) +
+                            #     geom_histogram(aes(x = greyscale), bins = 80) +
+                            #     geom_vline(xintercept = threshold)
+
+                            #     d <- as.data.frame(table(test$black_v_white))
+
+                            #     plot_d <- ggplot(data = d) + geom_col(aes(x = 1, y = Freq, fill = Var1))
+
+                            #     cowplot::plot_grid(plot_a, plot_b, plot_c, plot_d)
 
                 }
 

@@ -4,7 +4,7 @@ rstudio
 verification
 tidyverse
 tex
-phylochemistry-1
+phylochemistry
 xcms
 updating-r-and-r-packages
 R_Markdown
@@ -67,6 +67,19 @@ kruskal-dunn-tests
 pairs-of-means
 further-reading
 exercises-7
+part-instrumental-analysis
+chromatography-and-separations
+chromatographic-and-electrophoretic-methods
+chromatographic-separations
+types-of-mobile-phases-and-stationary-phases
+contact-between-the-mobile-phase-and-the-stationary-phase
+mass-spectrometry
+things
+spectroscopy
+things-1
+electrochemistry
+things-2
+subsetting
 figures-captions
 results-and-discussion
 structure
@@ -80,7 +93,7 @@ title
 further-reading-1
 image-color-analysis
 images-of-mass-spectra
-phylochemistry-2
+phylochemistry-1
 requirements
 load-phylochemistry
 r-scripts-on-google-drive
