@@ -1,3 +1,4 @@
+part-data-analysis
 installation
 r
 rstudio
@@ -33,11 +34,13 @@ summary_statistics
 the-pipe
 summary-statistics
 exercises-2
+subsetting
+part-chemometrics
 clustering
 theory
 exercises-3
-PCA
 pca
+pca-1
 ordination-plots
 principal-components
 exercises-4
@@ -79,7 +82,6 @@ spectroscopy
 things-1
 electrochemistry
 things-2
-subsetting
 figures-captions
 results-and-discussion
 structure

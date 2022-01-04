@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 5 the pipe and summaries | Integrated Bioanalytical Chemistry</title>
+<title>Chapter 6 the pipe and summaries | Integrated Bioanalytical Chemistry</title>
 <meta name="author" content="Lucas Busta">
-<meta name="description" content='5.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
+<meta name="description" content='6.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="Chapter 5 the pipe and summaries | Integrated Bioanalytical Chemistry">
+<meta property="og:title" content="Chapter 6 the pipe and summaries | Integrated Bioanalytical Chemistry">
 <meta property="og:type" content="book">
-<meta property="og:description" content='5.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
+<meta property="og:description" content='6.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 5 the pipe and summaries | Integrated Bioanalytical Chemistry">
-<meta name="twitter:description" content='5.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
+<meta name="twitter:title" content="Chapter 6 the pipe and summaries | Integrated Bioanalytical Chemistry">
+<meta name="twitter:description" content='6.1 the pipe (%&gt;%) We have seen how to create new objects using &lt;-, and we have been filtering and plotting data using, for example: ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y...'>
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -40,45 +40,47 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">integrated bioanalytical chemistry</a></li>
-<li class="book-part">data visualization</li>
-<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
-<li><a class="" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li class="book-part">data analysis</li>
+<li><a class="" href="installation.html"><span class="header-section-number">2</span> installation</a></li>
+<li><a class="" href="R_Markdown.html"><span class="header-section-number">3</span> ggplot and markdown</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
-<li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">3</span> geoms, facets, scales, themes</a></li>
-<li><a class="" href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></li>
-<li><a class="active" href="summary_statistics.html"><span class="header-section-number">5</span> the pipe and summaries</a></li>
+<li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">4</span> geoms, facets, scales, themes</a></li>
+<li><a class="" href="import-and-tidying.html"><span class="header-section-number">5</span> import and tidying</a></li>
+<li><a class="active" href="summary_statistics.html"><span class="header-section-number">6</span> the pipe and summaries</a></li>
 <li class="book-part">chemometrics</li>
-<li><a class="" href="chemometrics.html">chemometrics</a></li>
-<li><a class="" href="clustering.html"><span class="header-section-number">6</span> clustering</a></li>
-<li><a class="" href="PCA.html"><span class="header-section-number">7</span> pca</a></li>
-<li><a class="" href="k-means.html"><span class="header-section-number">8</span> k-means</a></li>
-<li><a class="" href="models.html"><span class="header-section-number">9</span> models</a></li>
-<li><a class="" href="comparing-means.html"><span class="header-section-number">10</span> comparing means</a></li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="clustering.html"><span class="header-section-number">8</span> clustering</a></li>
 <li class="book-part">instrumental analysis</li>
-<li><a class="" href="chromatography-and-separations.html"><span class="header-section-number">12</span> chromatography and separations</a></li>
-<li><a class="" href="mass-spectrometry.html"><span class="header-section-number">13</span> mass spectrometry</a></li>
-<li><a class="" href="spectroscopy.html"><span class="header-section-number">14</span> spectroscopy</a></li>
-<li><a class="" href="electrochemistry.html"><span class="header-section-number">15</span> electrochemistry</a></li>
+<li><a class="" href="chromatography-and-separations.html"><span class="header-section-number">10</span> chromatography and separations</a></li>
+<li><a class="" href="mass-spectrometry.html"><span class="header-section-number">11</span> mass spectrometry</a></li>
+<li><a class="" href="spectroscopy.html"><span class="header-section-number">12</span> spectroscopy</a></li>
+<li><a class="" href="electrochemistry.html"><span class="header-section-number">13</span> electrochemistry</a></li>
 <li class="book-part">writing</li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">16</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">17</span> results and discussion</a></li>
-<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">18</span> conclusion and introduction</a></li>
-<li><a class="" href="abstract-and-title.html"><span class="header-section-number">19</span> abstract and title</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">14</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">15</span> results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">16</span> conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html"><span class="header-section-number">17</span> abstract and title</a></li>
+<li class="book-part">image analysis</li>
 <li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
-<li><a class="" href="image-color-analysis.html"><span class="header-section-number">20</span> image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">21</span> images of mass spectra</a></li>
-<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">22</span> phylochemistry</a></li>
-<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">23</span> mass spectrometric analysis</a></li>
-<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">24</span> transcriptomic analyses</a></li>
-<li><a class="" href="genomic-analyses.html"><span class="header-section-number">25</span> genomic analyses</a></li>
-<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">26</span> evolutionary analyses</a></li>
+<li><a class="" href="image-color-analysis.html"><span class="header-section-number">18</span> image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">19</span> images of mass spectra</a></li>
+<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">20</span> phylochemistry</a></li>
+<li class="book-part">mass spectrometric analysis</li>
+<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">21</span> mass spectrometric analysis</a></li>
+<li class="book-part">transcriptome analysis</li>
+<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">22</span> transcriptomic analyses</a></li>
+<li class="book-part">transcriptome analysis</li>
+<li><a class="" href="genomic-analyses.html"><span class="header-section-number">23</span> genomic analyses</a></li>
+<li class="book-part">evolutionary analysis</li>
+<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">24</span> evolutionary analyses</a></li>
+<li class="book-part">appendices</li>
 <li><a class="" href="section-1.html"></a></li>
 <li><a class="" href="appendix.html">APPENDIX</a></li>
-<li><a class="" href="links.html"><span class="header-section-number">27</span> links</a></li>
-<li><a class="" href="faq.html"><span class="header-section-number">28</span> faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">29</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">25</span> links</a></li>
+<li><a class="" href="faq.html"><span class="header-section-number">26</span> faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">27</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -86,13 +88,13 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="summary_statistics" class="section level1" number="5">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="summary_statistics" class="section level1" number="6">
 <h1>
-<span class="header-section-number">5</span> the pipe and summaries<a class="anchor" aria-label="anchor" href="#summary_statistics"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6</span> the pipe and summaries<a class="anchor" aria-label="anchor" href="#summary_statistics"><i class="fas fa-link"></i></a>
 </h1>
-<div id="the-pipe" class="section level2" number="5.1">
+<div id="the-pipe" class="section level2" number="6.1">
 <h2>
-<span class="header-section-number">5.1</span> the pipe (%&gt;%)<a class="anchor" aria-label="anchor" href="#the-pipe"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.1</span> the pipe (%&gt;%)<a class="anchor" aria-label="anchor" href="#the-pipe"><i class="fas fa-link"></i></a>
 </h2>
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
@@ -108,9 +110,9 @@
 <div class="inline-figure"><img src="http://thebustalab.github.io/R_For_Chemists_3/images/pipe.jpg" width="80%" style="display: block; margin: auto;"></div>
 <p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
 </div>
-<div id="summary-statistics" class="section level2" number="5.2">
+<div id="summary-statistics" class="section level2" number="6.2">
 <h2>
-<span class="header-section-number">5.2</span> summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.2</span> summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"><i class="fas fa-link"></i></a>
 </h2>
 <p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
@@ -275,9 +277,9 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-80-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 </div>
-<div id="exercises-2" class="section level2" number="5.3">
+<div id="exercises-2" class="section level2" number="6.3">
 <h2>
-<span class="header-section-number">5.3</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.3</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
 </h2>
 <p>Isn’t seven the most powerfully magical number? <em>Isn’t seven the most powerfully magical number?</em> Yes… I think the idea of a seven-part assignment would greatly appeal to an alchemist.</p>
 <p>In this set of exercises we are going to use the periodic table. After you run source() you can load that dataset using <code>periodic_table</code>. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!</p>
@@ -296,22 +298,121 @@
 <li><p>You have learned many things in this course so far. <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code>, and now <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code>. Using <strong>all</strong> these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end --></p></li>
 </ol>
-<!-- start CHEMOMETRICS -->
+<!-- start wrangling -->
+</div>
+<div id="subsetting" class="section level2" number="6.4">
+<h2>
+<span class="header-section-number">6.4</span> subsetting<a class="anchor" aria-label="anchor" href="#subsetting"><i class="fas fa-link"></i></a>
+</h2>
+<p>So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:</p>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># To look at a single column (the third column)</span>
+<span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>
+<span class="co">## # A tibble: 220 × 1</span>
+<span class="co">##    water_temp</span>
+<span class="co">##         &lt;dbl&gt;</span>
+<span class="co">##  1       6.46</span>
+<span class="co">##  2       6.46</span>
+<span class="co">##  3       6.46</span>
+<span class="co">##  4       6.46</span>
+<span class="co">##  5       6.46</span>
+<span class="co">##  6       6.46</span>
+<span class="co">##  7       6.46</span>
+<span class="co">##  8       6.46</span>
+<span class="co">##  9       6.46</span>
+<span class="co">## 10       6.46</span>
+<span class="co">## # … with 210 more rows</span>
+
+<span class="co"># To look at select columns:</span>
+<span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
+<span class="co">## # A tibble: 220 × 4</span>
+<span class="co">##    park  water_temp    pH element</span>
+<span class="co">##    &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  </span>
+<span class="co">##  1 BELA        6.46  7.69 C      </span>
+<span class="co">##  2 BELA        6.46  7.69 N      </span>
+<span class="co">##  3 BELA        6.46  7.69 P      </span>
+<span class="co">##  4 BELA        6.46  7.69 Cl     </span>
+<span class="co">##  5 BELA        6.46  7.69 S      </span>
+<span class="co">##  6 BELA        6.46  7.69 F      </span>
+<span class="co">##  7 BELA        6.46  7.69 Br     </span>
+<span class="co">##  8 BELA        6.46  7.69 Na     </span>
+<span class="co">##  9 BELA        6.46  7.69 K      </span>
+<span class="co">## 10 BELA        6.46  7.69 Ca     </span>
+<span class="co">## # … with 210 more rows</span>
+
+<span class="co"># To look at a single row (the second row)</span>
+<span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>
+<span class="co">## # A tibble: 1 × 7</span>
+<span class="co">##   lake  park  water_temp    pH element mg_per_L element_type</span>
+<span class="co">##   &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span>
+<span class="co">## 1 Devi… BELA        6.46  7.69 N          0.028 bound</span>
+
+<span class="co"># To look at select rows:</span>
+<span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span>
+<span class="co">## # A tibble: 4 × 7</span>
+<span class="co">##   lake  park  water_temp    pH element mg_per_L element_type</span>
+<span class="co">##   &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span>
+<span class="co">## 1 Devi… BELA        6.46  7.69 N          0.028 bound       </span>
+<span class="co">## 2 Devi… BELA        6.46  7.69 P          0     bound       </span>
+<span class="co">## 3 Devi… BELA        6.46  7.69 Cl        10.4   free        </span>
+<span class="co">## 4 Devi… BELA        6.46  7.69 S          0.62  free</span>
+
+<span class="co"># To look at just a single column, by name</span>
+<span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">pH</span>
+<span class="co">##   [1] 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69</span>
+<span class="co">##  [12] 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44</span>
+<span class="co">##  [23] 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45</span>
+<span class="co">##  [34] 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42</span>
+<span class="co">##  [45] 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04</span>
+<span class="co">##  [56] 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82</span>
+<span class="co">##  [67] 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01</span>
+<span class="co">##  [78] 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03</span>
+<span class="co">##  [89] 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95</span>
+<span class="co">## [100] 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15</span>
+<span class="co">## [111] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88</span>
+<span class="co">## [122] 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45</span>
+<span class="co">## [133] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88</span>
+<span class="co">## [144] 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22</span>
+<span class="co">## [155] 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98</span>
+<span class="co">## [166] 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34</span>
+<span class="co">## [177] 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24</span>
+<span class="co">## [188] 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56</span>
+<span class="co">## [199] 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31</span>
+<span class="co">## [210] 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87</span>
+
+<span class="co"># To look at select columns by name</span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span>, <span class="va">water_temp</span><span class="op">)</span>
+<span class="co">## # A tibble: 220 × 2</span>
+<span class="co">##    park  water_temp</span>
+<span class="co">##    &lt;chr&gt;      &lt;dbl&gt;</span>
+<span class="co">##  1 BELA        6.46</span>
+<span class="co">##  2 BELA        6.46</span>
+<span class="co">##  3 BELA        6.46</span>
+<span class="co">##  4 BELA        6.46</span>
+<span class="co">##  5 BELA        6.46</span>
+<span class="co">##  6 BELA        6.46</span>
+<span class="co">##  7 BELA        6.46</span>
+<span class="co">##  8 BELA        6.46</span>
+<span class="co">##  9 BELA        6.46</span>
+<span class="co">## 10 BELA        6.46</span>
+<span class="co">## # … with 210 more rows</span></code></pre></div>
+<!-- end -->
+<hr>
+<hr>
+<hr>
 </div>
 </div>
-
-
-
   <div class="chapter-nav">
-<div class="prev"><a href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></div>
-<div class="next"><a href="chemometrics.html">chemometrics</a></div>
+<div class="prev"><a href="import-and-tidying.html"><span class="header-section-number">5</span> import and tidying</a></div>
+<div class="next"><a href="overview.html">overview</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#summary_statistics"><span class="header-section-number">5</span> the pipe and summaries</a></li>
-<li><a class="nav-link" href="#the-pipe"><span class="header-section-number">5.1</span> the pipe (%&gt;%)</a></li>
-<li><a class="nav-link" href="#summary-statistics"><span class="header-section-number">5.2</span> summary statistics</a></li>
-<li><a class="nav-link" href="#exercises-2"><span class="header-section-number">5.3</span> exercises</a></li>
+<li><a class="nav-link" href="#summary_statistics"><span class="header-section-number">6</span> the pipe and summaries</a></li>
+<li><a class="nav-link" href="#the-pipe"><span class="header-section-number">6.1</span> the pipe (%&gt;%)</a></li>
+<li><a class="nav-link" href="#summary-statistics"><span class="header-section-number">6.2</span> summary statistics</a></li>
+<li><a class="nav-link" href="#exercises-2"><span class="header-section-number">6.3</span> exercises</a></li>
+<li><a class="nav-link" href="#subsetting"><span class="header-section-number">6.4</span> subsetting</a></li>
 </ul>
 
       <div class="book-extra">

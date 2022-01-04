@@ -28,9 +28,9 @@ output:
 
 
 
-<!-- start preface-->
-
 # integrated bioanalytical chemistry {-}
+
+<!-- start preface-->
 
 
 
@@ -396,8 +396,11 @@ This course is a set of first steps toward meeting both challenges outlined abov
 
 
 <!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
-# (PART) data visualization {-}
+# (PART) data analysis
 
 <!-- start data visualization-->
 
@@ -1553,15 +1556,120 @@ Some pointers:
 7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
 
-<!-- start CHEMOMETRICS -->
+<!-- start wrangling -->
 
-# (PART) chemometrics {-}
+## subsetting
 
-# chemometrics {-}
+So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
 
 
+```r
+# To look at a single column (the third column)
+alaska_lake_data[,3]
+## # A tibble: 220 × 1
+##    water_temp
+##         <dbl>
+##  1       6.46
+##  2       6.46
+##  3       6.46
+##  4       6.46
+##  5       6.46
+##  6       6.46
+##  7       6.46
+##  8       6.46
+##  9       6.46
+## 10       6.46
+## # … with 210 more rows
 
+# To look at select columns:
+alaska_lake_data[,2:5]
+## # A tibble: 220 × 4
+##    park  water_temp    pH element
+##    <chr>      <dbl> <dbl> <chr>  
+##  1 BELA        6.46  7.69 C      
+##  2 BELA        6.46  7.69 N      
+##  3 BELA        6.46  7.69 P      
+##  4 BELA        6.46  7.69 Cl     
+##  5 BELA        6.46  7.69 S      
+##  6 BELA        6.46  7.69 F      
+##  7 BELA        6.46  7.69 Br     
+##  8 BELA        6.46  7.69 Na     
+##  9 BELA        6.46  7.69 K      
+## 10 BELA        6.46  7.69 Ca     
+## # … with 210 more rows
+
+# To look at a single row (the second row)
+alaska_lake_data[2,]
+## # A tibble: 1 × 7
+##   lake  park  water_temp    pH element mg_per_L element_type
+##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
+## 1 Devi… BELA        6.46  7.69 N          0.028 bound
+
+# To look at select rows:
+alaska_lake_data[2:5,]
+## # A tibble: 4 × 7
+##   lake  park  water_temp    pH element mg_per_L element_type
+##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
+## 1 Devi… BELA        6.46  7.69 N          0.028 bound       
+## 2 Devi… BELA        6.46  7.69 P          0     bound       
+## 3 Devi… BELA        6.46  7.69 Cl        10.4   free        
+## 4 Devi… BELA        6.46  7.69 S          0.62  free
+
+# To look at just a single column, by name
+alaska_lake_data$pH
+##   [1] 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69
+##  [12] 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44
+##  [23] 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45
+##  [34] 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42
+##  [45] 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04
+##  [56] 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82
+##  [67] 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01
+##  [78] 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03
+##  [89] 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95
+## [100] 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15
+## [111] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88
+## [122] 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45
+## [133] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88
+## [144] 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22
+## [155] 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98
+## [166] 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34
+## [177] 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24
+## [188] 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56
+## [199] 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31
+## [210] 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87
+
+# To look at select columns by name
+select(alaska_lake_data, park, water_temp)
+## # A tibble: 220 × 2
+##    park  water_temp
+##    <chr>      <dbl>
+##  1 BELA        6.46
+##  2 BELA        6.46
+##  3 BELA        6.46
+##  4 BELA        6.46
+##  5 BELA        6.46
+##  6 BELA        6.46
+##  7 BELA        6.46
+##  8 BELA        6.46
+##  9 BELA        6.46
+## 10 BELA        6.46
+## # … with 210 more rows
+```
 <!-- end -->
+
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) chemometrics
+
+# overview {-}
+
+
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at leo sit amet odio rhoncus tempor. Suspendisse et dolor eu mi lacinia scelerisque sed ut est. Ut vitae tortor sit amet urna scelerisque volutpat non non turpis. Ut mollis massa sed sem elementum pharetra. Donec at metus malesuada, dictum orci id, laoreet massa. Sed eros augue, dapibus at sem ut, scelerisque dictum erat. Proin dictum mattis libero, ut venenatis velit porttitor et. Pellentesque bibendum nunc nec neque dictum faucibus. Suspendisse placerat a dolor at tristique. Integer vel sem pharetra, consequat nunc at, tempor dui.
+
+Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras rhoncus tristique neque, sed vehicula turpis porttitor vitae. Etiam laoreet posuere mi, eget scelerisque tellus fermentum eget. Praesent dictum nunc finibus, accumsan turpis id, congue elit. Proin venenatis diam vel commodo gravida. Suspendisse tortor libero, dignissim quis semper efficitur, dictum eu risus. Donec venenatis tincidunt purus ut blandit. In id velit risus. Nam ullamcorper vehicula sollicitudin. Praesent egestas dapibus justo, pretium blandit leo auctor sed. Morbi sit amet dui et sem pharetra interdum id vitae libero. Vivamus mi mauris, accumsan in vehicula pulvinar, ultricies ut elit.
 
 <!-- start clustering -->
 # clustering
@@ -1653,7 +1761,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-91-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-92-1.png" width="80%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -1666,7 +1774,7 @@ ggtree() +
     scale_x_continuous(limits = c(0,400))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-92-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-93-1.png" width="80%" style="display: block; margin: auto;" />
  
 Very nice!
 
@@ -1698,7 +1806,7 @@ colnames(solvents)[c(1,5,7)]
 
 <!-- start principal components analysis-->
 
-# pca {#PCA}
+## pca
 
 "Which analytes are driving differences among my samples?"
 
@@ -1708,7 +1816,7 @@ explain pca as drawing a new set of axes
 pca also answers questions about whether variables are related
 hclust is "who is most closely related to whom?", PCA is about clustering
 
-## pca 
+### pca 
 
 PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
 
@@ -1736,13 +1844,13 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-95-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-96-1.png" width="80%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
 Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that's the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?
 
-## ordination plots
+### ordination plots
 
 Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
 
@@ -1798,7 +1906,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-97-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-98-1.png" width="80%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -1808,7 +1916,7 @@ Great! Here is how to read the ordination plot:
 
 With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
 
-## principal components
+### principal components
 
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
@@ -1843,11 +1951,11 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-98-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-99-1.png" width="80%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
 
-## exercises
+### exercises
 
 In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
@@ -1875,7 +1983,7 @@ colnames(periodic_table_subset)[c(18:20, 23:25)]
 ```
 We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
 
-### option 1: human metabolomics.
+#### option 1: human metabolomics.
 
 This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
 
@@ -1901,11 +2009,11 @@ This second option is to work with a dataset describing metabolomics data (i.e. 
 <!-- end -->
 
 <!-- start k-means -->
-# k-means
+## k-means
 
 "Do my samples fall into definable clusters?"
 
-## theory
+### theory
 
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
@@ -1965,7 +2073,7 @@ ggplot(solvents_pca_kmeans) +
   geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-104-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-105-1.png" width="80%" style="display: block; margin: auto;" />
 
 Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set `kmeans = "elbow"`:
 
@@ -2017,7 +2125,7 @@ ggplot(
   geom_line()
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-106-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-107-1.png" width="80%" style="display: block; margin: auto;" />
 
 Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse`.
 
@@ -2046,7 +2154,7 @@ ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
 ## solubility_in_water vapor_pressure
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-107-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-108-1.png" width="80%" style="display: block; margin: auto;" />
 
 Cool! 
 
@@ -2086,7 +2194,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-108-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-109-1.png" width="80%" style="display: block; margin: auto;" />
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
@@ -2153,45 +2261,45 @@ bar_plot <- ggplot() +
 cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-109-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-110-1.png" width="80%" style="display: block; margin: auto;" />
 
 Now we are really rockin!!
 
-## exercises
+### exercises
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
 
-### Question 1
+#### Question 1
 
 Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
 
 
 
-### Question 2
+#### Question 2
 
 Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
 
 
 
-### Question 3
+#### Question 3
 
 Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
 
 
 
-### Question 4
+#### Question 4
 
 Modify your code from Question 2 so that five clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?
 
 
 
-### Question 5
+#### Question 5
 
 Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?
 
 
 
-### Question 6
+#### Question 6
 
 Google "Quercetin". What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using `geom_pointrange` and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, `theme_classic()`).
 
@@ -2199,13 +2307,13 @@ Does one cluster have a large amount of variation in Quercetin abundance? Why do
 
 
 
-### Question 7
+#### Question 7
 
 Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
 
 
 
-### Challenge (optional)
+#### Challenge (optional)
 
 Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
 
@@ -2243,9 +2351,9 @@ Maybe something like this:
 
 <!-- start models -->
 
-# models
+## models
 
-## theory
+### theory
 
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildLinearModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.
 
@@ -2257,7 +2365,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = AMP, y = ADP))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-119-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-120-1.png" width="80%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -2327,7 +2435,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, y = model_y))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-123-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-124-1.png" width="80%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -2339,7 +2447,7 @@ ggplot(model$data) +
   geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-124-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-125-1.png" width="80%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -2360,7 +2468,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-126-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-127-1.png" width="80%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -2377,7 +2485,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-127-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-128-1.png" width="80%" style="display: block; margin: auto;" />
 
 40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
@@ -2412,9 +2520,9 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-129-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-130-1.png" width="80%" style="display: block; margin: auto;" />
 
-## exercises
+### exercises
 
 To practice creating linear models, try the following:
 
@@ -2430,7 +2538,7 @@ To practice creating linear models, try the following:
 <!-- end -->
 
 <!-- start comparing means -->
-# comparing means
+## comparing means
 
 
 
@@ -2499,7 +2607,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-133-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-134-1.png" width="80%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2510,7 +2618,7 @@ library(agricolae)
 library(multcompView)
 ``` -->
 
-## definitions
+### definitions
 
 1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
 
@@ -2520,7 +2628,7 @@ library(multcompView)
 
 Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
-## test selection
+### test selection
 
 There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
 
@@ -2580,7 +2688,7 @@ ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-136-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-137-1.png" width="80%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2593,7 +2701,7 @@ K_data_1_2 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-137-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-138-1.png" width="80%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2623,7 +2731,7 @@ K_data_1_2 %>%
 
 The p-value from this test is 0.596! This means that their variances are not significantly different.
 
-## two means
+### two means
 
 Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
@@ -2651,7 +2759,7 @@ K_data_1_2 %>%
 
 A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.
 
-## more than two means
+### more than two means
 
 In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let's consider our hawaii aquifer data again, though this time let's use all the aquifers, not just two:
 
@@ -2682,7 +2790,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-142-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-143-1.png" width="80%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2696,7 +2804,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-143-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-144-1.png" width="80%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -2734,7 +2842,7 @@ Based on these tests, it looks like the data for aquifer 9 is significantly diff
 
 Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
 
-### ANOVA, Tukey tests
+#### ANOVA, Tukey tests
 
 We will use the `anova_test` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
 
@@ -2803,11 +2911,11 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-149-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-150-1.png" width="80%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
-### Kruskal, Dunn tests
+#### Kruskal, Dunn tests
 
 The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
 
@@ -2873,11 +2981,11 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-152-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-153-1.png" width="80%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
-## pairs of means
+### pairs of means
 
 Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among *all* values of Na and Cl, rather, we want to test all *pairs* of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:
 
@@ -2888,7 +2996,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-153-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-154-1.png" width="80%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3032,9 +3140,9 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-epub3/unnamed-chunk-158-1.png" width="80%" style="display: block; margin: auto;" />
+<img src="index_files/figure-epub3/unnamed-chunk-159-1.png" width="80%" style="display: block; margin: auto;" />
 
-## further reading
+### further reading
 
 For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
 
@@ -3043,7 +3151,7 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
 
 
-## exercises
+### exercises
 
 Using the `hawaii_aquifers` data set, please complete the following:
 
@@ -3158,8 +3266,6 @@ Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest
 -->
 <!-- end -->
 
-<!-- start final project -->
-
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3198,9 +3304,7 @@ There are two common methods for bringing the mobile phase and the stationary ph
 
 
 
-```r
-
-knitr::include_app("https://dthdpu.shinyapps.io/IntroChromatography/")
+```
 ## PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
 ```
 
@@ -3235,113 +3339,9 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-
-<!-- # (PART) data handling -->
-
-<!-- start wrangling -->
-
-## subsetting
-
-So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
-
-
-```r
-# To look at a single column (the third column)
-alaska_lake_data[,3]
-## # A tibble: 220 × 1
-##    water_temp
-##         <dbl>
-##  1       6.46
-##  2       6.46
-##  3       6.46
-##  4       6.46
-##  5       6.46
-##  6       6.46
-##  7       6.46
-##  8       6.46
-##  9       6.46
-## 10       6.46
-## # … with 210 more rows
-
-# To look at select columns:
-alaska_lake_data[,2:5]
-## # A tibble: 220 × 4
-##    park  water_temp    pH element
-##    <chr>      <dbl> <dbl> <chr>  
-##  1 BELA        6.46  7.69 C      
-##  2 BELA        6.46  7.69 N      
-##  3 BELA        6.46  7.69 P      
-##  4 BELA        6.46  7.69 Cl     
-##  5 BELA        6.46  7.69 S      
-##  6 BELA        6.46  7.69 F      
-##  7 BELA        6.46  7.69 Br     
-##  8 BELA        6.46  7.69 Na     
-##  9 BELA        6.46  7.69 K      
-## 10 BELA        6.46  7.69 Ca     
-## # … with 210 more rows
-
-# To look at a single row (the second row)
-alaska_lake_data[2,]
-## # A tibble: 1 × 7
-##   lake  park  water_temp    pH element mg_per_L element_type
-##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
-## 1 Devi… BELA        6.46  7.69 N          0.028 bound
-
-# To look at select rows:
-alaska_lake_data[2:5,]
-## # A tibble: 4 × 7
-##   lake  park  water_temp    pH element mg_per_L element_type
-##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
-## 1 Devi… BELA        6.46  7.69 N          0.028 bound       
-## 2 Devi… BELA        6.46  7.69 P          0     bound       
-## 3 Devi… BELA        6.46  7.69 Cl        10.4   free        
-## 4 Devi… BELA        6.46  7.69 S          0.62  free
-
-# To look at just a single column, by name
-alaska_lake_data$pH
-##   [1] 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69
-##  [12] 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44
-##  [23] 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45
-##  [34] 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42
-##  [45] 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04
-##  [56] 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82
-##  [67] 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01
-##  [78] 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03
-##  [89] 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95
-## [100] 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15
-## [111] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88
-## [122] 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45
-## [133] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88
-## [144] 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22
-## [155] 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98
-## [166] 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34
-## [177] 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24
-## [188] 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56
-## [199] 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31
-## [210] 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87
-
-# To look at select columns by name
-select(alaska_lake_data, park, water_temp)
-## # A tibble: 220 × 2
-##    park  water_temp
-##    <chr>      <dbl>
-##  1 BELA        6.46
-##  2 BELA        6.46
-##  3 BELA        6.46
-##  4 BELA        6.46
-##  5 BELA        6.46
-##  6 BELA        6.46
-##  7 BELA        6.46
-##  8 BELA        6.46
-##  9 BELA        6.46
-## 10 BELA        6.46
-## # … with 210 more rows
-```
-<!-- end -->
+# (PART) writing {-}
 
 <!-- start WRITING -->
-
-# (PART) writing {-}
 
 # a mini manuscript {-}
 
@@ -3582,6 +3582,12 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) image analysis {-}
+
 <!-- start IMAGE ANALYSIS -->
 
 # {-}
@@ -3687,6 +3693,13 @@ closeRGD("file_share_link_here")
 
 <!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+
+# (PART) mass spectrometric analysis {-}
+
 <!-- start mass spectrometric analysis -->
 # mass spectrometric analysis
 
@@ -3756,17 +3769,35 @@ To control the mass spectrum window:
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
 <!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) transcriptome analysis {-}
+
 <!-- start transcriptomic analyses -->
 # transcriptomic analyses
 
 ## BLAST
 <!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) transcriptome analysis {-}
+
 <!-- start genomic analyses -->
 # genomic analyses
 
 ## loading GFF files
 <!-- end -->
+
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) evolutionary analysis {-}
 
 <!-- start evolutionary analyses -->
 # evolutionary analyses
@@ -3806,6 +3837,12 @@ buildTree(
 
 ## collapseTree
 <!-- end -->
+
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) appendices {-}
 
 <!-- start links -->
 

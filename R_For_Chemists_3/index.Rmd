@@ -1,5 +1,5 @@
 --- 
-title: "Integrated Bioanalytical Chemistry"
+title: "Integrated Bioanalytics"
 author: "Lucas Busta"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -8,7 +8,7 @@ bibliography: [book.bib, packages.bib]
 # url: your book url like https://bookdown.org/yihui/bookdown
 # cover-image: path to the social sharing image like images/cover.jpg
 description: |
-  Integrated Bioanalytical Chemistry is a book describing how to perform chemical, phylogenetic, and genomic analyses.
+  Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses.
 biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 output:
@@ -31,14 +31,14 @@ knitr:::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE,
                       warning = FALSE, comment = "##", cache = TRUE,
                       fig.width = 4, fig.height = 3, #results = "hide",
                       collapse = TRUE, results = 'markup', max.print = 6,
-                      out.width = "80%", fig.align = "center")
+                      out.width = "100%", fig.align = "center")
   
 options(pillar.sigfig = 3)
 ```
 
-<!-- start preface-->
+# integrated bioanalytics {-}
 
-# integrated bioanalytical chemistry {-}
+<!-- start preface-->
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.width = 2}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/R_For_Chemists_logo.jpg', dpi = NA)
@@ -60,7 +60,6 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/o
 ```
 
 <!-- end -->
-
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -1116,20 +1115,125 @@ ggplot(pt_by_year_summ,
 7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
 
+<!-- start wrangling -->
+
+## subsetting
+
+So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
+
+```{r}
+# To look at a single column (the third column)
+alaska_lake_data[,3]
+
+# To look at select columns:
+alaska_lake_data[,2:5]
+
+# To look at a single row (the second row)
+alaska_lake_data[2,]
+
+# To look at select rows:
+alaska_lake_data[2:5,]
+
+# To look at just a single column, by name
+alaska_lake_data$pH
+
+# To look at select columns by name
+select(alaska_lake_data, park, water_temp)
+
+```
+<!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) chemometrics {-}
+# (PART) chemical instrumentation
+
+<!-- start chemical separation -->
+
+# chromatography and separations
+
+The content in this part is based heavily on Harvey's Analytical Chemistry 2.1 Chapter 12.
+
+## Chromatographic and Electrophoretic Methods
+
+Drawing from an arsenal of analytical techniques, analytical chemists design methods that detect increasingly smaller concentrations of analyte in increasingly more complex matrices. Despite the power of these analytical techniques, they often suffer from a lack of selectivity. For this reason, many analytical procedures include a step to separate the analyte from potential interferents. Although effective, each additional step in an analytical procedure increases the analysis time and the cost of the analysis, and introduces uncertainty. In this chapter we consider two analytical techniques that avoid these limitations by combining the separation and analysis: chromatography and electrophoresis.
+
+<!-- ### Overview of Analytical Separations -->
+
+### Chromatographic Separations
+
+In chromatography we pass a sample-free phase, which we call the mobile phase, over a second sample-free stationary phase that remains fixed in space. We inject or place the sample into the mobile phase. As the sample moves with the mobile phase, its components partition between the mobile phase and the stationary phase. A component whose distribution ratio favors the stationary phase requires more time to pass through the system. Given sufficient time and sufficient stationary and mobile phase, we can separate solutes even if they have similar distribution ratios.
+
+There are many ways in which we can identify a chromatographic separation: by describing the physical state of the mobile phase and the stationary phase; by describing how we bring the stationary phase and the mobile phase into contact with each other; or by describing the chemical or physical interactions between the solute and the stationary phase. Let’s briefly consider how we might use each of these classifications. 
+
+#### Types of Mobile Phases and Stationary Phases
+
+The mobile phase is a liquid or a gas, and the stationary phase is a solid or a liquid film coated on a solid substrate. We often name chromatographic techniques by listing the type of mobile phase followed by the type of stationary phase. In gas–liquid chromatography, for example, the mobile phase is a gas and the stationary phase is a liquid film coated on a solid substrate. If a technique’s name includes only one phase, as in gas chromatography, it is the mobile phase.
+
+#### Contact Between the Mobile Phase and the Stationary Phase
+
+There are two common methods for bringing the mobile phase and the stationary phase into contact. In column chromatography we pack the stationary phase into a narrow column and pass the mobile phase through the column using gravity or by applying pressure. The stationary phase is a solid particle or a thin liquid film coated on either a solid particulate packing material or on the column’s walls. In planar chromatography the stationary phase is coated on a flat surface—typically, a glass, metal, or plastic plate. One end of the plate is placed in a reservoir that contains the mobile phase, which moves through the stationary phase by capillary action. In paper chromatography, for example, paper is the stationary phase.
+
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system."}
+knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/mobile_stat_phase.png', dpi = NA)
+```
+
+
+```{r, echo = FALSE}
+
+knitr::include_app("https://dthdpu.shinyapps.io/IntroChromatography/")
+
+```
+<!-- end -->
+
+<!-- start mass spectrometry -->
+
+# mass spectrometry
+
+## Things
+
+<!-- end -->
+
+<!-- start spectroscopy -->
+
+# spectroscopy
+
+## Things
+
+<!-- end -->
+
+<!-- start electrochemistry -->
+
+# electrochemistry
+
+## Things
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) chemometrics
+
+<!-- start overview -->
+
+# overview
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/R_For_Chemists_3/images/chemometrics.jpeg', dpi = NA)
 ```
 
-<!-- start clustering -->
-## clustering
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at leo sit amet odio rhoncus tempor. Suspendisse et dolor eu mi lacinia scelerisque sed ut est. Ut vitae tortor sit amet urna scelerisque volutpat non non turpis. Ut mollis massa sed sem elementum pharetra. Donec at metus malesuada, dictum orci id, laoreet massa. Sed eros augue, dapibus at sem ut, scelerisque dictum erat. Proin dictum mattis libero, ut venenatis velit porttitor et. Pellentesque bibendum nunc nec neque dictum faucibus. Suspendisse placerat a dolor at tristique. Integer vel sem pharetra, consequat nunc at, tempor dui.
 
-### theory
+Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras rhoncus tristique neque, sed vehicula turpis porttitor vitae. Etiam laoreet posuere mi, eget scelerisque tellus fermentum eget. Praesent dictum nunc finibus, accumsan turpis id, congue elit. Proin venenatis diam vel commodo gravida. Suspendisse tortor libero, dignissim quis semper efficitur, dictum eu risus. Donec venenatis tincidunt purus ut blandit. In id velit risus. Nam ullamcorper vehicula sollicitudin. Praesent egestas dapibus justo, pretium blandit leo auctor sed. Morbi sit amet dui et sem pharetra interdum id vitae libero. Vivamus mi mauris, accumsan in vehicula pulvinar, ultricies ut elit.
+
+<!-- end -->
+
+<!-- start clustering -->
+# clustering
+
+## theory
 
 "Which of my samples are most closely related?"
 
@@ -1194,7 +1298,7 @@ ggtree() +
  
 Very nice!
 
-### exercises
+## exercises
 
 For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
@@ -1211,7 +1315,7 @@ colnames(solvents)[c(1,5,7)]
 
 <!-- start principal components analysis-->
 
-## pca
+# pca
 
 "Which analytes are driving differences among my samples?"
 
@@ -1221,7 +1325,7 @@ explain pca as drawing a new set of axes
 pca also answers questions about whether variables are related
 hclust is "who is most closely related to whom?", PCA is about clustering
 
-### pca 
+## pca 
 
 PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
 
@@ -1254,7 +1358,7 @@ Great! In this plot we can see that White Fish Lake and North Killeak Lake, both
 
 Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that's the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?
 
-### ordination plots
+## ordination plots
 
 Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
 
@@ -1308,7 +1412,7 @@ Great! Here is how to read the ordination plot:
 
 With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
 
-### principal components
+## principal components
 
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
@@ -1335,7 +1439,7 @@ ggplot(
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
 
-### exercises
+## exercises
 
 In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
@@ -1345,7 +1449,7 @@ colnames(periodic_table_subset)[c(18:20, 23:25)]
 ```
 We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
 
-#### option 1: human metabolomics.
+### option 1: human metabolomics.
 
 This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
 
@@ -1453,11 +1557,11 @@ ggplot() +
 <!-- end -->
 
 <!-- start k-means -->
-## k-means
+# k-means
 
 "Do my samples fall into definable clusters?"
 
-### theory
+## theory
 
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
@@ -1646,11 +1750,11 @@ cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 
 Now we are really rockin!!
 
-### exercises
+## exercises
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
 
-#### Question 1
+### Question 1
 
 Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
 
@@ -1672,7 +1776,7 @@ ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape
 
 ```
 
-#### Question 2
+### Question 2
 
 Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
 
@@ -1699,7 +1803,7 @@ ggplot(aes(x = Dim.1, y = Dim.2)) +
 
 ```
 
-#### Question 3
+### Question 3
 
 Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
 
@@ -1724,7 +1828,7 @@ ggplot() +
 
 ```
 
-#### Question 4
+### Question 4
 
 Modify your code from Question 2 so that five clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?
 
@@ -1751,7 +1855,7 @@ plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
 plot0
 ```
 
-#### Question 5
+### Question 5
 
 Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?
 
@@ -1780,7 +1884,7 @@ plot1 <- ggtree(dat, aes(color = kmeans_cluster)) +
 
 ```
 
-#### Question 6
+### Question 6
 
 Google "Quercetin". What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using `geom_pointrange` and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, `theme_classic()`).
 
@@ -1795,7 +1899,7 @@ plot2 <- dat %>%
   plot2
 ```
 
-#### Question 7
+### Question 7
 
 Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
 
@@ -1803,7 +1907,7 @@ Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to ea
 cowplot::plot_grid(plot1, plot2)
 ```
 
-#### Challenge (optional)
+### Challenge (optional)
 
 Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
 
@@ -1888,9 +1992,9 @@ knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/E
 
 <!-- start models -->
 
-## models
+# models
 
-### theory
+## theory
 
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildLinearModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.
 
@@ -1998,7 +2102,7 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-### exercises
+## exercises
 
 To practice creating linear models, try the following:
 
@@ -2092,7 +2196,7 @@ model$metrics
 <!-- end -->
 
 <!-- start comparing means -->
-## comparing means
+# comparing means
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/hawaii_aquifers.jpeg', dpi = NA)
@@ -2139,7 +2243,7 @@ library(agricolae)
 library(multcompView)
 ``` -->
 
-### definitions
+## definitions
 
 1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
 
@@ -2149,7 +2253,7 @@ library(multcompView)
 
 Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
-### test selection
+## test selection
 
 There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
 
@@ -2207,7 +2311,7 @@ K_data_1_2 %>%
 
 The p-value from this test is 0.596! This means that their variances are not significantly different.
 
-### two means
+## two means
 
 Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
@@ -2225,7 +2329,7 @@ K_data_1_2 %>%
 
 A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.
 
-### more than two means
+## more than two means
 
 In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let's consider our hawaii aquifer data again, though this time let's use all the aquifers, not just two:
 
@@ -2268,7 +2372,7 @@ Based on these tests, it looks like the data for aquifer 9 is significantly diff
 
 Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
 
-#### ANOVA, Tukey tests
+### ANOVA, Tukey tests
 
 We will use the `anova_test` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
 
@@ -2304,7 +2408,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
-#### Kruskal, Dunn tests
+### Kruskal, Dunn tests
 
 The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
 
@@ -2339,7 +2443,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
-### pairs of means
+## pairs of means
 
 Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among *all* values of Na and Cl, rather, we want to test all *pairs* of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:
 
@@ -2421,7 +2525,7 @@ hawaii_aquifers %>%
 
 ```
 
-### further reading
+## further reading
 
 For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
 
@@ -2430,7 +2534,7 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
 
 
-### exercises
+## exercises
 
 Using the `hawaii_aquifers` data set, please complete the following:
 
@@ -2796,115 +2900,13 @@ hops_components %>%
 ```
 -->
 <!-- end -->
-
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-
-# (PART) instrumental analysis
-
-<!-- start chromatography and separations -->
-
-# chromatography and separations
-
-The content in this part is based heavily on Harvey's Analytical Chemistry 2.1 Chapter 12.
-
-## Chromatographic and Electrophoretic Methods
-
-Drawing from an arsenal of analytical techniques, analytical chemists design methods that detect increasingly smaller concentrations of analyte in increasingly more complex matrices. Despite the power of these analytical techniques, they often suffer from a lack of selectivity. For this reason, many analytical procedures include a step to separate the analyte from potential interferents. Although effective, each additional step in an analytical procedure increases the analysis time and the cost of the analysis, and introduces uncertainty. In this chapter we consider two analytical techniques that avoid these limitations by combining the separation and analysis: chromatography and electrophoresis.
-
-<!-- ### Overview of Analytical Separations -->
-
-### Chromatographic Separations
-
-In chromatography we pass a sample-free phase, which we call the mobile phase, over a second sample-free stationary phase that remains fixed in space. We inject or place the sample into the mobile phase. As the sample moves with the mobile phase, its components partition between the mobile phase and the stationary phase. A component whose distribution ratio favors the stationary phase requires more time to pass through the system. Given sufficient time and sufficient stationary and mobile phase, we can separate solutes even if they have similar distribution ratios.
-
-There are many ways in which we can identify a chromatographic separation: by describing the physical state of the mobile phase and the stationary phase; by describing how we bring the stationary phase and the mobile phase into contact with each other; or by describing the chemical or physical interactions between the solute and the stationary phase. Let’s briefly consider how we might use each of these classifications. 
-
-#### Types of Mobile Phases and Stationary Phases
-
-The mobile phase is a liquid or a gas, and the stationary phase is a solid or a liquid film coated on a solid substrate. We often name chromatographic techniques by listing the type of mobile phase followed by the type of stationary phase. In gas–liquid chromatography, for example, the mobile phase is a gas and the stationary phase is a liquid film coated on a solid substrate. If a technique’s name includes only one phase, as in gas chromatography, it is the mobile phase.
-
-#### Contact Between the Mobile Phase and the Stationary Phase
-
-There are two common methods for bringing the mobile phase and the stationary phase into contact. In column chromatography we pack the stationary phase into a narrow column and pass the mobile phase through the column using gravity or by applying pressure. The stationary phase is a solid particle or a thin liquid film coated on either a solid particulate packing material or on the column’s walls. In planar chromatography the stationary phase is coated on a flat surface—typically, a glass, metal, or plastic plate. One end of the plate is placed in a reservoir that contains the mobile phase, which moves through the stationary phase by capillary action. In paper chromatography, for example, paper is the stationary phase.
-
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system."}
-knitr:::include_graphics('http://thebustalab.github.io/R_For_Chemists_3/images/mobile_stat_phase.png', dpi = NA)
-```
-
-
-```{r, echo = FALSE}
-
-knitr::include_app("https://dthdpu.shinyapps.io/IntroChromatography/")
-
-```
-<!-- end -->
-
-<!-- start mass spectrometry -->
-
-# mass spectrometry
-
-## Things
-
-<!-- end -->
-
-<!-- start spectroscopy -->
-
-# spectroscopy
-
-## Things
-
-<!-- end -->
-
-<!-- start electrochemistry -->
-
-# electrochemistry
-
-## Things
-
-<!-- end -->
-
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
-
-<!-- # (PART) data handling -->
-
-<!-- start wrangling -->
-
-## subsetting
-
-So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
-
-```{r}
-# To look at a single column (the third column)
-alaska_lake_data[,3]
-
-# To look at select columns:
-alaska_lake_data[,2:5]
-
-# To look at a single row (the second row)
-alaska_lake_data[2,]
-
-# To look at select rows:
-alaska_lake_data[2:5,]
-
-# To look at just a single column, by name
-alaska_lake_data$pH
-
-# To look at select columns by name
-select(alaska_lake_data, park, water_temp)
-
-```
-<!-- end -->
+# (PART) scientific writing {-}
 
 <!-- start WRITING -->
-
-# (PART) writing {-}
 
 # a mini manuscript {-}
 
@@ -3150,6 +3152,12 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) image analysis {-}
+
 <!-- start IMAGE ANALYSIS -->
 
 # {-}
@@ -3248,6 +3256,12 @@ closeRGD("file_share_link_here")
 
 <!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) mass spectrometric analysis {-}
+
 <!-- start mass spectrometric analysis -->
 # mass spectrometric analysis
 
@@ -3314,17 +3328,33 @@ To control the mass spectrum window:
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
 <!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) transcriptome analysis {-}
+
 <!-- start transcriptomic analyses -->
 # transcriptomic analyses
 
 ## BLAST
 <!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) transcriptome analysis {-}
 
 <!-- start genomic analyses -->
 # genomic analyses
 
 ## loading GFF files
 <!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) evolutionary analysis {-}
 
 <!-- start evolutionary analyses -->
 # evolutionary analyses
@@ -3362,6 +3392,11 @@ buildTree(
 
 ## collapseTree
 <!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) appendices {-}
 
 <!-- start links -->
 
@@ -3380,8 +3415,8 @@ buildTree(
 
 <!-- end -->
 
-<!-- start FAQ -->
-# faq
+<!-- start R FAQ -->
+# r faq
 
 ## filtering
 

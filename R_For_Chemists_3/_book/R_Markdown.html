@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 2 ggplot and markdown | Integrated Bioanalytical Chemistry</title>
+<title>Chapter 3 ggplot and markdown | Integrated Bioanalytical Chemistry</title>
 <meta name="author" content="Lucas Busta">
-<meta name="description" content="2.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
+<meta name="description" content="3.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="Chapter 2 ggplot and markdown | Integrated Bioanalytical Chemistry">
+<meta property="og:title" content="Chapter 3 ggplot and markdown | Integrated Bioanalytical Chemistry">
 <meta property="og:type" content="book">
-<meta property="og:description" content="2.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
+<meta property="og:description" content="3.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 2 ggplot and markdown | Integrated Bioanalytical Chemistry">
-<meta name="twitter:description" content="2.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
+<meta name="twitter:title" content="Chapter 3 ggplot and markdown | Integrated Bioanalytical Chemistry">
+<meta name="twitter:description" content="3.1 Objects Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
@@ -40,45 +40,47 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">integrated bioanalytical chemistry</a></li>
-<li class="book-part">data visualization</li>
-<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
-<li><a class="active" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li class="book-part">data analysis</li>
+<li><a class="" href="installation.html"><span class="header-section-number">2</span> installation</a></li>
+<li><a class="active" href="R_Markdown.html"><span class="header-section-number">3</span> ggplot and markdown</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
-<li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">3</span> geoms, facets, scales, themes</a></li>
-<li><a class="" href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></li>
-<li><a class="" href="summary_statistics.html"><span class="header-section-number">5</span> the pipe and summaries</a></li>
+<li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">4</span> geoms, facets, scales, themes</a></li>
+<li><a class="" href="import-and-tidying.html"><span class="header-section-number">5</span> import and tidying</a></li>
+<li><a class="" href="summary_statistics.html"><span class="header-section-number">6</span> the pipe and summaries</a></li>
 <li class="book-part">chemometrics</li>
-<li><a class="" href="chemometrics.html">chemometrics</a></li>
-<li><a class="" href="clustering.html"><span class="header-section-number">6</span> clustering</a></li>
-<li><a class="" href="PCA.html"><span class="header-section-number">7</span> pca</a></li>
-<li><a class="" href="k-means.html"><span class="header-section-number">8</span> k-means</a></li>
-<li><a class="" href="models.html"><span class="header-section-number">9</span> models</a></li>
-<li><a class="" href="comparing-means.html"><span class="header-section-number">10</span> comparing means</a></li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="clustering.html"><span class="header-section-number">8</span> clustering</a></li>
 <li class="book-part">instrumental analysis</li>
-<li><a class="" href="chromatography-and-separations.html"><span class="header-section-number">12</span> chromatography and separations</a></li>
-<li><a class="" href="mass-spectrometry.html"><span class="header-section-number">13</span> mass spectrometry</a></li>
-<li><a class="" href="spectroscopy.html"><span class="header-section-number">14</span> spectroscopy</a></li>
-<li><a class="" href="electrochemistry.html"><span class="header-section-number">15</span> electrochemistry</a></li>
+<li><a class="" href="chromatography-and-separations.html"><span class="header-section-number">10</span> chromatography and separations</a></li>
+<li><a class="" href="mass-spectrometry.html"><span class="header-section-number">11</span> mass spectrometry</a></li>
+<li><a class="" href="spectroscopy.html"><span class="header-section-number">12</span> spectroscopy</a></li>
+<li><a class="" href="electrochemistry.html"><span class="header-section-number">13</span> electrochemistry</a></li>
 <li class="book-part">writing</li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">16</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">17</span> results and discussion</a></li>
-<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">18</span> conclusion and introduction</a></li>
-<li><a class="" href="abstract-and-title.html"><span class="header-section-number">19</span> abstract and title</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">14</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">15</span> results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">16</span> conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html"><span class="header-section-number">17</span> abstract and title</a></li>
+<li class="book-part">image analysis</li>
 <li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
-<li><a class="" href="image-color-analysis.html"><span class="header-section-number">20</span> image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">21</span> images of mass spectra</a></li>
-<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">22</span> phylochemistry</a></li>
-<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">23</span> mass spectrometric analysis</a></li>
-<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">24</span> transcriptomic analyses</a></li>
-<li><a class="" href="genomic-analyses.html"><span class="header-section-number">25</span> genomic analyses</a></li>
-<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">26</span> evolutionary analyses</a></li>
+<li><a class="" href="image-color-analysis.html"><span class="header-section-number">18</span> image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">19</span> images of mass spectra</a></li>
+<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">20</span> phylochemistry</a></li>
+<li class="book-part">mass spectrometric analysis</li>
+<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">21</span> mass spectrometric analysis</a></li>
+<li class="book-part">transcriptome analysis</li>
+<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">22</span> transcriptomic analyses</a></li>
+<li class="book-part">transcriptome analysis</li>
+<li><a class="" href="genomic-analyses.html"><span class="header-section-number">23</span> genomic analyses</a></li>
+<li class="book-part">evolutionary analysis</li>
+<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">24</span> evolutionary analyses</a></li>
+<li class="book-part">appendices</li>
 <li><a class="" href="section-1.html"></a></li>
 <li><a class="" href="appendix.html">APPENDIX</a></li>
-<li><a class="" href="links.html"><span class="header-section-number">27</span> links</a></li>
-<li><a class="" href="faq.html"><span class="header-section-number">28</span> faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">29</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">25</span> links</a></li>
+<li><a class="" href="faq.html"><span class="header-section-number">26</span> faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">27</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -86,13 +88,13 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="R_Markdown" class="section level1" number="2">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="R_Markdown" class="section level1" number="3">
 <h1>
-<span class="header-section-number">2</span> ggplot and markdown<a class="anchor" aria-label="anchor" href="#R_Markdown"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3</span> ggplot and markdown<a class="anchor" aria-label="anchor" href="#R_Markdown"><i class="fas fa-link"></i></a>
 </h1>
-<div id="objects" class="section level2" number="2.1">
+<div id="objects" class="section level2" number="3.1">
 <h2>
-<span class="header-section-number">2.1</span> Objects<a class="anchor" aria-label="anchor" href="#objects"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.1</span> Objects<a class="anchor" aria-label="anchor" href="#objects"><i class="fas fa-link"></i></a>
 </h2>
 <p>Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were “files” inside an R session. <code>phylochemistry</code> provides a variety of objects for us to work with.</p>
 <p>Let’s look at how to create an object. For this, we can use an arrow: <code>&lt;-</code> . The arrow will take something and store it inside an object. For example:</p>
@@ -121,9 +123,9 @@
 <span class="co">## # … with 170 more rows, and 1 more variable:</span>
 <span class="co">## #   abundance &lt;dbl&gt;</span></code></pre></div>
 </div>
-<div id="functions" class="section level2" number="2.2">
+<div id="functions" class="section level2" number="3.2">
 <h2>
-<span class="header-section-number">2.2</span> Functions<a class="anchor" aria-label="anchor" href="#functions"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2</span> Functions<a class="anchor" aria-label="anchor" href="#functions"><i class="fas fa-link"></i></a>
 </h2>
 <p>Excellent - we’ve got data. Now we need to manipulate it. For this we need functions:</p>
 <ul>
@@ -185,9 +187,9 @@
 <span class="co">## 18         3 Tsv11        Light             FAs             </span>
 <span class="co">## # … with 1 more variable: abundance &lt;dbl&gt;</span></code></pre></div>
 </div>
-<div id="ggplot" class="section level2" number="2.3">
+<div id="ggplot" class="section level2" number="3.3">
 <h2>
-<span class="header-section-number">2.3</span> ggplot<a class="anchor" aria-label="anchor" href="#ggplot"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.3</span> ggplot<a class="anchor" aria-label="anchor" href="#ggplot"><i class="fas fa-link"></i></a>
 </h2>
 <p>Now we have a nice, small table that we can use to practice data visualization. For visualization, we’re going to use <code>ggplot2</code> - a powerful set of commands for plot generation.</p>
 <p>There are three steps to setting up a ggplot:</p>
@@ -218,9 +220,9 @@
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="80%" style="display: block; margin: auto;"></div>
-<div id="modifying-geoms" class="section level3" number="2.3.1">
+<div id="modifying-geoms" class="section level3" number="3.3.1">
 <h3>
-<span class="header-section-number">2.3.1</span> modifying geoms<a class="anchor" aria-label="anchor" href="#modifying-geoms"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.3.1</span> modifying geoms<a class="anchor" aria-label="anchor" href="#modifying-geoms"><i class="fas fa-link"></i></a>
 </h3>
 <p>In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> function, this means that we need to add the <code>size =</code> argument. Here’s an example:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -234,9 +236,9 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;"></div>
 <p>** Important note: Inside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> and mapped to the variable called harvesting_regime, while size is outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> function and mapped to the variable harvesting_regime, while color is outside the <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> call and is mapped to the constant “black.”</p>
 </div>
-<div id="multiple-geoms" class="section level3" number="2.3.2">
+<div id="multiple-geoms" class="section level3" number="3.3.2">
 <h3>
-<span class="header-section-number">2.3.2</span> multiple geoms<a class="anchor" aria-label="anchor" href="#multiple-geoms"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.3.2</span> multiple geoms<a class="anchor" aria-label="anchor" href="#multiple-geoms"><i class="fas fa-link"></i></a>
 </h3>
 <p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -256,9 +258,9 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-29-1.png" width="80%" style="display: block; margin: auto;"></div>
 </div>
 </div>
-<div id="markdown" class="section level2" number="2.4">
+<div id="markdown" class="section level2" number="3.4">
 <h2>
-<span class="header-section-number">2.4</span> markdown<a class="anchor" aria-label="anchor" href="#markdown"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.4</span> markdown<a class="anchor" aria-label="anchor" href="#markdown"><i class="fas fa-link"></i></a>
 </h2>
 <p>Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: <code>File -&gt; New File -&gt; R Markdown</code>. You should get a template document that compiles when you press “knit.”</p>
 <p>Customize this document by modifying the title, and add <code>author: "your_name"</code> to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.</p>
@@ -271,9 +273,9 @@
 </ol>
 <p>We can also run R chunks right in markdown and create figures. Dr. Busta will show you how to do this in class.</p>
 </div>
-<div id="exercises" class="section level2" number="2.5">
+<div id="exercises" class="section level2" number="3.5">
 <h2>
-<span class="header-section-number">2.5</span> exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.5</span> exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
 </h2>
 <p>In this set of exercises we’re going to practice filtering and plotting data in R Markdown. We’re going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. <strong>For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know</strong></p>
 <p>Some pointers:</p>
@@ -281,9 +283,9 @@
 <li><p>If your code goes off the page, don’t be afraid to wrap it across multiple lines, as shown in some of the examples.</p></li>
 <li><p>Don’t be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.</p></li>
 </ul>
-<div id="algae-chemistry-dataset" class="section level3" number="2.5.1">
+<div id="algae-chemistry-dataset" class="section level3" number="3.5.1">
 <h3>
-<span class="header-section-number">2.5.1</span> Algae Chemistry Dataset<a class="anchor" aria-label="anchor" href="#algae-chemistry-dataset"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.5.1</span> Algae Chemistry Dataset<a class="anchor" aria-label="anchor" href="#algae-chemistry-dataset"><i class="fas fa-link"></i></a>
 </h3>
 <ol style="list-style-type: decimal">
 <li><strong>Filtering 1</strong></li>
@@ -340,9 +342,9 @@
 <p>What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?</p>
 </div>
 </div>
-<div id="alaska-lakes-dataset" class="section level2" number="2.6">
+<div id="alaska-lakes-dataset" class="section level2" number="3.6">
 <h2>
-<span class="header-section-number">2.6</span> Alaska Lakes Dataset<a class="anchor" aria-label="anchor" href="#alaska-lakes-dataset"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.6</span> Alaska Lakes Dataset<a class="anchor" aria-label="anchor" href="#alaska-lakes-dataset"><i class="fas fa-link"></i></a>
 </h2>
 <ol style="list-style-type: decimal">
 <li><strong>Viewing Data</strong></li>
@@ -391,25 +393,25 @@
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="installation.html"><span class="header-section-number">1</span> installation</a></div>
+<div class="prev"><a href="installation.html"><span class="header-section-number">2</span> installation</a></div>
 <div class="next"><a href="data-visualization.html">data visualization</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#R_Markdown"><span class="header-section-number">2</span> ggplot and markdown</a></li>
-<li><a class="nav-link" href="#objects"><span class="header-section-number">2.1</span> Objects</a></li>
-<li><a class="nav-link" href="#functions"><span class="header-section-number">2.2</span> Functions</a></li>
+<li><a class="nav-link" href="#R_Markdown"><span class="header-section-number">3</span> ggplot and markdown</a></li>
+<li><a class="nav-link" href="#objects"><span class="header-section-number">3.1</span> Objects</a></li>
+<li><a class="nav-link" href="#functions"><span class="header-section-number">3.2</span> Functions</a></li>
 <li>
-<a class="nav-link" href="#ggplot"><span class="header-section-number">2.3</span> ggplot</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#modifying-geoms"><span class="header-section-number">2.3.1</span> modifying geoms</a></li>
-<li><a class="nav-link" href="#multiple-geoms"><span class="header-section-number">2.3.2</span> multiple geoms</a></li>
+<a class="nav-link" href="#ggplot"><span class="header-section-number">3.3</span> ggplot</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#modifying-geoms"><span class="header-section-number">3.3.1</span> modifying geoms</a></li>
+<li><a class="nav-link" href="#multiple-geoms"><span class="header-section-number">3.3.2</span> multiple geoms</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#markdown"><span class="header-section-number">2.4</span> markdown</a></li>
+<li><a class="nav-link" href="#markdown"><span class="header-section-number">3.4</span> markdown</a></li>
 <li>
-<a class="nav-link" href="#exercises"><span class="header-section-number">2.5</span> exercises</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#algae-chemistry-dataset"><span class="header-section-number">2.5.1</span> Algae Chemistry Dataset</a></li></ul>
+<a class="nav-link" href="#exercises"><span class="header-section-number">3.5</span> exercises</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#algae-chemistry-dataset"><span class="header-section-number">3.5.1</span> Algae Chemistry Dataset</a></li></ul>
 </li>
-<li><a class="nav-link" href="#alaska-lakes-dataset"><span class="header-section-number">2.6</span> Alaska Lakes Dataset</a></li>
+<li><a class="nav-link" href="#alaska-lakes-dataset"><span class="header-section-number">3.6</span> Alaska Lakes Dataset</a></li>
 </ul>
 
       <div class="book-extra">
