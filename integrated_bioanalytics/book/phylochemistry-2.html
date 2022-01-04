@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 17 phylochemistry | phylochemistry</title>
+<meta name="author" content="Lucas Busta">
+<meta name="description" content="phylochemistry is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of...">
+<meta name="generator" content="bookdown 0.24.4 with bs4_book()">
+<meta property="og:title" content="Chapter 17 phylochemistry | phylochemistry">
+<meta property="og:type" content="book">
+<meta property="og:description" content="phylochemistry is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 17 phylochemistry | phylochemistry">
+<meta name="twitter:description" content="phylochemistry is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">phylochemistry</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"></a></li>
+<li><a class="" href="phylochemistry.html">phylochemistry</a></li>
+<li><a class="" href="section-1.html"></a></li>
+<li><a class="" href="getting-started.html">GETTING STARTED</a></li>
+<li><a class="" href="installation.html"><span class="header-section-number">1</span> installation</a></li>
+<li><a class="" href="section-2.html"></a></li>
+<li><a class="" href="data-visualization.html">DATA VISUALIZATION</a></li>
+<li><a class="" href="R_Markdown.html"><span class="header-section-number">2</span> ggplot and markdown</a></li>
+<li class="book-part">data visualization</li>
+<li><a class="" href="data-visualization-1.html">data visualization</a></li>
+<li><a class="" href="geoms_facets_scales_themes.html"><span class="header-section-number">3</span> geoms, facets, scales, themes</a></li>
+<li><a class="" href="import-and-tidying.html"><span class="header-section-number">4</span> import and tidying</a></li>
+<li><a class="" href="summary_statistics.html"><span class="header-section-number">5</span> the pipe and summaries</a></li>
+<li class="book-part">chemometrics</li>
+<li><a class="" href="chemometrics.html">chemometrics</a></li>
+<li><a class="" href="clustering.html"><span class="header-section-number">6</span> clustering</a></li>
+<li><a class="" href="PCA.html"><span class="header-section-number">7</span> pca</a></li>
+<li><a class="" href="k-means.html"><span class="header-section-number">8</span> k-means</a></li>
+<li><a class="" href="models.html"><span class="header-section-number">9</span> models</a></li>
+<li><a class="" href="comparing-means.html"><span class="header-section-number">10</span> comparing means</a></li>
+<li><a class="" href="section-3.html"></a></li>
+<li class="book-part">chemometrics</li>
+<li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">11</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">12</span> results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">13</span> conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html"><span class="header-section-number">14</span> abstract and title</a></li>
+<li><a class="" href="section-4.html"></a></li>
+<li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
+<li><a class="" href="image-color-analysis.html"><span class="header-section-number">15</span> image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">16</span> images of mass spectra</a></li>
+<li><a class="active" href="phylochemistry-2.html"><span class="header-section-number">17</span> phylochemistry</a></li>
+<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">18</span> mass spectrometric analysis</a></li>
+<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">19</span> transcriptomic analyses</a></li>
+<li><a class="" href="genomic-analyses.html"><span class="header-section-number">20</span> genomic analyses</a></li>
+<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">21</span> evolutionary analyses</a></li>
+<li><a class="" href="section-5.html"></a></li>
+<li><a class="" href="appendix.html">APPENDIX</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">22</span> links</a></li>
+<li><a class="" href="faq.html"><span class="header-section-number">23</span> faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">24</span> templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/rstudio/bookdown-demo">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="phylochemistry-2" class="section level1" number="17">
+<h1>
+<span class="header-section-number">17</span> phylochemistry<a class="anchor" aria-label="anchor" href="#phylochemistry-2"><i class="fas fa-link"></i></a>
+</h1>
+<!-- ![](http://thebustalab.github.io/images/phylochemistry_logo.jpg) -->
+<p><code>phylochemistry</code> is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of <code>phylochemistry</code>.</p>
+<div id="requirements" class="section level2" number="17.1">
+<h2>
+<span class="header-section-number">17.1</span> requirements<a class="anchor" aria-label="anchor" href="#requirements"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>To run <code>phylochemistry</code>, you need to have R and RStudio installed. For instructions on how to install those, please see <a href="https://thebustalab.github.io/R_For_Chemists/installation.html">this page</a>.</li>
+</ul>
+</div>
+<div id="load-phylochemistry" class="section level2" number="17.2">
+<h2>
+<span class="header-section-number">17.2</span> load phylochemistry<a class="anchor" aria-label="anchor" href="#load-phylochemistry"><i class="fas fa-link"></i></a>
+</h2>
+<p>Phylochemistry is not an R package, but rather a set of components that you can add to your R environment by running an R script hosted on this site. <code>phylochemistry</code> requires a number of existing R packages in order to run, but don’t worry,<code>phylochemistry</code> will help you install these packages if they are not installed already.</p>
+<ol style="list-style-type: decimal">
+<li>Load <code>phylochemistry</code> directly into your R session by running the following command in RStudio:</li>
+</ol>
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"http://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></code></pre></div>
+<p><br>
+Sometimes running the command above generates the message “You need to install the following packages before proceeding […] Run: installPhylochemistry() to automatically install the required packages.” This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:<br></p>
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">installPhylochemistry</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><br>
+Once that is complete, then try the source() command again:</p>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"http://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></code></pre></div>
+<!-- 1. (for Windows only) [install X.Org](https://www.x.org/wiki/)
+
+1. (for Mac only) [install XQuartz](https://www.xquartz.org/)
+ -->
+</div>
+<div id="r-scripts-on-google-drive" class="section level2" number="17.3">
+<h2>
+<span class="header-section-number">17.3</span> R scripts on Google Drive<a class="anchor" aria-label="anchor" href="#r-scripts-on-google-drive"><i class="fas fa-link"></i></a>
+</h2>
+<p>Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:</p>
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">openRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></code></pre></div>
+<p><br>
+When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:</p>
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">closeRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="new-features" class="section level2" number="17.4">
+<h2>
+<span class="header-section-number">17.4</span> new features<a class="anchor" aria-label="anchor" href="#new-features"><i class="fas fa-link"></i></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>A Shiny app for GC-FID and GC-MS data analysis, including a large MS library.</li>
+<li>Open reading frame extraction from multiple fasta files.</li>
+<li>BLAST searches that export .fasta files of hits and store results in a .csv file.</li>
+<li>Minor ticks for ggplot2 axes.</li>
+<li>Phylogenetic signal for discrete traits.</li>
+<li>Analyze multiple sequence alignments for sites associated with user-defined function</li>
+<li>Multiple column name, multiple row name data structures (aka “polylists”).</li>
+<li>Draw annotated multiple sequence alignments.</li>
+<li>Use image analysis to automatically get the csv of a mass spectrum from a published image.</li>
+<li>Draw chemical structures in R from a csv of molecular coordinates.</li>
+</ol>
+</div>
+<div id="wrapped-features" class="section level2" number="17.5">
+<h2>
+<span class="header-section-number">17.5</span> wrapped features<a class="anchor" aria-label="anchor" href="#wrapped-features"><i class="fas fa-link"></i></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>BLAST transcriptomes, via <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&amp;DOC_TYPE=Download">NCBI BLAST+</a>.</li>
+<li>Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via <a href="https://bioconductor.org/packages/release/bioc/html/msa.html">msa</a> and <a href="https://github.com/HajkD/orthologr">orthologr</a>.</li>
+<li>Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via <a href="https://cran.r-project.org/web/packages/phangorn/index.html">phangorn</a>.</li>
+<li>Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).</li>
+<li>Phylogenetic signal for continuous traits, via <a href="https://cran.r-project.org/web/packages/picante/index.html">picante</a>.</li>
+</ol>
+<!-- end --><!-- start mass spectrometric analysis -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="images-of-mass-spectra.html"><span class="header-section-number">16</span> images of mass spectra</a></div>
+<div class="next"><a href="mass-spectrometric-analysis.html"><span class="header-section-number">18</span> mass spectrometric analysis</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#phylochemistry-2"><span class="header-section-number">17</span> phylochemistry</a></li>
+<li><a class="nav-link" href="#requirements"><span class="header-section-number">17.1</span> requirements</a></li>
+<li><a class="nav-link" href="#load-phylochemistry"><span class="header-section-number">17.2</span> load phylochemistry</a></li>
+<li><a class="nav-link" href="#r-scripts-on-google-drive"><span class="header-section-number">17.3</span> R scripts on Google Drive</a></li>
+<li><a class="nav-link" href="#new-features"><span class="header-section-number">17.4</span> new features</a></li>
+<li><a class="nav-link" href="#wrapped-features"><span class="header-section-number">17.5</span> wrapped features</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/rstudio/bookdown-demo/blob/master/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/rstudio/bookdown-demo/edit/master/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>phylochemistry</strong>" was written by Lucas Busta. It was last built on 2022-01-03.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>
