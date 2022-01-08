@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 12 transcriptomic analyses | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta">
-<meta name="description" content="12.1 BLAST">
+<meta name="description" content="12.1 BLAST The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
 <meta property="og:title" content="Chapter 12 transcriptomic analyses | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="12.1 BLAST">
+<meta property="og:description" content="12.1 BLAST The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chapter 12 transcriptomic analyses | Integrated Bioanalytics">
-<meta name="twitter:description" content="12.1 BLAST">
+<meta name="twitter:description" content="12.1 BLAST The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
@@ -90,18 +90,19 @@
 <li><a class="" href="results-and-discussion.html"><span class="header-section-number">16</span> results and discussion</a></li>
 <li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">17</span> conclusion and introduction</a></li>
 <li><a class="" href="abstract-and-title.html"><span class="header-section-number">18</span> abstract and title</a></li>
+<li><a class="" href="proposals.html"><span class="header-section-number">19</span> proposals</a></li>
 <li class="book-part">image analysis</li>
 <li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
-<li><a class="" href="image-color-analysis.html"><span class="header-section-number">19</span> image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">20</span> images of mass spectra</a></li>
-<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">21</span> phylochemistry</a></li>
+<li><a class="" href="image-color-analysis.html"><span class="header-section-number">20</span> image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">21</span> images of mass spectra</a></li>
+<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">22</span> phylochemistry</a></li>
 <li class="book-part">appendices</li>
 <li><a class="" href="section-1.html"></a></li>
 <li><a class="" href="appendix.html">APPENDIX</a></li>
-<li><a class="" href="links.html"><span class="header-section-number">22</span> links</a></li>
-<li><a class="" href="r-faq.html"><span class="header-section-number">23</span> r faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">24</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">23</span> links</a></li>
+<li><a class="" href="r-faq.html"><span class="header-section-number">24</span> r faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">25</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -117,10 +118,19 @@
 <h2>
 <span class="header-section-number">12.1</span> BLAST<a class="anchor" aria-label="anchor" href="#blast"><i class="fas fa-link"></i></a>
 </h2>
+<p>The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
+E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as “false positive” hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
+E-value &lt; 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+10e-100 &lt; E-value &lt; 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+10e-50 &lt; E-value &lt; 10e-10 Closely related sequences, could be a domain match or similar.
+10e-10 &lt; E-value &lt; 1 Could be a true homologue but it is a gray area.
+E-value &gt; 1 Proteins are most likely not related
+E-value &gt; 10 Hits are most likely junk unless the query sequence is very short.
+reference: <a href="https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html" class="uri">https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html</a>
 <!-- end -->
-<hr>
-<hr>
-<hr>
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________</p>
 </div>
 </div>
 
@@ -164,7 +174,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta. It was last built on 2022-01-04.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta. It was last built on 2022-01-07.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

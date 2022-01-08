@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta"
-date: "2022-01-04"
+date: "2022-01-07"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3441,6 +3441,16 @@ ________________________________________________________________________________
 # transcriptomic analyses
 
 ## BLAST
+
+The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
+E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
+E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
+10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+E-value > 1 Proteins are most likely not related
+E-value > 10 Hits are most likely junk unless the query sequence is very short.
+reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3626,7 +3636,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
   + Combine each of your "data feature" -> "supp/lit info" -> "conclusion" combinations into a single paragraph.
   + Consider editing each paragraph so that it highlights what new contribution your data makes to the situation. Example (note the sentence in italics that highlights the new findings):
-    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1). These direct observations are consistent with meta-analyses of previously published observations (Supplemental Figure 1), as well as with conclusions drawn by others in recent literature reviews (So and so et al., 2018; The other person et al., 2019). *The new chemical analyses presented here demonstrate that this is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds in the atmosphere.* Together these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.
+    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1). These direct observations are consistent with meta-analyses of previously published observations (Supplemental Figure 1), as well as with conclusions drawn by others in recent literature reviews (So and so et al., 2018; The other person et al., 2019). *The new chemical analyses presented here thus confirm this is true for hydrocarbon compounds, and extend the observation to halogenated compounds in the atmosphere.* Together these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.
 
 3. **Order your paragraphs:**
 
@@ -3743,6 +3753,23 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 * [Titles Guide](https://libguides.usc.edu/writingguide/title)
 
 <!-- end -->
+
+<!-- start Proposal -->
+
+# proposals
+
+Grant writing is a game. You need to understand the rules (written or unwritten). This is a somewhat arbitrary list of them:
+
+\#1: Show excitement. If you are not excited, the reviewers will not be either. This is the most important rule.
+\#2: Significance means how your work will advance the field. It does not mean your work has to cure all cancers. It almost certainly will not, but it can still have high impact.
+\#3: You have to establish feasibility in the Approach section. This is a chicken and egg problem. If it is 100% feasible, it may be boring. If it is super exciting, it may not be feasible. Try to find a balance. 3/10 
+\#4: Reviewers decide based on the big picture. If you made a convincing case that your study will have a high impact, most reviewers are willing to overlook small problems in the details. Some details are more important than others however.
+\#5: Always customize the Personal Statement in your Biosketch to the grant you are writing. Explain briefly why you are the right person to do this particular work.
+\#6: Use the Facilities page to make a case why you institution is a great place for your studies. List collaborators, experts, core facilities, even if not directly relevant to your proposal. This is especially important if you are not at a tier 1 university.
+\#7: Send your Specific aims page and Significance section to a colleague who is not on your close field at least 2-3 weeks before the deadline. If they do not understand it, or do not find it exciting, rewrite them.
+\#8: When you revise a grant or try to renew, the reviewers do not see the previous version. What they see is the previous summary statement, that includes the abstract. Keep this in mind when you write the grant.
+\#9: Just because you responded to all comments does not mean you will get a better score. Sounds cruel, but this is how it is. Go beyond what is requested in the revised version to make your grant more compelling and to show progress.
+\#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

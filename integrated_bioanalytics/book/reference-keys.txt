@@ -99,6 +99,7 @@ abstract-and-title
 abstract
 title
 further-reading-1
+proposals
 image-color-analysis
 images-of-mass-spectra
 phylochemistry-1

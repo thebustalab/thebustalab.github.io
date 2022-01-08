@@ -8875,7 +8875,7 @@
 
                             }
 
-                            if (class(trait) %in% c("numeric")) {
+                            if (class(trait) %in% c("numeric", "integer")) {
 
                                 ### For continuous traits
 
@@ -8900,7 +8900,7 @@
                                     #         nepenthes_tree_4 <- multi2di(nepenthes_tree_3)
 
                                         # Determine phylogenetic signal
-                                            results[[i-1]] <- data.frame(
+                                            results[[(i-1)]] <- data.frame(
                                                 trait = colnames(traits)[i],
                                                 trait_type = "continuous",
                                                 n_species = length(tree$tip.label),
