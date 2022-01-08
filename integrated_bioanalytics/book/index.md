@@ -28,7 +28,7 @@ output:
       bg: "#fefefe" #backgrounds
       fg: "#000000" #fonts
     repo: 
-      base: https://github.com/Robinlovelace/geocompr
+      base: https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics
       branch: main
     includes:
       in_header: style/ga.html
@@ -42,7 +42,7 @@ output:
 
 <!-- start preface-->
 
-<img src="http://thebustalab.github.io/integrated_bioanalytics/images/R_For_Chemists_logo.jpg" width="100%" style="display: block; margin: auto;" />
+<img src="http://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg" width="100%" style="display: block; margin: auto;" />
 
 1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000.
 
@@ -399,12 +399,10 @@ function check_answer8()
 }
 </script>
 
-2. One of the largest obstacles facing scientists is communicating about our work with non-scientists. Challenge 2: We must practice oral and written science communication in both technical and non-technical formats.
-
-This course is a set of first steps toward meeting both challenges outlined above. In the first half, we’ll explore, critique, and practice methods of handling and communicating about the data generated in large analytical chemistry projects. In the second half, we’ll apply the methods to large datasets and hone our writing skills by developing mini manuscripts that incorporate our large datasets.
+<!-- This course is a set of first steps toward meeting both challenges outlined above. In the first half, we’ll explore, critique, and practice methods of handling and communicating about the data generated in large analytical chemistry projects. In the second half, we’ll apply the methods to large datasets and hone our writing skills by developing mini manuscripts that incorporate our large datasets.
 
 <img src="http://thebustalab.github.io/integrated_bioanalytics/images/overview.png" width="100%" style="display: block; margin: auto;" />
-
+ -->
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3510,6 +3508,10 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 
 # (PART) scientific writing {-}
+
+# overview
+
+One of the largest obstacles facing scientists is communicating about our work with non-scientists. We must practice written science communication in both technical and non-technical formats.
 
 <!-- start WRITING -->
 

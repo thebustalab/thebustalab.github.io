@@ -87,6 +87,7 @@ buildtree
 simple-template
 full-template
 collapsetree
+overview-2
 figures-captions
 results-and-discussion
 structure
