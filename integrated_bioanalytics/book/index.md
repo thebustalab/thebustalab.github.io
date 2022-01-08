@@ -44,360 +44,12 @@ output:
 
 <img src="http://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg" width="100%" style="display: block; margin: auto;" />
 
-1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000.
+<!-- 1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. -->
 
-**Question 1:**
-A model with more degrees of freedom will...
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question1" id="opt1" value="1" onchange="check_answer1()">
-    fit the data better
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question1" id="opt2" value="2" onchange="check_answer1()">
-    fit the data worse
-  </label>
-</div><div class="collapse" id="collapseExample1">
-  <div class="card card-body" id="answerFeedback1">
-  </div>
-</div><script type="text/javascript">
-function check_answer1()
-{
-    var radioButtons1 = document.getElementsByName("question1");
-    document.getElementById("answerFeedback1").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons1.length; i++)
-    {
-        if(radioButtons1[i].checked == true)
-        {
-            var feedback1 = "<p style='color:red'>Wrong; The simpler a model is, the more poorly it will represent the data. The most complex model possible exactly reproduces the observed data, and has 0 degrees of freedom. Topic: fit vs complexity, see lecture.</p>";
-            if(radioButtons1[i].value == "2") {
-              feedback1 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback1").innerHTML = feedback1;
-            return true;
-        }
-    }
-}
-</script>
-
-
-**Question 2:**
-A model with more degrees of freedom is...
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question2" id="opt1" value="1" onchange="check_answer2()">
-    more simple
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question2" id="opt2" value="2" onchange="check_answer2()">
-    more complex
-  </label>
-</div><div class="collapse" id="collapseExample2">
-  <div class="card card-body" id="answerFeedback2">
-  </div>
-</div><script type="text/javascript">
-function check_answer2()
-{
-    var radioButtons2 = document.getElementsByName("question2");
-    document.getElementById("answerFeedback2").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons2.length; i++)
-    {
-        if(radioButtons2[i].checked == true)
-        {
-            var feedback2 = "<p style='color:red'>Wrong; More degrees of freedom means fewer parameters are estimated, so the model is simpler. Topic: fit vs complexity, see lecture.</p>";
-            if(radioButtons2[i].value == "1") {
-              feedback2 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback2").innerHTML = feedback2;
-            return true;
-        }
-    }
-}
-</script>
-
-
-**Question 3:**
-What are degrees of freedom?
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question3" id="opt1" value="1" onchange="check_answer3()">
-    The number of parameters
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question3" id="opt2" value="2" onchange="check_answer3()">
-    The number of unique pieces of information
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question3" id="opt3" value="3" onchange="check_answer3()">
-    Number of participants minus number of parameters
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question3" id="opt4" value="4" onchange="check_answer3()">
-    The number of unique pieces of information minus number of parameters
-  </label>
-</div><div class="collapse" id="collapseExample3">
-  <div class="card card-body" id="answerFeedback3">
-  </div>
-</div><script type="text/javascript">
-function check_answer3()
-{
-    var radioButtons3 = document.getElementsByName("question3");
-    document.getElementById("answerFeedback3").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons3.length; i++)
-    {
-        if(radioButtons3[i].checked == true)
-        {
-            var feedback3 = "<p style='color:red'>Wrong; Degrees of freedom are the number of remaining parameters you *could* estimate, given a number of unique pieces of information. For example, if you have 10 participants, you could estimate maximum 10 parameters. If you then estimate 2 parameters, you have 8 remaining degrees of freedom. Note that in SEM, the pieces of information are not individual participants, but the observed (co)variances and sometimes means. Topic: degrees of freedom, see lecture.</p>";
-            if(radioButtons3[i].value == "4") {
-              feedback3 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback3").innerHTML = feedback3;
-            return true;
-        }
-    }
-}
-</script>
-
-
-**Question 4:**
-The error term ($\epsilon_i$) in regression equations reflects how much the observed scores of individuals differ from their predicted scores.
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question4" id="opt1" value="1" onchange="check_answer4()">
-    FALSE
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question4" id="opt2" value="2" onchange="check_answer4()">
-    TRUE
-  </label>
-</div><div class="collapse" id="collapseExample4">
-  <div class="card card-body" id="answerFeedback4">
-  </div>
-</div><script type="text/javascript">
-function check_answer4()
-{
-    var radioButtons4 = document.getElementsByName("question4");
-    document.getElementById("answerFeedback4").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons4.length; i++)
-    {
-        if(radioButtons4[i].checked == true)
-        {
-            var feedback4 = "<p style='color:red'>Wrong; This term e_i represents the 'residuals'; the variance not explained by the regression line. We assume that these residuals are normally distributed around 0, which means people's scores are normally distributed around the regression line. Topic: background knowledge.</p>";
-            if(radioButtons4[i].value == "2") {
-              feedback4 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback4").innerHTML = feedback4;
-            return true;
-        }
-    }
-}
-</script>
-
-
-**Question 5:**
-In OLS regression, a model is fit to the individual participant data. By contrast, regression in structural equation modeling fits a model to the observed covariance matrix.
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question5" id="opt1" value="1" onchange="check_answer5()">
-    TRUE
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question5" id="opt2" value="2" onchange="check_answer5()">
-    FALSE
-  </label>
-</div><div class="collapse" id="collapseExample5">
-  <div class="card card-body" id="answerFeedback5">
-  </div>
-</div><script type="text/javascript">
-function check_answer5()
-{
-    var radioButtons5 = document.getElementsByName("question5");
-    document.getElementById("answerFeedback5").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons5.length; i++)
-    {
-        if(radioButtons5[i].checked == true)
-        {
-            var feedback5 = "<p style='color:red'>Wrong; Structural equation models are usually fit to the observed covariance matrix, and sometimes a mean vector. In bivariate regression, the covariance between X and Y is modeled as a function of X. Topic: covariance matrix, see lecture.</p>";
-            if(radioButtons5[i].value == "1") {
-              feedback5 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback5").innerHTML = feedback5;
-            return true;
-        }
-    }
-}
-</script>
-
-
-**Question 6:**
-A psychologist administers a test intended to measure intelligence. Participants complete different puzzles and answer different questions. From a measurement theory point of view, what kind of variable is intelligence in this context?
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question6" id="opt1" value="1" onchange="check_answer6()">
-    A dependent variable
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question6" id="opt2" value="2" onchange="check_answer6()">
-    An observed variable
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question6" id="opt3" value="3" onchange="check_answer6()">
-    A measurement variable
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question6" id="opt4" value="4" onchange="check_answer6()">
-    A latent variable
-  </label>
-</div><div class="collapse" id="collapseExample6">
-  <div class="card card-body" id="answerFeedback6">
-  </div>
-</div><script type="text/javascript">
-function check_answer6()
-{
-    var radioButtons6 = document.getElementsByName("question6");
-    document.getElementById("answerFeedback6").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons6.length; i++)
-    {
-        if(radioButtons6[i].checked == true)
-        {
-            var feedback6 = "<p style='color:red'>Wrong; The puzzles and questions are observed variables. These are intended to measure an unobserved, 'latent' construct: intelligence. From a modeling perspective, the observed variables are dependent on the latent variable, not the other way around. Topic: factor analysis, see lecture.</p>";
-            if(radioButtons6[i].value == "4") {
-              feedback6 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback6").innerHTML = feedback6;
-            return true;
-        }
-    }
-}
-</script>
-
-
-**Question 7:**
-Multiple regression and ANCOVA are statistically equivalent.
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question7" id="opt1" value="1" onchange="check_answer7()">
-    FALSE
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question7" id="opt2" value="2" onchange="check_answer7()">
-    TRUE
-  </label>
-</div><div class="collapse" id="collapseExample7">
-  <div class="card card-body" id="answerFeedback7">
-  </div>
-</div><script type="text/javascript">
-function check_answer7()
-{
-    var radioButtons7 = document.getElementsByName("question7");
-    document.getElementById("answerFeedback7").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons7.length; i++)
-    {
-        if(radioButtons7[i].checked == true)
-        {
-            var feedback7 = "<p style='color:red'>Wrong; ANCOVA can be represented as multiple regression with dummies for all response categories, and one continuous predictor. Topic: background knowledge.</p>";
-            if(radioButtons7[i].value == "2") {
-              feedback7 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback7").innerHTML = feedback7;
-            return true;
-        }
-    }
-}
-</script>
-
-
-**Question 8:**
-In the equation $Y_i = a + bX_i + e_i$, what are the 'model parameters'?
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question8" id="opt1" value="1" onchange="check_answer8()">
-    $a$ and $bX_i$
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question8" id="opt2" value="2" onchange="check_answer8()">
-    $a$ and $b$
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question8" id="opt3" value="3" onchange="check_answer8()">
-    $Y_i, X_i$ and $e_i$
-  </label>
-</div>
-
-<div class="radio">
-  <label>
-    <input type="radio" name="question8" id="opt4" value="4" onchange="check_answer8()">
-    $Y$ and $X$
-  </label>
-</div><div class="collapse" id="collapseExample8">
-  <div class="card card-body" id="answerFeedback8">
-  </div>
-</div><script type="text/javascript">
-function check_answer8()
-{
-    var radioButtons8 = document.getElementsByName("question8");
-    document.getElementById("answerFeedback8").innerHTML = "Try selecting an answer!!";
-    for(var i = 0; i < radioButtons8.length; i++)
-    {
-        if(radioButtons8[i].checked == true)
-        {
-            var feedback8 = "<p style='color:red'>Wrong; The 'parameters' are the quantities we want to estimate. In this case, we have observed data for X_i and Y_i. We then estimate the intercept a and slope b. Then, we can calculate the residuals e_i. Topic: Model parameters, see lecture.</p>";
-            if(radioButtons8[i].value == "2") {
-              feedback8 = "<p style='color:green'>Correct!</p>"
-            }
-            document.getElementById("answerFeedback8").innerHTML = feedback8;
-            return true;
-        }
-    }
-}
-</script>
+<!-- ```{r results = "asis", echo = FALSE}
+source("formative.R")
+questionnaire("formative1.csv")
+``` -->
 
 <!-- This course is a set of first steps toward meeting both challenges outlined above. In the first half, we’ll explore, critique, and practice methods of handling and communicating about the data generated in large analytical chemistry projects. In the second half, we’ll apply the methods to large datasets and hone our writing skills by developing mini manuscripts that incorporate our large datasets.
 
@@ -441,7 +93,7 @@ There are two common methods for bringing the mobile phase and the stationary ph
 
 <div class="figure" style="text-align: center">
 <img src="http://thebustalab.github.io/integrated_bioanalytics/images/mobile_stat_phase.png" alt="In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system." width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-4)In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system.</p>
+<p class="caption">(\#fig:unnamed-chunk-3)In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system.</p>
 </div>
 
 Below is an app:
@@ -540,7 +192,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -652,6 +304,20 @@ install_github('andreacirilloac/updateR')
 library(updateR)
 
 updateR()
+```
+
+## R scripts on Google Drive
+
+Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
+
+```r
+openRGD("file_share_link_here")
+```
+ \
+When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
+
+```r
+closeRGD("file_share_link_here")
 ```
 
 <!-- end -->
@@ -784,7 +450,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
 
 2. **Define how your variables map onto the axes.**
 
@@ -795,7 +461,7 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
 
 3. **Use geometric shapes to represent other variables in your data.**
 
@@ -807,7 +473,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
@@ -817,7 +483,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### modifying geoms
 
@@ -829,7 +495,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
@@ -839,7 +505,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;" />
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
@@ -854,7 +520,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-30-1.png" width="100%" style="display: block; margin: auto;" />
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
@@ -865,7 +531,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-30-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-31-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -873,7 +539,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-31-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-32-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## markdown
 
@@ -951,7 +617,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-38-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-39-1.png" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -1059,7 +725,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-55-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -1092,7 +758,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" />
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
@@ -1105,7 +771,7 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", size = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -1123,7 +789,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(.~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can facet in the vertical direction:
 
@@ -1133,7 +799,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(replicate~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
 
 And we can do both at the same time:
 
@@ -1143,7 +809,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
 
@@ -1160,7 +826,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### RColorBrewer
 
@@ -1171,7 +837,7 @@ One particularly useful type of scale are those provided by RColorBrewer:
 display.brewer.all()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
 
 ```r
 ggplot(mtcars) +
@@ -1182,7 +848,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
   
 ## themes
   
@@ -1201,7 +867,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -1212,7 +878,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
   
 
 ```r
@@ -1223,7 +889,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Theme components
 
@@ -1240,7 +906,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
 
 Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
 
@@ -1263,7 +929,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-70-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exercises
 
@@ -1373,7 +1039,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1384,7 +1050,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-74-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1507,7 +1173,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-79-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-80-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1557,7 +1223,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1589,7 +1255,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1748,7 +1414,7 @@ ________________________________________________________________________________
 
 <!-- start overview -->
 
-# overview
+# overview {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg" width="100%" style="display: block; margin: auto;" />
 
@@ -1759,7 +1425,7 @@ Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit
 <!-- end -->
 
 <!-- start clustering -->
-# clustering
+# clustering {-}
 
 ## theory
 
@@ -1848,7 +1514,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-95-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -1861,7 +1527,7 @@ ggtree() +
     scale_x_continuous(limits = c(0,400))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-95-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-96-1.png" width="100%" style="display: block; margin: auto;" />
  
 Very nice!
 
@@ -1893,7 +1559,7 @@ colnames(solvents)[c(1,5,7)]
 
 <!-- start principal components analysis-->
 
-# pca
+# pca {-}
 
 "Which analytes are driving differences among my samples?"
 
@@ -1931,7 +1597,7 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-98-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-99-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
@@ -1993,7 +1659,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-100-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-101-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -2038,7 +1704,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-101-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-102-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
 
@@ -2096,7 +1762,7 @@ This second option is to work with a dataset describing metabolomics data (i.e. 
 <!-- end -->
 
 <!-- start k-means -->
-# k-means
+# k-means {-}
 
 "Do my samples fall into definable clusters?"
 
@@ -2160,7 +1826,7 @@ ggplot(solvents_pca_kmeans) +
   geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-108-1.png" width="100%" style="display: block; margin: auto;" />
 
 Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set `kmeans = "elbow"`:
 
@@ -2191,7 +1857,7 @@ solvents_pca_kmeans_elbow
 ##  3              3                  49545.
 ##  4              4                  38964.
 ##  5              5                  30702.
-##  6              6                  25837.
+##  6              6                  25646.
 ##  7              7                  20188.
 ##  8              8                  16508.
 ##  9              9                  14346.
@@ -2212,7 +1878,7 @@ ggplot(
   geom_line()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;" />
 
 Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse`.
 
@@ -2241,7 +1907,7 @@ ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
 ## solubility_in_water vapor_pressure
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! 
 
@@ -2281,7 +1947,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
@@ -2348,7 +2014,7 @@ bar_plot <- ggplot() +
 cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we are really rockin!!
 
@@ -2438,7 +2104,7 @@ Maybe something like this:
 
 <!-- start models -->
 
-# models
+# models {-}
 
 ## theory
 
@@ -2452,7 +2118,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = AMP, y = ADP))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -2522,7 +2188,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, y = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-126-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-127-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -2534,7 +2200,7 @@ ggplot(model$data) +
   geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-127-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-128-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -2555,7 +2221,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-129-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -2572,7 +2238,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
 
 40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
@@ -2607,7 +2273,7 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-132-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-133-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exercises
 
@@ -2625,7 +2291,8 @@ To practice creating linear models, try the following:
 <!-- end -->
 
 <!-- start comparing means -->
-# comparing means
+
+# comparing means {-}
 
 <img src="http://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" />
 
@@ -2694,7 +2361,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2775,7 +2442,7 @@ ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2788,7 +2455,7 @@ K_data_1_2 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2877,7 +2544,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2891,7 +2558,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-147-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -2998,7 +2665,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3068,7 +2735,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-155-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3083,7 +2750,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3227,7 +2894,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading
 
@@ -3359,7 +3026,7 @@ ________________________________________________________________________________
 # (PART) mass spectrometric analysis {-}
 
 <!-- start mass spectrometric analysis -->
-# mass spectrometric analysis
+# mass spectrometric analysis {-}
 
 ## integrationAppLite
 
@@ -3434,7 +3101,8 @@ ________________________________________________________________________________
 # (PART) transcriptome analysis {-}
 
 <!-- start transcriptomic analyses -->
-# transcriptomic analyses
+
+# transcriptomic analyses {-}
 
 ## BLAST
 
@@ -3452,10 +3120,10 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) transcriptome analysis {-}
+# (PART) genomic analysis {-}
 
 <!-- start genomic analyses -->
-# genomic analyses
+# genomic analyses {-}
 
 ## loading GFF files
 <!-- end -->
@@ -3466,7 +3134,7 @@ ________________________________________________________________________________
 # (PART) evolutionary analysis {-}
 
 <!-- start evolutionary analyses -->
-# evolutionary analyses
+# evolutionary analyses {-}
 
 ## buildTree
 
@@ -3509,7 +3177,7 @@ ________________________________________________________________________________
 
 # (PART) scientific writing {-}
 
-# overview
+# overview {-}
 
 One of the largest obstacles facing scientists is communicating about our work with non-scientists. We must practice written science communication in both technical and non-technical formats.
 
@@ -3569,7 +3237,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 
@@ -3665,7 +3333,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- start Conclusions -->
 
-# conclusion and introduction
+# conclusion and introduction {-}
 
 * Objective (conclusion): to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study?
 
@@ -3715,7 +3383,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- start Abstract -->
 
-# abstract and title
+# abstract and title {-}
 
 ## abstract
 
@@ -3756,7 +3424,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- start Proposal -->
 
-# proposals
+# proposals {-}
 
 Grant writing is a game. You need to understand the rules (written or unwritten). This is a somewhat arbitrary list of them:
 
@@ -3770,6 +3438,8 @@ Grant writing is a game. You need to understand the rules (written or unwritten)
 \#8: When you revise a grant or try to renew, the reviewers do not see the previous version. What they see is the previous summary statement, that includes the abstract. Keep this in mind when you write the grant.
 \#9: Just because you responded to all comments does not mean you will get a better score. Sounds cruel, but this is how it is. Go beyond what is requested in the revised version to make your grant more compelling and to show progress.
 \#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
+
+<!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3782,7 +3452,7 @@ ________________________________________________________________________________
 
 # IMAGE ANALYSIS {-}
 
-# image color analysis
+# image color analysis {-}
 
 For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
 
@@ -3807,11 +3477,9 @@ analyzeMassSpectralImages()
 
 <!-- start phylochemistry --> 
 
-# phylochemistry
-
 <!-- ![](http://thebustalab.github.io/images/phylochemistry_logo.jpg) -->
 
-`phylochemistry` is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of `phylochemistry`.
+<!-- `phylochemistry` is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of `phylochemistry`.
 
 ## requirements
 
@@ -3839,25 +3507,6 @@ Once that is complete, then try the source() command again:
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-<!-- 1. (for Windows only) [install X.Org](https://www.x.org/wiki/)
-
-1. (for Mac only) [install XQuartz](https://www.xquartz.org/)
- -->
-
-## R scripts on Google Drive
-
-Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
-
-```r
-openRGD("file_share_link_here")
-```
- \
-When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
-
-```r
-closeRGD("file_share_link_here")
-```
-
 ## new features
 
 1. A Shiny app for GC-FID and GC-MS data analysis, including a large MS library.
@@ -3877,19 +3526,16 @@ closeRGD("file_share_link_here")
 2. Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via [msa](https://bioconductor.org/packages/release/bioc/html/msa.html) and [orthologr](https://github.com/HajkD/orthologr).
 3. Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via [phangorn](https://cran.r-project.org/web/packages/phangorn/index.html).
 4. Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).
-5. Phylogenetic signal for continuous traits, via [picante](https://cran.r-project.org/web/packages/picante/index.html).
+5. Phylogenetic signal for continuous traits, via [picante](https://cran.r-project.org/web/packages/picante/index.html). -->
 
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) appendices {-}
+# (PART) appendix {-}
 
 <!-- start links -->
-
-# {-}
-# APPENDIX {-}
 
 # links
 
@@ -3934,7 +3580,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -3976,7 +3622,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 

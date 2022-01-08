@@ -54,12 +54,12 @@ options(pillar.sigfig = 3)
 knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg', dpi = NA)
 ```
 
-1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000.
+<!-- 1. Analytical chemists separate, identify, and quantify matter. To connect this data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. -->
 
-```{r results = "asis", echo = FALSE}
+<!-- ```{r results = "asis", echo = FALSE}
 source("formative.R")
 questionnaire("formative1.csv")
-```
+``` -->
 
 <!-- This course is a set of first steps toward meeting both challenges outlined above. In the first half, we’ll explore, critique, and practice methods of handling and communicating about the data generated in large analytical chemistry projects. In the second half, we’ll apply the methods to large datasets and hone our writing skills by developing mini manuscripts that incorporate our large datasets.
 
@@ -298,6 +298,18 @@ install_github('andreacirilloac/updateR')
 library(updateR)
 
 updateR()
+```
+
+## R scripts on Google Drive
+
+Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
+```{r, message = FALSE, eval = FALSE}
+openRGD("file_share_link_here")
+```
+ \
+When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
+```{r, message = FALSE, eval = FALSE}
+closeRGD("file_share_link_here")
 ```
 
 <!-- end -->
@@ -1235,7 +1247,7 @@ ________________________________________________________________________________
 
 <!-- start overview -->
 
-# overview
+# overview {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg', dpi = NA)
@@ -1248,7 +1260,7 @@ Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit
 <!-- end -->
 
 <!-- start clustering -->
-# clustering
+# clustering {-}
 
 ## theory
 
@@ -1332,7 +1344,7 @@ colnames(solvents)[c(1,5,7)]
 
 <!-- start principal components analysis-->
 
-# pca
+# pca {-}
 
 "Which analytes are driving differences among my samples?"
 
@@ -1574,7 +1586,7 @@ ggplot() +
 <!-- end -->
 
 <!-- start k-means -->
-# k-means
+# k-means {-}
 
 "Do my samples fall into definable clusters?"
 
@@ -2009,7 +2021,7 @@ knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/i
 
 <!-- start models -->
 
-# models
+# models {-}
 
 ## theory
 
@@ -2213,7 +2225,8 @@ model$metrics
 <!-- end -->
 
 <!-- start comparing means -->
-# comparing means
+
+# comparing means {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
@@ -2924,7 +2937,7 @@ ________________________________________________________________________________
 # (PART) mass spectrometric analysis {-}
 
 <!-- start mass spectrometric analysis -->
-# mass spectrometric analysis
+# mass spectrometric analysis {-}
 
 ## integrationAppLite
 
@@ -2996,7 +3009,8 @@ ________________________________________________________________________________
 # (PART) transcriptome analysis {-}
 
 <!-- start transcriptomic analyses -->
-# transcriptomic analyses
+
+# transcriptomic analyses {-}
 
 ## BLAST
 
@@ -3014,10 +3028,10 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) transcriptome analysis {-}
+# (PART) genomic analysis {-}
 
 <!-- start genomic analyses -->
-# genomic analyses
+# genomic analyses {-}
 
 ## loading GFF files
 <!-- end -->
@@ -3028,7 +3042,7 @@ ________________________________________________________________________________
 # (PART) evolutionary analysis {-}
 
 <!-- start evolutionary analyses -->
-# evolutionary analyses
+# evolutionary analyses {-}
 
 ## buildTree
 
@@ -3069,7 +3083,7 @@ ________________________________________________________________________________
 
 # (PART) scientific writing {-}
 
-# overview
+# overview {-}
 
 One of the largest obstacles facing scientists is communicating about our work with non-scientists. We must practice written science communication in both technical and non-technical formats.
 
@@ -3230,7 +3244,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- start Conclusions -->
 
-# conclusion and introduction
+# conclusion and introduction {-}
 
 * Objective (conclusion): to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study?
 
@@ -3280,7 +3294,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- start Abstract -->
 
-# abstract and title
+# abstract and title {-}
 
 ## abstract
 
@@ -3321,7 +3335,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 <!-- start Proposal -->
 
-# proposals
+# proposals {-}
 
 Grant writing is a game. You need to understand the rules (written or unwritten). This is a somewhat arbitrary list of them:
 
@@ -3335,6 +3349,8 @@ Grant writing is a game. You need to understand the rules (written or unwritten)
 \#8: When you revise a grant or try to renew, the reviewers do not see the previous version. What they see is the previous summary statement, that includes the abstract. Keep this in mind when you write the grant.
 \#9: Just because you responded to all comments does not mean you will get a better score. Sounds cruel, but this is how it is. Go beyond what is requested in the revised version to make your grant more compelling and to show progress.
 \#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
+
+<!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3347,7 +3363,7 @@ ________________________________________________________________________________
 
 # IMAGE ANALYSIS {-}
 
-# image color analysis
+# image color analysis {-}
 
 For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
 
@@ -3370,11 +3386,9 @@ analyzeMassSpectralImages()
 
 <!-- start phylochemistry --> 
 
-# phylochemistry
-
 <!-- ![](http://thebustalab.github.io/images/phylochemistry_logo.jpg) -->
 
-`phylochemistry` is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of `phylochemistry`.
+<!-- `phylochemistry` is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of `phylochemistry`.
 
 ## requirements
 
@@ -3399,23 +3413,6 @@ Once that is complete, then try the source() command again:
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-<!-- 1. (for Windows only) [install X.Org](https://www.x.org/wiki/)
-
-1. (for Mac only) [install XQuartz](https://www.xquartz.org/)
- -->
-
-## R scripts on Google Drive
-
-Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
-```{r, message = FALSE, eval = FALSE}
-openRGD("file_share_link_here")
-```
- \
-When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
-```{r, message = FALSE, eval = FALSE}
-closeRGD("file_share_link_here")
-```
-
 ## new features
 
 1. A Shiny app for GC-FID and GC-MS data analysis, including a large MS library.
@@ -3435,19 +3432,16 @@ closeRGD("file_share_link_here")
 2. Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via [msa](https://bioconductor.org/packages/release/bioc/html/msa.html) and [orthologr](https://github.com/HajkD/orthologr).
 3. Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via [phangorn](https://cran.r-project.org/web/packages/phangorn/index.html).
 4. Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).
-5. Phylogenetic signal for continuous traits, via [picante](https://cran.r-project.org/web/packages/picante/index.html).
+5. Phylogenetic signal for continuous traits, via [picante](https://cran.r-project.org/web/packages/picante/index.html). -->
 
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) appendices {-}
+# (PART) appendix {-}
 
 <!-- start links -->
-
-# {-}
-# APPENDIX {-}
 
 # links
 

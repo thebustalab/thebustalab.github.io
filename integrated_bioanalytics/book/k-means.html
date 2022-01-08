@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 8 k-means | Integrated Bioanalytics</title>
+<title>k-means | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta">
-<meta name="description" content="“Do my samples fall into definable clusters?”  8.1 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
+<meta name="description" content="“Do my samples fall into definable clusters?”  4.7 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="Chapter 8 k-means | Integrated Bioanalytics">
+<meta property="og:title" content="k-means | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="“Do my samples fall into definable clusters?”  8.1 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
+<meta property="og:description" content="“Do my samples fall into definable clusters?”  4.7 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 8 k-means | Integrated Bioanalytics">
-<meta name="twitter:description" content="“Do my samples fall into definable clusters?”  8.1 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
+<meta name="twitter:title" content="k-means | Integrated Bioanalytics">
+<meta name="twitter:description" content="“Do my samples fall into definable clusters?”  4.7 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
@@ -70,40 +70,37 @@
 <li class="book-part">advanced data analysis in r</li>
 <li><a class="" href="wrangling.html">wrangling</a></li>
 <li class="book-part">chemometrics</li>
-<li><a class="" href="overview-1.html"><span class="header-section-number">5</span> overview</a></li>
-<li><a class="" href="clustering.html"><span class="header-section-number">6</span> clustering</a></li>
-<li><a class="" href="pca.html"><span class="header-section-number">7</span> pca</a></li>
-<li><a class="active" href="k-means.html"><span class="header-section-number">8</span> k-means</a></li>
-<li><a class="" href="models.html"><span class="header-section-number">9</span> models</a></li>
-<li><a class="" href="comparing-means.html"><span class="header-section-number">10</span> comparing means</a></li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="clustering.html">clustering</a></li>
+<li><a class="" href="pca.html">pca</a></li>
+<li><a class="active" href="k-means.html">k-means</a></li>
+<li><a class="" href="models.html">models</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
 <li class="book-part">mass spectrometric analysis</li>
-<li><a class="" href="mass-spectrometric-analysis.html"><span class="header-section-number">11</span> mass spectrometric analysis</a></li>
+<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">transcriptome analysis</li>
-<li><a class="" href="transcriptomic-analyses.html"><span class="header-section-number">12</span> transcriptomic analyses</a></li>
-<li class="book-part">transcriptome analysis</li>
-<li><a class="" href="genomic-analyses.html"><span class="header-section-number">13</span> genomic analyses</a></li>
+<li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
+<li class="book-part">genomic analysis</li>
+<li><a class="" href="genomic-analyses.html">genomic analyses</a></li>
 <li class="book-part">evolutionary analysis</li>
-<li><a class="" href="evolutionary-analyses.html"><span class="header-section-number">14</span> evolutionary analyses</a></li>
+<li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">scientific writing</li>
-<li><a class="" href="overview-2.html"><span class="header-section-number">15</span> overview</a></li>
+<li><a class="" href="overview-2.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">16</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">17</span> results and discussion</a></li>
-<li><a class="" href="conclusion-and-introduction.html"><span class="header-section-number">18</span> conclusion and introduction</a></li>
-<li><a class="" href="abstract-and-title.html"><span class="header-section-number">19</span> abstract and title</a></li>
-<li><a class="" href="proposals.html"><span class="header-section-number">20</span> proposals</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">5</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">6</span> results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li><a class="" href="proposals.html">proposals</a></li>
 <li class="book-part">image analysis</li>
 <li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
-<li><a class="" href="image-color-analysis.html"><span class="header-section-number">21</span> image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">22</span> images of mass spectra</a></li>
-<li><a class="" href="phylochemistry-1.html"><span class="header-section-number">23</span> phylochemistry</a></li>
-<li class="book-part">appendices</li>
-<li><a class="" href="section-1.html"></a></li>
-<li><a class="" href="appendix.html">APPENDIX</a></li>
-<li><a class="" href="links.html"><span class="header-section-number">24</span> links</a></li>
-<li><a class="" href="r-faq.html"><span class="header-section-number">25</span> r faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">26</span> templates</a></li>
+<li><a class="" href="image-color-analysis.html">image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">7</span> images of mass spectra</a></li>
+<li class="book-part">appendix</li>
+<li><a class="" href="links.html"><span class="header-section-number">8</span> links</a></li>
+<li><a class="" href="r-faq.html"><span class="header-section-number">9</span> r faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">10</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -111,21 +108,20 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="k-means" class="section level1" number="8">
-<h1>
-<span class="header-section-number">8</span> k-means<a class="anchor" aria-label="anchor" href="#k-means"><i class="fas fa-link"></i></a>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="k-means" class="section level1 unnumbered">
+<h1>k-means<a class="anchor" aria-label="anchor" href="#k-means"><i class="fas fa-link"></i></a>
 </h1>
 <p>“Do my samples fall into definable clusters?”</p>
-<div id="theory-1" class="section level2" number="8.1">
+<div id="theory-1" class="section level2" number="4.7">
 <h2>
-<span class="header-section-number">8.1</span> theory<a class="anchor" aria-label="anchor" href="#theory-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.7</span> theory<a class="anchor" aria-label="anchor" href="#theory-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in <strong>A</strong> below:</p>
 <div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" width="100%" style="display: block; margin: auto;"></div>
 <p>One we know within-group variances, we find the “elbow” point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in <strong>B</strong> and <strong>C</strong>.)</p>
 <p>Let’s try k-means using <code>runMatrixAnalysis</code>. We can use it in conjunction with <code>analysis = "pca"</code> or <code>analysis = "hclust"</code>. Let’s do PCA first. To include k-means, we can just set <code>kmeans = "auto"</code>. It’s important to note that kmeans cannot handle NAs. We must set something for the <code>na_replacement</code> argument. One solution is to ignore variables that have NAs for some values, which can be done by setting <code>na_replacement = "drop"</code>.</p>
 <p>With <code>kmeans = "auto"</code> and <code>na_replacement = "drop"</code>, we can now run our analyssis. The output now has an additional column called <code>kmeans_cluster</code>, which indicates what cluster each sample is in:</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_pca_kmeans</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -163,12 +159,12 @@
 <span class="co">## #   relative_polarity &lt;dbl&gt;, formula_weight &lt;dbl&gt;,</span>
 <span class="co">## #   refractive_index &lt;dbl&gt;</span></code></pre></div>
 <p>We can plot the results and color them according to the group that kmeans suggested:</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">solvents_pca_kmeans</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-108-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let’s look at the elbow plot itself. For this, we can just set <code>kmeans = "elbow"</code>:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_pca_kmeans_elbow</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -194,14 +190,14 @@
 <span class="co">##  3              3                  49545.</span>
 <span class="co">##  4              4                  38964.</span>
 <span class="co">##  5              5                  30702.</span>
-<span class="co">##  6              6                  25837.</span>
+<span class="co">##  6              6                  25646.</span>
 <span class="co">##  7              7                  20188.</span>
 <span class="co">##  8              8                  16508.</span>
 <span class="co">##  9              9                  14346.</span>
 <span class="co">## 10             10                  12265.</span>
 <span class="co">## # … with 21 more rows</span></code></pre></div>
 <p>This gives us the maximum variance within a cluster for each number of clusters. Let’s plot that:</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>
   <span class="va">solvents_pca_kmeans_elbow</span>,
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cluster_number</span>, y <span class="op">=</span> <span class="va">variance_within_cluster</span><span class="op">)</span>
@@ -209,9 +205,9 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Hmm, it looks like there aren’t any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set <code>kmeans = 3</code> if we want three clusters in the output. Below, let’s do just that. Let’s also plot the results and use <code>geom_mark_ellipse</code>.</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -233,10 +229,10 @@
 <span class="co">## Dropping any variables in your dataset that have NA as a value.</span>
 <span class="co">## Variables dropped:</span>
 <span class="co">## solubility_in_water vapor_pressure</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool!</p>
 <p>One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -267,9 +263,9 @@
     data <span class="op">=</span> <span class="va">solvents_clustered</span>,
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">kmeans_cluster</span>, y <span class="op">=</span> <span class="va">boiling_point</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it’s possible that we’ll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the <code>plot_grid</code> function from the <code>cowplot</code> package. Let’s check it out:</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -329,60 +325,60 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span>
 
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">pca_plot</span>, <span class="va">bar_plot</span>, align <span class="op">=</span> <span class="st">"h"</span>, axis <span class="op">=</span> <span class="st">"b"</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Now we are really rockin!!</p>
 </div>
-<div id="exercises-5" class="section level2" number="8.2">
+<div id="exercises-5" class="section level2" number="4.8">
 <h2>
-<span class="header-section-number">8.2</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-5"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-5"><i class="fas fa-link"></i></a>
 </h2>
 <p>Use the wine grapes dataset (it’s stored as <code>wine_grape_data</code> after you run the <code>source(...)</code> command).</p>
-<div id="question-1" class="section level3" number="8.2.1">
+<div id="question-1" class="section level3" number="4.8.1">
 <h3>
-<span class="header-section-number">8.2.1</span> Question 1<a class="anchor" aria-label="anchor" href="#question-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.1</span> Question 1<a class="anchor" aria-label="anchor" href="#question-1"><i class="fas fa-link"></i></a>
 </h3>
 <p>Run a principal components analysis on the dataset. Use <code>na_replacement = "drop"</code> (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting <code>kmeans = "auto"</code>. Make scatter plot of the results. How many clusters does kmeans recommend?</p>
 </div>
-<div id="question-2" class="section level3" number="8.2.2">
+<div id="question-2" class="section level3" number="4.8.2">
 <h3>
-<span class="header-section-number">8.2.2</span> Question 2<a class="anchor" aria-label="anchor" href="#question-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.2</span> Question 2<a class="anchor" aria-label="anchor" href="#question-2"><i class="fas fa-link"></i></a>
 </h3>
 <p>Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use <code>geom_mark_ellipse</code> to highlight each cluster in your plot (note that the <code>fill</code> aesthetic is required to mark groups). Which varieties are put into each of the two clusters?</p>
 </div>
-<div id="question-3" class="section level3" number="8.2.3">
+<div id="question-3" class="section level3" number="4.8.3">
 <h3>
-<span class="header-section-number">8.2.3</span> Question 3<a class="anchor" aria-label="anchor" href="#question-3"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.3</span> Question 3<a class="anchor" aria-label="anchor" href="#question-3"><i class="fas fa-link"></i></a>
 </h3>
 <p>Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?</p>
 </div>
-<div id="question-4" class="section level3" number="8.2.4">
+<div id="question-4" class="section level3" number="4.8.4">
 <h3>
-<span class="header-section-number">8.2.4</span> Question 4<a class="anchor" aria-label="anchor" href="#question-4"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.4</span> Question 4<a class="anchor" aria-label="anchor" href="#question-4"><i class="fas fa-link"></i></a>
 </h3>
 <p>Modify your code from Question 2 so that five clusters are generated. Plot the results. Use <code>geom_mark_ellipse</code> to highlight each cluster in your plot (note that the <code>fill</code> aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?</p>
 </div>
-<div id="question-5" class="section level3" number="8.2.5">
+<div id="question-5" class="section level3" number="4.8.5">
 <h3>
-<span class="header-section-number">8.2.5</span> Question 5<a class="anchor" aria-label="anchor" href="#question-5"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.5</span> Question 5<a class="anchor" aria-label="anchor" href="#question-5"><i class="fas fa-link"></i></a>
 </h3>
 <p>Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using <code>na_replacement = "drop"</code>. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?</p>
 </div>
-<div id="question-6" class="section level3" number="8.2.6">
+<div id="question-6" class="section level3" number="4.8.6">
 <h3>
-<span class="header-section-number">8.2.6</span> Question 6<a class="anchor" aria-label="anchor" href="#question-6"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.6</span> Question 6<a class="anchor" aria-label="anchor" href="#question-6"><i class="fas fa-link"></i></a>
 </h3>
 <p>Google “Quercetin.” What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using <code>geom_pointrange</code> and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic()</a></code>).</p>
 <p>Does one cluster have a large amount of variation in Quercetin abundance? Why do you think this might be?</p>
 </div>
-<div id="question-7" class="section level3" number="8.2.7">
+<div id="question-7" class="section level3" number="4.8.7">
 <h3>
-<span class="header-section-number">8.2.7</span> Question 7<a class="anchor" aria-label="anchor" href="#question-7"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.7</span> Question 7<a class="anchor" aria-label="anchor" href="#question-7"><i class="fas fa-link"></i></a>
 </h3>
 <p>Use <code><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">cowplot::plot_grid</a></code> to display your plots from questions 4 and 5 next to each other.</p>
 </div>
-<div id="challenge-optional" class="section level3" number="8.2.8">
+<div id="challenge-optional" class="section level3" number="4.8.8">
 <h3>
-<span class="header-section-number">8.2.8</span> Challenge (optional)<a class="anchor" aria-label="anchor" href="#challenge-optional"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.8.8</span> Challenge (optional)<a class="anchor" aria-label="anchor" href="#challenge-optional"><i class="fas fa-link"></i></a>
 </h3>
 <p>Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. <strong>Make your combined plot as attractive as possible!</strong> Use each of the following:</p>
 <p><code>align = TRUE</code> inside <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab()</a></code></p>
@@ -405,8 +401,8 @@
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="pca.html"><span class="header-section-number">7</span> pca</a></div>
-<div class="next"><a href="models.html"><span class="header-section-number">9</span> models</a></div>
+<div class="prev"><a href="pca.html">pca</a></div>
+<div class="next"><a href="models.html">models</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to test in-development packages and provide feedback</p>
@@ -419,18 +415,18 @@
 <hr>
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#k-means"><span class="header-section-number">8</span> k-means</a></li>
-<li><a class="nav-link" href="#theory-1"><span class="header-section-number">8.1</span> theory</a></li>
+<li><a class="nav-link" href="#k-means">k-means</a></li>
+<li><a class="nav-link" href="#theory-1"><span class="header-section-number">4.7</span> theory</a></li>
 <li>
-<a class="nav-link" href="#exercises-5"><span class="header-section-number">8.2</span> exercises</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#question-1"><span class="header-section-number">8.2.1</span> Question 1</a></li>
-<li><a class="nav-link" href="#question-2"><span class="header-section-number">8.2.2</span> Question 2</a></li>
-<li><a class="nav-link" href="#question-3"><span class="header-section-number">8.2.3</span> Question 3</a></li>
-<li><a class="nav-link" href="#question-4"><span class="header-section-number">8.2.4</span> Question 4</a></li>
-<li><a class="nav-link" href="#question-5"><span class="header-section-number">8.2.5</span> Question 5</a></li>
-<li><a class="nav-link" href="#question-6"><span class="header-section-number">8.2.6</span> Question 6</a></li>
-<li><a class="nav-link" href="#question-7"><span class="header-section-number">8.2.7</span> Question 7</a></li>
-<li><a class="nav-link" href="#challenge-optional"><span class="header-section-number">8.2.8</span> Challenge (optional)</a></li>
+<a class="nav-link" href="#exercises-5"><span class="header-section-number">4.8</span> exercises</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#question-1"><span class="header-section-number">4.8.1</span> Question 1</a></li>
+<li><a class="nav-link" href="#question-2"><span class="header-section-number">4.8.2</span> Question 2</a></li>
+<li><a class="nav-link" href="#question-3"><span class="header-section-number">4.8.3</span> Question 3</a></li>
+<li><a class="nav-link" href="#question-4"><span class="header-section-number">4.8.4</span> Question 4</a></li>
+<li><a class="nav-link" href="#question-5"><span class="header-section-number">4.8.5</span> Question 5</a></li>
+<li><a class="nav-link" href="#question-6"><span class="header-section-number">4.8.6</span> Question 6</a></li>
+<li><a class="nav-link" href="#question-7"><span class="header-section-number">4.8.7</span> Question 7</a></li>
+<li><a class="nav-link" href="#challenge-optional"><span class="header-section-number">4.8.8</span> Challenge (optional)</a></li>
 </ul>
 </li>
 </ul>
@@ -458,34 +454,6 @@
   </div>
 
 </div></div>
-</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
-for (let popover of popovers) {
-  const div = document.createElement('div');
-  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
-  div.innerHTML = popover.getAttribute('data-content');
-
-  var has_math = div.querySelector("span.math");
-  if (has_math) {
-    document.body.appendChild(div);
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
-    MathJax.Hub.Queue(function() {
-      popover.setAttribute('data-content', div.innerHTML);
-      document.body.removeChild(div);
-    })
-  }
-}
-</script>
+</footer>
 </body>
 </html>
