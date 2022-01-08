@@ -1,0 +1,7 @@
+base
+knitr
+sf
+terra
+dplyr
+spData
+tmap

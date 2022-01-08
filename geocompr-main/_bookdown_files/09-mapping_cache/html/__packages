@@ -1,0 +1,13 @@
+base
+knitr
+sf
+sp
+raster
+dplyr
+spData
+spDataLarge
+tmap
+leaflet
+ggplot2
+RColorBrewer
+cartogram

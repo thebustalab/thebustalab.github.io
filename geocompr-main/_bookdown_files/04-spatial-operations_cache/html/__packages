@@ -1,0 +1,9 @@
+base
+knitr
+sf
+terra
+dplyr
+spData
+tmap
+ggplot2
+leaflet

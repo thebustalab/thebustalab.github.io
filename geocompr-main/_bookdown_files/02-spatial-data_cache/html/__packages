@@ -1,0 +1,8 @@
+base
+knitr
+sf
+terra
+spData
+spDataLarge
+tmap
+rcartocolor
