@@ -45,6 +45,21 @@ changed, including:
     [#656](https://github.com/Robinlovelace/geocompr/pull/656)
 -   Refactor build settings so the book builds on Docker images in the
     [geocompr/docker](https://github.com/geocompr/docker) repo
+-   Improve the experience of using the book in Binder (ideal for trying
+    out the code before installing or updating the necessary R
+    packages), as documented in issue
+    [#691](https://github.com/Robinlovelace/geocompr/issues/691) (thanks
+    to [yuvipanda](https://github.com/yuvipanda))
+-   Improved communication of binary spatial predicates in Chapter 4
+    (see [#675](https://github.com/Robinlovelace/geocompr/pull/675))
+-   New section on the links between subsetting and clipping (see
+    [#698](https://github.com/Robinlovelace/geocompr/pull/698)) in
+    Chapter 5
+-   New
+    [section](https://geocompr.robinlovelace.net/spatial-operations.html#de-9im-strings)
+    on the dimensionally extended 9 intersection model (DE-9IM)
+-   New [chapter](https://geocompr.robinlovelace.net/raster-vector.html)
+    on raster-vector interactions split out from Chapter 5
     <!-- Todo: update this bullet point (Rl 2021-11) -->
     <!-- - Next issue  -->
 
@@ -81,6 +96,7 @@ will update automatically): [prosoitos](https://github.com/prosoitos),
 [florisvdh](https://github.com/florisvdh),
 [katygregg](https://github.com/katygregg),
 [rsbivand](https://github.com/rsbivand),
+[iod-ine](https://github.com/iod-ine),
 [KiranmayiV](https://github.com/KiranmayiV),
 [zmbc](https://github.com/zmbc),
 [erstearns](https://github.com/erstearns),
@@ -97,7 +113,7 @@ will update automatically): [prosoitos](https://github.com/prosoitos),
 [pat-s](https://github.com/pat-s), [gisma](https://github.com/gisma),
 [ateucher](https://github.com/ateucher),
 [annakrystalli](https://github.com/annakrystalli),
-[DarrellCarvalho](https://github.com/DarrellCarvalho),
+[darrellcarvalho](https://github.com/darrellcarvalho),
 [kant](https://github.com/kant),
 [gavinsimpson](https://github.com/gavinsimpson),
 [Himanshuteli](https://github.com/Himanshuteli),
@@ -110,12 +126,15 @@ will update automatically): [prosoitos](https://github.com/prosoitos),
 [mpaulacaldas](https://github.com/mpaulacaldas),
 [mtennekes](https://github.com/mtennekes),
 [mvl22](https://github.com/mvl22),
+[defuneste](https://github.com/defuneste),
 [ganes1410](https://github.com/ganes1410),
 [richfitz](https://github.com/richfitz),
 [wdearden](https://github.com/wdearden),
 [yihui](https://github.com/yihui),
 [chihinl](https://github.com/chihinl),
 [cshancock](https://github.com/cshancock),
+[e-clin](https://github.com/e-clin),
+[ec-nebi](https://github.com/ec-nebi),
 [gregor-d](https://github.com/gregor-d),
 [jasongrahn](https://github.com/jasongrahn),
 [p-kono](https://github.com/p-kono),
