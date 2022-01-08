@@ -1,6 +1,5 @@
 fig:unnamed-chunk-4
 part-chemical-instrumentation
-chromatographic-and-electrophoretic-methods
 chromatographic-separations
 types-of-mobile-phases-and-stationary-phases
 contact-between-the-mobile-phase-and-the-stationary-phase

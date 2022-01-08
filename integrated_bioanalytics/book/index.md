@@ -422,8 +422,6 @@ Things
 
 The content in this part is based heavily on Harvey's Analytical Chemistry 2.1 Chapter 12.
 
-## Chromatographic and Electrophoretic Methods
-
 Drawing from an arsenal of analytical techniques, analytical chemists design methods that detect increasingly smaller concentrations of analyte in increasingly more complex matrices. Despite the power of these analytical techniques, they often suffer from a lack of selectivity. For this reason, many analytical procedures include a step to separate the analyte from potential interferents. Although effective, each additional step in an analytical procedure increases the analysis time and the cost of the analysis, and introduces uncertainty. In this chapter we consider two analytical techniques that avoid these limitations by combining the separation and analysis: chromatography and electrophoresis.
 
 <!-- ### Overview of Analytical Separations -->
