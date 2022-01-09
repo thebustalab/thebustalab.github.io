@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta"
-date: "2022-01-07"
+date: "2022-01-08"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -38,7 +38,7 @@ output:
 
 
 
-# integrated bioanalytics {-}
+<!-- # integrated bioanalytics {-} -->
 
 <!-- start preface-->
 

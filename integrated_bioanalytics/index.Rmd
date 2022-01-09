@@ -46,7 +46,7 @@ knitr:::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE,
 options(pillar.sigfig = 3)
 ```
 
-# integrated bioanalytics {-}
+<!-- # integrated bioanalytics {-} -->
 
 <!-- start preface-->
 
