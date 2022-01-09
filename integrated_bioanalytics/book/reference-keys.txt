@@ -1,8 +1,10 @@
 fig:unnamed-chunk-3
-part-chemical-instrumentation
+fig:unnamed-chunk-4
+overview-of-analytical-separations
 chromatographic-separations
 types-of-mobile-phases-and-stationary-phases
 contact-between-the-mobile-phase-and-the-stationary-phase
+interaction-between-the-solute-and-the-stationary-phase
 things
 things-1
 things-2

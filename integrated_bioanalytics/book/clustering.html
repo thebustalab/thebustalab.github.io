@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>clustering | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta">
-<meta name="description" content="4.1 theory “Which of my samples are most closely related?” So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and...">
+<meta name="description" content="3.1 theory “Which of my samples are most closely related?” So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
 <meta property="og:title" content="clustering | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="4.1 theory “Which of my samples are most closely related?” So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and...">
+<meta property="og:description" content="3.1 theory “Which of my samples are most closely related?” So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="clustering | Integrated Bioanalytics">
-<meta name="twitter:description" content="4.1 theory “Which of my samples are most closely related?” So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and...">
+<meta name="twitter:description" content="3.1 theory “Which of my samples are most closely related?” So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
@@ -53,6 +53,7 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">welcome</a></li>
 <li class="book-part">chemical instrumentation</li>
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="separations.html">separations</a></li>
@@ -86,8 +87,8 @@
 <li class="book-part">scientific writing</li>
 <li><a class="" href="overview-2.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">5</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">6</span> results and discussion</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">4</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">5</span> results and discussion</a></li>
 <li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li><a class="" href="proposals.html">proposals</a></li>
@@ -95,11 +96,11 @@
 <li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">7</span> images of mass spectra</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">6</span> images of mass spectra</a></li>
 <li class="book-part">appendix</li>
-<li><a class="" href="links.html"><span class="header-section-number">8</span> links</a></li>
-<li><a class="" href="r-faq.html"><span class="header-section-number">9</span> r faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">10</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">7</span> links</a></li>
+<li><a class="" href="r-faq.html"><span class="header-section-number">8</span> r faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">9</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -110,9 +111,9 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="clustering" class="section level1 unnumbered">
 <h1>clustering<a class="anchor" aria-label="anchor" href="#clustering"><i class="fas fa-link"></i></a>
 </h1>
-<div id="theory" class="section level2" number="4.1">
+<div id="theory" class="section level2" number="3.1">
 <h2>
-<span class="header-section-number">4.1</span> theory<a class="anchor" aria-label="anchor" href="#theory"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.1</span> theory<a class="anchor" aria-label="anchor" href="#theory"><i class="fas fa-link"></i></a>
 </h2>
 <p>“Which of my samples are most closely related?”</p>
 <p>So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, and other questions, we need to use matrix analyses. For this, we will use <code>runMatrixAnalysis()</code>, a function that is loaded into your R Session when you run the source() command.</p>
@@ -182,7 +183,7 @@
   <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-95-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-96-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
@@ -190,12 +191,12 @@
     <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, offset <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">400</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-96-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-97-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very nice!</p>
 </div>
-<div id="exercises-3" class="section level2" number="4.2">
+<div id="exercises-3" class="section level2" number="3.2">
 <h2>
-<span class="header-section-number">4.2</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-3"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-3"><i class="fas fa-link"></i></a>
 </h2>
 <p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: <code>algae_data</code> (which algae strains are most similar to each other?), <code>alaska_lake_data</code> (which lakes are most similar to each other?). and <code>solvents</code> (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>. For each of these, create (i) a tree diagram that shows how the “samples” in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as “additional_analyte_info.”</p>
 <p>For this assignment, you may find the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:</p>
@@ -235,8 +236,8 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#clustering">clustering</a></li>
-<li><a class="nav-link" href="#theory"><span class="header-section-number">4.1</span> theory</a></li>
-<li><a class="nav-link" href="#exercises-3"><span class="header-section-number">4.2</span> exercises</a></li>
+<li><a class="nav-link" href="#theory"><span class="header-section-number">3.1</span> theory</a></li>
+<li><a class="nav-link" href="#exercises-3"><span class="header-section-number">3.2</span> exercises</a></li>
 </ul>
 
       <div class="book-extra">

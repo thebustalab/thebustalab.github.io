@@ -46,7 +46,7 @@ knitr:::opts_chunk$set(echo = TRUE, prompt = FALSE, eval = TRUE,
 options(pillar.sigfig = 3)
 ```
 
-<!-- # integrated bioanalytics {-} -->
+# welcome {-}
 
 <!-- start preface-->
 
@@ -72,7 +72,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) chemical instrumentation
+# (PART) chemical instrumentation {-}
 
 <!-- start chemical separation -->
 
@@ -86,7 +86,7 @@ The content in this part is based heavily on Harvey's Analytical Chemistry 2.1 C
 
 Drawing from an arsenal of analytical techniques, analytical chemists design methods that detect increasingly smaller concentrations of analyte in increasingly more complex matrices. Despite the power of these analytical techniques, they often suffer from a lack of selectivity. For this reason, many analytical procedures include a step to separate the analyte from potential interferents. Although effective, each additional step in an analytical procedure increases the analysis time and the cost of the analysis, and introduces uncertainty. In this chapter we consider two analytical techniques that avoid these limitations by combining the separation and analysis: chromatography and electrophoresis.
 
-<!-- ### Overview of Analytical Separations -->
+## Overview of Analytical Separations
 
 ### Chromatographic Separations
 
@@ -102,6 +102,14 @@ The mobile phase is a liquid or a gas, and the stationary phase is a solid or a 
 
 There are two common methods for bringing the mobile phase and the stationary phase into contact. In column chromatography we pack the stationary phase into a narrow column and pass the mobile phase through the column using gravity or by applying pressure. The stationary phase is a solid particle or a thin liquid film coated on either a solid particulate packing material or on the column’s walls. In planar chromatography the stationary phase is coated on a flat surface—typically, a glass, metal, or plastic plate. One end of the plate is placed in a reservoir that contains the mobile phase, which moves through the stationary phase by capillary action. In paper chromatography, for example, paper is the stationary phase.
 
+
+```{r out.width = "50%", fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system."}
+knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/mobile_stat_phase.png', dpi = NA)
+```
+
+#### Interaction Between the Solute and the Stationary Phase
+
+The interaction between the solute and the stationary phase provides a third method for describing a separation. In adsorption chro- matography, solutes separate based on their ability to adsorb to a solid stationary phase. In partition chromatography, the stationary phase is a thin liquid film on a solid support. Separation occurs because there is a difference in the equilibrium partitioning of solutes between the sta- tionary phase and the mobile phase. A stationary phase that consists of a solid support with covalently attached anionic (e.g., –SO-3 ) or cationic (e.g., –N(CH3)+3 ) functional groups is the basis for ion-exchange chro- matography in which ionic solutes are attracted to the stationary phase by electrostatic forces. In size-exclusion chromatography the stationary phase is a porous particle or gel, with separation based on the size of the solutes. Larger solutes are unable to penetrate as deeply into the porous stationary phase and pass more quickly through the column.
 
 ```{r out.width = "50%", fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap = "In chromatography we pass a mobile phase over a stationary phase. When we inject a sample into the mobile phase, the sample’s components both move with the mobile phase and partition into the stationary phase. The solute that spends the most time in the stationary phase takes the longest time to move through the system."}
 knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/mobile_stat_phase.png', dpi = NA)
