@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="“Do my samples fall into definable clusters?”  3.7 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.0/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.0/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -54,12 +54,6 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">welcome</a></li>
-<li class="book-part">chemical instrumentation</li>
-<li><a class="" href="overview.html">overview</a></li>
-<li><a class="" href="separations.html">separations</a></li>
-<li><a class="" href="mass-spectrometry.html">mass spectrometry</a></li>
-<li><a class="" href="spectroscopy.html">spectroscopy</a></li>
-<li><a class="" href="electrochemistry.html">electrochemistry</a></li>
 <li class="book-part">basic data analysis in r</li>
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="" href="ggplot-and-markdown.html">ggplot and markdown</a></li>
@@ -70,7 +64,7 @@
 <li class="book-part">advanced data analysis in r</li>
 <li><a class="" href="wrangling.html">wrangling</a></li>
 <li class="book-part">chemometrics</li>
-<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="pca.html">pca</a></li>
 <li><a class="active" href="k-means.html">k-means</a></li>
@@ -85,7 +79,7 @@
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">scientific writing</li>
-<li><a class="" href="overview-2.html">overview</a></li>
+<li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
 <li><a class="" href="figures-captions.html"><span class="header-section-number">4</span> figures &amp; captions</a></li>
 <li><a class="" href="results-and-discussion.html"><span class="header-section-number">5</span> results and discussion</a></li>
@@ -121,7 +115,7 @@
 <p>One we know within-group variances, we find the “elbow” point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in <strong>B</strong> and <strong>C</strong>.)</p>
 <p>Let’s try k-means using <code>runMatrixAnalysis</code>. We can use it in conjunction with <code>analysis = "pca"</code> or <code>analysis = "hclust"</code>. Let’s do PCA first. To include k-means, we can just set <code>kmeans = "auto"</code>. It’s important to note that kmeans cannot handle NAs. We must set something for the <code>na_replacement</code> argument. One solution is to ignore variables that have NAs for some values, which can be done by setting <code>na_replacement = "drop"</code>.</p>
 <p>With <code>kmeans = "auto"</code> and <code>na_replacement = "drop"</code>, we can now run our analyssis. The output now has an additional column called <code>kmeans_cluster</code>, which indicates what cluster each sample is in:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_pca_kmeans</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -159,12 +153,12 @@
 <span class="co">## #   relative_polarity &lt;dbl&gt;, formula_weight &lt;dbl&gt;,</span>
 <span class="co">## #   refractive_index &lt;dbl&gt;</span></code></pre></div>
 <p>We can plot the results and color them according to the group that kmeans suggested:</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">solvents_pca_kmeans</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let’s look at the elbow plot itself. For this, we can just set <code>kmeans = "elbow"</code>:</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_pca_kmeans_elbow</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -197,17 +191,17 @@
 <span class="co">## 10             10                  12265.</span>
 <span class="co">## # … with 21 more rows</span></code></pre></div>
 <p>This gives us the maximum variance within a cluster for each number of clusters. Let’s plot that:</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>
   <span class="va">solvents_pca_kmeans_elbow</span>,
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cluster_number</span>, y <span class="op">=</span> <span class="va">variance_within_cluster</span><span class="op">)</span>
 <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_col</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;"></div>
+  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-108-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Hmm, it looks like there aren’t any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set <code>kmeans = 3</code> if we want three clusters in the output. Below, let’s do just that. Let’s also plot the results and use <code>geom_mark_ellipse</code>.</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -224,15 +218,15 @@
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_mark_ellipse</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span>
 <span class="co">## Dropping any variables in your dataset that have NA as a value.</span>
 <span class="co">## Variables dropped:</span>
 <span class="co">## solubility_in_water vapor_pressure</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool!</p>
 <p>One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -250,11 +244,11 @@
 <span class="co">## solubility_in_water vapor_pressure</span>
 
 <span class="va">solvents_clustered_summary</span> <span class="op">&lt;-</span> <span class="va">solvents_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">kmeans_cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_bp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">boiling_point</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">kmeans_cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">summarize</span><span class="op">(</span>mean_bp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">boiling_point</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span>
+  <span class="fu">geom_col</span><span class="op">(</span>
     data <span class="op">=</span> <span class="va">solvents_clustered_summary</span>,
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">kmeans_cluster</span>, y <span class="op">=</span> <span class="va">mean_bp</span><span class="op">)</span>,
     color <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> <span class="st">"white"</span>
@@ -263,9 +257,9 @@
     data <span class="op">=</span> <span class="va">solvents_clustered</span>,
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">kmeans_cluster</span>, y <span class="op">=</span> <span class="va">boiling_point</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it’s possible that we’ll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the <code>plot_grid</code> function from the <code>cowplot</code> package. Let’s check it out:</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">solvents</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
@@ -289,24 +283,24 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span>, 
     alpha <span class="op">=</span> <span class="fl">0.5</span>, label.lineheight <span class="op">=</span> <span class="fl">0.2</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"PCA dimension 1"</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">8</span>,<span class="fl">8</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"PCA dimension 2"</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">7</span>,<span class="fl">7</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_x_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"PCA dimension 1"</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">8</span>,<span class="fl">8</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_y_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"PCA dimension 2"</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">7</span>,<span class="fl">7</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">colors</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">8</span>,<span class="fl">8</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">7</span>,<span class="fl">7</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">8</span>,<span class="fl">8</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">7</span>,<span class="fl">7</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">solvents_clustered_summary</span> <span class="op">&lt;-</span> <span class="va">solvents_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">kmeans_cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_bp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">boiling_point</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">kmeans_cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">summarize</span><span class="op">(</span>mean_bp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">boiling_point</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">bar_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span>
+  <span class="fu">geom_violin</span><span class="op">(</span>
     data <span class="op">=</span> <span class="va">solvents_clustered</span>,
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">kmeans_cluster</span>, y <span class="op">=</span> <span class="va">boiling_point</span>, fill <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span>,
     size <span class="op">=</span> <span class="fl">0.5</span>, color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, width <span class="op">=</span> <span class="fl">0.5</span>
   <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_crossbar</a></span><span class="op">(</span>
+  <span class="fu">geom_crossbar</span><span class="op">(</span>
     data <span class="op">=</span> <span class="va">solvents_clustered_summary</span>,
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">kmeans_cluster</span>, y <span class="op">=</span> <span class="va">mean_bp</span>, ymin <span class="op">=</span> <span class="va">mean_bp</span>, ymax <span class="op">=</span> <span class="va">mean_bp</span><span class="op">)</span>,
     color <span class="op">=</span> <span class="st">"black"</span>, width <span class="op">=</span> <span class="fl">0.5</span>
@@ -316,16 +310,16 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">kmeans_cluster</span>, y <span class="op">=</span> <span class="va">boiling_point</span><span class="op">)</span>,
     size <span class="op">=</span> <span class="fl">2</span>, color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>
   <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Boiling point"</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">250</span>,<span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_x_discrete</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_y_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Boiling point"</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">250</span>,<span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_x_discrete</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Cluster"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">colors</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">coord_flip</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span>
 
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">pca_plot</span>, <span class="va">bar_plot</span>, align <span class="op">=</span> <span class="st">"h"</span>, axis <span class="op">=</span> <span class="st">"b"</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-114-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Now we are really rockin!!</p>
 </div>
 <div id="exercises-5" class="section level2" number="3.8">
@@ -367,7 +361,7 @@
 <h3>
 <span class="header-section-number">3.8.6</span> Question 6<a class="anchor" aria-label="anchor" href="#question-6"><i class="fas fa-link"></i></a>
 </h3>
-<p>Google “Quercetin.” What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using <code>geom_pointrange</code> and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic()</a></code>).</p>
+<p>Google “Quercetin.” What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using <code>geom_pointrange</code> and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, <code>theme_classic()</code>).</p>
 <p>Does one cluster have a large amount of variation in Quercetin abundance? Why do you think this might be?</p>
 </div>
 <div id="question-7" class="section level3" number="3.8.7">
@@ -386,7 +380,7 @@
 <p><code>rel_widths = &lt;your_choice&gt;</code> inside <code>plot_grid()</code></p>
 <p><code>name = &lt;your_choice&gt;</code> inside <code>scale_*_*</code></p>
 <p><code>label = kmeans_cluster</code> inside <code>geom_mark_ellipse()</code></p>
-<p><code>breaks = &lt;your_choice&gt;</code> inside <code><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous()</a></code> or <code><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous()</a></code> (as an example, <code>breaks = seq(0,10,1)</code>)</p>
+<p><code>breaks = &lt;your_choice&gt;</code> inside <code>scale_x_continuous()</code> or <code>scale_y_continuous()</code> (as an example, <code>breaks = seq(0,10,1)</code>)</p>
 <p>Also, consider using:</p>
 <p><code>guides(fill = "none", color = "none")</code></p>
 <p>Install the RColorBrewer package, and use one of its color schemes. As an example with the color scheme <code>Set1</code>:</p>
@@ -446,7 +440,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta. It was last built on 2022-01-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta. It was last built on 2022-01-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

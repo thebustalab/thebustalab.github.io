@@ -6,19 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>import and tidying | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta">
-<meta name="description" content="1.21 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
+<meta name="description" content="1.19 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
 <meta property="og:title" content="import and tidying | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="1.21 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
+<meta property="og:description" content="1.19 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="import and tidying | Integrated Bioanalytics">
-<meta name="twitter:description" content="1.21 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
+<meta name="twitter:description" content="1.19 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.0/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.0/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -54,12 +54,6 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">welcome</a></li>
-<li class="book-part">chemical instrumentation</li>
-<li><a class="" href="overview.html">overview</a></li>
-<li><a class="" href="separations.html">separations</a></li>
-<li><a class="" href="mass-spectrometry.html">mass spectrometry</a></li>
-<li><a class="" href="spectroscopy.html">spectroscopy</a></li>
-<li><a class="" href="electrochemistry.html">electrochemistry</a></li>
 <li class="book-part">basic data analysis in r</li>
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="" href="ggplot-and-markdown.html">ggplot and markdown</a></li>
@@ -70,7 +64,7 @@
 <li class="book-part">advanced data analysis in r</li>
 <li><a class="" href="wrangling.html">wrangling</a></li>
 <li class="book-part">chemometrics</li>
-<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="pca.html">pca</a></li>
 <li><a class="" href="k-means.html">k-means</a></li>
@@ -85,7 +79,7 @@
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">scientific writing</li>
-<li><a class="" href="overview-2.html">overview</a></li>
+<li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
 <li><a class="" href="figures-captions.html"><span class="header-section-number">4</span> figures &amp; captions</a></li>
 <li><a class="" href="results-and-discussion.html"><span class="header-section-number">5</span> results and discussion</a></li>
@@ -111,9 +105,9 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="import-and-tidying" class="section level1 unnumbered">
 <h1>import and tidying<a class="anchor" aria-label="anchor" href="#import-and-tidying"><i class="fas fa-link"></i></a>
 </h1>
-<div id="data-import" class="section level2" number="1.21">
+<div id="data-import" class="section level2" number="1.19">
 <h2>
-<span class="header-section-number">1.21</span> data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.19</span> data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
 </h2>
 <p>To analyze data that is stored on your own computer you can indeed import it into RStudio.</p>
 <p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
@@ -130,13 +124,13 @@
 </ul>
 <p>With these paths, we can read in data using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
 </div>
-<div id="tidy-data" class="section level2" number="1.22">
+<div id="tidy-data" class="section level2" number="1.20">
 <h2>
-<span class="header-section-number">1.22</span> tidy data<a class="anchor" aria-label="anchor" href="#tidy-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.20</span> tidy data<a class="anchor" aria-label="anchor" href="#tidy-data"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://tidydatatutor.com/vis.html" class="uri">https://tidydatatutor.com/vis.html</a></p>
 <p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fadb_sample</span>
 <span class="co">## # A tibble: 7 × 11</span>
 <span class="co">##   fatty_acid         Agonandra_brasiliensis Agonandra_silva…</span>
@@ -153,9 +147,9 @@
 <span class="co">## #   Ximenia_americana &lt;dbl&gt;, Ongokea_gore &lt;dbl&gt;,</span>
 <span class="co">## #   Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span>
 <span class="co">## #   Nuytsia_floribunda &lt;dbl&gt;</span></code></pre></div>
-<p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fadb_sample</span>, cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, names_to <span class="op">=</span> <span class="st">"plant_species"</span>, values_to <span class="op">=</span> <span class="st">"relative_abundance"</span><span class="op">)</span>
+<p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">pivot_longer</span><span class="op">(</span>data <span class="op">=</span> <span class="va">fadb_sample</span>, cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, names_to <span class="op">=</span> <span class="st">"plant_species"</span>, values_to <span class="op">=</span> <span class="st">"relative_abundance"</span><span class="op">)</span>
 <span class="co">## # A tibble: 70 × 3</span>
 <span class="co">##    fatty_acid        plant_species           relative_abunda…</span>
 <span class="co">##    &lt;chr&gt;             &lt;chr&gt;                              &lt;dbl&gt;</span>
@@ -191,8 +185,8 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#import-and-tidying">import and tidying</a></li>
-<li><a class="nav-link" href="#data-import"><span class="header-section-number">1.21</span> data import</a></li>
-<li><a class="nav-link" href="#tidy-data"><span class="header-section-number">1.22</span> tidy data</a></li>
+<li><a class="nav-link" href="#data-import"><span class="header-section-number">1.19</span> data import</a></li>
+<li><a class="nav-link" href="#tidy-data"><span class="header-section-number">1.20</span> tidy data</a></li>
 </ul>
 
       <div class="book-extra">
@@ -210,7 +204,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta. It was last built on 2022-01-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta. It was last built on 2022-01-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -100,7 +100,7 @@
             }
 
             message("Loading packages...")
-            invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), require, character.only = TRUE))))
+            invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
     
     } else {
     
