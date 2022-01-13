@@ -161,7 +161,7 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
 First, attempt to load phylochemistry:
-```{r, message = FALSE, eval = FALSE}
+```{r, message = FALSE}
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
@@ -190,16 +190,6 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- source("http://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
 
-<!-- ## xcms
-
-If you wish to run the GC-MS integration app that comes with phylochemistry, please also install XCMS by running the following in your RStudio console:
-
-```{r, message = FALSE, eval = FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("xcms")
-``` -->
 
 ## Updating R and R Packages
 
@@ -208,11 +198,11 @@ To update R:
 
 ```{r, eval = FALSE}
 
-install.packages('devtools') #assuming it is not already installed
+install.packages('remotes') #assuming it is not remotes installed
 
-library(devtools)
+library(remotes)
 
-install_github('andreacirilloac/updateR')
+remotes::install_github('andreacirilloac/updateR')
 
 library(updateR)
 
@@ -225,7 +215,8 @@ Sometimes we want to save our R scripts on Google Drive. If you have an R script
 ```{r, message = FALSE, eval = FALSE}
 openRGD("file_share_link_here")
 ```
- \
+
+
 When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
 ```{r, message = FALSE, eval = FALSE}
 closeRGD("file_share_link_here")
