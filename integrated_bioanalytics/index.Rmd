@@ -193,20 +193,21 @@ The first time you try this, it will very likely say: "You need to install the f
 
 ## Updating R and R Packages
 
+Close RStudio, open the plain R GUI, then run the following:
 
-To update R:
+On Mac:
 
 ```{r, eval = FALSE}
-
 install.packages('remotes') #assuming it is not remotes installed
-
-library(remotes)
-
 remotes::install_github('andreacirilloac/updateR')
+updateR::updateR()
+```
 
-library(updateR)
+On PC:
 
-updateR()
+```{r, eval = FALSE}
+install.packages("installr")
+installr::updateR()
 ```
 
 ## R scripts on Google Drive
@@ -215,7 +216,6 @@ Sometimes we want to save our R scripts on Google Drive. If you have an R script
 ```{r, message = FALSE, eval = FALSE}
 openRGD("file_share_link_here")
 ```
-
 
 When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
 ```{r, message = FALSE, eval = FALSE}
