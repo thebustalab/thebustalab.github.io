@@ -83,15 +83,15 @@
                 if(response) {
                     
                     if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
-                        install.packages(CRAN_packages[CRAN_packages %in% packages_needed])
+                        install.packages(CRAN_packages[CRAN_packages %in% packages_needed], dependencies = TRUE)
                     }
 
                     if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
-                        BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed])
+                        BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed], dependencies = TRUE)
                     }
 
                     if (length(Github_packages[Github_packages %in% packages_needed]) > 0) {
-                        remotes::install_github(Github_packages[Github_packages %in% packages_needed])
+                        remotes::install_github(Github_packages[Github_packages %in% packages_needed], dependencies = TRUE)
                     }
 
                 } else {
