@@ -5082,7 +5082,7 @@
                                                 theme_classic() +
                                                 guides(fill = "none") +
                                                 scale_fill_continuous(type = "viridis") +
-                                                scale_color_brewer(palette = "Set1")
+                                                scale_color_brewer(palette = "Paired")
 
                                         ## Add peaks, if any
                                             
