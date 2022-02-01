@@ -7296,7 +7296,6 @@
                                     print(head(prelim_data))
                             
                                 ## Extract swatches
-
                                     prelim_data %>%
                                         pivot_longer(cols = 9:11, names_to = "color", values_to = "value") %>%
                                         group_by(QR, color) %>%
