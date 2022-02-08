@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>genomic analyses | Integrated Bioanalytics</title>
+<title>genome assembly | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="3.21 loading GFF files">
+<meta name="description" content="For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using: cat *.fastq &gt; all_reads.fastq Then use Canu to assemble, we...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="genomic analyses | Integrated Bioanalytics">
+<meta property="og:title" content="genome assembly | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="3.21 loading GFF files">
+<meta property="og:description" content="For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using: cat *.fastq &gt; all_reads.fastq Then use Canu to assemble, we...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="genomic analyses | Integrated Bioanalytics">
-<meta name="twitter:description" content="3.21 loading GFF files">
+<meta name="twitter:title" content="genome assembly | Integrated Bioanalytics">
+<meta name="twitter:description" content="For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using: cat *.fastq &gt; all_reads.fastq Then use Canu to assemble, we...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
@@ -74,11 +74,11 @@
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">nanopore data</li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
-<li><a class="" href="genome-assembly.html">genome assembly</a></li>
+<li><a class="active" href="genome-assembly.html">genome assembly</a></li>
 <li class="book-part">transcriptome analysis</li>
 <li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
 <li class="book-part">genomic analysis</li>
-<li><a class="active" href="genomic-analyses.html">genomic analyses</a></li>
+<li><a class="" href="genomic-analyses.html">genomic analyses</a></li>
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">scientific writing</li>
@@ -105,25 +105,40 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="genomic-analyses" class="section level1 unnumbered">
-<h1>genomic analyses<a class="anchor" aria-label="anchor" href="#genomic-analyses"><i class="fas fa-link"></i></a>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="genome-assembly" class="section level1 unnumbered">
+<h1>genome assembly<a class="anchor" aria-label="anchor" href="#genome-assembly"><i class="fas fa-link"></i></a>
 </h1>
-<div id="loading-gff-files" class="section level2" number="3.21">
-<h2>
-<span class="header-section-number">3.21</span> loading GFF files<a class="anchor" aria-label="anchor" href="#loading-gff-files"><i class="fas fa-link"></i></a>
-</h2>
-<!-- end -->
-<hr>
-<hr>
-<hr>
-</div>
+<p>For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:</p>
+<p><code>cat *.fastq &gt; all_reads.fastq</code></p>
+<p>Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using <code>nano</code>. In it, try something like:</p>
+<p><code>/home/bust0037/canu/canu-2.1.1/build/bin/canu \ -p k_fed -d round2_reads/ \ genomeSize=260m \ -nanopore /mnt/int_disk/Kalanchoe_DNAseq/round2_reads/all_reads.fastq \ -minReadLength=1000 -correctedErrorRate=0.12 \ -minOverlapLength=500 -useGrid=false \ -minInputCoverage=0.5 -stopOnLowCoverage=0.5</code></p>
+<p>Notes on Canu options:</p>
+<p>Defaults:</p>
+<ul>
+<li>minReadLength=1000</li>
+<li>minOverlapLength=500bp</li>
+<li>correctedErrorRate=0.114</li>
+<li>stopOnLowCoverage &lt;integer=10&gt;</li>
+</ul>
+<p>Essentially only speed optimization:</p>
+<ul>
+<li>For over 30X coverage:</li>
+<li>Nanopore flip-flop R9.4 or R10.3: try: <code>corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105</code>
+</li>
+<li>For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
+correctedErrorRate=0.12</li>
+<li>Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________</li>
+</ul>
 </div>
 
 
 
 <div class="chapter-nav">
-<div class="prev"><a href="transcriptomic-analyses.html">transcriptomic analyses</a></div>
-<div class="next"><a href="evolutionary-analyses.html">evolutionary analyses</a></div>
+<div class="prev"><a href="data-transfer.html">data transfer</a></div>
+<div class="next"><a href="transcriptomic-analyses.html">transcriptomic analyses</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -135,10 +150,7 @@
         </ul>
 <hr>
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#genomic-analyses">genomic analyses</a></li>
-<li><a class="nav-link" href="#loading-gff-files"><span class="header-section-number">3.21</span> loading GFF files</a></li>
-</ul>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#genome-assembly">genome assembly</a></li></ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">

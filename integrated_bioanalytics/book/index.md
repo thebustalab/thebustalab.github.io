@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
-author: "Lucas Busta"
-date: "2022-01-13"
+author: "Lucas Busta and members of the Busta lab"
+date: "2022-02-07"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3007,6 +3007,68 @@ To control the mass spectrum window:
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
 <!-- end -->
 
+
+# (PART) nanopore data {-}
+
+<!-- start nanopore data -->
+
+# data transfer {-}
+
+Once you've completed a nanopore run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
+
+1.  Identify which files are of interest/where they are in the system.
+
+-Useful commands:
+
+`df -h` displays all currently mounted filesystems (& their usage, storage space, mounting point)
+
+`sudo fdisk -l` displays more data pertaining to the identification of disks. Can also change partitioning of hard disks
+
+-Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
+
+2. Mounting
+
+-Use command:
+`sudo mount </dev/sd_> </file_path>`
+-Replace `</sd_>` with actual hard drive label and `/file_path` with the pathway for the location in which you want to mount the drive.
+-Make sure the location (`</file_path>`) is preexisting location. Use the `mkdir` command to make a new directory if necessary.
+
+3. Copy data
+-Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk .
+
+
+# genome assembly {-}
+
+For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
+
+`cat *.fastq > all_reads.fastq`
+
+Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
+
+`/home/bust0037/canu/canu-2.1.1/build/bin/canu \
+-p k_fed -d round2_reads/ \
+genomeSize=260m \
+-nanopore /mnt/int_disk/Kalanchoe_DNAseq/round2_reads/all_reads.fastq \
+-minReadLength=1000 -correctedErrorRate=0.12 \
+-minOverlapLength=500 -useGrid=false \
+-minInputCoverage=0.5 -stopOnLowCoverage=0.5`
+
+Notes on Canu options:
+
+Defaults:
+
+* minReadLength=1000
+* minOverlapLength=500bp
+* correctedErrorRate=0.114
+* stopOnLowCoverage <integer=10>
+
+Essentially only speed optimization:
+
+* For over 30X coverage:
+* Nanopore flip-flop R9.4 or R10.3: try: `corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105`
+* For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
+correctedErrorRate=0.12
+* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

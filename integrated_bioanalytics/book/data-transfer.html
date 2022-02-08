@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>genomic analyses | Integrated Bioanalytics</title>
+<title>data transfer | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="3.21 loading GFF files">
+<meta name="description" content="Once you’ve completed a nanopore run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are: Identify which files are...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="genomic analyses | Integrated Bioanalytics">
+<meta property="og:title" content="data transfer | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="3.21 loading GFF files">
+<meta property="og:description" content="Once you’ve completed a nanopore run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are: Identify which files are...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="genomic analyses | Integrated Bioanalytics">
-<meta name="twitter:description" content="3.21 loading GFF files">
+<meta name="twitter:title" content="data transfer | Integrated Bioanalytics">
+<meta name="twitter:description" content="Once you’ve completed a nanopore run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are: Identify which files are...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
@@ -73,12 +73,12 @@
 <li class="book-part">mass spectrometric analysis</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">nanopore data</li>
-<li><a class="" href="data-transfer.html">data transfer</a></li>
+<li><a class="active" href="data-transfer.html">data transfer</a></li>
 <li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li class="book-part">transcriptome analysis</li>
 <li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
 <li class="book-part">genomic analysis</li>
-<li><a class="active" href="genomic-analyses.html">genomic analyses</a></li>
+<li><a class="" href="genomic-analyses.html">genomic analyses</a></li>
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">scientific writing</li>
@@ -105,25 +105,32 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="genomic-analyses" class="section level1 unnumbered">
-<h1>genomic analyses<a class="anchor" aria-label="anchor" href="#genomic-analyses"><i class="fas fa-link"></i></a>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="data-transfer" class="section level1 unnumbered">
+<h1>data transfer<a class="anchor" aria-label="anchor" href="#data-transfer"><i class="fas fa-link"></i></a>
 </h1>
-<div id="loading-gff-files" class="section level2" number="3.21">
-<h2>
-<span class="header-section-number">3.21</span> loading GFF files<a class="anchor" aria-label="anchor" href="#loading-gff-files"><i class="fas fa-link"></i></a>
-</h2>
-<!-- end -->
-<hr>
-<hr>
-<hr>
+<p>Once you’ve completed a nanopore run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:</p>
+<ol style="list-style-type: decimal">
+<li>Identify which files are of interest/where they are in the system.</li>
+</ol>
+<p>-Useful commands:</p>
+<p><code>df -h</code> displays all currently mounted filesystems (&amp; their usage, storage space, mounting point)</p>
+<p><code>sudo fdisk -l</code> displays more data pertaining to the identification of disks. Can also change partitioning of hard disks</p>
+<p>-Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Mounting</li>
+</ol>
+<p>-Use command:
+<code>sudo mount &lt;/dev/sd_&gt; &lt;/file_path&gt;</code>
+-Replace <code>&lt;/sd_&gt;</code> with actual hard drive label and <code>/file_path</code> with the pathway for the location in which you want to mount the drive.
+-Make sure the location (<code>&lt;/file_path&gt;</code>) is preexisting location. Use the <code>mkdir</code> command to make a new directory if necessary.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Copy data
+-Just use the <code>cp</code> command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk .</li>
+</ol>
 </div>
-</div>
-
-
-
-<div class="chapter-nav">
-<div class="prev"><a href="transcriptomic-analyses.html">transcriptomic analyses</a></div>
-<div class="next"><a href="evolutionary-analyses.html">evolutionary analyses</a></div>
+  <div class="chapter-nav">
+<div class="prev"><a href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></div>
+<div class="next"><a href="genome-assembly.html">genome assembly</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -135,10 +142,7 @@
         </ul>
 <hr>
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#genomic-analyses">genomic analyses</a></li>
-<li><a class="nav-link" href="#loading-gff-files"><span class="header-section-number">3.21</span> loading GFF files</a></li>
-</ul>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#data-transfer">data transfer</a></li></ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
@@ -148,13 +152,9 @@
 </div>
     </nav>
 </div>
-</div>
-  
-
-  
 
 </div>
- <!-- .container -->
+</div> <!-- .container -->
 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
