@@ -155,7 +155,7 @@
         
             message("Loading MS Library...")
 
-            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
         }
 
     } else {
