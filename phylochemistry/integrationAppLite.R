@@ -45,7 +45,7 @@
             )
 
             Bioconductor_packages <- c(
-                "ggtree",
+                "ggtree"
                 # "xcms",
                 # "msa",
                 # "rtracklayer",
