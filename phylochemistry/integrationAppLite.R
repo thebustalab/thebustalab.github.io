@@ -1381,3 +1381,276 @@
 
             }
 
+    #### buildTree
+
+        #' Construct various types of phylogenetic trees from alignments or other trees
+        #'
+        #' @param scaffold_type The type of information that should be used to build the tree. One of "amin_alignment", "nucl_alignment", or "newick"
+        #' @param scaffold_in_path The path to the information that should be used to build the tree.
+        #' @param members The tips of the tree that should be included. Default is to include everything.
+        #' @param gblocks TRUE/FALSE whether to use gblocks on the alignment
+        #' @param gblocks_path Path to the gblocks module, perhaps something like "/Users/lucasbusta/Documents/Science/_Lab_Notebook/Bioinformatics/programs/Gblocks_0.91b/Gblocks"
+        #' @param ml TRUE/FALSE whether to use maximum likelihood when constructing the tree.
+        #' @param model_test TRUE/FALSE whether to test various maximum likelihood models while constructing the tree
+        #' @param bootstrap TRUE/FALSE whether to calculate bootstrap values for tree nodes.
+        #' @param rois TRUE/FALSE whether to use only certain portions of an alignment for constructing the tree
+        #' @param rois_data The position in the alignment to use when constructing the tree. Default = NULL, i.e. all positions.
+        #' @param ancestral_states TRUE/FALSE whether to calculate ancestral states at nodes in the tree. Requires specifying a root via the 'root' parameter
+        #' @param root The tree tip to use as the root of the tree
+        #' @examples
+        #' @export
+        #' buildTree
+
+        buildTree <-    function(
+                            scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
+                            scaffold_in_path,
+                            members = NULL,
+                            gblocks = FALSE, 
+                            gblocks_path = NULL,
+                            ml = FALSE, 
+                            model_test = FALSE,
+                            bootstrap = FALSE,
+                            rois = FALSE, 
+                            rois_data = NULL,
+                            ancestral_states = FALSE,
+                            root = NULL
+                        ) {
+
+            if ( scaffold_type == "nucl_alignment" ) {
+
+                ## Use ROIS if specified
+                    # if ( rois == FALSE ) {
+                    #     cat("Skipping ROIs...\n")
+                    # } 
+                    # if ( rois == TRUE ) {
+                    #     rois_data$region_start <- as.numeric(as.character(rois_data$region_start))
+                    #     rois_data$region_end <- as.numeric(as.character(rois_data$region_end))
+                    #     nucl_seqs_aligned <- Biostrings::readDNAStringSet(file = paste(scaffold_in_path), format = "fasta")
+                    #     nucl_seqs_aligned_roi <- subseq(nucl_seqs_aligned, 1, 0)
+                    #         for ( i in 1:dim(rois_data)[1] ) {
+                    #             nucl_seqs_aligned_roi <- Biostrings::xscat(nucl_seqs_aligned_roi, subseq(nucl_seqs_aligned, (rois_data[,2][i]*3)-2, (rois_data[,3][i]*3)))
+                    #         }
+                    #     nucl_seqs_aligned_roi@ranges@NAMES <- nucl_seqs_aligned@ranges@NAMES
+                    #     Biostrings::writeXStringSet(nucl_seqs_aligned_roi, filepath = paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi", sep = ""))
+                    #     nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi", sep = ""), format="fasta", type="DNA")
+                    #     if ( gblocks == FALSE ) {
+                    #         cat(paste("Making tree with ", scaffold_in_path, "_roi...", sep = ""))
+                    #     }
+                    # }
+
+                ## Use gblocks on the alignment if specified
+                    if ( gblocks == FALSE ) {
+                        cat("Skipping gBlocks...\n")                    
+                    }
+                    if ( gblocks == TRUE ) {
+                        if ( rois == FALSE ) {
+                            nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
+                            nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
+                            ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
+                            nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "DNA")
+                            cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
+                        } 
+                        if ( rois == TRUE ) {
+                            # nucl_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
+                            # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "n", exec=gblocks_path)
+                            # ape::write.dna(nucl_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
+                            # nucl_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
+                            # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
+                        }
+                    }
+
+                ## If neither gBlocks nor ROIs, read in alignment as phyDat for tree creation
+                    if ( rois == FALSE ) {
+                        if ( gblocks == FALSE ) {
+                            nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
+                            cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
+                        }
+                    }
+
+                ## Create the tree
+                    output <- list()
+
+                    ## Create distrance tree
+                        cat("Creating neighbor-joining tree...\n")
+                        dm <- phangorn::dist.ml(nucl_seqs_aligned, "F81")
+                        NJ_tree <- phangorn::NJ(dm)
+                        output <- NJ_tree
+
+                    ## Make ml tree
+                        if ( ml == TRUE ) {
+                            ## Test all available nucl models, use the best one to optimize for ml
+                                if ( model_test == TRUE ) {
+                                    cat(paste("Testing 24 maximum liklihood models... \n"))
+                                    mt <- phangorn::modelTest(nucl_seqs_aligned, tree = NJ_tree, multicore = TRUE)
+                                    best_nucl_model <- gsub("\\+.*$", "", mt$Model[which.max(mt$logLik)])
+                                    cat(paste("Tested 24 models, using best model:", as.character(gsub("\\+.*$","",best_nucl_model)), "\n", sep = " "))
+                                } else {
+                                    best_nucl_model <- "GTR"
+                                }
+                                ML_tree_start <- phangorn::pml(NJ_tree, nucl_seqs_aligned, k = 4)
+                                ML_tree_optimized <- phangorn::optim.pml(ML_tree_start, rearrangement = "stochastic", optInv = TRUE, optGamma = TRUE, model = as.character(best_nucl_model))
+                                output <- ML_tree_optimized$tree
+                        }
+
+                    ## Run bootstrap analysis
+                        if ( bootstrap == TRUE ) {
+                            if ( ml == FALSE ) {
+                                stop("To calculate bootstrap values, please also run maximum likelihood estimation (ml = TRUE).\n")
+                            }
+                            bootstraps <- phangorn::bootstrap.pml(ML_tree_optimized, bs = 100, optNni = TRUE, multicore = FALSE)
+                            ML_tree_optimized$tree$node.label <- phangorn::plotBS(ML_tree_optimized$tree, bootstraps)$node.label
+                            output <- ML_tree_optimized$tree
+                        }
+
+                    ## Root the tree and run ancestral states
+                        if ( ancestral_states == TRUE ) {
+                            if ( ml == FALSE ) {
+                                cat("To enable ancestral state reconstruction, please also run maximum likelihood estimation (ml = TRUE).\n")
+                            }
+                            if ( ml == TRUE ) {
+                                # Root the tree, then calculate ancestral_states
+                                    ML_tree_optimized$tree <- ape::root(ML_tree_optimized$tree, as.character(root))
+                                    output <- list()
+                                    output$tree <- ML_tree_optimized$tree
+                                    output$ancestral_states <- phangorn::ancestral.pml(ML_tree_optimized)
+                            }
+                        }
+
+                    ## Root the tree if no ancestral_states were requested
+                        if ( ancestral_states == FALSE ) {
+                            if ( length(root) > 0 ) {
+                                output <- ape::root(output, as.character(root))
+                            }
+                        }
+
+                ## Return the tree
+                    return( output )
+            }
+
+            if ( scaffold_type == "amin_alignment" ) {
+
+                ## Read in data
+                    if (rois == FALSE) {
+                            cat("Skipping roi...\n")
+                            amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "AA")
+                            cat(paste("Making tree with ", scaffold_in_path, "...\n", sep = ""))
+                        } else {
+                            rois_data$region_start <- as.numeric(as.character(rois_data$region_start))
+                            rois_data$region_end <- as.numeric(as.character(rois_data$region_end))
+                            amin_seqs_aligned <- Biostrings::readAAStringSet(filepath = scaffold_in_path, format = "fasta")
+                            amin_seqs_aligned_roi <- subseq(amin_seqs_aligned, 1, 0)
+                            for (i in 1:dim(rois_data)[1]) {
+                                amin_seqs_aligned_roi <- Biostrings::xscat(amin_seqs_aligned_roi, subseq(amin_seqs_aligned, rois_data[,2][i], rois_data[,3][i]))
+                            }
+                        amin_seqs_aligned_roi@ranges@NAMES <- amin_seqs_aligned@ranges@NAMES
+                        Biostrings::writeXStringSet(amin_seqs_aligned_roi, filepath = paste(scaffold_in_path, "_roi", sep = ""))
+                        amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta", type = "AA")
+                        cat(paste("Making tree with ", scaffold_in_path, "_roi...", sep = ""))
+                    }
+
+                ## Make distance tree
+                    dm = phangorn::dist.ml(amin_seqs_aligned, model = "JTT")
+                    amin_tree = phangorn::NJ(dm)
+
+                ## Make ml tree
+                    if ( ml == TRUE ) {
+                        if ( model_test == TRUE ) {
+                            ## Test all available amino acid models and extract the best one
+                                # mt <- modelTest(amin_seqs_aligned, model = "all", multicore = TRUE)
+                                # fitStart = eval(get(mt$Model[which.min(mt$BIC)], env), env)
+                                # LG+G+I
+                        } else {
+                            model <- "LG"
+                        }
+                        
+                        ## Optimize for maximum liklihood and write out
+                            fitStart = phangorn::pml(amin_tree, amin_seqs_aligned, model = model, k = 4, inv = .2)
+                            amin_tree = phangorn::optim.pml(fitStart, rearrangement = "stochastic", optInv = TRUE, optGamma = TRUE)$tree
+                    }
+
+                ## Run bootstrap analysis
+                    if ( bootstrap == TRUE ) {
+                        if ( ml == FALSE ) {
+                            stop("To calculate bootstrap values, please also run maximum likelihood estimation (ml = TRUE)")
+                        }
+                        bootstraps <- phangorn::bootstrap.pml(fitStart, bs = 100, optNni = TRUE, multicore = FALSE)
+                        amin_tree$node.label <- phangorn::plotBS(amin_tree, bootstraps)$node.label
+                    }
+
+                ## Return tree
+                    return ( amin_tree )
+            }
+
+            if ( scaffold_type == "newick" ) {
+
+                ## Read in the newick scaffold
+                    if (length(grep("http", scaffold_in_path)) > 0) {
+                        tree <- readLines(scaffold_in_path)
+                        temp_tree <- tempfile(fileext = ".newick")
+                        temp_tree_connection <- file(temp_tree, "w")
+                        cat(tree, file = temp_tree_connection)
+                        close(temp_tree_connection)
+                        newick <- readTree(temp_tree)
+                        unlink(temp_tree)
+                    } else {
+                        newick <- readTree( tree_in_path = scaffold_in_path )    
+                    }
+
+                ## Are the Genus_species in your members in the newick? Are the genera in your members in the newick?
+                    compatibility <- data.frame( Genus_species = unique(members), is_species_in_tree = NA, is_genus_in_tree = NA )
+                    compatibility$is_species_in_tree <- compatibility$Genus_species %in% newick$tip.label
+                    compatibility$is_genus_in_tree <- gsub("_.*$", "", compatibility$Genus_species) %in% gsub("_.*$", "", as.character(newick$tip.label))
+
+                if ( all(compatibility$is_species_in_tree) == FALSE ) {
+                    ## For Genus_species in members whose genus is missing from the tree (orphans), remove them
+                        orphans <- as.character(dplyr::filter(compatibility, is_species_in_tree == FALSE & is_genus_in_tree == FALSE)$Genus_species)
+                        members <- members[!(members %in% orphans)]
+                        if ( length(orphans) > 0 ) {
+                            cat("The following species belong to a genus not found in the newick scaffold and were removed: ")
+                            for ( orphan in 1:length(orphans) ) {
+                                cat("\n")
+                                cat(orphans[orphan])
+                            }
+                            cat("\n")
+                            cat("\n")
+                        }
+
+                    ## Check compatibility again
+                        compatibility <- data.frame(Genus_species = unique(members), is_species_in_tree = NA, is_genus_in_tree = NA)
+                        compatibility$is_species_in_tree <- compatibility$Genus_species %in% newick$tip.label
+                        compatibility$is_genus_in_tree <- gsub("_.*$", "", compatibility$Genus_species) %in% gsub("_.*$", "", as.character(newick$tip.label))
+
+                    ## For unique(members$Genus_species) in members not in the tree but whose genus in the tree (adoptees), substitute
+                        adoptees <- as.character(dplyr::filter(compatibility, is_species_in_tree == FALSE & is_genus_in_tree == TRUE)$Genus_species)
+
+                        for ( i in 1:length(adoptees) ) {
+                            potential_foster_species <- newick$tip.label[gsub("_.*$", "", newick$tip.label) %in% gsub("_.*$", "", adoptees[i])] # all species in tree of the adoptees genus
+                            available_foster_species <- potential_foster_species[!potential_foster_species %in% unique(members)] # potential_foster_species not already in the quantities
+                            if ( length(available_foster_species) == 0) {
+                                members <- members[!members %in% adoptees[i]]
+                                cat(paste("There aren't enough fosters to include the following species in the tree so it was removed:", adoptees[i], "\n", sep = " "))
+                            } else {
+                                cat(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
+                                newick$tip.label[newick$tip.label == as.character(available_foster_species[1])] <- as.character(adoptees[i])
+                            }
+                        }
+                }
+
+                ## Drop tree tips not in desired members
+                    newick <- ape::drop.tip(newick, newick$tip.label[!newick$tip.label %in% unique(members)])
+
+                ## Sort members according to the tree
+                    ordered_tip_labels <- subset(ggtree::fortify(newick), isTip)$label[order(subset(ggtree::fortify(newick), isTip)$y, decreasing = TRUE)]
+                    members <- factor(members, levels = rev(ordered_tip_labels))
+
+                ## Return tree
+                    return ( newick )
+            }
+
+            cat("Pro tip: most tree read/write functions reset node numbers.\n 
+                Fortify your tree and save it as a csv file to preserve node numbering.\n
+                Do not save your tree as a newick or nexus file."
+            )
+        }
+
+    
