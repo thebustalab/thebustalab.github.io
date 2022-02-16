@@ -11,7 +11,6 @@
             CRAN_packages <- c(
                 "gridExtra",
                 "ape",
-                "rstatix",
                 "multcompView",
                 "imager",
                 "shiny",
