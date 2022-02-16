@@ -30,7 +30,7 @@
                 "dplyr",
                 "stringr", 
                 "progress",
-                "tidyverse",
+                "tidyverse"
                 # "ggrepel",
                 # "cowplot",
                 # "rstatix",
