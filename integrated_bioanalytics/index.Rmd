@@ -96,7 +96,7 @@ If you have trouble installing RStudio please google "Install RStudio Mac" or "I
 
 ## verification
 
-Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
+Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. If you are on Windows, be sure to run RStudio as administrator. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('http://thebustalab.github.io/integrated_bioanalytics/images/rstudio_components.png', dpi = NA)
@@ -160,7 +160,7 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
-First, attempt to load phylochemistry:
+First, attempt to load phylochemistry, if you are on Windows, be sure you've open RStudio as an administrator:
 ```{r, message = FALSE}
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
@@ -2944,6 +2944,10 @@ Once you've completed a nanopore run, the data are can be transferred to an exte
 
 # genome assembly {-}
 
+## Canu
+
+### Setting up Canu
+
 For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
 
 `cat *.fastq > all_reads.fastq`
@@ -2973,7 +2977,13 @@ Essentially only speed optimization:
 * Nanopore flip-flop R9.4 or R10.3: try: `corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105`
 * For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
 correctedErrorRate=0.12
-* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies
+* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
+
+### As Canu runs
+
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
+
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

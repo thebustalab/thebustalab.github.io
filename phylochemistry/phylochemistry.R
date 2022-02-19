@@ -1347,7 +1347,6 @@
                 }
             }
 
-
     ##### Sequence data handling
 
         #### extractORFs
@@ -6173,6 +6172,113 @@
                 return(as_tibble(output))
             }
 
+    ##### Networks
+
+        #### buildNetwork
+
+            #' Build a network from an edgelist
+            #'
+            #' @param infile The multiple alignment to (analyze and) plot.
+            #' @param roi Plot a subset of the alignment. 
+            #' @param consensus Include in the output graphic a line plot corresponding to the degree of conservation at each site in the alignment.
+            #' @param funct_assoc Include in the output graphic a line plot of the association between AA residues and 
+            #' @importFrom phangorn read.aa
+            #' @import tidyr
+            #' @import ggplot2
+            #' @import ggtree  
+            #' @export
+            #' @examples
+            #' buildNetwork()
+
+            buildNetwork <- function( edgelist, node_attributes = NULL, facet_variable = NULL ) {
+
+                ## Make sure the edgelist is a dataframe and that its first two columns are characters
+                    edgelist <- as.data.frame(edgelist)
+                    edgelist[,1] <- as.character(edgelist[,1])
+                    edgelist[,2] <- as.character(edgelist[,2])
+
+                ## If edgelist has more than two columns, assume that 3rd column is edge weights and build matrix from adjacency matrix
+                    # if (dim(edgelist)[2] > 2) {
+                    #     adjacency_matrix <- as.matrix(as.data.frame(tidyr::pivot_wider(edgelist, names_from = 1, values_from = 3)))
+                    #     rownames(adjacency_matrix) <- adjacency_matrix[,1]
+                    #     adjacency_matrix <- adjacency_matrix[,-1]
+                    #     network_object <- network::network(adjacency_matrix, matrix.type = "adjacency")
+                    # }
+
+                ## Just build a network with the edgelist
+                    if (dim(edgelist)[2] == 3) {
+                        network_object <- network::network(edgelist, matrix.type = "edgelist", ignore.eval = FALSE)
+                    }
+
+                ## Fortify the network object into a dataframe, modify it with new colnames and additional information, crack into a list of edges and nodes
+                    combined_network_frame <- ggnetwork::ggnetwork(network_object, arrow.gap = 0, layout = "kamadakawai")
+                    # combined_network_frame <- ggnetwork::ggnetwork(network_object, arrow.gap = 0)
+                    combined_network_frame$type <- "edge"
+                    colnames(combined_network_frame)[colnames(combined_network_frame) == "vertex.names"] <- "start_node"
+                    combined_network_frame$type[apply(cbind(combined_network_frame$x == combined_network_frame$xend, combined_network_frame$y == combined_network_frame$yend), 1, all)] <- "node"
+                    combined_network_frame$end_node <- combined_network_frame$start_node[match(combined_network_frame$xend, combined_network_frame$x)]
+
+                    network_frame <- list()
+                    network_frame$edges <- combined_network_frame[combined_network_frame$type == "edge",]
+                    network_frame$edges <- network_frame$edges[,colnames(network_frame$edges) %in% c("x", "y", "start_node", "xend", "yend", "end_node")]
+                    network_frame$nodes <- combined_network_frame[combined_network_frame$type == "node",]
+                    network_frame$nodes <- network_frame$nodes[,colnames(network_frame$nodes) %in% c("x", "y", "start_node")]
+                    colnames(network_frame$nodes)[3] <- "node_name"
+
+                    combined_network_frame$end_node <- as.character(combined_network_frame$end_node)
+
+                ## Bind edge attributes to the network_frame
+                    if (dim(edgelist)[2] > 2) {
+                        edge_attributes <- list()
+                        for ( edge in 1:dim(edgelist)[1] ) {
+                            network_frame_entry <- which(apply(cbind(combined_network_frame$start_node == edgelist[edge,1], combined_network_frame$end_node == edgelist[edge,2]), 1, all))
+                            edge_attributes[[network_frame_entry]] <- as.character(edgelist[edge, 3:dim(edgelist)[2]])
+                        }
+                        edge_attributes <- as.data.frame(do.call(rbind, edge_attributes))
+                        colnames(edge_attributes) <- colnames(edgelist)[3:dim(edgelist)[2]]
+                        network_frame$edges <- cbind(network_frame$edges, edge_attributes)
+                    }
+
+                ## Merge node_attributes frame with network_frame$nodes
+                    if (!is.null(node_attributes)) {
+                        network_frame$nodes <- cbind(network_frame$nodes, node_attributes[match(network_frame$nodes$node_name, node_attributes[,1]),])
+                    }
+
+                ## Create network_frame_expanded, which contains entries for each facet_variable
+                    # network_frame_expanded <- data.frame()
+                    # facet_variables <- as.character(unique(annotation_frame[,which(colnames(annotation_frame) == facet_variable)]))
+
+                    # if ( length(facet_variables) > 0 ) {
+                    #     for (i in 1:length(facet_variables)) {
+                    #         frame_subset <- annotation_frame[annotation_frame[,which(colnames(annotation_frame) == facet_variable)] == facet_variables[i],]
+                    #         frame_subset <- frame_subset[frame_subset$abundance > 0,]
+                            
+                    #         # Show only nodes present in that facet_variable
+                    #             # nodes <- network_frame[apply(cbind(network_frame$type == "node", network_frame$start_node %in% frame_subset$compound_name), 1, all),]
+
+                    #         # Show all nodes
+                    #             nodes <- network_frame[network_frame$type == "node",]
+                            
+                    #         # Show only edges present in that facet variable
+                    #             edges <- network_frame[apply(   cbind(
+                    #                                                 network_frame$type == "edge", 
+                    #                                                 network_frame$start_node %in% frame_subset$compound_name,
+                    #                                                 network_frame$end_node %in% frame_subset$compound_name
+                    #                                             ), 1, all),]
+
+                    #         temp <- rbind(nodes, edges)
+                    #         temp$facet_variable <- facet_variables[i]
+                    #         colnames(temp)[colnames(temp) == "facet_variable"] <- facet_variable
+
+                    #         network_frame_expanded <- rbind(network_frame_expanded, temp)
+                    #     }
+                    # } else {
+                    #     network_frame_expanded <- network_frame
+                    # }
+
+                return(network_frame)
+            }
+
     ##### Data Visualization
         
         #### drawAlignment
@@ -8488,115 +8594,6 @@
                     )
                     output$gaussians <- gaussians
                     
-                    return(output)
-
-            }
-
-        #### analyzeMolecularDiversity
-
-            #' analyzeMolecularDiversity
-            #'
-            #' @param x
-            #' @param y
-            #' @param smoothing_order
-            #' @param smoothing_window
-            #' @export
-            #' @examples
-            #' analyzeMolecularDiversity()
-
-            analyzeMolecularDiversity <- function( data, scale = TRUE ) {
-
-                ## Check for NAs
-                    if(any(is.na(data$molecule_name))) {
-                        data <- data[!is.na(data$molecule_name),]
-                        cat("One or more of the molecule names is NA... removing those entries from the analysis...\n")
-                    }
-                    if(any(is.na(data$feature))) {
-                        data <- data[!is.na(data$feature),]
-                        cat("One or more of the feature names is NA... removing those entries from the analysis...\n")
-                    }
-                    if(any(is.na(data$state))) {
-                        data <- data[!is.na(data$state),]
-                        cat("One or more of the state names is NA... removing those entries from the analysis...\n")
-                    }
-
-                ## Start the output list, the progress bar, loop over each feature
-
-                    cat("Calculating unlikeability and variation ratio across all molecules...\n")
-                    statistics <- list()
-                    pb <- progress::progress_bar$new(total = length(unique(data$feature)))
-                    for (i in 1:length(unique(data$feature))) {
-
-                        ## Tick the progress bar, get the list of categories to consider
-                            pb$tick()
-                            states_to_consider <- data$state[data$feature == unique(data$feature)[i]]
-                        
-                        ## Unlikeability
-                            all_pairs <- expand.grid(1:length(states_to_consider), 1:length(states_to_consider))
-                            unlikeability <- list()
-                            for (j in 1:dim(all_pairs)[1]) {
-                                if (all_pairs$Var1[j] == all_pairs$Var2[j]) {} else {
-                                    unlikeability[[j]] <- data.frame(
-                                        pair = paste(all_pairs$Var1[j], all_pairs$Var2[j], sep = "_"),
-                                        same = states_to_consider[all_pairs$Var1[j]] == states_to_consider[all_pairs$Var2[j]]
-                                    )
-                                }
-                            }
-                            unlikeability <- do.call(rbind, unlikeability)
-
-                            if(names(table(unlikeability$same))[1] == FALSE) {
-                                coeff_unlikeability <- table(unlikeability$same)[1]/sum(table(unlikeability$same))
-                            } else {
-                                coeff_unlikeability <- 0
-                            }
-
-                        ## Variation Ratio
-                            sum <- sum(table(states_to_consider))
-                            max <- max(table(states_to_consider))
-                            variation_ratio = 1 - (max/sum)
-
-                        ## Build output
-                            statistics[[i]] <- data.frame(
-                                feature = unique(data$feature)[i],
-                                variation_ratio = variation_ratio,
-                                most_common = names(which.max(table(states_to_consider))),
-                                coeff_unlikeability = coeff_unlikeability
-                            )
-                    }
-                    statistics <- do.call(rbind, statistics)
-                    rownames(statistics) <- NULL
-
-                ## Make edgelist
-                    
-                    cat("Building similarity matrix for all molecule pairs...\n")
-                    combinations <- t(combn(unique(data$molecule_name), 2))
-                    similarity <- list()
-                    pb <- progress::progress_bar$new(total = dim(combinations)[1])
-                    for (j in 1:dim(combinations)[1]) {
-                        pb$tick()
-                        compare <- full_join(
-                            filter(data, molecule_name == combinations[j,1]),
-                            filter(data, molecule_name == combinations[j,2]),
-                            by = "feature"
-                        )
-                        compare <- compare$state.x == compare$state.y
-                        compare[is.na(compare)] <- FALSE
-                        similarity[[j]] <- data.frame(
-                            molecule_A = combinations[j,1],
-                            molecule_B = combinations[j,2],
-                            similarity = sum(compare == TRUE)/length(compare)
-                        )
-                    }
-                    similarity <- do.call(rbind, similarity)
-                    rownames(similarity) <- NULL
-
-                    if (scale) {similarity$similarity <- normalize(similarity$similarity)}
-
-                ## Return
-                    
-                    output <- list()
-                    output$statistics <- statistics
-                    output$similarity <- similarity
                     return(output)
 
             }

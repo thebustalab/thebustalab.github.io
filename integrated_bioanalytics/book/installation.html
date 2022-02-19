@@ -141,7 +141,7 @@
 <h2>
 <span class="header-section-number">1.3</span> verification<a class="anchor" aria-label="anchor" href="#verification"><i class="fas fa-link"></i></a>
 </h2>
-<p>Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.</p>
+<p>Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. If you are on Windows, be sure to run RStudio as administrator. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.</p>
 <div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/rstudio_components.png" width="100%" style="display: block; margin: auto;"></div>
 <p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indometh)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -199,7 +199,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <span class="header-section-number">1.5</span> phylochemistry<a class="anchor" aria-label="anchor" href="#phylochemistry"><i class="fas fa-link"></i></a>
 </h2>
 <p>In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.</p>
-<p>First, attempt to load phylochemistry:</p>
+<p>First, attempt to load phylochemistry, if you are on Windows, be sure you’ve open RStudio as an administrator:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"http://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></code></pre></div>
 <p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?” You should say “yes.”</p>
@@ -288,7 +288,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-02-07.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-02-19.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

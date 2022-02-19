@@ -62,6 +62,9 @@ further-reading
 exercises-7
 integrationapplite
 cdf-export
+canu
+setting-up-canu
+as-canu-runs
 blast
 loading-gff-files
 buildtree
