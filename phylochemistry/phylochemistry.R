@@ -2600,6 +2600,40 @@
                 writeXStringSet(fasta, file_out_path)
             }
 
+        #### kmerTable
+
+            #' Convert a kmer report file from Canu into a table that can be accepted by genomescope
+            #' Use http://qb.cshl.edu/genomescope/genomescope2.0/
+            #'
+            #' @param file_in_path
+            #' @param file_out_path
+            #' @examples
+            #' @export
+            #' kmerTable
+
+            kmerTable <- function(file_in_path, file_out_path) {
+
+                dat <- readLines(file_in_path)
+                dat <- dat[11:length(dat)]
+                dat <- gsub("1\\.0.*$", "", gsub("0\\..*$", "", dat))
+                dat <- strsplit(paste(dat, collapse = " "), " ")[[1]]
+                dat <- dat[dat != ""]
+
+                dat <- data.frame(
+                    x = as.numeric(dat[seq(1,length(dat), 2)]),
+                    y = as.numeric(dat[seq(2,length(dat), 2)])
+                )
+
+                head(dat)
+                tail(dat)
+
+                write.table(
+                    dat, file = file_out_path,
+                    sep = " ", row.names = FALSE, col.names = FALSE
+                )
+
+            }
+
     ##### Chemical data handling
 
         #### convertCDFstoCSVs
@@ -5544,7 +5578,7 @@
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
                                                         transpose = FALSE,
                                                         unknown_sample_ID_info = c("unknown_unknown"),
-                                                        scale_variance = TRUE,
+                                                        scale_variance = FALSE,
                                                         kmeans = "none",
                                                         na_replacement = "drop",
                                                         output_format = "long"
@@ -5562,7 +5596,7 @@
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
                                                         transpose = FALSE,
                                                         unknown_sample_ID_info = NULL,
-                                                        scale_variance = TRUE,
+                                                        scale_variance = FALSE,
                                                         kmeans = "none",
                                                         na_replacement = "drop",
                                                         output_format = "long"
@@ -7595,13 +7629,20 @@
 
                 runMatrixAnalysis <-    function(
                                             data,
-                                            analysis = c("hclust", "hclust_phylo", "pca", "pca_ord", "pca_dim", "mca", "mca_ord", "mca_dim"),
+                                            analysis = c(
+                                                "hclust", "hclust_phylo",
+                                                "pca", "pca_ord", "pca_dim",
+                                                "mca", "mca_ord", "mca_dim",
+                                                "mds", "mds_ord", "mds_dim",
+                                                "tSNE", "DBSCAN"
+                                            ),
                                             column_w_names_of_multiple_analytes = NULL,
                                             column_w_values_for_multiple_analytes = NULL,
                                             columns_w_values_for_single_analyte = NULL,
                                             columns_w_additional_analyte_info = NULL,
                                             columns_w_sample_ID_info = NULL,
                                             transpose = FALSE,
+                                            distance_method = c("euclidean", "coeff_unlike"),
                                             unknown_sample_ID_info = NULL,
                                             scale_variance = TRUE,
                                             kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc.", "pca"),
@@ -7891,15 +7932,119 @@
 
                     # Run the matrix analysis selected
 
-                        ## tSNE
+                        ## Scale data if requested
 
-                            # library(Rtsne)
-                            # out <- Rtsne(matrix, theta = 0.0, perplexity = 2)
-                            # out <- out$Y
-                            # colnames(out) <- c("x","y")
-                            # out <- as.data.frame(out)
-                            # ggplot(out) +
-                            #     geom_point(aes(x = x, y = y), shape = 21, size= 4)
+                            if( scale_variance == TRUE ) {
+                                matrix <- scale(matrix)
+                            }
+
+                        ## Distance-based methods. First, get distance matrix:
+
+                            if( distance_method[1] == "euclidean" ) {
+                                dist_matrix <- stats::dist(matrix, method = "euclidean")
+                            } else {
+                                stop("Please specify distance method")
+                            }
+
+                            ## HCLUST, HCLUST_PHYLO ##
+
+                                if( analysis == "hclust" ) {
+                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
+                                    clustering <- ggtree::fortify(phylo)
+                                    clustering$sample_unique_ID <- clustering$label
+                                }
+
+                                if( analysis == "hclust_phylo" ) {                        
+                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
+                                    return(phylo)
+                                    stop("Returning hclust_phylo.")
+                                }
+
+                            ## MDS
+
+                                if( analysis == "mds" ) {
+                                    coords <- stats::cmdscale(dist_matrix)
+                                    colnames(coords) <- c("Dim.1", "Dim.2")
+                                    clustering <- as_tibble(coords)
+                                    clustering$sample_unique_ID <- rownames(coords)
+                                }
+
+                        ## Non distance-based methods
+                        
+                            ## tSNE
+
+                                # library(Rtsne)
+                                # out <- Rtsne(matrix, theta = 0.0, perplexity = 2)
+                                # out <- out$Y
+                                # colnames(out) <- c("x","y")
+                                # out <- as.data.frame(out)
+                                # ggplot(out) +
+                                #     geom_point(aes(x = x, y = y), shape = 21, size= 4)
+
+                            ## MCA, MCA_ORD, MCA_DIM ##
+
+                                if( analysis == "mca" ) {
+                                    cat("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
+                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
+                                    clustering <- as_tibble(coords)
+                                    clustering$sample_unique_ID <- rownames(coords)
+                                    colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
+                                    cat("Done!\n")
+                                }
+
+                                if( analysis == "mca_ord" ) {
+                                    cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
+                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
+                                    clustering <- as_tibble(coords)
+                                    clustering$analyte <- rownames(coords)
+                                    colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
+                                    clustering <- select(clustering, analyte, Dim_1, Dim_2)
+                                    return(clustering)
+                                    stop("Returning ordination plot coordinates. \nDone!")
+                                }
+
+                                if( analysis == "mca_dim" ) {
+                                    cat("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
+                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
+                                    clustering <- tibble::enframe(coords, name = NULL)
+                                    clustering$principal_component <- names(coords)
+                                    clustering$principal_component <- as.numeric(gsub("dim ", "", clustering$principal_component))
+                                    colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                                    clustering <- select(clustering, principal_component, percent_variance_explained)
+                                    return(clustering)
+                                    stop("Returning eigenvalues. \nDone!")
+                                }
+
+                        ## PCA, PCA_ORD, PCA_DIM ## 
+
+                            if( analysis == "pca" ) {
+                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
+                                clustering <- as_tibble(coords)
+                                clustering$sample_unique_ID <- rownames(coords)
+                            }
+
+                            if( analysis == "pca_ord" ) {
+                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
+                                clustering <- as_tibble(coords)
+                                clustering$analyte <- rownames(coords)
+                                clustering <- select(clustering, analyte, Dim.1, Dim.2)
+                                return(clustering)
+                                stop("Returning ordination plot coordinates.")
+                            }
+
+                            if( analysis == "pca_dim" ) {
+                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
+                                clustering <- tibble::enframe(coords, name = NULL)
+                                clustering$principal_component <- names(coords)
+                                clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
+                                colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                                clustering <- select(clustering, principal_component, percent_variance_explained)
+                                return(clustering)
+                                stop("Returning eigenvalues.")
+                            }
+
+                        
+                    # Clustering
 
                         ## Density-based clustering = DBSCAN and OPTICS
 
@@ -7912,96 +8057,6 @@
                             # out$name <- factor(out$name, levels = rev(rownames(matrix)[out$order]))
                             # ggplot(out[2:19,]) +
                             #     geom_col(aes(x = name, y = reach_dist))
-
-                        ## MCA ##
-
-                            if( analysis == "mca" ) {
-                                cat("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
-                                coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
-                                clustering <- as_tibble(coords)
-                                clustering$sample_unique_ID <- rownames(coords)
-                                colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                                cat("Done!\n")
-                            }
-
-                            if( analysis == "mca_ord" ) {
-                                cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
-                                coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
-                                clustering <- as_tibble(coords)
-                                clustering$analyte <- rownames(coords)
-                                colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
-                                clustering <- select(clustering, analyte, Dim_1, Dim_2)
-                                return(clustering)
-                                stop("Returning ordination plot coordinates. \nDone!")
-                            }
-
-                            if( analysis == "mca_dim" ) {
-                                cat("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
-                                coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
-                                clustering <- tibble::enframe(coords, name = NULL)
-                                clustering$principal_component <- names(coords)
-                                clustering$principal_component <- as.numeric(gsub("dim ", "", clustering$principal_component))
-                                colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                                clustering <- select(clustering, principal_component, percent_variance_explained)
-                                return(clustering)
-                                stop("Returning eigenvalues. \nDone!")
-                            }
-
-                        ## HCLUST, HCLUST_PHYLO ##
-
-                            if( analysis == "hclust" ) {                        
-                                phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
-                                clustering <- ggtree::fortify(phylo)
-                                clustering$sample_unique_ID <- clustering$label
-                            }
-
-                            if( analysis == "hclust_phylo" ) {                        
-                                phylo <- ape::as.phylo(stats::hclust(stats::dist(matrix)))
-                                # clustering <- ggtree::fortify(phylo)
-                                # clustering$sample_unique_ID <- clustering$label
-                                return(phylo)
-                                stop("Returning hclust_phylo.")
-                            }
-
-                        ## PCA, PCA_ORD, PCA_DIM ## 
-
-                            if( analysis == "pca" ) {
-                                if( scale_variance == TRUE ) {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]    
-                                } else {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
-                                }
-                                clustering <- as_tibble(coords)
-                                clustering$sample_unique_ID <- rownames(coords)
-                            }
-
-                            if( analysis == "pca_ord" ) {
-                                if( scale_variance == TRUE ) {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
-                                } else {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
-                                }
-                                clustering <- as_tibble(coords)
-                                clustering$analyte <- rownames(coords)
-                                clustering <- select(clustering, analyte, Dim.1, Dim.2)
-                                return(clustering)
-                                stop("Returning ordination plot coordinates.")
-                            }
-
-                            if( analysis == "pca_dim" ) {
-                                if( scale_variance == TRUE ) {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE)$eig[,2]
-                                } else {
-                                    coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
-                                }
-                                clustering <- tibble::enframe(coords, name = NULL)
-                                clustering$principal_component <- names(coords)
-                                clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
-                                colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                                clustering <- select(clustering, principal_component, percent_variance_explained)
-                                return(clustering)
-                                stop("Returning eigenvalues.")
-                            }
 
                         ## K-MEANS ##
 
@@ -8023,6 +8078,7 @@
                                     }
 
                                 ## Run k-means
+
                                     kmeans_results <- list()
                                     for( i in 1:(dim(matrix)[1]-1) ) {
                                         kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)

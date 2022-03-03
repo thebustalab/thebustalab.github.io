@@ -70,15 +70,15 @@
 <li><a class="" href="k-means.html">k-means</a></li>
 <li><a class="" href="models.html">models</a></li>
 <li><a class="active" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="midterm-exam.html">MIDTERM EXAM</a></li>
 <li class="book-part">mass spectrometric analysis</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">nanopore data</li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
-<li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li class="book-part">transcriptome analysis</li>
 <li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
 <li class="book-part">genomic analysis</li>
-<li><a class="" href="genomic-analyses.html">genomic analyses</a></li>
+<li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">scientific writing</li>
@@ -622,112 +622,12 @@ library(multcompView)
 <li><p>Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don’t forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.</p></li>
 <li><p>Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the <em>p</em> values and <em>p</em> groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?</p></li>
 </ol>
-<!-- end --><!-- start Mid Term Exam --><!-- # {-}
-# MIDTERM EXAM {-}
-
-For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
-
-The person that previously worked in your position, Mr. Porter, recently completed a chemical analysis of the major ingredients that Fireside Brewing uses. However, Mr. Porter didn't have time to finish analyzing the data that was collected.
-
-At Fireside Brewing, your boss is Mrs. Pilsner, a woman who has worked in the brewing industry for decades and is a certified cicerone (a professional beer taster). As an expert taster, she is familiar with all the classes of compounds in beer ingredients and their corresponding flavors, but she is not an expert in chemistry or data analysis.
-
-For your first task in this new position, Mrs. Pilsner wants you to finish analyzing Mr. Porter's data. Mrs. Pilsner has not given you specific instructions on how to analyze the data, rather, she has a set of specific questions that she wants answered so that she can improve Fireside Brewing. Mr. Porter left some notes about how to perform the analyses, but, since he was close to retirement and spent too much time riding his bicycle and drinking beer, the notes are not complete. Use Mr. Porter's incomplete notes to help you answer the questions below.
-
-**Answer each question with both (i) at least one high quality plot that provides a visual answer and (ii) a caption that provides a written answer. If a question necessitates an answer that is difficult to show with a plot (for example, a single *p* value), include that answer in the caption.**
-
-Write your answers in an R Markdown document, compile the document so that everything is shown: the code, your writing, and the plots. Submit the compiled pdf on Canvas.
-
-*note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
-
-<img src="http://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
-
-
-## Data set 1: beer_components
-
-Load this data set by running our source() command. It will then be present in your environment as `beer_components`.
-
-### Question 1 [7 points]:
-
-Mrs. Pilsner: *We are having problems with our Pale Ale. Its flavor is not consistent from batch to batch. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?*
-
-
-
-### Question 2 [12 points]:
-
-Mrs. Pilsner: *We are experimenting with a new beer that uses a 1:1:1 mixture of all the hop products that we use (hops, hop oil, and hop extract). I want to try to predict what type of flavor profile this beer might have. Using Mr. Porter's data for those three ingredients (hops, hop oil, and hop extract), can you predict what the relative abundance of each analyte class will be in the mixture?*
-
-
-
-### Question 3 [15 points]:
-
-Mrs. Pilsner: *I recently heard a rumor from other cicerones that, compared to other types of barley, barley containing significantly more 3-methylbutanal than all other aldehydes leads to a maltier flavor. Statistically speaking, does our barley currently contain significantly more 3-methylbutanal than all other aldehydes?*
-
-note from Mr. Porter: *Reminder to self: before conducting statistical tests, filter out analytes whose abundance == 0 in all five replicates, otherwise the tests will be biased.*
-
-
-
-### Question 4 [15 points]:
-
-Mrs. Pilsner: *When I taste our beers made with hop extract, they don't taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do ALL our different ingredients (including corn and barley) cluster according to their average chemical composition?*
-
-
-
-### Question 5 [*extra credit*, 4 points]:
-
-Mrs. Pilsner: *We are trying to reduce the price of our India Session Ale by replacing its hops with either hop extract or hop oil. Chemically speaking, which is more similar to hops - hop extract, or hop oil?*
-
-
-
-## Data set 2: hops_components
-
-After you answer all Mrs. Pilsner's questions about Mr. Porter's data, Mrs. Pilsner tells you about another data set that Fireside Brewing has. This data set was collected by Mr. Porter's intern, an undergraduate named Ms. Amber Stout. Amber measured the chemical composition of many different hop varieties. Please answer Mrs. Pilsner's questions below about the hops data in the same way you did for the questions above.
-
-To load this second data set, the hops data set, ensure you have run our source() command. It will then be present in your environment as `hops_components`.
-
-### Question 1 [12 points]:
-
-Mrs. Pilsner: *There are three major types of hops - aroma hops, dry hopping hops, and bittering hops. We had an emergency scenario last month where we ran out of bittering hops due to covid-related supply line problems. We needed to substitute either aroma hops or dry hopping hops into the recipe in place of bittering hops. At the time, we used aroma hops. Was that a good decision? If that emergency were to arise again, should we substitute aroma hops again, or should we use dry hopping hops instead? As much as possible, we would want the product from the emergency-substituted batch to be as similar to the normal batch made with bittering hops.*
-
-
-
-### Question 2 [15 points]:
-
-Mrs. Pilsner: *We buy our hops from many different countries of origin. I've always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the chemical profiles of other countries' hops (as a proxy for flavor profiles)? What chemical(s) largely drive this difference?*
-
-note from Mr. Porter: *note to self... by reducing the dimensionality of the chemical dataset to two dimensions, it should be possible to draw ellipses that encapsulate the chemical profile (as a proxy for "flavor profile") of each country's hops.*
-
-
-
-### Question 3 [12 points]:
-
-Mrs. Pilsner: *If we wanted to prepare our own hop oil, which type of hops should we use - aroma hops, bittering hops, or dry hopping hops? In other words, is there a statistical difference in the amount of total oil that each type of hops has? We want to pick the type of hops that would maximize our oil yield.*
-
-Mr. Porter: *Note to self: here we are **not** interested in comparing `total_oil` from different `hop_varieties`, but instead in comparing `total_oil` from hops with different `hop_brewing_usage`.*
-
-
-
-### Question 4 [12 points]:
-
-Mrs. Pilsner: *Cascade hops are a very popular variety, and also a variety we use in producing our flagship IPA. However, due to COVID-19, cascade hops are on back order for six months. What style of hop is most similar to cascade? I would like to order it to use in place of cascade hops for the batch of IPA we will brew two weeks from now.*
-
-
-
-### Question 5 [*extra credit*, 4 points]:
-
-Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?*
-
-
---><!-- end --><hr>
-<hr>
-<hr>
+<!-- end --><!-- start Mid Term Exam -->
 </div>
 </div>
-
-
-
-<div class="chapter-nav">
+  <div class="chapter-nav">
 <div class="prev"><a href="models.html">models</a></div>
-<div class="next"><a href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></div>
+<div class="next"><a href="midterm-exam.html">MIDTERM EXAM</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -763,18 +663,14 @@ Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest
 </div>
     </nav>
 </div>
-</div>
-  
-
-  
 
 </div>
- <!-- .container -->
+</div> <!-- .container -->
 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-02-19.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-03.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

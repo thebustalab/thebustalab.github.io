@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-02-19"
+date: "2022-03-03"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -2835,7 +2835,6 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- start Mid Term Exam -->
 
-<!-- # {-}
 # MIDTERM EXAM {-}
 
 For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
@@ -2930,7 +2929,7 @@ Mrs. Pilsner: *Cascade hops are a very popular variety, and also a variety we us
 Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?*
 
 
--->
+
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3016,13 +3015,15 @@ To control the mass spectrum window:
 
 Once you've completed a nanopore run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
 
-1.  Identify which files are of interest/where they are in the system.
+1. Identify which files are of interest/where they are in the system. Useful commands:
 
--Useful commands:
+Display all currently mounted filesystems (& their usage, storage space, mounting point):
 
-`df -h` displays all currently mounted filesystems (& their usage, storage space, mounting point)
+`df -h`
 
-`sudo fdisk -l` displays more data pertaining to the identification of disks. Can also change partitioning of hard disks
+Display more data pertaining to the identification of disks. Can also change partitioning of hard disks:
+
+`sudo fdisk -l` 
 
 -Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
 
@@ -3034,50 +3035,10 @@ Once you've completed a nanopore run, the data are can be transferred to an exte
 -Make sure the location (`</file_path>`) is preexisting location. Use the `mkdir` command to make a new directory if necessary.
 
 3. Copy data
+
 -Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk .
 
-
-# genome assembly {-}
-
-## Canu
-
-### Setting up Canu
-
-For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
-
-`cat *.fastq > all_reads.fastq`
-
-Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
-
-`/home/bust0037/canu/canu-2.1.1/build/bin/canu \
--p k_fed -d round2_reads/ \
-genomeSize=260m \
--nanopore /mnt/int_disk/Kalanchoe_DNAseq/round2_reads/all_reads.fastq \
--minReadLength=1000 -correctedErrorRate=0.12 \
--minOverlapLength=500 -useGrid=false \
--minInputCoverage=0.5 -stopOnLowCoverage=0.5`
-
-Notes on Canu options:
-
-Defaults:
-
-* minReadLength=1000
-* minOverlapLength=500bp
-* correctedErrorRate=0.114
-* stopOnLowCoverage <integer=10>
-
-Essentially only speed optimization:
-
-* For over 30X coverage:
-* Nanopore flip-flop R9.4 or R10.3: try: `corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105`
-* For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
-correctedErrorRate=0.12
-* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
-
-### As Canu runs
-
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
-
+<!-- end -->
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3108,7 +3069,61 @@ ________________________________________________________________________________
 # (PART) genomic analysis {-}
 
 <!-- start genomic analyses -->
-# genomic analyses {-}
+
+# genome assembly {-}
+
+## Canu
+
+### Computer configuration
+
+Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may differ. To run a genome assembly, start by determining what computing resources are available. Some helpful commands when investigating these resources on Linux machines:
+
+Assessing RAM (It is recommended to assign about 75% of available RAM to the assembly process):
+
+`grep MeMTotal /proc/meminfo`
+
+Assessing CPU resources (note that "threads per CPU" can denote the availability of hyperthreading):
+
+`lscpu`
+
+Assessing disk space (Make sure you are running your assembly on a disk with lots of open space. Ideally > 2TB):
+
+`df -h`
+
+### Setting up Canu
+
+For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
+
+`cat *.fastq > all_reads.fastq`
+
+Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
+
+`/home/grid/canu/canu-2.1.1/bin/canu -p k_fed -d /data/round2_pass_reads_assembly/ \
+-genomeSize=232m -nanopore /data/all_reads.fastq \
+-minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -stopOnLowCoverage=0.5 \
+-corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4`
+
+Notes on Canu options:
+
+Defaults:
+
+* minReadLength=1000
+* minOverlapLength=500bp
+* correctedErrorRate=0.114
+* stopOnLowCoverage <integer=10>
+
+Essentially only speed optimization:
+
+* For over 30X coverage:
+* Nanopore flip-flop R9.4 or R10.3: try: `corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105`
+* For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
+correctedErrorRate=0.12
+* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
+
+### As Canu runs
+
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
 
 ## loading GFF files
 <!-- end -->
