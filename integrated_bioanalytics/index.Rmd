@@ -2491,7 +2491,7 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- start Mid Term Exam -->
 
-# MIDTERM EXAM {-}
+<!-- # MIDTERM EXAM {-}
 
 For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
 
@@ -2836,7 +2836,7 @@ Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest
 hops_components %>%
   ggplot(aes(x = hop_variety, y = alpha_acids + beta_acids)) + geom_col() +
   coord_flip()
-```
+``` -->
 
 <!-- end -->
 ________________________________________________________________________________________________
@@ -3027,7 +3027,7 @@ correctedErrorRate=0.12
 
 ### As Canu runs
 
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with  and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
 
 
 ## loading GFF files

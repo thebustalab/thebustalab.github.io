@@ -2835,7 +2835,7 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- start Mid Term Exam -->
 
-# MIDTERM EXAM {-}
+<!-- # MIDTERM EXAM {-}
 
 For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
 
@@ -2928,25 +2928,6 @@ Mrs. Pilsner: *Cascade hops are a very popular variety, and also a variety we us
 
 Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?*
 
-
-
-<!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
-# (PART) mass spectrometric analysis {-}
-
-<!-- start mass spectrometric analysis -->
-# mass spectrometric analysis {-}
-
-## integrationAppLite
-
-`phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:
-
-1. Create a new folder on your hard drive and place your CDF file into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
-
-2. In RStudio, run the source command to load `phylochemistry`:
 
 
 ```r
@@ -3122,7 +3103,7 @@ correctedErrorRate=0.12
 
 ### As Canu runs
 
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with  and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
 
 
 ## loading GFF files
