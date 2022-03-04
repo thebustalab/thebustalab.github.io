@@ -8823,6 +8823,48 @@
                 )
             }
 
+        #### grubbsFilter
+
+            #' grubbsFilter on grouped data
+            #'
+            #' @param data
+            #' @param threshold
+            #' @export
+            #' @examples
+            #' grubbsFilter()
+
+            grubbsFilter <- function(data, col, threshold = 0.05, ...) {
+
+                if (dplyr::is_grouped_df(data)) {
+                  return(dplyr::do(data, grubbsFilter(., col, ...))) 
+                }
+
+                test_vector <- as.data.frame(data[,which(colnames(data) == col)])[[1]]
+
+                if (length(test_vector) > 3) {
+                    result <- outliers::grubbs.test(test_vector)
+
+                    if (result$p.value < threshold) {
+                        # print(result)
+                        tail <- gsub(" .*$", "", result$alternative)
+                        if (tail == "lowest") { data <- data[-which.min(test_vector),] }
+                        if (tail == "highest") { data <- data[-which.max(test_vector),] }
+                    }
+                }
+
+                return(data)
+
+                # data.frame(
+                #     id = c(rep("A", 5), rep("B", 5)),
+                #     val = c(-10,2,3,4,5,1,2,3,4,15)
+                # ) %>%
+                # as_tibble() %>%
+                # group_by(id) -> data
+
+                # grubbsFilter(data = data, col = "val")
+
+            }
+
     ##### Phylogenetic statistical testing
 
         #### phylogeneticSignal
