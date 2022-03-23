@@ -372,7 +372,7 @@
 
         	#' Returns contents of one fasta file as a StringSet object.
             #'
-            #' @param fasta_in_path The path to the fasta to read
+            #' @param fasta_in_path The path to the fasta to read. Can be local or a google drive share link.
             #' @param fasta_type The type of sequence data contained in the fasta file. Options: "nonspecific", "DNA", "RNA", or "AA"
             #' @importFrom Biostrings readBStringSet readDNAStringSet readRNAStringSet readAAStringSet
             #' @examples
@@ -380,22 +380,40 @@
             #' readFasta
 
             readFasta <- function( fasta_in_path, fasta_type = "nonspecific" ) {
-            	
-            	if ( fasta_type == "nonspecific" ) {
-            		return(Biostrings::readBStringSet( filepath = fasta_in_path ))
-            	}
 
-            	if ( fasta_type == "DNA" ) {
-            		return(Biostrings::readDNAStringSet( filepath = fasta_in_path ))
-            	}
+                ## If its on google drive, download it and make a temp file
+                    if (length(grep("http", fasta_in_path)) > 0) {
+                        cat("Downloading... this may take a while...")
+                        suppressMessages(googledrive::drive_download(
+                            file = googledrive::as_id(fasta_in_path),
+                            path = "TEMP___fasta",
+                            overwrite = TRUE
+                        ))
 
-            	if ( fasta_type == "RNA" ) {
-            		return(Biostrings::readRNAStringSet( filepath = fasta_in_path ))
-            	}
+                        temp_fasta <- Biostrings::readBStringSet("TEMP___fasta")
+                        
+                        file.remove("TEMP___fasta")
 
-            	if ( fasta_type == "AA" ) {
-            		return(Biostrings::readAAStringSet( filepath = fasta_in_path ))
-            	}
+                        return(temp_fasta)
+                    }
+
+                ## Read the file in
+                	if ( fasta_type == "nonspecific" ) {
+                		return(Biostrings::readBStringSet( filepath = fasta_in_path ))
+                	}
+
+                	if ( fasta_type == "DNA" ) {
+                		return(Biostrings::readDNAStringSet( filepath = fasta_in_path ))
+                	}
+
+                	if ( fasta_type == "RNA" ) {
+                		return(Biostrings::readRNAStringSet( filepath = fasta_in_path ))
+                	}
+
+                	if ( fasta_type == "AA" ) {
+                		return(Biostrings::readAAStringSet( filepath = fasta_in_path ))
+                	}
+
             }
 
         #### readManyFastas
@@ -702,31 +720,6 @@
                 rstudioapi::documentClose()
 
                 file.remove(paste0(file_name))
-
-            }
-
-        #### readFastaGD
-
-            #' Load a fasta file from Google Drive into R
-            #'
-            #' @param drive_share_link
-            #' @examples
-            #' @export
-            #' loadFastaGD
-
-            loadFastaGD <- function(drive_share_link){
-
-                suppressMessages(googledrive::drive_download(
-                    file = googledrive::as_id(drive_share_link),
-                    path = "TEMP___fasta",
-                    overwrite = TRUE
-                ))
-
-                temp_fasta <- Biostrings::readDNAStringSet("TEMP___fasta")
-                
-                file.remove("TEMP___fasta")
-
-                return(temp_fasta)
 
             }
 
@@ -2288,7 +2281,7 @@
 
                         # Load GFFs
                             cat(paste("Loading GFF for ", input_frame$Genus_species[i], "...\n", sep = ""))
-                            gff_as_GRange <- rtracklayer::import.gff(as.character(input_frame$GFF_in_path[i]))
+                            gff_as_GRange <- suppressWarnings(rtracklayer::import.gff(as.character(input_frame$GFF_in_path[i]), version = "3"))
                             chr <- unique(gff_as_GRange@seqnames@values)
                             cat(paste("Number of chromosomes and/or scaffolds: ", length(chr), "\n", sep = ""))
 
@@ -4643,7 +4636,7 @@
             #' @param zoom_and_scroll_rate Defines intervals of zooming and scrolling movement while running the app
             #' @examples
             #' @export
-            #' integrationAppLite
+            #' integrationAppLite2
 
             integrationAppLite2 <- function(
                     CDF_directory_path = getwd(),
@@ -4662,7 +4655,7 @@
 
                     ## PREPARE DATA: Check for CDF to CSV conversion, check chromatograms
 
-                        if (length(paths_to_cdfs) == 0) {
+                        if ( length(paths_to_cdfs) == 0 ) {
 
                             stop("The directory specified does not contain any .CDF files.")
 
@@ -4713,6 +4706,27 @@
                                         cat("   Writing out data file as CSV... \n")
                                             data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
 
+                                    }
+
+                                ## If any chromatograms (tic and ion) are not present for this csv, extract them
+
+                                    if ( file.exists("chromatograms.csv") ) {
+
+                                        ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
+                                        missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv]))
+                                        missing_ions <- dropNA(missing_ions)
+
+                                    } else {
+
+                                        missing_ions <- ions
+
+                                    }
+
+                                    if (length(missing_ions) > 0) {
+                                        
+                                        cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))    
+                                            framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
+                                        
                                         cat("   Extracting chromatograms...\n")
                                             
                                             if ("tic" %in% ions) {
@@ -4732,16 +4746,16 @@
 
                                             if ( length(ions[ions != "tic"]) > 0 ) {
 
-                                                ions <- as.numeric(as.character(ions[ions != "tic"]))
-                                                for (ion in 1:length(ions[ions != "tic"])) {
+                                                numeric_ions <- as.numeric(as.character(ions[ions != "tic"]))
+                                                for ( ion in 1:length(numeric_ions) ){
                                                     framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
                                                     framedDataFile %>% 
                                                         group_by(rt) %>% 
-                                                        filter(mz > (ions[ion] - 0.6)) %>%
-                                                        filter(mz < (ions[ion] + 0.6)) %>%
+                                                        filter(mz > (numeric_ions[ion] - 0.6)) %>%
+                                                        filter(mz < (numeric_ions[ion] + 0.6)) %>%
                                                         summarize(
                                                             abundance = sum(intensity),
-                                                            ion = ions[ion],
+                                                            ion = numeric_ions[ion],
                                                             rt_first_row_in_raw = min(row_number),
                                                             rt_last_row_in_raw = max(row_number)
                                                         ) -> chromatogram
@@ -4751,57 +4765,27 @@
                                                     chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)   
                                                 }
                                             }
-
-                                ## Otherwise, check to see if the chromatogram needs to be updated
-                                    
-                                    } else {
-
-                                    # If any are missing, extract the chromatograms to add and write them out
-
-                                        if ( file.exists("chromatograms.csv") ) {
-                                            ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
-                                            missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv]))
-                                            missing_ions <- dropNA(missing_ions)
-
-                                            if (length(missing_ions) > 0) {
-                                                cat(paste("Chromatogram extraction. Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))    
-                                                framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
-                                                for (ion in 1:length(missing_ions)) {
-                                                    framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
-                                                    framedDataFile %>% 
-                                                        group_by(rt) %>% 
-                                                        filter(mz > (missing_ions[ion] - 0.6)) %>%
-                                                        filter(mz < (missing_ions[ion] + 0.6)) %>%
-                                                        summarize(
-                                                            abundance = sum(intensity),
-                                                            ion = missing_ions[ion],
-                                                            rt_first_row_in_raw = min(row_number),
-                                                            rt_last_row_in_raw = max(row_number)
-                                                        ) -> chromatogram
-                                                    chromatogram <- as.data.frame(chromatogram)
-                                                    chromatogram$rt <- as.numeric(chromatogram$rt)
-                                                    chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
-                                                    chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
-                                                }
-                                            }
-                                        }
                                     }
 
-                                    ## If the chromatograms file already exists, append to it, else create it
+                                ## If the chromatograms file already exists, append to it and re-write out, else create it
 
-                                        if ( file.exists("chromatograms.csv") ) {
+                                    if ( file.exists("chromatograms.csv") ) {
                                         
-                                            writeMonolist(
-                                                monolist = rbind( chromatograms, chromatograms_to_add ),
-                                                monolist_out_path = "chromatograms.csv"
-                                            )
+                                        print("writing it")
 
-                                        } else {
+                                        writeMonolist(
+                                            monolist = rbind( chromatograms, chromatograms_to_add ),
+                                            monolist_out_path = "chromatograms.csv"
+                                        )
 
-                                            writeMonolist(chromatograms_to_add, "chromatograms.csv")
+                                    } else {
 
-                                        }
+                                        writeMonolist(chromatograms_to_add, "chromatograms.csv")
+
+                                    }
                             }
+
+                            print("done")
                         }
 
                         ## Read in chromatograms
@@ -4812,7 +4796,7 @@
 
                             ## If it doesn't exist, create it
                             
-                                if (!file.exists("samples_monolist.csv")) {
+                                if ( !file.exists("samples_monolist.csv") ) {
 
                                     samples_monolist <- data.frame(
                                         Sample_ID = unique(chromatograms$path_to_cdf_csv),
@@ -5177,7 +5161,8 @@
                                                         areas <- append(areas, 
                                                           sum(dplyr::filter(
                                                             chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
-                                                            rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak])$tic
+                                                            rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak],
+                                                            ion == "tic")$abundance
                                                           ) - 
                                                           sum(dplyr::filter(
                                                             chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
@@ -5278,7 +5263,7 @@
                                             peak_end = max(peak_points$rt),
                                             peak_ID = "unknown",
                                             path_to_cdf_csv = peak_points$path_to_cdf_csv[1],
-                                            area = sum(peak_points$tic)
+                                            area = sum(peak_points$abundance[peak_points$ion == "tic"])
                                         )
                                         peak_data
                                     } else {
@@ -5708,7 +5693,7 @@
 
                 }
 
-    	#### readChromatograms
+        #### readChromatograms
 
             #' Import chromatograms stored as ChemStation exported .csv files
             #'

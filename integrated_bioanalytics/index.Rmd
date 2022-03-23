@@ -3025,9 +3025,50 @@ Essentially only speed optimization:
 correctedErrorRate=0.12
 * Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
 
-### As Canu runs
+### Run time metrics
 
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with  and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with `kmerTable()` and run the output at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
+### Post-run metrics
+
+Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
+
+## Python programs
+
+INSTALL PYTHON (or upgrade python)
+
+INSTALL BIOCONDA
+1. install miniconda:
+  curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  sh ...
+  
+
+2. set up channels
+
+  /home/bust0037/miniconda3/bin/conda config --add channels defaults
+  /home/bust0037/miniconda3/bin/conda config --add channels bioconda
+  /home/bust0037/miniconda3/bin/conda config --add channels conda-forge
+
+3. install packages
+
+  /home/bust0037/miniconda3/bin/conda install sibeliaz
+  /home/bust0037/miniconda3/bin/conda install -c bioconda ragtag
+
+4. run your stuff
+
+  /home/bust0037/miniconda3/bin/conda run sibeliaz -n k_fed.contigs.scaffolded.fasta KlaxifloraFTBG2000359A_699_v3.0.fa
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  ragtag.py
+
+
+  /home/bust0037/meryl-1.3/bin/meryl
+  /home/bust0037/merqury-1.3/merqury.sh
+
+sh $MERQURY/best_k.sh <genome_size>
 
 
 ## loading GFF files
