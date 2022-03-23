@@ -18,12 +18,15 @@
                 "readr",
                 "ips",
                 "FactoMineR",
-                "remotes"
+                "remotes",
+                "tidyverse"
             )
 
             Bioconductor_packages <- c(
+                "BiocManager",
                 "ggtree",
-                "xcms"
+                "xcms",
+                "GenomeInfoDbData"
             )
 
             Github_packages <- c(
@@ -914,7 +917,7 @@
                                 print("writing it")
 
                                 writeMonolist(
-                                    monolist = rbind( chromatograms, chromatograms_to_add ),
+                                    monolist = rbind( readMonolist("chromatograms.csv"), chromatograms_to_add ),
                                     monolist_out_path = "chromatograms.csv"
                                 )
 
