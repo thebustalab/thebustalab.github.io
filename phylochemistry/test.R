@@ -19,7 +19,8 @@
                 "ips",
                 "FactoMineR",
                 "remotes",
-                "tidyverse"
+                "tidyverse",
+                "Rfast"
             )
 
             Bioconductor_packages <- c(
