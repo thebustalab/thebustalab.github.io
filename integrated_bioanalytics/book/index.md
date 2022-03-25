@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-03-24"
+date: "2022-03-25"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -50,6 +50,18 @@ source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
 # (PART) data analysis in r
+
+<!-- start overview -->
+
+# overview {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg" width="100%" style="display: block; margin: auto;" />
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at leo sit amet odio rhoncus tempor. Suspendisse et dolor eu mi lacinia scelerisque sed ut est. Ut vitae tortor sit amet urna scelerisque volutpat non non turpis. Ut mollis massa sed sem elementum pharetra. Donec at metus malesuada, dictum orci id, laoreet massa. Sed eros augue, dapibus at sem ut, scelerisque dictum erat. Proin dictum mattis libero, ut venenatis velit porttitor et. Pellentesque bibendum nunc nec neque dictum faucibus. Suspendisse placerat a dolor at tristique. Integer vel sem pharetra, consequat nunc at, tempor dui.
+
+Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras rhoncus tristique neque, sed vehicula turpis porttitor vitae. Etiam laoreet posuere mi, eget scelerisque tellus fermentum eget. Praesent dictum nunc finibus, accumsan turpis id, congue elit. Proin venenatis diam vel commodo gravida. Suspendisse tortor libero, dignissim quis semper efficitur, dictum eu risus. Donec venenatis tincidunt purus ut blandit. In id velit risus. Nam ullamcorper vehicula sollicitudin. Praesent egestas dapibus justo, pretium blandit leo auctor sed. Morbi sit amet dui et sem pharetra interdum id vitae libero. Vivamus mi mauris, accumsan in vehicula pulvinar, ultricies ut elit.
+
+<!-- end -->
 
 <!-- start installation -->
 
@@ -113,7 +125,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -165,7 +177,7 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
-First, attempt to load phylochemistry, if you are on Windows, be sure you've open RStudio as an administrator:
+First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
 
 ```r
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
@@ -195,7 +207,6 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- ```{r, message = FALSE} -->
 <!-- source("http://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
-
 
 ## Updating R and R Packages
 
@@ -234,9 +245,13 @@ closeRGD("file_share_link_here")
 
 <!-- end -->
 
-<!-- start ggplot and markdown -->
+<!-- start data visualization -->
 
-# ggplot and markdown {-}
+# data visualization {-}
+
+Stuff here on deseption with graphics, tufte, etc.
+
+We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`.
 
 ## Objects
 
@@ -362,7 +377,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-21-1.png" width="100%" style="display: block; margin: auto;" />
 
 2. **Define how your variables map onto the axes.**
 
@@ -373,7 +388,7 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-21-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
 
 3. **Use geometric shapes to represent other variables in your data.**
 
@@ -385,7 +400,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
@@ -395,7 +410,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### modifying geoms
 
@@ -407,7 +422,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
@@ -417,7 +432,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
@@ -432,7 +447,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
@@ -443,7 +458,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -451,7 +466,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## markdown
 
@@ -529,7 +544,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-35-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-36-1.png" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -637,26 +652,13 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-52-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-53-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
 
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
-
-
-# data visualization {-}
-
-Stuff here on deseption with graphics, tufte, etc.
-
-<!-- end -->
-
-<!-- start ggplot II -->
-
-# ggplot II {-}
-
-We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`.
 
 ## geoms
 
@@ -670,7 +672,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-54-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-55-1.png" width="100%" style="display: block; margin: auto;" />
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
@@ -683,7 +685,7 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", size = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-55-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" />
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -701,7 +703,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(.~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can facet in the vertical direction:
 
@@ -711,7 +713,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(replicate~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" />
 
 And we can do both at the same time:
 
@@ -721,7 +723,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
 
@@ -738,7 +740,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### RColorBrewer
 
@@ -749,7 +751,7 @@ One particularly useful type of scale are those provided by RColorBrewer:
 display.brewer.all()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
 
 ```r
 ggplot(mtcars) +
@@ -760,7 +762,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
   
 ## themes
   
@@ -779,7 +781,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -790,7 +792,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
   
 
 ```r
@@ -801,7 +803,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Theme components
 
@@ -818,7 +820,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
 
 Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
 
@@ -841,7 +843,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exercises
 
@@ -867,8 +869,8 @@ Some pointers:
 
 <!-- end -->
 
-<!-- start import and tidying -->
-# import and tidying {-}
+<!-- start data wranging -->
+# data wranging {-}
 
 ## data import
 
@@ -887,334 +889,6 @@ You can quickly find paths to files via the following:
 * On PC: Locate the file in Windows Explorer. Hold down the Shift key then right-click on the file. Click "Copy As Path"
 
 With these paths, we can read in data using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
-
-## tidy data
-
-https://tidydatatutor.com/vis.html
-
-When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
-
-
-```r
-fadb_sample
-## # A tibble: 7 × 11
-##   fatty_acid         Agonandra_brasiliensis Agonandra_silva…
-##   <chr>                               <dbl>            <dbl>
-## 1 Hexadecanoic acid                     3.4              1  
-## 2 Octadecanoic acid                     6.2              0.1
-## 3 Eicosanoic acid                       4.7              3.5
-## 4 Docosanoic acid                      77.4              0.4
-## 5 Tetracosanoic acid                    1.4              1  
-## 6 Hexacosanoic acid                     1.9             12.6
-## 7 Octacosanoic acid                     5               81.4
-## # … with 8 more variables: Agonandra_excelsa <dbl>,
-## #   Heisteria_silvianii <dbl>, Malania_oleifera <dbl>,
-## #   Ximenia_americana <dbl>, Ongokea_gore <dbl>,
-## #   Comandra_pallida <dbl>, Buckleya_distichophylla <dbl>,
-## #   Nuytsia_floribunda <dbl>
-```
-
-While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
-
-
-```r
-pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
-## # A tibble: 70 × 3
-##    fatty_acid        plant_species           relative_abunda…
-##    <chr>             <chr>                              <dbl>
-##  1 Hexadecanoic acid Agonandra_brasiliensis               3.4
-##  2 Hexadecanoic acid Agonandra_silvatica                  1  
-##  3 Hexadecanoic acid Agonandra_excelsa                    1.2
-##  4 Hexadecanoic acid Heisteria_silvianii                  2.9
-##  5 Hexadecanoic acid Malania_oleifera                     0.7
-##  6 Hexadecanoic acid Ximenia_americana                    3.3
-##  7 Hexadecanoic acid Ongokea_gore                         1  
-##  8 Hexadecanoic acid Comandra_pallida                     2.3
-##  9 Hexadecanoic acid Buckleya_distichophylla              1.6
-## 10 Hexadecanoic acid Nuytsia_floribunda                   3.8
-## # … with 60 more rows
-```
-
-Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
-
-<!-- end -->
-
-<!-- start the pipe and summaries -->
-# the pipe and summaries {-}
-
-## the pipe (%>%)
-
-We have seen how to create new objects using `<-`, and we have been filtering and plotting data using, for example:
-
-
-```r
-ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
-```
-
-<img src="index_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
-
-However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
-
-
-```r
-alaska_lake_data %>%
-  filter(park == "BELA") %>%
-  ggplot(aes(x = pH, y = lake)) + geom_col()
-```
-
-<img src="index_files/figure-html/unnamed-chunk-70-1.png" width="100%" style="display: block; margin: auto;" />
-
-Neat! Another way to think about the pipe:
-
-<img src="http://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" width="100%" style="display: block; margin: auto;" />
-
-The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see...
-
-## summary statistics
-
-So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the `ny_trees` dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
-
-
-```r
-ny_trees
-## # A tibble: 378,762 × 14
-##    tree_height tree_diameter address      tree_loc pit_type 
-##          <dbl>         <dbl> <chr>        <chr>    <chr>    
-##  1        21.1             6 1139 57 STR… Front    Sidewalk…
-##  2        59.0             6 2220 BERGEN… Across   Sidewalk…
-##  3        92.4            13 2254 BERGEN… Across   Sidewalk…
-##  4        50.2            15 2332 BERGEN… Across   Sidewalk…
-##  5        95.0            21 2361 EAST  … Front    Sidewalk…
-##  6        67.5            19 2409 EAST  … Front    Continuo…
-##  7        75.3            11 1481 EAST  … Front    Lawn     
-##  8        27.9             7 1129 57 STR… Front    Sidewalk…
-##  9       111.             26 2076 EAST  … Across   Sidewalk…
-## 10        83.9            20 2025 EAST  … Front    Sidewalk…
-## # … with 378,752 more rows, and 9 more variables:
-## #   soil_lvl <chr>, status <chr>, spc_latin <chr>,
-## #   spc_common <chr>, trunk_dmg <chr>, zipcode <dbl>,
-## #   boroname <chr>, latitude <dbl>, longitude <dbl>
-```
-
-More than 300,000 observations of 14 variables! That's 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
-
-Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. We will use the function `summarize()` to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
-
-
-```r
-ny_trees %>%
-  summarize(mean_height = mean(tree_height))
-## # A tibble: 1 × 1
-##   mean_height
-##         <dbl>
-## 1        72.6
-
-ny_trees %>%
-  summarize(stdev_height = sd(tree_height))
-## # A tibble: 1 × 1
-##   stdev_height
-##          <dbl>
-## 1         28.7
-```
-
-Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics.
-
-
-```r
-ny_trees %>%
-  group_by(spc_latin) %>%
-  summarize(mean_height = mean(tree_height))
-## # A tibble: 12 × 2
-##    spc_latin              mean_height
-##    <chr>                        <dbl>
-##  1 ACER PLATANOIDES              82.6
-##  2 ACER RUBRUM                  106. 
-##  3 ACER SACCHARINUM              65.6
-##  4 FRAXINUS PENNSYLVANICA        60.6
-##  5 GINKGO BILOBA                 90.4
-##  6 GLEDITSIA TRIACANTHOS         53.0
-##  7 PLATANUS ACERIFOLIA           82.0
-##  8 PYRUS CALLERYANA              21.0
-##  9 QUERCUS PALUSTRIS             65.5
-## 10 QUERCUS RUBRA                111. 
-## 11 TILIA CORDATA                 98.8
-## 12 ZELKOVA SERRATA              101.
-```
-
-Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
-
-
-```r
-ny_trees %>%
-  group_by(spc_latin) %>%
-  summarize(
-    mean_height = mean(tree_height),
-    stdev_height = sd(tree_height)
-  ) -> ny_trees_by_spc_summ
-ny_trees_by_spc_summ
-## # A tibble: 12 × 3
-##    spc_latin              mean_height stdev_height
-##    <chr>                        <dbl>        <dbl>
-##  1 ACER PLATANOIDES              82.6        17.6 
-##  2 ACER RUBRUM                  106.         15.7 
-##  3 ACER SACCHARINUM              65.6        16.6 
-##  4 FRAXINUS PENNSYLVANICA        60.6        21.3 
-##  5 GINKGO BILOBA                 90.4        24.5 
-##  6 GLEDITSIA TRIACANTHOS         53.0        13.0 
-##  7 PLATANUS ACERIFOLIA           82.0        16.0 
-##  8 PYRUS CALLERYANA              21.0         5.00
-##  9 QUERCUS PALUSTRIS             65.5         6.48
-## 10 QUERCUS RUBRA                111.         20.7 
-## 11 TILIA CORDATA                 98.8        32.6 
-## 12 ZELKOVA SERRATA              101.         10.7
-```
-
-Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` if you want them to vary along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
-
-
-```r
-ny_trees_by_spc_summ %>%
-ggplot() +
-  geom_pointrange(
-      aes(
-        y = spc_latin,
-        x = mean_height,
-        xmin = mean_height - stdev_height,
-        xmax = mean_height + stdev_height
-      )
-    )
-```
-
-<img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
-
-Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
-
-
-```r
-ny_trees %>%
-  group_by(spc_latin, boroname) %>%
-  summarize(
-    mean_diam = mean(tree_diameter),
-    stdev_diam = sd(tree_diameter)
-  ) -> ny_trees_by_spc_boro_summ
-## `summarise()` has grouped output by 'spc_latin'. You can override using the `.groups` argument.
-ny_trees_by_spc_boro_summ
-## # A tibble: 48 × 4
-## # Groups:   spc_latin [12]
-##    spc_latin        boroname  mean_diam stdev_diam
-##    <chr>            <chr>         <dbl>      <dbl>
-##  1 ACER PLATANOIDES Bronx         13.9        6.74
-##  2 ACER PLATANOIDES Brooklyn      15.4       14.9 
-##  3 ACER PLATANOIDES Manhattan     11.6        8.45
-##  4 ACER PLATANOIDES Queens        15.1       12.9 
-##  5 ACER RUBRUM      Bronx         11.4        7.88
-##  6 ACER RUBRUM      Brooklyn      10.5        7.41
-##  7 ACER RUBRUM      Manhattan      6.63       4.23
-##  8 ACER RUBRUM      Queens        14.1        8.36
-##  9 ACER SACCHARINUM Bronx         19.7       10.5 
-## 10 ACER SACCHARINUM Brooklyn      22.2       10.1 
-## # … with 38 more rows
-```
-
-Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let's map boroname to x and facet over tree species, which used to be on x. We'll also manually modify the theme element `strip.text.y` to get the species names in a readable position.
-
-
-```r
-ny_trees_by_spc_boro_summ %>%
-ggplot() +
-  geom_pointrange(
-    aes(
-      y = boroname,
-      x = mean_diam,
-      xmin = mean_diam-stdev_diam,
-      xmax = mean_diam+stdev_diam
-    )
-  ) +
-  facet_grid(spc_latin~.) +
-  theme(
-    strip.text.y = element_text(angle = 0)
-  )
-```
-
-<img src="index_files/figure-html/unnamed-chunk-78-1.png" width="100%" style="display: block; margin: auto;" />
-
-Excellent! And if we really want to go for something pretty:
-
-
-```r
-ny_trees_by_spc_boro_summ %>%
-ggplot() +
-  geom_pointrange(
-    aes(
-      y = boroname,
-      x = mean_diam,
-      xmin = mean_diam-stdev_diam,
-      xmax = mean_diam+stdev_diam,
-      fill = spc_latin
-    ), color = "black", shape = 21
-  ) +
-  labs(
-    y = "Borough", 
-    x = "Trunk diameter",
-    caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
-  ) +
-  facet_grid(spc_latin~.) +
-  guides(fill = "none") +
-  scale_fill_brewer(palette = "Paired") +
-  theme_bw() +
-  theme(
-    strip.text.y = element_text(angle = 0),
-    plot.caption = element_text(hjust = 0.5)
-  )
-```
-
-<img src="index_files/figure-html/unnamed-chunk-79-1.png" width="100%" style="display: block; margin: auto;" />
-
-*Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
-
-
-## exercises
-
-Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
-
-In this set of exercises we are going to use the periodic table. After you run source() you can load that dataset using `periodic_table`. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
-
-Some pointers:
-
-- If your code goes off the page, don't be afraid to wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.
-
-- Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
-
-1. Make a plot using `geom_point()` that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?
-
-
-
-2. The column `state_at_RT` indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in `state_at_RT` (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?
-
-
-
-3. Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of `crystal_structure`? Make a plot using `geom_pointrange()` that shows the mean and standard deviation of each of these groups. What's up with elements that have a cubic crystal structure?
-
-
-
-4. Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four *periods* in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does "CHON" mean? (not the rock band, though they are also excellent, especially that song that features GoYama)
-
-
-
-5. Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each `group_number`. Use `geom_point()` and `geom_errorbar()` to illustrate the average, minimum, and maximum values for each group number.
-
-
-
-6. Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by `color`. Now filter out those that have `color == "colorless"`. Of the remaining elements, which has the widest range of specific heats? Use `geom_point()` and `geom_errorbar()` to illustrate the mean and standard deviation of each color's specific heats.
-
-
-
-7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
-<!-- end -->
-
-<!-- start wrangling -->
-
-# wrangling {-}
 
 ## subsetting
 
@@ -1313,23 +987,323 @@ select(alaska_lake_data, park, water_temp)
 ## 10 BELA        6.46
 ## # … with 210 more rows
 ```
-<!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
 
-# (PART) chemometrics
+## tidy data
 
-<!-- start overview -->
+https://tidydatatutor.com/vis.html
 
-# overview {-}
+When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg" width="100%" style="display: block; margin: auto;" />
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at leo sit amet odio rhoncus tempor. Suspendisse et dolor eu mi lacinia scelerisque sed ut est. Ut vitae tortor sit amet urna scelerisque volutpat non non turpis. Ut mollis massa sed sem elementum pharetra. Donec at metus malesuada, dictum orci id, laoreet massa. Sed eros augue, dapibus at sem ut, scelerisque dictum erat. Proin dictum mattis libero, ut venenatis velit porttitor et. Pellentesque bibendum nunc nec neque dictum faucibus. Suspendisse placerat a dolor at tristique. Integer vel sem pharetra, consequat nunc at, tempor dui.
+```r
+fadb_sample
+## # A tibble: 7 × 11
+##   fatty_acid         Agonandra_brasiliensis Agonandra_silva…
+##   <chr>                               <dbl>            <dbl>
+## 1 Hexadecanoic acid                     3.4              1  
+## 2 Octadecanoic acid                     6.2              0.1
+## 3 Eicosanoic acid                       4.7              3.5
+## 4 Docosanoic acid                      77.4              0.4
+## 5 Tetracosanoic acid                    1.4              1  
+## 6 Hexacosanoic acid                     1.9             12.6
+## 7 Octacosanoic acid                     5               81.4
+## # … with 8 more variables: Agonandra_excelsa <dbl>,
+## #   Heisteria_silvianii <dbl>, Malania_oleifera <dbl>,
+## #   Ximenia_americana <dbl>, Ongokea_gore <dbl>,
+## #   Comandra_pallida <dbl>, Buckleya_distichophylla <dbl>,
+## #   Nuytsia_floribunda <dbl>
+```
 
-Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras rhoncus tristique neque, sed vehicula turpis porttitor vitae. Etiam laoreet posuere mi, eget scelerisque tellus fermentum eget. Praesent dictum nunc finibus, accumsan turpis id, congue elit. Proin venenatis diam vel commodo gravida. Suspendisse tortor libero, dignissim quis semper efficitur, dictum eu risus. Donec venenatis tincidunt purus ut blandit. In id velit risus. Nam ullamcorper vehicula sollicitudin. Praesent egestas dapibus justo, pretium blandit leo auctor sed. Morbi sit amet dui et sem pharetra interdum id vitae libero. Vivamus mi mauris, accumsan in vehicula pulvinar, ultricies ut elit.
+While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
 
+
+```r
+pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
+## # A tibble: 70 × 3
+##    fatty_acid        plant_species          relative_abunda…
+##    <chr>             <chr>                             <dbl>
+##  1 Hexadecanoic acid Agonandra_brasiliensis              3.4
+##  2 Hexadecanoic acid Agonandra_silvatica                 1  
+##  3 Hexadecanoic acid Agonandra_excelsa                   1.2
+##  4 Hexadecanoic acid Heisteria_silvianii                 2.9
+##  5 Hexadecanoic acid Malania_oleifera                    0.7
+##  6 Hexadecanoic acid Ximenia_americana                   3.3
+##  7 Hexadecanoic acid Ongokea_gore                        1  
+##  8 Hexadecanoic acid Comandra_pallida                    2.3
+##  9 Hexadecanoic acid Buckleya_distichophyl…              1.6
+## 10 Hexadecanoic acid Nuytsia_floribunda                  3.8
+## # … with 60 more rows
+```
+
+Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+
+## the pipe (%>%)
+
+We have seen how to create new objects using `<-`, and we have been filtering and plotting data using, for example:
+
+
+```r
+ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-71-1.png" width="100%" style="display: block; margin: auto;" />
+
+However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
+
+
+```r
+alaska_lake_data %>%
+  filter(park == "BELA") %>%
+  ggplot(aes(x = pH, y = lake)) + geom_col()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" />
+
+Neat! Another way to think about the pipe:
+
+<img src="http://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" width="100%" style="display: block; margin: auto;" />
+
+The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see...
+
+## summary statistics
+
+So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the `ny_trees` dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
+
+
+```r
+ny_trees
+## # A tibble: 378,762 × 14
+##    tree_height tree_diameter address       tree_loc pit_type
+##          <dbl>         <dbl> <chr>         <chr>    <chr>   
+##  1        21.1             6 1139 57 STRE… Front    Sidewal…
+##  2        59.0             6 2220 BERGEN … Across   Sidewal…
+##  3        92.4            13 2254 BERGEN … Across   Sidewal…
+##  4        50.2            15 2332 BERGEN … Across   Sidewal…
+##  5        95.0            21 2361 EAST   … Front    Sidewal…
+##  6        67.5            19 2409 EAST   … Front    Continu…
+##  7        75.3            11 1481 EAST   … Front    Lawn    
+##  8        27.9             7 1129 57 STRE… Front    Sidewal…
+##  9       111.             26 2076 EAST   … Across   Sidewal…
+## 10        83.9            20 2025 EAST   … Front    Sidewal…
+## # … with 378,752 more rows, and 9 more variables:
+## #   soil_lvl <chr>, status <chr>, spc_latin <chr>,
+## #   spc_common <chr>, trunk_dmg <chr>, zipcode <dbl>,
+## #   boroname <chr>, latitude <dbl>, longitude <dbl>
+```
+
+More than 300,000 observations of 14 variables! That's 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
+
+Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. We will use the function `summarize()` to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
+
+
+```r
+ny_trees %>%
+  summarize(mean_height = mean(tree_height))
+## # A tibble: 1 × 1
+##   mean_height
+##         <dbl>
+## 1        72.6
+
+ny_trees %>%
+  summarize(stdev_height = sd(tree_height))
+## # A tibble: 1 × 1
+##   stdev_height
+##          <dbl>
+## 1         28.7
+```
+
+Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics.
+
+
+```r
+ny_trees %>%
+  group_by(spc_latin) %>%
+  summarize(mean_height = mean(tree_height))
+## # A tibble: 12 × 2
+##    spc_latin              mean_height
+##    <chr>                        <dbl>
+##  1 ACER PLATANOIDES              82.6
+##  2 ACER RUBRUM                  106. 
+##  3 ACER SACCHARINUM              65.6
+##  4 FRAXINUS PENNSYLVANICA        60.6
+##  5 GINKGO BILOBA                 90.4
+##  6 GLEDITSIA TRIACANTHOS         53.0
+##  7 PLATANUS ACERIFOLIA           82.0
+##  8 PYRUS CALLERYANA              21.0
+##  9 QUERCUS PALUSTRIS             65.5
+## 10 QUERCUS RUBRA                111. 
+## 11 TILIA CORDATA                 98.8
+## 12 ZELKOVA SERRATA              101.
+```
+
+Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
+
+
+```r
+ny_trees %>%
+  group_by(spc_latin) %>%
+  summarize(
+    mean_height = mean(tree_height),
+    stdev_height = sd(tree_height)
+  ) -> ny_trees_by_spc_summ
+ny_trees_by_spc_summ
+## # A tibble: 12 × 3
+##    spc_latin              mean_height stdev_height
+##    <chr>                        <dbl>        <dbl>
+##  1 ACER PLATANOIDES              82.6        17.6 
+##  2 ACER RUBRUM                  106.         15.7 
+##  3 ACER SACCHARINUM              65.6        16.6 
+##  4 FRAXINUS PENNSYLVANICA        60.6        21.3 
+##  5 GINKGO BILOBA                 90.4        24.5 
+##  6 GLEDITSIA TRIACANTHOS         53.0        13.0 
+##  7 PLATANUS ACERIFOLIA           82.0        16.0 
+##  8 PYRUS CALLERYANA              21.0         5.00
+##  9 QUERCUS PALUSTRIS             65.5         6.48
+## 10 QUERCUS RUBRA                111.         20.7 
+## 11 TILIA CORDATA                 98.8        32.6 
+## 12 ZELKOVA SERRATA              101.         10.7
+```
+
+Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` if you want them to vary along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
+
+
+```r
+ny_trees_by_spc_summ %>%
+ggplot() +
+  geom_pointrange(
+      aes(
+        y = spc_latin,
+        x = mean_height,
+        xmin = mean_height - stdev_height,
+        xmax = mean_height + stdev_height
+      )
+    )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-78-1.png" width="100%" style="display: block; margin: auto;" />
+
+Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
+
+
+```r
+ny_trees %>%
+  group_by(spc_latin, boroname) %>%
+  summarize(
+    mean_diam = mean(tree_diameter),
+    stdev_diam = sd(tree_diameter)
+  ) -> ny_trees_by_spc_boro_summ
+ny_trees_by_spc_boro_summ
+## # A tibble: 48 × 4
+## # Groups:   spc_latin [12]
+##    spc_latin        boroname  mean_diam stdev_diam
+##    <chr>            <chr>         <dbl>      <dbl>
+##  1 ACER PLATANOIDES Bronx         13.9        6.74
+##  2 ACER PLATANOIDES Brooklyn      15.4       14.9 
+##  3 ACER PLATANOIDES Manhattan     11.6        8.45
+##  4 ACER PLATANOIDES Queens        15.1       12.9 
+##  5 ACER RUBRUM      Bronx         11.4        7.88
+##  6 ACER RUBRUM      Brooklyn      10.5        7.41
+##  7 ACER RUBRUM      Manhattan      6.63       4.23
+##  8 ACER RUBRUM      Queens        14.1        8.36
+##  9 ACER SACCHARINUM Bronx         19.7       10.5 
+## 10 ACER SACCHARINUM Brooklyn      22.2       10.1 
+## # … with 38 more rows
+```
+
+Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let's map boroname to x and facet over tree species, which used to be on x. We'll also manually modify the theme element `strip.text.y` to get the species names in a readable position.
+
+
+```r
+ny_trees_by_spc_boro_summ %>%
+ggplot() +
+  geom_pointrange(
+    aes(
+      y = boroname,
+      x = mean_diam,
+      xmin = mean_diam-stdev_diam,
+      xmax = mean_diam+stdev_diam
+    )
+  ) +
+  facet_grid(spc_latin~.) +
+  theme(
+    strip.text.y = element_text(angle = 0)
+  )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-80-1.png" width="100%" style="display: block; margin: auto;" />
+
+Excellent! And if we really want to go for something pretty:
+
+
+```r
+ny_trees_by_spc_boro_summ %>%
+ggplot() +
+  geom_pointrange(
+    aes(
+      y = boroname,
+      x = mean_diam,
+      xmin = mean_diam-stdev_diam,
+      xmax = mean_diam+stdev_diam,
+      fill = spc_latin
+    ), color = "black", shape = 21
+  ) +
+  labs(
+    y = "Borough", 
+    x = "Trunk diameter",
+    caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
+  ) +
+  facet_grid(spc_latin~.) +
+  guides(fill = "none") +
+  scale_fill_brewer(palette = "Paired") +
+  theme_bw() +
+  theme(
+    strip.text.y = element_text(angle = 0),
+    plot.caption = element_text(hjust = 0.5)
+  )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;" />
+
+*Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
+
+
+## exercises
+
+Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
+
+In this set of exercises we are going to use the periodic table. After you run source() you can load that dataset using `periodic_table`. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
+
+Some pointers:
+
+- If your code goes off the page, don't be afraid to wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.
+
+- Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
+
+1. Make a plot using `geom_point()` that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?
+
+
+
+2. The column `state_at_RT` indicates the state of each element at room temperate. Make a plot that shows the average first ionization potential of all the elements belonging to each state group indicated in `state_at_RT` (i.e. what is the average 1st ionization potential of all elements that are solid at room temp? liquid? etc.). Which is the highest?
+
+
+
+3. Filter the dataset so that only elements with atomic number less than 85 are included. Considering only these elements, what is the average and standard deviation of boiling points for each type of `crystal_structure`? Make a plot using `geom_pointrange()` that shows the mean and standard deviation of each of these groups. What's up with elements that have a cubic crystal structure?
+
+
+
+4. Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four *periods* in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does "CHON" mean? (not the rock band, though they are also excellent, especially that song that features GoYama)
+
+
+
+5. Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each `group_number`. Use `geom_point()` and `geom_errorbar()` to illustrate the average, minimum, and maximum values for each group number.
+
+
+
+6. Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by `color`. Now filter out those that have `color == "colorless"`. Of the remaining elements, which has the widest range of specific heats? Use `geom_point()` and `geom_errorbar()` to illustrate the mean and standard deviation of each color's specific heats.
+
+
+
+7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
 
 <!-- start clustering -->
@@ -2831,7 +2805,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) mass spectrometric analysis {-}
+# (PART) mass spectrometry data {-}
 
 <!-- start mass spectrometric analysis -->
 
@@ -2905,13 +2879,13 @@ To control the mass spectrum window:
 <!-- end -->
 
 
-# (PART) nanopore data {-}
+# (PART) dna and rna sequence data {-}
 
 <!-- start nanopore data -->
 
 # data transfer {-}
 
-Once you've completed a nanopore run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
+Once you've completed a sequencing run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
 
 1. Identify which files are of interest/where they are in the system. Useful commands:
 
@@ -2934,7 +2908,45 @@ Display more data pertaining to the identification of disks. Can also change par
 
 3. Copy data
 
--Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk .
+-Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
+
+# nanopore read assessment {-}
+
+With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
+
+* nanoporeReadQCShort: Provides only read length information, runs quickly.
+* nanoporeReadQCLong: Provides read length and quality information, but is a bit slow.
+
+
+```r
+qc_data <- fastxQCShort(
+  fastxs = "/Users/bust0037/Desktop/k_fed.contigs.scaffolded.fa"
+)
+
+head(qc_data)
+##           name   length
+## 1 Chr01_RagTag 32286674
+## 2 Chr02_RagTag 23104666
+## 3 Chr03_RagTag 21286608
+## 4 Chr04_RagTag 20167753
+## 5 Chr05_RagTag 18883323
+## 6 Chr06_RagTag 19090322
+
+qc_data %>%
+  mutate(category = case_when(
+    length > mean(qc_data$length)*5 ~ "chromosome",
+    length <= mean(qc_data$length)*5 ~ "leftover_bit"
+  )) %>%
+  ggplot() +
+    geom_treemap(aes(area = length, fill = category), color = "black", size = 1) +
+    scale_fill_manual(values = c("gold", "maroon"))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
+
+# illumina read assessment {-}
+
+Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples
 
 <!-- end -->
 
@@ -3062,6 +3074,74 @@ INSTALL BIOCONDA
   /home/bust0037/merqury-1.3/merqury.sh
 
 sh $MERQURY/best_k.sh <genome_size>
+
+## assembly assessment
+
+Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder:
+
+
+```r
+# reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
+
+# # post <- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")
+# n_chroms <- 18
+
+# pb <- progress::progress_bar$new(total = n_chroms)
+
+# out <- list()
+
+# for (i in 1:n_chroms) {
+
+#   pb$tick()
+
+#   dat <- strsplit(substr(as.character(post[i]), 1, 50000000), "")[[1]]
+  
+#   b <- rle(dat)
+
+#   # Create a data frame
+#   dt <- data.frame(number = b$values, lengths = b$lengths, scaff = i)
+#   # Get the end
+#   dt$end <- cumsum(dt$lengths)
+#   # Get the start
+#   dt$start <- dt$end - dt$lengths + 1
+
+#   # Select columns
+#   dt <- dt[, c("number", "start", "end", "scaff")]
+#   # Sort rows
+#   dt <- dt[order(dt$number), ]
+
+#   dt %>%
+#     filter(number == "N") -> N_dat
+
+#   out[[i]] <- N_dat
+
+# }
+
+# out <- do.call(rbind, out)
+
+
+# chroms <- data.frame(
+#   lengths = post@ranges@width[1:n_chroms],
+#   scaff = seq(1,n_chroms,1)
+# )
+
+# ggplot() +
+#   statebins:::geom_rrect(data = chroms, aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
+#   geom_rect(data = out, aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
+#   facet_grid(scaff~.) +
+#   scale_fill_viridis(end = 0.8) +
+#   theme_classic()
+
+# ggplot() +
+#   geom_rect(data = filter(chroms, scaff == 1 | scaff == 2), aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
+#   geom_rect(data = filter(out, scaff == 1 | scaff == 2), aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
+#   facet_grid(scaff~.) +
+#   scale_y_continuous(limits = c(-2,2)) +
+#   scale_fill_viridis(end = 0.8) +
+#   theme_classic() +
+#   coord_polar()
+```
+
 
 
 ## loading GFF files
@@ -3198,7 +3278,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 
@@ -3541,7 +3621,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -3583,7 +3663,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -3618,18 +3698,18 @@ How to remove certain columns:
 alaska_lake_data %>%
   select(!water_temp)
 ## # A tibble: 220 × 6
-##    lake                park     pH element mg_per_L element_type
-##    <chr>               <chr> <dbl> <chr>      <dbl> <chr>       
-##  1 Devil_Mountain_Lake BELA   7.69 C          3.4   bound       
-##  2 Devil_Mountain_Lake BELA   7.69 N          0.028 bound       
-##  3 Devil_Mountain_Lake BELA   7.69 P          0     bound       
-##  4 Devil_Mountain_Lake BELA   7.69 Cl        10.4   free        
-##  5 Devil_Mountain_Lake BELA   7.69 S          0.62  free        
-##  6 Devil_Mountain_Lake BELA   7.69 F          0.04  free        
-##  7 Devil_Mountain_Lake BELA   7.69 Br         0.02  free        
-##  8 Devil_Mountain_Lake BELA   7.69 Na         8.92  free        
-##  9 Devil_Mountain_Lake BELA   7.69 K          1.2   free        
-## 10 Devil_Mountain_Lake BELA   7.69 Ca         5.73  free        
+##    lake            park     pH element mg_per_L element_type
+##    <chr>           <chr> <dbl> <chr>      <dbl> <chr>       
+##  1 Devil_Mountain… BELA   7.69 C          3.4   bound       
+##  2 Devil_Mountain… BELA   7.69 N          0.028 bound       
+##  3 Devil_Mountain… BELA   7.69 P          0     bound       
+##  4 Devil_Mountain… BELA   7.69 Cl        10.4   free        
+##  5 Devil_Mountain… BELA   7.69 S          0.62  free        
+##  6 Devil_Mountain… BELA   7.69 F          0.04  free        
+##  7 Devil_Mountain… BELA   7.69 Br         0.02  free        
+##  8 Devil_Mountain… BELA   7.69 Na         8.92  free        
+##  9 Devil_Mountain… BELA   7.69 K          1.2   free        
+## 10 Devil_Mountain… BELA   7.69 Ca         5.73  free        
 ## # … with 210 more rows
 ```
 

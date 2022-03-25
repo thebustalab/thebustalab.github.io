@@ -4,21 +4,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 8 r faq | Integrated Bioanalytics</title>
+<title>Chapter 7 r faq | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="8.1 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
-<meta name="generator" content="bookdown 0.24.4 with bs4_book()">
-<meta property="og:title" content="Chapter 8 r faq | Integrated Bioanalytics">
+<meta name="description" content="7.1 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
+<meta name="generator" content="bookdown 0.25 with bs4_book()">
+<meta property="og:title" content="Chapter 7 r faq | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="8.1 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
+<meta property="og:description" content="7.1 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 8 r faq | Integrated Bioanalytics">
-<meta name="twitter:description" content="8.1 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="twitter:title" content="Chapter 7 r faq | Integrated Bioanalytics">
+<meta name="twitter:description" content="7.1 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
-<link href="libs/_Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
-<link href="libs/_Montserrat-0.4.0/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -55,24 +55,21 @@
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">welcome</a></li>
 <li class="book-part">data analysis in r</li>
-<li><a class="" href="installation.html">installation</a></li>
-<li><a class="" href="ggplot-and-markdown.html">ggplot and markdown</a></li>
-<li><a class="" href="data-visualization.html">data visualization</a></li>
-<li><a class="" href="ggplot-ii.html">ggplot II</a></li>
-<li><a class="" href="import-and-tidying.html">import and tidying</a></li>
-<li><a class="" href="the-pipe-and-summaries.html">the pipe and summaries</a></li>
-<li><a class="" href="wrangling.html">wrangling</a></li>
-<li class="book-part">chemometrics</li>
 <li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="data-visualization.html">data visualization</a></li>
+<li><a class="" href="data-wranging.html">data wranging</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="pca.html">pca</a></li>
 <li><a class="" href="k-means.html">k-means</a></li>
 <li><a class="" href="models.html">models</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">mass spectrometric analysis</li>
+<li class="book-part">mass spectrometry data</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
-<li class="book-part">nanopore data</li>
+<li class="book-part">dna and rna sequence data</li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
+<li><a class="" href="nanopore-read-assessment.html">nanopore read assessment</a></li>
+<li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
 <li class="book-part">transcriptome analysis</li>
 <li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
 <li class="book-part">genomic analysis</li>
@@ -80,12 +77,12 @@
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">managing data projects</li>
-<li><a class="" href="data-on-google-drive.html"><span class="header-section-number">3</span> data on Google Drive</a></li>
+<li><a class="" href="data-on-google-drive.html"><span class="header-section-number">2</span> data on Google Drive</a></li>
 <li class="book-part">scientific writing</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">4</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">5</span> results and discussion</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">3</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">4</span> results and discussion</a></li>
 <li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li><a class="" href="proposals.html">proposals</a></li>
@@ -93,11 +90,11 @@
 <li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">6</span> images of mass spectra</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">5</span> images of mass spectra</a></li>
 <li class="book-part">appendix</li>
-<li><a class="" href="links.html"><span class="header-section-number">7</span> links</a></li>
-<li><a class="active" href="r-faq.html"><span class="header-section-number">8</span> r faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">9</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">6</span> links</a></li>
+<li><a class="active" href="r-faq.html"><span class="header-section-number">7</span> r faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">8</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -105,13 +102,13 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="r-faq" class="section level1" number="8">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="r-faq" class="section level1" number="7">
 <h1>
-<span class="header-section-number">8</span> r faq<a class="anchor" aria-label="anchor" href="#r-faq"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7</span> r faq<a class="anchor" aria-label="anchor" href="#r-faq"><i class="fas fa-link"></i></a>
 </h1>
-<div id="filtering" class="section level2" number="8.1">
+<div id="filtering" class="section level2" number="7.1">
 <h2>
-<span class="header-section-number">8.1</span> filtering<a class="anchor" aria-label="anchor" href="#filtering"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7.1</span> filtering<a class="anchor" aria-label="anchor" href="#filtering"><i class="fas fa-link"></i></a>
 </h2>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt; 18)</code> ## less than 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18)</code> ## less than or equal to 18</p>
@@ -121,18 +118,18 @@
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; != 18)</code> ## not equal to 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
 </div>
-<div id="ordering" class="section level2" number="8.2">
+<div id="ordering" class="section level2" number="7.2">
 <h2>
-<span class="header-section-number">8.2</span> ordering<a class="anchor" aria-label="anchor" href="#ordering"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7.2</span> ordering<a class="anchor" aria-label="anchor" href="#ordering"><i class="fas fa-link"></i></a>
 </h2>
 <p>A list of numeric element has an inherent order to it: -inf -&gt; +inf. A list of character element also has an inherent order to it: A -&gt; Z, or if it’s a mixed number and letter list (which is interpreted by R as a character list): 0 -&gt; 9 -&gt; A -&gt; Z.</p>
 <p>However, there are cases where we will want a list of character elements to have some order other than A -&gt; Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -&gt; Z. For example, in the plot below, the y axis is not, perhaps, in the “correct” order:</p>
-<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">periodic_table</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">group_number</span>, x <span class="op">=</span> <span class="va">atomic_mass_rounded</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>How do we fix this? We need to convert the column <code>group_number</code> into a list of factors that have the correct order (see below). For this, we will use the command <code>factor</code>, which will accept an argument called <code>levels</code> in which we can define the order the the characters should be in:</p>
-<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">periodic_table</span><span class="op">$</span><span class="va">group_number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span>
   <span class="va">periodic_table</span><span class="op">$</span><span class="va">group_number</span>,
   levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span>, <span class="st">"9"</span>, <span class="st">"10"</span>, <span class="st">"11"</span>, <span class="st">"12"</span>, <span class="st">"13"</span>, <span class="st">"14"</span>, <span class="st">"15"</span>, <span class="st">"16"</span>, <span class="st">"17"</span>, <span class="st">"18"</span>, <span class="st">"lanthanides"</span>, <span class="st">"actinides"</span><span class="op">)</span>
@@ -160,18 +157,18 @@
 <span class="co">## #   first_ionization_poten_eV &lt;dbl&gt;,</span>
 <span class="co">## #   second_ionization_poten_eV &lt;dbl&gt;, …</span></code></pre></div>
 <p>Notice that now when we look at the type of data that is contained in the column <code>group_number</code> it says “<fct>” This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?</fct></p>
-<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">periodic_table</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">group_number</span>, x <span class="op">=</span> <span class="va">atomic_mass_rounded</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>VICTORY!</p>
 </div>
-<div id="column-manipulation" class="section level2" number="8.3">
+<div id="column-manipulation" class="section level2" number="7.3">
 <h2>
-<span class="header-section-number">8.3</span> column manipulation<a class="anchor" aria-label="anchor" href="#column-manipulation"><i class="fas fa-link"></i></a>
+<span class="header-section-number">7.3</span> column manipulation<a class="anchor" aria-label="anchor" href="#column-manipulation"><i class="fas fa-link"></i></a>
 </h2>
 <p>How to select specific columns:</p>
-<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">select</span><span class="op">(</span><span class="va">water_temp</span>, <span class="va">pH</span><span class="op">)</span>
 <span class="co">## # A tibble: 220 × 2</span>
@@ -189,30 +186,30 @@
 <span class="co">## 10       6.46  7.69</span>
 <span class="co">## # … with 210 more rows</span></code></pre></div>
 <p>How to remove certain columns:</p>
-<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">select</span><span class="op">(</span><span class="op">!</span><span class="va">water_temp</span><span class="op">)</span>
 <span class="co">## # A tibble: 220 × 6</span>
-<span class="co">##    lake                park     pH element mg_per_L element_type</span>
-<span class="co">##    &lt;chr&gt;               &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span>
-<span class="co">##  1 Devil_Mountain_Lake BELA   7.69 C          3.4   bound       </span>
-<span class="co">##  2 Devil_Mountain_Lake BELA   7.69 N          0.028 bound       </span>
-<span class="co">##  3 Devil_Mountain_Lake BELA   7.69 P          0     bound       </span>
-<span class="co">##  4 Devil_Mountain_Lake BELA   7.69 Cl        10.4   free        </span>
-<span class="co">##  5 Devil_Mountain_Lake BELA   7.69 S          0.62  free        </span>
-<span class="co">##  6 Devil_Mountain_Lake BELA   7.69 F          0.04  free        </span>
-<span class="co">##  7 Devil_Mountain_Lake BELA   7.69 Br         0.02  free        </span>
-<span class="co">##  8 Devil_Mountain_Lake BELA   7.69 Na         8.92  free        </span>
-<span class="co">##  9 Devil_Mountain_Lake BELA   7.69 K          1.2   free        </span>
-<span class="co">## 10 Devil_Mountain_Lake BELA   7.69 Ca         5.73  free        </span>
+<span class="co">##    lake            park     pH element mg_per_L element_type</span>
+<span class="co">##    &lt;chr&gt;           &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span>
+<span class="co">##  1 Devil_Mountain… BELA   7.69 C          3.4   bound       </span>
+<span class="co">##  2 Devil_Mountain… BELA   7.69 N          0.028 bound       </span>
+<span class="co">##  3 Devil_Mountain… BELA   7.69 P          0     bound       </span>
+<span class="co">##  4 Devil_Mountain… BELA   7.69 Cl        10.4   free        </span>
+<span class="co">##  5 Devil_Mountain… BELA   7.69 S          0.62  free        </span>
+<span class="co">##  6 Devil_Mountain… BELA   7.69 F          0.04  free        </span>
+<span class="co">##  7 Devil_Mountain… BELA   7.69 Br         0.02  free        </span>
+<span class="co">##  8 Devil_Mountain… BELA   7.69 Na         8.92  free        </span>
+<span class="co">##  9 Devil_Mountain… BELA   7.69 K          1.2   free        </span>
+<span class="co">## 10 Devil_Mountain… BELA   7.69 Ca         5.73  free        </span>
 <span class="co">## # … with 210 more rows</span></code></pre></div>
 <!-- end -->
 <!-- start templates -->
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="links.html"><span class="header-section-number">7</span> links</a></div>
-<div class="next"><a href="templates.html"><span class="header-section-number">9</span> templates</a></div>
+<div class="prev"><a href="links.html"><span class="header-section-number">6</span> links</a></div>
+<div class="next"><a href="templates.html"><span class="header-section-number">8</span> templates</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -225,10 +222,10 @@
 <hr>
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#r-faq"><span class="header-section-number">8</span> r faq</a></li>
-<li><a class="nav-link" href="#filtering"><span class="header-section-number">8.1</span> filtering</a></li>
-<li><a class="nav-link" href="#ordering"><span class="header-section-number">8.2</span> ordering</a></li>
-<li><a class="nav-link" href="#column-manipulation"><span class="header-section-number">8.3</span> column manipulation</a></li>
+<li><a class="nav-link" href="#r-faq"><span class="header-section-number">7</span> r faq</a></li>
+<li><a class="nav-link" href="#filtering"><span class="header-section-number">7.1</span> filtering</a></li>
+<li><a class="nav-link" href="#ordering"><span class="header-section-number">7.2</span> ordering</a></li>
+<li><a class="nav-link" href="#column-manipulation"><span class="header-section-number">7.3</span> column manipulation</a></li>
 </ul>
 
       <div class="book-extra">
@@ -246,7 +243,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-24.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

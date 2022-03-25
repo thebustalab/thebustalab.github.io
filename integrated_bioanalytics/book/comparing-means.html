@@ -7,18 +7,18 @@
 <title>comparing means | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
-<meta name="generator" content="bookdown 0.24.4 with bs4_book()">
+<meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="comparing means | Integrated Bioanalytics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="comparing means | Integrated Bioanalytics">
 <meta name="twitter:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
-<link href="libs/_Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
-<link href="libs/_Montserrat-0.4.0/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -55,24 +55,21 @@
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">welcome</a></li>
 <li class="book-part">data analysis in r</li>
-<li><a class="" href="installation.html">installation</a></li>
-<li><a class="" href="ggplot-and-markdown.html">ggplot and markdown</a></li>
-<li><a class="" href="data-visualization.html">data visualization</a></li>
-<li><a class="" href="ggplot-ii.html">ggplot II</a></li>
-<li><a class="" href="import-and-tidying.html">import and tidying</a></li>
-<li><a class="" href="the-pipe-and-summaries.html">the pipe and summaries</a></li>
-<li><a class="" href="wrangling.html">wrangling</a></li>
-<li class="book-part">chemometrics</li>
 <li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="data-visualization.html">data visualization</a></li>
+<li><a class="" href="data-wranging.html">data wranging</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="pca.html">pca</a></li>
 <li><a class="" href="k-means.html">k-means</a></li>
 <li><a class="" href="models.html">models</a></li>
 <li><a class="active" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">mass spectrometric analysis</li>
+<li class="book-part">mass spectrometry data</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
-<li class="book-part">nanopore data</li>
+<li class="book-part">dna and rna sequence data</li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
+<li><a class="" href="nanopore-read-assessment.html">nanopore read assessment</a></li>
+<li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
 <li class="book-part">transcriptome analysis</li>
 <li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
 <li class="book-part">genomic analysis</li>
@@ -80,12 +77,12 @@
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
 <li class="book-part">managing data projects</li>
-<li><a class="" href="data-on-google-drive.html"><span class="header-section-number">3</span> data on Google Drive</a></li>
+<li><a class="" href="data-on-google-drive.html"><span class="header-section-number">2</span> data on Google Drive</a></li>
 <li class="book-part">scientific writing</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
-<li><a class="" href="figures-captions.html"><span class="header-section-number">4</span> figures &amp; captions</a></li>
-<li><a class="" href="results-and-discussion.html"><span class="header-section-number">5</span> results and discussion</a></li>
+<li><a class="" href="figures-captions.html"><span class="header-section-number">3</span> figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html"><span class="header-section-number">4</span> results and discussion</a></li>
 <li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li><a class="" href="proposals.html">proposals</a></li>
@@ -93,11 +90,11 @@
 <li><a class="" href="section.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">6</span> images of mass spectra</a></li>
+<li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">5</span> images of mass spectra</a></li>
 <li class="book-part">appendix</li>
-<li><a class="" href="links.html"><span class="header-section-number">7</span> links</a></li>
-<li><a class="" href="r-faq.html"><span class="header-section-number">8</span> r faq</a></li>
-<li><a class="" href="templates.html"><span class="header-section-number">9</span> templates</a></li>
+<li><a class="" href="links.html"><span class="header-section-number">6</span> links</a></li>
+<li><a class="" href="r-faq.html"><span class="header-section-number">7</span> r faq</a></li>
+<li><a class="" href="templates.html"><span class="header-section-number">8</span> templates</a></li>
 </ul>
 
         <div class="book-extra">
@@ -173,9 +170,9 @@ library(rstatix)
 library(agricolae)
 library(multcompView)
 ``` -->
-<div id="definitions" class="section level2" number="2.11">
+<div id="definitions" class="section level2" number="1.35">
 <h2>
-<span class="header-section-number">2.11</span> definitions<a class="anchor" aria-label="anchor" href="#definitions"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.35</span> definitions<a class="anchor" aria-label="anchor" href="#definitions"><i class="fas fa-link"></i></a>
 </h2>
 <ol style="list-style-type: decimal">
 <li><p><strong>populations and independent measurements</strong>: When we are comparing means, we are comparing two <em>sets</em> of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the “population” (i.e. the aquifer).</p></li>
@@ -184,9 +181,9 @@ library(multcompView)
 </ol>
 <p>Please note that the the <em>p</em> value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.</p>
 </div>
-<div id="test-selection" class="section level2" number="2.12">
+<div id="test-selection" class="section level2" number="1.36">
 <h2>
-<span class="header-section-number">2.12</span> test selection<a class="anchor" aria-label="anchor" href="#test-selection"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.36</span> test selection<a class="anchor" aria-label="anchor" href="#test-selection"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):</p>
 <div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/stats.png" width="100%" style="display: block; margin: auto;"></div>
@@ -264,9 +261,9 @@ library(multcompView)
 <span class="co">## 1     1    22     0.289 0.596</span></code></pre></div>
 <p>The p-value from this test is 0.596! This means that their variances are not significantly different.</p>
 </div>
-<div id="two-means" class="section level2" number="2.13">
+<div id="two-means" class="section level2" number="1.37">
 <h2>
-<span class="header-section-number">2.13</span> two means<a class="anchor" aria-label="anchor" href="#two-means"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.37</span> two means<a class="anchor" aria-label="anchor" href="#two-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let’s try it out:</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
@@ -286,9 +283,9 @@ library(multcompView)
 <span class="co">## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0282</span></code></pre></div>
 <p>A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.</p>
 </div>
-<div id="more-than-two-means" class="section level2" number="2.14">
+<div id="more-than-two-means" class="section level2" number="1.38">
 <h2>
-<span class="header-section-number">2.14</span> more than two means<a class="anchor" aria-label="anchor" href="#more-than-two-means"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.38</span> more than two means<a class="anchor" aria-label="anchor" href="#more-than-two-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let’s consider our hawaii aquifer data again, though this time let’s use all the aquifers, not just two:</p>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
@@ -352,9 +349,9 @@ library(multcompView)
 <span class="co">## 1     9   100      3.12 0.00239</span></code></pre></div>
 <p>Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the variances are certainly different from one another (Levene test p = 0.002).</p>
 <p>Let’s assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.</p>
-<div id="anova-tukey-tests" class="section level3" number="2.14.1">
+<div id="anova-tukey-tests" class="section level3" number="1.38.1">
 <h3>
-<span class="header-section-number">2.14.1</span> ANOVA, Tukey tests<a class="anchor" aria-label="anchor" href="#anova-tukey-tests"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.38.1</span> ANOVA, Tukey tests<a class="anchor" aria-label="anchor" href="#anova-tukey-tests"><i class="fas fa-link"></i></a>
 </h3>
 <p>We will use the <code>anova_test</code> function from the package <code>rstatix</code>. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.</p>
 <div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
@@ -410,9 +407,9 @@ library(multcompView)
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
-<div id="kruskal-dunn-tests" class="section level3" number="2.14.2">
+<div id="kruskal-dunn-tests" class="section level3" number="1.38.2">
 <h3>
-<span class="header-section-number">2.14.2</span> Kruskal, Dunn tests<a class="anchor" aria-label="anchor" href="#kruskal-dunn-tests"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.38.2</span> Kruskal, Dunn tests<a class="anchor" aria-label="anchor" href="#kruskal-dunn-tests"><i class="fas fa-link"></i></a>
 </h3>
 <p>The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let’s try it out:</p>
 <div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
@@ -470,9 +467,9 @@ library(multcompView)
 <p>Note that these groupings are different from those generated by ANOVA/Tukey.</p>
 </div>
 </div>
-<div id="pairs-of-means" class="section level2" number="2.15">
+<div id="pairs-of-means" class="section level2" number="1.39">
 <h2>
-<span class="header-section-number">2.15</span> pairs of means<a class="anchor" aria-label="anchor" href="#pairs-of-means"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.39</span> pairs of means<a class="anchor" aria-label="anchor" href="#pairs-of-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among <em>all</em> values of Na and Cl, rather, we want to test all <em>pairs</em> of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:</p>
 <div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
@@ -603,17 +600,17 @@ library(multcompView)
     <span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="further-reading" class="section level2" number="2.16">
+<div id="further-reading" class="section level2" number="1.40">
 <h2>
-<span class="header-section-number">2.16</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.40</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading"><i class="fas fa-link"></i></a>
 </h2>
 <p>For more on comparing multiple means in R: <a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">www.datanovia.com</a></p>
 <p>For more on parametric versus non-parametric tests: <a href="https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/">Statistics by Jim</a></p>
 <p>For more on interpreting <em>p</em> values: [<a href="https://link.springer.com/article/10.1007/s00259-019-04467-5">The p value wars (again) by Ulrich Dirnagl</a>]</p>
 </div>
-<div id="exercises-7" class="section level2" number="2.17">
+<div id="exercises-7" class="section level2" number="1.41">
 <h2>
-<span class="header-section-number">2.17</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.41</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
 </h2>
 <p>Using the <code>hawaii_aquifers</code> data set, please complete the following:</p>
 <ol style="list-style-type: decimal">
@@ -646,18 +643,18 @@ library(multcompView)
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#comparing-means">comparing means</a></li>
-<li><a class="nav-link" href="#definitions"><span class="header-section-number">2.11</span> definitions</a></li>
-<li><a class="nav-link" href="#test-selection"><span class="header-section-number">2.12</span> test selection</a></li>
-<li><a class="nav-link" href="#two-means"><span class="header-section-number">2.13</span> two means</a></li>
+<li><a class="nav-link" href="#definitions"><span class="header-section-number">1.35</span> definitions</a></li>
+<li><a class="nav-link" href="#test-selection"><span class="header-section-number">1.36</span> test selection</a></li>
+<li><a class="nav-link" href="#two-means"><span class="header-section-number">1.37</span> two means</a></li>
 <li>
-<a class="nav-link" href="#more-than-two-means"><span class="header-section-number">2.14</span> more than two means</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#anova-tukey-tests"><span class="header-section-number">2.14.1</span> ANOVA, Tukey tests</a></li>
-<li><a class="nav-link" href="#kruskal-dunn-tests"><span class="header-section-number">2.14.2</span> Kruskal, Dunn tests</a></li>
+<a class="nav-link" href="#more-than-two-means"><span class="header-section-number">1.38</span> more than two means</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#anova-tukey-tests"><span class="header-section-number">1.38.1</span> ANOVA, Tukey tests</a></li>
+<li><a class="nav-link" href="#kruskal-dunn-tests"><span class="header-section-number">1.38.2</span> Kruskal, Dunn tests</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#pairs-of-means"><span class="header-section-number">2.15</span> pairs of means</a></li>
-<li><a class="nav-link" href="#further-reading"><span class="header-section-number">2.16</span> further reading</a></li>
-<li><a class="nav-link" href="#exercises-7"><span class="header-section-number">2.17</span> exercises</a></li>
+<li><a class="nav-link" href="#pairs-of-means"><span class="header-section-number">1.39</span> pairs of means</a></li>
+<li><a class="nav-link" href="#further-reading"><span class="header-section-number">1.40</span> further reading</a></li>
+<li><a class="nav-link" href="#exercises-7"><span class="header-section-number">1.41</span> exercises</a></li>
 </ul>
 
       <div class="book-extra">
@@ -679,7 +676,7 @@ library(multcompView)
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-24.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

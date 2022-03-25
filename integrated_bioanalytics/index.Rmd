@@ -174,8 +174,8 @@ Other options are: if you have Windows, download and install [MikTeX](https://mi
 
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
-First, attempt to load phylochemistry, if you are on Windows, be sure you've open RStudio as an administrator:
-```{r, message = FALSE}
+First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
+```{r, message = FALSE, cache = FALSE}
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
@@ -2724,65 +2724,65 @@ sh $MERQURY/best_k.sh <genome_size>
 Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder:
 
 ```{r}
-reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
+# reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
 
-# post <- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")
-n_chroms <- 18
+# # post <- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")
+# n_chroms <- 18
 
-pb <- progress::progress_bar$new(total = n_chroms)
+# pb <- progress::progress_bar$new(total = n_chroms)
 
-out <- list()
+# out <- list()
 
-for (i in 1:n_chroms) {
+# for (i in 1:n_chroms) {
 
-  pb$tick()
+#   pb$tick()
 
-  dat <- strsplit(substr(as.character(post[i]), 1, 50000000), "")[[1]]
+#   dat <- strsplit(substr(as.character(post[i]), 1, 50000000), "")[[1]]
   
-  b <- rle(dat)
+#   b <- rle(dat)
 
-  # Create a data frame
-  dt <- data.frame(number = b$values, lengths = b$lengths, scaff = i)
-  # Get the end
-  dt$end <- cumsum(dt$lengths)
-  # Get the start
-  dt$start <- dt$end - dt$lengths + 1
+#   # Create a data frame
+#   dt <- data.frame(number = b$values, lengths = b$lengths, scaff = i)
+#   # Get the end
+#   dt$end <- cumsum(dt$lengths)
+#   # Get the start
+#   dt$start <- dt$end - dt$lengths + 1
 
-  # Select columns
-  dt <- dt[, c("number", "start", "end", "scaff")]
-  # Sort rows
-  dt <- dt[order(dt$number), ]
+#   # Select columns
+#   dt <- dt[, c("number", "start", "end", "scaff")]
+#   # Sort rows
+#   dt <- dt[order(dt$number), ]
 
-  dt %>%
-    filter(number == "N") -> N_dat
+#   dt %>%
+#     filter(number == "N") -> N_dat
 
-  out[[i]] <- N_dat
+#   out[[i]] <- N_dat
 
-}
+# }
 
-out <- do.call(rbind, out)
+# out <- do.call(rbind, out)
 
 
-chroms <- data.frame(
-  lengths = post@ranges@width[1:n_chroms],
-  scaff = seq(1,n_chroms,1)
-)
+# chroms <- data.frame(
+#   lengths = post@ranges@width[1:n_chroms],
+#   scaff = seq(1,n_chroms,1)
+# )
 
-ggplot() +
-  statebins:::geom_rrect(data = chroms, aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
-  geom_rect(data = out, aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
-  facet_grid(scaff~.) +
-  scale_fill_viridis(end = 0.8) +
-  theme_classic()
+# ggplot() +
+#   statebins:::geom_rrect(data = chroms, aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
+#   geom_rect(data = out, aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
+#   facet_grid(scaff~.) +
+#   scale_fill_viridis(end = 0.8) +
+#   theme_classic()
 
-ggplot() +
-  geom_rect(data = filter(chroms, scaff == 1 | scaff == 2), aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
-  geom_rect(data = filter(out, scaff == 1 | scaff == 2), aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
-  facet_grid(scaff~.) +
-  scale_y_continuous(limits = c(-2,2)) +
-  scale_fill_viridis(end = 0.8) +
-  theme_classic() +
-  coord_polar()
+# ggplot() +
+#   geom_rect(data = filter(chroms, scaff == 1 | scaff == 2), aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
+#   geom_rect(data = filter(out, scaff == 1 | scaff == 2), aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
+#   facet_grid(scaff~.) +
+#   scale_y_continuous(limits = c(-2,2)) +
+#   scale_fill_viridis(end = 0.8) +
+#   theme_classic() +
+#   coord_polar()
 ```
 
 
