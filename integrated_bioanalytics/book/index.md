@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-03-03"
+date: "2022-03-24"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -49,7 +49,7 @@ output:
 source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-# (PART) basic data analysis in r
+# (PART) data analysis in r
 
 <!-- start installation -->
 
@@ -1211,11 +1211,6 @@ Some pointers:
 
 7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
 <!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
-# (PART) advanced data analysis in r
 
 <!-- start wrangling -->
 
@@ -1470,7 +1465,7 @@ colnames(solvents)[c(1,5,7)]
 ```
 <!-- end -->
 
-<!-- start principal components analysis-->
+<!-- start principal components analysis -->
 
 # pca {-}
 
@@ -2832,102 +2827,23 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 
 <!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
-<!-- start Mid Term Exam -->
+# (PART) mass spectrometric analysis {-}
 
-<!-- # MIDTERM EXAM {-}
+<!-- start mass spectrometric analysis -->
 
-For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
+# mass spectrometric analysis {-}
 
-The person that previously worked in your position, Mr. Porter, recently completed a chemical analysis of the major ingredients that Fireside Brewing uses. However, Mr. Porter didn't have time to finish analyzing the data that was collected.
+## integrationAppLite2
 
-At Fireside Brewing, your boss is Mrs. Pilsner, a woman who has worked in the brewing industry for decades and is a certified cicerone (a professional beer taster). As an expert taster, she is familiar with all the classes of compounds in beer ingredients and their corresponding flavors, but she is not an expert in chemistry or data analysis.
+`phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:
 
-For your first task in this new position, Mrs. Pilsner wants you to finish analyzing Mr. Porter's data. Mrs. Pilsner has not given you specific instructions on how to analyze the data, rather, she has a set of specific questions that she wants answered so that she can improve Fireside Brewing. Mr. Porter left some notes about how to perform the analyses, but, since he was close to retirement and spent too much time riding his bicycle and drinking beer, the notes are not complete. Use Mr. Porter's incomplete notes to help you answer the questions below.
+1. Create a new folder on your hard drive and place your CDF file into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
-**Answer each question with both (i) at least one high quality plot that provides a visual answer and (ii) a caption that provides a written answer. If a question necessitates an answer that is difficult to show with a plot (for example, a single *p* value), include that answer in the caption.**
-
-Write your answers in an R Markdown document, compile the document so that everything is shown: the code, your writing, and the plots. Submit the compiled pdf on Canvas.
-
-*note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
-
-<img src="http://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
-
-
-## Data set 1: beer_components
-
-Load this data set by running our source() command. It will then be present in your environment as `beer_components`.
-
-### Question 1 [7 points]:
-
-Mrs. Pilsner: *We are having problems with our Pale Ale. Its flavor is not consistent from batch to batch. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?*
-
-
-
-### Question 2 [12 points]:
-
-Mrs. Pilsner: *We are experimenting with a new beer that uses a 1:1:1 mixture of all the hop products that we use (hops, hop oil, and hop extract). I want to try to predict what type of flavor profile this beer might have. Using Mr. Porter's data for those three ingredients (hops, hop oil, and hop extract), can you predict what the relative abundance of each analyte class will be in the mixture?*
-
-
-
-### Question 3 [15 points]:
-
-Mrs. Pilsner: *I recently heard a rumor from other cicerones that, compared to other types of barley, barley containing significantly more 3-methylbutanal than all other aldehydes leads to a maltier flavor. Statistically speaking, does our barley currently contain significantly more 3-methylbutanal than all other aldehydes?*
-
-note from Mr. Porter: *Reminder to self: before conducting statistical tests, filter out analytes whose abundance == 0 in all five replicates, otherwise the tests will be biased.*
-
-
-
-### Question 4 [15 points]:
-
-Mrs. Pilsner: *When I taste our beers made with hop extract, they don't taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do ALL our different ingredients (including corn and barley) cluster according to their average chemical composition?*
-
-
-
-### Question 5 [*extra credit*, 4 points]:
-
-Mrs. Pilsner: *We are trying to reduce the price of our India Session Ale by replacing its hops with either hop extract or hop oil. Chemically speaking, which is more similar to hops - hop extract, or hop oil?*
-
-
-
-## Data set 2: hops_components
-
-After you answer all Mrs. Pilsner's questions about Mr. Porter's data, Mrs. Pilsner tells you about another data set that Fireside Brewing has. This data set was collected by Mr. Porter's intern, an undergraduate named Ms. Amber Stout. Amber measured the chemical composition of many different hop varieties. Please answer Mrs. Pilsner's questions below about the hops data in the same way you did for the questions above.
-
-To load this second data set, the hops data set, ensure you have run our source() command. It will then be present in your environment as `hops_components`.
-
-### Question 1 [12 points]:
-
-Mrs. Pilsner: *There are three major types of hops - aroma hops, dry hopping hops, and bittering hops. We had an emergency scenario last month where we ran out of bittering hops due to covid-related supply line problems. We needed to substitute either aroma hops or dry hopping hops into the recipe in place of bittering hops. At the time, we used aroma hops. Was that a good decision? If that emergency were to arise again, should we substitute aroma hops again, or should we use dry hopping hops instead? As much as possible, we would want the product from the emergency-substituted batch to be as similar to the normal batch made with bittering hops.*
-
-
-
-### Question 2 [15 points]:
-
-Mrs. Pilsner: *We buy our hops from many different countries of origin. I've always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the chemical profiles of other countries' hops (as a proxy for flavor profiles)? What chemical(s) largely drive this difference?*
-
-note from Mr. Porter: *note to self... by reducing the dimensionality of the chemical dataset to two dimensions, it should be possible to draw ellipses that encapsulate the chemical profile (as a proxy for "flavor profile") of each country's hops.*
-
-
-
-### Question 3 [12 points]:
-
-Mrs. Pilsner: *If we wanted to prepare our own hop oil, which type of hops should we use - aroma hops, bittering hops, or dry hopping hops? In other words, is there a statistical difference in the amount of total oil that each type of hops has? We want to pick the type of hops that would maximize our oil yield.*
-
-Mr. Porter: *Note to self: here we are **not** interested in comparing `total_oil` from different `hop_varieties`, but instead in comparing `total_oil` from hops with different `hop_brewing_usage`.*
-
-
-
-### Question 4 [12 points]:
-
-Mrs. Pilsner: *Cascade hops are a very popular variety, and also a variety we use in producing our flagship IPA. However, due to COVID-19, cascade hops are on back order for six months. What style of hop is most similar to cascade? I would like to order it to use in place of cascade hops for the batch of IPA we will brew two weeks from now.*
-
-
-
-### Question 5 [*extra credit*, 4 points]:
-
-Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?*
-
+2. In RStudio, run the source command to load `phylochemistry`:
 
 
 ```r
@@ -2935,20 +2851,20 @@ source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
  \
 
-3. In RStudio, run the `integrationAppLite` command on the *folder* that contains your CDF file. 
+3. In RStudio, run the `integrationAppLite2` command on the *folder* that contains your CDF file. 
  \
 
 If you are on a Mac, *use single forward slashes*. For example:
 
 ```r
-integrationAppLite("/Volumes/My_Drive/gc_data")
+integrationAppLite2("/Volumes/My_Drive/gc_data")
 ```
  \
 
 If you are on a PC, *use double back slashes*. For example:
 
 ```r
-integrationAppLite("C:\\Users\\My Profile\\gc_data")
+integrationAppLite2("C:\\Users\\My Profile\\gc_data")
 ```
  \
 
@@ -2975,6 +2891,7 @@ To control the mass spectrum window:
 * shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.
 * shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.
 * shift+4 = search current spectrum in panel 1 against library of mass spectra.
+* shift+5 = save the current spectrum in panel 1 as a csv file.
 
 
 ## CDF export
@@ -3101,9 +3018,50 @@ Essentially only speed optimization:
 correctedErrorRate=0.12
 * Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
 
-### As Canu runs
+### Run time metrics
 
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with  and run it at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with `kmerTable()` and run the output at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
+### Post-run metrics
+
+Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
+
+## Python programs
+
+INSTALL PYTHON (or upgrade python)
+
+INSTALL BIOCONDA
+1. install miniconda:
+  curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  sh ...
+  
+
+2. set up channels
+
+  /home/bust0037/miniconda3/bin/conda config --add channels defaults
+  /home/bust0037/miniconda3/bin/conda config --add channels bioconda
+  /home/bust0037/miniconda3/bin/conda config --add channels conda-forge
+
+3. install packages
+
+  /home/bust0037/miniconda3/bin/conda install sibeliaz
+  /home/bust0037/miniconda3/bin/conda install -c bioconda ragtag
+
+4. run your stuff
+
+  /home/bust0037/miniconda3/bin/conda run sibeliaz -n k_fed.contigs.scaffolded.fasta KlaxifloraFTBG2000359A_699_v3.0.fa
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  ragtag.py
+
+
+  /home/bust0037/meryl-1.3/bin/meryl
+  /home/bust0037/merqury-1.3/merqury.sh
+
+sh $MERQURY/best_k.sh <genome_size>
 
 
 ## loading GFF files
@@ -3156,13 +3114,35 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
+# (PART) managing data projects {-}
+
+<!-- start evolutionary analyses -->
+
+# data on Google Drive
+
+## R scripts on Google Drive
+
+Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
+
+```r
+openRGD("file_share_link_here")
+```
+ \
+When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
+
+```r
+closeRGD("file_share_link_here")
+```
+<!-- end -->
+
 # (PART) scientific writing {-}
+
+<!-- start WRITING -->
 
 # overview {-}
 
 One of the largest obstacles facing scientists is communicating about our work with non-scientists. We must practice written science communication in both technical and non-technical formats.
 
-<!-- start WRITING -->
 
 # a mini manuscript {-}
 
@@ -3218,7 +3198,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 
@@ -3561,7 +3541,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -3603,7 +3583,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 

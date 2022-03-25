@@ -6,19 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>genome assembly | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="3.19 Canu  3.19.1 Computer configuration Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may...">
+<meta name="description" content="2.21 Canu  2.21.1 Computer configuration Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
 <meta property="og:title" content="genome assembly | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="3.19 Canu  3.19.1 Computer configuration Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may...">
+<meta property="og:description" content="2.21 Canu  2.21.1 Computer configuration Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="genome assembly | Integrated Bioanalytics">
-<meta name="twitter:description" content="3.19 Canu  3.19.1 Computer configuration Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may...">
+<meta name="twitter:description" content="2.21 Canu  2.21.1 Computer configuration Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.0/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.0/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -54,14 +54,13 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">welcome</a></li>
-<li class="book-part">basic data analysis in r</li>
+<li class="book-part">data analysis in r</li>
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="" href="ggplot-and-markdown.html">ggplot and markdown</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
 <li><a class="" href="ggplot-ii.html">ggplot II</a></li>
 <li><a class="" href="import-and-tidying.html">import and tidying</a></li>
 <li><a class="" href="the-pipe-and-summaries.html">the pipe and summaries</a></li>
-<li class="book-part">advanced data analysis in r</li>
 <li><a class="" href="wrangling.html">wrangling</a></li>
 <li class="book-part">chemometrics</li>
 <li><a class="" href="overview.html">overview</a></li>
@@ -70,6 +69,8 @@
 <li><a class="" href="k-means.html">k-means</a></li>
 <li><a class="" href="models.html">models</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">mass spectrometric analysis</li>
+<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">nanopore data</li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
 <li class="book-part">transcriptome analysis</li>
@@ -78,6 +79,8 @@
 <li><a class="active" href="genome-assembly.html">genome assembly</a></li>
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
+<li class="book-part">managing data projects</li>
+<li><a class="" href="data-on-google-drive.html"><span class="header-section-number">3</span> data on Google Drive</a></li>
 <li class="book-part">scientific writing</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
@@ -105,13 +108,13 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="genome-assembly" class="section level1 unnumbered">
 <h1>genome assembly<a class="anchor" aria-label="anchor" href="#genome-assembly"><i class="fas fa-link"></i></a>
 </h1>
-<div id="canu" class="section level2" number="3.19">
+<div id="canu" class="section level2" number="2.21">
 <h2>
-<span class="header-section-number">3.19</span> Canu<a class="anchor" aria-label="anchor" href="#canu"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.21</span> Canu<a class="anchor" aria-label="anchor" href="#canu"><i class="fas fa-link"></i></a>
 </h2>
-<div id="computer-configuration" class="section level3" number="3.19.1">
+<div id="computer-configuration" class="section level3" number="2.21.1">
 <h3>
-<span class="header-section-number">3.19.1</span> Computer configuration<a class="anchor" aria-label="anchor" href="#computer-configuration"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.21.1</span> Computer configuration<a class="anchor" aria-label="anchor" href="#computer-configuration"><i class="fas fa-link"></i></a>
 </h3>
 <p>Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may differ. To run a genome assembly, start by determining what computing resources are available. Some helpful commands when investigating these resources on Linux machines:</p>
 <p>Assessing RAM (It is recommended to assign about 75% of available RAM to the assembly process):</p>
@@ -121,9 +124,9 @@
 <p>Assessing disk space (Make sure you are running your assembly on a disk with lots of open space. Ideally &gt; 2TB):</p>
 <p><code>df -h</code></p>
 </div>
-<div id="setting-up-canu" class="section level3" number="3.19.2">
+<div id="setting-up-canu" class="section level3" number="2.21.2">
 <h3>
-<span class="header-section-number">3.19.2</span> Setting up Canu<a class="anchor" aria-label="anchor" href="#setting-up-canu"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.21.2</span> Setting up Canu<a class="anchor" aria-label="anchor" href="#setting-up-canu"><i class="fas fa-link"></i></a>
 </h3>
 <p>For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:</p>
 <p><code>cat *.fastq &gt; all_reads.fastq</code></p>
@@ -147,16 +150,53 @@ correctedErrorRate=0.12</li>
 <li>Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.</li>
 </ul>
 </div>
-<div id="as-canu-runs" class="section level3" number="3.19.3">
+<div id="run-time-metrics" class="section level3" number="2.21.3">
 <h3>
-<span class="header-section-number">3.19.3</span> As Canu runs<a class="anchor" aria-label="anchor" href="#as-canu-runs"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.21.3</span> Run time metrics<a class="anchor" aria-label="anchor" href="#run-time-metrics"><i class="fas fa-link"></i></a>
 </h3>
-<p>Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with and run it at: <a href="http://qb.cshl.edu/genomescope/" class="uri">http://qb.cshl.edu/genomescope/</a>. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!</p>
+<p>Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with <code>kmerTable()</code> and run the output at: <a href="http://qb.cshl.edu/genomescope/" class="uri">http://qb.cshl.edu/genomescope/</a>. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!</p>
+</div>
+<div id="post-run-metrics" class="section level3" number="2.21.4">
+<h3>
+<span class="header-section-number">2.21.4</span> Post-run metrics<a class="anchor" aria-label="anchor" href="#post-run-metrics"><i class="fas fa-link"></i></a>
+</h3>
+<p>Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies</p>
 </div>
 </div>
-<div id="loading-gff-files" class="section level2" number="3.20">
+<div id="python-programs" class="section level2" number="2.22">
 <h2>
-<span class="header-section-number">3.20</span> loading GFF files<a class="anchor" aria-label="anchor" href="#loading-gff-files"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.22</span> Python programs<a class="anchor" aria-label="anchor" href="#python-programs"><i class="fas fa-link"></i></a>
+</h2>
+<p>INSTALL PYTHON (or upgrade python)</p>
+<p>INSTALL BIOCONDA
+1. install miniconda:
+curl -O <a href="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" class="uri">https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh</a>
+sh …</p>
+<ol start="2" style="list-style-type: decimal">
+<li>set up channels</li>
+</ol>
+<p>/home/bust0037/miniconda3/bin/conda config –add channels defaults
+/home/bust0037/miniconda3/bin/conda config –add channels bioconda
+/home/bust0037/miniconda3/bin/conda config –add channels conda-forge</p>
+<ol start="3" style="list-style-type: decimal">
+<li>install packages</li>
+</ol>
+<p>/home/bust0037/miniconda3/bin/conda install sibeliaz
+/home/bust0037/miniconda3/bin/conda install -c bioconda ragtag</p>
+<ol start="4" style="list-style-type: decimal">
+<li>run your stuff</li>
+</ol>
+<p>/home/bust0037/miniconda3/bin/conda run sibeliaz -n k_fed.contigs.scaffolded.fasta KlaxifloraFTBG2000359A_699_v3.0.fa</p>
+<p>/home/bust0037/miniconda3/bin/conda run ragtag</p>
+<p>/home/bust0037/miniconda3/bin/conda run ragtag</p>
+<p>ragtag.py</p>
+<p>/home/bust0037/meryl-1.3/bin/meryl
+/home/bust0037/merqury-1.3/merqury.sh</p>
+<p>sh $MERQURY/best_k.sh <genome_size></genome_size></p>
+</div>
+<div id="loading-gff-files" class="section level2" number="2.23">
+<h2>
+<span class="header-section-number">2.23</span> loading GFF files<a class="anchor" aria-label="anchor" href="#loading-gff-files"><i class="fas fa-link"></i></a>
 </h2>
 <!-- end -->
 <hr>
@@ -184,13 +224,15 @@ correctedErrorRate=0.12</li>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#genome-assembly">genome assembly</a></li>
 <li>
-<a class="nav-link" href="#canu"><span class="header-section-number">3.19</span> Canu</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#computer-configuration"><span class="header-section-number">3.19.1</span> Computer configuration</a></li>
-<li><a class="nav-link" href="#setting-up-canu"><span class="header-section-number">3.19.2</span> Setting up Canu</a></li>
-<li><a class="nav-link" href="#as-canu-runs"><span class="header-section-number">3.19.3</span> As Canu runs</a></li>
+<a class="nav-link" href="#canu"><span class="header-section-number">2.21</span> Canu</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#computer-configuration"><span class="header-section-number">2.21.1</span> Computer configuration</a></li>
+<li><a class="nav-link" href="#setting-up-canu"><span class="header-section-number">2.21.2</span> Setting up Canu</a></li>
+<li><a class="nav-link" href="#run-time-metrics"><span class="header-section-number">2.21.3</span> Run time metrics</a></li>
+<li><a class="nav-link" href="#post-run-metrics"><span class="header-section-number">2.21.4</span> Post-run metrics</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#loading-gff-files"><span class="header-section-number">3.20</span> loading GFF files</a></li>
+<li><a class="nav-link" href="#python-programs"><span class="header-section-number">2.22</span> Python programs</a></li>
+<li><a class="nav-link" href="#loading-gff-files"><span class="header-section-number">2.23</span> loading GFF files</a></li>
 </ul>
 
       <div class="book-extra">
@@ -212,7 +254,7 @@ correctedErrorRate=0.12</li>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-03.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

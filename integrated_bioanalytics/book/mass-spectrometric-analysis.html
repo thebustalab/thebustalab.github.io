@@ -6,19 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>mass spectrometric analysis | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="3.20 integrationAppLite phylochemistry provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a...">
+<meta name="description" content="2.18 integrationAppLite2 phylochemistry provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a...">
 <meta name="generator" content="bookdown 0.24.4 with bs4_book()">
 <meta property="og:title" content="mass spectrometric analysis | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="3.20 integrationAppLite phylochemistry provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a...">
+<meta property="og:description" content="2.18 integrationAppLite2 phylochemistry provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mass spectrometric analysis | Integrated Bioanalytics">
-<meta name="twitter:description" content="3.20 integrationAppLite phylochemistry provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a...">
+<meta name="twitter:description" content="2.18 integrationAppLite2 phylochemistry provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.0/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.0/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -54,14 +54,13 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">welcome</a></li>
-<li class="book-part">basic data analysis in r</li>
+<li class="book-part">data analysis in r</li>
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="" href="ggplot-and-markdown.html">ggplot and markdown</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
 <li><a class="" href="ggplot-ii.html">ggplot II</a></li>
 <li><a class="" href="import-and-tidying.html">import and tidying</a></li>
 <li><a class="" href="the-pipe-and-summaries.html">the pipe and summaries</a></li>
-<li class="book-part">advanced data analysis in r</li>
 <li><a class="" href="wrangling.html">wrangling</a></li>
 <li class="book-part">chemometrics</li>
 <li><a class="" href="overview.html">overview</a></li>
@@ -70,7 +69,6 @@
 <li><a class="" href="k-means.html">k-means</a></li>
 <li><a class="" href="models.html">models</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
-<li><a class="" href="midterm-exam.html">MIDTERM EXAM</a></li>
 <li class="book-part">mass spectrometric analysis</li>
 <li><a class="active" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">nanopore data</li>
@@ -81,6 +79,8 @@
 <li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
+<li class="book-part">managing data projects</li>
+<li><a class="" href="data-on-google-drive.html"><span class="header-section-number">3</span> data on Google Drive</a></li>
 <li class="book-part">scientific writing</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
@@ -108,9 +108,9 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="mass-spectrometric-analysis" class="section level1 unnumbered">
 <h1>mass spectrometric analysis<a class="anchor" aria-label="anchor" href="#mass-spectrometric-analysis"><i class="fas fa-link"></i></a>
 </h1>
-<div id="integrationapplite" class="section level2" number="3.20">
+<div id="integrationapplite2" class="section level2" number="2.18">
 <h2>
-<span class="header-section-number">3.20</span> integrationAppLite<a class="anchor" aria-label="anchor" href="#integrationapplite"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.18</span> integrationAppLite2<a class="anchor" aria-label="anchor" href="#integrationapplite2"><i class="fas fa-link"></i></a>
 </h2>
 <p><code>phylochemistry</code> provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:</p>
 <ol style="list-style-type: decimal">
@@ -121,16 +121,16 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"http://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <ol start="3" style="list-style-type: decimal">
-<li>In RStudio, run the <code>integrationAppLite</code> command on the <em>folder</em> that contains your CDF file.<br>
+<li>In RStudio, run the <code>integrationAppLite2</code> command on the <em>folder</em> that contains your CDF file.<br>
 </li>
 </ol>
 <p>If you are on a Mac, <em>use single forward slashes</em>. For example:</p>
 <div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">integrationAppLite</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">integrationAppLite2</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p>If you are on a PC, <em>use double back slashes</em>. For example:</p>
 <div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">integrationAppLite</span><span class="op">(</span><span class="st">"C:\\Users\\My Profile\\gc_data"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">integrationAppLite2</span><span class="op">(</span><span class="st">"C:\\Users\\My Profile\\gc_data"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p>The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long.</p>
 <p>Please watch this <a href="https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing">overview video</a> for a demonstration of how to use the integration app.</p>
@@ -152,11 +152,12 @@
 <li>shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.</li>
 <li>shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.</li>
 <li>shift+4 = search current spectrum in panel 1 against library of mass spectra.</li>
+<li>shift+5 = save the current spectrum in panel 1 as a csv file.</li>
 </ul>
 </div>
-<div id="cdf-export" class="section level2" number="3.21">
+<div id="cdf-export" class="section level2" number="2.19">
 <h2>
-<span class="header-section-number">3.21</span> CDF export<a class="anchor" aria-label="anchor" href="#cdf-export"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.19</span> CDF export<a class="anchor" aria-label="anchor" href="#cdf-export"><i class="fas fa-link"></i></a>
 </h2>
 <ol style="list-style-type: decimal">
 <li>On the GC-MS computer, open Enhanced Data Analysis</li>
@@ -174,7 +175,7 @@
 
 
 <div class="chapter-nav">
-<div class="prev"><a href="midterm-exam.html">MIDTERM EXAM</a></div>
+<div class="prev"><a href="comparing-means.html">comparing means</a></div>
 <div class="next"><a href="data-transfer.html">data transfer</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
@@ -189,8 +190,8 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#mass-spectrometric-analysis">mass spectrometric analysis</a></li>
-<li><a class="nav-link" href="#integrationapplite"><span class="header-section-number">3.20</span> integrationAppLite</a></li>
-<li><a class="nav-link" href="#cdf-export"><span class="header-section-number">3.21</span> CDF export</a></li>
+<li><a class="nav-link" href="#integrationapplite2"><span class="header-section-number">2.18</span> integrationAppLite2</a></li>
+<li><a class="nav-link" href="#cdf-export"><span class="header-section-number">2.19</span> CDF export</a></li>
 </ul>
 
       <div class="book-extra">
@@ -212,7 +213,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-03.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

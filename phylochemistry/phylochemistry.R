@@ -45,7 +45,8 @@
                 "bio3d",
                 # "shipunov",
                 "remotes",
-                "gdata"
+                "gdata",
+                "treemapify"
             )
 
             Bioconductor_packages <- c(
@@ -2457,17 +2458,46 @@
                     return(framed_GFFs)
                 }
 
-        #### analyzeNanoporeReads
+        #### fastxQCShort
 
-            #' Run QC on nanopore reads
+            #' Run short QC on fastx file(s)
             #'
-            #' @param fastqs A list of the paths to the fastq files you want to analyze
+            #' @param fastxs A list of the paths to the fastx files you want to analyze
             #' @param max_n_reads The maximum number of reads to analyze. Default is no limit.
             #' @examples
             #' @export
-            #' analyzeNanoporeReads
+            #' fastxQCShort
 
-            analyzeNanoporeReads <- function(fastqs, max_n_reads = NULL) {
+            fastxQCShort <- function(fastxs) {
+
+                output <- list()
+                total_read_number <- 0
+
+                for ( fastx in 1:length(fastxs)) {
+
+                    output[[fastx]] <- read.table(Rsamtools::indexFa(fastxs[fastx]))[,1:2]
+
+                }
+
+                output <- do.call(rbind, output)
+                rownames(output) <- NULL
+                colnames(output) <- c("name", "length")
+
+                return(output)
+
+            }
+
+        #### fastxQCLong
+
+            #' Run long QC on fastx file(s)
+            #'
+            #' @param fastxs A list of the paths to the fastx file(s) you want to analyze
+            #' @param max_n_reads The maximum number of reads to analyze. Default is no limit.
+            #' @examples
+            #' @export
+            #' fastxQCLong
+
+            fastxQCLong <- function(fastxs, max_n_reads = NULL) {
 
                 output <- list()
                 total_read_number <- 0

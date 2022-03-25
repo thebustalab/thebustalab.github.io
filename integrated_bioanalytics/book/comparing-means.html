@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.0/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.0/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.0/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -54,14 +54,13 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">welcome</a></li>
-<li class="book-part">basic data analysis in r</li>
+<li class="book-part">data analysis in r</li>
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="" href="ggplot-and-markdown.html">ggplot and markdown</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
 <li><a class="" href="ggplot-ii.html">ggplot II</a></li>
 <li><a class="" href="import-and-tidying.html">import and tidying</a></li>
 <li><a class="" href="the-pipe-and-summaries.html">the pipe and summaries</a></li>
-<li class="book-part">advanced data analysis in r</li>
 <li><a class="" href="wrangling.html">wrangling</a></li>
 <li class="book-part">chemometrics</li>
 <li><a class="" href="overview.html">overview</a></li>
@@ -70,6 +69,8 @@
 <li><a class="" href="k-means.html">k-means</a></li>
 <li><a class="" href="models.html">models</a></li>
 <li><a class="active" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">mass spectrometric analysis</li>
+<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">nanopore data</li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
 <li class="book-part">transcriptome analysis</li>
@@ -78,6 +79,8 @@
 <li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li class="book-part">evolutionary analysis</li>
 <li><a class="" href="evolutionary-analyses.html">evolutionary analyses</a></li>
+<li class="book-part">managing data projects</li>
+<li><a class="" href="data-on-google-drive.html"><span class="header-section-number">3</span> data on Google Drive</a></li>
 <li class="book-part">scientific writing</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
@@ -170,9 +173,9 @@ library(rstatix)
 library(agricolae)
 library(multcompView)
 ``` -->
-<div id="definitions" class="section level2" number="3.11">
+<div id="definitions" class="section level2" number="2.11">
 <h2>
-<span class="header-section-number">3.11</span> definitions<a class="anchor" aria-label="anchor" href="#definitions"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.11</span> definitions<a class="anchor" aria-label="anchor" href="#definitions"><i class="fas fa-link"></i></a>
 </h2>
 <ol style="list-style-type: decimal">
 <li><p><strong>populations and independent measurements</strong>: When we are comparing means, we are comparing two <em>sets</em> of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the “population” (i.e. the aquifer).</p></li>
@@ -181,9 +184,9 @@ library(multcompView)
 </ol>
 <p>Please note that the the <em>p</em> value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.</p>
 </div>
-<div id="test-selection" class="section level2" number="3.12">
+<div id="test-selection" class="section level2" number="2.12">
 <h2>
-<span class="header-section-number">3.12</span> test selection<a class="anchor" aria-label="anchor" href="#test-selection"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.12</span> test selection<a class="anchor" aria-label="anchor" href="#test-selection"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):</p>
 <div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/stats.png" width="100%" style="display: block; margin: auto;"></div>
@@ -261,9 +264,9 @@ library(multcompView)
 <span class="co">## 1     1    22     0.289 0.596</span></code></pre></div>
 <p>The p-value from this test is 0.596! This means that their variances are not significantly different.</p>
 </div>
-<div id="two-means" class="section level2" number="3.13">
+<div id="two-means" class="section level2" number="2.13">
 <h2>
-<span class="header-section-number">3.13</span> two means<a class="anchor" aria-label="anchor" href="#two-means"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.13</span> two means<a class="anchor" aria-label="anchor" href="#two-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let’s try it out:</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
@@ -283,9 +286,9 @@ library(multcompView)
 <span class="co">## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0282</span></code></pre></div>
 <p>A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.</p>
 </div>
-<div id="more-than-two-means" class="section level2" number="3.14">
+<div id="more-than-two-means" class="section level2" number="2.14">
 <h2>
-<span class="header-section-number">3.14</span> more than two means<a class="anchor" aria-label="anchor" href="#more-than-two-means"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.14</span> more than two means<a class="anchor" aria-label="anchor" href="#more-than-two-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let’s consider our hawaii aquifer data again, though this time let’s use all the aquifers, not just two:</p>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
@@ -349,9 +352,9 @@ library(multcompView)
 <span class="co">## 1     9   100      3.12 0.00239</span></code></pre></div>
 <p>Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the variances are certainly different from one another (Levene test p = 0.002).</p>
 <p>Let’s assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.</p>
-<div id="anova-tukey-tests" class="section level3" number="3.14.1">
+<div id="anova-tukey-tests" class="section level3" number="2.14.1">
 <h3>
-<span class="header-section-number">3.14.1</span> ANOVA, Tukey tests<a class="anchor" aria-label="anchor" href="#anova-tukey-tests"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.14.1</span> ANOVA, Tukey tests<a class="anchor" aria-label="anchor" href="#anova-tukey-tests"><i class="fas fa-link"></i></a>
 </h3>
 <p>We will use the <code>anova_test</code> function from the package <code>rstatix</code>. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.</p>
 <div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
@@ -407,9 +410,9 @@ library(multcompView)
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
-<div id="kruskal-dunn-tests" class="section level3" number="3.14.2">
+<div id="kruskal-dunn-tests" class="section level3" number="2.14.2">
 <h3>
-<span class="header-section-number">3.14.2</span> Kruskal, Dunn tests<a class="anchor" aria-label="anchor" href="#kruskal-dunn-tests"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.14.2</span> Kruskal, Dunn tests<a class="anchor" aria-label="anchor" href="#kruskal-dunn-tests"><i class="fas fa-link"></i></a>
 </h3>
 <p>The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let’s try it out:</p>
 <div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
@@ -467,9 +470,9 @@ library(multcompView)
 <p>Note that these groupings are different from those generated by ANOVA/Tukey.</p>
 </div>
 </div>
-<div id="pairs-of-means" class="section level2" number="3.15">
+<div id="pairs-of-means" class="section level2" number="2.15">
 <h2>
-<span class="header-section-number">3.15</span> pairs of means<a class="anchor" aria-label="anchor" href="#pairs-of-means"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.15</span> pairs of means<a class="anchor" aria-label="anchor" href="#pairs-of-means"><i class="fas fa-link"></i></a>
 </h2>
 <p>Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among <em>all</em> values of Na and Cl, rather, we want to test all <em>pairs</em> of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:</p>
 <div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
@@ -600,17 +603,17 @@ library(multcompView)
     <span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="further-reading" class="section level2" number="3.16">
+<div id="further-reading" class="section level2" number="2.16">
 <h2>
-<span class="header-section-number">3.16</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.16</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading"><i class="fas fa-link"></i></a>
 </h2>
 <p>For more on comparing multiple means in R: <a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">www.datanovia.com</a></p>
 <p>For more on parametric versus non-parametric tests: <a href="https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/">Statistics by Jim</a></p>
 <p>For more on interpreting <em>p</em> values: [<a href="https://link.springer.com/article/10.1007/s00259-019-04467-5">The p value wars (again) by Ulrich Dirnagl</a>]</p>
 </div>
-<div id="exercises-7" class="section level2" number="3.17">
+<div id="exercises-7" class="section level2" number="2.17">
 <h2>
-<span class="header-section-number">3.17</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.17</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
 </h2>
 <p>Using the <code>hawaii_aquifers</code> data set, please complete the following:</p>
 <ol style="list-style-type: decimal">
@@ -619,157 +622,9 @@ library(multcompView)
 <li><p>Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don’t forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.</p></li>
 <li><p>Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the <em>p</em> values and <em>p</em> groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?</p></li>
 </ol>
-<!-- end --><!-- start Mid Term Exam --><!-- # MIDTERM EXAM {-}
-
-For this examination, imagine that you are an analytical chemist that was just hired by Fireside Brewing, a large beer brewing company in Montana. At Fireside Brewing, beer is brewed using recipes that can include barley, corn, hops, hop oil, and/or hop extract. With these six ingredients the company can make all the beer varieties discussed below.
-
-The person that previously worked in your position, Mr. Porter, recently completed a chemical analysis of the major ingredients that Fireside Brewing uses. However, Mr. Porter didn't have time to finish analyzing the data that was collected.
-
-At Fireside Brewing, your boss is Mrs. Pilsner, a woman who has worked in the brewing industry for decades and is a certified cicerone (a professional beer taster). As an expert taster, she is familiar with all the classes of compounds in beer ingredients and their corresponding flavors, but she is not an expert in chemistry or data analysis.
-
-For your first task in this new position, Mrs. Pilsner wants you to finish analyzing Mr. Porter's data. Mrs. Pilsner has not given you specific instructions on how to analyze the data, rather, she has a set of specific questions that she wants answered so that she can improve Fireside Brewing. Mr. Porter left some notes about how to perform the analyses, but, since he was close to retirement and spent too much time riding his bicycle and drinking beer, the notes are not complete. Use Mr. Porter's incomplete notes to help you answer the questions below.
-
-**Answer each question with both (i) at least one high quality plot that provides a visual answer and (ii) a caption that provides a written answer. If a question necessitates an answer that is difficult to show with a plot (for example, a single *p* value), include that answer in the caption.**
-
-Write your answers in an R Markdown document, compile the document so that everything is shown: the code, your writing, and the plots. Submit the compiled pdf on Canvas.
-
-*note: a high quality plot is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional. You are a new employee - impress people!*
-
-<img src="http://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
-
-
-## Data set 1: beer_components
-
-Load this data set by running our source() command. It will then be present in your environment as `beer_components`.
-
-### Question 1 [7 points]:
-
-Mrs. Pilsner: *We are having problems with our Pale Ale. Its flavor is not consistent from batch to batch. We need to identify the ingredient that is causing this problem. What is the variability of each analyte class (ketone, sesquiterpene, etc.) in each of the ingredients we use (barley, corn, hop extract, hop oil, and hops), and particuarly, which ingredient and which class are most highly variable?*
-
-
-
-### Question 2 [12 points]:
-
-Mrs. Pilsner: *We are experimenting with a new beer that uses a 1:1:1 mixture of all the hop products that we use (hops, hop oil, and hop extract). I want to try to predict what type of flavor profile this beer might have. Using Mr. Porter's data for those three ingredients (hops, hop oil, and hop extract), can you predict what the relative abundance of each analyte class will be in the mixture?*
-
-
-
-### Question 3 [15 points]:
-
-Mrs. Pilsner: *I recently heard a rumor from other cicerones that, compared to other types of barley, barley containing significantly more 3-methylbutanal than all other aldehydes leads to a maltier flavor. Statistically speaking, does our barley currently contain significantly more 3-methylbutanal than all other aldehydes?*
-
-note from Mr. Porter: *Reminder to self: before conducting statistical tests, filter out analytes whose abundance == 0 in all five replicates, otherwise the tests will be biased.*
-
-
-
-### Question 4 [15 points]:
-
-Mrs. Pilsner: *When I taste our beers made with hop extract, they don't taste very hoppy compared to our beers made with hop oil or hops. Why is this - how do ALL our different ingredients (including corn and barley) cluster according to their average chemical composition?*
-
-
-
-### Question 5 [*extra credit*, 4 points]:
-
-Mrs. Pilsner: *We are trying to reduce the price of our India Session Ale by replacing its hops with either hop extract or hop oil. Chemically speaking, which is more similar to hops - hop extract, or hop oil?*
-
-
-
-## Data set 2: hops_components
-
-After you answer all Mrs. Pilsner's questions about Mr. Porter's data, Mrs. Pilsner tells you about another data set that Fireside Brewing has. This data set was collected by Mr. Porter's intern, an undergraduate named Ms. Amber Stout. Amber measured the chemical composition of many different hop varieties. Please answer Mrs. Pilsner's questions below about the hops data in the same way you did for the questions above.
-
-To load this second data set, the hops data set, ensure you have run our source() command. It will then be present in your environment as `hops_components`.
-
-### Question 1 [12 points]:
-
-Mrs. Pilsner: *There are three major types of hops - aroma hops, dry hopping hops, and bittering hops. We had an emergency scenario last month where we ran out of bittering hops due to covid-related supply line problems. We needed to substitute either aroma hops or dry hopping hops into the recipe in place of bittering hops. At the time, we used aroma hops. Was that a good decision? If that emergency were to arise again, should we substitute aroma hops again, or should we use dry hopping hops instead? As much as possible, we would want the product from the emergency-substituted batch to be as similar to the normal batch made with bittering hops.*
-
-
-
-### Question 2 [15 points]:
-
-Mrs. Pilsner: *We buy our hops from many different countries of origin. I've always wondered which country has the most unique hop varieties. Can you make a plot that shows me which country has the most hop varieties that have no overlap with the chemical profiles of other countries' hops (as a proxy for flavor profiles)? What chemical(s) largely drive this difference?*
-
-note from Mr. Porter: *note to self... by reducing the dimensionality of the chemical dataset to two dimensions, it should be possible to draw ellipses that encapsulate the chemical profile (as a proxy for "flavor profile") of each country's hops.*
-
-
-
-### Question 3 [12 points]:
-
-Mrs. Pilsner: *If we wanted to prepare our own hop oil, which type of hops should we use - aroma hops, bittering hops, or dry hopping hops? In other words, is there a statistical difference in the amount of total oil that each type of hops has? We want to pick the type of hops that would maximize our oil yield.*
-
-Mr. Porter: *Note to self: here we are **not** interested in comparing `total_oil` from different `hop_varieties`, but instead in comparing `total_oil` from hops with different `hop_brewing_usage`.*
-
-
-
-### Question 4 [12 points]:
-
-Mrs. Pilsner: *Cascade hops are a very popular variety, and also a variety we use in producing our flagship IPA. However, due to COVID-19, cascade hops are on back order for six months. What style of hop is most similar to cascade? I would like to order it to use in place of cascade hops for the batch of IPA we will brew two weeks from now.*
-
-
-
-### Question 5 [*extra credit*, 4 points]:
-
-Mrs. Pilsner: *We are interested in producing a new type of beer with the lowest amount of acids possible. Which variety of hops has the lowest total amount of acids?*
-
-
-
-```r
-source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
-```
- \
-
-3. In RStudio, run the `integrationAppLite` command on the *folder* that contains your CDF file. 
- \
-
-If you are on a Mac, *use single forward slashes*. For example:
-
-```r
-integrationAppLite("/Volumes/My_Drive/gc_data")
-```
- \
-
-If you are on a PC, *use double back slashes*. For example:
-
-```r
-integrationAppLite("C:\\Users\\My Profile\\gc_data")
-```
- \
-
-The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long.
-
-Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app.
-
-As a reference, below are the key commands used to operate the integration app. This is the information that is covered in the overview video.
-
-To control the chromatogram window:
-
-* shift + q = update
-* shift + a = add selected peak
-* shift + r = remove selected peak
-* shift + f = forward
-* shift + d = backward
-* shift + c = zoom in
-* shift + v = zoom out
-* shift + z = save table
-
-To control the mass spectrum window:
-
-* shift+1 = extract mass spectra from highlighted chromatogram region, plot average mass spectrum in panel 1.
-* shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.
-* shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.
-* shift+4 = search current spectrum in panel 1 against library of mass spectra.
-
-
-## CDF export
-
-1. On the GC-MS computer, open Enhanced Data Analysis
-2. File > Export Data To .AIA Format, Create New Directory (“OK”) > Desktop (create a folder with a name you will remember)
-3. Select all the datafiles you wish to analyze and process them, saving the output into the folder you just created
-4. Copy the .D files for the samples you wish to analyze to the same folder
-5. Move this folder to your personal computer
-6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
-<!-- end -->
+<!-- end --><hr>
+<hr>
+<hr>
 </div>
 </div>
 
@@ -777,7 +632,7 @@ To control the mass spectrum window:
 
 <div class="chapter-nav">
 <div class="prev"><a href="models.html">models</a></div>
-<div class="next"><a href="data-transfer.html">data transfer</a></div>
+<div class="next"><a href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -791,18 +646,18 @@ To control the mass spectrum window:
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#comparing-means">comparing means</a></li>
-<li><a class="nav-link" href="#definitions"><span class="header-section-number">3.11</span> definitions</a></li>
-<li><a class="nav-link" href="#test-selection"><span class="header-section-number">3.12</span> test selection</a></li>
-<li><a class="nav-link" href="#two-means"><span class="header-section-number">3.13</span> two means</a></li>
+<li><a class="nav-link" href="#definitions"><span class="header-section-number">2.11</span> definitions</a></li>
+<li><a class="nav-link" href="#test-selection"><span class="header-section-number">2.12</span> test selection</a></li>
+<li><a class="nav-link" href="#two-means"><span class="header-section-number">2.13</span> two means</a></li>
 <li>
-<a class="nav-link" href="#more-than-two-means"><span class="header-section-number">3.14</span> more than two means</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#anova-tukey-tests"><span class="header-section-number">3.14.1</span> ANOVA, Tukey tests</a></li>
-<li><a class="nav-link" href="#kruskal-dunn-tests"><span class="header-section-number">3.14.2</span> Kruskal, Dunn tests</a></li>
+<a class="nav-link" href="#more-than-two-means"><span class="header-section-number">2.14</span> more than two means</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#anova-tukey-tests"><span class="header-section-number">2.14.1</span> ANOVA, Tukey tests</a></li>
+<li><a class="nav-link" href="#kruskal-dunn-tests"><span class="header-section-number">2.14.2</span> Kruskal, Dunn tests</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#pairs-of-means"><span class="header-section-number">3.15</span> pairs of means</a></li>
-<li><a class="nav-link" href="#further-reading"><span class="header-section-number">3.16</span> further reading</a></li>
-<li><a class="nav-link" href="#exercises-7"><span class="header-section-number">3.17</span> exercises</a></li>
+<li><a class="nav-link" href="#pairs-of-means"><span class="header-section-number">2.15</span> pairs of means</a></li>
+<li><a class="nav-link" href="#further-reading"><span class="header-section-number">2.16</span> further reading</a></li>
+<li><a class="nav-link" href="#exercises-7"><span class="header-section-number">2.17</span> exercises</a></li>
 </ul>
 
       <div class="book-extra">
@@ -824,7 +679,7 @@ To control the mass spectrum window:
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-03.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-03-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
