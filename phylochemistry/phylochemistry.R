@@ -369,6 +369,25 @@
                 ape::write.tree( phy = tree, file = tree_out_path )
             }
 
+        #### downloadFasta
+
+            #' Returns contents of one fasta file as a StringSet object.
+            #'
+            #' @param share_link The path to the fasta to read. Can be local or a google drive share link.
+            #' @importFrom Biostrings readBStringSet readDNAStringSet readRNAStringSet readAAStringSet
+            #' @examples
+            #' @export
+            #' downloadFasta
+
+            downloadFasta <- function(share_link) {
+                cat("Downloading... this may take a while...")
+                suppressMessages(googledrive::drive_download(
+                    file = googledrive::as_id(share_link),
+                    path = "TEMP___fasta",
+                    overwrite = TRUE
+                ))
+            }
+
         #### readFasta
 
         	#' Returns contents of one fasta file as a StringSet object.
@@ -384,12 +403,8 @@
 
                 ## If its on google drive, download it and make a temp file
                     if (length(grep("http", fasta_in_path)) > 0) {
-                        cat("Downloading... this may take a while...")
-                        suppressMessages(googledrive::drive_download(
-                            file = googledrive::as_id(fasta_in_path),
-                            path = "TEMP___fasta",
-                            overwrite = TRUE
-                        ))
+                        
+                        downloadFasta(share_link = fasta_in_path)
 
                         temp_fasta <- Biostrings::readBStringSet("TEMP___fasta")
                         
@@ -1003,13 +1018,13 @@
 
                     ## Read in the newick scaffold
                         if (length(grep("http", scaffold_in_path)) > 0) {
-                            tree <- readLines(scaffold_in_path)
                             temp_tree <- tempfile(fileext = ".newick")
-                            temp_tree_connection <- file(temp_tree, "w")
-                            cat(tree, file = temp_tree_connection)
-                            close(temp_tree_connection)
+                            suppressMessages(googledrive::drive_download(
+                                file = googledrive::as_id(scaffold_in_path),
+                                path = temp_tree,
+                                overwrite = TRUE
+                            ))
                             newick <- readTree(temp_tree)
-                            unlink(temp_tree)
                         } else {
                             newick <- readTree( tree_in_path = scaffold_in_path )    
                         }
@@ -2458,104 +2473,124 @@
                     return(framed_GFFs)
                 }
 
-        #### fastxQCShort
+        #### fastxQC
 
-            #' Run short QC on fastx file(s)
+            #' Run QC on fastx file(s)
             #'
-            #' @param fastxs A list of the paths to the fastx files you want to analyze
-            #' @param max_n_reads The maximum number of reads to analyze. Default is no limit.
+            #' @param paths_to_fastxs A list of the paths to the fastx file(s) you want to analyze
+            #' @param max_n_seqs The maximum number of sequences PER FILE to analyze. Default is no limit.
             #' @examples
             #' @export
-            #' fastxQCShort
+            #' fastxQC
 
-            fastxQCShort <- function(fastxs) {
+            fastxQC <-  function(
+                
+                            paths_to_fastxs,
+                            type = c("fastq", "fasta"),
+                            mode = c("fast", "slow"),
+                            max_n_seqs = NULL
 
-                output <- list()
-                total_read_number <- 0
-
-                for ( fastx in 1:length(fastxs)) {
-
-                    output[[fastx]] <- read.table(Rsamtools::indexFa(fastxs[fastx]))[,1:2]
-
-                }
-
-                output <- do.call(rbind, output)
-                rownames(output) <- NULL
-                colnames(output) <- c("name", "length")
-
-                return(output)
-
-            }
-
-        #### fastxQCLong
-
-            #' Run long QC on fastx file(s)
-            #'
-            #' @param fastxs A list of the paths to the fastx file(s) you want to analyze
-            #' @param max_n_reads The maximum number of reads to analyze. Default is no limit.
-            #' @examples
-            #' @export
-            #' fastxQCLong
-
-            fastxQCLong <- function(fastxs, max_n_reads = NULL) {
+                        ) {
 
                 output <- list()
-                total_read_number <- 0
+                for ( path_to_fastx in 1:length(paths_to_fastxs)) {
 
-                for ( fastq in 1:length(fastqs) ) {
+                    cat(paste("Analyzing file ", paths_to_fastxs[path_to_fastx], "\n", sep = ""))
 
-                    cat(paste("Analyzing file ", fastqs[fastq], "\n", sep = ""))
-                    cat(paste("Using Phred_ASCII_33 score conversions...", "\n", sep = ""))
-
-                    if (length(max_n_reads) > 0) {
-                        n_reads <- max_n_reads
-                    } else {
-                        n_reads <- (dim(data.table::fread(fastqs[fastq], sep = NULL, header = FALSE))[1]/4)
+                    if (length(grep("http", paths_to_fastxs[path_to_fastx])) > 0) {
+                        downloadFasta(paths_to_fastxs[path_to_fastx])
+                        paths_to_fastxs[path_to_fastx] <- "TEMP___fasta"
                     }
 
-                    pb <- progress::progress_bar$new(total = n_reads)
+                    ## Start progress bar for this file
 
-                    for (i in 1:n_reads) {
-
-                        data <- data.table::fread(fastqs[fastq], skip = (4*(i-1)), nrows = 4, sep = NULL, header = FALSE)
-
-                        if (!length(strsplit(as.character(unlist(data[2,])), split = "")[[1]]) == length(strsplit(as.character(unlist(data[4,])), split = "")[[1]])) {
-                            stop(paste0("Problem with quality score encoding on line ", i))
+                        if (length(max_n_seqs) > 0) {
+                            n_reads <- max_n_seqs
+                        } else {
+                            if (type == "fasta") {
+                                n_reads <- (dim(data.table::fread(paths_to_fastxs[path_to_fastx], sep = NULL, header = FALSE))[1]/2)
+                            }
+                            if (type == "fastq") {
+                                n_reads <- (dim(data.table::fread(paths_to_fastxs[path_to_fastx], sep = NULL, header = FALSE))[1]/4)
+                            }
                         }
 
-                        total_read_number <- total_read_number + 1
+                    ## Get length distribution. If fastq, convert to fasta first. If slow, do quality scores
 
-                        read_score <- mean(as.numeric(phred33_lookup$X2[match(
-                                            strsplit(as.character(unlist(data[4,])), split = "")[[1]],
-                                            phred33_lookup$X1
-                                        )]))
-                        read_info <- data.frame(
-                            # read_name = 
-                            read_length = nchar(data[2,]),
-                            read_score = read_score,
-                            read_accuracy = (1-10^(-read_score/10))*100
-                        )
+                        if (type == "fasta") {
 
-                        output[[total_read_number]] <- read_info
+                            output[[length(output)+1]] <- cbind(
+                                data.frame(
+                                    file = rep(paths_to_fastxs[path_to_fastx], n_reads)
+                                ),
+                                read.table(Rsamtools::indexFa(
+                                    paths_to_fastxs[path_to_fastx]
+                                ))[1:n_reads,1:2]
+                            )
 
-                        pb$tick()
-                    
-                    }
+                        }
 
+                        if (type == "fastq" & mode == "fast") {
+                            
+                            cat(paste("Converting to fasta and getting sequence lengths...", "\n", sep = ""))
+
+                            fastqToFasta(
+                                file_in_path = paths_to_fastxs[path_to_fastx],
+                                file_out_path = paste0(paths_to_fastxs[path_to_fastx], ".fasta")
+                            )
+
+                            output[[length(output)+1]] <- cbind(
+                                data.frame(
+                                    file = rep(paths_to_fastxs[path_to_fastx], n_reads)
+                                ),
+                                read.table(Rsamtools::indexFa(
+                                    paste0(paths_to_fastxs[path_to_fastx], ".fasta")
+                                ))[1:n_reads,1:2]
+                            )
+
+                        }
+
+                        if (type == "fastq" & mode == "slow") {
+
+                            cat(paste("Using Phred_ASCII_33 score conversions...", "\n", sep = ""))
+                            cat(paste("Analyzing quality scores...", "\n", sep = ""))
+
+                            pb <- progress::progress_bar$new(total = n_reads)
+                            for (i in 1:n_reads) {
+
+                                data <- data.table::fread(
+                                    paths_to_fastxs[path_to_fastx], skip = (4*(i-1)),
+                                    nrows = 4, sep = NULL, header = FALSE
+                                )
+
+                                if (!length(strsplit(as.character(unlist(data[2,])), split = "")[[1]]) == length(strsplit(as.character(unlist(data[4,])), split = "")[[1]])) {
+                                    stop(paste0("Problem with quality score encoding on line ", i))
+                                }
+
+                                read_score <- mean(as.numeric(phred33_lookup$X2[match(
+                                                    strsplit(as.character(unlist(data[4,])), split = "")[[1]],
+                                                    phred33_lookup$X1
+                                                )]))
+                                
+                                output[[length(output)+1]] <- data.frame(
+                                    file = paths_to_fastxs[path_to_fastx],
+                                    name = data[1],
+                                    length = nchar(data[2,]),
+                                    score = read_score,
+                                    accuracy = (1-10^(-read_score/10))*100
+                                )
+
+                                pb$tick()
+                            
+                            }
+                        }
                 }
 
                 output <- do.call(rbind, output)
                 rownames(output) <- NULL
+                colnames(output) <- c("file", "name", "length", "score", "accuracy")[1:dim(output)[2]]
 
-                #   cat("   Summarizing header and length information...\n\n")
-                #       read_info <- as.data.frame(data.table::fread("nanoheader.txt", header = FALSE))
-                #       read_info$read_length <- as.data.frame(data.table::fread("nanolength.txt"))[,1]
-                #       read_info$read_score <- as.data.frame(data.table::fread("nanoscores.txt"))[,1]
-                #       read_info$read_accuracy <- (1-10^(-read_info$read_score/10))*100
-                #       colnames(read_info) <- c("read_name", "runid", "sampleid", "read", "ch", "start_time", "read_length", "read_score", "read_accuracy")
-                #       sample_info[[fastq]] <- read_info
-
-                    return(output)
+                return(as_tibble(output))
             }
 
         #### reverseTranslate

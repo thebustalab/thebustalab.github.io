@@ -2564,16 +2564,19 @@ Display more data pertaining to the identification of disks. Can also change par
 
 -Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
 
-# nanopore read assessment {-}
+# sequence assessment {-}
 
 With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
 
-* nanoporeReadQCShort: Provides only read length information, runs quickly.
-* nanoporeReadQCLong: Provides read length and quality information, but is a bit slow.
-
 ```{r}
-qc_data <- fastxQCShort(
-  fastxs = "/Users/bust0037/Desktop/k_fed.contigs.scaffolded.fa"
+qc_data <- fastxQC(
+    paths_to_fastxs = c(
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example2.fastq"
+    ),
+    type = "fasta",
+    mode = "slow",
+    max_n_seqs = 1000
 )
 
 head(qc_data)
@@ -2785,6 +2788,9 @@ Let's look at some examples. For these example, we will use some fasta files sto
 #   coord_polar()
 ```
 
+# comparative genomics
+
+GENESPACE: syntenic pan-genome annotations for eukaryotes
 
 
 ## loading GFF files
