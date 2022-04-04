@@ -7116,7 +7116,6 @@
                                         aes_string(x = "bond_start_x+0.18", y = "bond_start_y", xend = "bond_end_x+0.18", yend = "bond_end_y"),
                                         size = 1.5, alpha = 0.7, color = "blue"
                                     )
-
                             }
 
                         
