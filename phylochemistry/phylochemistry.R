@@ -7143,7 +7143,7 @@
                         ## Add atom number labels
                           
                             plot <- plot + geom_text(
-                                data = filter(plot_data),#, molecule_component == "atom", atom_number %in% c(10, 50, 71)),
+                                data = filter(plot_data, molecule_component == "atom"),#, atom_number %in% c(10, 50, 71)),
                                 aes(x = x, y = y, label = atom_number),
                                 size = 2, color = "white"
                             )
