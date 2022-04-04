@@ -46,7 +46,8 @@
                 # "shipunov",
                 "remotes",
                 "gdata",
-                "treemapify"
+                "treemapify",
+                "viridis"
             )
 
             Bioconductor_packages <- c(
@@ -7136,7 +7137,7 @@
                                     aes_string(x = "x", y = "y", fill = atom_color_column),
                                     shape = 21, size = 4
                                 ) +
-                                scale_fill_viridis()
+                                scale_fill_viridis(na.value = "#440154FF")
                             }
 
                         ## Add atom number labels
@@ -7163,7 +7164,7 @@
                         ## Scales and theme
                             scale_size_continuous(range = c(0,4)) +
                             scale_x_continuous(breaks = seq(0,20,1)) +
-                            scale_color_viridis() +
+                            scale_color_viridis(na.value = "#440154FF") +
                             # scale_linetype_manual(values = bond_line_types) +
                             scale_y_continuous(breaks = seq(0,20,1)) +
                             facet_wrap(.~molecule_name, ncol = 3) +
