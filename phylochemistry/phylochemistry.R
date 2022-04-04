@@ -498,7 +498,7 @@
 
             writeManyFastas <- function( XStringSet, fasta_out_directory_path ) {
             	for (sequence in 1:length(XStringSet)) {
-            		Biostrings::writeXStringSet( x = XStringSet[sequence], filepath = paste0(fasta_out_directory_path, XStringSet@ranges@NAMES[sequence], ".fa") )
+            		Biostrings::writeXStringSet( x = XStringSet[[sequence]], filepath = paste0(fasta_out_directory_path, XStringSet@ranges@NAMES[sequence], ".fa") )
             	}
             }
 
@@ -814,6 +814,74 @@
 
     ##### Tree and taxa manipulation
 
+        #### gblocks
+
+            #' Subset an alignment
+            #'
+            #' @param scaffold_type The type of information that should be used to build the tree. One of "amin_alignment", "nucl_alignment", or "newick"
+            #' @param scaffold_in_path The path to the information that should be used to build the tree.
+            #' @param members The tips of the tree that should be included. Default is to include everything.
+            #' @examples
+            #' @export
+            #' buildTree
+
+            gblocks <- function(
+                alignment_in_path = NULL,
+                max_gap_percent = 0.5,
+                min_conservation_percent = 0.5
+            ) {
+
+                ## Read in the alignment and make it a matrix
+                    nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
+                    nucl_seqs_aligned_matrix <- t(as.matrix(as.data.frame(nucl_seqs_aligned)))
+
+                ## Analyze composition of each position
+                    position_scores <- list()
+                    for (i in 1:dim(nucl_seqs_aligned_matrix)[2]) {
+                        position_scores[[i]] <- data.frame(
+                            position = i,
+                            gap_percent = sum(nucl_seqs_aligned_matrix[,i] == "-", na.rm = TRUE) / dim(nucl_seqs_aligned_matrix)[1],
+                            conservation_percent = suppressWarnings(sum(nucl_seqs_aligned_matrix[,i] == mode(nucl_seqs_aligned_matrix[,i]), na.rm = TRUE) / dim(nucl_seqs_aligned_matrix)[1])
+                        )
+                    }
+                    position_scores <- do.call(rbind, position_scores)
+
+                    ggplot(position_scores) +
+                        geom_line(aes(x = position, y = conservation_percent)) +
+                        geom_line(aes(x = position, y = gap_percent+1), color = "red") +
+                        theme_bw()
+
+                ## Find all positions with less than threshold conservation
+                    conservation_reject <- position_scores$position[position_scores$conservation_percent < min_conservation_percent]
+                    gap_reject <- position_scores$position[position_scores$gap_percent > max_gap_percent]
+
+                    ggplot() +
+                        geom_vline(
+                            aes(xintercept = conservation_reject), alpha = 0.4, size = 2
+                        ) +
+                        geom_vline(
+                            aes(xintercept = gap_reject), alpha = 0.4, size = 2
+                        ) +
+                        geom_line(data = position_scores, aes(x = position, y = conservation_percent)) +
+                        geom_line(data = position_scores, aes(x = position, y = gap_percent+1), color = "red") +
+                        
+                        theme_bw()
+
+                ## Remove reject positions
+                    nucl_seqs_aligned_matrix <- nucl_seqs_aligned_matrix[,-c(conservation_reject)]
+                    nucl_seqs_aligned_matrix <- nucl_seqs_aligned_matrix[,-c(gap_reject)]
+
+                ## Write out as fasta
+
+                    blocked_alignment <- DNAStringSet()
+                    for (i in 1:dim(nucl_seqs_aligned_matrix)[1]) {
+                        blocked_alignment <- c(blocked_alignment, DNAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
+                    }
+                    blocked_alignment@ranges@NAMES <- rownames(nucl_seqs_aligned_matrix)
+                    writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
+
+            }
+
         #### buildTree
 
             #' Construct various types of phylogenetic trees from alignments or other trees
@@ -822,7 +890,6 @@
             #' @param scaffold_in_path The path to the information that should be used to build the tree.
             #' @param members The tips of the tree that should be included. Default is to include everything.
             #' @param gblocks TRUE/FALSE whether to use gblocks on the alignment
-            #' @param gblocks_path Path to the gblocks module, perhaps something like "/Users/lucasbusta/Documents/Science/_Lab_Notebook/Bioinformatics/programs/Gblocks_0.91b/Gblocks"
             #' @param ml TRUE/FALSE whether to use maximum likelihood when constructing the tree.
             #' @param model_test TRUE/FALSE whether to test various maximum likelihood models while constructing the tree
             #' @param bootstrap TRUE/FALSE whether to calculate bootstrap values for tree nodes.
@@ -877,9 +944,10 @@
                         }
                         if ( gblocks == TRUE ) {
                             if ( rois == FALSE ) {
-                                nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
-                                nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
-                                ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
+                                gblocks(alignment_in_path = scaffold_in_path)
+                                # nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
+                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
+                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
                                 nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "DNA")
                                 cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
                             } 
@@ -7067,7 +7135,8 @@
                                     data = filter(plot_data, molecule_component == "atom"),
                                     aes_string(x = "x", y = "y", fill = atom_color_column),
                                     shape = 21, size = 4
-                                )
+                                ) +
+                                scale_fill_viridis()
                             }
 
                         ## Add atom number labels
@@ -7094,6 +7163,7 @@
                         ## Scales and theme
                             scale_size_continuous(range = c(0,4)) +
                             scale_x_continuous(breaks = seq(0,20,1)) +
+                            scale_color_viridis() +
                             # scale_linetype_manual(values = bond_line_types) +
                             scale_y_continuous(breaks = seq(0,20,1)) +
                             facet_wrap(.~molecule_name, ncol = 3) +
