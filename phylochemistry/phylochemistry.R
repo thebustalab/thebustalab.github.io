@@ -7142,17 +7142,23 @@
 
                         ## Add atom number labels
                           
-                            plot <- plot + geom_text(
-                                data = filter(plot_data, molecule_component == "atom", element_or_group %in% c("H", "COOH")),
-                                aes(x = x, y = y, label = atom_number),
-                                size = 2, color = "black"
-                            ) +
+                            # plot <- plot + geom_text(
+                            #     data = filter(plot_data, molecule_component == "atom", element_or_group %in% c("H", "COOH")),
+                            #     aes(x = x, y = y, label = atom_number),
+                            #     size = 2, color = "black"
+                            # ) +
 
-                            geom_text(
-                                data = filter(plot_data, molecule_component == "atom", element_or_group != "H" & element_or_group != "COOH"),
+                            # geom_text(
+                            #     data = filter(plot_data, molecule_component == "atom", element_or_group != "H" & element_or_group != "COOH"),
+                            #     aes(x = x, y = y, label = atom_number),
+                            #     size = 2, color = "white"
+                            # ) +
+
+                            plot <- plot + geom_text(
+                                data = filter(plot_data, molecule_component == "atom"),
                                 aes(x = x, y = y, label = atom_number),
                                 size = 2, color = "white"
-                            ) +
+                            )
 
                         ## Add molecule name as label
                             geom_text(
