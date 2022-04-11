@@ -1204,8 +1204,12 @@ ggtree() +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
     scale_x_continuous(limits = c(0,400))
 ```
- 
+
 Very nice!
+
+## further reading
+ 
+For more information on plotting trees, see: https://yulab-smu.top/treedata-book/chapter10.html
 
 ## exercises
 
@@ -2629,6 +2633,8 @@ ________________________________________________________________________________
 
 # genome assembly {-}
 
+refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md
+
 ## Canu
 
 ### Computer configuration
@@ -2836,6 +2842,10 @@ buildTree(
 ```
 
 ## collapseTree
+
+## ancestralStates
+
+ancestral states: https://www.phytools.org/eqg2015/asr.html
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
