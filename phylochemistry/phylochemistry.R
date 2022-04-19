@@ -8054,16 +8054,20 @@
 
                         ## Scale data if requested
 
-                            if( scale_variance == TRUE ) {
+                            if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
                                 matrix <- scale(matrix)
                             }
 
                         ## Distance-based methods. First, get distance matrix:
 
-                            if( distance_method[1] == "euclidean" ) {
-                                dist_matrix <- stats::dist(matrix, method = "euclidean")
-                            } else {
-                                stop("Please specify distance method")
+                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+
+                                if( distance_method[1] == "euclidean") {
+                                    dist_matrix <- stats::dist(matrix, method = "euclidean")
+                                } else {
+                                    stop("Please specify distance method")
+                                }
+
                             }
 
                             ## HCLUST, HCLUST_PHYLO ##
