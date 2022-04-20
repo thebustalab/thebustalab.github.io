@@ -2572,7 +2572,7 @@ Display more data pertaining to the identification of disks. Can also change par
 
 With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
 
-```{r}
+```{r, eval = FALSE}
 qc_data <- fastxQC(
     paths_to_fastxs = c(
         "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",

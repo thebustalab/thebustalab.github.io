@@ -70,3 +70,5 @@ AnnotationDbi
 GenomicFeatures
 Rsamtools
 treemapify
+viridisLite
+viridis

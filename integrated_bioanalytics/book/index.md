@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-03-25"
+date: "2022-04-20"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1410,8 +1410,12 @@ ggtree() +
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-92-1.png" width="100%" style="display: block; margin: auto;" />
- 
+
 Very nice!
+
+## further reading
+ 
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html
 
 ## exercises
 
@@ -2910,27 +2914,23 @@ Display more data pertaining to the identification of disks. Can also change par
 
 -Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
 
-# nanopore read assessment {-}
+# sequence assessment {-}
 
 With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
 
-* nanoporeReadQCShort: Provides only read length information, runs quickly.
-* nanoporeReadQCLong: Provides read length and quality information, but is a bit slow.
-
 
 ```r
-qc_data <- fastxQCShort(
-  fastxs = "/Users/bust0037/Desktop/k_fed.contigs.scaffolded.fa"
+qc_data <- fastxQC(
+    paths_to_fastxs = c(
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example2.fastq"
+    ),
+    type = "fasta",
+    mode = "slow",
+    max_n_seqs = 1000
 )
 
 head(qc_data)
-##           name   length
-## 1 Chr01_RagTag 32286674
-## 2 Chr02_RagTag 23104666
-## 3 Chr03_RagTag 21286608
-## 4 Chr04_RagTag 20167753
-## 5 Chr05_RagTag 18883323
-## 6 Chr06_RagTag 19090322
 
 qc_data %>%
   mutate(category = case_when(
@@ -2941,8 +2941,6 @@ qc_data %>%
     geom_treemap(aes(area = length, fill = category), color = "black", size = 1) +
     scale_fill_manual(values = c("gold", "maroon"))
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
 
 # illumina read assessment {-}
 
@@ -2980,27 +2978,39 @@ ________________________________________________________________________________
 
 <!-- start genomic analyses -->
 
+# setup
+
+Get docker.
+
+https://hub.docker.com/r/staphb/quast
+
 # genome assembly {-}
 
-## Canu
+To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.
 
-### Computer configuration
+## assembly
+
+### equipment
 
 Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may differ. To run a genome assembly, start by determining what computing resources are available. Some helpful commands when investigating these resources on Linux machines:
 
-Assessing RAM (It is recommended to assign about 75% of available RAM to the assembly process):
+* Assessing RAM (It is recommended to assign about 75% of available RAM to the assembly process):
 
 `grep MeMTotal /proc/meminfo`
 
-Assessing CPU resources (note that "threads per CPU" can denote the availability of hyperthreading):
+* Assessing CPU resources (note that "threads per CPU" can denote the availability of hyperthreading):
 
 `lscpu`
 
-Assessing disk space (Make sure you are running your assembly on a disk with lots of open space. Ideally > 2TB):
+* Assessing disk/storage space (Make sure you are running your assembly on a disk with lots of open space. Ideally > 2TB):
 
 `df -h`
 
-### Setting up Canu
+### canu
+
+#### setting up canu
+
+`docker pull staphb/canu-racon`
 
 For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
 
@@ -3030,23 +3040,116 @@ Essentially only speed optimization:
 correctedErrorRate=0.12
 * Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
 
-### Run time metrics
+#### run time metrics
 
 Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with `kmerTable()` and run the output at: http://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
 
-### Post-run metrics
+### flye
 
+`docker pull staphb/flye`
+
+## evaluating contigs
+
+Can these be merged into a single wrapper that can be run after each step in assembly/polishing/scaffolding etc?
+
+### BUSCO
+
+- Real BUSCO input will be /home/bust0037/data1/comparative_genomics/Kfedtschenkoi_382_v1.0.fa
+- Note BUSCO uses current working directory for input and output
+
+`docker pull ezlabgva/busco:v5.3.2_cv1`
+
+`
+sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
+`
+
+### merqury
+
+`docker pull quay.io/chai/merqury`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
+
+References:
+https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
 Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
 
-## Python programs
+### quast
 
-INSTALL PYTHON (or upgrade python)
+Quast provides a score called ALE: alignment liklihood estimate.
+
+`docker pull staphb/quast`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/quast/ staphb/quast:latest quast.py -h`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/quast/ staphb/quast:latest quast.py --fragmented quast/k_fed.contigs.fasta --nanopore quast/all_reads.fastq --space-efficient --memory-efficient --fast`
+
+## polishing contigs
+
+### medaka
+
+Pull the docker image:
+
+`docker pull ontresearch/medaka`
+
+Run medaka:
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/medaka/ ontresearch/medaka:latest medaka_consensus -i medaka/all_reads.fastq -d medaka/k_fed.contigs.fasta -b 50`
+
+Good documentation here: https://labs.epi2me.io/notebooks/Introduction_to_how_ONT's_medaka_works.html
+
+Medaka will:
+* Map all your raw reads. Look for feedback like: `[M::worker_pipeline::2924.325*0.25] mapped 75823 sequences`.
+* Do something else, updates in the form of: `21.7% Done (88.2/406.1 Mbases) in 6815.1s`.
+
+## methylation with remora
+
+can we call methylation status on our Kalanchoe genomes? -> yes, we can use Remora -> watch for new guppy release, MinKNOW integration -> currently in bonito
+
+```
+bonito basecaller dna_r10.4_e8.1_sup@v3.4 /data/reads --modified-bases 5mC --reference ref.mmi > basecalls_with_mods.bam
+bonito basecaller dna_r10.4_e8.1_sup@v3.4 --reference consensus.fasta --modified-bases 5mC
+```
+
+## scaffolding assembly
+
+### RagTag
+
+INSTALL PYTHON (or upgrade python) <- can this be done using docker?
 
 INSTALL BIOCONDA
 1. install miniconda:
   curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
   sh ...
   
+## annotation
+
+### augustus
+
+see: https://hub.docker.com/r/pegi3s/autoaugustus/
+
+```
+docker pull pegi3s/autoaugustus
+```
+
+```
+sudo docker run --rm -v $(pwd):$(pwd) pegi3s/autoaugustus augustus --species=help
+sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species=tomato /augustus/consensus.fasta > consensus-preductions.gff --progress=TRUE
+augustus –species=honeybee1 ../clean-assembly/consensus.clean.fasta.masked –softmasking=1 > augustus-predictions-softmasked.gff –progress=TRUE
+```
+
+## final assessment
+
+### mosdepth
+
+`sudo docker pull quay.io/biocontainers/mosdepth:0.2.4--he527e40_0`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -h`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd gfanz/mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth --quantize 0:1:4:100:200: --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
 
 2. set up channels
 
@@ -3075,7 +3178,6 @@ INSTALL BIOCONDA
 
 sh $MERQURY/best_k.sh <genome_size>
 
-## assembly assessment
 
 Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder:
 
@@ -3143,6 +3245,10 @@ Let's look at some examples. For these example, we will use some fasta files sto
 ```
 
 
+# comparative genomics
+
+GENESPACE: syntenic pan-genome annotations for eukaryotes
+
 
 ## loading GFF files
 <!-- end -->
@@ -3189,6 +3295,10 @@ buildTree(
 ```
 
 ## collapseTree
+
+## ancestralStates
+
+ancestral states: https://www.phytools.org/eqg2015/asr.html
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
