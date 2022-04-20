@@ -2787,7 +2787,6 @@ docker pull pegi3s/autoaugustus
 ```
 sudo docker run --rm -v $(pwd):$(pwd) pegi3s/autoaugustus augustus --species=help
 sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species=tomato /augustus/consensus.fasta > consensus-preductions.gff --progress=TRUE
-augustus –species=honeybee1 ../clean-assembly/consensus.clean.fasta.masked –softmasking=1 > augustus-predictions-softmasked.gff –progress=TRUE
 ```
 
 ## final assessment

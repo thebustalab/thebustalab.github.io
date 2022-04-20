@@ -62,7 +62,7 @@
             )
 
             Github_packages <- c(
-                "HajkD/orthologr"
+                # "HajkD/orthologr"
             )
 
             packages_needed <- c(CRAN_packages, Bioconductor_packages, Github_packages)[!c(CRAN_packages, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
