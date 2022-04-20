@@ -1209,7 +1209,7 @@ Very nice!
 
 ## further reading
  
-For more information on plotting trees, see: https://yulab-smu.top/treedata-book/chapter10.html
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html
 
 ## exercises
 

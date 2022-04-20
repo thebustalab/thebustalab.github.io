@@ -8052,7 +8052,7 @@
 
                     # Run the matrix analysis selected
 
-                        ## Scale data if requested
+                        ## Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
                                 matrix <- scale(matrix)
@@ -8118,7 +8118,7 @@
 
                                 if( analysis == "mca_ord" ) {
                                     cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
-                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$coord[,c(1,2)]
+                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$eta2[,c(1,2)]
                                     clustering <- as_tibble(coords)
                                     clustering$analyte <- rownames(coords)
                                     colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
