@@ -874,15 +874,16 @@
                         stop()
                     }
 
-                ## Find all positions with less than threshold conservation
+                ## Find all positions with less than threshold conservation and remove them
                     conservation_reject <- position_scores$position[position_scores$conservation_percent < min_conservation_percent]
-                    gap_reject <- position_scores$position[position_scores$gap_percent > max_gap_percent]
-
-                ## Remove reject positions
                     cat(paste0("Removing ", length(conservation_reject), " positions that are too conserved.\n"))
-                    nucl_seqs_aligned_matrix <- nucl_seqs_aligned_matrix[,-c(conservation_reject)]
+                    gap_reject <- position_scores$position[position_scores$gap_percent > max_gap_percent]
                     cat(paste0("Removing ", length(gap_reject), " positions that contain too many gaps.\n"))
-                    nucl_seqs_aligned_matrix <- nucl_seqs_aligned_matrix[,-c(gap_reject)]
+                    
+                    reject_positions <- unique(c(conservation_reject, gap_reject))
+                    reject_positions[order(reject_positions)]
+
+                    nucl_seqs_aligned_matrix <- nucl_seqs_aligned_matrix[,-c(reject_positions)]
                     cat(paste0("Remaining positions: ", dim(nucl_seqs_aligned_matrix)[2]), "\n")
 
                 ## Write out as fasta
@@ -902,6 +903,17 @@
                         blocked_alignment@ranges@NAMES <- rownames(nucl_seqs_aligned_matrix)
                         writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
                     }
+
+                    blocked_alignment <- t(as.matrix(as.data.frame(blocked_alignment)))
+                    position_scores <- list()
+                    for (i in 1:dim(blocked_alignment)[2]) {
+                        position_scores[[i]] <- data.frame(
+                            position = i,
+                            gap_percent = sum(blocked_alignment[,i] == "-", na.rm = TRUE) / dim(blocked_alignment)[1],
+                            conservation_percent = suppressWarnings(sum(blocked_alignment[,i] == mode(blocked_alignment[,i]), na.rm = TRUE) / dim(nucl_seqs_aligned_matrix)[1])
+                        )
+                    }
+                    position_scores <- do.call(rbind, position_scores)
 
             }
 
