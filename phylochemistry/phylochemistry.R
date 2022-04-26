@@ -43,7 +43,7 @@
                 "exifr",
                 "lubridate",
                 "bio3d",
-                # "shipunov",
+                "ggtreeExtra"
                 "remotes",
                 "gdata",
                 "treemapify",
@@ -819,22 +819,30 @@
 
             #' Subset an alignment
             #'
-            #' @param scaffold_type The type of information that should be used to build the tree. One of "amin_alignment", "nucl_alignment", or "newick"
-            #' @param scaffold_in_path The path to the information that should be used to build the tree.
+            #' @param alignment_in_path The path to the information that should be used to build the tree.
             #' @param members The tips of the tree that should be included. Default is to include everything.
             #' @examples
             #' @export
-            #' buildTree
+            #' gblocks
 
             gblocks <- function(
                 alignment_in_path = NULL,
                 max_gap_percent = 0.5,
-                min_conservation_percent = 0.5
+                min_conservation_percent = 0.3,
+                sequence_type = c("DNA", "AA")
             ) {
 
                 ## Read in the alignment and make it a matrix
-                    nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
-                    nucl_seqs_aligned_matrix <- t(as.matrix(as.data.frame(nucl_seqs_aligned)))
+                    if (sequence_type == "DNA") {
+                        nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(alignment_in_path), format = "fasta", type = "DNA")
+                        nucl_seqs_aligned_matrix <- t(as.matrix(as.data.frame(nucl_seqs_aligned)))
+                        cat(paste0("Alignment is ", dim(nucl_seqs_aligned_matrix)[2], " positions long.\n"))
+                    }
+                    if (sequence_type == "AA") {
+                        nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(alignment_in_path), format = "fasta", type = "AA")
+                        nucl_seqs_aligned_matrix <- t(as.matrix(as.data.frame(nucl_seqs_aligned)))
+                        cat(paste0("Alignment is ", dim(nucl_seqs_aligned_matrix)[2], " positions long.\n"))
+                    }
 
                 ## Analyze composition of each position
                     position_scores <- list()
@@ -847,39 +855,53 @@
                     }
                     position_scores <- do.call(rbind, position_scores)
 
-                    ggplot(position_scores) +
-                        geom_line(aes(x = position, y = conservation_percent)) +
-                        geom_line(aes(x = position, y = gap_percent+1), color = "red") +
-                        theme_bw()
+                    print(
+                        ggplot() +
+                            geom_line(data = position_scores, aes(x = position, y = -gap_percent+1.5-max_gap_percent), color = "gold", alpha = 0.8) +
+                            geom_line(data = position_scores, aes(x = position, y = conservation_percent+0.5-min_conservation_percent), color = "maroon", alpha = 0.4) +
+                            geom_hline(yintercept = 0.5) +
+                            coord_cartesian(xlim = c(
+                                which(movingAverage(position_scores$conservation_percent) < 0.9)[1],
+                                (dim(position_scores)[1] - which(rev(movingAverage(position_scores$conservation_percent) < 0.9))[1])
+                            )) +
+                            geom_text(aes(x = dim(position_scores)[1]*0.45, y = 1, label = "Positions with gold and red above the line are kept.")) +
+                            theme_bw()
+                    )
+
+                ## Ask user if these settings are okay
+
+                    if ( !if (interactive()) askYesNo("Do these gblocks parameters look okay?") ) {
+                        stop()
+                    }
 
                 ## Find all positions with less than threshold conservation
                     conservation_reject <- position_scores$position[position_scores$conservation_percent < min_conservation_percent]
                     gap_reject <- position_scores$position[position_scores$gap_percent > max_gap_percent]
 
-                    ggplot() +
-                        geom_vline(
-                            aes(xintercept = conservation_reject), alpha = 0.4, size = 2
-                        ) +
-                        geom_vline(
-                            aes(xintercept = gap_reject), alpha = 0.4, size = 2
-                        ) +
-                        geom_line(data = position_scores, aes(x = position, y = conservation_percent)) +
-                        geom_line(data = position_scores, aes(x = position, y = gap_percent+1), color = "red") +
-                        
-                        theme_bw()
-
                 ## Remove reject positions
+                    cat(paste0("Removing ", length(conservation_reject), " positions that are too conserved.\n"))
                     nucl_seqs_aligned_matrix <- nucl_seqs_aligned_matrix[,-c(conservation_reject)]
+                    cat(paste0("Removing ", length(gap_reject), " positions that contain too many gaps.\n"))
                     nucl_seqs_aligned_matrix <- nucl_seqs_aligned_matrix[,-c(gap_reject)]
+                    cat(paste0("Remaining positions: ", dim(nucl_seqs_aligned_matrix)[2]), "\n")
 
                 ## Write out as fasta
-
-                    blocked_alignment <- DNAStringSet()
-                    for (i in 1:dim(nucl_seqs_aligned_matrix)[1]) {
-                        blocked_alignment <- c(blocked_alignment, DNAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
+                    if (sequence_type == "DNA") {
+                        blocked_alignment <- DNAStringSet()
+                        for (i in 1:dim(nucl_seqs_aligned_matrix)[1]) {
+                            blocked_alignment <- c(blocked_alignment, DNAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
+                        }
+                        blocked_alignment@ranges@NAMES <- rownames(nucl_seqs_aligned_matrix)
+                        writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
                     }
-                    blocked_alignment@ranges@NAMES <- rownames(nucl_seqs_aligned_matrix)
-                    writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
+                    if (sequence_type == "AA") {
+                        blocked_alignment <- AAStringSet()
+                        for (i in 1:dim(nucl_seqs_aligned_matrix)[1]) {
+                            blocked_alignment <- c(blocked_alignment, AAStringSet(paste0(nucl_seqs_aligned_matrix[i,], collapse = "")))
+                        }
+                        blocked_alignment@ranges@NAMES <- rownames(nucl_seqs_aligned_matrix)
+                        writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
+                    }
 
             }
 
@@ -907,7 +929,8 @@
                                 scaffold_in_path,
                                 members = NULL,
                                 gblocks = FALSE, 
-                                gblocks_path = NULL,
+                                gblocks_max_gap_percent = 0.5,
+                                gblocks_min_conservation_percent = 0.3,
                                 ml = FALSE, 
                                 model_test = FALSE,
                                 bootstrap = FALSE,
@@ -945,7 +968,11 @@
                         }
                         if ( gblocks == TRUE ) {
                             if ( rois == FALSE ) {
-                                gblocks(alignment_in_path = scaffold_in_path)
+                                gblocks(
+                                    alignment_in_path = scaffold_in_path, sequence_type = "DNA",
+                                    max_gap_percent = gblocks_max_gap_percent,
+                                    min_conservation_percent = gblocks_min_conservation_percent
+                                )
                                 # nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
                                 # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
                                 # ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
@@ -989,6 +1016,7 @@
                                     } else {
                                         best_nucl_model <- "GTR"
                                     }
+                                    cat("Creating maximum liklihood tree...\n")
                                     ML_tree_start <- phangorn::pml(NJ_tree, nucl_seqs_aligned, k = 4)
                                     ML_tree_optimized <- phangorn::optim.pml(ML_tree_start, rearrangement = "stochastic", optInv = TRUE, optGamma = TRUE, model = as.character(best_nucl_model))
                                     output <- ML_tree_optimized$tree
@@ -1030,6 +1058,40 @@
                 }
 
                 if ( scaffold_type == "amin_alignment" ) {
+
+                    ## Use gblocks on the alignment if specified
+                        if ( gblocks == FALSE ) {
+                            cat("Skipping gBlocks...\n")                    
+                        }
+                        if ( gblocks == TRUE ) {
+                            if ( rois == FALSE ) {
+                                gblocks(
+                                    alignment_in_path = scaffold_in_path, sequence_type = "AA",
+                                    max_gap_percent = gblocks_max_gap_percent,
+                                    min_conservation_percent = gblocks_min_conservation_percent
+                                )
+                                # nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
+                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
+                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
+                                nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "AA")
+                                cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
+                            } 
+                            if ( rois == TRUE ) {
+                                # nucl_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
+                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "n", exec=gblocks_path)
+                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
+                                # nucl_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
+                                # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
+                            }
+                        }
+
+                    ## If neither gBlocks nor ROIs, read in alignment as phyDat for tree creation
+                        if ( rois == FALSE ) {
+                            if ( gblocks == FALSE ) {
+                                nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
+                                cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
+                            }
+                        }
 
                     ## Read in data
                         if (rois == FALSE) {
@@ -1760,11 +1822,21 @@
                                     monolist_out_path
                                 ) {
 
-                ### Make sure transcriptomes object is character
+                ### Make sure transcriptomes object is character and has names
+
+                    if( length(names(transcriptomes)) != length(transcriptomes) ) {
+                        stop("Please provide a set of named paths to the argument `transcriptomes`")
+                    }
                     
                     names <- names(transcriptomes)
                     transcriptomes <- as.character(transcriptomes)
                     names(transcriptomes) <- names
+
+                # ### Remove existing blast output
+
+                #     for (i in 1:length(transcriptomes)) {
+                #         file_to_remove <- 
+                #         if (file.exists(file_to_remove) { file.remove(file_to_remove) }
 
                 ### Build blast database
 
