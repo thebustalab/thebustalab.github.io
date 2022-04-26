@@ -43,7 +43,7 @@
                 "exifr",
                 "lubridate",
                 "bio3d",
-                "ggtreeExtra"
+                "ggtreeExtra",
                 "remotes",
                 "gdata",
                 "treemapify",
