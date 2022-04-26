@@ -43,7 +43,6 @@
                 "exifr",
                 "lubridate",
                 "bio3d",
-                "ggtreeExtra",
                 "remotes",
                 "gdata",
                 "treemapify",
@@ -52,6 +51,7 @@
 
             Bioconductor_packages <- c(
                 "ggtree",
+                "ggtreeExtra",
                 "xcms",
                 "msa",
                 "rtracklayer",
