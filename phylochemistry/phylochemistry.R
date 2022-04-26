@@ -975,11 +975,15 @@
                         # }
 
                     ## Use gblocks on the alignment if specified
-                        if ( gblocks == FALSE ) {
-                            cat("Skipping gBlocks...\n")                    
-                        }
-                        if ( gblocks == TRUE ) {
-                            if ( rois == FALSE ) {
+                        if ( gblocks ) {
+                            if ( rois ) {
+                                # nucl_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
+                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "n", exec=gblocks_path)
+                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
+                                # nucl_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
+                                # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
+                            } else {
+                                cat("Skipping rois...\n")
                                 gblocks(
                                     alignment_in_path = scaffold_in_path, sequence_type = "DNA",
                                     max_gap_percent = gblocks_max_gap_percent,
@@ -991,18 +995,11 @@
                                 nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "DNA")
                                 cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
                             } 
-                            if ( rois == TRUE ) {
-                                # nucl_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
-                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "n", exec=gblocks_path)
-                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
-                                # nucl_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
-                                # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
-                            }
-                        }
-
-                    ## If neither gBlocks nor ROIs, read in alignment as phyDat for tree creation
-                        if ( rois == FALSE ) {
-                            if ( gblocks == FALSE ) {
+                            
+                        } else {
+                            cat("Skipping gblocks...\n")
+                            if ( rois == FALSE) {
+                                cat("Skipping rois...\n")
                                 nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
                                 cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
                             }
@@ -1072,57 +1069,56 @@
                 if ( scaffold_type == "amin_alignment" ) {
 
                     ## Use gblocks on the alignment if specified
-                        if ( gblocks == FALSE ) {
-                            cat("Skipping gBlocks...\n")                    
-                        }
-                        if ( gblocks == TRUE ) {
-                            if ( rois == FALSE ) {
+                        if ( gblocks ) {
+                            if ( rois ) {
+                                # amin_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
+                                # amin_seqs_aligned_blocked <- ips::gblocks(amin_seqs_aligned, b5 = "n", exec=gblocks_path)
+                                # ape::write.dna(amin_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
+                                # amin_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
+                                # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
+                            } else {
                                 gblocks(
                                     alignment_in_path = scaffold_in_path, sequence_type = "AA",
                                     max_gap_percent = gblocks_max_gap_percent,
                                     min_conservation_percent = gblocks_min_conservation_percent
                                 )
-                                # nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
-                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
-                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
-                                nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "AA")
+                                # amin_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
+                                # amin_seqs_aligned_blocked <- ips::gblocks(amin_seqs_aligned, b5 = "a", exec = gblocks_path)
+                                # ape::write.dna(amin_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
+                                amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "AA")
                                 cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
                             } 
-                            if ( rois == TRUE ) {
-                                # nucl_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
-                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "n", exec=gblocks_path)
-                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
-                                # nucl_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
-                                # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
-                            }
+                            
+                        } else {
+                            cat("Skipping gBlocks...\n")
                         }
 
                     ## If neither gBlocks nor ROIs, read in alignment as phyDat for tree creation
                         if ( rois == FALSE ) {
                             if ( gblocks == FALSE ) {
-                                nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
+                                amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
                                 cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
                             }
                         }
 
                     ## Read in data
-                        if (rois == FALSE) {
-                                cat("Skipping roi...\n")
-                                amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "AA")
-                                cat(paste("Making tree with ", scaffold_in_path, "...\n", sep = ""))
-                            } else {
-                                rois_data$region_start <- as.numeric(as.character(rois_data$region_start))
-                                rois_data$region_end <- as.numeric(as.character(rois_data$region_end))
-                                amin_seqs_aligned <- Biostrings::readAAStringSet(filepath = scaffold_in_path, format = "fasta")
-                                amin_seqs_aligned_roi <- subseq(amin_seqs_aligned, 1, 0)
-                                for (i in 1:dim(rois_data)[1]) {
-                                    amin_seqs_aligned_roi <- Biostrings::xscat(amin_seqs_aligned_roi, subseq(amin_seqs_aligned, rois_data[,2][i], rois_data[,3][i]))
-                                }
-                            amin_seqs_aligned_roi@ranges@NAMES <- amin_seqs_aligned@ranges@NAMES
-                            Biostrings::writeXStringSet(amin_seqs_aligned_roi, filepath = paste(scaffold_in_path, "_roi", sep = ""))
-                            amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta", type = "AA")
-                            cat(paste("Making tree with ", scaffold_in_path, "_roi...", sep = ""))
-                        }
+                        # if (rois == FALSE) {
+                        #         cat("Skipping roi...\n")
+                        #         amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "AA")
+                        #         cat(paste("Making tree with ", scaffold_in_path, "...\n", sep = ""))
+                        #     } else {
+                        #         rois_data$region_start <- as.numeric(as.character(rois_data$region_start))
+                        #         rois_data$region_end <- as.numeric(as.character(rois_data$region_end))
+                        #         amin_seqs_aligned <- Biostrings::readAAStringSet(filepath = scaffold_in_path, format = "fasta")
+                        #         amin_seqs_aligned_roi <- subseq(amin_seqs_aligned, 1, 0)
+                        #         for (i in 1:dim(rois_data)[1]) {
+                        #             amin_seqs_aligned_roi <- Biostrings::xscat(amin_seqs_aligned_roi, subseq(amin_seqs_aligned, rois_data[,2][i], rois_data[,3][i]))
+                        #         }
+                        #     amin_seqs_aligned_roi@ranges@NAMES <- amin_seqs_aligned@ranges@NAMES
+                        #     Biostrings::writeXStringSet(amin_seqs_aligned_roi, filepath = paste(scaffold_in_path, "_roi", sep = ""))
+                        #     amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta", type = "AA")
+                        #     cat(paste("Making tree with ", scaffold_in_path, "_roi...", sep = ""))
+                        # }
 
                     ## Make distance tree
                         dm = phangorn::dist.ml(amin_seqs_aligned, model = "JTT")
