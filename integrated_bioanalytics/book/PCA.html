@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="“Which analytes are driving differences among my samples?” In addition to heirarchical clustering, there is another way to look at our data in a cluster context - i.e. another way to identify...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -89,7 +89,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li><a class="" href="proposals.html">proposals</a></li>
 <li class="book-part">image analysis</li>
-<li><a class="" href="section.html"></a></li>
+<li><a class="" href="section-3.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
 <li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">7</span> images of mass spectra</a></li>
@@ -112,9 +112,9 @@
 <p>explain pca as drawing a new set of axes
 pca also answers questions about whether variables are related
 hclust is “who is most closely related to whom?” PCA is about clustering</p>
-<div id="pca-1" class="section level2" number="1.28">
+<div id="pca-1" class="section level2" number="1.8">
 <h2>
-<span class="header-section-number">1.28</span> pca<a class="anchor" aria-label="anchor" href="#pca-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.8</span> pca<a class="anchor" aria-label="anchor" href="#pca-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let’s look at an example:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" width="100%" style="display: block; margin: auto;"></div>
@@ -139,9 +139,9 @@ hclust is “who is most closely related to whom?” PCA is about clustering</p>
 <p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
 <p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
 </div>
-<div id="ordination-plots" class="section level2" number="1.29">
+<div id="ordination-plots" class="section level2" number="1.9">
 <h2>
-<span class="header-section-number">1.29</span> ordination plots<a class="anchor" aria-label="anchor" href="#ordination-plots"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9</span> ordination plots<a class="anchor" aria-label="anchor" href="#ordination-plots"><i class="fas fa-link"></i></a>
 </h2>
 <p>Let’s look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let’s look at an example. We can obtain the ordination plot information using <code>runMatrixAnalysis()</code> with <code>analysis = "pca_ord"</code>:</p>
 <pre><code>## # A tibble: 6 × 3
@@ -196,9 +196,9 @@ hclust is “who is most closely related to whom?” PCA is about clustering</p>
 </ol>
 <p>With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.</p>
 </div>
-<div id="principal-components" class="section level2" number="1.30">
+<div id="principal-components" class="section level2" number="1.10">
 <h2>
-<span class="header-section-number">1.30</span> principal components<a class="anchor" aria-label="anchor" href="#principal-components"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.10</span> principal components<a class="anchor" aria-label="anchor" href="#principal-components"><i class="fas fa-link"></i></a>
 </h2>
 <p>We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
@@ -232,9 +232,9 @@ hclust is “who is most closely related to whom?” PCA is about clustering</p>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-98-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.</p>
 </div>
-<div id="exercises-4" class="section level2" number="1.31">
+<div id="exercises-2" class="section level2" number="1.11">
 <h2>
-<span class="header-section-number">1.31</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-4"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.11</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
 </h2>
 <p>In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
@@ -258,9 +258,9 @@ hclust is “who is most closely related to whom?” PCA is about clustering</p>
 <span class="co">## [5] "polarizability_A_cubed"            </span>
 <span class="co">## [6] "heat_atomization_kJ_per_mol"</span></code></pre></div>
 <p>We can use that command in the template, as in the example below. With the notation <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code>, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run <code>c(5:7,9:25)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code> in the console). With the notation <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run <code>c(1:4, 8)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> in the console).</p>
-<div id="option-1-human-metabolomics." class="section level3" number="1.31.1">
+<div id="option-1-human-metabolomics." class="section level3" number="1.11.1">
 <h3>
-<span class="header-section-number">1.31.1</span> option 1: human metabolomics.<a class="anchor" aria-label="anchor" href="#option-1-human-metabolomics."><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.11.1</span> option 1: human metabolomics.<a class="anchor" aria-label="anchor" href="#option-1-human-metabolomics."><i class="fas fa-link"></i></a>
 </h3>
 <p>This first option is to work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:</p>
 <ol style="list-style-type: decimal">
@@ -271,9 +271,9 @@ hclust is “who is most closely related to whom?” PCA is about clustering</p>
 <li>Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.</li>
 </ol>
 </div>
-<div id="option-2-grape-vine-chemistry" class="section level3" number="1.31.2">
+<div id="option-2-grape-vine-chemistry" class="section level3" number="1.11.2">
 <h3>
-<span class="header-section-number">1.31.2</span> option 2: grape vine chemistry<a class="anchor" aria-label="anchor" href="#option-2-grape-vine-chemistry"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.11.2</span> option 2: grape vine chemistry<a class="anchor" aria-label="anchor" href="#option-2-grape-vine-chemistry"><i class="fas fa-link"></i></a>
 </h3>
 <p>This second option is to work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:</p>
 <ol style="list-style-type: decimal">
@@ -303,13 +303,13 @@ hclust is “who is most closely related to whom?” PCA is about clustering</p>
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#pca">pca</a></li>
-<li><a class="nav-link" href="#pca-1"><span class="header-section-number">1.28</span> pca</a></li>
-<li><a class="nav-link" href="#ordination-plots"><span class="header-section-number">1.29</span> ordination plots</a></li>
-<li><a class="nav-link" href="#principal-components"><span class="header-section-number">1.30</span> principal components</a></li>
+<li><a class="nav-link" href="#pca-1"><span class="header-section-number">1.8</span> pca</a></li>
+<li><a class="nav-link" href="#ordination-plots"><span class="header-section-number">1.9</span> ordination plots</a></li>
+<li><a class="nav-link" href="#principal-components"><span class="header-section-number">1.10</span> principal components</a></li>
 <li>
-<a class="nav-link" href="#exercises-4"><span class="header-section-number">1.31</span> exercises</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#option-1-human-metabolomics."><span class="header-section-number">1.31.1</span> option 1: human metabolomics.</a></li>
-<li><a class="nav-link" href="#option-2-grape-vine-chemistry"><span class="header-section-number">1.31.2</span> option 2: grape vine chemistry</a></li>
+<a class="nav-link" href="#exercises-2"><span class="header-section-number">1.11</span> exercises</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#option-1-human-metabolomics."><span class="header-section-number">1.11.1</span> option 1: human metabolomics.</a></li>
+<li><a class="nav-link" href="#option-2-grape-vine-chemistry"><span class="header-section-number">1.11.2</span> option 2: grape vine chemistry</a></li>
 </ul>
 </li>
 </ul>
@@ -329,7 +329,7 @@ hclust is “who is most closely related to whom?” PCA is about clustering</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-04-20.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-05-09.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-04-20"
+date: "2022-05-09"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -67,7 +67,7 @@ Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit
 
 # installation {-}
 
-## R
+## R {-}
 
 R is the computing language we will use to run our chemometric analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
 
@@ -83,7 +83,7 @@ We will use \<this notation\> quite a bit. It indicates a place where you should
 
 If you have trouble installing R please google "Install R Mac" or "Install R PC" and follow one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.
 
-## RStudio
+## RStudio {-}
 
 Once we install R, we can install RStudio, which is essentially a convenient way of interacting with R. Some people do not like RStudio and prefer to interact with R directly. This is fine, but many beginning R users find RStudio helpful, so I recommend it. Follow these steps to install RStudio:
 
@@ -97,7 +97,7 @@ Once we install R, we can install RStudio, which is essentially a convenient way
 
 If you have trouble installing RStudio please google "Install RStudio Mac" or "Install RStudio PC" and following one the many video tutorials out there. If you have tried this and are still having trouble, please contact me.
 
-## verification
+## verification {-}
 
 Open RStudio by clicking on the appropriate file in your applications folder, or wherever it is saved on your computer. If you are on Windows, be sure to run RStudio as administrator. You will see several windows. One is the Code Editor, one is the R Console, one is the Workspace and History, and one is the Plots and Files window.
 
@@ -148,7 +148,7 @@ library(tidyverse)
 
 If the library load correctly - then you are set to go! If not, try updating your R / RStudio installations, the re installing the tidyverse. If this still fails, please contact me. -->
 
-## TeX
+## TeX {-}
 
 In this class we will generate high quality reports suitable for submission to supervisors, academic journals, etc. For this, we need the typesetting engine TeX. There are a few ways to do this. The easiest way is using the following commands:
 
@@ -173,7 +173,7 @@ tinytex::install_tinytex()
 
 Other options are: if you have Windows, download and install [MikTeX](https://miktex.org/download). If you have OSX, you can download and install [MacTeX](http://www.tug.org/mactex/morepackages.html).
 
-## phylochemistry
+## phylochemistry {-}
 
 In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.
 
@@ -208,7 +208,7 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- source("http://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
 
-## Updating R and R Packages
+## Updating R and R Packages {-}
 
 Close RStudio, open the plain R GUI, then run the following:
 
@@ -229,7 +229,7 @@ install.packages("installr")
 installr::updateR()
 ```
 
-## R scripts on Google Drive
+## R scripts on Google Drive {-}
 
 Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
 
@@ -249,11 +249,13 @@ closeRGD("file_share_link_here")
 
 # data visualization {-}
 
+## {-}
+
 Stuff here on deseption with graphics, tufte, etc.
 
 We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`.
 
-## Objects
+## objects {-}
 
 Ok, we've got the installation out of the way. Let's get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with.
 
@@ -295,7 +297,7 @@ algae_data
 ## #   abundance <dbl>
 ```
 
-## Functions
+## functions {-}
 
 Excellent - we've got data. Now we need to manipulate it. For this we need functions:
 
@@ -362,7 +364,7 @@ algae_data_small
 ## # … with 1 more variable: abundance <dbl>
 ```
 
-## ggplot
+## ggplot & geoms {-}
 
 Now we have a nice, small table that we can use to practice data visualization. For visualization, we're going to use `ggplot2` - a powerful set of commands for plot generation. 
 
@@ -412,9 +414,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
 
-### modifying geoms
-
-In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. Here's an example:
+In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. Here's an example:
 
 
 ```r
@@ -435,8 +435,6 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 <img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
-
-### multiple geoms
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
@@ -468,7 +466,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 <img src="index_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;" />
 
-## markdown
+## markdown {-}
 
 Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: `File -> New File -> R Markdown`. You should get a template document that compiles when you press "knit".
 
@@ -486,7 +484,7 @@ You should notice a few things when you compile this document:
 
 We can also run R chunks right in markdown and create figures. Dr. Busta will show you how to do this in class.
 
-## exercises
+## exercises I {-}
 
 In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
@@ -496,7 +494,7 @@ Some pointers:
 
 - Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
 
-### Algae Chemistry Dataset
+### algae {-}
 
 1. **Filtering 1**
 
@@ -592,7 +590,7 @@ ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
 
 What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?
 
-## Alaska Lakes Dataset
+### alaska lakes {-}
 
 1. **Viewing Data**
 
@@ -660,7 +658,9 @@ Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 
-## geoms
+## {-}
+
+## more geoms {-}
 
 I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
@@ -691,7 +691,7 @@ These examples should illustrate that there is, to some degree, correspondence b
 
 There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
 
-## facets
+## facets {-}
 
 As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
 
@@ -727,7 +727,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
 
-## scales
+## scales {-}
 
 Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
 
@@ -742,7 +742,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
 
 <img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
 
-### RColorBrewer
+### colors {-}
 
 One particularly useful type of scale are those provided by RColorBrewer:
 
@@ -764,11 +764,9 @@ ggplot(mtcars) +
 
 <img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
   
-## themes
+## themes {-}
   
 So far we've just looked at how to control the means by which your *data* is represented on the plot. There are also components of the plot that are, strictly speaking, not *data* per se, but rather non-data ink. These are controlled using the `theme()` family of commands. There are two ways to go about this.
-
-### Complete themes
 
 `ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
 
@@ -804,8 +802,6 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
-
-### Theme components
 
 You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
 
@@ -845,7 +841,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 <img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
 
-## exercises
+## exercises II {-}
 
 In this set of exercises we're going to practice making more plots using the dataset `solvents`. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
 
@@ -867,12 +863,20 @@ Some pointers:
 
 5. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted. Note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized. *Defend* your ideas with argument!
 
+## {-}
+
+## further reading II {-}
+
+Check out some of the incredible geoms that are easy to access using R and ggplot2: [R Graph Gallery](https://r-graph-gallery.com/). Use these to make your figures attractive and easy to interpret!
+
+For a challenge, try implementing these awesome color scales: [Famous R Color Palettes](https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/). Note that some of these are optimized for colorblind individuals and that other are optimized for continuous hue gradients, etc.
+
 <!-- end -->
 
 <!-- start data wranging -->
 # data wranging {-}
 
-## data import
+## data import {-}
 
 To analyze data that is stored on your own computer you can indeed import it into RStudio.
 
@@ -890,7 +894,7 @@ You can quickly find paths to files via the following:
 
 With these paths, we can read in data using the `read_csv` command. We'll run `read_csv("<path_to_your_data>")`. Note the use of QUOTES `""`! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.
 
-## subsetting
+## subsetting {-}
 
 So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
 
@@ -2960,6 +2964,14 @@ ________________________________________________________________________________
 
 ## BLAST
 
+### interpretation
+
+From Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+"BLAST, FASTA, SSEARCH, and other commonly used similarity searching programs produce accurate statistical estimates that can be used to reliably infer homology. Searches with protein sequences (BLASTP, FASTP, SSEARCH,) or translated DNA sequences (BLASTX, FASTX) are preferred because they are 5–10-fold more sensitive than DNA:DNA sequence comparison. The 30% identity rule-of-thumb is too conservative; statistically significant (E() < 10−6 – 10−3) protein homologs can share less than 20% identity. E()-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.""
+
+* e-values
+
 The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
 E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
 E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
@@ -2969,6 +2981,10 @@ E-value < 10e-100 Identical sequences. You will get long alignments across the e
 E-value > 1 Proteins are most likely not related
 E-value > 10 Hits are most likely junk unless the query sequence is very short.
 reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
+
+* bit-scores
+
+
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3134,7 +3150,6 @@ docker pull pegi3s/autoaugustus
 ```
 sudo docker run --rm -v $(pwd):$(pwd) pegi3s/autoaugustus augustus --species=help
 sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species=tomato /augustus/consensus.fasta > consensus-preductions.gff --progress=TRUE
-augustus –species=honeybee1 ../clean-assembly/consensus.clean.fasta.masked –softmasking=1 > augustus-predictions-softmasked.gff –progress=TRUE
 ```
 
 ## final assessment

@@ -6,19 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>data wranging | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="1.19 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
+<meta name="description" content="data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that comes...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="data wranging | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="1.19 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
+<meta property="og:description" content="data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that comes...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="data wranging | Integrated Bioanalytics">
-<meta name="twitter:description" content="1.19 data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that...">
+<meta name="twitter:description" content="data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that comes...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -89,7 +89,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li><a class="" href="proposals.html">proposals</a></li>
 <li class="book-part">image analysis</li>
-<li><a class="" href="section.html"></a></li>
+<li><a class="" href="section-3.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
 <li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">7</span> images of mass spectra</a></li>
@@ -107,9 +107,8 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="data-wranging" class="section level1 unnumbered">
 <h1>data wranging<a class="anchor" aria-label="anchor" href="#data-wranging"><i class="fas fa-link"></i></a>
 </h1>
-<div id="data-import" class="section level2" number="1.19">
-<h2>
-<span class="header-section-number">1.19</span> data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
+<div id="data-import" class="section level2 unnumbered">
+<h2>data import<a class="anchor" aria-label="anchor" href="#data-import"><i class="fas fa-link"></i></a>
 </h2>
 <p>To analyze data that is stored on your own computer you can indeed import it into RStudio.</p>
 <p>The easiest way to do this is to use the interactive command <code>readCSV()</code>, a function that comes with the phylochemistry source command. You run <code>readCSV()</code> in your console, then navigate to the data on your hard drive.</p>
@@ -126,9 +125,8 @@
 </ul>
 <p>With these paths, we can read in data using the <code>read_csv</code> command. We’ll run <code>read_csv("&lt;path_to_your_data&gt;")</code>. Note the use of QUOTES <code>""</code>! Those are necessary. Also make sure your path uses the appropriate direction of slashes for your operating system.</p>
 </div>
-<div id="subsetting" class="section level2" number="1.20">
-<h2>
-<span class="header-section-number">1.20</span> subsetting<a class="anchor" aria-label="anchor" href="#subsetting"><i class="fas fa-link"></i></a>
+<div id="subsetting" class="section level2 unnumbered">
+<h2>subsetting<a class="anchor" aria-label="anchor" href="#subsetting"><i class="fas fa-link"></i></a>
 </h2>
 <p>So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
@@ -223,9 +221,9 @@
 <span class="co">## 10 BELA        6.46</span>
 <span class="co">## # … with 210 more rows</span></code></pre></div>
 </div>
-<div id="tidy-data" class="section level2" number="1.21">
+<div id="tidy-data" class="section level2" number="1.1">
 <h2>
-<span class="header-section-number">1.21</span> tidy data<a class="anchor" aria-label="anchor" href="#tidy-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.1</span> tidy data<a class="anchor" aria-label="anchor" href="#tidy-data"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://tidydatatutor.com/vis.html" class="uri">https://tidydatatutor.com/vis.html</a></p>
 <p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
@@ -265,9 +263,9 @@
 <span class="co">## # … with 60 more rows</span></code></pre></div>
 <p>Brilliant! Now we have a tidy, long-style table that can be used with ggplot.</p>
 </div>
-<div id="the-pipe" class="section level2" number="1.22">
+<div id="the-pipe" class="section level2" number="1.2">
 <h2>
-<span class="header-section-number">1.22</span> the pipe (%&gt;%)<a class="anchor" aria-label="anchor" href="#the-pipe"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.2</span> the pipe (%&gt;%)<a class="anchor" aria-label="anchor" href="#the-pipe"><i class="fas fa-link"></i></a>
 </h2>
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
@@ -283,9 +281,9 @@
 <div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" width="100%" style="display: block; margin: auto;"></div>
 <p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
 </div>
-<div id="summary-statistics" class="section level2" number="1.23">
+<div id="summary-statistics" class="section level2" number="1.3">
 <h2>
-<span class="header-section-number">1.23</span> summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.3</span> summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"><i class="fas fa-link"></i></a>
 </h2>
 <p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
@@ -450,9 +448,9 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 </div>
-<div id="exercises-2" class="section level2" number="1.24">
+<div id="exercises" class="section level2" number="1.4">
 <h2>
-<span class="header-section-number">1.24</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.4</span> exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
 </h2>
 <p>Isn’t seven the most powerfully magical number? <em>Isn’t seven the most powerfully magical number?</em> Yes… I think the idea of a seven-part assignment would greatly appeal to an alchemist.</p>
 <p>In this set of exercises we are going to use the periodic table. After you run source() you can load that dataset using <code>periodic_table</code>. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!</p>
@@ -490,12 +488,12 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#data-wranging">data wranging</a></li>
-<li><a class="nav-link" href="#data-import"><span class="header-section-number">1.19</span> data import</a></li>
-<li><a class="nav-link" href="#subsetting"><span class="header-section-number">1.20</span> subsetting</a></li>
-<li><a class="nav-link" href="#tidy-data"><span class="header-section-number">1.21</span> tidy data</a></li>
-<li><a class="nav-link" href="#the-pipe"><span class="header-section-number">1.22</span> the pipe (%&gt;%)</a></li>
-<li><a class="nav-link" href="#summary-statistics"><span class="header-section-number">1.23</span> summary statistics</a></li>
-<li><a class="nav-link" href="#exercises-2"><span class="header-section-number">1.24</span> exercises</a></li>
+<li><a class="nav-link" href="#data-import">data import</a></li>
+<li><a class="nav-link" href="#subsetting">subsetting</a></li>
+<li><a class="nav-link" href="#tidy-data"><span class="header-section-number">1.1</span> tidy data</a></li>
+<li><a class="nav-link" href="#the-pipe"><span class="header-section-number">1.2</span> the pipe (%&gt;%)</a></li>
+<li><a class="nav-link" href="#summary-statistics"><span class="header-section-number">1.3</span> summary statistics</a></li>
+<li><a class="nav-link" href="#exercises"><span class="header-section-number">1.4</span> exercises</a></li>
 </ul>
 
       <div class="book-extra">
@@ -513,7 +511,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-04-20.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-05-09.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

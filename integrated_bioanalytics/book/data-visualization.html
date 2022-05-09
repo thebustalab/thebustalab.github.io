@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="Stuff here on deseption with graphics, tufte, etc. We’ve looked at how to filter data and map variables in our data to geometric shapes to make plots. Let’s have a look at a few more things. For...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -89,7 +89,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li><a class="" href="proposals.html">proposals</a></li>
 <li class="book-part">image analysis</li>
-<li><a class="" href="section.html"></a></li>
+<li><a class="" href="section-3.html"></a></li>
 <li><a class="" href="image-analysis.html">IMAGE ANALYSIS</a></li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
 <li><a class="" href="images-of-mass-spectra.html"><span class="header-section-number">7</span> images of mass spectra</a></li>
@@ -107,11 +107,13 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="data-visualization" class="section level1 unnumbered">
 <h1>data visualization<a class="anchor" aria-label="anchor" href="#data-visualization"><i class="fas fa-link"></i></a>
 </h1>
+<div id="section" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section"><i class="fas fa-link"></i></a></h2>
 <p>Stuff here on deseption with graphics, tufte, etc.</p>
 <p>We’ve looked at how to filter data and map variables in our data to geometric shapes to make plots. Let’s have a look at a few more things. For these examples, we’re going to use the data set called <code>solvents</code>.</p>
-<div id="objects" class="section level2" number="1.8">
-<h2>
-<span class="header-section-number">1.8</span> Objects<a class="anchor" aria-label="anchor" href="#objects"><i class="fas fa-link"></i></a>
+</div>
+<div id="objects" class="section level2 unnumbered">
+<h2>objects<a class="anchor" aria-label="anchor" href="#objects"><i class="fas fa-link"></i></a>
 </h2>
 <p>Ok, we’ve got the installation out of the way. Let’s get down to working with data and generating reports! In R, data is stored in objects. You can think of objects as if they were “files” inside an R session. <code>phylochemistry</code> provides a variety of objects for us to work with.</p>
 <p>Let’s look at how to create an object. For this, we can use an arrow: <code>&lt;-</code> . The arrow will take something and store it inside an object. For example:</p>
@@ -140,9 +142,8 @@
 <span class="co">## # … with 170 more rows, and 1 more variable:</span>
 <span class="co">## #   abundance &lt;dbl&gt;</span></code></pre></div>
 </div>
-<div id="functions" class="section level2" number="1.9">
-<h2>
-<span class="header-section-number">1.9</span> Functions<a class="anchor" aria-label="anchor" href="#functions"><i class="fas fa-link"></i></a>
+<div id="functions" class="section level2 unnumbered">
+<h2>functions<a class="anchor" aria-label="anchor" href="#functions"><i class="fas fa-link"></i></a>
 </h2>
 <p>Excellent - we’ve got data. Now we need to manipulate it. For this we need functions:</p>
 <ul>
@@ -204,9 +205,8 @@
 <span class="co">## 18         3 Tsv11        Light             FAs             </span>
 <span class="co">## # … with 1 more variable: abundance &lt;dbl&gt;</span></code></pre></div>
 </div>
-<div id="ggplot" class="section level2" number="1.10">
-<h2>
-<span class="header-section-number">1.10</span> ggplot<a class="anchor" aria-label="anchor" href="#ggplot"><i class="fas fa-link"></i></a>
+<div id="ggplot-geoms" class="section level2 unnumbered">
+<h2>ggplot &amp; geoms<a class="anchor" aria-label="anchor" href="#ggplot-geoms"><i class="fas fa-link"></i></a>
 </h2>
 <p>Now we have a nice, small table that we can use to practice data visualization. For visualization, we’re going to use <code>ggplot2</code> - a powerful set of commands for plot generation.</p>
 <p>There are three steps to setting up a ggplot:</p>
@@ -237,11 +237,7 @@
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div id="modifying-geoms" class="section level3" number="1.10.1">
-<h3>
-<span class="header-section-number">1.10.1</span> modifying geoms<a class="anchor" aria-label="anchor" href="#modifying-geoms"><i class="fas fa-link"></i></a>
-</h3>
-<p>In the last plot in the previous section, the points were a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. Here’s an example:</p>
+<p>In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. Here’s an example:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
@@ -252,11 +248,6 @@
   <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>size <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>** Important note: Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black.”</p>
-</div>
-<div id="multiple-geoms" class="section level3" number="1.10.2">
-<h3>
-<span class="header-section-number">1.10.2</span> multiple geoms<a class="anchor" aria-label="anchor" href="#multiple-geoms"><i class="fas fa-link"></i></a>
-</h3>
 <p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
@@ -274,10 +265,8 @@
   <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-</div>
-<div id="markdown" class="section level2" number="1.11">
-<h2>
-<span class="header-section-number">1.11</span> markdown<a class="anchor" aria-label="anchor" href="#markdown"><i class="fas fa-link"></i></a>
+<div id="markdown" class="section level2 unnumbered">
+<h2>markdown<a class="anchor" aria-label="anchor" href="#markdown"><i class="fas fa-link"></i></a>
 </h2>
 <p>Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: <code>File -&gt; New File -&gt; R Markdown</code>. You should get a template document that compiles when you press “knit.”</p>
 <p>Customize this document by modifying the title, and add <code>author: "your_name"</code> to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.</p>
@@ -290,9 +279,8 @@
 </ol>
 <p>We can also run R chunks right in markdown and create figures. Dr. Busta will show you how to do this in class.</p>
 </div>
-<div id="exercises" class="section level2" number="1.12">
-<h2>
-<span class="header-section-number">1.12</span> exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
+<div id="exercises-i" class="section level2 unnumbered">
+<h2>exercises I<a class="anchor" aria-label="anchor" href="#exercises-i"><i class="fas fa-link"></i></a>
 </h2>
 <p>In this set of exercises we’re going to practice filtering and plotting data in R Markdown. We’re going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. <strong>For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know</strong></p>
 <p>Some pointers:</p>
@@ -300,9 +288,8 @@
 <li><p>If your code goes off the page, don’t be afraid to wrap it across multiple lines, as shown in some of the examples.</p></li>
 <li><p>Don’t be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.</p></li>
 </ul>
-<div id="algae-chemistry-dataset" class="section level3" number="1.12.1">
-<h3>
-<span class="header-section-number">1.12.1</span> Algae Chemistry Dataset<a class="anchor" aria-label="anchor" href="#algae-chemistry-dataset"><i class="fas fa-link"></i></a>
+<div id="algae" class="section level3 unnumbered">
+<h3>algae<a class="anchor" aria-label="anchor" href="#algae"><i class="fas fa-link"></i></a>
 </h3>
 <ol style="list-style-type: decimal">
 <li><strong>Filtering 1</strong></li>
@@ -358,11 +345,9 @@
 <span id="cb27-3"><a href="data-visualization.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(algae_strain<span class="sc">~</span>.)</span></code></pre></div>
 <p>What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?</p>
 </div>
-</div>
-<div id="alaska-lakes-dataset" class="section level2" number="1.13">
-<h2>
-<span class="header-section-number">1.13</span> Alaska Lakes Dataset<a class="anchor" aria-label="anchor" href="#alaska-lakes-dataset"><i class="fas fa-link"></i></a>
-</h2>
+<div id="alaska-lakes" class="section level3 unnumbered">
+<h3>alaska lakes<a class="anchor" aria-label="anchor" href="#alaska-lakes"><i class="fas fa-link"></i></a>
+</h3>
 <ol style="list-style-type: decimal">
 <li><strong>Viewing Data</strong></li>
 </ol>
@@ -408,9 +393,12 @@
 <p>Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.</p>
 <p>When you are done with this plot, take a screen shot of it. Go to <a href="https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing">THIS GOOGLE SHEET</a>, make a slide for yourself (you don’t have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.</p>
 </div>
-<div id="geoms" class="section level2" number="1.14">
-<h2>
-<span class="header-section-number">1.14</span> geoms<a class="anchor" aria-label="anchor" href="#geoms"><i class="fas fa-link"></i></a>
+</div>
+<div id="section-1" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-1"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="more-geoms" class="section level2 unnumbered">
+<h2>more geoms<a class="anchor" aria-label="anchor" href="#more-geoms"><i class="fas fa-link"></i></a>
 </h2>
 <p>I’d like to introduce you to two new geoms. The first <code>geom_smooth()</code> is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
@@ -430,9 +418,8 @@
 <p>These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.</p>
 <p>There is a <a href="https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf">handy cheat sheet</a> that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs…</p>
 </div>
-<div id="facets" class="section level2" number="1.15">
-<h2>
-<span class="header-section-number">1.15</span> facets<a class="anchor" aria-label="anchor" href="#facets"><i class="fas fa-link"></i></a>
+<div id="facets" class="section level2 unnumbered">
+<h2>facets<a class="anchor" aria-label="anchor" href="#facets"><i class="fas fa-link"></i></a>
 </h2>
 <p>As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let’s check it out.</p>
 <p>Here, we can facet in the horizontal direction:</p>
@@ -455,9 +442,8 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider <code>facet_wrap</code> instead of <code>facet_grid</code>.</p>
 </div>
-<div id="scales" class="section level2" number="1.16">
-<h2>
-<span class="header-section-number">1.16</span> scales<a class="anchor" aria-label="anchor" href="#scales"><i class="fas fa-link"></i></a>
+<div id="scales" class="section level2 unnumbered">
+<h2>scales<a class="anchor" aria-label="anchor" href="#scales"><i class="fas fa-link"></i></a>
 </h2>
 <p>Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the <code>scale_*</code> family of commands. Consider our faceting example above. In it, we use <code>geom_tile(aes(fill = abundance))</code> to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called <code>fill</code> that we can adjust using <code>scale_fill_*</code>. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, <code>scale_fill_gradient()</code> is the command we need to change it. Remember that you could always type <code>?scale_fill_</code> into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: “How to modify color scale ggplot geom_tile,” which will undoubtedly turn up a wealth of help.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -467,9 +453,8 @@
   <span class="fu">scale_fill_gradient</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"white"</span>, high <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div id="rcolorbrewer" class="section level3" number="1.16.1">
-<h3>
-<span class="header-section-number">1.16.1</span> RColorBrewer<a class="anchor" aria-label="anchor" href="#rcolorbrewer"><i class="fas fa-link"></i></a>
+<div id="colors" class="section level3 unnumbered">
+<h3>colors<a class="anchor" aria-label="anchor" href="#colors"><i class="fas fa-link"></i></a>
 </h3>
 <p>One particularly useful type of scale are those provided by RColorBrewer:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
@@ -485,15 +470,10 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
-<div id="themes" class="section level2" number="1.17">
-<h2>
-<span class="header-section-number">1.17</span> themes<a class="anchor" aria-label="anchor" href="#themes"><i class="fas fa-link"></i></a>
+<div id="themes" class="section level2 unnumbered">
+<h2>themes<a class="anchor" aria-label="anchor" href="#themes"><i class="fas fa-link"></i></a>
 </h2>
 <p>So far we’ve just looked at how to control the means by which your <em>data</em> is represented on the plot. There are also components of the plot that are, strictly speaking, not <em>data</em> per se, but rather non-data ink. These are controlled using the <code>theme()</code> family of commands. There are two ways to go about this.</p>
-<div id="complete-themes" class="section level3" number="1.17.1">
-<h3>
-<span class="header-section-number">1.17.1</span> Complete themes<a class="anchor" aria-label="anchor" href="#complete-themes"><i class="fas fa-link"></i></a>
-</h3>
 <p><code>ggplot</code> comes with a handful of built in “complete themes.” These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">solvents</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">boiling_point</span>, y <span class="op">=</span> <span class="va">vapor_pressure</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
@@ -516,11 +496,6 @@
   <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span>
 <span class="co">## `geom_smooth()` using method = 'loess' and formula 'y ~ x'</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;"></div>
-</div>
-<div id="theme-components" class="section level3" number="1.17.2">
-<h3>
-<span class="header-section-number">1.17.2</span> Theme components<a class="anchor" aria-label="anchor" href="#theme-components"><i class="fas fa-link"></i></a>
-</h3>
 <p>You can also change individual components of themes. This can be a bit tricky, but it’s all explained if you run <code>?theme()</code>. Hare is an example (and google will provide many, many more).</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">solvents</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">boiling_point</span>, y <span class="op">=</span> <span class="va">vapor_pressure</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
@@ -550,10 +525,8 @@
 <span class="co">## `geom_smooth()` using method = 'loess' and formula 'y ~ x'</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-</div>
-<div id="exercises-1" class="section level2" number="1.18">
-<h2>
-<span class="header-section-number">1.18</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-1"><i class="fas fa-link"></i></a>
+<div id="exercises-ii" class="section level2 unnumbered">
+<h2>exercises II<a class="anchor" aria-label="anchor" href="#exercises-ii"><i class="fas fa-link"></i></a>
 </h2>
 <p>In this set of exercises we’re going to practice making more plots using the dataset <code>solvents</code>. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond <code>geom_point()</code> and <code>geom_violin()</code>, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! <strong>Show me that you have mastered this material.</strong> Don’t forget about the ggplot cheat sheet (see the “Links” section in this book).</p>
 <p>As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio as an R Markdown document. You will compile that file as a pdf and submit it on Canvas. If you have any questions please let me know.</p>
@@ -569,7 +542,17 @@
 <li><p>Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as <code>theme_classic()</code>, rather, manually modify components of the theme using <code>theme()</code>). This means that inside your <code>theme()</code> command, there should be three arguments separated by commas.</p></li>
 <li><p>Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot <em>and</em> the trend you’ve identified and highlighted. Note: I realize that the word “optimize” is not clearly defined here. That’s ok! You are the judge of what is optimized and what is not. Use your caption to make a case for <em>why</em> your plot is optimized. <em>Defend</em> your ideas with argument!</p></li>
 </ol>
-<!-- end --><!-- start data wranging -->
+</div>
+<div id="section-2" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-2"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-ii" class="section level2 unnumbered">
+<h2>further reading II<a class="anchor" aria-label="anchor" href="#further-reading-ii"><i class="fas fa-link"></i></a>
+</h2>
+<p>Check out some of the incredible geoms that are easy to access using R and ggplot2: <a href="https://r-graph-gallery.com/">R Graph Gallery</a>. Use these to make your figures attractive and easy to interpret!</p>
+<p>For a challenge, try implementing these awesome color scales: <a href="https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/">Famous R Color Palettes</a>. Note that some of these are optimized for colorblind individuals and that other are optimized for continuous hue gradients, etc.</p>
+<!-- end -->
+<!-- start data wranging -->
 </div>
 </div>
   <div class="chapter-nav">
@@ -588,31 +571,27 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#data-visualization">data visualization</a></li>
-<li><a class="nav-link" href="#objects"><span class="header-section-number">1.8</span> Objects</a></li>
-<li><a class="nav-link" href="#functions"><span class="header-section-number">1.9</span> Functions</a></li>
+<li><a class="nav-link" href="#section"></a></li>
+<li><a class="nav-link" href="#objects">objects</a></li>
+<li><a class="nav-link" href="#functions">functions</a></li>
+<li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
+<li><a class="nav-link" href="#markdown">markdown</a></li>
 <li>
-<a class="nav-link" href="#ggplot"><span class="header-section-number">1.10</span> ggplot</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#modifying-geoms"><span class="header-section-number">1.10.1</span> modifying geoms</a></li>
-<li><a class="nav-link" href="#multiple-geoms"><span class="header-section-number">1.10.2</span> multiple geoms</a></li>
+<a class="nav-link" href="#exercises-i">exercises I</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#algae">algae</a></li>
+<li><a class="nav-link" href="#alaska-lakes">alaska lakes</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#markdown"><span class="header-section-number">1.11</span> markdown</a></li>
+<li><a class="nav-link" href="#section-1"></a></li>
+<li><a class="nav-link" href="#more-geoms">more geoms</a></li>
+<li><a class="nav-link" href="#facets">facets</a></li>
 <li>
-<a class="nav-link" href="#exercises"><span class="header-section-number">1.12</span> exercises</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#algae-chemistry-dataset"><span class="header-section-number">1.12.1</span> Algae Chemistry Dataset</a></li></ul>
+<a class="nav-link" href="#scales">scales</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#colors">colors</a></li></ul>
 </li>
-<li><a class="nav-link" href="#alaska-lakes-dataset"><span class="header-section-number">1.13</span> Alaska Lakes Dataset</a></li>
-<li><a class="nav-link" href="#geoms"><span class="header-section-number">1.14</span> geoms</a></li>
-<li><a class="nav-link" href="#facets"><span class="header-section-number">1.15</span> facets</a></li>
-<li>
-<a class="nav-link" href="#scales"><span class="header-section-number">1.16</span> scales</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#rcolorbrewer"><span class="header-section-number">1.16.1</span> RColorBrewer</a></li></ul>
-</li>
-<li>
-<a class="nav-link" href="#themes"><span class="header-section-number">1.17</span> themes</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#complete-themes"><span class="header-section-number">1.17.1</span> Complete themes</a></li>
-<li><a class="nav-link" href="#theme-components"><span class="header-section-number">1.17.2</span> Theme components</a></li>
-</ul>
-</li>
-<li><a class="nav-link" href="#exercises-1"><span class="header-section-number">1.18</span> exercises</a></li>
+<li><a class="nav-link" href="#themes">themes</a></li>
+<li><a class="nav-link" href="#exercises-ii">exercises II</a></li>
+<li><a class="nav-link" href="#section-2"></a></li>
+<li><a class="nav-link" href="#further-reading-ii">further reading II</a></li>
 </ul>
 
       <div class="book-extra">
@@ -630,7 +609,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-04-20.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-05-09.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
