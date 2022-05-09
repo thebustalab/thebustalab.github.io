@@ -19,6 +19,7 @@
                 "data.table",
                 "rhandsontable",
                 "ips",
+                "eulerr",
                 "phangorn",
                 "seqinr",
                 "Rfast",
@@ -150,16 +151,6 @@
 
 ###### Datasets
 
-    if (exists("MS_library")) { # You can choose to load MS library if you define MS_library = TRUE before running source()
-
-        if (MS_library) {
-        
-            message("Loading MS Library...")
-
-            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
-        }
-
-    } else {
 
         if ( exists("datasets") ) {
 
@@ -191,14 +182,14 @@
                 pb$tick()
             }
 
-        }
+            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
 
-    }
+        }
 
     ## Load color schemes
 
-    cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
-    cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
+        cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
+        cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
 
         # message("\n")
 
@@ -338,6 +329,46 @@
 
             writePolylist <- function( polylist, polylist_out_path ) {
                 write.table( polylist, file = polylist_out_path, sep = ",", row.names = FALSE, col.names = FALSE)
+            }
+
+        #### readAlignment
+
+            #' Reads an alignment into a tidy dataframe
+            #'
+            #' @param alignment_in_path The path to the alignment
+            #' @examples
+            #' @export
+            #' readAlignment
+
+            readAlignment <- function( alignment_in_path, type = c("DNA", "AA")) {
+
+                ## DNA v AA
+
+                    if (length(type) > 1) {
+                        stop("Please specify a single type of alignment: DNA or AA")
+                    }
+
+                ## Read and return the alignment
+                    
+                    if ( type == "DNA" ) {
+                        alignment <- phangorn::read.phyDat(
+                            file = alignment_in_path,
+                            format = "fasta", type = "DNA"
+                        )
+                    }
+                    if ( type == "AA" ) {
+                        alignment <- phangorn::read.phyDat(
+                            file = alignment_in_path,
+                            format = "fasta", type = "AA"
+                        )   
+                    }
+                    alignment <- t(as.matrix(as.data.frame(alignment)))
+                    alignment <- as_tibble(data.frame(cbind(rownames(alignment), alignment)))
+                    alignment <- pivot_longer(alignment, cols = c(2:dim(alignment)[2]), names_to = "position", values_to = "state")
+                    alignment$position <- as.numeric(as.character(gsub("X", "", alignment$position)))
+                    colnames(alignment)[1] <- "name"
+                    
+                    return(alignment)
             }
 
         #### readTree
@@ -940,14 +971,9 @@
                                 scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
                                 scaffold_in_path,
                                 members = NULL,
-                                gblocks = FALSE, 
-                                gblocks_max_gap_percent = 0.5,
-                                gblocks_min_conservation_percent = 0.3,
                                 ml = FALSE, 
                                 model_test = FALSE,
                                 bootstrap = FALSE,
-                                rois = FALSE, 
-                                rois_data = NULL,
                                 ancestral_states = FALSE,
                                 root = NULL
                             ) {
@@ -975,44 +1001,47 @@
                         # }
 
                     ## Use gblocks on the alignment if specified
-                        if ( gblocks ) {
-                            if ( rois ) {
-                                # nucl_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
-                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "n", exec=gblocks_path)
-                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
-                                # nucl_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
-                                # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
-                            } else {
-                                cat("Skipping rois...\n")
-                                gblocks(
-                                    alignment_in_path = scaffold_in_path, sequence_type = "DNA",
-                                    max_gap_percent = gblocks_max_gap_percent,
-                                    min_conservation_percent = gblocks_min_conservation_percent
-                                )
-                                # nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
-                                # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
-                                # ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
-                                nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "DNA")
-                                cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
-                            } 
+                        # if ( gblocks ) {
+                        #     if ( rois ) {
+                        #         # nucl_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
+                        #         # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "n", exec=gblocks_path)
+                        #         # ape::write.dna(nucl_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
+                        #         # nucl_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
+                        #         # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
+                        #     } else {
+                        #         cat("Skipping rois...\n")
+                        #         gblocks(
+                        #             alignment_in_path = scaffold_in_path, sequence_type = "DNA",
+                        #             max_gap_percent = gblocks_max_gap_percent,
+                        #             min_conservation_percent = gblocks_min_conservation_percent
+                        #         )
+                        #         # nucl_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
+                        #         # nucl_seqs_aligned_blocked <- ips::gblocks(nucl_seqs_aligned, b5 = "a", exec = gblocks_path)
+                        #         # ape::write.dna(nucl_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
+                        #         nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "DNA")
+                        #         cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
+                        #     } 
                             
-                        } else {
-                            cat("Skipping gblocks...\n")
-                            if ( rois == FALSE) {
-                                cat("Skipping rois...\n")
-                                nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
-                                cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
-                            }
-                        }
+                        # } else {
+                        #     cat("Skipping gblocks...\n")
+                        #     if ( rois == FALSE) {
+                        #         cat("Skipping rois...\n")
+                        #         nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
+                        #         cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
+                        #     }
+                        # }
 
                     ## Create the tree
                         output <- list()
 
                         ## Create distrance tree
+                            cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
+                                nucl_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
+                                
                             cat("Creating neighbor-joining tree...\n")
-                            dm <- phangorn::dist.ml(nucl_seqs_aligned, "F81")
-                            NJ_tree <- phangorn::NJ(dm)
-                            output <- NJ_tree
+                                dm <- phangorn::dist.ml(nucl_seqs_aligned, "F81")
+                                NJ_tree <- phangorn::NJ(dm)
+                                output <- NJ_tree
 
                         ## Make ml tree
                             if ( ml == TRUE ) {
@@ -1069,37 +1098,37 @@
                 if ( scaffold_type == "amin_alignment" ) {
 
                     ## Use gblocks on the alignment if specified
-                        if ( gblocks ) {
-                            if ( rois ) {
-                                # amin_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
-                                # amin_seqs_aligned_blocked <- ips::gblocks(amin_seqs_aligned, b5 = "n", exec=gblocks_path)
-                                # ape::write.dna(amin_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
-                                # amin_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
-                                # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
-                            } else {
-                                gblocks(
-                                    alignment_in_path = scaffold_in_path, sequence_type = "AA",
-                                    max_gap_percent = gblocks_max_gap_percent,
-                                    min_conservation_percent = gblocks_min_conservation_percent
-                                )
-                                # amin_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
-                                # amin_seqs_aligned_blocked <- ips::gblocks(amin_seqs_aligned, b5 = "a", exec = gblocks_path)
-                                # ape::write.dna(amin_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
-                                amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "AA")
-                                cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
-                            } 
+                    #     if ( gblocks ) {
+                    #         if ( rois ) {
+                    #             # amin_seqs_aligned <- seqinr::read.alignment(file = paste(scaffold_in_path, "_roi", sep = ""), format = "fasta")
+                    #             # amin_seqs_aligned_blocked <- ips::gblocks(amin_seqs_aligned, b5 = "n", exec=gblocks_path)
+                    #             # ape::write.dna(amin_seqs_aligned_blocked, paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format = "fasta")
+                    #             # amin_seqs_aligned <- phangorn::read.phyDat(file=paste(phylochemistry_directory, "/", project_name, "/alignments/", scaffold_in_path, "_roi_blocked", sep = ""), format="fasta", type="DNA")
+                    #             # cat(paste("Making tree with ", scaffold_in_path, "_roi_blocked...", sep = ""))
+                    #         } else {
+                    #             gblocks(
+                    #                 alignment_in_path = scaffold_in_path, sequence_type = "AA",
+                    #                 max_gap_percent = gblocks_max_gap_percent,
+                    #                 min_conservation_percent = gblocks_min_conservation_percent
+                    #             )
+                    #             # amin_seqs_aligned <- ape::read.dna(file = paste(scaffold_in_path), format = "fasta") # Needs to be DNAbin format
+                    #             # amin_seqs_aligned_blocked <- ips::gblocks(amin_seqs_aligned, b5 = "a", exec = gblocks_path)
+                    #             # ape::write.dna(amin_seqs_aligned_blocked, paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta")
+                    #             amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path, "_blocked", sep = ""), format = "fasta", type = "AA")
+                    #             cat(paste("Making tree with ", scaffold_in_path, "_blocked...\n", sep = ""))
+                    #         } 
                             
-                        } else {
-                            cat("Skipping gBlocks...\n")
-                        }
+                    #     } else {
+                    #         cat("Skipping gBlocks...\n")
+                    #     }
 
-                    ## If neither gBlocks nor ROIs, read in alignment as phyDat for tree creation
-                        if ( rois == FALSE ) {
-                            if ( gblocks == FALSE ) {
-                                amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "DNA")
-                                cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
-                            }
-                        }
+                    # ## If neither gBlocks nor ROIs, read in alignment as phyDat for tree creation
+                    #     if ( rois == FALSE ) {
+                    #         if ( gblocks == FALSE ) {
+                    #             amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "AA")
+                    #             cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
+                    #         }
+                    #     }
 
                     ## Read in data
                         # if (rois == FALSE) {
@@ -1121,6 +1150,10 @@
                         # }
 
                     ## Make distance tree
+                        cat(paste("Making tree with ", scaffold_in_path," ...\n", sep = ""))
+                            amin_seqs_aligned <- phangorn::read.phyDat(file = paste(scaffold_in_path), format = "fasta", type = "AA")
+                                
+                        # cat("Creating neighbor-joining tree...\n")
                         dm = phangorn::dist.ml(amin_seqs_aligned, model = "JTT")
                         amin_tree = phangorn::NJ(dm)
 
@@ -1824,7 +1857,7 @@
                                     iterative_blast_length_cutoff = 700,
                                     sequences_of_interest_directory_path,
                                     blast_module_directory_path,
-                                    blast_type = c("blastn", "dc-megablast"), 
+                                    blast_type = c("blastn", "dc-megablast", "blastp", "tblastn"), 
                                     e_value_cutoff = 1,
                                     queries_in_output = FALSE,
                                     monolist_out_path
@@ -1840,25 +1873,39 @@
                     transcriptomes <- as.character(transcriptomes)
                     names(transcriptomes) <- names
 
-                # ### Remove existing blast output
+                ### If tblastn, then translate all transcriptomes and rename the translations with "_trans" suffix
 
-                #     for (i in 1:length(transcriptomes)) {
-                #         file_to_remove <- 
-                #         if (file.exists(file_to_remove) { file.remove(file_to_remove) }
+                    if ( blast_type == "tblastn" ) {
+                        cat("Translating transcriptomes...\n\n")
+                        for ( transcriptome in 1:length(transcriptomes) ) {
+                            writeFasta(
+                                XStringSet = translate(readDNAStringSet(transcriptomes[transcriptome]), if.fuzzy.codon = "solve"),
+                                fasta_out_path = paste(transcriptomes[transcriptome], "trans", sep = "_")
+                            )
+                            transcriptomes[transcriptome] <- paste(transcriptomes[transcriptome], "trans", sep = "_")
+                        }
+                    }
 
-                ### Build blast database
+                ### Build blast database(s)
 
-                    if( .Platform$OS == "unix") {
-                        
+                    if ( blast_type %in% c("blastn", "dc-megablast")) {
+                        dbtype = "nucl"
+                    } else if ( blast_type %in% c("tblastn", "dc-megablast") ) {
+                        dbtype = "prot"
+                    }
+
+                    if ( .Platform$OS == "unix" ) {
+
                         for (transcriptome in 1:length(transcriptomes)) {
                             cat(paste0("\nSpecies: ", names(transcriptomes)[transcriptome]))
-                            system( 
+                            system(
                                 paste(
-                                    blast_module_directory_path, 
-                                    "makeblastdb -in ", 
-                                    transcriptomes[transcriptome], 
-                                    " -dbtype nucl", 
-                                    sep = "" 
+                                    blast_module_directory_path,
+                                    "makeblastdb -in ",
+                                    transcriptomes[transcriptome],
+                                    " -dbtype ",
+                                    dbtype,
+                                    sep = ""
                                 ) 
                             )
                         }
@@ -1869,21 +1916,25 @@
                             cat(paste0("\nSpecies: ", names(transcriptomes)[transcriptome]))
                             shell(
                                 paste(
-                                    blast_module_directory_path, 
-                                    "makeblastdb -in ", 
-                                    transcriptomes[transcriptome], 
-                                    " -dbtype nucl", 
-                                    sep = "" 
-                                ) 
+                                    blast_module_directory_path,
+                                    "makeblastdb -in ",
+                                    transcriptomes[transcriptome],
+                                    " -dbtype ",
+                                    dbtype,
+                                    sep = ""
+                                )
                             )
                         }
-
                     }
                     
                 ### Start BLAST process
+
                     change_in_hit_number <- 1
                     iteration_number <- 0
-                    query_seqs <- Biostrings::readDNAStringSet(filepath = initial_query_in_path, format = "fasta")
+                    query_seqs <- Biostrings::readBStringSet(filepath = initial_query_in_path, format = "fasta")
+
+                    if (blast_type == "tblastn") {blast_type = "blastp"}
+
                     while ( change_in_hit_number > 0 ) {
 
                         ### Read in query, set initial hit number for iterative BLAST
@@ -1902,11 +1953,14 @@
                                 # change_in_hit_number <- 1
                             }
 
-                        ## Loop over each member of the query and use it to blast each transcriptome
+                        ### Loop over each member of the query and use it to blast each transcriptome
+                            
                             monolist <- data.frame()
+                            
                             for ( query_seq in 1:length(query_seqs) ) {
 
                                 ## Write individual files for each member of the query
+                                    
                                     Biostrings::writeXStringSet(
                                         query_seqs[query_seq], 
                                         filepath = paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""), 
@@ -1914,6 +1968,7 @@
                                     )
 
                                 ## Loop over the transcriptomes, run the blast on each, add hits to monolist
+                                    
                                     for (transcriptome in 1:length(transcriptomes)) {
 
                                         ## Run BLASTs on unix system
@@ -1923,7 +1978,8 @@
                                                 system(
                                                     paste(
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -1941,7 +1997,8 @@
                                                 system(
                                                     paste(
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -1959,7 +2016,8 @@
                                                 system(
                                                     paste(
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -1977,7 +2035,8 @@
                                                 system(
                                                     paste(
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -1991,6 +2050,25 @@
                                                         sep = ""
                                                     )
                                                 )
+
+                                                system(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        blast_type,
+                                                        " -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        " -outfmt '6 bitscore'",
+                                                        sep = ""
+                                                    )
+                                                )
                                             }
 
                                         ## Run BLASTs on windows system
@@ -1999,9 +2077,9 @@
 
                                                 shell(
                                                     paste(
-
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -2019,7 +2097,8 @@
                                                 shell(
                                                     paste(
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -2037,7 +2116,8 @@
                                                 shell(
                                                     paste(
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -2055,7 +2135,8 @@
                                                 shell(
                                                     paste(
                                                         blast_module_directory_path,
-                                                        "blastn -task ",
+                                                        blast_type,
+                                                        " -task ",
                                                         blast_type,
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
@@ -2069,13 +2150,32 @@
                                                         sep = ""
                                                     )
                                                 )
+
+                                                shell(
+                                                    paste(
+                                                        blast_module_directory_path,
+                                                        blast_type,
+                                                        " -task ",
+                                                        blast_type,
+                                                        " -db ", 
+                                                        transcriptomes[transcriptome],
+                                                        " -query ",
+                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        " -out ",
+                                                        paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""),
+                                                        " -evalue ",
+                                                        e_value_cutoff,
+                                                        " -outfmt \"6 bitscore\"",
+                                                        sep = ""
+                                                    )
+                                                )
                                             }
 
                                         ## Extract BLAST hits from transcriptome, add them to the monolist, write them to individual files
 
                                             # Read in whole transcriptome
                                                 temp_seqs <- Biostrings::readDNAStringSet( 
-                                                    filepath = as.character(transcriptomes[transcriptome]), 
+                                                    filepath = as.character(gsub("_trans", "", transcriptomes)[transcriptome]), 
                                                     format = "fasta"
                                                 )
                                         
@@ -2090,6 +2190,7 @@
                                                         temp_hits_length <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1])
                                                         temp_hits_pident <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1])
                                                         temp_hits_evalue <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1])
+                                                        temp_hits_bitscore <- as.character(read.table(file = paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""))[,1])
                                                         
                                                         duplicate_indeces <- duplicated(temp_hits)
 
@@ -2097,11 +2198,13 @@
                                                         temp_hits_length <- temp_hits_length[!duplicate_indeces]
                                                         temp_hits_pident <- temp_hits_pident[!duplicate_indeces]
                                                         temp_hits_evalue <- temp_hits_evalue[!duplicate_indeces]
+                                                        temp_hits_bitscore <- temp_hits_bitscore[!duplicate_indeces]
                                                         
                                                         writeMonolist(temp_hits, paste(transcriptomes[transcriptome], ".out", sep = ""))
                                                         writeMonolist(temp_hits_length, paste(transcriptomes[transcriptome], ".out_length", sep = ""))
                                                         writeMonolist(temp_hits_pident, paste(transcriptomes[transcriptome], ".out_pident", sep = ""))
                                                         writeMonolist(temp_hits_evalue, paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))
+                                                        writeMonolist(temp_hits_bitscore, paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""))
 
                                                     temp_hits <- readMonolist(paste(transcriptomes[transcriptome], ".out", sep = ""))
                                                     cat(paste(
@@ -2139,21 +2242,21 @@
 
                                                             # Add hit information to the monolist
                                                                 monolist <- rbind(monolist, data.frame(
-                                                                                                accession = gsub(" .*", "", temp_seqs@ranges@NAMES),
-                                                                                                Genus = as.character(gsub("_.*$", "", names(transcriptomes)[transcriptome])),
-                                                                                                species = gsub(".*_", "", names(transcriptomes)[transcriptome]),
-                                                                                                annotation = temp_seqs@ranges@NAMES,
-                                                                                                length = temp_seqs@ranges@width,
-                                                                                                longestORF = longest_ORFs,
-                                                                                                length_aligned_with_query = readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1],
-                                                                                                percent_identity = readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1],
-                                                                                                e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
-                                                                                                subset_all = TRUE,
-                                                                                                query = query_seqs@ranges@NAMES[query_seq],
-                                                                                                query_length = query_seqs@ranges@width[query_seq],
-                                                                                                query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
-                                                                                            )
-                                                                )
+                                                                    accession = gsub(" .*", "", temp_seqs@ranges@NAMES),
+                                                                    Genus = as.character(gsub("_.*$", "", names(transcriptomes)[transcriptome])),
+                                                                    species = gsub(".*_", "", names(transcriptomes)[transcriptome]),
+                                                                    annotation = temp_seqs@ranges@NAMES,
+                                                                    length = temp_seqs@ranges@width,
+                                                                    longestORF = longest_ORFs,
+                                                                    length_aligned_with_query = readMonolist(paste(transcriptomes[transcriptome], ".out_length", sep = ""))[,1],
+                                                                    percent_identity = readMonolist(paste(transcriptomes[transcriptome], ".out_pident", sep = ""))[,1],
+                                                                    e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
+                                                                    bitscore = readMonolist(paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""))[,1],
+                                                                    subset_all = TRUE,
+                                                                    query = query_seqs@ranges@NAMES[query_seq],
+                                                                    query_length = query_seqs@ranges@width[query_seq],
+                                                                    query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                                                ))
                                                         }
                                                 }
                                     }
@@ -2161,20 +2264,27 @@
                                 ## Optionally add the queries to the output
 
                                     if (queries_in_output == TRUE) {
+
+                                        if (blast_type == "blastp") {
+                                                longestORF <- 3*query_seqs@ranges@width[query_seq] 
+                                            } else {
+                                                longestORF <- extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                            }
                                         
                                         monolist <- rbind(monolist, data.frame(
                                             accession = query_seqs@ranges@NAMES[query_seq],
                                             Genus = "Query",
                                             species = "query",
                                             annotation = "query",
-                                            length = query_seqs@ranges@width,
-                                            longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1],
-                                            length_aligned_with_query = 100,
+                                            length = query_seqs@ranges@width[query_seq],
+                                            longestORF = longestORF,
+                                            length_aligned_with_query = query_seqs@ranges@width[query_seq],
                                             percent_identity = 100,
                                             e_value = 0,
+                                            bitscore = 1000,
                                             subset_all = TRUE,
-                                            query = query_seqs@ranges@NAMES,
-                                            query_length = query_seqs@ranges@width,
+                                            query = query_seqs@ranges@NAMES[query_seq],
+                                            query_length = query_seqs@ranges@width[query_seq],
                                             query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
                                         ))
 
@@ -2186,14 +2296,8 @@
                                     }
 
                                 ## Remove individual query files
-                                    if (
-                                        file.exists(
-                                            paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = "")
-                                        )
-                                    ) {
-                                        file.remove(
-                                            paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = "")
-                                        )
+                                    if (file.exists(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = "")) ) {
+                                        file.remove(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))
                                     }
                             }
 
@@ -2417,6 +2521,237 @@
                                 seqinr::write.fasta(as.list(msa$seq),as.list(msa$nam), file.out = paste(alignment_directory_path, subset, "_amin_seqs_aligned.fa", sep = ""))
                         }
                     }
+            }
+
+        #### analyzeAlignment
+        
+            #' Analyze a multiple sequence alignment and subset it for phylogeny building
+            #'
+            #' @param alignment_in_path The alignment to analyze, in fasta format
+            #' @param type DNA or AA
+            #' @examples
+            #' @export
+            #' extractORFs
+
+            analyzeAlignment <- function(
+                alignment_in_path,
+                type = c("DNA", "AA")
+            ) {
+
+                ## Prelim stuff
+
+                    ## Read in and process alignment
+                        
+                        alignment <- readAlignment(
+                            alignment_in_path = alignment_in_path,
+                            type = type
+                        )
+
+                        if (type == "DNA") {scaffold_type = "nucl_alignment"}
+                        if (type == "AA") {scaffold_type = "amin_alignment"}
+
+                        tree <- fortify(buildTree(
+                            scaffold_type = scaffold_type,
+                            scaffold_in_path = alignment_in_path,
+                        ))
+
+                        alignment$name <- factor(alignment$name, levels = arrange(filter(tree, isTip == TRUE), y)$label)
+
+                    ## Analyze composition of each position
+                                
+                        alignment %>%
+                            group_by(position) %>%
+                            summarize(
+                                nongap_percent = 100-(sum(str_count(state, "-"))/n()*100),
+                                conservation_percent = suppressWarnings(sum(state == mode(state))/n()*100)
+                            ) %>%
+                            pivot_longer(cols = c(2,3), names_to = "metric", values_to = "value") -> alignment_stats
+
+                ## User interface
+
+                    ui <- fluidPage(
+
+                        sidebarLayout(
+
+                            sidebarPanel(
+
+                                sliderInput(
+                                    inputId = "x_start",
+                                    label = "x_start",
+                                    min = 0,
+                                    max = max(alignment$position),
+                                    value = 0
+                                ),
+
+                                sliderInput(
+                                    inputId = "x_end",
+                                    label = "x_end",
+                                    min = 0,
+                                    max = max(alignment$position),
+                                    value = max(alignment$position)
+                                ),
+
+                                sliderInput(
+                                    inputId = "nongap_threshold",
+                                    label = "nongap_threshold",
+                                    min = 0,
+                                    max = 100,
+                                    value = 50
+                                ),
+
+                                sliderInput(
+                                    inputId = "conservation_threshold",
+                                    label = "conservation_threshold",
+                                    min = 0,
+                                    max = 100,
+                                    value = 50
+                                ),
+
+                                plotOutput(
+                                    outputId = "tree",
+                                    height = "300px"
+                                ),
+
+                                plotOutput(
+                                    outputId = "filtered_tree",
+                                    height = "300px"
+                                ),
+
+                                width = 3
+
+                            ),
+
+                            mainPanel(
+
+                                plotOutput(
+                                    outputId = "plot",
+                                    height = "1000px"
+                                )
+                            )
+                        )
+                    )
+
+                ## Server
+
+                    server <- function(input, output) {
+
+                        ## Original tree
+
+                            output$tree <- renderPlot({ ggtree(tree) + geom_tiplab(aes(label = gsub(" .*$", "", label))) })
+
+                        ## Plot alignment
+
+                            output$plot <- renderPlot({
+
+                                ## Main plots
+
+                                    stats_plot <- ggplot(alignment_stats, aes(x = position, y = value, color = metric)) +
+                                        geom_line(size = 1) +
+                                        geom_hline(data = data.frame(
+                                            metric = "conservation_percent",
+                                            yintercept = input$conservation_threshold
+                                            ), aes(yintercept = yintercept)
+                                        ) +
+                                        geom_hline(data = data.frame(
+                                            metric = "nongap_percent",
+                                            yintercept = input$nongap_threshold
+                                            ), aes(yintercept = yintercept)
+                                        ) +
+                                        scale_color_viridis(discrete = TRUE, guide = "none") +
+                                        theme_classic() +
+                                        scale_y_continuous(name = "Percent") +
+                                        scale_x_continuous(expand = c(0,0)) +
+                                        coord_cartesian(xlim = c(input$x_start, input$x_end)) +
+                                        facet_grid(metric~.) +
+                                        theme(
+                                            axis.text.y = element_blank()
+                                        )
+                                
+                                    alignment_plot <- ggplot(alignment, aes(x = position, y = name)) +
+                                        geom_tile(aes(fill = state)) +
+                                        scale_fill_viridis(discrete = TRUE, guide = "none") +
+                                        scale_y_discrete(name = "") +
+                                        scale_x_continuous(expand = c(0,0)) +
+                                        theme_classic() +
+                                        coord_cartesian(xlim = c(input$x_start, input$x_end)) +
+                                        theme(
+                                            axis.text.y = element_blank()
+                                        )
+
+                                    alignment_stats %>%
+                                        pivot_wider(names_from = "metric", values_from = "value") %>%
+                                        filter(
+                                            nongap_percent > input$nongap_threshold &
+                                            conservation_percent > input$conservation_threshold
+                                        ) %>% 
+                                        select(position) %>% as.data.frame() -> positions_to_keep
+                                        positions_to_keep <- positions_to_keep[,1]
+
+                                    alignment %>%
+                                        filter(position %in% positions_to_keep) %>%
+                                        ggplot(aes(x = position, y = name)) +
+                                            geom_tile(aes(fill = state)) +
+                                            scale_fill_viridis(discrete = TRUE, guide = "none") +
+                                            scale_y_discrete(name = "") +
+                                            scale_x_continuous(expand = c(0,0)) +
+                                            theme_classic() +
+                                            coord_cartesian(xlim = c(input$x_start, input$x_end)) +
+                                            theme(
+                                                axis.text.y = element_blank()
+                                            ) -> filtered_alignment_plot
+
+                                    stats_plot + filtered_alignment_plot + alignment_plot + patchwork::plot_layout(ncol = 1)
+
+                            })
+
+                        ## Process and draw tree from filtered_alignment
+
+                            output$filtered_tree <- renderPlot({
+
+                                alignment_stats %>%
+                                    pivot_wider(names_from = "metric", values_from = "value") %>%
+                                    filter(
+                                        nongap_percent > input$nongap_threshold &
+                                        conservation_percent > input$conservation_threshold
+                                    ) %>% 
+                                    select(position) %>% as.data.frame() -> positions_to_keep
+                                    positions_to_keep <- positions_to_keep[,1]
+
+                                alignment %>%
+                                    filter(position %in% positions_to_keep) %>%
+                                    pivot_wider(names_from = position, values_from = state) -> alignment_wide
+
+                                if (type == "DNA") {
+                                    blocked_alignment <- DNAStringSet()
+                                    for (i in 1:dim(alignment_wide)[1]) {
+                                        blocked_alignment <- c(blocked_alignment, DNAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
+                                    }
+                                    blocked_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
+                                    writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
+                                }
+
+                                if (type == "AA") {
+                                    blocked_alignment <- AAStringSet()
+                                    for (i in 1:dim(alignment_wide)[1]) {
+                                        blocked_alignment <- c(blocked_alignment, AAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
+                                    }
+                                    blocked_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
+                                    writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
+                                }
+
+                                blocked_tree <- fortify(buildTree(
+                                    scaffold_type = scaffold_type,
+                                    scaffold_in_path = paste0(alignment_in_path, "_blocked"),
+                                ))
+
+                                ggtree(blocked_tree)
+
+                            })
+
+                    }
+
+                shinyApp(ui, server)
+
             }
 
         #### readGFFs
@@ -7362,6 +7697,22 @@
 
                             return(translational_frame)
                     }
+
+        #### vennAnalysis
+
+            #' Get coordinates for quantitative Venn Diagram
+            #'
+            #' @param data Data frame of TRUE FALSE for whether each observation belongs to each category
+            #' @examples
+            #' vennAnalysis()
+
+            vennAnalysis <- function(data) {
+                plot(euler(data, shape = "circle"), quantities = TRUE)
+                venn_circle_data <- plot(eulerr::euler(data, shape = "circle"), quantities = TRUE)$data$ellipses[,1:3]
+                colnames(venn_circle_data) <- c("x", "y", "r")
+                venn_circle_data$category <- rownames(venn_circle_data)
+                return(venn_circle_data)
+            }
 
     ##### Image Analysis
 

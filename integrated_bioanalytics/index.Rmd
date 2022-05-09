@@ -2613,6 +2613,14 @@ ________________________________________________________________________________
 
 ## BLAST
 
+### interpretation
+
+From Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+"BLAST, FASTA, SSEARCH, and other commonly used similarity searching programs produce accurate statistical estimates that can be used to reliably infer homology. Searches with protein sequences (BLASTP, FASTP, SSEARCH,) or translated DNA sequences (BLASTX, FASTX) are preferred because they are 5–10-fold more sensitive than DNA:DNA sequence comparison. The 30% identity rule-of-thumb is too conservative; statistically significant (E() < 10−6 – 10−3) protein homologs can share less than 20% identity. E()-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.""
+
+* e-values
+
 The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
 E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
 E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
@@ -2622,6 +2630,10 @@ E-value < 10e-100 Identical sequences. You will get long alignments across the e
 E-value > 1 Proteins are most likely not related
 E-value > 10 Hits are most likely junk unless the query sequence is very short.
 reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
+
+* bit-scores
+
+
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
