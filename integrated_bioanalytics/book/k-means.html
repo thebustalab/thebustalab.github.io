@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="“Do my samples fall into definable clusters?”  1.12 theory One of the questions we’ve been asking is “which of my samples are most closely related?” We’ve been answering that question using...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -136,18 +136,18 @@
 
 <span class="va">solvents_pca_kmeans</span>
 <span class="co">## # A tibble: 32 × 15</span>
-<span class="co">##    sample_unique_ID       solvent   formula miscible_with_w…</span>
-<span class="co">##    &lt;chr&gt;                  &lt;chr&gt;     &lt;chr&gt;   &lt;lgl&gt;           </span>
-<span class="co">##  1 acetic_acid_C2H4O2_TR… acetic_a… C2H4O2  TRUE            </span>
-<span class="co">##  2 acetone_C3H6O_TRUE_67… acetone   C3H6O   TRUE            </span>
-<span class="co">##  3 acetonitrile_C2H3N_TR… acetonit… C2H3N   TRUE            </span>
-<span class="co">##  4 benzene_C6H6_FALSE_71… benzene   C6H6    FALSE           </span>
-<span class="co">##  5 benzonitrile_C7H5N_FA… benzonit… C7H5N   FALSE           </span>
-<span class="co">##  6 1-butanol_C4H10O_FALS… 1-butanol C4H10O  FALSE           </span>
-<span class="co">##  7 2-butanone_C4H8O_FALS… 2-butano… C4H8O   FALSE           </span>
-<span class="co">##  8 carbon_disulfide_CS2_… carbon_d… CS2     FALSE           </span>
-<span class="co">##  9 carbon_tetrachloride_… carbon_t… CCl4    FALSE           </span>
-<span class="co">## 10 chlorobenzene_C6H5Cl_… chlorobe… C6H5Cl  FALSE           </span>
+<span class="co">##    sample_unique_ID         solvent formula miscible_with_w…</span>
+<span class="co">##    &lt;chr&gt;                    &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;           </span>
+<span class="co">##  1 acetic_acid_C2H4O2_TRUE… acetic… C2H4O2  TRUE            </span>
+<span class="co">##  2 acetone_C3H6O_TRUE_67-6… acetone C3H6O   TRUE            </span>
+<span class="co">##  3 acetonitrile_C2H3N_TRUE… aceton… C2H3N   TRUE            </span>
+<span class="co">##  4 benzene_C6H6_FALSE_71-4… benzene C6H6    FALSE           </span>
+<span class="co">##  5 benzonitrile_C7H5N_FALS… benzon… C7H5N   FALSE           </span>
+<span class="co">##  6 1-butanol_C4H10O_FALSE_… 1-buta… C4H10O  FALSE           </span>
+<span class="co">##  7 2-butanone_C4H8O_FALSE_… 2-buta… C4H8O   FALSE           </span>
+<span class="co">##  8 carbon_disulfide_CS2_FA… carbon… CS2     FALSE           </span>
+<span class="co">##  9 carbon_tetrachloride_CC… carbon… CCl4    FALSE           </span>
+<span class="co">## 10 chlorobenzene_C6H5Cl_FA… chloro… C6H5Cl  FALSE           </span>
 <span class="co">## # … with 22 more rows, and 11 more variables:</span>
 <span class="co">## #   CAS_number &lt;chr&gt;, category &lt;chr&gt;, Dim.1 &lt;dbl&gt;,</span>
 <span class="co">## #   Dim.2 &lt;dbl&gt;, kmeans_cluster &lt;chr&gt;, boiling_point &lt;dbl&gt;,</span>
@@ -158,7 +158,7 @@
 <div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">solvents_pca_kmeans</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">kmeans_cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let’s look at the elbow plot itself. For this, we can just set <code>kmeans = "elbow"</code>:</p>
 <div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_pca_kmeans_elbow</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
@@ -181,16 +181,16 @@
 <span class="co">## # A tibble: 31 × 2</span>
 <span class="co">##    cluster_number variance_within_cluster</span>
 <span class="co">##             &lt;dbl&gt;                   &lt;dbl&gt;</span>
-<span class="co">##  1              1                 142804.</span>
-<span class="co">##  2              2                  67355.</span>
-<span class="co">##  3              3                  49545.</span>
-<span class="co">##  4              4                  38964.</span>
-<span class="co">##  5              5                  30702.</span>
-<span class="co">##  6              6                  25646.</span>
-<span class="co">##  7              7                  20188.</span>
-<span class="co">##  8              8                  16508.</span>
-<span class="co">##  9              9                  14346.</span>
-<span class="co">## 10             10                  12265.</span>
+<span class="co">##  1              1                   186. </span>
+<span class="co">##  2              2                   128. </span>
+<span class="co">##  3              3                    99.1</span>
+<span class="co">##  4              4                    73.6</span>
+<span class="co">##  5              5                    62.5</span>
+<span class="co">##  6              6                    51.8</span>
+<span class="co">##  7              7                    42.8</span>
+<span class="co">##  8              8                    36.4</span>
+<span class="co">##  9              9                    31.7</span>
+<span class="co">## 10             10                    27.8</span>
 <span class="co">## # … with 21 more rows</span></code></pre></div>
 <p>This gives us the maximum variance within a cluster for each number of clusters. Let’s plot that:</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
@@ -201,7 +201,7 @@
   <span class="fu">geom_col</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Hmm, it looks like there aren’t any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set <code>kmeans = 3</code> if we want three clusters in the output. Below, let’s do just that. Let’s also plot the results and use <code>geom_mark_ellipse</code>.</p>
 <div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">runMatrixAnalysis</span><span class="op">(</span>
@@ -225,7 +225,7 @@
 <span class="co">## Dropping any variables in your dataset that have NA as a value.</span>
 <span class="co">## Variables dropped:</span>
 <span class="co">## solubility_in_water vapor_pressure</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-108-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool!</p>
 <p>One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:</p>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
@@ -259,7 +259,7 @@
     data <span class="op">=</span> <span class="va">solvents_clustered</span>,
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">kmeans_cluster</span>, y <span class="op">=</span> <span class="va">boiling_point</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-108-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it’s possible that we’ll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the <code>plot_grid</code> function from the <code>cowplot</code> package. Let’s check it out:</p>
 <div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">solvents_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
@@ -321,7 +321,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span>
 
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">pca_plot</span>, <span class="va">bar_plot</span>, align <span class="op">=</span> <span class="st">"h"</span>, axis <span class="op">=</span> <span class="st">"b"</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Now we are really rockin!!</p>
 </div>
 <div id="exercises-3" class="section level2" number="1.13">

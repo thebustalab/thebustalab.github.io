@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="1.5 theory “Which of my samples are most closely related?” So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -117,18 +117,18 @@
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">alaska_lake_data</span>
 <span class="co">## # A tibble: 220 × 7</span>
-<span class="co">##    lake                park  water_temp    pH element mg_per_L</span>
-<span class="co">##    &lt;chr&gt;               &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;</span>
-<span class="co">##  1 Devil_Mountain_Lake BELA        6.46  7.69 C          3.4  </span>
-<span class="co">##  2 Devil_Mountain_Lake BELA        6.46  7.69 N          0.028</span>
-<span class="co">##  3 Devil_Mountain_Lake BELA        6.46  7.69 P          0    </span>
-<span class="co">##  4 Devil_Mountain_Lake BELA        6.46  7.69 Cl        10.4  </span>
-<span class="co">##  5 Devil_Mountain_Lake BELA        6.46  7.69 S          0.62 </span>
-<span class="co">##  6 Devil_Mountain_Lake BELA        6.46  7.69 F          0.04 </span>
-<span class="co">##  7 Devil_Mountain_Lake BELA        6.46  7.69 Br         0.02 </span>
-<span class="co">##  8 Devil_Mountain_Lake BELA        6.46  7.69 Na         8.92 </span>
-<span class="co">##  9 Devil_Mountain_Lake BELA        6.46  7.69 K          1.2  </span>
-<span class="co">## 10 Devil_Mountain_Lake BELA        6.46  7.69 Ca         5.73 </span>
+<span class="co">##    lake              park  water_temp    pH element mg_per_L</span>
+<span class="co">##    &lt;chr&gt;             &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;</span>
+<span class="co">##  1 Devil_Mountain_L… BELA        6.46  7.69 C          3.4  </span>
+<span class="co">##  2 Devil_Mountain_L… BELA        6.46  7.69 N          0.028</span>
+<span class="co">##  3 Devil_Mountain_L… BELA        6.46  7.69 P          0    </span>
+<span class="co">##  4 Devil_Mountain_L… BELA        6.46  7.69 Cl        10.4  </span>
+<span class="co">##  5 Devil_Mountain_L… BELA        6.46  7.69 S          0.62 </span>
+<span class="co">##  6 Devil_Mountain_L… BELA        6.46  7.69 F          0.04 </span>
+<span class="co">##  7 Devil_Mountain_L… BELA        6.46  7.69 Br         0.02 </span>
+<span class="co">##  8 Devil_Mountain_L… BELA        6.46  7.69 Na         8.92 </span>
+<span class="co">##  9 Devil_Mountain_L… BELA        6.46  7.69 K          1.2  </span>
+<span class="co">## 10 Devil_Mountain_L… BELA        6.46  7.69 Ca         5.73 </span>
 <span class="co">## # … with 210 more rows, and 1 more variable:</span>
 <span class="co">## #   element_type &lt;chr&gt;</span></code></pre></div>
 <p>We can see that this dataset is comprised of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
@@ -153,18 +153,18 @@
 <span class="op">)</span>
 <span class="va">AK_lakes_clustered</span>
 <span class="co">## # A tibble: 39 × 25</span>
-<span class="co">##    sample_unique_ID  lake   park  parent  node branch.length</span>
-<span class="co">##    &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;         &lt;dbl&gt;</span>
-<span class="co">##  1 Devil_Mountain_L… Devil… BELA      33     1          7.25</span>
-<span class="co">##  2 Imuruk_Lake_BELA  Imuru… BELA      32     2          4.91</span>
-<span class="co">##  3 Kuzitrin_Lake_BE… Kuzit… BELA      36     3          3.27</span>
-<span class="co">##  4 Lava_Lake_BELA    Lava_… BELA      35     4          3.02</span>
-<span class="co">##  5 North_Killeak_La… North… BELA      21     5        204.  </span>
-<span class="co">##  6 White_Fish_Lake_… White… BELA      22     6         65.2 </span>
-<span class="co">##  7 Iniakuk_Lake_GAAR Iniak… GAAR      29     7          3.60</span>
-<span class="co">##  8 Kurupa_Lake_GAAR  Kurup… GAAR      31     8          8.57</span>
-<span class="co">##  9 Lake_Matcharak_G… Lake_… GAAR      29     9          3.60</span>
-<span class="co">## 10 Lake_Selby_GAAR   Lake_… GAAR      30    10          5.24</span>
+<span class="co">##    sample_unique_ID   lake  park  parent  node branch.length</span>
+<span class="co">##    &lt;chr&gt;              &lt;chr&gt; &lt;chr&gt;  &lt;int&gt; &lt;int&gt;         &lt;dbl&gt;</span>
+<span class="co">##  1 Devil_Mountain_La… Devi… BELA      33     1         0.979</span>
+<span class="co">##  2 Imuruk_Lake_BELA   Imur… BELA      39     2         0.816</span>
+<span class="co">##  3 Kuzitrin_Lake_BELA Kuzi… BELA      38     3         0.703</span>
+<span class="co">##  4 Lava_Lake_BELA     Lava… BELA      27     4         0.738</span>
+<span class="co">##  5 North_Killeak_Lak… Nort… BELA      21     5         5.58 </span>
+<span class="co">##  6 White_Fish_Lake_B… Whit… BELA      22     6         3.89 </span>
+<span class="co">##  7 Iniakuk_Lake_GAAR  Inia… GAAR      29     7         1.25 </span>
+<span class="co">##  8 Kurupa_Lake_GAAR   Kuru… GAAR      35     8         0.954</span>
+<span class="co">##  9 Lake_Matcharak_GA… Lake… GAAR      35     9         0.954</span>
+<span class="co">## 10 Lake_Selby_GAAR    Lake… GAAR      36    10         1.12 </span>
 <span class="co">## # … with 29 more rows, and 19 more variables: label &lt;chr&gt;,</span>
 <span class="co">## #   isTip &lt;lgl&gt;, x &lt;dbl&gt;, y &lt;dbl&gt;, branch &lt;dbl&gt;,</span>
 <span class="co">## #   angle &lt;dbl&gt;, water_temp &lt;dbl&gt;, pH &lt;dbl&gt;, C &lt;dbl&gt;,</span>
@@ -179,7 +179,7 @@
   <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-91-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-92-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
@@ -187,12 +187,12 @@
     <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, offset <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">scale_x_continuous</span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">400</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-92-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very nice!</p>
 </div>
-<div id="further-reading" class="section level2" number="1.6">
+<div id="further-reading-1" class="section level2" number="1.6">
 <h2>
-<span class="header-section-number">1.6</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.6</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>For more information on plotting annotated trees, see: <a href="https://yulab-smu.top/treedata-book/chapter10.html" class="uri">https://yulab-smu.top/treedata-book/chapter10.html</a></p>
 </div>
@@ -239,7 +239,7 @@
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#clustering">clustering</a></li>
 <li><a class="nav-link" href="#theory"><span class="header-section-number">1.5</span> theory</a></li>
-<li><a class="nav-link" href="#further-reading"><span class="header-section-number">1.6</span> further reading</a></li>
+<li><a class="nav-link" href="#further-reading-1"><span class="header-section-number">1.6</span> further reading</a></li>
 <li><a class="nav-link" href="#exercises-1"><span class="header-section-number">1.7</span> exercises</a></li>
 </ul>
 

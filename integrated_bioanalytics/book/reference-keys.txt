@@ -1,10 +1,11 @@
+fig:unnamed-chunk-68
 part-data-analysis-in-r
 tidy-data
 the-pipe
 summary-statistics
 exercises
 theory
-further-reading
+further-reading-1
 exercises-1
 pca-1
 ordination-plots
@@ -31,7 +32,7 @@ more-than-two-means
 anova-tukey-tests
 kruskal-dunn-tests
 pairs-of-means
-further-reading-1
+further-reading-2
 exercises-5
 integrationapplite2
 cdf-export
@@ -74,11 +75,11 @@ structure-1
 suggestions-1
 abstract
 title
-further-reading-2
+further-reading-3
 images-of-mass-spectra
 links
 geoms
-colors-1
+colors
 r-faq
 filtering
 ordering
