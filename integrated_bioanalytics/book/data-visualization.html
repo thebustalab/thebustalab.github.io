@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -107,7 +107,7 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="data-visualization" class="section level1 unnumbered">
 <h1>data visualization<a class="anchor" aria-label="anchor" href="#data-visualization"><i class="fas fa-link"></i></a>
 </h1>
-<div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" width="100%" style="display: block; margin: auto;"></div>
 <p>Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data visualization is a whole field in and of itself (just google “data visualization” and see what happens). Data visualization is also rife with “trendy” visuals, misleading visuals, and visuals that look cool but don’t actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let’s get started!</p>
 <div id="section" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section"><i class="fas fa-link"></i></a></h2>
@@ -270,7 +270,7 @@
 <p>Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: <code>File -&gt; New File -&gt; R Markdown</code>. You should get a template document that compiles when you press “knit.”</p>
 <p>Customize this document by modifying the title, and add <code>author: "your_name"</code> to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.</p>
 <p>You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a “chunk” or R code. That looks like this:</p>
-<div class="inline-figure"><img src="http://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>You can compilie this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:</p>
 <ol style="list-style-type: decimal">
 <li><p>Headings: When you compile that code, the “# My first analysis” creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, “## Part 1” will create a subheading, “### Part 1.1” will create a sub-subheading, and so on.</p></li>
@@ -291,31 +291,13 @@
 <h3>algae<a class="anchor" aria-label="anchor" href="#algae"><i class="fas fa-link"></i></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><strong>Filtering 1</strong></li>
+<li><p>You will have <code>algae_data</code> stored in an object called <code>algae_data</code> as soon as you run <code>source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")</code>. For this question, filter the data so that only entries are shown for which the <code>chemical_species</code> is “FAs” (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?</p></li>
+<li><p>Now filter the dataset so that only entries for the <code>algae_strain</code> “Tsv1” are shown. What are the dimensions of the resulting dataset?</p></li>
+<li><p>Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that <code>&gt;</code> can be used in the filter command instead of <code>==</code>, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?</p></li>
+<li><p>Make a ggplot that has <code>algae_strain</code> on the x axis and <code>abundance</code> on the y axis. Remember about <code>aes()</code>. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points. Which algae strain has the most abundant compound out of all the compounds in the dataset?</p></li>
+<li><p>Make a ggplot that has <code>abundance</code> on the x axis and <code>chemical_species</code> on the y axis. Use points to represent each compound. You don’t need to color the points. Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)</p></li>
+<li><p>I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot’s data argument:</p></li>
 </ol>
-<p>You will have <code>algae_data</code> stored in an object called <code>algae_data</code> as soon as you run <code>source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")</code>. For this question, filter the data so that only entries are shown for which the <code>chemical_species</code> is “FAs” (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?</p>
-<ol start="2" style="list-style-type: decimal">
-<li><strong>Filtering 2</strong></li>
-</ol>
-<p>Now filter the dataset so that only entries for the <code>algae_strain</code> “Tsv1” are shown. What are the dimensions of the resulting dataset?</p>
-<ol start="3" style="list-style-type: decimal">
-<li><strong>Filtering 3</strong></li>
-</ol>
-<p>Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that <code>&gt;</code> can be used in the filter command instead of <code>==</code>, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?</p>
-<ol start="4" style="list-style-type: decimal">
-<li><strong>Plotting</strong></li>
-</ol>
-<p>Make a ggplot that has <code>algae_strain</code> on the x axis and <code>abundance</code> on the y axis. Remember about <code>aes()</code>. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points.</p>
-<p>Which algae strain has the most abundant compound out of all the compounds in the dataset?</p>
-<ol start="5" style="list-style-type: decimal">
-<li><strong>Plotting</strong></li>
-</ol>
-<p>Make a ggplot that has <code>abundance</code> on the x axis and <code>chemical_species</code> on the y axis. Use points to represent each compound. You don’t need to color the points.</p>
-<p>Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)</p>
-<ol start="6" style="list-style-type: decimal">
-<li><strong>Filtering and plotting</strong></li>
-</ol>
-<p>I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot’s data argument:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"essential_Aas"</span><span class="op">)</span>,
@@ -324,17 +306,10 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-37-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Using the above as a template, make a plot that shows just <code>omega_3_polyunsaturated_Fas</code>, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to <code>harvesting_regime</code>. Remember that mapping a feature of a shape onto a variable must be done inside <code>aes()</code>. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside <code>aes()</code>. Which harvesting regime leads to higher levels of <code>omega_3_polyunsaturated_Fas</code>?</p>
 <ol start="7" style="list-style-type: decimal">
-<li><strong>Filtering and plotting</strong></li>
+<li><p>Use a combination of filtering and plotting to show the abundance of the different chemical species in just the <code>algae_strain</code> called “Tsv1.” Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.</p></li>
+<li><p>Make a plot that checks to see which <code>chemical_species</code> were more abundant under light as opposed to heavy <code>harvesting_regime</code> in all three replicates. Use filtered data so that just one <code>algae_strain</code> is shown, an x and a y axis, and points to represent the measurements. Make the points <code>size = 5</code> and also set the point’s <code>alpha = 0.6</code>. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.</p></li>
+<li><p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p></li>
 </ol>
-<p>Use a combination of filtering and plotting to show the abundance of the different chemical species in just the <code>algae_strain</code> called “Tsv1.” Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.</p>
-<ol start="8" style="list-style-type: decimal">
-<li><strong>Open-ended plotting</strong></li>
-</ol>
-<p>Make a plot that checks to see which <code>chemical_species</code> were more abundant under light as opposed to heavy <code>harvesting_regime</code> in all three replicates. Use filtered data so that just one <code>algae_strain</code> is shown, an x and a y axis, and points to represent the measurements. Make the points <code>size = 5</code> and also set the point’s <code>alpha = 0.6</code>. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.</p>
-<ol start="9" style="list-style-type: decimal">
-<li><strong>A peek at what’s to come…</strong></li>
-</ol>
-<p>Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: <code>facet_grid(.~algae_strain)</code>. Remember that adding things to plots is done with the <code>+</code> sign, so your code should look something like:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="data-visualization.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> algae_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">&lt;</span>something<span class="sc">&gt;</span>, <span class="at">y =</span> <span class="sc">&lt;</span>something <span class="cf">else</span><span class="sc">&gt;</span>)) <span class="sc">+</span></span>
 <span id="cb26-2"><a href="data-visualization.html#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="sc">&lt;</span>some things<span class="sc">&gt;</span>), <span class="sc">&lt;</span>some here too<span class="sc">&gt;</span>) <span class="sc">+</span></span>
 <span id="cb26-3"><a href="data-visualization.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>algae_strain)</span></code></pre></div>
@@ -348,37 +323,15 @@
 <h3>alaska lakes<a class="anchor" aria-label="anchor" href="#alaska-lakes"><i class="fas fa-link"></i></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li><strong>Viewing Data</strong></li>
+<li><p>Use R to view the first few lines of the <code>alaska_lake_data</code> dataset. Do your best to describe, in written format, the kind of data that are in this data set.</p></li>
+<li><p>How many variables are in the Alaska lakes dataset?</p></li>
+<li><p>Filter the data set so only meausurements of free elements (i.e. element_type is “free”) are shown. Remember, it’s <code>==</code>, not <code>=</code>. What are the dimensions of the resulting dataset?</p></li>
+<li><p>Make a plot that shows the water temperatures of each lake. Don’t worry if you get a warning message from R about “missing values.” Which is the hottest lake? The coolest?</p></li>
+<li><p>Make a plot that shows the water temperature of each lake. The x axis should be <code>park</code>, the y axis <code>water temp</code>. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?</p></li>
+<li><p>From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from <code>park == "NOAT"</code> are shown (note the double equals sign and the quotes around NOAT…). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.</p></li>
+<li><p>Make a plot that shows which lake has the highest abundance of sulfur.</p></li>
+<li><p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn’t make a very nice plot):</p></li>
 </ol>
-<p>Use R to view the first few lines of the <code>alaska_lake_data</code> dataset. Do your best to describe, in written format, the kind of data that are in this data set.</p>
-<ol start="2" style="list-style-type: decimal">
-<li><strong>Objects</strong></li>
-</ol>
-<p>How many variables are in the Alaska lakes dataset?</p>
-<ol start="3" style="list-style-type: decimal">
-<li><strong>Filtering</strong></li>
-</ol>
-<p>Filter the data set so only meausurements of free elements (i.e. element_type is “free”) are shown. Remember, it’s <code>==</code>, not <code>=</code>. What are the dimensions of the resulting dataset?</p>
-<ol start="4" style="list-style-type: decimal">
-<li><strong>Plotting</strong></li>
-</ol>
-<p>Make a plot that shows the water temperatures of each lake. Don’t worry if you get a warning message from R about “missing values.” Which is the hottest lake? The coolest?</p>
-<ol start="5" style="list-style-type: decimal">
-<li><strong>Plotting</strong></li>
-</ol>
-<p>Make a plot that shows the water temperature of each lake. The x axis should be <code>park</code>, the y axis <code>water temp</code>. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?</p>
-<ol start="6" style="list-style-type: decimal">
-<li><strong>Filtering and Plotting</strong></li>
-</ol>
-<p>From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from <code>park == "NOAT"</code> are shown (note the double equals sign and the quotes around NOAT…). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.</p>
-<ol start="7" style="list-style-type: decimal">
-<li><strong>Filtering and Plotting</strong></li>
-</ol>
-<p>Make a plot that shows which lake has the highest abundance of sulfur.</p>
-<ol start="8" style="list-style-type: decimal">
-<li><strong>Open-ended Plotting</strong></li>
-</ol>
-<p>Make a plot that uses geom_point(). Set the “shape” aesthetic of the points to 21, i.e. <code>geom_point(aes(...), shape = 21)</code>. This gives you access to a new aesthetics: <code>fill</code>. It also changes the behaviour of the <code>color</code> aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn’t make a very nice plot):</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">lake</span> <span class="op">==</span> <span class="st">"Lake_Narvakrak"</span><span class="op">)</span>,
