@@ -503,7 +503,7 @@ ggplot(
   geom_point(aes(color = harvesting_regime), size = 5, alpha = 0.6)
 ```
 
-9. Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
+9. Take the code that you made for the question above. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
 
 ```{r, eval = FALSE} 
 ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
