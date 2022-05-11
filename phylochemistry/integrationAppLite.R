@@ -150,6 +150,22 @@
 
 ###### Functions
 
+    #### readTree
+
+        #' Reads a phylogenetic tree
+        #'
+        #' @param tree_in_path The path to the phylogenetic tree
+        #' @importFrom ape read.tree
+        #' @examples
+        #' @export
+        #' readTree
+
+        readTree <- function( tree_in_path ) {
+
+            ## Read and return the tree
+                return( ape::read.tree(file = tree_in_path) )
+        }
+
     #### readMonolist
 
         #' Reads a monolist
