@@ -150,6 +150,20 @@
 
 ###### Functions
 
+    #### readMonolist
+
+        #' Reads a monolist
+        #'
+        #' @param monolist_in_path The path to the monolist (in .csv format) to be read
+        #' @examples
+        #' @export
+        #' readMonolist
+
+        readMonolist <- function( monolist_in_path ) {
+            monolist <- as.data.frame(data.table::fread(file = monolist_in_path))
+            return( monolist )
+        }
+
     #### convertCDFstoCSVs
 
         #' Convert mass spectral datafiles (CDF) into a csv file
