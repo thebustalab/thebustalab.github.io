@@ -6,7 +6,7 @@
             
             CRAN_packages <- c(
                 "gridExtra",
-                # "ape",
+                "ape",
                 "multcompView",
                 # "imager",
                 "shiny",

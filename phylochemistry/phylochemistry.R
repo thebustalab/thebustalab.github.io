@@ -530,7 +530,7 @@
 
             writeManyFastas <- function( XStringSet, fasta_out_directory_path ) {
             	for (sequence in 1:length(XStringSet)) {
-            		Biostrings::writeXStringSet( x = XStringSet[[sequence]], filepath = paste0(fasta_out_directory_path, XStringSet@ranges@NAMES[sequence], ".fa") )
+            		Biostrings::writeXStringSet( x = XStringSet[sequence], filepath = paste0(fasta_out_directory_path, XStringSet@ranges@NAMES[sequence], ".fa") )
             	}
             }
 
@@ -1842,7 +1842,7 @@
             #' @param initial_query_in_path Path to a fasta file containing the query
             #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
             #' @param blast_module_directory_path Path to directory containing the BLAST+ module (perhaps something like "/usr/local/ncbi/blast/bin/")
-            #' @param blast_type One of "blastn" or "dc-megablast". "blastn" is a traditional BLASTN requiring an exact match of 11. "dc-megablast" is a discontiguous megablast used to find more distant (e.g., interspecies) sequences.
+            #' @param blast_mode One of "blastn" or "dc-megablast". "blastn" is a traditional BLASTN requiring an exact match of 11. "dc-megablast" is a discontiguous megablast used to find more distant (e.g., interspecies) sequences.
             #' @param e_value_cutoff e-value cutoff to apply to results. Defaults to 1. Set to 1e-10 for heavy filtering.
             #' @param queries_in_output Should the queries be included in the fasta output?
             #' @param monolist_out_path Path to where the output monolist should be written
@@ -1857,7 +1857,7 @@
                                     iterative_blast_length_cutoff = 700,
                                     sequences_of_interest_directory_path,
                                     blast_module_directory_path,
-                                    blast_type = c("blastn", "dc-megablast", "blastp", "tblastn"), 
+                                    blast_mode = c("nnblastn", "dc-megablast", "blastp", "tblastn", "ptblastp"), 
                                     e_value_cutoff = 1,
                                     queries_in_output = FALSE,
                                     monolist_out_path
@@ -1873,9 +1873,9 @@
                     transcriptomes <- as.character(transcriptomes)
                     names(transcriptomes) <- names
 
-                ### If tblastn, then translate all transcriptomes and rename the translations with "_trans" suffix
+                ### If *tblast*, then translate all transcriptomes and rename the translations with "_trans" suffix
 
-                    if ( blast_type == "tblastn" ) {
+                    if ( substr(blast_mode, 2, 2) == "t" ) {
                         cat("Translating transcriptomes...\n\n")
                         for ( transcriptome in 1:length(transcriptomes) ) {
                             writeFasta(
@@ -1888,10 +1888,12 @@
 
                 ### Build blast database(s)
 
-                    if ( blast_type %in% c("blastn", "dc-megablast")) {
+                    if ( substr(blast_mode, 2, 2) %in% c("n") ) {
                         dbtype = "nucl"
-                    } else if ( blast_type %in% c("tblastn", "dc-megablast") ) {
+                    } else if ( substr(blast_mode, 2, 2) %in% c("t", "p") ) {
                         dbtype = "prot"
+                    } else {
+                        stop("Please specify a target type of n t or p")
                     }
 
                     if ( .Platform$OS == "unix" ) {
@@ -1932,8 +1934,7 @@
                     change_in_hit_number <- 1
                     iteration_number <- 0
                     query_seqs <- Biostrings::readBStringSet(filepath = initial_query_in_path, format = "fasta")
-
-                    if (blast_type == "tblastn") {blast_type = "blastp"}
+                    if (blast_mode %in% c("ptblastp")) { blast_type <- "blastp" }
 
                     while ( change_in_hit_number > 0 ) {
 
@@ -2174,10 +2175,17 @@
                                         ## Extract BLAST hits from transcriptome, add them to the monolist, write them to individual files
 
                                             # Read in whole transcriptome
-                                                temp_seqs <- Biostrings::readDNAStringSet( 
-                                                    filepath = as.character(gsub("_trans", "", transcriptomes)[transcriptome]), 
-                                                    format = "fasta"
-                                                )
+                                                if ( substr(blast_mode, 8, 8) == "p" ) {
+                                                    temp_seqs <- Biostrings::readAAStringSet( 
+                                                        filepath = as.character(transcriptomes)[transcriptome], 
+                                                        format = "fasta"
+                                                    )
+                                                } else if ( substr(blast_mode, 8, 8) == "n" ) {
+                                                    temp_seqs <- Biostrings::readDNAStringSet( 
+                                                        filepath = as.character(gsub("_trans", "", transcriptomes)[transcriptome]), 
+                                                        format = "fasta"
+                                                    )
+                                                }
                                         
                                             # Attempt to read in hits list, subset transcriptome according to that list, add hits to monolist
                                                 cat(paste0("Query ", query_seq, ": "))
