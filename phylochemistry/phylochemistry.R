@@ -151,7 +151,6 @@
 
 ###### Datasets
 
-
         if ( exists("datasets") ) {
 
             message("Object 'datasets' exists, not loading phylochemistry datasets....")
@@ -7724,7 +7723,7 @@
 
     ##### Image Analysis
 
-        #### analyzeImage
+        #### analyzeImages
 
             #' Create major and minor axes ticks and labels
             #'
@@ -7732,66 +7731,73 @@
             #' @param minor_freq Number of minor ticks between each major tick 
             #' @examples
             #' @export
-            #' analyzeImage
+            #' analyzeImages
 
-            analyzeImage <- function(
-                                share_link,
+            analyzeImages <- function(
+                                folder_URL,
                                 monolist_out_path
                             ) {
 
+                files <- googledrive::drive_ls(folder_URL)
+                file <- 1
+                prop <- 0.4
+                corner_points_x <<- vector()
+                corner_points_y <<- vector()
+
                 ui <- fluidPage(
-                    tabsetPanel(type = "tabs",
-                        tabPanel("Main",
-                            sidebarLayout(
-                                sidebarPanel(
-                                    verbatimTextOutput("metadata1", placeholder = TRUE),
-                                    verbatimTextOutput("metadata2", placeholder = TRUE),
-                                    actionButton("rgb_select", "RGB Selected"),
-                                    actionButton("sample_select", "Sample Window Selected"),
-                                    actionButton("write_out", "Append to Spreadsheet"),
-                                    plotOutput(
-                                        outputId = "rgb_window",
-                                        height = 200
+                    verticalLayout(
+                        splitLayout(
+                            verticalLayout(
+                                splitLayout(
+                                    sliderInput("file", "File Number:",
+                                        min = 1, max = dim(files)[1],
+                                        value = 1, step = 1
                                     ),
-                                    plotOutput(
-                                        outputId = "rgb_histogram",
-                                        height = 200
-                                    ),
-                                    verbatimTextOutput("mode_reference_value_R", placeholder = TRUE),
-                                    verbatimTextOutput("mode_reference_value_G", placeholder = TRUE),
-                                    verbatimTextOutput("mode_reference_value_B", placeholder = TRUE),
-                                    plotOutput(
-                                        outputId = "sample_window",
-                                        height = 300
-                                    ),
-                                    verbatimTextOutput("mean_sample_value_R", placeholder = TRUE),
-                                    verbatimTextOutput("mean_sample_value_G", placeholder = TRUE),
-                                    verbatimTextOutput("mean_sample_value_B", placeholder = TRUE)
+                                    actionButton("download_image", "Download Image")
                                 ),
-                                mainPanel(
-                                    plotOutput(
-                                        outputId = "photograph",
-                                        brush = brushOpts(
-                                            id = "photograph_brush"
+                                verbatimTextOutput("photo_unique_id", placeholder = TRUE),
+                                verbatimTextOutput("photo_metadata1", placeholder = TRUE),
+                                verbatimTextOutput("photo_metadata2", placeholder = TRUE),
+                                splitLayout(
+                                    verticalLayout(
+                                        sliderInput("rotation", "Rotation:",
+                                            min = 0, max = 360,
+                                            value = 0, step = 90
                                         ),
-                                        click = "photograph_click", 
-                                        dblclick = "photograph_double_click",
-                                        height = 700
+                                        verbatimTextOutput('selected')
+                                    ),
+                                    verticalLayout(
+                                        actionButton("draw_image", "Draw Image"),
+                                        actionButton("colorchecker_select", "ColorChecker Selected. Calibrate."),
+                                        actionButton("rgb_select", "RGB Selected. Calibrate."),
+                                        actionButton("reset", "Reset.")
                                     )
+                                )
+                            ),
+                            splitLayout(
+                                verticalLayout(
+                                    actionButton("write_out", "Append to Spreadsheet")
+                                ),
+                                plotOutput(
+                                    outputId = "sample_window",
+                                    height = 400
                                 )
                             )
                         ),
-                        tabPanel("Meta Analysis",
-                            sidebarLayout(
-                                sidebarPanel(
-                                    fileInput("metadata_file", "Choose File:")
+                        splitLayout(
+                            plotOutput(
+                                outputId = "photograph",
+                                brush = brushOpts(
+                                    id = "photograph_brush"
                                 ),
-                                mainPanel(
-                                    plotOutput(
-                                        outputId = "metaplot",
-                                        height = 700
-                                    )
-                                )
+                                click = "photograph_click", 
+                                dblclick = "photograph_double_click",
+                                height = 500
+                            ),
+                            pickerOutput(
+                                outputId = "calibrated_photograph",
+                                width = '100%',
+                                height = "500px"
                             )
                         )
                     )
@@ -7799,233 +7805,682 @@
 
                 server <- function(input, output, session) {
 
-                    ## Analyze images (main) tab
+                    ## Download image
 
-                        ## Read in and process image
-
-                            # if (share_link == )
+                        observeEvent(input$download_image, {
 
                             googledrive::drive_download(
-                              file = share_link,
-                              path = "temp.JPEG",
-                              overwrite = TRUE
+                                file = files$id[input$file],
+                                path = "temp.JPEG",
+                                overwrite = TRUE
                             )
 
                             path_to_image <- "temp.JPEG"
 
-                            image <- imager::load.image(path_to_image)
-                            image <- as_tibble(as.data.frame(as.cimg(image)))
-                            image$y <- -as.numeric(image$y)
-                            image$y <- image$y + -min(image$y)
-                            image <- pivot_wider(image, names_from = cc, values_from = value)
-                            names(image)[3:5] <- c("R", "G", "B")
-                            image$hex <- rgb(image$R, image$G, image$B)
-                            image <- image
+                            imRed <<- imager::load.image(path_to_image)
 
-                        ## Extract and print QR code data and timestamp
+                            ## Extract and print QR code data and timestamp
 
-                            metadata <- list()
-                            qr_location_data <- quadrangle::qr_scan_cpp(magick::image_read(path_to_image), lighten = TRUE, darken = TRUE)
-                            metadata$name <- quadrangle::qr_scan_js_from_corners(magick::image_read(path_to_image), qr_location_data$points)$data
-                            metadata$time_stamp <- exifr::read_exif(path_to_image)$SubSecCreateDate
-                            output$metadata1 <- renderText({ metadata$name })
-                            output$metadata2 <- renderPrint({ metadata$time_stamp })
-                            metadata$date <- gsub(":", "/", gsub(" .*$", "", metadata$time_stamp))
-                            metadata$year <- lubridate::year(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
-                            metadata$month <- lubridate::month(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
-                            metadata$day <- lubridate::day(gsub(":", "/", gsub(" .*$", "", metadata$time_stamp)))
+                                photo_metadata <- list()
+                                qr_location_data <- quadrangle::qr_scan_cpp(magick::image_read(path_to_image), lighten = TRUE, darken = TRUE)
+                                photo_metadata$photo_unique_id <- as.character(files$id[input$file])
+                                # photo_metadata$photo_unique_id <- as.character(files$id[file])
+                                photo_metadata$name <- quadrangle::qr_scan_js_from_corners(magick::image_read(path_to_image), qr_location_data$points)$data
+                                if( length(exifr::read_exif(path_to_image)$SubSecCreateDate) > 0 ){ photo_metadata$time_stamp <- exifr::read_exif(path_to_image)$SubSecCreateDate } else { photo_metadata$time_stamp <- exifr::read_exif(path_to_image)$FileModifyDate }
+                                output$photo_unique_id <- renderText({ photo_metadata$photo_unique_id })
+                                output$photo_metadata1 <- renderText({ photo_metadata$name })
+                                output$photo_metadata2 <- renderPrint({ photo_metadata$time_stamp })
+                                photo_metadata$date <- gsub(":", "/", gsub(" .*$", "", photo_metadata$time_stamp))
+                                photo_metadata$year <- lubridate::year(gsub(":", "/", gsub(" .*$", "", photo_metadata$time_stamp)))
+                                photo_metadata$month <- lubridate::month(gsub(":", "/", gsub(" .*$", "", photo_metadata$time_stamp)))
+                                photo_metadata$day <- lubridate::day(gsub(":", "/", gsub(" .*$", "", photo_metadata$time_stamp)))
+                                photo_metadata <<- photo_metadata
+                        })
 
-                        ## Draw photograph
+                    ## Draw or rotate photograph when asked
+
+                        observeEvent(input$draw_image, {
+
+                            imRed <<- imager::imrotate(imRed, input$rotation)
+                            
+                            image_as_df <- as_tibble(as.data.frame(as.cimg(imRed)))
+                            image_as_df$y <- -as.numeric(image_as_df$y)
+                            image_as_df$y <- image_as_df$y + -min(image_as_df$y)
+                            image_as_df <- pivot_wider(image_as_df, names_from = cc, values_from = value)
+                            names(image_as_df)[3:5] <- c("R", "G", "B")
+                            image_as_df$hex <- rgb(image_as_df$R, image_as_df$G, image_as_df$B)
+                            image_as_df <<- image_as_df
 
                             photograph <- ggplot() +
-                                geom_tile(data = filter(image), aes(x = x, y = y), fill = image$hex) + theme_classic()
+                                geom_tile(data = filter(image_as_df), aes(x = x, y = y), fill = image_as_df$hex) + theme_void()
+                                photograph
                             output$photograph <- renderPlot({photograph})
 
-                        ## Extract sample spot
+                            corner_points_x <<- vector()
+                            corner_points_y <<- vector()
 
-                            observeEvent(input$sample_select, {
+                            # output$selected <- isolate(renderPrint({
+                            #     corner_points_x
+                            # }))
 
-                                if ( isolate(!is.null(input$photograph_brush)) ) {
+                        })
+
+                    ## Extract sample spot
+
+                        output$sample_window <- renderPlot({ 
+
+                            if ( !is.null(input$calibrated_photograph_selected_points) ) {
+
+                                sample_pixel_data <<- image_calibrated[input$calibrated_photograph_selected_points,]
+
+                                ggplot() +
+                                    geom_tile(
+                                        data = sample_pixel_data,
+                                        aes(x = x, y = y),
+                                        fill = sample_pixel_data$hex
+                                    ) +
+                                    theme_void()
+
+                                # sample_pixel_output <<- data.frame(
+                                #     photo_unique_id = photo_metadata$photo_unique_id,
+                                #     name = photo_metadata$name,
+                                #     time_stamp = photo_metadata$time_stamp,
+                                #     x = sample_pixel_data$x,
+                                #     y = sample_pixel_data$y,
+                                #     color = sample_pixel_data$hex
+                                # )
+
+                            } else { NULL}
+
+                        })
                                     
-                                    image_points <<- isolate(brushedPoints(image, input$photograph_brush))
+                    ## Run ColorChecker correction
+
+                        output$selected <- renderPrint({
+                            corner_points_x <<- c(corner_points_x, input$photograph_click$x)
+                            corner_points_y <<- c(corner_points_y, input$photograph_click$y)
+                            corner_points_x
+                        })
+
+                        # observeEvent(input$reset, {
+                            
+
+                        #     output$selected <- renderPrint({
+                        #         corner_points_x
+                        #     })
+                        # })
+
+                        observeEvent(input$colorchecker_select, {
+
+                            ## Pre-calculations
+                                
+                                mR <- raster::as.matrix(imager::R(imRed)) * 255
+                                mG <- raster::as.matrix(imager::G(imRed)) * 255
+                                mB <- raster::as.matrix(imager::B(imRed)) * 255
+                                rR <- raster::raster(mR)
+                                rG <- raster::raster(mG)
+                                rB <- raster::raster(mB)
+                                raster::extent(rR) <- c(0, dim(imRed)[2], 0, dim(imRed)[1])
+                                raster::extent(rG) <- c(0, dim(imRed)[2], 0, dim(imRed)[1])
+                                raster::extent(rB) <- c(0, dim(imRed)[2], 0, dim(imRed)[1])
+                                rR <- raster::flip(t(rR), "y")
+                                rG <- raster::flip(t(rG), "y")
+                                rB <- raster::flip(t(rB), "y")
+
+                            ## Get the border of the colorchecker and swatch positions
+
+                                xy <- list()
+                                xy$x <- corner_points_x
+                                xy$y <- corner_points_y
+
+                                xyDF <- as.data.frame(xy)
+                                line1 <- xyDF[1:2, ]
+                                line2 <- xyDF[2:3, ]
+                                line3 <- xyDF[3:4, ]
+                                line4 <- xyDF[c(4, 1), ]
+                                xdiff <- (line1$x[2] - line1$x[1])/6
+                                ydiff <- (line1$y[2] - line1$y[1])/6
+                                xmin <- line1$x[1]
+                                ymin <- line1$y[1]
+                                xySubA <- list(x = c((xmin + xmin + xdiff)/2, (xmin + 
+                                    xdiff + xmin + xdiff * 2)/2, (xmin + xdiff * 
+                                    2 + xmin + xdiff * 3)/2, (xmin + xdiff * 3 + 
+                                    xmin + xdiff * 4)/2, (xmin + xdiff * 4 + xmin + 
+                                    xdiff * 5)/2, (xmin + xdiff * 5 + xmin + xdiff * 
+                                    6)/2), y = c((ymin + ymin + ydiff)/2, (ymin + 
+                                    ydiff + ymin + ydiff * 2)/2, (ymin + ydiff * 
+                                    2 + ymin + ydiff * 3)/2, (ymin + ydiff * 3 + 
+                                    ymin + ydiff * 4)/2, (ymin + ydiff * 4 + ymin + 
+                                    ydiff * 5)/2, (ymin + ydiff * 5 + ymin + ydiff * 
+                                    6)/2))
+                                xySubDF_1A <- as.data.frame(xySubA)
+                                xySubBa <- list(x = c(xmin + xdiff - (xdiff/2) * 
+                                    prop, xmin + xdiff * 2 - (xdiff/2) * prop, xmin + 
+                                    xdiff * 3 - (xdiff/2) * prop, xmin + xdiff * 
+                                    4 - (xdiff/2) * prop, xmin + xdiff * 5 - (xdiff/2) * 
+                                    prop, xmin + xdiff * 6 - (xdiff/2) * prop), y = c(ymin + 
+                                    ydiff - (ydiff/2) * prop, ymin + ydiff * 2 - 
+                                    (ydiff/2) * prop, ymin + ydiff * 3 - (ydiff/2) * 
+                                    prop, ymin + ydiff * 4 - (ydiff/2) * prop, ymin + 
+                                    ydiff * 5 - (ydiff/2) * prop, ymin + ydiff * 
+                                    6 - (ydiff/2) * prop))
+                                xySubBb <- list(x = c(xmin + (xdiff/2) * prop, xmin + 
+                                    xdiff + (xdiff/2) * prop, xmin + xdiff * 2 + 
+                                    (xdiff/2) * prop, xmin + xdiff * 3 + (xdiff/2) * 
+                                    prop, xmin + xdiff * 4 + (xdiff/2) * prop, xmin + 
+                                    xdiff * 5 + (xdiff/2) * prop), y = c(ymin + (ydiff/2) * 
+                                    prop, ymin + ydiff + (ydiff/2) * prop, ymin + 
+                                    ydiff * 2 + (ydiff/2) * prop, ymin + ydiff * 
+                                    3 + (ydiff/2) * prop, ymin + ydiff * 4 + (ydiff/2) * 
+                                    prop, ymin + ydiff * 5 + (ydiff/2) * prop))
+                                xySubDF_1Ba <- as.data.frame(xySubBa)
+                                xySubDF_1Bb <- as.data.frame(xySubBb)
+                                xdiff <- (line3$x[2] - line3$x[1])/6
+                                ydiff <- (line3$y[2] - line3$y[1])/6
+                                xmin <- line3$x[1]
+                                ymin <- line3$y[1]
+                                xySubA <- list(x = c((xmin + xmin + xdiff)/2, (xmin + 
+                                    xdiff + xmin + xdiff * 2)/2, (xmin + xdiff * 
+                                    2 + xmin + xdiff * 3)/2, (xmin + xdiff * 3 + 
+                                    xmin + xdiff * 4)/2, (xmin + xdiff * 4 + xmin + 
+                                    xdiff * 5)/2, (xmin + xdiff * 5 + xmin + xdiff * 
+                                    6)/2), y = c((ymin + ymin + ydiff)/2, (ymin + 
+                                    ydiff + ymin + ydiff * 2)/2, (ymin + ydiff * 
+                                    2 + ymin + ydiff * 3)/2, (ymin + ydiff * 3 + 
+                                    ymin + ydiff * 4)/2, (ymin + ydiff * 4 + ymin + 
+                                    ydiff * 5)/2, (ymin + ydiff * 5 + ymin + ydiff * 
+                                    6)/2))
+                                xySubDF_3A <- as.data.frame(xySubA)
+                                xySubBa <- list(x = c(xmin + xdiff - (xdiff/2) * 
+                                    prop, xmin + xdiff * 2 - (xdiff/2) * prop, xmin + 
+                                    xdiff * 3 - (xdiff/2) * prop, xmin + xdiff * 
+                                    4 - (xdiff/2) * prop, xmin + xdiff * 5 - (xdiff/2) * 
+                                    prop, xmin + xdiff * 6 - (xdiff/2) * prop), y = c(ymin + 
+                                    ydiff - (ydiff/2) * prop, ymin + ydiff * 2 - 
+                                    (ydiff/2) * prop, ymin + ydiff * 3 - (ydiff/2) * 
+                                    prop, ymin + ydiff * 4 - (ydiff/2) * prop, ymin + 
+                                    ydiff * 5 - (ydiff/2) * prop, ymin + ydiff * 
+                                    6 - (ydiff/2) * prop))
+                                xySubBb <- list(x = c(xmin + (xdiff/2) * prop, xmin + 
+                                    xdiff + (xdiff/2) * prop, xmin + xdiff * 2 + 
+                                    (xdiff/2) * prop, xmin + xdiff * 3 + (xdiff/2) * 
+                                    prop, xmin + xdiff * 4 + (xdiff/2) * prop, xmin + 
+                                    xdiff * 5 + (xdiff/2) * prop), y = c(ymin + (ydiff/2) * 
+                                    prop, ymin + ydiff + (ydiff/2) * prop, ymin + 
+                                    ydiff * 2 + (ydiff/2) * prop, ymin + ydiff * 
+                                    3 + (ydiff/2) * prop, ymin + ydiff * 4 + (ydiff/2) * 
+                                    prop, ymin + ydiff * 5 + (ydiff/2) * prop))
+                                xySubDF_3Ba <- as.data.frame(xySubBa)
+                                xySubDF_3Bb <- as.data.frame(xySubBb)
+                                xdiff <- (line2$x[2] - line2$x[1])/4
+                                ydiff <- (line2$y[2] - line2$y[1])/4
+                                xmin <- line2$x[1]
+                                ymin <- line2$y[1]
+                                xySubA <- list(x = c((xmin + xmin + xdiff)/2, (xmin + 
+                                    xdiff + xmin + xdiff * 2)/2, (xmin + xdiff * 
+                                    2 + xmin + xdiff * 3)/2, (xmin + xdiff * 3 + 
+                                    xmin + xdiff * 4)/2), y = c((ymin + ymin + ydiff)/2, 
+                                    (ymin + ydiff + ymin + ydiff * 2)/2, (ymin + 
+                                      ydiff * 2 + ymin + ydiff * 3)/2, (ymin + ydiff * 
+                                      3 + ymin + ydiff * 4)/2))
+                                xySubDF_2A <- as.data.frame(xySubA)
+                                xySubBa <- list(x = c(xmin + xdiff - (xdiff/2) * 
+                                    prop, xmin + xdiff * 2 - (xdiff/2) * prop, xmin + 
+                                    xdiff * 3 - (xdiff/2) * prop, xmin + xdiff * 
+                                    4 - (xdiff/2) * prop), y = c(ymin + ydiff - (ydiff/2) * 
+                                    prop, ymin + ydiff * 2 - (ydiff/2) * prop, ymin + 
+                                    ydiff * 3 - (ydiff/2) * prop, ymin + ydiff * 
+                                    4 - (ydiff/2) * prop))
+                                xySubBb <- list(x = c(xmin + (xdiff/2) * prop, xmin + 
+                                    xdiff + (xdiff/2) * prop, xmin + xdiff * 2 + 
+                                    (xdiff/2) * prop, xmin + xdiff * 3 + (xdiff/2) * 
+                                    prop), y = c(ymin + (ydiff/2) * prop, ymin + 
+                                    ydiff + (ydiff/2) * prop, ymin + ydiff * 2 + 
+                                    (ydiff/2) * prop, ymin + ydiff * 3 + (ydiff/2) * 
+                                    prop))
+                                xySubDF_2Ba <- as.data.frame(xySubBa)
+                                xySubDF_2Bb <- as.data.frame(xySubBb)
+                                xdiff <- (line4$x[2] - line4$x[1])/4
+                                ydiff <- (line4$y[2] - line4$y[1])/4
+                                xmin <- line4$x[1]
+                                ymin <- line4$y[1]
+                                xySubA <- list(x = c((xmin + xmin + xdiff)/2, (xmin + 
+                                    xdiff + xmin + xdiff * 2)/2, (xmin + xdiff * 
+                                    2 + xmin + xdiff * 3)/2, (xmin + xdiff * 3 + 
+                                    xmin + xdiff * 4)/2), y = c((ymin + ymin + ydiff)/2, 
+                                    (ymin + ydiff + ymin + ydiff * 2)/2, (ymin + 
+                                      ydiff * 2 + ymin + ydiff * 3)/2, (ymin + ydiff * 
+                                      3 + ymin + ydiff * 4)/2))
+                                xySubDF_4A <- as.data.frame(xySubA)
+                                xySubBa <- list(x = c(xmin + xdiff - (xdiff/2) * 
+                                    prop, xmin + xdiff * 2 - (xdiff/2) * prop, xmin + 
+                                    xdiff * 3 - (xdiff/2) * prop, xmin + xdiff * 
+                                    4 - (xdiff/2) * prop), y = c(ymin + ydiff - (ydiff/2) * 
+                                    prop, ymin + ydiff * 2 - (ydiff/2) * prop, ymin + 
+                                    ydiff * 3 - (ydiff/2) * prop, ymin + ydiff * 
+                                    4 - (ydiff/2) * prop))
+                                xySubBb <- list(x = c(xmin + (xdiff/2) * prop, xmin + 
+                                    xdiff + (xdiff/2) * prop, xmin + xdiff * 2 + 
+                                    (xdiff/2) * prop, xmin + xdiff * 3 + (xdiff/2) * 
+                                    prop), y = c(ymin + (ydiff/2) * prop, ymin + 
+                                    ydiff + (ydiff/2) * prop, ymin + ydiff * 2 + 
+                                    (ydiff/2) * prop, ymin + ydiff * 3 + (ydiff/2) * 
+                                    prop))
+                                xySubDF_4Ba <- as.data.frame(xySubBa)
+                                xySubDF_4Bb <- as.data.frame(xySubBb)
+
+                                sub_data <<- rbind(xySubDF_1A, xySubDF_1Ba, xySubDF_1Bb, xySubDF_2A, xySubDF_2Ba, xySubDF_2Bb, xySubDF_3A, xySubDF_3Ba, xySubDF_3Bb, xySubDF_4A, xySubDF_4Ba, xySubDF_4Bb)
+
+                                labels <- list(
+                                    c(1, 7, 13, 19), c(2, 8, 14, 20), 
+                                    c(3, 9, 15, 21), c(4, 10, 16, 22),
+                                    c(5, 11, 17, 23), c(6, 12, 18, 24)
+                                )
+
+                            ## Get swatch positions and labels
+                                
+                                swatch_labels <- list()
+                                xyTot <- c()
+                                for (e in 1:nrow(xySubDF_1A)) {
+                                    xyLine1 <- xySubDF_1A[e, ]
+                                    xyLine2 <- xySubDF_3A[6:1, ][e, ]
+                                    xdiff <- (xyLine2$x - xyLine1$x)/4
+                                    ydiff <- (xyLine2$y - xyLine1$y)/4
+                                    xmin <- xyLine1$x
+                                    ymin <- xyLine1$y
+                                    xySub <- list(x = c((xmin + xmin + xdiff)/2, 
+                                      (xmin + xdiff + xmin + xdiff * 2)/2, (xmin + 
+                                        xdiff * 2 + xmin + xdiff * 3)/2, (xmin + 
+                                        xdiff * 3 + xmin + xdiff * 4)/2), y = c((ymin + 
+                                      ymin + ydiff)/2, (ymin + ydiff + ymin + ydiff * 
+                                      2)/2, (ymin + ydiff * 2 + ymin + ydiff * 3)/2, 
+                                      (ymin + ydiff * 3 + ymin + ydiff * 4)/2))
+                                    xySubDF <- as.data.frame(xySub)
+
+                                    swatch_labels[[e]] <- xySubDF
                                     
-                                    sample_window <- ggplot() +
-                                        geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
-                                        theme_classic()
+                                    xySubDFLabel <- cbind(xySubDF, label = labels[[e]])
+                                    xyLine1a <- xySubDF_1Ba[e, ]
+                                    xyLine1b <- xySubDF_1Bb[e, ]
+                                    xyLine3a <- xySubDF_3Bb[6:1, ][e, ]
+                                    xyLine3b <- xySubDF_3Ba[6:1, ][e, ]
+                                    xdiffa <- (xyLine3a$x - xyLine1a$x)/4
+                                    ydiffa <- (xyLine3a$y - xyLine1a$y)/4
+                                    xdiffb <- (xyLine3b$x - xyLine1b$x)/4
+                                    ydiffb <- (xyLine3b$y - xyLine1b$y)/4
+                                    xmina <- xyLine1a$x
+                                    ymina <- xyLine1a$y
+                                    xminb <- xyLine1b$x
+                                    yminb <- xyLine1b$y
+                                    xySubAa <- list(x = c(xmina + xdiffa - (xdiffa/2) * 
+                                      prop, xmina + xdiffa * 2 - (xdiffa/2) * prop, 
+                                      xmina + xdiffa * 3 - (xdiffa/2) * prop, xmina + 
+                                        xdiffa * 4 - (xdiffa/2) * prop), y = c(ymina + 
+                                      ydiffa - (ydiffa/2) * prop, ymina + ydiffa * 
+                                      2 - (ydiffa/2) * prop, ymina + ydiffa * 3 - 
+                                      (ydiffa/2) * prop, ymina + ydiffa * 4 - (ydiffa/2) * 
+                                      prop))
+                                    xySubAb <- list(x = c(xmina + (xdiffa/2) * prop, 
+                                      xmina + xdiffa + (xdiffa/2) * prop, xmina + 
+                                        xdiffa * 2 + (xdiffa/2) * prop, xmina + xdiffa * 
+                                        3 + (xdiffa/2) * prop), y = c(ymina + (ydiffa/2) * 
+                                      prop, ymina + ydiffa + (ydiffa/2) * prop, ymina + 
+                                      ydiffa * 2 + (ydiffa/2) * prop, ymina + ydiffa * 
+                                      3 + (ydiffa/2) * prop))
+                                    xySubBa <- list(x = c(xminb + xdiffb - (xdiffb/2) * 
+                                      prop, xminb + xdiffb * 2 - (xdiffb/2) * prop, 
+                                      xminb + xdiffb * 3 - (xdiffb/2) * prop, xminb + 
+                                        xdiffb * 4 - (xdiffb/2) * prop), y = c(yminb + 
+                                      ydiffb - (ydiffb/2) * prop, yminb + ydiffb * 
+                                      2 - (ydiffb/2) * prop, yminb + ydiffb * 3 - 
+                                      (ydiffb/2) * prop, yminb + ydiffb * 4 - (ydiffb/2) * 
+                                      prop))
+                                    xySubBb <- list(x = c(xminb + (xdiffb/2) * prop, 
+                                      xminb + xdiffb + (xdiffb/2) * prop, xminb + 
+                                        xdiffb * 2 + (xdiffb/2) * prop, xminb + xdiffb * 
+                                        3 + (xdiffb/2) * prop), y = c(yminb + (ydiffb/2) * 
+                                      prop, yminb + ydiffb + (ydiffb/2) * prop, yminb + 
+                                      ydiffb * 2 + (ydiffb/2) * prop, yminb + ydiffb * 
+                                      3 + (ydiffb/2) * prop))
+                                    xySubAaDF <- as.data.frame(xySubAa)
+                                    xySubAbDF <- as.data.frame(xySubAb)
+                                    xySubBaDF <- as.data.frame(xySubBa)
+                                    xySubBbDF <- as.data.frame(xySubBb)
+                                    xySubRow <- cbind(xySubAaDF, xySubAbDF, xySubBaDF, 
+                                      xySubBbDF, label = labels[[e]])
+                                    colnames(xySubRow) <- c("x1", "y1", "x2", "y2", 
+                                      "x3", "y3", "x4", "y4", "label")
+                                    xyTot <- rbind(xyTot, xySubRow)
+                                }
 
-                                    output$sample_window <- renderPlot({ sample_window })
+                                swatch_labels <- do.call(rbind, swatch_labels)
+                                swatch_labels$label <- unlist(labels)
 
-                                    mean_sample_value_R <<- mean(image_points$R)
-                                    mean_sample_value_G <<- mean(image_points$G)
-                                    mean_sample_value_B <<- mean(image_points$B)
+                            ## Get swatch colors
 
-                                    output$mean_sample_value_R <- renderText({ mean_sample_value_R })
-                                    output$mean_sample_value_G <- renderText({ mean_sample_value_G })
-                                    output$mean_sample_value_B <- renderText({ mean_sample_value_B })
-
-                                    sample_pixel_output <<- data.frame(
-                                        QR = metadata$name,
-                                        Year = metadata$year,
-                                        Month = metadata$month,
-                                        Day = metadata$day,
-                                        Date = metadata$date,
-                                        type = "sample",
-                                        x = image_points$x,
-                                        y = image_points$y,
-                                        R = image_points$R,
-                                        G = image_points$G,
-                                        B = image_points$B
-                                    )
-                                        
-                                } else { NULL }
-
-                            })
-
-                        ## Extract rgb_window
-
-                            observeEvent(input$rgb_select, {
-
-                                if ( isolate(!is.null(input$photograph_brush)) ) {
+                                xyTot$imR <- NA
+                                xyTot$imG <- NA
+                                xyTot$imB <- NA
+                                xyTot <- xyTot[order(xyTot$label), ]
+                                polygons <- list()
+                                for (e in 1:nrow(xyTot)) {
                                     
-                                    image_points <- isolate(brushedPoints(image, input$photograph_brush))
-                                    
-                                    Rmax <- cbind(
-                                        data.frame(color_swatch = "red"),
-                                        image_points[order(image_points$R, decreasing = TRUE),][1:50,]
-                                    )
-                                    Gmax <- cbind(
-                                        data.frame(color_swatch = "green"),
-                                        image_points[order(image_points$G, decreasing = TRUE),][1:50,]
-                                    )
-                                    Bmax <- cbind(
-                                        data.frame(color_swatch = "blue"),
-                                        image_points[order(image_points$B, decreasing = TRUE),][1:50,]
-                                    )
-                                    
-                                    rgb_window <- ggplot() +
-                                        geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
-                                        geom_rect(aes(xmin = min(Rmax$x), xmax = max(Rmax$x), ymin = min(Rmax$y), ymax = max(Rmax$y)), alpha = 0.5) +
-                                        geom_rect(aes(xmin = min(Gmax$x), xmax = max(Gmax$x), ymin = min(Gmax$y), ymax = max(Gmax$y)), alpha = 0.5) +
-                                        geom_rect(aes(xmin = min(Bmax$x), xmax = max(Bmax$x), ymin = min(Bmax$y), ymax = max(Bmax$y)), alpha = 0.5)
-
-                                    output$rgb_window <- renderPlot({ rgb_window })
-
-                                    swatch_data <<- rbind(
-                                        select(Rmax, color_swatch, x, y, R) %>%
-                                        set_colnames(c("color_swatch", "x", "y", "value")),
-                                        select(Gmax, color_swatch, x, y, G) %>%
-                                        set_colnames(c("color_swatch", "x", "y", "value")),
-                                        select(Bmax, color_swatch, x, y, B) %>%
-                                        set_colnames(c("color_swatch", "x", "y", "value"))
-                                    )
-                                    swatch_data$color_swatch <- factor(swatch_data$color_swatch, levels = c("red", "green", "blue"))
-
-                                    rgb_histogram <- ggplot(data = swatch_data) + 
-                                        geom_histogram(aes(x = value, fill = color_swatch), binwidth = 0.01, color = "black") +
-                                        scale_fill_manual(values = c("red", "green", "blue")) +
-                                        facet_grid(color_swatch~.) +
-                                        scale_x_continuous(limits = c(-0.1,1.1)) +
-                                        theme_bw()
-
-                                    output$rgb_histogram <- renderPlot({ rgb_histogram })
-
-                                    mode_reference_value_R <<- mode(swatch_data$value[swatch_data$color_swatch == "red"])
-                                    mode_reference_value_G <<- mode(swatch_data$value[swatch_data$color_swatch == "green"])
-                                    mode_reference_value_B <<- mode(swatch_data$value[swatch_data$color_swatch == "blue"])
-
-                                    output$mode_reference_value_R <- renderText({ mode_reference_value_R })
-                                    output$mode_reference_value_G <- renderText({ mode_reference_value_G })
-                                    output$mode_reference_value_B <- renderText({ mode_reference_value_B })
-
-                                    reference_pixel_output <<- data.frame(
-                                        QR = metadata$name,
-                                        Year = metadata$year,
-                                        Month = metadata$month,
-                                        Day = metadata$day,
-                                        Date = metadata$date,
-                                        type = "reference",
-                                        x = image_points$x,
-                                        y = image_points$y,
-                                        R = image_points$R,
-                                        G = image_points$G,
-                                        B = image_points$B
+                                    polygons[[e]] <- data.frame(
+                                        xmax = xyTot$x1[e],
+                                        xmin = xyTot$x2[e],
+                                        ymax = xyTot$y1[e],
+                                        ymin = xyTot$y3[e],
+                                        label = e
                                     )
 
-                                } else { NULL }
+                                    image_as_df %>%
+                                        filter(
+                                            x < xyTot$x1[e] &
+                                            x > xyTot$x2[e] &
+                                            y < xyTot$y1[e] &
+                                            y > xyTot$y3[e]
+                                        ) -> polygon_data
 
-                            })
-
-                        ## Write out
-
-                            observeEvent(input$write_out, {
-
-                                if (file.exists(monolist_out_path)) {
-
-                                    writeMonolist(
-                                        rbind(reference_pixel_output, sample_pixel_output),
-                                        append = TRUE,
-                                        monolist_out_path = monolist_out_path,
-                                        col.names = FALSE
-                                    )
-                                    cat("Appended to Spreadsheet")
-
-                                } else {
-
-                                    writeMonolist(
-                                        rbind(reference_pixel_output, sample_pixel_output),
-                                        append = TRUE,
-                                        monolist_out_path = monolist_out_path,
-                                        col.names = TRUE
-                                    )
-                                    cat("Appended to Spreadsheet")
+                                    xyTot$imR[e] <- mode(polygon_data$R) * 255
+                                    xyTot$imG[e] <- mode(polygon_data$G) * 255
+                                    xyTot$imB[e] <- mode(polygon_data$B) * 255
 
                                 }
+                                polygons <- do.call(rbind, polygons)
+
+
+                                l1 <- c(1, 115, 82, 68)
+                                l2 <- c(2, 194, 150, 130)
+                                l3 <- c(3, 98, 122, 157)
+                                l4 <- c(4, 87, 108, 67)
+                                l5 <- c(5, 133, 128, 177)
+                                l6 <- c(6, 103, 189, 170)
+                                l7 <- c(7, 214, 126, 44)
+                                l8 <- c(8, 80, 91, 166)
+                                l9 <- c(9, 193, 90, 99)
+                                l10 <- c(10, 94, 60, 108)
+                                l11 <- c(11, 157, 188, 64)
+                                l12 <- c(12, 224, 163, 46)
+                                l13 <- c(13, 56, 61, 150)
+                                l14 <- c(14, 70, 148, 73)
+                                l15 <- c(15, 175, 54, 60)
+                                l16 <- c(16, 231, 199, 31)
+                                l17 <- c(17, 187, 86, 149)
+                                l18 <- c(18, 8, 133, 161)
+                                l19 <- c(19, 243, 243, 242)
+                                l20 <- c(20, 200, 200, 200)
+                                l21 <- c(21, 160, 160, 160)
+                                l22 <- c(22, 122, 122, 121)
+                                l23 <- c(23, 85, 85, 85)
+                                l24 <- c(24, 52, 52, 52)
+                                ColorCheckerRGB <- as.data.frame(rbind(l1, l2, l3, 
+                                    l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, 
+                                    l15, l16, l17, l18, l19, l20, l21, l22, l23, 
+                                    l24)
+                                )
+                                colnames(ColorCheckerRGB) <- c("label", "sR", "sG", "sB")
+
+                                dat <<- merge(xyTot, ColorCheckerRGB, by = "label")
+
+                                ## Calculate regression for the colors
+
+                                    print("Calculating polynomial regression...")
+                                        sR <- dat$sR
+                                        sG <- dat$sG
+                                        sB <- dat$sB
+                                        imR <- dat$imR
+                                        imG <- dat$imG
+                                        imB <- dat$imB
+                                        modelR <- lm(sR ~ imR + imG + imB + imR^2 + imG^2 + 
+                                            imB^2)
+                                        modelG <- lm(sG ~ imR + imG + imB + imR^2 + imG^2 + 
+                                            imB^2)
+                                        modelB <- lm(sB ~ imR + imG + imB + imR^2 + imG^2 + 
+                                            imB^2)
+                                        dfIm = data.frame(imR = matrix(mR, ncol = 1), imG = matrix(mG, 
+                                            ncol = 1), imB = matrix(mB, ncol = 1))
+
+                                ## Calibrate colors
+
+                                    print("Calibrating colors...")
+                                        prR <- predict(modelR, dfIm)
+                                        prG <- predict(modelG, dfIm)
+                                        prB <- predict(modelB, dfIm)
+                                        dfCal <- as.data.frame(cbind(prR, prG, prB))
                                     
-                            })
+                                    print("Rebuilding image...")
+                                        Ri = matrix(dfCal$prR, nrow = dim(imRed)[1])
+                                        Gi = matrix(dfCal$prG, nrow = dim(imRed)[1])
+                                        Bi = matrix(dfCal$prB, nrow = dim(imRed)[1])
+                                        imCal = array(dim = dim(imRed))
+                                        imCal[, , , 1] = Ri
+                                        imCal[, , , 2] = Gi
+                                        imCal[, , , 3] = Bi
+                                        imCal <- imager::as.cimg(imCal)
+                                        
+                                        image_calibrated <<- as_tibble(as.data.frame(as.cimg(imCal)))
+                                        image_calibrated$y <- -as.numeric(image_calibrated$y)
+                                        image_calibrated$y <- image_calibrated$y + -min(image_calibrated$y)
+                                        image_calibrated <- pivot_wider(image_calibrated, names_from = cc, values_from = value)
+                                        names(image_calibrated)[3:5] <- c("R", "G", "B")
+
+                                        image_calibrated$R[image_calibrated$R/255 < 0] <- 0
+                                        image_calibrated$G[image_calibrated$G/255 < 0] <- 0
+                                        image_calibrated$B[image_calibrated$B/255 < 0] <- 0
+
+                                        image_calibrated$R[image_calibrated$R/255 > 1] <- 1
+                                        image_calibrated$G[image_calibrated$G/255 > 1] <- 1
+                                        image_calibrated$B[image_calibrated$B/255 > 1] <- 1
+
+                                        image_calibrated$hex <- rgb(image_calibrated$R/255, image_calibrated$G/255, image_calibrated$B/255)
+                                        image_calibrated <<- image_calibrated
+
+                                output$photograph <- renderPlot({
+                                    
+                                    ggplot() +
+                                        geom_tile(data = filter(image_as_df), aes(x = x, y = y), fill = image_as_df$hex) + theme_void() +
+                                        geom_point(
+                                            data = sub_data,
+                                            aes(x = x, y = y), shape = 21, size = 3, color = "black", fill = "maroon"
+                                        ) +
+                                        geom_text(
+                                            data = swatch_labels,
+                                            aes(x = x, y = y, label = label), color = "gold"
+                                        ) +
+                                        geom_rect(
+                                            data = polygons,
+                                            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), color = "gold", alpha = 0
+                                        )
+
+                                })
+
+                                output$calibrated_photograph <- renderPicker({
+
+                                    picker(
+                                        coords = as.data.frame(image_calibrated[,1:2]),
+                                        colors = as.data.frame(image_calibrated[,6])[[1]],
+                                        # cluster_colors = image_as_df[,6],
+                                        labels = as.character(as.data.frame(image_calibrated[,1])[[1]]) 
+                                        # labels = NULL
+                                        # label_coords = label_coords,
+                                        # polygons = polygons, 
+                                        # text_props = text_props,
+                                        # point_color_polygons = 'white',
+                                        # grid_legend_items = grid_legend_items
+                                    )
+                                    
+                                    # ggplot() +
+                                    #     geom_tile(data = filter(image_calibrated), aes(x = x, y = y), fill = image_calibrated$hex) + theme_void()
+                                        # geom_point(
+                                        #     data = sub_data,
+                                        #     aes(x = x, y = y), shape = 21, size = 3, color = "black", fill = "maroon"
+                                        # ) +
+                                        # geom_text(
+                                        #     data = swatch_labels,
+                                        #     aes(x = x, y = y, label = label), color = "gold"
+                                        # ) +
+                                        # geom_rect(
+                                        #     data = polygons,
+                                        #     aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), color = "gold"
+                                        # )
+
+                                })
+
+                        })
+
+                    ## Extract rgb_window
+
+                        observeEvent(input$rgb_select, {
+
+                            if ( isolate(!is.null(input$photograph_brush)) ) {
+                                
+                                image_points <<- isolate(brushedPoints(image_as_df, input$photograph_brush))
+                                
+                                Rmax <- cbind(
+                                    data.frame(color_swatch = "red"),
+                                    image_points[order(image_points$R, decreasing = TRUE),][1:50,]
+                                )
+                                Gmax <- cbind(
+                                    data.frame(color_swatch = "green"),
+                                    image_points[order(image_points$G, decreasing = TRUE),][1:50,]
+                                )
+                                Bmax <- cbind(
+                                    data.frame(color_swatch = "blue"),
+                                    image_points[order(image_points$B, decreasing = TRUE),][1:50,]
+                                )
+                                
+                                rgb_window <- ggplot() +
+                                    geom_tile(data = image_points, aes(x = x, y = y), fill = image_points$hex) +
+                                    geom_rect(aes(xmin = min(Rmax$x), xmax = max(Rmax$x), ymin = min(Rmax$y), ymax = max(Rmax$y)), alpha = 0.5) +
+                                    geom_rect(aes(xmin = min(Gmax$x), xmax = max(Gmax$x), ymin = min(Gmax$y), ymax = max(Gmax$y)), alpha = 0.5) +
+                                    geom_rect(aes(xmin = min(Bmax$x), xmax = max(Bmax$x), ymin = min(Bmax$y), ymax = max(Bmax$y)), alpha = 0.5)
+
+                                output$rgb_window <- renderPlot({ rgb_window })
+
+                                swatch_data <<- rbind(
+                                    select(Rmax, color_swatch, x, y, R) %>%
+                                    set_colnames(c("color_swatch", "x", "y", "value")),
+                                    select(Gmax, color_swatch, x, y, G) %>%
+                                    set_colnames(c("color_swatch", "x", "y", "value")),
+                                    select(Bmax, color_swatch, x, y, B) %>%
+                                    set_colnames(c("color_swatch", "x", "y", "value"))
+                                )
+                                swatch_data$color_swatch <- factor(swatch_data$color_swatch, levels = c("red", "green", "blue"))
+
+                                rgb_histogram <- ggplot(data = swatch_data) + 
+                                    geom_histogram(aes(x = value, fill = color_swatch), binwidth = 0.01, color = "black") +
+                                    scale_fill_manual(values = c("red", "green", "blue")) +
+                                    facet_grid(color_swatch~.) +
+                                    scale_x_continuous(limits = c(-0.1,1.1)) +
+                                    theme_bw()
+
+                                output$rgb_histogram <- renderPlot({ rgb_histogram })
+
+                                # mode_reference_value_R <<- mode(swatch_data$value[swatch_data$color_swatch == "red"])
+                                # mode_reference_value_G <<- mode(swatch_data$value[swatch_data$color_swatch == "green"])
+                                # mode_reference_value_B <<- mode(swatch_data$value[swatch_data$color_swatch == "blue"])
+
+                                mode_reference_value_R <<- mean(swatch_data$value[swatch_data$color_swatch == "red"])
+                                mode_reference_value_G <<- mean(swatch_data$value[swatch_data$color_swatch == "green"])
+                                mode_reference_value_B <<- mean(swatch_data$value[swatch_data$color_swatch == "blue"])
+
+                                output$mode_reference_value_R <- renderText({ mode_reference_value_R })
+                                output$mode_reference_value_G <- renderText({ mode_reference_value_G })
+                                output$mode_reference_value_B <- renderText({ mode_reference_value_B })
+
+                                reference_pixel_output <<- data.frame(
+                                    QR = if(is.null(photo_metadata$name)) {"NA"} else {photo_metadata$name},
+                                    Year = photo_metadata$year,
+                                    Month = photo_metadata$month,
+                                    Day = photo_metadata$day,
+                                    Date = photo_metadata$date,
+                                    type = "reference",
+                                    x = image_points$x,
+                                    y = image_points$y,
+                                    R = image_points$R,
+                                    G = image_points$G,
+                                    B = image_points$B
+                                )
+
+                            } else { NULL }
+
+                        })
+
+                    ## Write out
+
+                        ## Here be sure to use a unique_photo_ID and have the app check to see if its already in output before writing out!
+
+                        ## Maybe a share link could be the unique photo ID
+
+                        observeEvent(input$write_out, {
+
+                            if (file.exists(monolist_out_path)) {
+
+                                writeMonolist(
+                                    cbind(as.data.frame(photo_metadata), sample_pixel_data),
+                                    append = TRUE,
+                                    monolist_out_path = monolist_out_path,
+                                    col.names = FALSE
+                                )
+                                cat("Appended to Spreadsheet")
+
+                            } else {
+
+                                writeMonolist(
+                                    cbind(as.data.frame(photo_metadata), sample_pixel_data),
+                                    append = TRUE,
+                                    monolist_out_path = monolist_out_path,
+                                    col.names = TRUE
+                                )
+                                cat("Appended to Spreadsheet")
+
+                            }
+                                
+                        })
 
                     ## Meta analysis tab
 
-                            observeEvent(input$metadata_file, {
+                            # observeEvent(input$metadata_file, {
 
-                                ## Read in metadata file
-                                    metadata_file <<- input$metadata_file
-                                    print(metadata_file)
-                                    prelim_data <<- readMonolist(metadata_file$datapath)
-                                    print(head(prelim_data))
+                            #     ## Read in metadata file
+                            #         metadata_file <<- input$metadata_file
+                            #         print(metadata_file)
+                            #         prelim_data <<- readMonolist(metadata_file$datapath)
+                            #         print(head(prelim_data))
                             
-                                ## Extract swatches
-                                    prelim_data %>%
-                                        pivot_longer(cols = 9:11, names_to = "color", values_to = "value") %>%
-                                        group_by(QR, color) %>%
-                                        arrange(desc(value), .by_group = TRUE) %>%
-                                        dplyr::slice(1:25) -> swatch_data
+                            #     ## Extract swatches
+                            #         prelim_data %>%
+                            #             pivot_longer(cols = 9:11, names_to = "color", values_to = "value") %>%
+                            #             group_by(QR, color) %>%
+                            #             arrange(desc(value), .by_group = TRUE) %>%
+                            #             dplyr::slice(1:25) -> swatch_data
 
-                                ## Determine global means
-                                    swatch_data$global_mean <- 0  
-                                    swatch_data$global_mean[swatch_data$color == "R"] <- mean(swatch_data$value[swatch_data$color == "R"])
-                                    swatch_data$global_mean[swatch_data$color == "G"] <- mean(swatch_data$value[swatch_data$color == "B"])
-                                    swatch_data$global_mean[swatch_data$color == "B"] <- mean(swatch_data$value[swatch_data$color == "G"])
+                            #     ## Determine global means
+                            #         swatch_data$global_mean <- 0  
+                            #         swatch_data$global_mean[swatch_data$color == "R"] <- mean(swatch_data$value[swatch_data$color == "R"])
+                            #         swatch_data$global_mean[swatch_data$color == "G"] <- mean(swatch_data$value[swatch_data$color == "B"])
+                            #         swatch_data$global_mean[swatch_data$color == "B"] <- mean(swatch_data$value[swatch_data$color == "G"])
 
-                                ## Create dataframe according to which normalization should be performed
-                                    swatch_data %>%
-                                    group_by(QR, color) %>%
-                                    summarize(difference = unique(global_mean) - unique(mean(value))) %>%
-                                    # mutate(unique_id = paste(QR, "_", color)) %>%
-                                    pivot_wider(names_from = color, values_from = difference, names_prefix = "adjust_") -> normalization_data
+                            #     ## Create dataframe according to which normalization should be performed
+                            #         swatch_data %>%
+                            #         group_by(QR, color) %>%
+                            #         summarize(difference = unique(global_mean) - unique(mean(value))) %>%
+                            #         # mutate(unique_id = paste(QR, "_", color)) %>%
+                            #         pivot_wider(names_from = color, values_from = difference, names_prefix = "adjust_") -> normalization_data
 
-                                ## Modify swatch data according to global means
-                                    swatch_data %>%
-                                    group_by(QR, color) %>%
-                                    mutate(modified_value = value + (global_mean - mean(value))) %>%
-                                    pivot_longer(cols = 10:12, names_to = "value_type", values_to = "value") %>%
-                                    ggplot() +
-                                        geom_histogram(aes(x = value, fill = value_type), bins = 30, alpha = 0.7, color = "black") +
-                                        facet_grid(QR~color) +
-                                        theme_bw() -> global_means_plot
+                            #     ## Modify swatch data according to global means
+                            #         swatch_data %>%
+                            #         group_by(QR, color) %>%
+                            #         mutate(modified_value = value + (global_mean - mean(value))) %>%
+                            #         pivot_longer(cols = 10:12, names_to = "value_type", values_to = "value") %>%
+                            #         ggplot() +
+                            #             geom_histogram(aes(x = value, fill = value_type), bins = 30, alpha = 0.7, color = "black") +
+                            #             facet_grid(QR~color) +
+                            #             theme_bw() -> global_means_plot
 
-                                    output$metaplot <- renderPlot({ global_means_plot })
+                            #         output$metaplot <- renderPlot({ global_means_plot })
 
-                            })
+                            # })
 
                         ## Modify reference data according to global means
                             
@@ -8127,7 +8582,51 @@
                 shinyApp(ui = ui, server = server)
 
             }
-            
+
+        #### generateQRcodes
+
+            #' Create major and minor axes ticks and labels
+            #'
+            #' @param share_link Share link to Google Sheet with QR code metadata
+            #' @examples
+            #' @export
+            #' analyzeImage
+
+            generateQRcodes <- function( share_link ) {
+
+                ## Read in the Google docs spreadsheet
+
+                    data <- read_sheet(share_link)
+
+                ## Create QR codes for the plants
+
+                    plot_list <- list()
+                    for (i in 1:dim(data)[1]) {
+                        
+                        metadata <- unite(data, col = "metadata")$metadata
+
+                        png(paste0(metadata, ".png"))
+                            image(
+                                1 - qrencoder::qrencode(metadata),
+                                asp = 1, xlim = c(-0.1, 1.1), ylim = c(-0.1, 1.1),
+                                col = c("black", "white")
+                            )
+                        dev.off()
+
+                        plot_list[[i]] <- cowplot::plot_grid(
+                            ggpubr::text_grob(metadata, size = 5),
+                            grid::rasterGrob(png::readPNG(paste0(metadata, ".png"))),
+                            ncol = 1, rel_heights = c(1,30)
+                        )
+
+                        file.remove(paste0(metadata, ".png"))
+
+                    }
+
+                ## return
+                    return(plot_list)
+                    message("Consider using 'do.call(\"grid.arrange\", c(plot_list))' to plot all the plots")
+
     ##### Mathematics, Statistical Testing, and Modeling
 
         #### normalize
