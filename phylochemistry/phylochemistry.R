@@ -8626,6 +8626,7 @@
                 ## return
                     return(plot_list)
                     message("Consider using 'do.call(\"grid.arrange\", c(plot_list))' to plot all the plots")
+        }
 
     ##### Mathematics, Statistical Testing, and Modeling
 
