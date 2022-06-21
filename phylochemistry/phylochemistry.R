@@ -5202,7 +5202,7 @@
                     x_axis_end_default = NULL,
                     path_to_reference_library = busta_spectral_library,
                     samples_monolist_subset = NULL,
-                    ions = "tic"
+                    ions = 0
                 ) {
 
                     setwd(CDF_directory_path)
@@ -5269,7 +5269,7 @@
                                     if ( file.exists("chromatograms.csv") ) {
 
                                         ions_for_this_cdf_csv <- unique(filter(readMonolist("chromatograms.csv"), path_to_cdf_csv == paths_to_cdf_csvs[file])$ion)
-                                        missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv]))
+                                        missing_ions <- as.numeric(as.character(ions[!ions %in% ions_for_this_cdf_csv])) ## Here as numeric mess with TIC
                                         missing_ions <- dropNA(missing_ions)
 
                                     } else {
@@ -5285,12 +5285,12 @@
                                         
                                         cat("   Extracting chromatograms...\n")
                                             
-                                            if ("tic" %in% ions) {
+                                            if (0 %in% ions) {
                                                 framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
                                                 framedDataFile %>% 
                                                     group_by(rt) %>% summarize(
                                                     abundance = sum(intensity),
-                                                    ion = "tic",
+                                                    ion = 0,
                                                     rt_first_row_in_raw = min(row_number),
                                                     rt_last_row_in_raw = max(row_number)
                                                 ) -> chromatogram
@@ -5300,9 +5300,9 @@
                                                 chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)
                                             }
 
-                                            if ( length(ions[ions != "tic"]) > 0 ) {
+                                            if ( length(ions[ions != 0]) > 0 ) {
 
-                                                numeric_ions <- as.numeric(as.character(ions[ions != "tic"]))
+                                                numeric_ions <- as.numeric(as.character(ions[ions != 0]))
                                                 for ( ion in 1:length(numeric_ions) ){
                                                     framedDataFile$row_number <- seq(1,dim(framedDataFile)[1],1)
                                                     framedDataFile %>% 
@@ -5327,7 +5327,7 @@
 
                                     if ( file.exists("chromatograms.csv") ) {
                                         
-                                        print("writing it")
+                                        # print("writing it")
 
                                         writeMonolist(
                                             monolist = rbind( chromatograms, chromatograms_to_add ),
@@ -5551,7 +5551,7 @@
                                             for ( chrom in 1:length(unique(chromatograms_updated$path_to_cdf_csv)) ) {
                                       
                                                 chromatogram <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == unique(chromatograms_updated$path_to_cdf_csv)[chrom])
-                                                tic <- filter(chromatogram, ion == "tic")
+                                                tic <- filter(chromatogram, ion == 0)
 
                                                 prelim_baseline_window <- samples_monolist$baseline_window[match(chromatogram$path_to_cdf_csv[1], samples_monolist$path_to_cdf_csv)]
 
@@ -5718,7 +5718,7 @@
                                                           sum(dplyr::filter(
                                                             chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
                                                             rt >= peaks_in_this_sample$peak_start[peak] & rt <= peaks_in_this_sample$peak_end[peak],
-                                                            ion == "tic")$abundance
+                                                            ion == 0)$abundance
                                                           ) - 
                                                           sum(dplyr::filter(
                                                             chromatograms_updated[chromatograms_updated$path_to_cdf_csv == as.character(peaks_in_this_sample$path_to_cdf_csv[peak]),], 
@@ -5768,7 +5768,7 @@
 
                                                             signal_for_this_peak$peak_number_within_sample <- peak_table$peak_number_within_sample[peak]
                                                             
-                                                            ribbon <- filter(signal_for_this_peak, ion == "tic")
+                                                            ribbon <- filter(signal_for_this_peak, ion == 0)
                                                             ribbon$baseline <- filter(signal_for_this_peak, ion == "baseline")$abundance
 
                                                             chromatogram_plot <- chromatogram_plot +
@@ -5779,7 +5779,7 @@
                                                                     alpha = 0.8
                                                                 ) +
                                                                 geom_text(
-                                                                    data = filter(signal_for_this_peak, ion == "tic"),
+                                                                    data = filter(signal_for_this_peak, ion == 0),
                                                                     mapping = aes(label = peak_number_within_sample, x = median(rt_rt_offset), y = max(abundance))
                                                                 )
                                                         }
@@ -5819,7 +5819,7 @@
                                             peak_end = max(peak_points$rt),
                                             peak_ID = "unknown",
                                             path_to_cdf_csv = peak_points$path_to_cdf_csv[1],
-                                            area = sum(peak_points$abundance[peak_points$ion == "tic"])
+                                            area = sum(peak_points$abundance[peak_points$ion == 0])
                                         )
                                         peak_data
                                     } else {
