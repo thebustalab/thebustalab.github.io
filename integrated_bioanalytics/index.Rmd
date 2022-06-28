@@ -2520,6 +2520,10 @@ Display more data pertaining to the identification of disks. Can also change par
 
 `sudo fdisk -l` 
 
+Also consider
+
+`lsblk -f` 
+
 -Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
 
 2. Mounting
@@ -2559,6 +2563,10 @@ qc_data %>%
     geom_treemap(aes(area = length, fill = category), color = "black", size = 1) +
     scale_fill_manual(values = c("gold", "maroon"))
 ```
+
+4. Additional Information
+
+bootable USB: https://rufus.ie/en/#
 
 # illumina read assessment {-}
 
