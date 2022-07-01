@@ -2618,9 +2618,14 @@ ________________________________________________________________________________
 
 # setup
 
-Get docker.
+* Get docker.
 
-https://hub.docker.com/r/staphb/quast
+https://hub.docker.com/
+
+* Connecting to remote host:
+
+`ssh-keygen -t rsa`
+`ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address`
 
 # genome assembly {-}
 
@@ -2697,8 +2702,7 @@ Can these be merged into a single wrapper that can be run after each step in ass
 
 `docker pull ezlabgva/busco:v5.3.2_cv1`
 
-`
-sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
 `
 
 ### merqury
@@ -2715,11 +2719,11 @@ Merqury: reference-free quality, completeness, and phasing assessment for genome
 
 Quast provides a score called ALE: alignment liklihood estimate.
 
-`docker pull staphb/quast`
+`docker pull longas/quast`
 
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/quast/ staphb/quast:latest quast.py -h`
+`sudo docker run -u $(id -u) -v /home/bust0037/:/tmp/work/quast_results longas/quast:latest quast.py -h`
 
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/quast/ staphb/quast:latest quast.py --fragmented quast/k_fed.contigs.fasta --nanopore quast/all_reads.fastq --space-efficient --memory-efficient --fast`
+`sudo docker run -u $(id -u) -v /home/bust0037/ben_test/_ben_genomes/:/tmp/work/quast_results longas/quast:latest quast.py --fragmented /tmp/work/quast_results/ben_pre_n_frust.contigs.fasta --nanopore /tmp/work/quast_results/all_pass_reads.fastq --space-efficient --memory-efficient --fast`
 
 ## polishing contigs
 

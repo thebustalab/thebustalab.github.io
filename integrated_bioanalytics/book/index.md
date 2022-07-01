@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-05-09"
+date: "2022-06-30"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -541,7 +541,7 @@ Using the above as a template, make a plot that shows just `omega_3_polyunsatura
 
 
 
-9. Take the code that you made for Question 9. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
+9. Take the code that you made for the question above. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
 
 
 ```r
@@ -2867,6 +2867,10 @@ Display more data pertaining to the identification of disks. Can also change par
 
 `sudo fdisk -l` 
 
+Also consider
+
+`lsblk -f` 
+
 -Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
 
 2. Mounting
@@ -2907,6 +2911,10 @@ qc_data %>%
     geom_treemap(aes(area = length, fill = category), color = "black", size = 1) +
     scale_fill_manual(values = c("gold", "maroon"))
 ```
+
+4. Additional Information
+
+bootable USB: https://rufus.ie/en/#
 
 # illumina read assessment {-}
 
@@ -2958,9 +2966,14 @@ ________________________________________________________________________________
 
 # setup
 
-Get docker.
+* Get docker.
 
-https://hub.docker.com/r/staphb/quast
+https://hub.docker.com/
+
+* Connecting to remote host:
+
+`ssh-keygen -t rsa`
+`ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address`
 
 # genome assembly {-}
 
@@ -3037,8 +3050,7 @@ Can these be merged into a single wrapper that can be run after each step in ass
 
 `docker pull ezlabgva/busco:v5.3.2_cv1`
 
-`
-sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
 `
 
 ### merqury
@@ -3055,11 +3067,11 @@ Merqury: reference-free quality, completeness, and phasing assessment for genome
 
 Quast provides a score called ALE: alignment liklihood estimate.
 
-`docker pull staphb/quast`
+`docker pull longas/quast`
 
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/quast/ staphb/quast:latest quast.py -h`
+`sudo docker run -u $(id -u) -v /home/bust0037/:/tmp/work/quast_results longas/quast:latest quast.py -h`
 
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/quast/ staphb/quast:latest quast.py --fragmented quast/k_fed.contigs.fasta --nanopore quast/all_reads.fastq --space-efficient --memory-efficient --fast`
+`sudo docker run -u $(id -u) -v /home/bust0037/ben_test/_ben_genomes/:/tmp/work/quast_results longas/quast:latest quast.py --fragmented /tmp/work/quast_results/ben_pre_n_frust.contigs.fasta --nanopore /tmp/work/quast_results/all_pass_reads.fastq --space-efficient --memory-efficient --fast`
 
 ## polishing contigs
 
