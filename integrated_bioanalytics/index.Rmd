@@ -785,6 +785,8 @@ Check out some of the incredible geoms that are easy to access using R and ggplo
 
 For a challenge, try implementing these awesome color scales: [Famous R Color Palettes](https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/). Note that some of these are optimized for colorblind individuals and that other are optimized for continuous hue gradients, etc.
 
+For a list of data visualization sins: [Friends Don't Let Friends](https://github.com/cxli233/FriendsDontLetFriends). Some interesting things in here!
+
 For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/).
 
 <!-- end -->
@@ -2506,6 +2508,14 @@ To control the mass spectrum window:
 
 <!-- start nanopore data -->
 
+# data acquisition {-}
+
+Updating MinKNOW on GridIon
+
+`sudo apt update`
+`sudo apt install ont-gridion-release`
+`sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub`
+
 # data transfer {-}
 
 Once you've completed a sequencing run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
@@ -2516,13 +2526,13 @@ Display all currently mounted filesystems (& their usage, storage space, mountin
 
 `df -h`
 
+Also:
+
+`lsblk -f`
+
 Display more data pertaining to the identification of disks. Can also change partitioning of hard disks:
 
 `sudo fdisk -l` 
-
-Also consider
-
-`lsblk -f` 
 
 -Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
 
@@ -2616,7 +2626,7 @@ ________________________________________________________________________________
 
 <!-- start genomic analyses -->
 
-# setup
+# setup {-}
 
 * Get docker.
 
@@ -2885,7 +2895,7 @@ Let's look at some examples. For these example, we will use some fasta files sto
 ```
 
 
-# comparative genomics
+# comparative genomics {-}
 
 GENESPACE: syntenic pan-genome annotations for eukaryotes
 
@@ -2941,25 +2951,6 @@ ancestral states: https://www.phytools.org/eqg2015/asr.html
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
-
-# (PART) managing data projects {-}
-
-<!-- start evolutionary analyses -->
-
-# data on Google Drive
-
-## R scripts on Google Drive
-
-Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
-```{r, message = FALSE, eval = FALSE}
-openRGD("file_share_link_here")
-```
- \
-When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
-```{r, message = FALSE, eval = FALSE}
-closeRGD("file_share_link_here")
-```
-<!-- end -->
 
 # (PART) scientific writing {-}
 

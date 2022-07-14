@@ -12,7 +12,7 @@
                 "gridExtra",
                 "ape",
                 "multcompView",
-                "imager",
+                # "imager",
                 "shiny",
                 "DT",
                 "RColorBrewer",
@@ -6356,7 +6356,7 @@
             #' @examples
             #' readSpectra()
 
-            readSpectra <- function( dir ) {
+            readSpectra <- function( dir, source = c("phylochemistry", "agilent") ) {
 
                 ## Set working directory and prepare the data frame
                     setwd(dir)
@@ -6367,10 +6367,16 @@
 
                 ## Read in all data
                     for (i in 1:length(dir())) {
-                        temp <- read.csv(dir()[i])
-                        temp <- temp[3:dim(temp)[1],1:2]
-                        mz <- as.numeric(as.character(temp[,1]))
-                        abu <- 100*as.numeric(as.character(temp[,2]))/(max(as.numeric(as.character(temp[,2]))))
+                        temp <- readMonolist(dir()[i])
+                        if (source == "phylochemistry" ) {
+                            mz <- as.numeric(as.character(temp$mz))
+                            abu <- 100*as.numeric(as.character(temp$abu))/(max(as.numeric(as.character(temp$abu))))
+                        }
+                        if (source == "agilent") {
+                            temp <- temp[3:dim(temp)[1],1:2]
+                            mz <- as.numeric(as.character(temp[,1]))
+                            abu <- 100*as.numeric(as.character(temp[,2]))/(max(as.numeric(as.character(temp[,2]))))    
+                        }
                         var1 <- as.character(rep(as.character(i))) # Var1 is the position in the directory
                         var2 <- as.character(rep(gsub("~.*$", "", dir()[i])))
                         var3 <- as.character(rep(gsub("-.*$", "", gsub(".*~", "", dir()[i]))))
