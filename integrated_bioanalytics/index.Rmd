@@ -58,7 +58,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-# (PART) data analysis in r
+# (PART) data analysis in R
 
 <!-- start overview -->
 
@@ -2433,17 +2433,17 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) mass spectrometry data {-}
+# (PART) gc-ms data {-}
 
 <!-- start mass spectrometric analysis -->
 
 # mass spectrometric analysis {-}
 
-## integrationAppLite2
+## analyzeGCMSdata
 
 `phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:
 
-1. Create a new folder on your hard drive and place your CDF file into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
+1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
 2. In RStudio, run the source command to load `phylochemistry`:
 
@@ -2452,18 +2452,18 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
  \
 
-3. In RStudio, run the `integrationAppLite2` command on the *folder* that contains your CDF file. 
+3. In RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. 
  \
 
 If you are on a Mac, *use single forward slashes*. For example:
 ```{r, message = FALSE, eval = FALSE}
-integrationAppLite2("/Volumes/My_Drive/gc_data")
+analyzeGCMSdata("/Volumes/My_Drive/gc_data")
 ```
  \
 
 If you are on a PC, *use double back slashes*. For example:
 ```{r, message = FALSE, eval = FALSE}
-integrationAppLite2("C:\\Users\\My Profile\\gc_data")
+analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
 
@@ -2583,7 +2583,6 @@ bootable USB: https://rufus.ie/en/#
 Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples
 
 <!-- end -->
-
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

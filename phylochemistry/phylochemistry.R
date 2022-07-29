@@ -3274,7 +3274,7 @@
 
     	    }
 
-        #### integrationApp
+        #### analyzeGCMSdata
 
             #' A Shiny app to integrate GC-FID and GC-MS data
             #'
@@ -3287,9 +3287,9 @@
             #' @param zoom_and_scroll_rate Defines intervals of zooming and scrolling movement while running the app
             #' @examples
             #' @export
-            #' integrationApp
+            #' analyzeGCMSdata
 
-            integrationApp <- function(
+            analyzeGCMSdata <- function(
                     CDF_directory_path = getwd(),
                     zoom_and_scroll_rate = 100,
                     baseline_window = 400,
