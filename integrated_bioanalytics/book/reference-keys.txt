@@ -38,7 +38,6 @@ integrationapplite2
 cdf-export
 blast
 interpretation
-setup
 assembly
 equipment
 canu
@@ -58,15 +57,12 @@ annotation
 augustus
 final-assessment
 mosdepth
-comparative-genomics
 loading-gff-files
 buildtree
 simple-template
 full-template
 collapsetree
 ancestralstates
-data-on-google-drive
-r-scripts-on-google-drive-1
 figures-captions
 results-and-discussion
 structure

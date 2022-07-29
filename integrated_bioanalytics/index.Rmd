@@ -2671,10 +2671,7 @@ For assembly on the BustaLab storage box, navigate to the directory that contain
 
 Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
 
-`/home/grid/canu/canu-2.1.1/bin/canu -p k_fed -d /data/round2_pass_reads_assembly/ \
--genomeSize=232m -nanopore /data/all_reads.fastq \
--minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -stopOnLowCoverage=0.5 \
--corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4`
+`sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4`
 
 Notes on Canu options:
 

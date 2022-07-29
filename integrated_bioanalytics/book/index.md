@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-06-30"
+date: "2022-07-29"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -830,6 +830,8 @@ Some pointers:
 Check out some of the incredible geoms that are easy to access using R and ggplot2: [R Graph Gallery](https://r-graph-gallery.com/). Use these to make your figures attractive and easy to interpret!
 
 For a challenge, try implementing these awesome color scales: [Famous R Color Palettes](https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/). Note that some of these are optimized for colorblind individuals and that other are optimized for continuous hue gradients, etc.
+
+For a list of data visualization sins: [Friends Don't Let Friends](https://github.com/cxli233/FriendsDontLetFriends). Some interesting things in here!
 
 For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/).
 
@@ -2853,6 +2855,14 @@ To control the mass spectrum window:
 
 <!-- start nanopore data -->
 
+# data acquisition {-}
+
+Updating MinKNOW on GridIon
+
+`sudo apt update`
+`sudo apt install ont-gridion-release`
+`sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub`
+
 # data transfer {-}
 
 Once you've completed a sequencing run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
@@ -2863,13 +2873,13 @@ Display all currently mounted filesystems (& their usage, storage space, mountin
 
 `df -h`
 
+Also:
+
+`lsblk -f`
+
 Display more data pertaining to the identification of disks. Can also change partitioning of hard disks:
 
 `sudo fdisk -l` 
-
-Also consider
-
-`lsblk -f` 
 
 -Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
 
@@ -2964,7 +2974,7 @@ ________________________________________________________________________________
 
 <!-- start genomic analyses -->
 
-# setup
+# setup {-}
 
 * Get docker.
 
@@ -3009,10 +3019,7 @@ For assembly on the BustaLab storage box, navigate to the directory that contain
 
 Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
 
-`/home/grid/canu/canu-2.1.1/bin/canu -p k_fed -d /data/round2_pass_reads_assembly/ \
--genomeSize=232m -nanopore /data/all_reads.fastq \
--minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -stopOnLowCoverage=0.5 \
--corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4`
+`sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4`
 
 Notes on Canu options:
 
@@ -3234,7 +3241,7 @@ Let's look at some examples. For these example, we will use some fasta files sto
 ```
 
 
-# comparative genomics
+# comparative genomics {-}
 
 GENESPACE: syntenic pan-genome annotations for eukaryotes
 
@@ -3292,27 +3299,6 @@ ancestral states: https://www.phytools.org/eqg2015/asr.html
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
-
-# (PART) managing data projects {-}
-
-<!-- start evolutionary analyses -->
-
-# data on Google Drive
-
-## R scripts on Google Drive
-
-Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
-
-```r
-openRGD("file_share_link_here")
-```
- \
-When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
-
-```r
-closeRGD("file_share_link_here")
-```
-<!-- end -->
 
 # (PART) scientific writing {-}
 
@@ -3377,7 +3363,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 
@@ -3720,7 +3706,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -3762,7 +3748,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
