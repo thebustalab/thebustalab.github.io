@@ -57,9 +57,7 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg" width="100%" style="display: block; margin: auto;" />
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at leo sit amet odio rhoncus tempor. Suspendisse et dolor eu mi lacinia scelerisque sed ut est. Ut vitae tortor sit amet urna scelerisque volutpat non non turpis. Ut mollis massa sed sem elementum pharetra. Donec at metus malesuada, dictum orci id, laoreet massa. Sed eros augue, dapibus at sem ut, scelerisque dictum erat. Proin dictum mattis libero, ut venenatis velit porttitor et. Pellentesque bibendum nunc nec neque dictum faucibus. Suspendisse placerat a dolor at tristique. Integer vel sem pharetra, consequat nunc at, tempor dui.
-
-Cras finibus nisl ut elit rutrum, in maximus nunc gravida. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras rhoncus tristique neque, sed vehicula turpis porttitor vitae. Etiam laoreet posuere mi, eget scelerisque tellus fermentum eget. Praesent dictum nunc finibus, accumsan turpis id, congue elit. Proin venenatis diam vel commodo gravida. Suspendisse tortor libero, dignissim quis semper efficitur, dictum eu risus. Donec venenatis tincidunt purus ut blandit. In id velit risus. Nam ullamcorper vehicula sollicitudin. Praesent egestas dapibus justo, pretium blandit leo auctor sed. Morbi sit amet dui et sem pharetra interdum id vitae libero. Vivamus mi mauris, accumsan in vehicula pulvinar, ultricies ut elit.
+In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. In this chapter, we will explore, critique, and practice methods of handling and visualizing the data generated in large analytical projects.
 
 <!-- end -->
 
@@ -3589,10 +3587,6 @@ ________________________________________________________________________________
 # (PART) IMAGE ANALYSIS {-}
 
 <!-- start IMAGE ANALYSIS -->
-
-# {-}
-
-# IMAGE ANALYSIS {-}
 
 # image color analysis {-}
 
