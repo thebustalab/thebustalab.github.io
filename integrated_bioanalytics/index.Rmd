@@ -1190,7 +1190,7 @@ colnames(solvents)[1:3]
 colnames(solvents)[c(1,5,7)]
 ```
 <!-- end -->
-
+ 
 <!-- start principal components analysis -->
 
 # pca {-}
