@@ -38,7 +38,7 @@ output:
 
 
 
-# welcome {-}
+# WELCOME {-}
 
 <!-- start preface-->
 
@@ -49,7 +49,7 @@ output:
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-# (PART) data analysis in r
+# (PART) DATA ANALYSIS IN R
 
 <!-- start overview -->
 
@@ -2777,17 +2777,17 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) mass spectrometry data {-}
+# (PART) GC-MS DATA {-}
 
 <!-- start mass spectrometric analysis -->
 
 # mass spectrometric analysis {-}
 
-## integrationAppLite2
+## loading analyzeGCMSdata (basic)
 
 `phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:
 
-1. Create a new folder on your hard drive and place your CDF file into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
+1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
 2. In RStudio, run the source command to load `phylochemistry`:
 
@@ -2797,26 +2797,42 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
  \
 
-3. In RStudio, run the `integrationAppLite2` command on the *folder* that contains your CDF file. 
+3. In RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. 
  \
 
 If you are on a Mac, *use single forward slashes*. For example:
 
 ```r
-integrationAppLite2("/Volumes/My_Drive/gc_data")
+analyzeGCMSdata("/Volumes/My_Drive/gc_data")
 ```
  \
 
 If you are on a PC, *use double back slashes*. For example:
 
 ```r
-integrationAppLite2("C:\\Users\\My Profile\\gc_data")
+analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
 
-The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long.
+The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long, Once the app opens, press shit+q to load the chromatogram(s).
 
-Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app.
+## loading analyzeGCMSdata (advanced)
+
+You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram. For example:
+
+
+```r
+analyzeGCMSdata("/Volumes/My_Drive/gc_data", ions = c("0", "218"))
+```
+ \
+
+Will return an interface that shows chromatograms for the total ion count and for ion 218.
+
+At this point, note that you have a new set of files in your data-containing folder. There will be one `*.CDF.csv` file for each CDF file you have in the folder. This contains a matrix of all the mass measurements in your entire sample - the abundance of each m/z value during each scan. There is also a `chromatograms.csv` file. This is a list of all the chromatograms (total ion + whatever single ions were specified). These can be useful for creating plots of chromatograms via ggplot.
+
+<!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
+
+## using analyzeGCMSdata
 
 As a reference, below are the key commands used to operate the integration app. This is the information that is covered in the overview video.
 
@@ -2825,10 +2841,11 @@ To control the chromatogram window:
 * shift + q = update
 * shift + a = add selected peak
 * shift + r = remove selected peak
-* shift + f = forward
+* shift + g = add global peak
+<!-- * shift + f = forward
 * shift + d = backward
 * shift + c = zoom in
-* shift + v = zoom out
+* shift + v = zoom out -->
 * shift + z = save table
 
 To control the mass spectrum window:
@@ -2851,7 +2868,7 @@ To control the mass spectrum window:
 <!-- end -->
 
 
-# (PART) dna and rna sequence data {-}
+# (PART) DNA AND RNA SEQUENCE DATA {-}
 
 <!-- start nanopore data -->
 
@@ -2931,12 +2948,11 @@ bootable USB: https://rufus.ie/en/#
 Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples
 
 <!-- end -->
-
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) transcriptome analysis {-}
+# (PART) TRANSCRIPTOME ANALYSIS {-}
 
 <!-- start transcriptomic analyses -->
 
@@ -2970,7 +2986,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) genomic analysis {-}
+# (PART) GENOMIC ANALYSIS {-}
 
 <!-- start genomic analyses -->
 
@@ -3252,7 +3268,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) evolutionary analysis {-}
+# (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
 # evolutionary analyses {-}
@@ -3300,7 +3316,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) scientific writing {-}
+# (PART) SCIENTIFIC WRITING {-}
 
 <!-- start WRITING -->
 
@@ -3323,7 +3339,7 @@ The manuscript will be comprised of a title, abstract, introduction, results and
 
 The orders of presentation and preparation do not have to be the same! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
 
-# figures & captions
+# figures & captions {-}
 
 A high quality figure is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional.
 
@@ -3363,11 +3379,11 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 
-# results and discussion
+# results and discussion {-}
 
 * Objective: Walk your reader through your results, drawing conclusions and making interpretations as you go.
 
@@ -3570,7 +3586,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) image analysis {-}
+# (PART) IMAGE ANALYSIS {-}
 
 <!-- start IMAGE ANALYSIS -->
 
@@ -3590,7 +3606,7 @@ analyzeImage(
 )
 ```
 
-# images of mass spectra
+# images of mass spectra {-}
 
 
 ```r
@@ -3659,11 +3675,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) appendix {-}
+# (PART) APPENDIX {-}
 
 <!-- start links -->
 
-# links
+# links {-}
 
 ## geoms
 
@@ -3676,7 +3692,7 @@ ________________________________________________________________________________
 <!-- end -->
 
 <!-- start R FAQ -->
-# r faq
+# r faq {-}
 
 ## filtering
 
@@ -3706,7 +3722,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -3748,7 +3764,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -3802,7 +3818,7 @@ alaska_lake_data %>%
 
 <!-- start templates -->
 
-# templates
+# templates {-}
 
 ## matrix analyses
 

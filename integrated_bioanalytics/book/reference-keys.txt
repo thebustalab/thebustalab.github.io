@@ -34,7 +34,9 @@ kruskal-dunn-tests
 pairs-of-means
 further-reading-2
 exercises-5
-integrationapplite2
+loading-analyzegcmsdata-basic
+loading-analyzegcmsdata-advanced
+using-analyzegcmsdata
 cdf-export
 blast
 interpretation
@@ -63,8 +65,6 @@ simple-template
 full-template
 collapsetree
 ancestralstates
-figures-captions
-results-and-discussion
 structure
 suggestions
 structure-1
@@ -72,15 +72,11 @@ suggestions-1
 abstract
 title
 further-reading-3
-images-of-mass-spectra
-links
 geoms
 colors
-r-faq
 filtering
 ordering
 column-manipulation
-templates
 matrix-analyses
 basic-runmatrixanalysis-template
 advanced-runmatrixanalysis-template
