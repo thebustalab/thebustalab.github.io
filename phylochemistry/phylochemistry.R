@@ -189,7 +189,9 @@
 
             ## Taxonomical datasets
 
-                angio_tree <- read.tree("https://thebustalab.github.io/data/angiosperms.newick")
+                angiosperm_tree <- read.tree("https://thebustalab.github.io/data/angiosperms.newick")
+                angiosperm_species <- readMonolist("https://thebustalab.github.io/data/angiosperms.csv")
+
 
         }
 
@@ -197,6 +199,21 @@
 
         cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
         cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
+        discrete_palette <- c(
+            "dodgerblue2", "#E31A1C", # red
+            "green4",
+            "#6A3D9A", # purple
+            "#FF7F00", # orange
+            "black", "gold1",
+            "skyblue2", "#FB9A99", # lt pink
+            "palegreen2",
+            "#CAB2D6", # lt purple
+            "#FDBF6F", # lt orange
+            "gray70", "khaki2",
+            "maroon", "orchid1", "deeppink1", "blue1", "steelblue4",
+            "darkturquoise", "green1", "yellow4", "yellow3",
+            "darkorange4", "brown"
+        )
 
         # message("\n")
 
@@ -241,13 +258,17 @@
 
             #' Reads a monolist
             #'
-            #' @param monolist_in_path The path to the monolist (in .csv format) to be read
+            #' @param monolist_in_path The path to the monolist (in .csv format) to be read. URLs are also accepted.
             #' @examples
             #' @export
             #' readMonolist
 
             readMonolist <- function( monolist_in_path ) {
-                monolist <- as.data.frame(data.table::fread(file = monolist_in_path))
+                if (length(grep("http", monolist_in_path)) > 0) {
+                    monolist <- read_csv(monolist_in_path)        
+                } else {
+                    monolist <- as.data.frame(data.table::fread(file = monolist_in_path))
+                }
                 return( monolist )
             }
 
@@ -1043,8 +1064,7 @@
                         }
 
                     ## Return the tree
-                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n"
-                        )
+                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n")
                         return( output )
                 }
 
@@ -1121,7 +1141,7 @@
                         }
 
                     ## Return tree
-                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n"
+                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n")
                         return ( output )
                 }
 
@@ -1188,7 +1208,7 @@
                         members <- factor(members, levels = rev(ordered_tip_labels))
 
                     ## Return tree
-                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n"
+                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n")
                         return ( newick )
                 }
 

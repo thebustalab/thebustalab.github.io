@@ -2954,10 +2954,10 @@ buildTree(
 
 ## plotting trees
 
-There are several approaches to plotting trees. A simple one is using the base `plot` function, though this can get messy when there are lots of tip labels:
+There are several approaches to plotting trees. A simple one is using the base `plot` function:
 
-```{r, eval = FALSE}
-test_tree <- buildTree(
+```{r}
+test_tree_small <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
@@ -2966,7 +2966,53 @@ test_tree <- buildTree(
 plot(test_tree)
 ```
 
-Here's another approach to plotting trees - using ggplots `fortify`. Let's try it:
+Though this can get messy when there are lots of tip labels:
+
+```{r, messages = FALSE}
+set.seed(122)
+test_tree_big <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = angiosperm_species$Genus_species[abs(floor(rnorm(80)*10000))]
+)
+
+plot(test_tree_big)
+```
+
+One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
+
+```{r, messages = FALSE}
+ggtree(test_tree_big)
+```
+
+One convenient approach is to use ggplot's `fortify`. This will convert your `phylo` object into a data frame:
+
+```{r}
+test_tree_big_fortified <- fortify(test_tree_big)
+test_tree_big_fortified
+```
+`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files.
+
+```{r}
+
+test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, angiosperm_species, by = c("label" = "Genus_species"))
+
+ggtree(test_tree_big_fortified_w_data) + 
+  geom_point(
+    data = filter(test_tree_big_fortified_w_data, isTip == TRUE),
+    aes(x = x, y = y, fill = Order), size = 3, shape = 21, color = "black") +
+  geom_text(
+    data = filter(test_tree_big_fortified_w_data, isTip == TRUE),
+    aes(x = x, y = y, label = y), size = 2, color = "white") +
+  geom_tiplab(aes(label = label), offset = 10, size = 2) +
+  theme_void() +
+  scale_fill_manual(values = discrete_palette) +
+  coord_cartesian(xlim = c(0,280)) +
+  theme(
+    legend.position = c(0.15, 0.75)
+  )
+
+```
 
 ## collapseTree
 
