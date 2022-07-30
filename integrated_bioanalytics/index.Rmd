@@ -1174,7 +1174,7 @@ Very nice!
 
 ## further reading
  
-For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
 
 ## exercises
 
@@ -2951,6 +2951,22 @@ buildTree(
   root = NULL
 )
 ```
+
+## plotting trees
+
+There are several approaches to plotting trees. A simple one is using the base `plot` function, though this can get messy when there are lots of tip labels:
+
+```{r, eval = FALSE}
+test_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
+)
+
+plot(test_tree)
+```
+
+Here's another approach to plotting trees - using ggplots `fortify`. Let's try it:
 
 ## collapseTree
 

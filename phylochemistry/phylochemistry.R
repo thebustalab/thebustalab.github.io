@@ -159,29 +159,37 @@
 
             message("Loading datasets...")
 
-            sample_datasets <- as.data.frame(rbind(
-                c("algae_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv"),
-                c("alaska_lake_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv"),
-                c("solvents", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv"),
-                c("periodic_table", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv"),
-                c("fadb_sample", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv"),
-                c("periodic_table_subset", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv"),
-                c("ny_trees", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv"),
-                c("metabolomics_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv"),
-                c("wine_grape_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv"),
-                c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
-                c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
-                c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
-            ))
+            ## Sample datasets for CHEM5725
 
-            pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
-            for (i in 1:dim(sample_datasets)[1]) {
-                temp_obj <- read_csv(sample_datasets[i,2], show_col_types = FALSE)
-                gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
-                pb$tick()
-            }
+                sample_datasets <- as.data.frame(rbind(
+                    c("algae_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv"),
+                    c("alaska_lake_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv"),
+                    c("solvents", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv"),
+                    c("periodic_table", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv"),
+                    c("fadb_sample", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv"),
+                    c("periodic_table_subset", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv"),
+                    c("ny_trees", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv"),
+                    c("metabolomics_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv"),
+                    c("wine_grape_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv"),
+                    c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
+                    c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
+                    c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
+                ))
 
-            busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+                pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
+                for (i in 1:dim(sample_datasets)[1]) {
+                    temp_obj <- read_csv(sample_datasets[i,2], show_col_types = FALSE)
+                    gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
+                    pb$tick()
+                }
+
+            ## Mass spectral library
+
+                busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+
+            ## Taxonomical datasets
+
+                angio_tree <- read.tree("https://thebustalab.github.io/data/angiosperms.newick")
 
         }
 
@@ -1035,9 +1043,7 @@
                         }
 
                     ## Return the tree
-                        cat("Pro tip: most tree read/write functions reset node numbers.\n 
-                            Fortify your tree and save it as a csv file to preserve node numbering.\n
-                            Do not save your tree as a newick or nexus file."
+                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n"
                         )
                         return( output )
                 }
@@ -1115,17 +1121,14 @@
                         }
 
                     ## Return tree
-                        cat("Pro tip: most tree read/write functions reset node numbers.\n 
-                            Fortify your tree and save it as a csv file to preserve node numbering.\n
-                            Do not save your tree as a newick or nexus file."
-                        )
+                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n"
                         return ( output )
                 }
 
                 if ( scaffold_type == "newick" ) {
 
                     ## Read in the newick scaffold
-                        if (length(grep("http", scaffold_in_path)) > 0) {
+                        if (length(grep("google", scaffold_in_path)) > 0) {
                             temp_tree <- tempfile(fileext = ".newick")
                             suppressMessages(googledrive::drive_download(
                                 file = googledrive::as_id(scaffold_in_path),
@@ -1185,10 +1188,7 @@
                         members <- factor(members, levels = rev(ordered_tip_labels))
 
                     ## Return tree
-                        cat("Pro tip: most tree read/write functions reset node numbers.\n 
-                            Fortify your tree and save it as a csv file to preserve node numbering.\n
-                            Do not save your tree as a newick or nexus file."
-                        )
+                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n"
                         return ( newick )
                 }
 
