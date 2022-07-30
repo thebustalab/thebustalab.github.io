@@ -2993,7 +2993,7 @@ test_tree_big_fortified
 ```
 `ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files.
 
-```{r}
+```{r, fig.height = 8, fig.width = 7}
 
 test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, angiosperm_species, by = c("label" = "Genus_species"))
 

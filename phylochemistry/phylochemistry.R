@@ -149,74 +149,6 @@
                 c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89")
             ))
 
-###### Datasets
-
-        if ( exists("datasets") ) {
-
-            message("Object 'datasets' exists, not loading phylochemistry datasets....")
-
-        } else {
-
-            message("Loading datasets...")
-
-            ## Sample datasets for CHEM5725
-
-                sample_datasets <- as.data.frame(rbind(
-                    c("algae_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv"),
-                    c("alaska_lake_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv"),
-                    c("solvents", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv"),
-                    c("periodic_table", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv"),
-                    c("fadb_sample", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv"),
-                    c("periodic_table_subset", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv"),
-                    c("ny_trees", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv"),
-                    c("metabolomics_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv"),
-                    c("wine_grape_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv"),
-                    c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
-                    c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
-                    c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
-                ))
-
-                pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
-                for (i in 1:dim(sample_datasets)[1]) {
-                    temp_obj <- read_csv(sample_datasets[i,2], show_col_types = FALSE)
-                    gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
-                    pb$tick()
-                }
-
-            ## Mass spectral library
-
-                busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
-
-            ## Taxonomical datasets
-
-                angiosperm_tree <- read.tree("https://thebustalab.github.io/data/angiosperms.newick")
-                angiosperm_species <- readMonolist("https://thebustalab.github.io/data/angiosperms.csv")
-
-
-        }
-
-    ## Load color schemes
-
-        cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
-        cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
-        discrete_palette <- c(
-            "dodgerblue2", "#E31A1C", # red
-            "green4",
-            "#6A3D9A", # purple
-            "#FF7F00", # orange
-            "black", "gold1",
-            "skyblue2", "#FB9A99", # lt pink
-            "palegreen2",
-            "#CAB2D6", # lt purple
-            "#FDBF6F", # lt orange
-            "gray70", "khaki2",
-            "maroon", "orchid1", "deeppink1", "blue1", "steelblue4",
-            "darkturquoise", "green1", "yellow4", "yellow3",
-            "darkorange4", "brown"
-        )
-
-        # message("\n")
-
 ###### Functions
 
     message("Loading functions...")
@@ -8199,5 +8131,73 @@
                         return(results)
 
                 }
+
+###### Datasets
+
+        if ( exists("datasets") ) {
+
+            message("Object 'datasets' exists, not loading phylochemistry datasets....")
+
+        } else {
+
+            message("Loading datasets...")
+
+            ## Sample datasets for CHEM5725
+
+                sample_datasets <- as.data.frame(rbind(
+                    c("algae_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv"),
+                    c("alaska_lake_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv"),
+                    c("solvents", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv"),
+                    c("periodic_table", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv"),
+                    c("fadb_sample", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv"),
+                    c("periodic_table_subset", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv"),
+                    c("ny_trees", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv"),
+                    c("metabolomics_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv"),
+                    c("wine_grape_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv"),
+                    c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
+                    c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
+                    c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
+                ))
+
+                pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
+                for (i in 1:dim(sample_datasets)[1]) {
+                    temp_obj <- read_csv(sample_datasets[i,2], show_col_types = FALSE)
+                    gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
+                    pb$tick()
+                }
+
+            ## Mass spectral library
+
+                busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+
+            ## Taxonomical datasets
+
+                angiosperm_tree <- read.tree("https://thebustalab.github.io/data/angiosperms.newick")
+                angiosperm_species <- readMonolist("https://thebustalab.github.io/data/angiosperms.csv")
+
+
+        }
+
+    ## Load color schemes
+
+        cont_1 <- c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00")
+        cont_2 <- c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6")
+        discrete_palette <- c(
+            "dodgerblue2", "#E31A1C", # red
+            "green4",
+            "#6A3D9A", # purple
+            "#FF7F00", # orange
+            "black", "gold1",
+            "skyblue2", "#FB9A99", # lt pink
+            "palegreen2",
+            "#CAB2D6", # lt purple
+            "#FDBF6F", # lt orange
+            "gray70", "khaki2",
+            "maroon", "orchid1", "deeppink1", "blue1", "steelblue4",
+            "darkturquoise", "green1", "yellow4", "yellow3",
+            "darkorange4", "brown"
+        )
+
+        # message("\n")
 
 message("Done!")
