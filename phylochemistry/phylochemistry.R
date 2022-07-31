@@ -12,7 +12,7 @@
                 "gridExtra",
                 "ape",
                 "multcompView",
-                # "imager",
+                "imager",
                 "shiny",
                 "DT",
                 "RColorBrewer",
@@ -1741,13 +1741,11 @@
             blastTranscriptomes <- function(
                                     transcriptomes,
                                     query_in_path,
-                                    iterative_blast = FALSE,
-                                    iterative_blast_length_cutoff = 700,
                                     sequences_of_interest_directory_path,
                                     blast_module_directory_path,
                                     blast_mode = c("nnblastn", "dc-megablast", "blastp", "tblastn", "ptblastp"), 
                                     e_value_cutoff = 1,
-                                    queries_in_output = FALSE,
+                                    queries_in_output = TRUE,
                                     monolist_out_path
                                 ) {
 

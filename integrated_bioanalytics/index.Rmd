@@ -54,9 +54,26 @@ options(pillar.sigfig = 3)
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg', dpi = NA)
 ```
 
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script:
+
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
+
+Features provided by the source script:
+
+Analysis and visualization tools:
+
+* A GC-MS data analysis application with a MS reference library.
+* A sequence alignment analysis applications for trimming alignments.
+* Hard-to-find color palettes (for example, a 25 member discrete color palette)
+
+Useful data:
+
+* More than 12 chemical datasets for running practice analyses.
+* A plant phylogeny for >300,000 species, including ferns, gymnosperms, and angiosperms.
+* A list of >400,000 plant species as well as the families and orders to which they belong.
+
 
 # (PART) DATA ANALYSIS IN R
 
@@ -1167,7 +1184,7 @@ AK_lakes_clustered %>%
 ggtree() +
     geom_tiplab(aes(label = lake), offset = 10) +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,400))
+    scale_x_continuous(limits = c(0,15))
 ```
 
 Very nice!
@@ -2919,34 +2936,107 @@ ________________________________________________________________________________
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
-# evolutionary analyses {-}
+# blast searches {-}
 
-## buildTree
+## blastTranscriptomes
 
-### Simple template
+On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what this function is designed for. This funtion relies on the BLAST+ program available from [...]. Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Let's check it out by looking at an example. For this example, we need to set up a few things:
+
+* A named list of sequence collections (often transcriptomes) to search (one fasta for each collection).
+* One or more queries, all listed in a single fasta file.
+* The path to the BLAST+ executable.
+* The path to where we want a summary of the BLAST results to be written.
+* The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+
+Once we have those things, we can set up the search:
 
 ```{r, eval = FALSE}
-buildTree(
-  scaffold_type = "newick",
-  scaffold_in_path = NULL,
-  members = NULL
+blastTranscriptomes(
+  transcriptomes = "",
+  query_in_path = "",
+  sequences_of_interest_directory_path = "",
+  blast_module_directory_path = "",
+  blast_mode = c("nnblastn", "dc-megablast", "blastp", "tblastn", "ptblastp"), 
+  e_value_cutoff = 1,
+  queries_in_output = TRUE,
+  monolist_out_path = ""
 )
 ```
 
-### Full template
+There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments (see below).
+
+# alignments {-}
+
+## alignSequences
+
+There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but if you are using 
+
+```{r, eval = FALSE}
+alignSequences(
+  monolist = readMonolist(""), 
+  subset = "subset_all", 
+  alignment_directory_path = "", 
+  sequences_of_interest_directory_path = "",
+  input_sequence_type = c("nucl", "amin"), 
+  mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
+  base_fragment = NULL
+)
+```
+
+## analyzeAlignment
+
+```{r, eval = FALSE}
+
+```
+
+# phylogenies {-}
+
+## buildTree
+
+This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum liklihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let's look at some examples:
+
+### newick input
+
+Let's use the Busta lab's angiosperm phylogeny [derived from XXX] to build a phylogeny with five species in it.
+
+```{r}
+tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_thaliana", "Amborella_trichopoda")
+)
+
+tree
+
+plot(tree)
+```
+
+Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
+
+```{r}
+tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_neglecta", "Amborella_trichopoda")
+)
+
+tree
+
+plot(tree)
+```
+
+Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
+
+### alignment input
 
 ```{r, eval = FALSE}
 buildTree(
   scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
   scaffold_in_path = NULL,
   members = NULL,
-  gblocks = FALSE, 
-  gblocks_path = NULL,
   ml = FALSE, 
   model_test = FALSE,
   bootstrap = FALSE,
-  rois = FALSE, 
-  rois_data = NULL,
   ancestral_states = FALSE,
   root = NULL
 )
@@ -2963,12 +3053,12 @@ test_tree_small <- buildTree(
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
 )
 
-plot(test_tree)
+plot(test_tree_small)
 ```
 
 Though this can get messy when there are lots of tip labels:
 
-```{r, messages = FALSE}
+```{r, message = FALSE}
 set.seed(122)
 test_tree_big <- buildTree(
   scaffold_type = "newick",
@@ -2981,21 +3071,25 @@ plot(test_tree_big)
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
-```{r, messages = FALSE}
+```{r, message = FALSE}
 ggtree(test_tree_big)
 ```
 
-One convenient approach is to use ggplot's `fortify`. This will convert your `phylo` object into a data frame:
+Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
 ```{r}
 test_tree_big_fortified <- fortify(test_tree_big)
 test_tree_big_fortified
 ```
-`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files.
+`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:
 
 ```{r, fig.height = 8, fig.width = 7}
 
+## Note that "plant_species" comes with the phylochemistry source.
+
 test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, angiosperm_species, by = c("label" = "Genus_species"))
+
+test_tree_big_fortified_w_data
 
 ggtree(test_tree_big_fortified_w_data) + 
   geom_point(
@@ -3016,9 +3110,16 @@ ggtree(test_tree_big_fortified_w_data) +
 
 ## collapseTree
 
-## ancestralStates
+# phylogenetic analyses
+
+## ancestralTraits
+
+Note that this is different from `buildTree`'s "ancestral_states", which estimates ancestral sequence states at phylogeny nodes. Instead, `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
 
 ancestral states: https://www.phytools.org/eqg2015/asr.html
+
+## phylogenetic regression
+
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-07-29"
+date: "2022-07-30"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -44,10 +44,27 @@ output:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg" width="100%" style="display: block; margin: auto;" />
 
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets:
+
 
 ```r
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
+
+Features provided by the source script:
+
+Analysis and visualization tools:
+
+* A GC-MS data analysis application with a MS reference library.
+* A sequence alignment analysis applications for trimming alignments.
+* Hard-to-find color palettes (for example, a 25 member discrete color palette)
+
+Useful data:
+
+* More than 12 chemical datasets for running practice analyses.
+* A plant phylogeny for >300,000 species, including ferns, gymnosperms, and angiosperms.
+* A list of >400,000 plant species as well as the families and orders to which they belong.
+
 
 # (PART) DATA ANALYSIS IN R
 
@@ -1381,7 +1398,7 @@ Very nice!
 
 ## further reading
  
-For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
 
 ## exercises
 
@@ -1408,7 +1425,7 @@ colnames(solvents)[c(1,5,7)]
 ## [3] "solubility_in_water"
 ```
 <!-- end -->
-
+ 
 <!-- start principal components analysis -->
 
 # pca {-}
@@ -3269,22 +3286,129 @@ ________________________________________________________________________________
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
-# evolutionary analyses {-}
+# blast searches {-}
 
-## buildTree
+## blastTranscriptomes
 
-### Simple template
+On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what this function is designed for. This funtion relies on the BLAST+ program available from [...]. Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Let's check it out by looking at an example. For this example, we need to set up a few things:
+
+* A named list of sequence collections (often transcriptomes) to search (one fasta for each collection).
+* One or more queries, all listed in a single fasta file.
+* The path to the BLAST+ executable.
+* The path to where we want a summary of the BLAST results to be written.
+* The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+
+Once we have those things, we can set up the search:
 
 
 ```r
-buildTree(
-  scaffold_type = "newick",
-  scaffold_in_path = NULL,
-  members = NULL
+blastTranscriptomes(
+  transcriptomes = "",
+  query_in_path = "",
+  sequences_of_interest_directory_path = "",
+  blast_module_directory_path = "",
+  blast_mode = c("nnblastn", "dc-megablast", "blastp", "tblastn", "ptblastp"), 
+  e_value_cutoff = 1,
+  queries_in_output = TRUE,
+  monolist_out_path = ""
 )
 ```
 
-### Full template
+There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments (see below).
+
+# alignments {-}
+
+## alignSequences
+
+There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but if you are using 
+
+
+```r
+alignSequences(
+  monolist = readMonolist(""), 
+  subset = "subset_all", 
+  alignment_directory_path = "", 
+  sequences_of_interest_directory_path = "",
+  input_sequence_type = c("nucl", "amin"), 
+  mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
+  base_fragment = NULL
+)
+```
+
+## analyzeAlignment
+
+
+
+# phylogenies {-}
+
+## buildTree
+
+This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum liklihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let's look at some examples:
+
+### newick input
+
+Let's use the Busta lab's angiosperm phylogeny [derived from XXX] to build a phylogeny with five species in it.
+
+
+```r
+tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_thaliana", "Amborella_trichopoda")
+)
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+tree
+## 
+## Phylogenetic tree with 5 tips and 4 internal nodes.
+## 
+## Tip labels:
+##   Amborella_trichopoda, Zea_mays, Sorghum_bicolor, Setaria_viridis, Arabidopsis_thaliana
+## Node labels:
+##   , , , 
+## 
+## Rooted; includes branch lengths.
+
+plot(tree)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
+
+Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
+
+
+```r
+tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_neglecta", "Amborella_trichopoda")
+)
+## Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta 
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+tree
+## 
+## Phylogenetic tree with 5 tips and 4 internal nodes.
+## 
+## Tip labels:
+##   Amborella_trichopoda, Zea_mays, Sorghum_bicolor, Setaria_viridis, Arabidopsis_neglecta
+## Node labels:
+##   , , , 
+## 
+## Rooted; includes branch lengths.
+
+plot(tree)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
+
+Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
+
+### alignment input
 
 
 ```r
@@ -3292,17 +3416,184 @@ buildTree(
   scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
   scaffold_in_path = NULL,
   members = NULL,
-  gblocks = FALSE, 
-  gblocks_path = NULL,
   ml = FALSE, 
   model_test = FALSE,
   bootstrap = FALSE,
-  rois = FALSE, 
-  rois_data = NULL,
   ancestral_states = FALSE,
   root = NULL
 )
 ```
+
+## plotting trees
+
+There are several approaches to plotting trees. A simple one is using the base `plot` function:
+
+
+```r
+test_tree_small <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
+)
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+plot(test_tree_small)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+
+Though this can get messy when there are lots of tip labels:
+
+
+```r
+set.seed(122)
+test_tree_big <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  members = angiosperm_species$Genus_species[abs(floor(rnorm(80)*10000))]
+)
+## The following species belong to a genus not found in the newick scaffold and were removed: 
+## Afroligusticum_thodei
+## Pseuderanthemum_standleyi
+## Hereroa_acuminata
+## Eberlanzia_hospitalis
+## Cystacanthus_yunnanensis
+## Gibbaeum_gibbosum
+## Ditassa_obscura
+## Rabiea_lesliei
+## Suckleya_suckleyana
+## Cephalophyllum_pillansii
+## Dicliptera_bogotensis
+## Huernia_piersii
+## Papualthia_reticulata
+## Antimima_elevata
+## Halimocnemis_sclerosperma
+## Antrocaryon_nannanii
+## Stenandriopsis_thomensis
+## Seidlitzia_rosmarinus
+## Sceletium_dejagerae
+## Faucaria_subintegra
+## 
+## Scaffold newick tip Goniothalamus_giganteus substituted with Goniothalamus_gardneri 
+## Scaffold newick tip Rhagodia_drummondii substituted with Rhagodia_ulicina 
+## Scaffold newick tip Justicia_gendarussa substituted with Justicia_colorata 
+## Scaffold newick tip Carpobrotus_chilensis substituted with Carpobrotus_acinaciformis 
+## Scaffold newick tip Asclepias_exaltata substituted with Asclepias_leptopus 
+## Scaffold newick tip Strobilanthes_persicifolia substituted with Strobilanthes_botryantha 
+## Scaffold newick tip Allium_textile substituted with Allium_viridulum 
+## Scaffold newick tip Lepidagathis_villosa substituted with Lepidagathis_laxifolia 
+## Scaffold newick tip Dyschoriste_nagchana substituted with Dyschoriste_jaliscensis 
+## Scaffold newick tip Halosarcia_indica substituted with Halosarcia_pruinosa 
+## Scaffold newick tip Monechma_spartioides substituted with Monechma_divaricatum 
+## Scaffold newick tip Anthurium_scherzerianum substituted with Anthurium_naviculare 
+## Scaffold newick tip Oxypetalum_coeruleum substituted with Oxypetalum_macrolepis 
+## Scaffold newick tip Comocladia_macrophylla substituted with Comocladia_dodonaea 
+## Scaffold newick tip Alstroemeria_pulchra substituted with Alstroemeria_lutea 
+## Scaffold newick tip Salsola_collina substituted with Salsola_algeriensis 
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_elmendorfii 
+## Scaffold newick tip Alternanthera_philoxeroides substituted with Alternanthera_costaricensis 
+## Scaffold newick tip Habranthus_martinezii substituted with Habranthus_salinarum 
+## Scaffold newick tip Caralluma_retrospiciens substituted with Caralluma_vaduliae 
+## Scaffold newick tip Aphelandra_sinclairiana substituted with Aphelandra_flava 
+## Scaffold newick tip Leucocoryne_coquimbensis substituted with Leucocoryne_foetida 
+## Scaffold newick tip Hypoestes_aristata substituted with Hypoestes_elliotii 
+## Scaffold newick tip Uvaria_lucida substituted with Uvaria_capuronii 
+## Scaffold newick tip Eryngium_duriaei substituted with Eryngium_fistulosum 
+## Scaffold newick tip Ferula_oopoda substituted with Ferula_drudeana 
+## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_refracta 
+## Scaffold newick tip Asystasia_gangetica substituted with Asystasia_amoena 
+## Scaffold newick tip Tetragonia_tetragonioides substituted with Tetragonia_acanthocarpa 
+## Scaffold newick tip Ferula_communis substituted with Ferula_leiophylla 
+## Scaffold newick tip Justicia_carnea substituted with Justicia_caudatifolia 
+## Scaffold newick tip Hypoestes_forsskaolii substituted with Hypoestes_glandulifera 
+## Scaffold newick tip Viburnum_acerifolium substituted with Viburnum_sempervirens 
+## Scaffold newick tip Arthrocnemum_macrostachyum substituted with Arthrocnemum_subterminale 
+## Scaffold newick tip Aspidoglossum_heterophyllum substituted with Aspidoglossum_eylesii 
+## Scaffold newick tip Epipremnum_aureum substituted with Epipremnum_nobile 
+## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_bipartita 
+## Scaffold newick tip Hieronymiella_argentina substituted with Hieronymiella_pamiana 
+## Scaffold newick tip Apodolirion_lanceolatum substituted with Apodolirion_bolusii 
+## Scaffold newick tip Barleria_oenotheroides substituted with Barleria_mysorensis 
+## There aren't enough fosters to include the following species in the tree so it was removed: Hypoestes_isalensis 
+## Scaffold newick tip Hermbstaedtia_glauca substituted with Hermbstaedtia_caffra 
+## Scaffold newick tip Andrographis_paniculata substituted with Andrographis_stenophylla 
+## Scaffold newick tip Echinodorus_berteroi substituted with Echinodorus_macrophyllus 
+## Scaffold newick tip Tulbaghia_capensis substituted with Tulbaghia_nutans 
+## Scaffold newick tip Annona_muricata substituted with Annona_manabiensis 
+## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_penstemonoides 
+## Scaffold newick tip Altingia_siamensis substituted with Altingia_multinervis 
+## Scaffold newick tip Viburnum_orientale substituted with Viburnum_chunii 
+## Scaffold newick tip Maireana_microphylla substituted with Maireana_platycarpa 
+## Scaffold newick tip Barleria_lupulina substituted with Barleria_polyneura 
+## Scaffold newick tip Maireana_sedifolia substituted with Maireana_atkinsiana 
+## Scaffold newick tip Blepharis_diversispina substituted with Blepharis_acanthodioides 
+## Scaffold newick tip Dasymaschalon_macrocalyx substituted with Dasymaschalon_wallichii 
+## Scaffold newick tip Delosperma_echinatum substituted with Delosperma_litorale 
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+plot(test_tree_big)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+
+One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
+
+
+```r
+ggtree(test_tree_big)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
+
+One convenient approach is to use ggplot's `fortify`. This will convert your `phylo` object into a data frame:
+
+
+```r
+test_tree_big_fortified <- fortify(test_tree_big)
+test_tree_big_fortified
+## # A tibble: 111 × 9
+##    parent  node branch.length label isTip     x     y branch
+##     <int> <int>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
+##  1     59     1         145.  Echi… TRUE   188.     1   116.
+##  2     60     2          78.8 Epip… TRUE   188.     2   149.
+##  3     60     3          78.8 Anth… TRUE   188.     3   149.
+##  4     61     4         135.  Alst… TRUE   188.     4   121.
+##  5     63     5          48.7 Tulb… TRUE   188.     8   164.
+##  6     64     6          42.3 Leuc… TRUE   188.     9   167.
+##  7     65     7          24.1 Alli… TRUE   188.    10   176.
+##  8     65     8          24.1 Alli… TRUE   188.    11   176.
+##  9     66     9          31.8 Apod… TRUE   188.     5   172.
+## 10     67    10          10.1 Hier… TRUE   188.     6   183.
+## # … with 101 more rows, and 1 more variable: angle <dbl>
+```
+`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files.
+
+
+```r
+
+test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, angiosperm_species, by = c("label" = "Genus_species"))
+
+ggtree(test_tree_big_fortified_w_data) + 
+  geom_point(
+    data = filter(test_tree_big_fortified_w_data, isTip == TRUE),
+    aes(x = x, y = y, fill = Order), size = 3, shape = 21, color = "black") +
+  geom_text(
+    data = filter(test_tree_big_fortified_w_data, isTip == TRUE),
+    aes(x = x, y = y, label = y), size = 2, color = "white") +
+  geom_tiplab(aes(label = label), offset = 10, size = 2) +
+  theme_void() +
+  scale_fill_manual(values = discrete_palette) +
+  coord_cartesian(xlim = c(0,280)) +
+  theme(
+    legend.position = c(0.15, 0.75)
+  )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -3377,7 +3668,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 
@@ -3716,7 +4007,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -3758,7 +4049,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
