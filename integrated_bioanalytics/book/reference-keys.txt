@@ -68,7 +68,8 @@ newick-input
 alignment-input
 plotting-trees
 collapsetree
-ancestralstates
+ancestraltraits
+phylogenetic-regression
 structure
 suggestions
 structure-1

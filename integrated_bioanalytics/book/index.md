@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-07-30"
+date: "2022-08-04"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -44,7 +44,7 @@ output:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg" width="100%" style="display: block; margin: auto;" />
 
-Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets:
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script:
 
 
 ```r
@@ -53,17 +53,17 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 Features provided by the source script:
 
-Analysis and visualization tools:
+--Analysis and visualization tools--
 
 * A GC-MS data analysis application with a MS reference library.
 * A sequence alignment analysis applications for trimming alignments.
 * Hard-to-find color palettes (for example, a 25 member discrete color palette)
 
-Useful data:
+--Useful data--
 
 * More than 12 chemical datasets for running practice analyses.
-* A plant phylogeny for >300,000 species, including ferns, gymnosperms, and angiosperms.
-* A list of >400,000 plant species as well as the families and orders to which they belong.
+* A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes.
+* A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong.
 
 
 # (PART) DATA ANALYSIS IN R
@@ -74,7 +74,7 @@ Useful data:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg" width="100%" style="display: block; margin: auto;" />
 
-In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. In this chapter, we will explore, critique, and practice methods of handling and visualizing the data generated in large analytical projects.
+In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. In this chapter, we will explore, critique, and practice methods of handling and visualizing the data generated in large analytical projects. We'll also look at how to answer common quesions we may have about our data: "Which of my samples are most closely related?", "Which analytes are driving differences among my samples?", "Do my samples fall into definable clusters?", "Are any of my variables related?", and "Are any of these distributions different?".
 
 <!-- end -->
 
@@ -84,7 +84,7 @@ In bioanalytical science, we separate, identify, and quantify matter - be it DNA
 
 ## R {-}
 
-R is the computing language we will use to run our chemometric analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
+R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
 
 1. Go to https://cran.r-project.org/
 
@@ -174,11 +174,15 @@ install.packages(c('tinytex', 'rmarkdown'))
 
 If you are on Mac, you may get an error about "not being able to write to a path" or something like that. In that case you probably need to open your terminal and run the following two commands: 
 
-  sudo chown -R \`whoami\`:admin /usr/local/bin 
+```
+sudo chown -R \`whoami\`:admin /usr/local/bin
+```
 
   and then 
 
-  ~/Library/TinyTeX/bin/\*/tlmgr path add
+```
+~/Library/TinyTeX/bin/\*/tlmgr path add
+```
 
 Then, on both Mac and PC, you then need to do:
 
@@ -1389,7 +1393,7 @@ AK_lakes_clustered %>%
 ggtree() +
     geom_tiplab(aes(label = lake), offset = 10) +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,400))
+    scale_x_continuous(limits = c(0,15))
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;" />
@@ -3347,13 +3351,13 @@ This function is a swiss army knife for tree building. It takes as input alignme
 
 ### newick input
 
-Let's use the Busta lab's angiosperm phylogeny [derived from XXX] to build a phylogeny with five species in it.
+Let's use the Busta lab's plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.
 
 
 ```r
 tree <- buildTree(
   scaffold_type = "newick",
-  scaffold = "https://thebustalab.github.io/data/angiosperms.newick",
+  scaffold = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_thaliana", "Amborella_trichopoda")
 )
 ## Pro tip: most tree read/write functions reset node numbers.
@@ -3382,7 +3386,7 @@ Cool! We got our phylogeny. What happens if we want to build a phylogeny that ha
 ```r
 tree <- buildTree(
   scaffold_type = "newick",
-  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_neglecta", "Amborella_trichopoda")
 )
 ## Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta 
@@ -3432,7 +3436,7 @@ There are several approaches to plotting trees. A simple one is using the base `
 ```r
 test_tree_small <- buildTree(
   scaffold_type = "newick",
-  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
 )
 ## Pro tip: most tree read/write functions reset node numbers.
@@ -3451,86 +3455,67 @@ Though this can get messy when there are lots of tip labels:
 set.seed(122)
 test_tree_big <- buildTree(
   scaffold_type = "newick",
-  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
-  members = angiosperm_species$Genus_species[abs(floor(rnorm(80)*10000))]
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
+  members = plant_species$Genus_species[abs(floor(rnorm(60)*100000))]
 )
 ## The following species belong to a genus not found in the newick scaffold and were removed: 
-## Afroligusticum_thodei
-## Pseuderanthemum_standleyi
-## Hereroa_acuminata
-## Eberlanzia_hospitalis
-## Cystacanthus_yunnanensis
-## Gibbaeum_gibbosum
-## Ditassa_obscura
-## Rabiea_lesliei
-## Suckleya_suckleyana
-## Cephalophyllum_pillansii
-## Dicliptera_bogotensis
-## Huernia_piersii
-## Papualthia_reticulata
-## Antimima_elevata
-## Halimocnemis_sclerosperma
-## Antrocaryon_nannanii
-## Stenandriopsis_thomensis
-## Seidlitzia_rosmarinus
-## Sceletium_dejagerae
-## Faucaria_subintegra
+## Steirodiscus_schlechteri
+## Phyllagathis_marumiaetricha
+## Jungia_sordida
+## Carpacoce_heteromorpha
+## Huttonaea_woodii
+## Ferulago_macrocarpa
+## Echinospartum_lusitanicum
+## Scurrula_lepidota
+## Astronidium_sudestense
 ## 
-## Scaffold newick tip Goniothalamus_giganteus substituted with Goniothalamus_gardneri 
-## Scaffold newick tip Rhagodia_drummondii substituted with Rhagodia_ulicina 
-## Scaffold newick tip Justicia_gendarussa substituted with Justicia_colorata 
-## Scaffold newick tip Carpobrotus_chilensis substituted with Carpobrotus_acinaciformis 
-## Scaffold newick tip Asclepias_exaltata substituted with Asclepias_leptopus 
-## Scaffold newick tip Strobilanthes_persicifolia substituted with Strobilanthes_botryantha 
-## Scaffold newick tip Allium_textile substituted with Allium_viridulum 
-## Scaffold newick tip Lepidagathis_villosa substituted with Lepidagathis_laxifolia 
-## Scaffold newick tip Dyschoriste_nagchana substituted with Dyschoriste_jaliscensis 
-## Scaffold newick tip Halosarcia_indica substituted with Halosarcia_pruinosa 
-## Scaffold newick tip Monechma_spartioides substituted with Monechma_divaricatum 
-## Scaffold newick tip Anthurium_scherzerianum substituted with Anthurium_naviculare 
-## Scaffold newick tip Oxypetalum_coeruleum substituted with Oxypetalum_macrolepis 
-## Scaffold newick tip Comocladia_macrophylla substituted with Comocladia_dodonaea 
-## Scaffold newick tip Alstroemeria_pulchra substituted with Alstroemeria_lutea 
-## Scaffold newick tip Salsola_collina substituted with Salsola_algeriensis 
-## Scaffold newick tip Allium_subhirsutum substituted with Allium_elmendorfii 
-## Scaffold newick tip Alternanthera_philoxeroides substituted with Alternanthera_costaricensis 
-## Scaffold newick tip Habranthus_martinezii substituted with Habranthus_salinarum 
-## Scaffold newick tip Caralluma_retrospiciens substituted with Caralluma_vaduliae 
-## Scaffold newick tip Aphelandra_sinclairiana substituted with Aphelandra_flava 
-## Scaffold newick tip Leucocoryne_coquimbensis substituted with Leucocoryne_foetida 
-## Scaffold newick tip Hypoestes_aristata substituted with Hypoestes_elliotii 
-## Scaffold newick tip Uvaria_lucida substituted with Uvaria_capuronii 
-## Scaffold newick tip Eryngium_duriaei substituted with Eryngium_fistulosum 
-## Scaffold newick tip Ferula_oopoda substituted with Ferula_drudeana 
-## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_refracta 
-## Scaffold newick tip Asystasia_gangetica substituted with Asystasia_amoena 
-## Scaffold newick tip Tetragonia_tetragonioides substituted with Tetragonia_acanthocarpa 
-## Scaffold newick tip Ferula_communis substituted with Ferula_leiophylla 
-## Scaffold newick tip Justicia_carnea substituted with Justicia_caudatifolia 
-## Scaffold newick tip Hypoestes_forsskaolii substituted with Hypoestes_glandulifera 
-## Scaffold newick tip Viburnum_acerifolium substituted with Viburnum_sempervirens 
-## Scaffold newick tip Arthrocnemum_macrostachyum substituted with Arthrocnemum_subterminale 
-## Scaffold newick tip Aspidoglossum_heterophyllum substituted with Aspidoglossum_eylesii 
-## Scaffold newick tip Epipremnum_aureum substituted with Epipremnum_nobile 
-## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_bipartita 
-## Scaffold newick tip Hieronymiella_argentina substituted with Hieronymiella_pamiana 
-## Scaffold newick tip Apodolirion_lanceolatum substituted with Apodolirion_bolusii 
-## Scaffold newick tip Barleria_oenotheroides substituted with Barleria_mysorensis 
-## There aren't enough fosters to include the following species in the tree so it was removed: Hypoestes_isalensis 
-## Scaffold newick tip Hermbstaedtia_glauca substituted with Hermbstaedtia_caffra 
-## Scaffold newick tip Andrographis_paniculata substituted with Andrographis_stenophylla 
-## Scaffold newick tip Echinodorus_berteroi substituted with Echinodorus_macrophyllus 
-## Scaffold newick tip Tulbaghia_capensis substituted with Tulbaghia_nutans 
-## Scaffold newick tip Annona_muricata substituted with Annona_manabiensis 
-## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_penstemonoides 
-## Scaffold newick tip Altingia_siamensis substituted with Altingia_multinervis 
-## Scaffold newick tip Viburnum_orientale substituted with Viburnum_chunii 
-## Scaffold newick tip Maireana_microphylla substituted with Maireana_platycarpa 
-## Scaffold newick tip Barleria_lupulina substituted with Barleria_polyneura 
-## Scaffold newick tip Maireana_sedifolia substituted with Maireana_atkinsiana 
-## Scaffold newick tip Blepharis_diversispina substituted with Blepharis_acanthodioides 
-## Scaffold newick tip Dasymaschalon_macrocalyx substituted with Dasymaschalon_wallichii 
-## Scaffold newick tip Delosperma_echinatum substituted with Delosperma_litorale 
+## Scaffold newick tip Peperomia_fraseri substituted with Peperomia_kimachii 
+## Scaffold newick tip Telipogon_pulcher substituted with Telipogon_alberti 
+## Scaffold newick tip Elaeocarpus_angustifolius substituted with Elaeocarpus_miriensis 
+## Scaffold newick tip Angelica_sinensis substituted with Angelica_anomala 
+## Scaffold newick tip Senecio_pterophorus substituted with Senecio_isatideus 
+## Scaffold newick tip Macroscepis_hirsuta substituted with Macroscepis_pleistantha 
+## Scaffold newick tip Tithonia_diversifolia substituted with Tithonia_fruticosa 
+## Scaffold newick tip Spermacoce_princeae substituted with Spermacoce_latituba 
+## Scaffold newick tip Bothriocline_laxa substituted with Bothriocline_amphicoma 
+## Scaffold newick tip Siler_montanum substituted with Siler_zernyi 
+## Scaffold newick tip Teucrium_betchei substituted with Teucrium_rotundifolium 
+## Scaffold newick tip Calathea_pluriplicata substituted with Calathea_mediopicta 
+## Scaffold newick tip Phyllanthus_maderaspatensis substituted with Phyllanthus_roeperianus 
+## Scaffold newick tip Entada_abyssinica substituted with Entada_dolichorrhachis 
+## Scaffold newick tip Pimpinella_rhodantha substituted with Pimpinella_cypria 
+## Scaffold newick tip Baccharis_neglecta substituted with Baccharis_grisebachii 
+## Scaffold newick tip Mikania_micrantha substituted with Mikania_longipes 
+## Scaffold newick tip Raphionacme_flanaganii substituted with Raphionacme_hirsuta 
+## Scaffold newick tip Senecio_polyanthemoides substituted with Senecio_conferruminatus 
+## Scaffold newick tip Heracleum_austriacum substituted with Heracleum_bailletianum 
+## Scaffold newick tip Bulbophyllum_hainanense substituted with Bulbophyllum_kaniense 
+## Scaffold newick tip Madhuca_microphylla substituted with Madhuca_elmeri 
+## Scaffold newick tip Capparis_spinosa substituted with Capparis_cantoniensis 
+## Scaffold newick tip Albizia_lebbekoides substituted with Albizia_tulearensis 
+## Scaffold newick tip Cephalaria_syriaca substituted with Cephalaria_dirmilensis 
+## Scaffold newick tip Adesmia_exilis substituted with Adesmia_uspallatensis 
+## Scaffold newick tip Artemisia_biennis substituted with Artemisia_stricta 
+## Scaffold newick tip Osteospermum_ilicifolium substituted with Osteospermum_polycephalum 
+## Scaffold newick tip Atriplex_californica substituted with Atriplex_lanfrancoi 
+## Scaffold newick tip Oberonia_ensiformis substituted with Oberonia_anguina 
+## Scaffold newick tip Ceropegia_linearis_subsp._woodii substituted with Ceropegia_andamanica 
+## Scaffold newick tip Cousinia_severtzovii substituted with Cousinia_butkovii 
+## Scaffold newick tip Hoya_lanceolata substituted with Hoya_loyceandrewsiana 
+## Scaffold newick tip Cousinia_microcarpa substituted with Cousinia_trachylepis 
+## Scaffold newick tip Bossiaea_cordigera substituted with Bossiaea_oligosperma 
+## Scaffold newick tip Cayaponia_tubulosa substituted with Cayaponia_jenmanii 
+## Scaffold newick tip Pomatocalpa_kunstleri substituted with Pomatocalpa_linearipetalum 
+## Scaffold newick tip Endlicheria_verticillata substituted with Endlicheria_xerampela 
+## Scaffold newick tip Eugenia_moschata substituted with Eugenia_azurensis 
+## Scaffold newick tip Gastrolobium_punctatum substituted with Gastrolobium_spinosum 
+## Scaffold newick tip Dioscorea_mexicana substituted with Dioscorea_pennellii 
+## Scaffold newick tip Mitrella_kentii substituted with Mitrella_ledermannii 
+## Scaffold newick tip Ageratina_adenophora substituted with Ageratina_ayerscottiana 
+## Scaffold newick tip Astragalus_vogelii substituted with Astragalus_jolderensis 
+## Scaffold newick tip Eremocharis_fruticosa substituted with Eremocharis_longiramea 
+## Scaffold newick tip Spathiphyllum_floribundum substituted with Spathiphyllum_monachinoi 
+## Scaffold newick tip Balanops_vieillardii substituted with Balanops_microstachya 
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
@@ -3549,7 +3534,7 @@ ggtree(test_tree_big)
 
 <img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
-One convenient approach is to use ggplot's `fortify`. This will convert your `phylo` object into a data frame:
+Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
 
 ```r
@@ -3570,12 +3555,32 @@ test_tree_big_fortified
 ## 10     67    10          10.1 Hier… TRUE   188.     6   183.
 ## # … with 101 more rows, and 1 more variable: angle <dbl>
 ```
-`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files.
+`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:
 
 
 ```r
 
-test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, angiosperm_species, by = c("label" = "Genus_species"))
+## Note that "plant_species" comes with the phylochemistry source.
+
+test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, plant_species, by = c("label" = "Genus_species"))
+
+test_tree_big_fortified_w_data
+## # A tibble: 111 × 14
+##    parent  node branch.length label isTip     x     y branch
+##     <int> <int>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
+##  1     59     1         145.  Echi… TRUE   188.     1   116.
+##  2     60     2          78.8 Epip… TRUE   188.     2   149.
+##  3     60     3          78.8 Anth… TRUE   188.     3   149.
+##  4     61     4         135.  Alst… TRUE   188.     4   121.
+##  5     63     5          48.7 Tulb… TRUE   188.     8   164.
+##  6     64     6          42.3 Leuc… TRUE   188.     9   167.
+##  7     65     7          24.1 Alli… TRUE   188.    10   176.
+##  8     65     8          24.1 Alli… TRUE   188.    11   176.
+##  9     66     9          31.8 Apod… TRUE   188.     5   172.
+## 10     67    10          10.1 Hier… TRUE   188.     6   183.
+## # … with 101 more rows, and 6 more variables: angle <dbl>,
+## #   Phylum <chr>, Order <chr>, Family <chr>, Genus <chr>,
+## #   species <chr>
 
 ggtree(test_tree_big_fortified_w_data) + 
   geom_point(
@@ -3597,9 +3602,33 @@ ggtree(test_tree_big_fortified_w_data) +
 
 ## collapseTree
 
-## ancestralStates
+Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the `collapseTree` function. It takes two arguments: an un-fortified tree (`tree`), and a two-column data frame (`associations`). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let's look at the tree from the previous section at the family level:
+
+
+```r
+collapseTree(
+  tree = test_tree_big,
+  associations = data.frame(
+    tip.label = test_tree_big$tip.label,
+    family = plant_species$Family[match(test_tree_big$tip.label, plant_species$Genus_species)]
+  )
+) -> test_tree_big_families
+
+ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
+
+# phylogenetic analyses {-}
+
+## ancestralTraits
+
+Note that this is different from `buildTree`'s "ancestral_states", which estimates ancestral sequence states at phylogeny nodes. Instead, `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
 
 ancestral states: https://www.phytools.org/eqg2015/asr.html
+
+## phylogenetic regression
+
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3668,7 +3697,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
 
@@ -4007,7 +4036,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4049,7 +4078,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 

@@ -3067,7 +3067,7 @@ set.seed(122)
 test_tree_big <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
-  members = plant_species$Genus_species[abs(floor(rnorm(80)*10000))]
+  members = plant_species$Genus_species[abs(floor(rnorm(60)*100000))]
 )
 
 plot(test_tree_big)
@@ -3114,7 +3114,21 @@ ggtree(test_tree_big_fortified_w_data) +
 
 ## collapseTree
 
-# phylogenetic analyses
+Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the `collapseTree` function. It takes two arguments: an un-fortified tree (`tree`), and a two-column data frame (`associations`). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let's look at the tree from the previous section at the family level:
+
+```{r}
+collapseTree(
+  tree = test_tree_big,
+  associations = data.frame(
+    tip.label = test_tree_big$tip.label,
+    family = plant_species$Family[match(test_tree_big$tip.label, plant_species$Genus_species)]
+  )
+) -> test_tree_big_families
+
+ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
+```
+
+# phylogenetic analyses {-}
 
 ## ancestralTraits
 

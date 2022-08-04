@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="1.39 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -81,6 +81,7 @@
 <li><a class="" href="blast-searches.html">blast searches</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
 <li><a class="active" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
 <li class="book-part">SCIENTIFIC WRITING</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
@@ -115,11 +116,11 @@
 <h3>
 <span class="header-section-number">1.39.1</span> newick input<a class="anchor" aria-label="anchor" href="#newick-input"><i class="fas fa-link"></i></a>
 </h3>
-<p>Let’s use the Busta lab’s angiosperm phylogeny [derived from XXX] to build a phylogeny with five species in it.</p>
-<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
+<p>Let’s use the Busta lab’s plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.</p>
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span>
   scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,
-  scaffold <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/angiosperms.newick"</span>,
+  scaffold <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/plant_phylogeny.newick"</span>,
   members <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sorghum_bicolor"</span>, <span class="st">"Zea_mays"</span>, <span class="st">"Setaria_viridis"</span>, <span class="st">"Arabidopsis_thaliana"</span>, <span class="st">"Amborella_trichopoda"</span><span class="op">)</span>
 <span class="op">)</span>
 <span class="co">## Pro tip: most tree read/write functions reset node numbers.</span>
@@ -140,10 +141,10 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tree</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn’t in our scaffold? For example, what if we want to build a phylogeny that includes <em>Arabidopsis neglecta</em>? We can include that name in our list of members:</p>
-<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span>
   scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,
-  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/angiosperms.newick"</span>,
+  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/plant_phylogeny.newick"</span>,
   members <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sorghum_bicolor"</span>, <span class="st">"Zea_mays"</span>, <span class="st">"Setaria_viridis"</span>, <span class="st">"Arabidopsis_neglecta"</span>, <span class="st">"Amborella_trichopoda"</span><span class="op">)</span>
 <span class="op">)</span>
 <span class="co">## Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta </span>
@@ -170,7 +171,7 @@
 <h3>
 <span class="header-section-number">1.39.2</span> alignment input<a class="anchor" aria-label="anchor" href="#alignment-input"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">buildTree</span><span class="op">(</span>
   scaffold_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"amin_alignment"</span>, <span class="st">"nucl_alignment"</span>, <span class="st">"newick"</span><span class="op">)</span>,
   scaffold_in_path <span class="op">=</span> <span class="cn">NULL</span>,
@@ -188,10 +189,10 @@
 <span class="header-section-number">1.40</span> plotting trees<a class="anchor" aria-label="anchor" href="#plotting-trees"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are several approaches to plotting trees. A simple one is using the base <code>plot</code> function:</p>
-<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test_tree_small</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span>
   scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,
-  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/angiosperms.newick"</span>,
+  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/plant_phylogeny.newick"</span>,
   members <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Sorghum_bicolor"</span>, <span class="st">"Zea_mays"</span>, <span class="st">"Setaria_viridis"</span><span class="op">)</span>
 <span class="op">)</span>
 <span class="co">## Pro tip: most tree read/write functions reset node numbers.</span>
@@ -201,90 +202,71 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">test_tree_small</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Though this can get messy when there are lots of tip labels:</p>
-<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">122</span><span class="op">)</span>
 <span class="va">test_tree_big</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span>
   scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,
-  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/angiosperms.newick"</span>,
-  members <span class="op">=</span> <span class="va">angiosperm_species</span><span class="op">$</span><span class="va">Genus_species</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">80</span><span class="op">)</span><span class="op">*</span><span class="fl">10000</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/plant_phylogeny.newick"</span>,
+  members <span class="op">=</span> <span class="va">plant_species</span><span class="op">$</span><span class="va">Genus_species</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">60</span><span class="op">)</span><span class="op">*</span><span class="fl">100000</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
 <span class="op">)</span>
 <span class="co">## The following species belong to a genus not found in the newick scaffold and were removed: </span>
-<span class="co">## Afroligusticum_thodei</span>
-<span class="co">## Pseuderanthemum_standleyi</span>
-<span class="co">## Hereroa_acuminata</span>
-<span class="co">## Eberlanzia_hospitalis</span>
-<span class="co">## Cystacanthus_yunnanensis</span>
-<span class="co">## Gibbaeum_gibbosum</span>
-<span class="co">## Ditassa_obscura</span>
-<span class="co">## Rabiea_lesliei</span>
-<span class="co">## Suckleya_suckleyana</span>
-<span class="co">## Cephalophyllum_pillansii</span>
-<span class="co">## Dicliptera_bogotensis</span>
-<span class="co">## Huernia_piersii</span>
-<span class="co">## Papualthia_reticulata</span>
-<span class="co">## Antimima_elevata</span>
-<span class="co">## Halimocnemis_sclerosperma</span>
-<span class="co">## Antrocaryon_nannanii</span>
-<span class="co">## Stenandriopsis_thomensis</span>
-<span class="co">## Seidlitzia_rosmarinus</span>
-<span class="co">## Sceletium_dejagerae</span>
-<span class="co">## Faucaria_subintegra</span>
+<span class="co">## Steirodiscus_schlechteri</span>
+<span class="co">## Phyllagathis_marumiaetricha</span>
+<span class="co">## Jungia_sordida</span>
+<span class="co">## Carpacoce_heteromorpha</span>
+<span class="co">## Huttonaea_woodii</span>
+<span class="co">## Ferulago_macrocarpa</span>
+<span class="co">## Echinospartum_lusitanicum</span>
+<span class="co">## Scurrula_lepidota</span>
+<span class="co">## Astronidium_sudestense</span>
 <span class="co">## </span>
-<span class="co">## Scaffold newick tip Goniothalamus_giganteus substituted with Goniothalamus_gardneri </span>
-<span class="co">## Scaffold newick tip Rhagodia_drummondii substituted with Rhagodia_ulicina </span>
-<span class="co">## Scaffold newick tip Justicia_gendarussa substituted with Justicia_colorata </span>
-<span class="co">## Scaffold newick tip Carpobrotus_chilensis substituted with Carpobrotus_acinaciformis </span>
-<span class="co">## Scaffold newick tip Asclepias_exaltata substituted with Asclepias_leptopus </span>
-<span class="co">## Scaffold newick tip Strobilanthes_persicifolia substituted with Strobilanthes_botryantha </span>
-<span class="co">## Scaffold newick tip Allium_textile substituted with Allium_viridulum </span>
-<span class="co">## Scaffold newick tip Lepidagathis_villosa substituted with Lepidagathis_laxifolia </span>
-<span class="co">## Scaffold newick tip Dyschoriste_nagchana substituted with Dyschoriste_jaliscensis </span>
-<span class="co">## Scaffold newick tip Halosarcia_indica substituted with Halosarcia_pruinosa </span>
-<span class="co">## Scaffold newick tip Monechma_spartioides substituted with Monechma_divaricatum </span>
-<span class="co">## Scaffold newick tip Anthurium_scherzerianum substituted with Anthurium_naviculare </span>
-<span class="co">## Scaffold newick tip Oxypetalum_coeruleum substituted with Oxypetalum_macrolepis </span>
-<span class="co">## Scaffold newick tip Comocladia_macrophylla substituted with Comocladia_dodonaea </span>
-<span class="co">## Scaffold newick tip Alstroemeria_pulchra substituted with Alstroemeria_lutea </span>
-<span class="co">## Scaffold newick tip Salsola_collina substituted with Salsola_algeriensis </span>
-<span class="co">## Scaffold newick tip Allium_subhirsutum substituted with Allium_elmendorfii </span>
-<span class="co">## Scaffold newick tip Alternanthera_philoxeroides substituted with Alternanthera_costaricensis </span>
-<span class="co">## Scaffold newick tip Habranthus_martinezii substituted with Habranthus_salinarum </span>
-<span class="co">## Scaffold newick tip Caralluma_retrospiciens substituted with Caralluma_vaduliae </span>
-<span class="co">## Scaffold newick tip Aphelandra_sinclairiana substituted with Aphelandra_flava </span>
-<span class="co">## Scaffold newick tip Leucocoryne_coquimbensis substituted with Leucocoryne_foetida </span>
-<span class="co">## Scaffold newick tip Hypoestes_aristata substituted with Hypoestes_elliotii </span>
-<span class="co">## Scaffold newick tip Uvaria_lucida substituted with Uvaria_capuronii </span>
-<span class="co">## Scaffold newick tip Eryngium_duriaei substituted with Eryngium_fistulosum </span>
-<span class="co">## Scaffold newick tip Ferula_oopoda substituted with Ferula_drudeana </span>
-<span class="co">## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_refracta </span>
-<span class="co">## Scaffold newick tip Asystasia_gangetica substituted with Asystasia_amoena </span>
-<span class="co">## Scaffold newick tip Tetragonia_tetragonioides substituted with Tetragonia_acanthocarpa </span>
-<span class="co">## Scaffold newick tip Ferula_communis substituted with Ferula_leiophylla </span>
-<span class="co">## Scaffold newick tip Justicia_carnea substituted with Justicia_caudatifolia </span>
-<span class="co">## Scaffold newick tip Hypoestes_forsskaolii substituted with Hypoestes_glandulifera </span>
-<span class="co">## Scaffold newick tip Viburnum_acerifolium substituted with Viburnum_sempervirens </span>
-<span class="co">## Scaffold newick tip Arthrocnemum_macrostachyum substituted with Arthrocnemum_subterminale </span>
-<span class="co">## Scaffold newick tip Aspidoglossum_heterophyllum substituted with Aspidoglossum_eylesii </span>
-<span class="co">## Scaffold newick tip Epipremnum_aureum substituted with Epipremnum_nobile </span>
-<span class="co">## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_bipartita </span>
-<span class="co">## Scaffold newick tip Hieronymiella_argentina substituted with Hieronymiella_pamiana </span>
-<span class="co">## Scaffold newick tip Apodolirion_lanceolatum substituted with Apodolirion_bolusii </span>
-<span class="co">## Scaffold newick tip Barleria_oenotheroides substituted with Barleria_mysorensis </span>
-<span class="co">## There aren't enough fosters to include the following species in the tree so it was removed: Hypoestes_isalensis </span>
-<span class="co">## Scaffold newick tip Hermbstaedtia_glauca substituted with Hermbstaedtia_caffra </span>
-<span class="co">## Scaffold newick tip Andrographis_paniculata substituted with Andrographis_stenophylla </span>
-<span class="co">## Scaffold newick tip Echinodorus_berteroi substituted with Echinodorus_macrophyllus </span>
-<span class="co">## Scaffold newick tip Tulbaghia_capensis substituted with Tulbaghia_nutans </span>
-<span class="co">## Scaffold newick tip Annona_muricata substituted with Annona_manabiensis </span>
-<span class="co">## There aren't enough fosters to include the following species in the tree so it was removed: Strobilanthes_penstemonoides </span>
-<span class="co">## Scaffold newick tip Altingia_siamensis substituted with Altingia_multinervis </span>
-<span class="co">## Scaffold newick tip Viburnum_orientale substituted with Viburnum_chunii </span>
-<span class="co">## Scaffold newick tip Maireana_microphylla substituted with Maireana_platycarpa </span>
-<span class="co">## Scaffold newick tip Barleria_lupulina substituted with Barleria_polyneura </span>
-<span class="co">## Scaffold newick tip Maireana_sedifolia substituted with Maireana_atkinsiana </span>
-<span class="co">## Scaffold newick tip Blepharis_diversispina substituted with Blepharis_acanthodioides </span>
-<span class="co">## Scaffold newick tip Dasymaschalon_macrocalyx substituted with Dasymaschalon_wallichii </span>
-<span class="co">## Scaffold newick tip Delosperma_echinatum substituted with Delosperma_litorale </span>
+<span class="co">## Scaffold newick tip Peperomia_fraseri substituted with Peperomia_kimachii </span>
+<span class="co">## Scaffold newick tip Telipogon_pulcher substituted with Telipogon_alberti </span>
+<span class="co">## Scaffold newick tip Elaeocarpus_angustifolius substituted with Elaeocarpus_miriensis </span>
+<span class="co">## Scaffold newick tip Angelica_sinensis substituted with Angelica_anomala </span>
+<span class="co">## Scaffold newick tip Senecio_pterophorus substituted with Senecio_isatideus </span>
+<span class="co">## Scaffold newick tip Macroscepis_hirsuta substituted with Macroscepis_pleistantha </span>
+<span class="co">## Scaffold newick tip Tithonia_diversifolia substituted with Tithonia_fruticosa </span>
+<span class="co">## Scaffold newick tip Spermacoce_princeae substituted with Spermacoce_latituba </span>
+<span class="co">## Scaffold newick tip Bothriocline_laxa substituted with Bothriocline_amphicoma </span>
+<span class="co">## Scaffold newick tip Siler_montanum substituted with Siler_zernyi </span>
+<span class="co">## Scaffold newick tip Teucrium_betchei substituted with Teucrium_rotundifolium </span>
+<span class="co">## Scaffold newick tip Calathea_pluriplicata substituted with Calathea_mediopicta </span>
+<span class="co">## Scaffold newick tip Phyllanthus_maderaspatensis substituted with Phyllanthus_roeperianus </span>
+<span class="co">## Scaffold newick tip Entada_abyssinica substituted with Entada_dolichorrhachis </span>
+<span class="co">## Scaffold newick tip Pimpinella_rhodantha substituted with Pimpinella_cypria </span>
+<span class="co">## Scaffold newick tip Baccharis_neglecta substituted with Baccharis_grisebachii </span>
+<span class="co">## Scaffold newick tip Mikania_micrantha substituted with Mikania_longipes </span>
+<span class="co">## Scaffold newick tip Raphionacme_flanaganii substituted with Raphionacme_hirsuta </span>
+<span class="co">## Scaffold newick tip Senecio_polyanthemoides substituted with Senecio_conferruminatus </span>
+<span class="co">## Scaffold newick tip Heracleum_austriacum substituted with Heracleum_bailletianum </span>
+<span class="co">## Scaffold newick tip Bulbophyllum_hainanense substituted with Bulbophyllum_kaniense </span>
+<span class="co">## Scaffold newick tip Madhuca_microphylla substituted with Madhuca_elmeri </span>
+<span class="co">## Scaffold newick tip Capparis_spinosa substituted with Capparis_cantoniensis </span>
+<span class="co">## Scaffold newick tip Albizia_lebbekoides substituted with Albizia_tulearensis </span>
+<span class="co">## Scaffold newick tip Cephalaria_syriaca substituted with Cephalaria_dirmilensis </span>
+<span class="co">## Scaffold newick tip Adesmia_exilis substituted with Adesmia_uspallatensis </span>
+<span class="co">## Scaffold newick tip Artemisia_biennis substituted with Artemisia_stricta </span>
+<span class="co">## Scaffold newick tip Osteospermum_ilicifolium substituted with Osteospermum_polycephalum </span>
+<span class="co">## Scaffold newick tip Atriplex_californica substituted with Atriplex_lanfrancoi </span>
+<span class="co">## Scaffold newick tip Oberonia_ensiformis substituted with Oberonia_anguina </span>
+<span class="co">## Scaffold newick tip Ceropegia_linearis_subsp._woodii substituted with Ceropegia_andamanica </span>
+<span class="co">## Scaffold newick tip Cousinia_severtzovii substituted with Cousinia_butkovii </span>
+<span class="co">## Scaffold newick tip Hoya_lanceolata substituted with Hoya_loyceandrewsiana </span>
+<span class="co">## Scaffold newick tip Cousinia_microcarpa substituted with Cousinia_trachylepis </span>
+<span class="co">## Scaffold newick tip Bossiaea_cordigera substituted with Bossiaea_oligosperma </span>
+<span class="co">## Scaffold newick tip Cayaponia_tubulosa substituted with Cayaponia_jenmanii </span>
+<span class="co">## Scaffold newick tip Pomatocalpa_kunstleri substituted with Pomatocalpa_linearipetalum </span>
+<span class="co">## Scaffold newick tip Endlicheria_verticillata substituted with Endlicheria_xerampela </span>
+<span class="co">## Scaffold newick tip Eugenia_moschata substituted with Eugenia_azurensis </span>
+<span class="co">## Scaffold newick tip Gastrolobium_punctatum substituted with Gastrolobium_spinosum </span>
+<span class="co">## Scaffold newick tip Dioscorea_mexicana substituted with Dioscorea_pennellii </span>
+<span class="co">## Scaffold newick tip Mitrella_kentii substituted with Mitrella_ledermannii </span>
+<span class="co">## Scaffold newick tip Ageratina_adenophora substituted with Ageratina_ayerscottiana </span>
+<span class="co">## Scaffold newick tip Astragalus_vogelii substituted with Astragalus_jolderensis </span>
+<span class="co">## Scaffold newick tip Eremocharis_fruticosa substituted with Eremocharis_longiramea </span>
+<span class="co">## Scaffold newick tip Spathiphyllum_floribundum substituted with Spathiphyllum_monachinoi </span>
+<span class="co">## Scaffold newick tip Balanops_vieillardii substituted with Balanops_microstachya </span>
 <span class="co">## Pro tip: most tree read/write functions reset node numbers.</span>
 <span class="co">## Fortify your tree and save it as a csv file to preserve node numbering.</span>
 <span class="co">## Do not save your tree as a newick or nexus file.</span>
@@ -292,11 +274,11 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>One solution is to use <code>ggtree</code>, which by default doesn’t show tip labels. <code>plot</code> can do that too, but <code>ggtree</code> does a bunch of other useful things, so I recommend that:</p>
-<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>One convenient approach is to use ggplot’s <code>fortify</code>. This will convert your <code>phylo</code> object into a data frame:</p>
-<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<p>Another convenient fucntion is ggplot’s <code>fortify</code>. This will convert your <code>phylo</code> object into a data frame:</p>
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test_tree_big_fortified</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/fortify.html">fortify</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">)</span>
 <span class="va">test_tree_big_fortified</span>
 <span class="co">## # A tibble: 111 × 9</span>
@@ -313,10 +295,30 @@
 <span class="co">##  9     66     9          31.8 Apod… TRUE   188.     5   172.</span>
 <span class="co">## 10     67    10          10.1 Hier… TRUE   188.     6   183.</span>
 <span class="co">## # … with 101 more rows, and 1 more variable: angle &lt;dbl&gt;</span></code></pre></div>
-<p><code>ggtree</code> can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files.</p>
-<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<p><code>ggtree</code> can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:</p>
+<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="va">test_tree_big_fortified_w_data</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">test_tree_big_fortified</span>, <span class="va">angiosperm_species</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"label"</span> <span class="op">=</span> <span class="st">"Genus_species"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">## Note that "plant_species" comes with the phylochemistry source.</span>
+
+<span class="va">test_tree_big_fortified_w_data</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">test_tree_big_fortified</span>, <span class="va">plant_species</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"label"</span> <span class="op">=</span> <span class="st">"Genus_species"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">test_tree_big_fortified_w_data</span>
+<span class="co">## # A tibble: 111 × 14</span>
+<span class="co">##    parent  node branch.length label isTip     x     y branch</span>
+<span class="co">##     &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
+<span class="co">##  1     59     1         145.  Echi… TRUE   188.     1   116.</span>
+<span class="co">##  2     60     2          78.8 Epip… TRUE   188.     2   149.</span>
+<span class="co">##  3     60     3          78.8 Anth… TRUE   188.     3   149.</span>
+<span class="co">##  4     61     4         135.  Alst… TRUE   188.     4   121.</span>
+<span class="co">##  5     63     5          48.7 Tulb… TRUE   188.     8   164.</span>
+<span class="co">##  6     64     6          42.3 Leuc… TRUE   188.     9   167.</span>
+<span class="co">##  7     65     7          24.1 Alli… TRUE   188.    10   176.</span>
+<span class="co">##  8     65     8          24.1 Alli… TRUE   188.    11   176.</span>
+<span class="co">##  9     66     9          31.8 Apod… TRUE   188.     5   172.</span>
+<span class="co">## 10     67    10          10.1 Hier… TRUE   188.     6   183.</span>
+<span class="co">## # … with 101 more rows, and 6 more variables: angle &lt;dbl&gt;,</span>
+<span class="co">## #   Phylum &lt;chr&gt;, Order &lt;chr&gt;, Family &lt;chr&gt;, Genus &lt;chr&gt;,</span>
+<span class="co">## #   species &lt;chr&gt;</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">test_tree_big_fortified_w_data</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>
@@ -338,24 +340,23 @@
 <h2>
 <span class="header-section-number">1.41</span> collapseTree<a class="anchor" aria-label="anchor" href="#collapsetree"><i class="fas fa-link"></i></a>
 </h2>
-</div>
-<div id="ancestralstates" class="section level2" number="1.42">
-<h2>
-<span class="header-section-number">1.42</span> ancestralStates<a class="anchor" aria-label="anchor" href="#ancestralstates"><i class="fas fa-link"></i></a>
-</h2>
-<p>ancestral states: <a href="https://www.phytools.org/eqg2015/asr.html" class="uri">https://www.phytools.org/eqg2015/asr.html</a>
-<!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________</p>
-</div>
-</div>
+<p>Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the <code>collapseTree</code> function. It takes two arguments: an un-fortified tree (<code>tree</code>), and a two-column data frame (<code>associations</code>). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let’s look at the tree from the previous section at the family level:</p>
+<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">collapseTree</span><span class="op">(</span>
+  tree <span class="op">=</span> <span class="va">test_tree_big</span>,
+  associations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+    tip.label <span class="op">=</span> <span class="va">test_tree_big</span><span class="op">$</span><span class="va">tip.label</span>,
+    family <span class="op">=</span> <span class="va">plant_species</span><span class="op">$</span><span class="va">Family</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">$</span><span class="va">tip.label</span>, <span class="va">plant_species</span><span class="op">$</span><span class="va">Genus_species</span><span class="op">)</span><span class="op">]</span>
+  <span class="op">)</span>
+<span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_tree_big_families</span>
 
-
-
-<div class="chapter-nav">
+<span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">test_tree_big_families</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">300</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+</div>
+  <div class="chapter-nav">
 <div class="prev"><a href="alignments.html">alignments</a></div>
-<div class="next"><a href="overview-1.html">overview</a></div>
+<div class="next"><a href="phylogenetic-analyses.html">phylogenetic analyses</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -377,7 +378,6 @@ ________________________________________________________________________________
 </li>
 <li><a class="nav-link" href="#plotting-trees"><span class="header-section-number">1.40</span> plotting trees</a></li>
 <li><a class="nav-link" href="#collapsetree"><span class="header-section-number">1.41</span> collapseTree</a></li>
-<li><a class="nav-link" href="#ancestralstates"><span class="header-section-number">1.42</span> ancestralStates</a></li>
 </ul>
 
       <div class="book-extra">
@@ -388,18 +388,14 @@ ________________________________________________________________________________
 </div>
     </nav>
 </div>
-</div>
-  
-
-  
 
 </div>
- <!-- .container -->
+</div> <!-- .container -->
 
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-07-30.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-08-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
