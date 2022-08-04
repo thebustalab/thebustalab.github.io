@@ -2745,6 +2745,7 @@
 
                                 # Reorient each goi_region so it begins at zero
                                     subsetted_ranges <- subsetted_ranges[subsetted_ranges$type != "region",] # remove "ranges" that are whole chrom_scaffs
+                                    library(plyr)
                                     subsetted_ranges <- plyr::ddply(subsetted_ranges, .(goi_region_name), mutate, end = end - min(start), start = start - min(start))
                                     subsetted_ranges <- plyr::ddply(subsetted_ranges, .(goi_region_name), mutate, goi_region_length = max(end))
 
@@ -8170,9 +8171,8 @@
 
             ## Taxonomical datasets
 
-                angiosperm_tree <- read.tree("https://thebustalab.github.io/data/angiosperms.newick")
-                angiosperm_species <- readMonolist("https://thebustalab.github.io/data/angiosperms.csv")
-
+                plant_phylogeny <- read.tree("https://thebustalab.github.io/data/plant_phylogeny.newick")
+                plant_species <- readMonolist("https://thebustalab.github.io/data/plant_species.csv")
 
         }
 

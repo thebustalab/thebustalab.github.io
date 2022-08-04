@@ -62,17 +62,17 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 Features provided by the source script:
 
-Analysis and visualization tools:
+--Analysis and visualization tools--
 
 * A GC-MS data analysis application with a MS reference library.
 * A sequence alignment analysis applications for trimming alignments.
 * Hard-to-find color palettes (for example, a 25 member discrete color palette)
 
-Useful data:
+--Useful data--
 
 * More than 12 chemical datasets for running practice analyses.
-* A plant phylogeny for >300,000 species, including ferns, gymnosperms, and angiosperms.
-* A list of >400,000 plant species as well as the families and orders to which they belong.
+* A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes.
+* A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong.
 
 
 # (PART) DATA ANALYSIS IN R
@@ -85,7 +85,7 @@ Useful data:
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg', dpi = NA)
 ```
 
-In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. Challenge 1: As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. In this chapter, we will explore, critique, and practice methods of handling and visualizing the data generated in large analytical projects.
+In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. In this chapter, we will explore, critique, and practice methods of handling and visualizing the data generated in large analytical projects. We'll also look at how to answer common quesions we may have about our data: "Which of my samples are most closely related?", "Which analytes are driving differences among my samples?", "Do my samples fall into definable clusters?", "Are any of my variables related?", and "Are any of these distributions different?".
 
 <!-- end -->
 
@@ -95,7 +95,7 @@ In bioanalytical science, we separate, identify, and quantify matter - be it DNA
 
 ## R {-}
 
-R is the computing language we will use to run our chemometric analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
+R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
 
 1. Go to https://cran.r-project.org/
 
@@ -172,11 +172,15 @@ install.packages(c('tinytex', 'rmarkdown'))
 
 If you are on Mac, you may get an error about "not being able to write to a path" or something like that. In that case you probably need to open your terminal and run the following two commands: 
 
-  sudo chown -R \`whoami\`:admin /usr/local/bin 
+```
+sudo chown -R \`whoami\`:admin /usr/local/bin
+```
 
   and then 
 
-  ~/Library/TinyTeX/bin/\*/tlmgr path add
+```
+~/Library/TinyTeX/bin/\*/tlmgr path add
+```
 
 Then, on both Mac and PC, you then need to do:
 ```{r, message = FALSE, eval = FALSE}
@@ -2997,12 +3001,12 @@ This function is a swiss army knife for tree building. It takes as input alignme
 
 ### newick input
 
-Let's use the Busta lab's angiosperm phylogeny [derived from XXX] to build a phylogeny with five species in it.
+Let's use the Busta lab's plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.
 
 ```{r}
 tree <- buildTree(
   scaffold_type = "newick",
-  scaffold = "https://thebustalab.github.io/data/angiosperms.newick",
+  scaffold = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_thaliana", "Amborella_trichopoda")
 )
 
@@ -3016,7 +3020,7 @@ Cool! We got our phylogeny. What happens if we want to build a phylogeny that ha
 ```{r}
 tree <- buildTree(
   scaffold_type = "newick",
-  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_neglecta", "Amborella_trichopoda")
 )
 
@@ -3049,7 +3053,7 @@ There are several approaches to plotting trees. A simple one is using the base `
 ```{r}
 test_tree_small <- buildTree(
   scaffold_type = "newick",
-  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
 )
 
@@ -3062,8 +3066,8 @@ Though this can get messy when there are lots of tip labels:
 set.seed(122)
 test_tree_big <- buildTree(
   scaffold_type = "newick",
-  scaffold_in_path = "https://thebustalab.github.io/data/angiosperms.newick",
-  members = angiosperm_species$Genus_species[abs(floor(rnorm(80)*10000))]
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
+  members = plant_species$Genus_species[abs(floor(rnorm(80)*10000))]
 )
 
 plot(test_tree_big)
@@ -3087,7 +3091,7 @@ test_tree_big_fortified
 
 ## Note that "plant_species" comes with the phylochemistry source.
 
-test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, angiosperm_species, by = c("label" = "Genus_species"))
+test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, plant_species, by = c("label" = "Genus_species"))
 
 test_tree_big_fortified_w_data
 
