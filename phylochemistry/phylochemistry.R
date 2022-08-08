@@ -12,7 +12,7 @@
                 "gridExtra",
                 "ape",
                 "multcompView",
-                "imager",
+                # "imager",
                 "shiny",
                 "DT",
                 "RColorBrewer",
