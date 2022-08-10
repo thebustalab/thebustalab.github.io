@@ -506,7 +506,7 @@
             #' writeFasta
 
             writeFasta <- function( XStringSet, fasta_out_path, append = FALSE) {
-            	Biostrings::writeXStringSet( x = XStringSet, filepath = fasta_out_path, append = append )
+            	Biostrings::writeXStringSet( x = DNAStringSet(XStringSet), filepath = fasta_out_path, append = append )
             }
 
         #### writeSupplementalTable
@@ -2768,6 +2768,7 @@
                                     subsetted_ranges$species <- gsub(".*_", "", input_frame$Genus_species[i])
                                     subsetted_ranges$y_position <- input_frame$y_position[i]
                                     framed_GFFs[[i]] <- subsetted_ranges
+                                    framed_GFFs <- do.call(rbind, framed_GFFs)
                             }
                     }
 

@@ -2486,7 +2486,7 @@ analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
 
-The first time you open your datafile, it may take a while to load. This is normal - the program is analyzing all the data points in your data file. For a typical exploratory GC-MS run of around 60 minutes, this is more than 2.5 million data points! So please be patient. After you open your data file once, subsequent openings will not take so long, Once the app opens, press shit+q to load the chromatogram(s).
+The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shit+q to load the chromatogram(s).
 
 ## loading analyzeGCMSdata (advanced)
 
