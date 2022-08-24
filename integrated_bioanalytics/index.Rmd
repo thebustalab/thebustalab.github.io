@@ -93,6 +93,10 @@ In bioanalytical science, we separate, identify, and quantify matter - be it DNA
 
 # installation {-}
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png', dpi = NA)
+```
+
 ## R {-}
 
 R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to installing RStudio. If not, follow these steps to install R:
@@ -774,7 +778,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   )
 ```
 
-## exercises II {-}
+## data vis exercises II {-}
 
 In this set of exercises we're going to practice making more plots using the dataset `solvents`. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
 
@@ -3180,7 +3184,7 @@ A high quality figure is one in which, for example, axes tick labels do not over
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg', dpi = NA)
 ```
 
-Components of a caption:
+## Components of a caption
 
 1. Title - an overall description of the what is shown
 2. For each subplot:
@@ -3213,7 +3217,22 @@ ggplot(
   )
 ```
 
-Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.  -->
+Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
+
+## Exporting graphics
+
+To export graphics from R, consider the following:
+
+```{r}
+png(filename = <path_to_file_you_want_to_create>, width = 10, height = 10, res = 600, units = "in")
+
+cowplot::plot_grid(peak_1_to_plot, peak_2_to_plot, peak_3_to_plot,
+peak_4_to_plot, peak_5_to_plot, align = "v", axis = "b", labels = c('Peak 1','Peak 2','Peak 3', 'Peak 4', 'Peak 5'), ncol = 1, label_x = 0.4)
+
+dev.off()
+```
+
+The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
 # results and discussion {-}
 
