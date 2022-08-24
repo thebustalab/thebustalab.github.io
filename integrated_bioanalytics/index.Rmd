@@ -3223,7 +3223,7 @@ Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing 
 
 To export graphics from R, consider the following:
 
-```{r}
+```{r, eval = FALSE}
 png(filename = <path_to_file_you_want_to_create>, width = 10, height = 10, res = 600, units = "in")
 
 cowplot::plot_grid(peak_1_to_plot, peak_2_to_plot, peak_3_to_plot,

@@ -1,4 +1,4 @@
-fig:unnamed-chunk-68
+fig:unnamed-chunk-69
 part-data-analysis-in-r
 tidy-data
 the-pipe
@@ -70,6 +70,8 @@ plotting-trees
 collapsetree
 ancestraltraits
 phylogenetic-regression
+components-of-a-caption
+exporting-graphics
 structure
 suggestions
 structure-1

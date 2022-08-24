@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="data import To analyze data that is stored on your own computer you can indeed import it into RStudio. The easiest way to do this is to use the interactive command readCSV(), a function that comes...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -270,13 +270,13 @@
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_col</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>However, as our analyses get more complex, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_col</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-74-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Neat! Another way to think about the pipe:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" width="100%" style="display: block; margin: auto;"></div>
 <p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
@@ -377,7 +377,7 @@
         xmax <span class="op">=</span> <span class="va">mean_height</span> <span class="op">+</span> <span class="va">stdev_height</span>
       <span class="op">)</span>
     <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-79-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-80-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ny_trees</span> <span class="op">%&gt;%</span>
@@ -418,7 +418,7 @@
   <span class="fu">theme</span><span class="op">(</span>
     strip.text.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! And if we really want to go for something pretty:</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span>
@@ -445,7 +445,7 @@
     strip.text.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
     plot.caption <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 </div>
 <div id="exercises" class="section level2" number="1.4">
@@ -511,7 +511,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-08-04.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-08-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
