@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-08-24"
+date: "2022-08-25"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3044,9 +3044,9 @@ Genome assembly requires computing resources - and since not all genomes are of 
 
 `df -h`
 
-### canu
+### assembly software
 
-#### setting up canu
+#### canu
 
 `docker pull staphb/canu-racon`
 
@@ -3075,13 +3075,31 @@ Essentially only speed optimization:
 correctedErrorRate=0.12
 * Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
 
-#### run time metrics
-
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with `kmerTable()` and run the output at: https://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
-
-### flye
+#### flye
 
 `docker pull staphb/flye`
+
+### kmer-based metrics
+
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data found in the .histogram files (i.e. in correction/0-mercounts/x.histogram, trimming/0-mercounts/x.histogram, unitigging/0-mercounts/x.histogram) and process them with `canuHistogramToKmerTable()`, as shown below. You can upload the output to : http://qb.cshl.edu/genomescope/genomescope2.0/. This will give you approximate genome size, ploidy, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
+
+```r
+canuHistogramToKmerTable(
+  file_in_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram",
+  file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
+)
+```
+
+#### merqury
+
+`docker pull quay.io/chai/merqury`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
+
+References:
+https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
+Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
 
 ## evaluating contigs
 
@@ -3096,16 +3114,6 @@ Can these be merged into a single wrapper that can be run after each step in ass
 
 `sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
 `
-
-### merqury
-
-`docker pull quay.io/chai/merqury`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
-
-References:
-https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
-Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
 
 ### quast
 
@@ -3380,7 +3388,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -3410,7 +3418,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -3448,7 +3456,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -3525,7 +3533,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -3534,7 +3542,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -3600,7 +3608,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -3619,7 +3627,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -3690,7 +3698,7 @@ ggplot(
     color = "black"
   ) +
   facet_grid(park~., scales = "free", space = "free") +
-  theme_bw() +
+  theme_bw() + 
   scale_fill_brewer(palette = "Set1") +
   scale_y_discrete(name = "Lake Name") +
   scale_x_continuous(name = "Abundance mg/L)") +
@@ -3699,7 +3707,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-184-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
 
@@ -4054,7 +4062,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4096,7 +4104,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 

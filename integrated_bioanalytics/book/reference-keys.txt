@@ -42,13 +42,13 @@ blast
 interpretation
 assembly
 equipment
+assembly-software
 canu
-setting-up-canu
-run-time-metrics
 flye
+kmer-based-metrics
+merqury
 evaluating-contigs
 busco
-merqury
 quast
 polishing-contigs
 medaka

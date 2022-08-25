@@ -2697,9 +2697,9 @@ Genome assembly requires computing resources - and since not all genomes are of 
 
 `df -h`
 
-### canu
+### assembly software
 
-#### setting up canu
+#### canu
 
 `docker pull staphb/canu-racon`
 
@@ -2728,13 +2728,30 @@ Essentially only speed optimization:
 correctedErrorRate=0.12
 * Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
 
-#### run time metrics
-
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data in the .report file, process it with `kmerTable()` and run the output at: https://qb.cshl.edu/genomescope/. This will give you approximate genome size, heterozygosity, repeat content, and read error rate. All good stuff to know!
-
-### flye
+#### flye
 
 `docker pull staphb/flye`
+
+### kmer-based metrics
+
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data found in the .histogram files (i.e. in correction/0-mercounts/x.histogram, trimming/0-mercounts/x.histogram, unitigging/0-mercounts/x.histogram) and process them with `canuHistogramToKmerTable()`, as shown below. You can upload the output to : http://qb.cshl.edu/genomescope/genomescope2.0/. This will give you approximate genome size, ploidy, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
+```{r, eval = FALSE}
+canuHistogramToKmerTable(
+  file_in_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram",
+  file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
+)
+```
+
+#### merqury
+
+`docker pull quay.io/chai/merqury`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
+
+References:
+https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
+Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
 
 ## evaluating contigs
 
@@ -2749,16 +2766,6 @@ Can these be merged into a single wrapper that can be run after each step in ass
 
 `sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
 `
-
-### merqury
-
-`docker pull quay.io/chai/merqury`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
-
-References:
-https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
-Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
 
 ### quast
 
@@ -3208,7 +3215,7 @@ ggplot(
     color = "black"
   ) +
   facet_grid(park~., scales = "free", space = "free") +
-  theme_bw() +
+  theme_bw() + 
   scale_fill_brewer(palette = "Set1") +
   scale_y_discrete(name = "Lake Name") +
   scale_x_continuous(name = "Abundance mg/L)") +

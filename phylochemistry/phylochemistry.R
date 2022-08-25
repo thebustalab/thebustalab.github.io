@@ -3003,7 +3003,7 @@
                 writeXStringSet(fasta, file_out_path)
             }
 
-        #### kmerTable
+        #### canuHistogramToKmerTable
 
             #' Convert a kmer report file from Canu into a table that can be accepted by genomescope
             #' Use http://qb.cshl.edu/genomescope/genomescope2.0/
@@ -3014,7 +3014,7 @@
             #' @export
             #' kmerTable
 
-            kmerTable <- function(file_in_path, file_out_path) {
+            canuHistogramToKmerTable <- function(file_in_path, file_out_path) {
 
                 dat <- readLines(file_in_path)
                 dat <- dat[11:length(dat)]
