@@ -65,8 +65,8 @@ Features provided by the source script:
 --Analysis and visualization tools--
 
 * A GC-MS data analysis application with a MS reference library.
-* A sequence alignment analysis applications for trimming alignments.
-* Hard-to-find color palettes (for example, a 25 member discrete color palette)
+* A sequence alignment analysis application for trimming alignments.
+* Hard-to-find color palettes (for example, a 25-member discrete color palette)
 
 --Useful data--
 
@@ -811,6 +811,8 @@ For a challenge, try implementing these awesome color scales: [Famous R Color Pa
 For a list of data visualization sins: [Friends Don't Let Friends](https://github.com/cxli233/FriendsDontLetFriends). Some interesting things in here!
 
 For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/).
+
+Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards).
 
 <!-- end -->
 
