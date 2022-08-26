@@ -71,8 +71,8 @@ Features provided by the source script:
 --Useful data--
 
 * More than 12 chemical datasets for running practice analyses.
-* A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes.
-* A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong.
+* A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick).
+* A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv).
 
 
 # (PART) DATA ANALYSIS IN R
