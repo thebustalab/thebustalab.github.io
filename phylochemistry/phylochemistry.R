@@ -197,7 +197,7 @@
 
             readMonolist <- function( monolist_in_path ) {
                 if (length(grep("http", monolist_in_path)) > 0) {
-                    monolist <- read_csv(monolist_in_path)        
+                    monolist <- read_csv(monolist_in_path, show_col_types = FALSE)        
                 } else {
                     monolist <- as.data.frame(data.table::fread(file = monolist_in_path))
                 }
@@ -8168,7 +8168,7 @@
 
             ## Mass spectral library
 
-                busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+                # busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
 
             ## Taxonomical datasets
 
