@@ -57,7 +57,7 @@
                 # "msa",
                 # "rtracklayer",
                 "Biostrings",
-                "GenomicRanges",
+                "GenomicRanges"
                 # "GenomicFeatures",
                 # "Rsamtools"
             )
