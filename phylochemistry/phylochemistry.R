@@ -4,11 +4,26 @@
 
 ###### Libraries
 
+    if (bustalab == TRUE) {
+        # CRAN_packages <- "imager"
+        Bioconductor_packages <- c(
+            "xcms",
+            "msa",
+            "rtracklayer",
+            "Biostrings",
+            "GenomicRanges"
+            "GenomicFeatures",
+            "Rsamtools"
+        )
+
+    }
+
     if ( !exists("packages") ) {
 
         ## Define necessary libraries
             
-            CRAN_packages <- c(
+            if (!exists(CRAN_packages)) {CRAN_packages <- vector()}
+            CRAN_packages <- c(CRAN_packages, 
                 "gridExtra",
                 "ape",
                 "multcompView",
@@ -50,16 +65,10 @@
                 "viridis"
             )
 
+            if (!exists(Bioconductor_packages)) {Bioconductor_packages <- vector()}
             Bioconductor_packages <- c(
                 "ggtree",
-                "ggtreeExtra",
-                # "xcms",
-                # "msa",
-                # "rtracklayer",
-                "Biostrings",
-                "GenomicRanges"
-                # "GenomicFeatures",
-                # "Rsamtools"
+                "ggtreeExtra"
             )
 
             Github_packages <- c(
@@ -8166,14 +8175,15 @@
                     pb$tick()
                 }
 
-            ## Mass spectral library
+            ## Busta lab specific datasets
 
-                # busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+                if (bustalab == TRUE) {
 
-            ## Taxonomical datasets
-
-                plant_phylogeny <- read.tree("https://thebustalab.github.io/data/plant_phylogeny.newick")
-                plant_species <- readMonolist("https://thebustalab.github.io/data/plant_species.csv")
+                    busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+                    plant_phylogeny <- read.tree("https://thebustalab.github.io/data/plant_phylogeny.newick")
+                    plant_species <- readMonolist("https://thebustalab.github.io/data/plant_species.csv")
+                
+                }                
 
         }
 
