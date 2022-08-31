@@ -53,13 +53,13 @@
             Bioconductor_packages <- c(
                 "ggtree",
                 "ggtreeExtra",
-                "xcms",
-                "msa",
-                "rtracklayer",
+                # "xcms",
+                # "msa",
+                # "rtracklayer",
                 "Biostrings",
                 "GenomicRanges",
-                "GenomicFeatures",
-                "Rsamtools"
+                # "GenomicFeatures",
+                # "Rsamtools"
             )
 
             Github_packages <- c(
