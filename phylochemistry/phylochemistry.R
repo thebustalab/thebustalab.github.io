@@ -22,7 +22,7 @@
 
         ## Define necessary libraries
             
-            if (!exists(CRAN_packages)) {CRAN_packages <- vector()}
+            if (!exists("CRAN_packages")) {CRAN_packages <- vector()}
             CRAN_packages <- c(CRAN_packages, 
                 "gridExtra",
                 "ape",
@@ -65,7 +65,7 @@
                 "viridis"
             )
 
-            if (!exists(Bioconductor_packages)) {Bioconductor_packages <- vector()}
+            if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
             Bioconductor_packages <- c(
                 "ggtree",
                 "ggtreeExtra"
