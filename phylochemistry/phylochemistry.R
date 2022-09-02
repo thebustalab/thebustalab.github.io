@@ -4,17 +4,21 @@
 
 ###### Libraries
 
-    if (bustalab == TRUE) {
-        # CRAN_packages <- "imager"
-        Bioconductor_packages <- c(
-            "xcms",
-            "msa",
-            "rtracklayer",
-            "Biostrings",
-            "GenomicRanges",
-            "GenomicFeatures",
-            "Rsamtools"
-        )
+    if (exists("bustalab") {
+        
+        if (bustalab == TRUE) {
+            # CRAN_packages <- "imager"
+            Bioconductor_packages <- c(
+                "xcms",
+                "msa",
+                "rtracklayer",
+                "Biostrings",
+                "GenomicRanges",
+                "GenomicFeatures",
+                "Rsamtools"
+            )
+
+        }
 
     }
 
@@ -8177,13 +8181,17 @@
 
             ## Busta lab specific datasets
 
-                if (bustalab == TRUE) {
+                if (exists("bustalab") {
+                    
+                    if (bustalab == TRUE) {
 
-                    busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
-                    plant_phylogeny <- read.tree("https://thebustalab.github.io/data/plant_phylogeny.newick")
-                    plant_species <- readMonolist("https://thebustalab.github.io/data/plant_species.csv")
-                
-                }                
+                        busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+                        plant_phylogeny <- read.tree("https://thebustalab.github.io/data/plant_phylogeny.newick")
+                        plant_species <- readMonolist("https://thebustalab.github.io/data/plant_species.csv")
+                    
+                    }
+
+                }
 
         }
 
