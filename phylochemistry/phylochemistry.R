@@ -4,7 +4,7 @@
 
 ###### Libraries
 
-    if (exists("bustalab") { 
+    if (exists("bustalab")) { 
         
         if (bustalab == TRUE) {
             # CRAN_packages <- "imager"
@@ -8181,7 +8181,7 @@
 
             ## Busta lab specific datasets
 
-                if (exists("bustalab") {
+                if (exists("bustalab")) {
                     
                     if (bustalab == TRUE) {
 
