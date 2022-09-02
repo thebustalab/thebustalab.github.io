@@ -4,7 +4,7 @@
 
 ###### Libraries
 
-    if (exists("bustalab")) { 
+    if (exists("bustalab")) {  
         
         if (bustalab == TRUE) {
             # CRAN_packages <- "imager"
