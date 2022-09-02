@@ -8174,7 +8174,7 @@
 
                 pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
                 for (i in 1:dim(sample_datasets)[1]) {
-                    temp_obj <- read_csv(sample_datasets[i,2], show_col_types = FALSE)
+                    temp_obj <- readr::read_csv(sample_datasets[i,2], show_col_types = FALSE)
                     gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
                     pb$tick()
                 }
