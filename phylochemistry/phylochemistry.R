@@ -8172,7 +8172,7 @@
                     c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
                 ))
 
-                options(show_col_types = FALSE)
+                options("show_col_types" = FALSE)
                 pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
                 for (i in 1:dim(sample_datasets)[1]) {
                     # temp_obj <- readr::read_csv(sample_datasets[i,2], show_col_types = FALSE)
