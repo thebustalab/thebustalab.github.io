@@ -54,7 +54,7 @@ options(pillar.sigfig = 3)
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg', dpi = NA)
 ```
 
-Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script:
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and data sets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script:
 
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
@@ -199,6 +199,7 @@ In addition to the tidyverse, there are a variety of other packages we will need
 
 First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
 ```{r, message = FALSE, cache = FALSE}
+bustalab <- TRUE
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
@@ -693,7 +694,17 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`.
+Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
+
+
+```{r}
+ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) + 
+  geom_tile(aes(fill = abundance), color = "black") + 
+  facet_wrap(chemical_species~.)
+```
+
+<!-- HERE INTRODUCE COWPLOT!! -->
+
 
 ## scales {-}
 
@@ -816,8 +827,14 @@ Some examples of award winning data visualization: [Information Is Beautiful Awa
 
 <!-- end -->
 
-<!-- start data wranging -->
-# data wranging {-}
+<!-- start data wrangling -->
+# data wrangling {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png', dpi = NA)
+```
+
+Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, including data import, subsetting, pivoting, and summarizing data.
 
 ## data import {-}
 
@@ -862,9 +879,7 @@ select(alaska_lake_data, park, water_temp)
 
 ```
 
-## tidy data
-
-https://tidydatatutor.com/vis.html
+## tidy data {-}
 
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
 
@@ -880,7 +895,9 @@ pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values
 
 Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
 
-## the pipe (%>%)
+## the pipe (%>%) {-}
+
+https://tidydatatutor.com/vis.html
 
 We have seen how to create new objects using `<-`, and we have been filtering and plotting data using, for example:
 
@@ -904,7 +921,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see...
 
-## summary statistics
+## summary statistics {-}
 
 So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the `ny_trees` dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
 
@@ -1022,7 +1039,7 @@ ggplot() +
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
 
-## exercises
+## exercises {-}
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
@@ -1128,7 +1145,7 @@ ggplot(pt_by_year_summ,
   coord_flip()
 ```
 
-7. You have learned many things in this course so far. `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting periodic trend. Use theme elements and scales to enhance your plot: impress me!
+7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting trend in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. Impress me!
 <!-- end -->
 
 <!-- start clustering -->
@@ -2711,7 +2728,9 @@ For assembly on the BustaLab storage box, navigate to the directory that contain
 
 Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
 
-`sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4`
+```{r, eval = FALSE}
+sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4
+```
 
 Notes on Canu options:
 
