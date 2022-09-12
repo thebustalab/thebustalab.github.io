@@ -949,7 +949,15 @@ ny_trees %>%
   summarize(mean_height = mean(tree_height))
 ```
 
-Bam. Mean height of each tree species. `summarize()` is more powerful though, we can do many summary statistics at once:
+Bam. Mean height of each tree species. We can also count the number of observations using `n()`:
+
+```{r}
+ny_trees %>%
+  group_by(spc_latin) %>%
+  summarize(number_of_individuals = n())
+```
+
+Cool! `summarize()` is more powerful though, we can do many summary statistics at once:
 
 ```{r}
 ny_trees %>%
