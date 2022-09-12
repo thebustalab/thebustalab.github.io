@@ -340,8 +340,28 @@
 <span class="co">## 10 QUERCUS RUBRA                111. </span>
 <span class="co">## 11 TILIA CORDATA                 98.8</span>
 <span class="co">## 12 ZELKOVA SERRATA              101.</span></code></pre></div>
-<p>Bam. Mean height of each tree species. <code>summarize()</code> is more powerful though, we can do many summary statistics at once:</p>
+<p>Bam. Mean height of each tree species. We can also count the number of observations using <code>n()</code>:</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ny_trees</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>number_of_individuals <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="co">## # A tibble: 12 × 2</span>
+<span class="co">##    spc_latin              number_of_individuals</span>
+<span class="co">##    &lt;chr&gt;                                  &lt;int&gt;</span>
+<span class="co">##  1 ACER PLATANOIDES                       67260</span>
+<span class="co">##  2 ACER RUBRUM                            11506</span>
+<span class="co">##  3 ACER SACCHARINUM                       13161</span>
+<span class="co">##  4 FRAXINUS PENNSYLVANICA                 16987</span>
+<span class="co">##  5 GINKGO BILOBA                          15672</span>
+<span class="co">##  6 GLEDITSIA TRIACANTHOS                  48707</span>
+<span class="co">##  7 PLATANUS ACERIFOLIA                    80075</span>
+<span class="co">##  8 PYRUS CALLERYANA                       39125</span>
+<span class="co">##  9 QUERCUS PALUSTRIS                      37058</span>
+<span class="co">## 10 QUERCUS RUBRA                          10020</span>
+<span class="co">## 11 TILIA CORDATA                          25970</span>
+<span class="co">## 12 ZELKOVA SERRATA                        13221</span></code></pre></div>
+<p>Cool! <code>summarize()</code> is more powerful though, we can do many summary statistics at once:</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ny_trees</span> <span class="op">%&gt;%</span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>
@@ -365,7 +385,7 @@
 <span class="co">## 11 TILIA CORDATA                 98.8        32.6 </span>
 <span class="co">## 12 ZELKOVA SERRATA              101.         10.7</span></code></pre></div>
 <p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code> if you want them to vary along x). Also, note that in the aesthetic mappings for <code>xmin</code> and <code>xmax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ny_trees_by_spc_summ</span> <span class="op">%&gt;%</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_pointrange</span><span class="op">(</span>
@@ -376,9 +396,9 @@
         xmax <span class="op">=</span> <span class="va">mean_height</span> <span class="op">+</span> <span class="va">stdev_height</span>
       <span class="op">)</span>
     <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ny_trees</span> <span class="op">%&gt;%</span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span>, <span class="va">boroname</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>
@@ -402,7 +422,7 @@
 <span class="co">## 10 ACER SACCHARINUM Brooklyn      22.2       10.1 </span>
 <span class="co">## # … with 38 more rows</span></code></pre></div>
 <p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_pointrange</span><span class="op">(</span>
@@ -417,9 +437,9 @@
   <span class="fu">theme</span><span class="op">(</span>
     strip.text.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-85-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! And if we really want to go for something pretty:</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_pointrange</span><span class="op">(</span>
@@ -444,7 +464,7 @@
     strip.text.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
     plot.caption <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-85-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-86-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 </div>
 <div id="exercises" class="section level2 unnumbered">
@@ -509,7 +529,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-11.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-12.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
