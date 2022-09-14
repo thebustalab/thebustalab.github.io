@@ -1,7 +1,9 @@
 fig:unnamed-chunk-70
 part-data-analysis-in-r
-theory
+mutate
 further-reading-1
+theory
+further-reading-2
 exercises-1
 pca-1
 ordination-plots
@@ -28,7 +30,7 @@ more-than-two-means
 anova-tukey-tests
 kruskal-dunn-tests
 pairs-of-means
-further-reading-2
+further-reading-3
 exercises-5
 loading-analyzegcmsdata-basic
 loading-analyzegcmsdata-advanced
@@ -74,11 +76,11 @@ structure-1
 suggestions-1
 abstract
 title
-further-reading-3
+further-reading-4
 geoms
 colors
 filtering
-ordering
+ordering-1
 column-manipulation
 matrix-analyses
 basic-runmatrixanalysis-template

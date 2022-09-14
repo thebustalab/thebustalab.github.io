@@ -72,7 +72,7 @@ Features provided by the source script:
 
 --Useful data--
 
-* More than 12 chemical datasets for running practice analyses.
+* More than 12 chemical data sets for running practice analyses.
 * A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick).
 * A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv).
 
@@ -899,8 +899,6 @@ Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
 
 ## the pipe (%>%) {-}
 
-https://tidydatatutor.com/vis.html
-
 We have seen how to create new objects using `<-`, and we have been filtering and plotting data using, for example:
 
 ```{r}
@@ -1048,12 +1046,50 @@ ggplot() +
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
+## ordering {-}
+
+We can also sort or order a data frame based on a specific column with the command `arrange()`. Let's have a quick look. Suppose we wanted to know which lake was the coldest:
+
+```{r}
+arrange(alaska_lake_data, water_temp)
+```
+
+Or suppose we wanted to know which was the warmest?
+
+```{r}
+arrange(alaska_lake_data, desc(water_temp))
+```
+
+`arrange()` will work on grouped data, which is particularly useful in combination with `slice()`, which can show us the first n elements in each group:
+
+```{r}
+alaska_lake_data %>%
+  group_by(park) %>%
+  arrange(water_temp) %>%
+  dplyr::slice(1)
+```
+
+It looks like the coldest lakes in the three parks are Devil Mountain Lake, Wild Lake, and Desperation Lake!
+
+## mutate
+
+One last thing before our exercises... there is another command called `mutate()`. It is like summarize it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn't make the data set smaller, in fact it makes it bigger, by creating a new row for the new variables defined inside `mutate()`. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park's total dissolved sulfur does each lake have?
+
+```{r}
+alaska_lake_data %>%
+  filter(element == "S") %>%
+  group_by(park) %>%
+  select(lake, park, element, mg_per_L) %>%
+  mutate(percent_S = mg_per_L/sum(mg_per_L)*100)
+```
+
+The percent columns for each park add to 100%, so, for example, Devil Mountain Lake has 32.3% of BELA's dissolved sulfur.
 
 ## exercises {-}
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
-In this set of exercises we are going to use the periodic table. After you run source() you can load that dataset using `periodic_table`. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
+In this set of exercises we are going to use the periodic table. After you run source() you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
 
 Some pointers:
 
@@ -1156,7 +1192,10 @@ ggplot(pt_by_year_summ,
 ```
 
 7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()` and `summarize()`. Using **all** these commands, create a graphic to illustrate what you consider to be an interesting trend in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. Impress me!
-<!-- end -->
+
+## further reading
+
+Be sure to check out the Tidy Data Tutor: https://tidydatatutor.com/vis.html. An easy way to visualize what's going on during data wrangling!
 
 <!-- start clustering -->
 # clustering {-}

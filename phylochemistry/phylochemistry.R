@@ -129,6 +129,7 @@
         summarize <- dplyr::summarize
         filter <- dplyr::filter
         select <- dplyr::select
+        slice <- dplyr::slice
 
     ## Set up options
 
