@@ -263,7 +263,7 @@
                     center_row <- grep(centroid, polylist[,center_column])
 
                 # Use centroid to extract vertical_monolist
-                    vertical_monolist <- polylist[(center_row+1):dim(polylist)[1], 1:(center_column-1)]
+                    vertical_monolist <- as.data.frame(polylist[(center_row+1):dim(polylist)[1], 1:(center_column-1)])
                     colnames(vertical_monolist) <- as.character(unlist(polylist[center_row, 1:(center_column-1)]))
                     vertical_monolist$URI_URI_URI <- apply(vertical_monolist, 1, function(x) paste(x, collapse = ""))
 
@@ -286,6 +286,13 @@
                     #     print("Adding Genus_species column")
                     #     polylist$Genus_species <- paste(polylist$Genus, polylist$species, sep="_")
                     # }
+
+                # Convert to numeric
+                    for ( i in 1:dim(polylist)[2] ) {
+                        if ( numbersOnly(polylist[,i]) ) {
+                            polylist[,i] <- as.numeric(polylist[,i])
+                        }
+                    }
 
                 # Reset row numbers, return the polylist
                     rownames(polylist) <- NULL
@@ -1429,6 +1436,10 @@
                     return(out)
                 }
             }
+
+        #### numbersOnly
+
+            numbersOnly <- function(x) { all(suppressWarnings(!is.na(as.numeric(as.character(x))))) }
 
     ##### Sequence data handling
 
