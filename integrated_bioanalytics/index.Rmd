@@ -1066,7 +1066,7 @@ arrange(alaska_lake_data, desc(water_temp))
 alaska_lake_data %>%
   group_by(park) %>%
   arrange(water_temp) %>%
-  dplyr::slice(1)
+  slice(1)
 ```
 
 It looks like the coldest lakes in the three parks are Devil Mountain Lake, Wild Lake, and Desperation Lake!

@@ -1352,7 +1352,7 @@ arrange(alaska_lake_data, desc(water_temp))
 alaska_lake_data %>%
   group_by(park) %>%
   arrange(water_temp) %>%
-  dplyr::slice(1)
+  slice(1)
 ## # A tibble: 3 × 7
 ## # Groups:   park [3]
 ##   lake  park  water_temp    pH element mg_per_L element_type
