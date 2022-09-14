@@ -1,46 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <title>comparing means | Integrated Bioanalytics</title>
-
-    <meta name="author" content="Lucas Busta and members of the Busta lab" />
-  
-   <meta name="description" content="comparing means | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses." />
-   <meta name="generator" content="placeholder" />
-  <meta property="og:title" content="comparing means | Integrated Bioanalytics" />
-  <meta property="og:type" content="book" />
-  
-  
-  <meta property="og:description" content="comparing means | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses." />
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="comparing means | Integrated Bioanalytics" />
-  
-  <meta name="twitter:description" content="comparing means | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses." />
-  
-  <!-- JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script>
-  <script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script>
-    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet" />
-    <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script>
-    <link href="libs/_Lato-0.4.1/font.css" rel="stylesheet" />
-    <link href="libs/_Roboto Mono-0.4.1/font.css" rel="stylesheet" />
-    <link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet" />
-    <script src="libs/bs3compat-0.3.1.9000/transition.js"></script>
-    <script src="libs/bs3compat-0.3.1.9000/tabs.js"></script>
-    <script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script>
-    <link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet" />
-    <script src="libs/bs4_book-1.0.0/bs4_book.js"></script>
-    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-
-    <script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>comparing means | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
+<meta name="generator" content="bookdown 0.25 with bs4_book()">
+<meta property="og:title" content="comparing means | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="comparing means | Integrated Bioanalytics">
+<meta name="twitter:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -49,21 +31,13 @@
       ga('create', 'UA-99618359-1', 'auto');
       ga('send', 'pageview');
 
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script>
-
-  <!-- CSS -->
-    <link rel="stylesheet" href="style/style.css" />
-  
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
 </head>
-
 <body data-spy="scroll" data-target="#toc">
 
 <div class="container-fluid">
 <div class="row">
-  <header class="col-sm-12 col-lg-3 sidebar sidebar-book">
-    <a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
 
     <div class="d-flex align-items-start justify-content-between">
       <h2>
@@ -75,23 +49,65 @@
     <div id="main-nav" class="collapse-lg">
       <form role="search">
         <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
-      </form>
+</form>
 
-      <nav aria-label="Table of contents">
-        <h2>Table of contents</h2>
-        <div id="book-toc"></div>
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA ANALYSIS IN R</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="data-visualization.html">data visualization</a></li>
+<li><a class="" href="data-wrangling.html">data wrangling</a></li>
+<li><a class="" href="clustering.html">clustering</a></li>
+<li><a class="" href="pca.html">pca</a></li>
+<li><a class="" href="k-means.html">k-means</a></li>
+<li><a class="" href="models.html">models</a></li>
+<li><a class="active" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
+<li class="book-part">DNA AND RNA SEQUENCE DATA</li>
+<li><a class="" href="data-acquisition.html">data acquisition</a></li>
+<li><a class="" href="data-transfer.html">data transfer</a></li>
+<li><a class="" href="sequence-assessment.html">sequence assessment</a></li>
+<li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
+<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
+<li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
+<li class="book-part">GENOMIC ANALYSIS</li>
+<li><a class="" href="setup.html">setup</a></li>
+<li><a class="" href="genome-assembly.html">genome assembly</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">EVOLUTIONARY ANALYSIS</li>
+<li><a class="" href="blast-searches.html">blast searches</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li class="book-part">SCIENTIFIC WRITING</li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="a-mini-manuscript.html">a mini manuscript</a></li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html">results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li><a class="" href="proposals.html">proposals</a></li>
+<li class="book-part">IMAGE ANALYSIS</li>
+<li><a class="" href="image-color-analysis.html">image color analysis</a></li>
+<li><a class="" href="images-of-mass-spectra.html">images of mass spectra</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
 
         <div class="book-extra">
-          <p><a id="book-repo" href="#">View book source <i class="fab fa-github"></i></a></li></p>
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
         </div>
       </nav>
-    </div>
-  </header>
-
-  <main class="col-sm-12 col-md-9 col-lg-7" id="content">
-<div id="comparing-means" class="section level1 unnumbered">
-<h1>comparing means</h1>
-<p><img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="comparing-means" class="section level1 unnumbered">
+<h1>comparing means<a class="anchor" aria-label="anchor" href="#comparing-means"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;"></div>
 <p>shapiroTest
 leveneTest
 tTest
@@ -103,49 +119,51 @@ dunnTest</p>
 <p><strong>“Are these two things the same?”</strong></p>
 <p>Often, we want to know if our study subjects contain different amounts of certain analytes. For example, “Does this lake over here contain more potassium than that lake over there?” For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.</p>
 <p>I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose that you are an analytical chemist on Hawaii that is studying the chemistry of the island’s aquifers. you have the data set <code>hawaii_aquifers</code>. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="comparing-means.html#cb91-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers</span>
-<span id="cb91-2"><a href="comparing-means.html#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 990 × 6</span></span>
-<span id="cb91-3"><a href="comparing-means.html#cb91-3" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code well_name         longitude latitude analyte</span></span>
-<span id="cb91-4"><a href="comparing-means.html#cb91-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span></span>
-<span id="cb91-5"><a href="comparing-means.html#cb91-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    Alewa_Heights_Sp…        NA       NA SiO2   </span></span>
-<span id="cb91-6"><a href="comparing-means.html#cb91-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_1    Alewa_Heights_Sp…        NA       NA Cl     </span></span>
-<span id="cb91-7"><a href="comparing-means.html#cb91-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_1    Alewa_Heights_Sp…        NA       NA Mg     </span></span>
-<span id="cb91-8"><a href="comparing-means.html#cb91-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_1    Alewa_Heights_Sp…        NA       NA Na     </span></span>
-<span id="cb91-9"><a href="comparing-means.html#cb91-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_1    Alewa_Heights_Sp…        NA       NA K      </span></span>
-<span id="cb91-10"><a href="comparing-means.html#cb91-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_1    Alewa_Heights_Sp…        NA       NA SO4    </span></span>
-<span id="cb91-11"><a href="comparing-means.html#cb91-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_1    Alewa_Heights_Sp…        NA       NA HCO3   </span></span>
-<span id="cb91-12"><a href="comparing-means.html#cb91-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_1    Alewa_Heights_Sp…        NA       NA dissol…</span></span>
-<span id="cb91-13"><a href="comparing-means.html#cb91-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_1    Alewa_Heights_Sp…        NA       NA Ca     </span></span>
-<span id="cb91-14"><a href="comparing-means.html#cb91-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_1    Beretania_High_S…        NA       NA SiO2   </span></span>
-<span id="cb91-15"><a href="comparing-means.html#cb91-15" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 980 more rows, and 1 more variable:</span></span>
-<span id="cb91-16"><a href="comparing-means.html#cb91-16" aria-hidden="true" tabindex="-1"></a><span class="do">## #   abundance &lt;dbl&gt;</span></span>
-<span id="cb91-17"><a href="comparing-means.html#cb91-17" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(hawaii_aquifers<span class="sc">$</span>aquifer_code)</span>
-<span id="cb91-18"><a href="comparing-means.html#cb91-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] &quot;aquifer_1&quot;  &quot;aquifer_2&quot;  &quot;aquifer_3&quot;  &quot;aquifer_4&quot; </span></span>
-<span id="cb91-19"><a href="comparing-means.html#cb91-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  [5] &quot;aquifer_5&quot;  &quot;aquifer_6&quot;  &quot;aquifer_7&quot;  &quot;aquifer_8&quot; </span></span>
-<span id="cb91-20"><a href="comparing-means.html#cb91-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  [9] &quot;aquifer_9&quot;  &quot;aquifer_10&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hawaii_aquifers</span>
+<span class="co">## # A tibble: 990 × 6</span>
+<span class="co">##    aquifer_code well_name         longitude latitude analyte</span>
+<span class="co">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span>
+<span class="co">##  1 aquifer_1    Alewa_Heights_Sp…        NA       NA SiO2   </span>
+<span class="co">##  2 aquifer_1    Alewa_Heights_Sp…        NA       NA Cl     </span>
+<span class="co">##  3 aquifer_1    Alewa_Heights_Sp…        NA       NA Mg     </span>
+<span class="co">##  4 aquifer_1    Alewa_Heights_Sp…        NA       NA Na     </span>
+<span class="co">##  5 aquifer_1    Alewa_Heights_Sp…        NA       NA K      </span>
+<span class="co">##  6 aquifer_1    Alewa_Heights_Sp…        NA       NA SO4    </span>
+<span class="co">##  7 aquifer_1    Alewa_Heights_Sp…        NA       NA HCO3   </span>
+<span class="co">##  8 aquifer_1    Alewa_Heights_Sp…        NA       NA dissol…</span>
+<span class="co">##  9 aquifer_1    Alewa_Heights_Sp…        NA       NA Ca     </span>
+<span class="co">## 10 aquifer_1    Beretania_High_S…        NA       NA SiO2   </span>
+<span class="co">## # … with 980 more rows, and 1 more variable:</span>
+<span class="co">## #   abundance &lt;dbl&gt;</span>
+<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">hawaii_aquifers</span><span class="op">$</span><span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">##  [1] "aquifer_1"  "aquifer_2"  "aquifer_3"  "aquifer_4" </span>
+<span class="co">##  [5] "aquifer_5"  "aquifer_6"  "aquifer_7"  "aquifer_8" </span>
+<span class="co">##  [9] "aquifer_9"  "aquifer_10"</span></code></pre></div>
 <p>Importantly, there are many wells that draw on each aquifer, as shown in the graph below.</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="comparing-means.html#cb92-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb92-2"><a href="comparing-means.html#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(aquifer_code, well_name) <span class="sc">%&gt;%</span></span>
-<span id="cb92-3"><a href="comparing-means.html#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb92-4"><a href="comparing-means.html#cb92-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n_wells =</span> <span class="fu">length</span>(<span class="fu">unique</span>(well_name))) <span class="ot">-&gt;</span> aquifers_summarized</span>
-<span id="cb92-5"><a href="comparing-means.html#cb92-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-6"><a href="comparing-means.html#cb92-6" aria-hidden="true" tabindex="-1"></a>aquifers_summarized</span>
-<span id="cb92-7"><a href="comparing-means.html#cb92-7" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 10 × 2</span></span>
-<span id="cb92-8"><a href="comparing-means.html#cb92-8" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code n_wells</span></span>
-<span id="cb92-9"><a href="comparing-means.html#cb92-9" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;          &lt;int&gt;</span></span>
-<span id="cb92-10"><a href="comparing-means.html#cb92-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1         12</span></span>
-<span id="cb92-11"><a href="comparing-means.html#cb92-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10         7</span></span>
-<span id="cb92-12"><a href="comparing-means.html#cb92-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2          5</span></span>
-<span id="cb92-13"><a href="comparing-means.html#cb92-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3          3</span></span>
-<span id="cb92-14"><a href="comparing-means.html#cb92-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4         16</span></span>
-<span id="cb92-15"><a href="comparing-means.html#cb92-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5          4</span></span>
-<span id="cb92-16"><a href="comparing-means.html#cb92-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6         12</span></span>
-<span id="cb92-17"><a href="comparing-means.html#cb92-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7          9</span></span>
-<span id="cb92-18"><a href="comparing-means.html#cb92-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8          3</span></span>
-<span id="cb92-19"><a href="comparing-means.html#cb92-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9         30</span></span>
-<span id="cb92-20"><a href="comparing-means.html#cb92-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-21"><a href="comparing-means.html#cb92-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(aquifers_summarized) <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> n_wells, <span class="at">y =</span> aquifer_code))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">aquifer_code</span>, <span class="va">well_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">summarize</span><span class="op">(</span>n_wells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">well_name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">aquifers_summarized</span>
+
+<span class="va">aquifers_summarized</span>
+<span class="co">## # A tibble: 10 × 2</span>
+<span class="co">##    aquifer_code n_wells</span>
+<span class="co">##    &lt;chr&gt;          &lt;int&gt;</span>
+<span class="co">##  1 aquifer_1         12</span>
+<span class="co">##  2 aquifer_10         7</span>
+<span class="co">##  3 aquifer_2          5</span>
+<span class="co">##  4 aquifer_3          3</span>
+<span class="co">##  5 aquifer_4         16</span>
+<span class="co">##  6 aquifer_5          4</span>
+<span class="co">##  7 aquifer_6         12</span>
+<span class="co">##  8 aquifer_7          9</span>
+<span class="co">##  9 aquifer_8          3</span>
+<span class="co">## 10 aquifer_9         30</span>
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">aquifers_summarized</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_col</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_wells</span>, y <span class="op">=</span> <span class="va">aquifer_code</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;"></div>
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
@@ -155,7 +173,9 @@ library(agricolae)
 library(multcompView)
 ``` -->
 <div id="definitions" class="section level2" number="1.14">
-<h2><span class="header-section-number">1.14</span> definitions</h2>
+<h2>
+<span class="header-section-number">1.14</span> definitions<a class="anchor" aria-label="anchor" href="#definitions"><i class="fas fa-link"></i></a>
+</h2>
 <ol style="list-style-type: decimal">
 <li><p><strong>populations and independent measurements</strong>: When we are comparing means, we are comparing two <em>sets</em> of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the “population” (i.e. the aquifer).</p></li>
 <li><p><strong>the null hypothesis</strong>: When we conduct a statistical test, we are testing the null hypothesis. The null (think “default”) hypothesis is that there is no difference bewteen the means (hence the name “null”). In the example of our aquifers, let’s say that we’re interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.</p></li>
@@ -164,396 +184,436 @@ library(multcompView)
 <p>Please note that the the <em>p</em> value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.</p>
 </div>
 <div id="test-selection" class="section level2" number="1.15">
-<h2><span class="header-section-number">1.15</span> test selection</h2>
+<h2>
+<span class="header-section-number">1.15</span> test selection<a class="anchor" aria-label="anchor" href="#test-selection"><i class="fas fa-link"></i></a>
+</h2>
 <p>There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):</p>
-<p><img src="https://thebustalab.github.io/integrated_bioanalytics/images/stats.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/stats.png" width="100%" style="display: block; margin: auto;"></div>
 <p>When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful “parametric” tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful “non-parametric” tests.</p>
 <p>We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let’s use the <code>hawaii_aquifers</code> data as an example, and let’s consider only the element potassium:</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="comparing-means.html#cb93-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="ot">&lt;-</span> hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb93-2"><a href="comparing-means.html#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">==</span> <span class="st">&quot;K&quot;</span>)</span>
-<span id="cb93-3"><a href="comparing-means.html#cb93-3" aria-hidden="true" tabindex="-1"></a>  K_data</span>
-<span id="cb93-4"><a href="comparing-means.html#cb93-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 110 × 6</span></span>
-<span id="cb93-5"><a href="comparing-means.html#cb93-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code well_name         longitude latitude analyte</span></span>
-<span id="cb93-6"><a href="comparing-means.html#cb93-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span></span>
-<span id="cb93-7"><a href="comparing-means.html#cb93-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      </span></span>
-<span id="cb93-8"><a href="comparing-means.html#cb93-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_1    Beretania_High_S…       NA      NA   K      </span></span>
-<span id="cb93-9"><a href="comparing-means.html#cb93-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_1    Beretania_Low_Se…       NA      NA   K      </span></span>
-<span id="cb93-10"><a href="comparing-means.html#cb93-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_1    Kuliouou_Well         -158.     21.3 K      </span></span>
-<span id="cb93-11"><a href="comparing-means.html#cb93-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_1    Manoa_Well_II         -158.     21.3 K      </span></span>
-<span id="cb93-12"><a href="comparing-means.html#cb93-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb93-13"><a href="comparing-means.html#cb93-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb93-14"><a href="comparing-means.html#cb93-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb93-15"><a href="comparing-means.html#cb93-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      </span></span>
-<span id="cb93-16"><a href="comparing-means.html#cb93-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      </span></span>
-<span id="cb93-17"><a href="comparing-means.html#cb93-17" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 100 more rows, and 1 more variable:</span></span>
-<span id="cb93-18"><a href="comparing-means.html#cb93-18" aria-hidden="true" tabindex="-1"></a><span class="do">## #   abundance &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span>
+  <span class="va">K_data</span>
+<span class="co">## # A tibble: 110 × 6</span>
+<span class="co">##    aquifer_code well_name         longitude latitude analyte</span>
+<span class="co">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span>
+<span class="co">##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      </span>
+<span class="co">##  2 aquifer_1    Beretania_High_S…       NA      NA   K      </span>
+<span class="co">##  3 aquifer_1    Beretania_Low_Se…       NA      NA   K      </span>
+<span class="co">##  4 aquifer_1    Kuliouou_Well         -158.     21.3 K      </span>
+<span class="co">##  5 aquifer_1    Manoa_Well_II         -158.     21.3 K      </span>
+<span class="co">##  6 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  7 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      </span>
+<span class="co">## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      </span>
+<span class="co">## # … with 100 more rows, and 1 more variable:</span>
+<span class="co">## #   abundance &lt;dbl&gt;</span></code></pre></div>
 <p>To work with two means, let’s just look at aquifers 1 and 6:</p>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="comparing-means.html#cb94-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="ot">&lt;-</span> K_data <span class="sc">%&gt;%</span></span>
-<span id="cb94-2"><a href="comparing-means.html#cb94-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(aquifer_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;aquifer_1&quot;</span>, <span class="st">&quot;aquifer_6&quot;</span>))</span>
-<span id="cb94-3"><a href="comparing-means.html#cb94-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb94-4"><a href="comparing-means.html#cb94-4" aria-hidden="true" tabindex="-1"></a>K_data_1_2</span>
-<span id="cb94-5"><a href="comparing-means.html#cb94-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 24 × 6</span></span>
-<span id="cb94-6"><a href="comparing-means.html#cb94-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code well_name         longitude latitude analyte</span></span>
-<span id="cb94-7"><a href="comparing-means.html#cb94-7" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span></span>
-<span id="cb94-8"><a href="comparing-means.html#cb94-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      </span></span>
-<span id="cb94-9"><a href="comparing-means.html#cb94-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_1    Beretania_High_S…       NA      NA   K      </span></span>
-<span id="cb94-10"><a href="comparing-means.html#cb94-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_1    Beretania_Low_Se…       NA      NA   K      </span></span>
-<span id="cb94-11"><a href="comparing-means.html#cb94-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_1    Kuliouou_Well         -158.     21.3 K      </span></span>
-<span id="cb94-12"><a href="comparing-means.html#cb94-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_1    Manoa_Well_II         -158.     21.3 K      </span></span>
-<span id="cb94-13"><a href="comparing-means.html#cb94-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb94-14"><a href="comparing-means.html#cb94-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb94-15"><a href="comparing-means.html#cb94-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb94-16"><a href="comparing-means.html#cb94-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      </span></span>
-<span id="cb94-17"><a href="comparing-means.html#cb94-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      </span></span>
-<span id="cb94-18"><a href="comparing-means.html#cb94-18" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 14 more rows, and 1 more variable: abundance &lt;dbl&gt;</span></span>
-<span id="cb94-19"><a href="comparing-means.html#cb94-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb94-20"><a href="comparing-means.html#cb94-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(K_data_1_2, <span class="fu">aes</span>(<span class="at">x =</span> aquifer_code, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb94-21"><a href="comparing-means.html#cb94-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb94-22"><a href="comparing-means.html#cb94-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">aquifer_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"aquifer_1"</span>, <span class="st">"aquifer_6"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">K_data_1_2</span>
+<span class="co">## # A tibble: 24 × 6</span>
+<span class="co">##    aquifer_code well_name         longitude latitude analyte</span>
+<span class="co">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span>
+<span class="co">##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      </span>
+<span class="co">##  2 aquifer_1    Beretania_High_S…       NA      NA   K      </span>
+<span class="co">##  3 aquifer_1    Beretania_Low_Se…       NA      NA   K      </span>
+<span class="co">##  4 aquifer_1    Kuliouou_Well         -158.     21.3 K      </span>
+<span class="co">##  5 aquifer_1    Manoa_Well_II         -158.     21.3 K      </span>
+<span class="co">##  6 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  7 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      </span>
+<span class="co">## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      </span>
+<span class="co">## # … with 14 more rows, and 1 more variable: abundance &lt;dbl&gt;</span>
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">K_data_1_2</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">aquifer_code</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Are these data normally distributed? Do they have similar variance? Let’s get a first approximation by looking at a plot:</p>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="comparing-means.html#cb95-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="sc">%&gt;%</span></span>
-<span id="cb95-2"><a href="comparing-means.html#cb95-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> abundance)) <span class="sc">+</span> </span>
-<span id="cb95-3"><a href="comparing-means.html#cb95-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
-<span id="cb95-4"><a href="comparing-means.html#cb95-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>aquifer_code) <span class="sc">+</span></span>
-<span id="cb95-5"><a href="comparing-means.html#cb95-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..<span class="sc">*</span><span class="dv">10</span>), <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_histogram</span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_density</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="comparing-means.html#cb96-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="sc">%&gt;%</span></span>
-<span id="cb96-2"><a href="comparing-means.html#cb96-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span> </span>
-<span id="cb96-3"><a href="comparing-means.html#cb96-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shapiro_test</span>(abundance)</span>
-<span id="cb96-4"><a href="comparing-means.html#cb96-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 4</span></span>
-<span id="cb96-5"><a href="comparing-means.html#cb96-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   aquifer_code variable  statistic     p</span></span>
-<span id="cb96-6"><a href="comparing-means.html#cb96-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb96-7"><a href="comparing-means.html#cb96-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 aquifer_1    abundance     0.885 0.102</span></span>
-<span id="cb96-8"><a href="comparing-means.html#cb96-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 aquifer_6    abundance     0.914 0.239</span></span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">shapiro_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
+<span class="co">## # A tibble: 2 × 4</span>
+<span class="co">##   aquifer_code variable  statistic     p</span>
+<span class="co">##   &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">## 1 aquifer_1    abundance     0.885 0.102</span>
+<span class="co">## 2 aquifer_6    abundance     0.914 0.239</span></code></pre></div>
 <p>Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the variances about the two means? Are they similar? For this we need a Levene test. With that test, we are not looking within each group, but rather across groups - this means we do NOT need to <code>group_by(aquifer_code)</code> and should specify a <code>y ~ x</code> formula instead:</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="comparing-means.html#cb97-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="sc">%&gt;%</span></span>
-<span id="cb97-2"><a href="comparing-means.html#cb97-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">levene_test</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb97-3"><a href="comparing-means.html#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 4</span></span>
-<span id="cb97-4"><a href="comparing-means.html#cb97-4" aria-hidden="true" tabindex="-1"></a><span class="do">##     df1   df2 statistic     p</span></span>
-<span id="cb97-5"><a href="comparing-means.html#cb97-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb97-6"><a href="comparing-means.html#cb97-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1     1    22     0.289 0.596</span></span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">levene_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## # A tibble: 1 × 4</span>
+<span class="co">##     df1   df2 statistic     p</span>
+<span class="co">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">## 1     1    22     0.289 0.596</span></code></pre></div>
 <p>The p-value from this test is 0.596! This means that their variances are not significantly different.</p>
 </div>
 <div id="two-means" class="section level2" number="1.16">
-<h2><span class="header-section-number">1.16</span> two means</h2>
+<h2>
+<span class="header-section-number">1.16</span> two means<a class="anchor" aria-label="anchor" href="#two-means"><i class="fas fa-link"></i></a>
+</h2>
 <p>Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let’s try it out:</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="comparing-means.html#cb98-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="sc">%&gt;%</span></span>
-<span id="cb98-2"><a href="comparing-means.html#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t_test</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb98-3"><a href="comparing-means.html#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 8</span></span>
-<span id="cb98-4"><a href="comparing-means.html#cb98-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   .y.       group1 group2    n1    n2 statistic    df      p</span></span>
-<span id="cb98-5"><a href="comparing-means.html#cb98-5" aria-hidden="true" tabindex="-1"></a><span class="do">## * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span id="cb98-6"><a href="comparing-means.html#cb98-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 abundance aquif… aquif…    12    12     -2.75  20.5 0.0121</span></span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">t_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## # A tibble: 1 × 8</span>
+<span class="co">##   .y.       group1 group2    n1    n2 statistic    df      p</span>
+<span class="co">## * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
+<span class="co">## 1 abundance aquif… aquif…    12    12     -2.75  20.5 0.0121</span></code></pre></div>
 <p>A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that the two means are different. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let’s try that one out and compare the p-values from the two methods:</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="comparing-means.html#cb99-1" aria-hidden="true" tabindex="-1"></a>K_data_1_2 <span class="sc">%&gt;%</span></span>
-<span id="cb99-2"><a href="comparing-means.html#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wilcox_test</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb99-3"><a href="comparing-means.html#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 7</span></span>
-<span id="cb99-4"><a href="comparing-means.html#cb99-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   .y.       group1    group2       n1    n2 statistic      p</span></span>
-<span id="cb99-5"><a href="comparing-means.html#cb99-5" aria-hidden="true" tabindex="-1"></a><span class="do">## * &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span id="cb99-6"><a href="comparing-means.html#cb99-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0282</span></span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">wilcox_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## # A tibble: 1 × 7</span>
+<span class="co">##   .y.       group1    group2       n1    n2 statistic      p</span>
+<span class="co">## * &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt;</span>
+<span class="co">## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0282</span></code></pre></div>
 <p>A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.</p>
 </div>
 <div id="more-than-two-means" class="section level2" number="1.17">
-<h2><span class="header-section-number">1.17</span> more than two means</h2>
+<h2>
+<span class="header-section-number">1.17</span> more than two means<a class="anchor" aria-label="anchor" href="#more-than-two-means"><i class="fas fa-link"></i></a>
+</h2>
 <p>In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let’s consider our hawaii aquifer data again, though this time let’s use all the aquifers, not just two:</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="comparing-means.html#cb100-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="ot">&lt;-</span> hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb100-2"><a href="comparing-means.html#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">==</span> <span class="st">&quot;K&quot;</span>)</span>
-<span id="cb100-3"><a href="comparing-means.html#cb100-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb100-4"><a href="comparing-means.html#cb100-4" aria-hidden="true" tabindex="-1"></a>K_data</span>
-<span id="cb100-5"><a href="comparing-means.html#cb100-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 110 × 6</span></span>
-<span id="cb100-6"><a href="comparing-means.html#cb100-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code well_name         longitude latitude analyte</span></span>
-<span id="cb100-7"><a href="comparing-means.html#cb100-7" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span></span>
-<span id="cb100-8"><a href="comparing-means.html#cb100-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      </span></span>
-<span id="cb100-9"><a href="comparing-means.html#cb100-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_1    Beretania_High_S…       NA      NA   K      </span></span>
-<span id="cb100-10"><a href="comparing-means.html#cb100-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_1    Beretania_Low_Se…       NA      NA   K      </span></span>
-<span id="cb100-11"><a href="comparing-means.html#cb100-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_1    Kuliouou_Well         -158.     21.3 K      </span></span>
-<span id="cb100-12"><a href="comparing-means.html#cb100-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_1    Manoa_Well_II         -158.     21.3 K      </span></span>
-<span id="cb100-13"><a href="comparing-means.html#cb100-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb100-14"><a href="comparing-means.html#cb100-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb100-15"><a href="comparing-means.html#cb100-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span></span>
-<span id="cb100-16"><a href="comparing-means.html#cb100-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      </span></span>
-<span id="cb100-17"><a href="comparing-means.html#cb100-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      </span></span>
-<span id="cb100-18"><a href="comparing-means.html#cb100-18" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 100 more rows, and 1 more variable:</span></span>
-<span id="cb100-19"><a href="comparing-means.html#cb100-19" aria-hidden="true" tabindex="-1"></a><span class="do">## #   abundance &lt;dbl&gt;</span></span>
-<span id="cb100-20"><a href="comparing-means.html#cb100-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb100-21"><a href="comparing-means.html#cb100-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> K_data, <span class="fu">aes</span>(<span class="at">y =</span> aquifer_code, <span class="at">x =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb100-22"><a href="comparing-means.html#cb100-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb100-23"><a href="comparing-means.html#cb100-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">size =</span> <span class="dv">3</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op">&lt;-</span> <span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span>
+
+<span class="va">K_data</span>
+<span class="co">## # A tibble: 110 × 6</span>
+<span class="co">##    aquifer_code well_name         longitude latitude analyte</span>
+<span class="co">##    &lt;chr&gt;        &lt;chr&gt;                 &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;  </span>
+<span class="co">##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      </span>
+<span class="co">##  2 aquifer_1    Beretania_High_S…       NA      NA   K      </span>
+<span class="co">##  3 aquifer_1    Beretania_Low_Se…       NA      NA   K      </span>
+<span class="co">##  4 aquifer_1    Kuliouou_Well         -158.     21.3 K      </span>
+<span class="co">##  5 aquifer_1    Manoa_Well_II         -158.     21.3 K      </span>
+<span class="co">##  6 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  7 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      </span>
+<span class="co">##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      </span>
+<span class="co">## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      </span>
+<span class="co">## # … with 100 more rows, and 1 more variable:</span>
+<span class="co">## #   abundance &lt;dbl&gt;</span>
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Let’s check visually to see if each group is normally distributed and to see if they have roughly equal variance:</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="comparing-means.html#cb101-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
-<span id="cb101-2"><a href="comparing-means.html#cb101-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb101-3"><a href="comparing-means.html#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> abundance)) <span class="sc">+</span> </span>
-<span id="cb101-4"><a href="comparing-means.html#cb101-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
-<span id="cb101-5"><a href="comparing-means.html#cb101-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>aquifer_code) <span class="sc">+</span></span>
-<span id="cb101-6"><a href="comparing-means.html#cb101-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..<span class="sc">*</span><span class="dv">10</span>), <span class="at">colour =</span> <span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu">geom_histogram</span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu">geom_density</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let’s check using the Shapiro and Levene tests. Don’t forget: with the Shaprio test, we are looking within each group and so need to <code>group_by()</code>, with the Levene test, we are looking across groups, and so need to provide a <code>y~x</code> formula:</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="comparing-means.html#cb102-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
-<span id="cb102-2"><a href="comparing-means.html#cb102-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span> </span>
-<span id="cb102-3"><a href="comparing-means.html#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shapiro_test</span>(abundance)</span>
-<span id="cb102-4"><a href="comparing-means.html#cb102-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 10 × 4</span></span>
-<span id="cb102-5"><a href="comparing-means.html#cb102-5" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code variable  statistic          p</span></span>
-<span id="cb102-6"><a href="comparing-means.html#cb102-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span id="cb102-7"><a href="comparing-means.html#cb102-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    abundance     0.885 0.102     </span></span>
-<span id="cb102-8"><a href="comparing-means.html#cb102-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10   abundance     0.864 0.163     </span></span>
-<span id="cb102-9"><a href="comparing-means.html#cb102-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2    abundance     0.913 0.459     </span></span>
-<span id="cb102-10"><a href="comparing-means.html#cb102-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3    abundance     0.893 0.363     </span></span>
-<span id="cb102-11"><a href="comparing-means.html#cb102-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4    abundance     0.948 0.421     </span></span>
-<span id="cb102-12"><a href="comparing-means.html#cb102-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5    abundance     0.902 0.421     </span></span>
-<span id="cb102-13"><a href="comparing-means.html#cb102-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6    abundance     0.914 0.239     </span></span>
-<span id="cb102-14"><a href="comparing-means.html#cb102-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7    abundance     0.915 0.355     </span></span>
-<span id="cb102-15"><a href="comparing-means.html#cb102-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8    abundance     0.842 0.220     </span></span>
-<span id="cb102-16"><a href="comparing-means.html#cb102-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9    abundance     0.786 0.00000866</span></span></code></pre></div>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="comparing-means.html#cb103-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
-<span id="cb103-2"><a href="comparing-means.html#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">levene_test</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb103-3"><a href="comparing-means.html#cb103-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 4</span></span>
-<span id="cb103-4"><a href="comparing-means.html#cb103-4" aria-hidden="true" tabindex="-1"></a><span class="do">##     df1   df2 statistic       p</span></span>
-<span id="cb103-5"><a href="comparing-means.html#cb103-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span id="cb103-6"><a href="comparing-means.html#cb103-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1     9   100      3.12 0.00239</span></span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">shapiro_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
+<span class="co">## # A tibble: 10 × 4</span>
+<span class="co">##    aquifer_code variable  statistic          p</span>
+<span class="co">##    &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;</span>
+<span class="co">##  1 aquifer_1    abundance     0.885 0.102     </span>
+<span class="co">##  2 aquifer_10   abundance     0.864 0.163     </span>
+<span class="co">##  3 aquifer_2    abundance     0.913 0.459     </span>
+<span class="co">##  4 aquifer_3    abundance     0.893 0.363     </span>
+<span class="co">##  5 aquifer_4    abundance     0.948 0.421     </span>
+<span class="co">##  6 aquifer_5    abundance     0.902 0.421     </span>
+<span class="co">##  7 aquifer_6    abundance     0.914 0.239     </span>
+<span class="co">##  8 aquifer_7    abundance     0.915 0.355     </span>
+<span class="co">##  9 aquifer_8    abundance     0.842 0.220     </span>
+<span class="co">## 10 aquifer_9    abundance     0.786 0.00000866</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">levene_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## # A tibble: 1 × 4</span>
+<span class="co">##     df1   df2 statistic       p</span>
+<span class="co">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span>
+<span class="co">## 1     9   100      3.12 0.00239</span></code></pre></div>
 <p>Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the variances are certainly different from one another (Levene test p = 0.002).</p>
 <p>Let’s assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.</p>
 <div id="anova-tukey-tests" class="section level3" number="1.17.1">
-<h3><span class="header-section-number">1.17.1</span> ANOVA, Tukey tests</h3>
+<h3>
+<span class="header-section-number">1.17.1</span> ANOVA, Tukey tests<a class="anchor" aria-label="anchor" href="#anova-tukey-tests"><i class="fas fa-link"></i></a>
+</h3>
 <p>We will use the <code>anova_test</code> function from the package <code>rstatix</code>. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="comparing-means.html#cb104-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
-<span id="cb104-2"><a href="comparing-means.html#cb104-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anova_test</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb104-3"><a href="comparing-means.html#cb104-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficient covariances computed by hccm()</span></span>
-<span id="cb104-4"><a href="comparing-means.html#cb104-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ANOVA Table (type II tests)</span></span>
-<span id="cb104-5"><a href="comparing-means.html#cb104-5" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb104-6"><a href="comparing-means.html#cb104-6" aria-hidden="true" tabindex="-1"></a><span class="do">##         Effect DFn DFd      F        p p&lt;.05   ges</span></span>
-<span id="cb104-7"><a href="comparing-means.html#cb104-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 aquifer_code   9 100 10.021 7.72e-11     * 0.474</span></span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">anova_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## Coefficient covariances computed by hccm()</span>
+<span class="co">## ANOVA Table (type II tests)</span>
+<span class="co">## </span>
+<span class="co">##         Effect DFn DFd      F        p p&lt;.05   ges</span>
+<span class="co">## 1 aquifer_code   9 100 10.021 7.72e-11     * 0.474</span></code></pre></div>
 <p>A p-value of 7.7e-11! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey’s Honest Significant Difference test (implemented using <code>tukey_hsd</code>). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="comparing-means.html#cb105-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
-<span id="cb105-2"><a href="comparing-means.html#cb105-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tukey_hsd</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb105-3"><a href="comparing-means.html#cb105-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 45 × 9</span></span>
-<span id="cb105-4"><a href="comparing-means.html#cb105-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    term         group1   group2 null.value estimate conf.low</span></span>
-<span id="cb105-5"><a href="comparing-means.html#cb105-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span id="cb105-6"><a href="comparing-means.html#cb105-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_code aquifer… aquif…          0  0.00357   -2.00 </span></span>
-<span id="cb105-7"><a href="comparing-means.html#cb105-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_code aquifer… aquif…          0  1.44      -0.668</span></span>
-<span id="cb105-8"><a href="comparing-means.html#cb105-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_code aquifer… aquif…          0  0.375     -2.35 </span></span>
-<span id="cb105-9"><a href="comparing-means.html#cb105-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_code aquifer… aquif…          0 -1.15      -2.75 </span></span>
-<span id="cb105-10"><a href="comparing-means.html#cb105-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_code aquifer… aquif…          0 -0.845     -3.09 </span></span>
-<span id="cb105-11"><a href="comparing-means.html#cb105-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_code aquifer… aquif…          0  1.98       0.261</span></span>
-<span id="cb105-12"><a href="comparing-means.html#cb105-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_code aquifer… aquif…          0  2.70       0.837</span></span>
-<span id="cb105-13"><a href="comparing-means.html#cb105-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_code aquifer… aquif…          0 -0.125     -2.85 </span></span>
-<span id="cb105-14"><a href="comparing-means.html#cb105-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_code aquifer… aquif…          0 -0.378     -1.78 </span></span>
-<span id="cb105-15"><a href="comparing-means.html#cb105-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_code aquifer… aquif…          0  1.44      -0.910</span></span>
-<span id="cb105-16"><a href="comparing-means.html#cb105-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 35 more rows, and 3 more variables:</span></span>
-<span id="cb105-17"><a href="comparing-means.html#cb105-17" aria-hidden="true" tabindex="-1"></a><span class="do">## #   conf.high &lt;dbl&gt;, p.adj &lt;dbl&gt;, p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">tukey_hsd</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## # A tibble: 45 × 9</span>
+<span class="co">##    term         group1   group2 null.value estimate conf.low</span>
+<span class="co">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span>
+<span class="co">##  1 aquifer_code aquifer… aquif…          0  0.00357   -2.00 </span>
+<span class="co">##  2 aquifer_code aquifer… aquif…          0  1.44      -0.668</span>
+<span class="co">##  3 aquifer_code aquifer… aquif…          0  0.375     -2.35 </span>
+<span class="co">##  4 aquifer_code aquifer… aquif…          0 -1.15      -2.75 </span>
+<span class="co">##  5 aquifer_code aquifer… aquif…          0 -0.845     -3.09 </span>
+<span class="co">##  6 aquifer_code aquifer… aquif…          0  1.98       0.261</span>
+<span class="co">##  7 aquifer_code aquifer… aquif…          0  2.70       0.837</span>
+<span class="co">##  8 aquifer_code aquifer… aquif…          0 -0.125     -2.85 </span>
+<span class="co">##  9 aquifer_code aquifer… aquif…          0 -0.378     -1.78 </span>
+<span class="co">## 10 aquifer_code aquifer… aquif…          0  1.44      -0.910</span>
+<span class="co">## # … with 35 more rows, and 3 more variables:</span>
+<span class="co">## #   conf.high &lt;dbl&gt;, p.adj &lt;dbl&gt;, p.adj.signif &lt;chr&gt;</span></code></pre></div>
 <p>Using the output from our tukey test, we can determine which means are similar. We can do this using the p_groups function:</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="comparing-means.html#cb106-1" aria-hidden="true" tabindex="-1"></a>groups_based_on_tukey <span class="ot">&lt;-</span> K_data <span class="sc">%&gt;%</span></span>
-<span id="cb106-2"><a href="comparing-means.html#cb106-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tukey_hsd</span>(abundance <span class="sc">~</span> aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb106-3"><a href="comparing-means.html#cb106-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">p_groups</span>()</span>
-<span id="cb106-4"><a href="comparing-means.html#cb106-4" aria-hidden="true" tabindex="-1"></a>groups_based_on_tukey</span>
-<span id="cb106-5"><a href="comparing-means.html#cb106-5" aria-hidden="true" tabindex="-1"></a><span class="do">##             treatment group spaced_group</span></span>
-<span id="cb106-6"><a href="comparing-means.html#cb106-6" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_1   aquifer_1    ab         ab  </span></span>
-<span id="cb106-7"><a href="comparing-means.html#cb106-7" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_10 aquifer_10   abc         abc </span></span>
-<span id="cb106-8"><a href="comparing-means.html#cb106-8" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_2   aquifer_2   acd         a cd</span></span>
-<span id="cb106-9"><a href="comparing-means.html#cb106-9" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_3   aquifer_3  abcd         abcd</span></span>
-<span id="cb106-10"><a href="comparing-means.html#cb106-10" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_4   aquifer_4     b          b  </span></span>
-<span id="cb106-11"><a href="comparing-means.html#cb106-11" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_5   aquifer_5    ab         ab  </span></span>
-<span id="cb106-12"><a href="comparing-means.html#cb106-12" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_6   aquifer_6    cd           cd</span></span>
-<span id="cb106-13"><a href="comparing-means.html#cb106-13" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_7   aquifer_7     d            d</span></span>
-<span id="cb106-14"><a href="comparing-means.html#cb106-14" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_8   aquifer_8   abc         abc </span></span>
-<span id="cb106-15"><a href="comparing-means.html#cb106-15" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_9   aquifer_9    ab         ab</span></span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">groups_based_on_tukey</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">tukey_hsd</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">p_groups</span><span class="op">(</span><span class="op">)</span>
+<span class="va">groups_based_on_tukey</span>
+<span class="co">##             treatment group spaced_group</span>
+<span class="co">## aquifer_1   aquifer_1    ab         ab  </span>
+<span class="co">## aquifer_10 aquifer_10   abc         abc </span>
+<span class="co">## aquifer_2   aquifer_2   acd         a cd</span>
+<span class="co">## aquifer_3   aquifer_3  abcd         abcd</span>
+<span class="co">## aquifer_4   aquifer_4     b          b  </span>
+<span class="co">## aquifer_5   aquifer_5    ab         ab  </span>
+<span class="co">## aquifer_6   aquifer_6    cd           cd</span>
+<span class="co">## aquifer_7   aquifer_7     d            d</span>
+<span class="co">## aquifer_8   aquifer_8   abc         abc </span>
+<span class="co">## aquifer_9   aquifer_9    ab         ab</span></code></pre></div>
 <p>We can use the output from <code>p_groups</code> to annotate our plot:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="comparing-means.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> K_data, <span class="fu">aes</span>(<span class="at">y =</span> aquifer_code, <span class="at">x =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb107-2"><a href="comparing-means.html#cb107-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb107-3"><a href="comparing-means.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;maroon&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb107-4"><a href="comparing-means.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> groups_based_on_tukey, <span class="fu">aes</span>(<span class="at">y =</span> treatment, <span class="at">x =</span> <span class="dv">9</span>, <span class="at">label =</span> group))</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_tukey</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
 <div id="kruskal-dunn-tests" class="section level3" number="1.17.2">
-<h3><span class="header-section-number">1.17.2</span> Kruskal, Dunn tests</h3>
+<h3>
+<span class="header-section-number">1.17.2</span> Kruskal, Dunn tests<a class="anchor" aria-label="anchor" href="#kruskal-dunn-tests"><i class="fas fa-link"></i></a>
+</h3>
 <p>The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let’s try it out:</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="comparing-means.html#cb108-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
-<span id="cb108-2"><a href="comparing-means.html#cb108-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kruskal_test</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb108-3"><a href="comparing-means.html#cb108-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 6</span></span>
-<span id="cb108-4"><a href="comparing-means.html#cb108-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   .y.           n statistic    df            p method       </span></span>
-<span id="cb108-5"><a href="comparing-means.html#cb108-5" aria-hidden="true" tabindex="-1"></a><span class="do">## * &lt;chr&gt;     &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;        &lt;dbl&gt; &lt;chr&gt;        </span></span>
-<span id="cb108-6"><a href="comparing-means.html#cb108-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 abundance   110      57.7     9 0.0000000037 Kruskal-Wall…</span></span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">kruskal_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## # A tibble: 1 × 6</span>
+<span class="co">##   .y.           n statistic    df            p method       </span>
+<span class="co">## * &lt;chr&gt;     &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;        &lt;dbl&gt; &lt;chr&gt;        </span>
+<span class="co">## 1 abundance   110      57.7     9 0.0000000037 Kruskal-Wall…</span></code></pre></div>
 <p>A p-value of 3.9e-9! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey’s HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let’s try:</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="comparing-means.html#cb109-1" aria-hidden="true" tabindex="-1"></a>K_data <span class="sc">%&gt;%</span></span>
-<span id="cb109-2"><a href="comparing-means.html#cb109-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dunn_test</span>(abundance <span class="sc">~</span> aquifer_code)</span>
-<span id="cb109-3"><a href="comparing-means.html#cb109-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 45 × 9</span></span>
-<span id="cb109-4"><a href="comparing-means.html#cb109-4" aria-hidden="true" tabindex="-1"></a><span class="do">##    .y.    group1 group2    n1    n2 statistic       p  p.adj</span></span>
-<span id="cb109-5"><a href="comparing-means.html#cb109-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span id="cb109-6"><a href="comparing-means.html#cb109-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 abund… aquif… aquif…    12     7    -0.205 0.838   1     </span></span>
-<span id="cb109-7"><a href="comparing-means.html#cb109-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 abund… aquif… aquif…    12     6     2.25  0.0242  0.702 </span></span>
-<span id="cb109-8"><a href="comparing-means.html#cb109-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 abund… aquif… aquif…    12     3     0.911 0.362   1     </span></span>
-<span id="cb109-9"><a href="comparing-means.html#cb109-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 abund… aquif… aquif…    12    17    -2.70  0.00702 0.232 </span></span>
-<span id="cb109-10"><a href="comparing-means.html#cb109-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 abund… aquif… aquif…    12     5    -1.15  0.252   1     </span></span>
-<span id="cb109-11"><a href="comparing-means.html#cb109-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 abund… aquif… aquif…    12    12     2.53  0.0113  0.351 </span></span>
-<span id="cb109-12"><a href="comparing-means.html#cb109-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 abund… aquif… aquif…    12     9     3.02  0.00254 0.0967</span></span>
-<span id="cb109-13"><a href="comparing-means.html#cb109-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 abund… aquif… aquif…    12     3     0.182 0.855   1     </span></span>
-<span id="cb109-14"><a href="comparing-means.html#cb109-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 abund… aquif… aquif…    12    36    -0.518 0.605   1     </span></span>
-<span id="cb109-15"><a href="comparing-means.html#cb109-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 abund… aquif… aquif…     7     6     2.20  0.0278  0.777 </span></span>
-<span id="cb109-16"><a href="comparing-means.html#cb109-16" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 35 more rows, and 1 more variable:</span></span>
-<span id="cb109-17"><a href="comparing-means.html#cb109-17" aria-hidden="true" tabindex="-1"></a><span class="do">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">dunn_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+<span class="co">## # A tibble: 45 × 9</span>
+<span class="co">##    .y.    group1 group2    n1    n2 statistic       p  p.adj</span>
+<span class="co">##  * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span>
+<span class="co">##  1 abund… aquif… aquif…    12     7    -0.205 0.838   1     </span>
+<span class="co">##  2 abund… aquif… aquif…    12     6     2.25  0.0242  0.702 </span>
+<span class="co">##  3 abund… aquif… aquif…    12     3     0.911 0.362   1     </span>
+<span class="co">##  4 abund… aquif… aquif…    12    17    -2.70  0.00702 0.232 </span>
+<span class="co">##  5 abund… aquif… aquif…    12     5    -1.15  0.252   1     </span>
+<span class="co">##  6 abund… aquif… aquif…    12    12     2.53  0.0113  0.351 </span>
+<span class="co">##  7 abund… aquif… aquif…    12     9     3.02  0.00254 0.0967</span>
+<span class="co">##  8 abund… aquif… aquif…    12     3     0.182 0.855   1     </span>
+<span class="co">##  9 abund… aquif… aquif…    12    36    -0.518 0.605   1     </span>
+<span class="co">## 10 abund… aquif… aquif…     7     6     2.20  0.0278  0.777 </span>
+<span class="co">## # … with 35 more rows, and 1 more variable:</span>
+<span class="co">## #   p.adj.signif &lt;chr&gt;</span></code></pre></div>
 <p>This gives us adjusted p-values for all pairwise comparisons. Once again, we can use <code>p_groups()</code> to give us a compact letter display for each group, which can then be used to annotate the plot:</p>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="comparing-means.html#cb110-1" aria-hidden="true" tabindex="-1"></a>groups_based_on_dunn <span class="ot">&lt;-</span> K_data <span class="sc">%&gt;%</span></span>
-<span id="cb110-2"><a href="comparing-means.html#cb110-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dunn_test</span>(abundance <span class="sc">~</span> aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb110-3"><a href="comparing-means.html#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">p_groups</span>()</span>
-<span id="cb110-4"><a href="comparing-means.html#cb110-4" aria-hidden="true" tabindex="-1"></a>groups_based_on_dunn</span>
-<span id="cb110-5"><a href="comparing-means.html#cb110-5" aria-hidden="true" tabindex="-1"></a><span class="do">##             treatment group spaced_group</span></span>
-<span id="cb110-6"><a href="comparing-means.html#cb110-6" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_1   aquifer_1  abcd         abcd</span></span>
-<span id="cb110-7"><a href="comparing-means.html#cb110-7" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_10 aquifer_10  abcd         abcd</span></span>
-<span id="cb110-8"><a href="comparing-means.html#cb110-8" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_2   aquifer_2   abc         abc </span></span>
-<span id="cb110-9"><a href="comparing-means.html#cb110-9" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_3   aquifer_3  abcd         abcd</span></span>
-<span id="cb110-10"><a href="comparing-means.html#cb110-10" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_4   aquifer_4     d            d</span></span>
-<span id="cb110-11"><a href="comparing-means.html#cb110-11" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_5   aquifer_5   acd         a cd</span></span>
-<span id="cb110-12"><a href="comparing-means.html#cb110-12" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_6   aquifer_6    ab         ab  </span></span>
-<span id="cb110-13"><a href="comparing-means.html#cb110-13" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_7   aquifer_7     b          b  </span></span>
-<span id="cb110-14"><a href="comparing-means.html#cb110-14" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_8   aquifer_8  abcd         abcd</span></span>
-<span id="cb110-15"><a href="comparing-means.html#cb110-15" aria-hidden="true" tabindex="-1"></a><span class="do">## aquifer_9   aquifer_9    cd           cd</span></span>
-<span id="cb110-16"><a href="comparing-means.html#cb110-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb110-17"><a href="comparing-means.html#cb110-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> K_data, <span class="fu">aes</span>(<span class="at">y =</span> aquifer_code, <span class="at">x =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb110-18"><a href="comparing-means.html#cb110-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb110-19"><a href="comparing-means.html#cb110-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb110-20"><a href="comparing-means.html#cb110-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Potassium abundance&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">10</span>,<span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb110-21"><a href="comparing-means.html#cb110-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Aquifer code&quot;</span>) <span class="sc">+</span></span>
-<span id="cb110-22"><a href="comparing-means.html#cb110-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> groups_based_on_dunn, <span class="fu">aes</span>(<span class="at">y =</span> treatment, <span class="at">x =</span> <span class="dv">9</span>, <span class="at">label =</span> group)) <span class="sc">+</span></span>
-<span id="cb110-23"><a href="comparing-means.html#cb110-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">groups_based_on_dunn</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">dunn_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">p_groups</span><span class="op">(</span><span class="op">)</span>
+<span class="va">groups_based_on_dunn</span>
+<span class="co">##             treatment group spaced_group</span>
+<span class="co">## aquifer_1   aquifer_1  abcd         abcd</span>
+<span class="co">## aquifer_10 aquifer_10  abcd         abcd</span>
+<span class="co">## aquifer_2   aquifer_2   abc         abc </span>
+<span class="co">## aquifer_3   aquifer_3  abcd         abcd</span>
+<span class="co">## aquifer_4   aquifer_4     d            d</span>
+<span class="co">## aquifer_5   aquifer_5   acd         a cd</span>
+<span class="co">## aquifer_6   aquifer_6    ab         ab  </span>
+<span class="co">## aquifer_7   aquifer_7     b          b  </span>
+<span class="co">## aquifer_8   aquifer_8  abcd         abcd</span>
+<span class="co">## aquifer_9   aquifer_9    cd           cd</span>
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.4</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_x_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Potassium abundance"</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">10</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_y_discrete</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Aquifer code"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_dunn</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that these groupings are different from those generated by ANOVA/Tukey.</p>
 </div>
 </div>
 <div id="pairs-of-means" class="section level2" number="1.18">
-<h2><span class="header-section-number">1.18</span> pairs of means</h2>
+<h2>
+<span class="header-section-number">1.18</span> pairs of means<a class="anchor" aria-label="anchor" href="#pairs-of-means"><i class="fas fa-link"></i></a>
+</h2>
 <p>Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among <em>all</em> values of Na and Cl, rather, we want to test all <em>pairs</em> of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="comparing-means.html#cb111-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb111-2"><a href="comparing-means.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb111-3"><a href="comparing-means.html#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> analyte, <span class="at">y =</span> abundance)) <span class="sc">+</span> <span class="fu">geom_violin</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">facet_grid</span>(.<span class="sc">~</span>aquifer_code)</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Fortunately, we can use an approach that is very similar to the what we’ve learned in the earlier portions of this chapter, just with minor modifications. Let’s have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="comparing-means.html#cb112-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb112-2"><a href="comparing-means.html#cb112-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb112-3"><a href="comparing-means.html#cb112-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(analyte, aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb112-4"><a href="comparing-means.html#cb112-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shapiro_test</span>(abundance)</span>
-<span id="cb112-5"><a href="comparing-means.html#cb112-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 20 × 5</span></span>
-<span id="cb112-6"><a href="comparing-means.html#cb112-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code analyte variable  statistic        p</span></span>
-<span id="cb112-7"><a href="comparing-means.html#cb112-7" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span id="cb112-8"><a href="comparing-means.html#cb112-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    Cl      abundance     0.900 1.59e- 1</span></span>
-<span id="cb112-9"><a href="comparing-means.html#cb112-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10   Cl      abundance     0.486 1.09e- 5</span></span>
-<span id="cb112-10"><a href="comparing-means.html#cb112-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2    Cl      abundance     0.869 2.24e- 1</span></span>
-<span id="cb112-11"><a href="comparing-means.html#cb112-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3    Cl      abundance     0.75  0       </span></span>
-<span id="cb112-12"><a href="comparing-means.html#cb112-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4    Cl      abundance     0.903 7.49e- 2</span></span>
-<span id="cb112-13"><a href="comparing-means.html#cb112-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5    Cl      abundance     0.767 4.22e- 2</span></span>
-<span id="cb112-14"><a href="comparing-means.html#cb112-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6    Cl      abundance     0.741 2.15e- 3</span></span>
-<span id="cb112-15"><a href="comparing-means.html#cb112-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7    Cl      abundance     0.893 2.12e- 1</span></span>
-<span id="cb112-16"><a href="comparing-means.html#cb112-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8    Cl      abundance     0.878 3.17e- 1</span></span>
-<span id="cb112-17"><a href="comparing-means.html#cb112-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9    Cl      abundance     0.414 7.58e-11</span></span>
-<span id="cb112-18"><a href="comparing-means.html#cb112-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 11 aquifer_1    Na      abundance     0.886 1.06e- 1</span></span>
-<span id="cb112-19"><a href="comparing-means.html#cb112-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 12 aquifer_10   Na      abundance     0.593 2.26e- 4</span></span>
-<span id="cb112-20"><a href="comparing-means.html#cb112-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 13 aquifer_2    Na      abundance     0.884 2.88e- 1</span></span>
-<span id="cb112-21"><a href="comparing-means.html#cb112-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 14 aquifer_3    Na      abundance     0.822 1.69e- 1</span></span>
-<span id="cb112-22"><a href="comparing-means.html#cb112-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 15 aquifer_4    Na      abundance     0.933 2.41e- 1</span></span>
-<span id="cb112-23"><a href="comparing-means.html#cb112-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 16 aquifer_5    Na      abundance     0.782 5.71e- 2</span></span>
-<span id="cb112-24"><a href="comparing-means.html#cb112-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 17 aquifer_6    Na      abundance     0.764 3.80e- 3</span></span>
-<span id="cb112-25"><a href="comparing-means.html#cb112-25" aria-hidden="true" tabindex="-1"></a><span class="do">## 18 aquifer_7    Na      abundance     0.915 3.51e- 1</span></span>
-<span id="cb112-26"><a href="comparing-means.html#cb112-26" aria-hidden="true" tabindex="-1"></a><span class="do">## 19 aquifer_8    Na      abundance     0.855 2.53e- 1</span></span>
-<span id="cb112-27"><a href="comparing-means.html#cb112-27" aria-hidden="true" tabindex="-1"></a><span class="do">## 20 aquifer_9    Na      abundance     0.544 2.09e- 9</span></span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">analyte</span>, <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">shapiro_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
+<span class="co">## # A tibble: 20 × 5</span>
+<span class="co">##    aquifer_code analyte variable  statistic        p</span>
+<span class="co">##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;</span>
+<span class="co">##  1 aquifer_1    Cl      abundance     0.900 1.59e- 1</span>
+<span class="co">##  2 aquifer_10   Cl      abundance     0.486 1.09e- 5</span>
+<span class="co">##  3 aquifer_2    Cl      abundance     0.869 2.24e- 1</span>
+<span class="co">##  4 aquifer_3    Cl      abundance     0.75  0       </span>
+<span class="co">##  5 aquifer_4    Cl      abundance     0.903 7.49e- 2</span>
+<span class="co">##  6 aquifer_5    Cl      abundance     0.767 4.22e- 2</span>
+<span class="co">##  7 aquifer_6    Cl      abundance     0.741 2.15e- 3</span>
+<span class="co">##  8 aquifer_7    Cl      abundance     0.893 2.12e- 1</span>
+<span class="co">##  9 aquifer_8    Cl      abundance     0.878 3.17e- 1</span>
+<span class="co">## 10 aquifer_9    Cl      abundance     0.414 7.58e-11</span>
+<span class="co">## 11 aquifer_1    Na      abundance     0.886 1.06e- 1</span>
+<span class="co">## 12 aquifer_10   Na      abundance     0.593 2.26e- 4</span>
+<span class="co">## 13 aquifer_2    Na      abundance     0.884 2.88e- 1</span>
+<span class="co">## 14 aquifer_3    Na      abundance     0.822 1.69e- 1</span>
+<span class="co">## 15 aquifer_4    Na      abundance     0.933 2.41e- 1</span>
+<span class="co">## 16 aquifer_5    Na      abundance     0.782 5.71e- 2</span>
+<span class="co">## 17 aquifer_6    Na      abundance     0.764 3.80e- 3</span>
+<span class="co">## 18 aquifer_7    Na      abundance     0.915 3.51e- 1</span>
+<span class="co">## 19 aquifer_8    Na      abundance     0.855 2.53e- 1</span>
+<span class="co">## 20 aquifer_9    Na      abundance     0.544 2.09e- 9</span></code></pre></div>
 <p>Looks like some of those distributions are significantly different from normal! Let’s run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="comparing-means.html#cb113-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb113-2"><a href="comparing-means.html#cb113-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb113-3"><a href="comparing-means.html#cb113-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb113-4"><a href="comparing-means.html#cb113-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">levene_test</span>(abundance <span class="sc">~</span> analyte)</span>
-<span id="cb113-5"><a href="comparing-means.html#cb113-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 10 × 5</span></span>
-<span id="cb113-6"><a href="comparing-means.html#cb113-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code   df1   df2 statistic       p</span></span>
-<span id="cb113-7"><a href="comparing-means.html#cb113-7" aria-hidden="true" tabindex="-1"></a><span class="do">##    &lt;chr&gt;        &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span id="cb113-8"><a href="comparing-means.html#cb113-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1        1    22   10.5    0.00375</span></span>
-<span id="cb113-9"><a href="comparing-means.html#cb113-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10       1    12    0.0535 0.821  </span></span>
-<span id="cb113-10"><a href="comparing-means.html#cb113-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2        1    10    0.0243 0.879  </span></span>
-<span id="cb113-11"><a href="comparing-means.html#cb113-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3        1     4    0.320  0.602  </span></span>
-<span id="cb113-12"><a href="comparing-means.html#cb113-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4        1    32    1.57   0.219  </span></span>
-<span id="cb113-13"><a href="comparing-means.html#cb113-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5        1     8    0.474  0.511  </span></span>
-<span id="cb113-14"><a href="comparing-means.html#cb113-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6        1    22    1.03   0.322  </span></span>
-<span id="cb113-15"><a href="comparing-means.html#cb113-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7        1    16    1.54   0.232  </span></span>
-<span id="cb113-16"><a href="comparing-means.html#cb113-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8        1     4    0.515  0.512  </span></span>
-<span id="cb113-17"><a href="comparing-means.html#cb113-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9        1    70    1.07   0.304</span></span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">levene_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">analyte</span><span class="op">)</span>
+<span class="co">## # A tibble: 10 × 5</span>
+<span class="co">##    aquifer_code   df1   df2 statistic       p</span>
+<span class="co">##    &lt;chr&gt;        &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span>
+<span class="co">##  1 aquifer_1        1    22   10.5    0.00375</span>
+<span class="co">##  2 aquifer_10       1    12    0.0535 0.821  </span>
+<span class="co">##  3 aquifer_2        1    10    0.0243 0.879  </span>
+<span class="co">##  4 aquifer_3        1     4    0.320  0.602  </span>
+<span class="co">##  5 aquifer_4        1    32    1.57   0.219  </span>
+<span class="co">##  6 aquifer_5        1     8    0.474  0.511  </span>
+<span class="co">##  7 aquifer_6        1    22    1.03   0.322  </span>
+<span class="co">##  8 aquifer_7        1    16    1.54   0.232  </span>
+<span class="co">##  9 aquifer_8        1     4    0.515  0.512  </span>
+<span class="co">## 10 aquifer_9        1    70    1.07   0.304</span></code></pre></div>
 <p>It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use the <code>wilcox_test</code>, but we have may pairs, so we will use <code>pairwise_wilcox_test</code> (note that with this test there are options for various styles of controlling for multiple comparisons, see: <code>?pairwise_wilcox_test</code>):</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="comparing-means.html#cb114-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb114-2"><a href="comparing-means.html#cb114-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb114-3"><a href="comparing-means.html#cb114-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb114-4"><a href="comparing-means.html#cb114-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairwise_wilcox_test</span>(abundance<span class="sc">~</span>analyte)</span>
-<span id="cb114-5"><a href="comparing-means.html#cb114-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 10 × 10</span></span>
-<span id="cb114-6"><a href="comparing-means.html#cb114-6" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code .y.      group1 group2    n1    n2 statistic</span></span>
-<span id="cb114-7"><a href="comparing-means.html#cb114-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;</span></span>
-<span id="cb114-8"><a href="comparing-means.html#cb114-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    abundan… Cl     Na        12    12      99.5</span></span>
-<span id="cb114-9"><a href="comparing-means.html#cb114-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10   abundan… Cl     Na         7     7      14  </span></span>
-<span id="cb114-10"><a href="comparing-means.html#cb114-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2    abundan… Cl     Na         6     6      36  </span></span>
-<span id="cb114-11"><a href="comparing-means.html#cb114-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3    abundan… Cl     Na         3     3       3  </span></span>
-<span id="cb114-12"><a href="comparing-means.html#cb114-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4    abundan… Cl     Na        17    17     189  </span></span>
-<span id="cb114-13"><a href="comparing-means.html#cb114-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5    abundan… Cl     Na         5     5      17.5</span></span>
-<span id="cb114-14"><a href="comparing-means.html#cb114-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6    abundan… Cl     Na        12    12      53  </span></span>
-<span id="cb114-15"><a href="comparing-means.html#cb114-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7    abundan… Cl     Na         9     9      42  </span></span>
-<span id="cb114-16"><a href="comparing-means.html#cb114-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8    abundan… Cl     Na         3     3       6  </span></span>
-<span id="cb114-17"><a href="comparing-means.html#cb114-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9    abundan… Cl     Na        36    36     248. </span></span>
-<span id="cb114-18"><a href="comparing-means.html#cb114-18" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 3 more variables: p &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span></span>
-<span id="cb114-19"><a href="comparing-means.html#cb114-19" aria-hidden="true" tabindex="-1"></a><span class="do">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">pairwise_wilcox_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span>
+<span class="co">## # A tibble: 10 × 10</span>
+<span class="co">##    aquifer_code .y.      group1 group2    n1    n2 statistic</span>
+<span class="co">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;</span>
+<span class="co">##  1 aquifer_1    abundan… Cl     Na        12    12      99.5</span>
+<span class="co">##  2 aquifer_10   abundan… Cl     Na         7     7      14  </span>
+<span class="co">##  3 aquifer_2    abundan… Cl     Na         6     6      36  </span>
+<span class="co">##  4 aquifer_3    abundan… Cl     Na         3     3       3  </span>
+<span class="co">##  5 aquifer_4    abundan… Cl     Na        17    17     189  </span>
+<span class="co">##  6 aquifer_5    abundan… Cl     Na         5     5      17.5</span>
+<span class="co">##  7 aquifer_6    abundan… Cl     Na        12    12      53  </span>
+<span class="co">##  8 aquifer_7    abundan… Cl     Na         9     9      42  </span>
+<span class="co">##  9 aquifer_8    abundan… Cl     Na         3     3       6  </span>
+<span class="co">## 10 aquifer_9    abundan… Cl     Na        36    36     248. </span>
+<span class="co">## # … with 3 more variables: p &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span>
+<span class="co">## #   p.adj.signif &lt;chr&gt;</span></code></pre></div>
 <p>Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).</p>
 <p>What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a <code>pairwise_t_test</code> of course!</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="comparing-means.html#cb115-1" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb115-2"><a href="comparing-means.html#cb115-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb115-3"><a href="comparing-means.html#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(aquifer_code) <span class="sc">%&gt;%</span></span>
-<span id="cb115-4"><a href="comparing-means.html#cb115-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairwise_t_test</span>(abundance<span class="sc">~</span>analyte) <span class="ot">-&gt;</span> test_output</span>
-<span id="cb115-5"><a href="comparing-means.html#cb115-5" aria-hidden="true" tabindex="-1"></a>  test_output</span>
-<span id="cb115-6"><a href="comparing-means.html#cb115-6" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 10 × 10</span></span>
-<span id="cb115-7"><a href="comparing-means.html#cb115-7" aria-hidden="true" tabindex="-1"></a><span class="do">##    aquifer_code .y.       group1 group2    n1    n2        p</span></span>
-<span id="cb115-8"><a href="comparing-means.html#cb115-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  * &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;</span></span>
-<span id="cb115-9"><a href="comparing-means.html#cb115-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  1 aquifer_1    abundance Cl     Na        12    12  4.69e-2</span></span>
-<span id="cb115-10"><a href="comparing-means.html#cb115-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  2 aquifer_10   abundance Cl     Na         7     7  8.82e-1</span></span>
-<span id="cb115-11"><a href="comparing-means.html#cb115-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  3 aquifer_2    abundance Cl     Na         6     6  3.75e-5</span></span>
-<span id="cb115-12"><a href="comparing-means.html#cb115-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  4 aquifer_3    abundance Cl     Na         3     3  6.83e-1</span></span>
-<span id="cb115-13"><a href="comparing-means.html#cb115-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  5 aquifer_4    abundance Cl     Na        17    17  1.03e-1</span></span>
-<span id="cb115-14"><a href="comparing-means.html#cb115-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  6 aquifer_5    abundance Cl     Na         5     5  1.45e-1</span></span>
-<span id="cb115-15"><a href="comparing-means.html#cb115-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  7 aquifer_6    abundance Cl     Na        12    12  5.66e-1</span></span>
-<span id="cb115-16"><a href="comparing-means.html#cb115-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  8 aquifer_7    abundance Cl     Na         9     9  5.21e-1</span></span>
-<span id="cb115-17"><a href="comparing-means.html#cb115-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  9 aquifer_8    abundance Cl     Na         3     3  4.28e-1</span></span>
-<span id="cb115-18"><a href="comparing-means.html#cb115-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 aquifer_9    abundance Cl     Na        36    36  9.48e-1</span></span>
-<span id="cb115-19"><a href="comparing-means.html#cb115-19" aria-hidden="true" tabindex="-1"></a><span class="do">## # … with 3 more variables: p.signif &lt;chr&gt;, p.adj &lt;dbl&gt;,</span></span>
-<span id="cb115-20"><a href="comparing-means.html#cb115-20" aria-hidden="true" tabindex="-1"></a><span class="do">## #   p.adj.signif &lt;chr&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">pairwise_t_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_output</span>
+  <span class="va">test_output</span>
+<span class="co">## # A tibble: 10 × 10</span>
+<span class="co">##    aquifer_code .y.       group1 group2    n1    n2        p</span>
+<span class="co">##  * &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;</span>
+<span class="co">##  1 aquifer_1    abundance Cl     Na        12    12  4.69e-2</span>
+<span class="co">##  2 aquifer_10   abundance Cl     Na         7     7  8.82e-1</span>
+<span class="co">##  3 aquifer_2    abundance Cl     Na         6     6  3.75e-5</span>
+<span class="co">##  4 aquifer_3    abundance Cl     Na         3     3  6.83e-1</span>
+<span class="co">##  5 aquifer_4    abundance Cl     Na        17    17  1.03e-1</span>
+<span class="co">##  6 aquifer_5    abundance Cl     Na         5     5  1.45e-1</span>
+<span class="co">##  7 aquifer_6    abundance Cl     Na        12    12  5.66e-1</span>
+<span class="co">##  8 aquifer_7    abundance Cl     Na         9     9  5.21e-1</span>
+<span class="co">##  9 aquifer_8    abundance Cl     Na         3     3  4.28e-1</span>
+<span class="co">## 10 aquifer_9    abundance Cl     Na        36    36  9.48e-1</span>
+<span class="co">## # … with 3 more variables: p.signif &lt;chr&gt;, p.adj &lt;dbl&gt;,</span>
+<span class="co">## #   p.adj.signif &lt;chr&gt;</span></code></pre></div>
 <p>Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="comparing-means.html#cb116-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb116-2"><a href="comparing-means.html#cb116-2" aria-hidden="true" tabindex="-1"></a>anno <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb116-3"><a href="comparing-means.html#cb116-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">xmin =</span> test_output<span class="sc">$</span>group1,</span>
-<span id="cb116-4"><a href="comparing-means.html#cb116-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">xmax =</span> test_output<span class="sc">$</span>group2,</span>
-<span id="cb116-5"><a href="comparing-means.html#cb116-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_position =</span> <span class="fu">c</span>(<span class="dv">150</span>, <span class="dv">150</span>, <span class="dv">150</span>, <span class="dv">175</span>, <span class="dv">80</span>, <span class="dv">50</span>, <span class="dv">300</span>, <span class="dv">150</span>, <span class="dv">50</span>, <span class="dv">125</span>),</span>
-<span id="cb116-6"><a href="comparing-means.html#cb116-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">text =</span> test_output<span class="sc">$</span>p.signif,</span>
-<span id="cb116-7"><a href="comparing-means.html#cb116-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_size =</span> <span class="dv">10</span>,</span>
-<span id="cb116-8"><a href="comparing-means.html#cb116-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_vert_offset =</span> <span class="dv">10</span>,</span>
-<span id="cb116-9"><a href="comparing-means.html#cb116-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_horiz_offset =</span> <span class="fl">1.5</span>,</span>
-<span id="cb116-10"><a href="comparing-means.html#cb116-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">tip_length_xmin =</span> <span class="dv">5</span>,</span>
-<span id="cb116-11"><a href="comparing-means.html#cb116-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">tip_length_xmax =</span> <span class="dv">5</span>,</span>
-<span id="cb116-12"><a href="comparing-means.html#cb116-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">aquifer_code =</span> test_output<span class="sc">$</span>aquifer_code</span>
-<span id="cb116-13"><a href="comparing-means.html#cb116-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb116-14"><a href="comparing-means.html#cb116-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb116-15"><a href="comparing-means.html#cb116-15" aria-hidden="true" tabindex="-1"></a>hawaii_aquifers <span class="sc">%&gt;%</span></span>
-<span id="cb116-16"><a href="comparing-means.html#cb116-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(analyte <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Na&quot;</span>, <span class="st">&quot;Cl&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb116-17"><a href="comparing-means.html#cb116-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> analyte, <span class="at">y =</span> abundance)) <span class="sc">+</span></span>
-<span id="cb116-18"><a href="comparing-means.html#cb116-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">fill =</span> <span class="st">&quot;gold&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb116-19"><a href="comparing-means.html#cb116-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">&quot;maroon&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
-<span id="cb116-20"><a href="comparing-means.html#cb116-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(.<span class="sc">~</span>aquifer_code) <span class="sc">+</span></span>
-<span id="cb116-21"><a href="comparing-means.html#cb116-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geomSignif</span>(<span class="at">data =</span> anno) <span class="sc">+</span></span>
-<span id="cb116-22"><a href="comparing-means.html#cb116-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Analyte&quot;</span>) <span class="sc">+</span></span>
-<span id="cb116-23"><a href="comparing-means.html#cb116-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">&quot;Abundance&quot;</span>) <span class="sc">+</span></span>
-<span id="cb116-24"><a href="comparing-means.html#cb116-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb116-25"><a href="comparing-means.html#cb116-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb116-26"><a href="comparing-means.html#cb116-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>)</span>
-<span id="cb116-27"><a href="comparing-means.html#cb116-27" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
-<p><img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">anno</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+  xmin <span class="op">=</span> <span class="va">test_output</span><span class="op">$</span><span class="va">group1</span>,
+  xmax <span class="op">=</span> <span class="va">test_output</span><span class="op">$</span><span class="va">group2</span>,
+  y_position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">150</span>, <span class="fl">150</span>, <span class="fl">150</span>, <span class="fl">175</span>, <span class="fl">80</span>, <span class="fl">50</span>, <span class="fl">300</span>, <span class="fl">150</span>, <span class="fl">50</span>, <span class="fl">125</span><span class="op">)</span>,
+  text <span class="op">=</span> <span class="va">test_output</span><span class="op">$</span><span class="va">p.signif</span>,
+  text_size <span class="op">=</span> <span class="fl">10</span>,
+  text_vert_offset <span class="op">=</span> <span class="fl">10</span>,
+  text_horiz_offset <span class="op">=</span> <span class="fl">1.5</span>,
+  tip_length_xmin <span class="op">=</span> <span class="fl">5</span>,
+  tip_length_xmax <span class="op">=</span> <span class="fl">5</span>,
+  aquifer_code <span class="op">=</span> <span class="va">test_output</span><span class="op">$</span><span class="va">aquifer_code</span>
+<span class="op">)</span>
+
+<span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_violin</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"gold"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span>, fill <span class="op">=</span> <span class="st">"maroon"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geomSignif</span><span class="op">(</span>data <span class="op">=</span> <span class="va">anno</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_x_discrete</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Analyte"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_y_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Abundance"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>
+    text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span>
+    <span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="further-reading-3" class="section level2" number="1.19">
-<h2><span class="header-section-number">1.19</span> further reading</h2>
+<h2>
+<span class="header-section-number">1.19</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
+</h2>
 <p>For more on comparing multiple means in R: <a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">www.datanovia.com</a></p>
 <p>For more on parametric versus non-parametric tests: <a href="https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/">Statistics by Jim</a></p>
 <p>For more on interpreting <em>p</em> values: [<a href="https://link.springer.com/article/10.1007/s00259-019-04467-5">The p value wars (again) by Ulrich Dirnagl</a>]</p>
 </div>
 <div id="exercises-5" class="section level2" number="1.20">
-<h2><span class="header-section-number">1.20</span> exercises</h2>
+<h2>
+<span class="header-section-number">1.20</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-5"><i class="fas fa-link"></i></a>
+</h2>
 <p>Using the <code>hawaii_aquifers</code> data set, please complete the following:</p>
 <ol style="list-style-type: decimal">
 <li><p>Choose one analyte and filter the data so only the rows for that analyte are shown.</p></li>
@@ -561,46 +621,61 @@ library(multcompView)
 <li><p>Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don’t forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.</p></li>
 <li><p>Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the <em>p</em> values and <em>p</em> groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?</p></li>
 </ol>
-<!-- end -->
-<hr />
-<hr />
-<hr />
+<!-- end --><hr>
+<hr>
+<hr>
 </div>
 </div>
 
 
 
-</div>
-  </main>
-
-  <div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+<div class="chapter-nav">
+<div class="prev"><a href="models.html">models</a></div>
+<div class="next"><a href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
         <ul class="list-unstyled">
-          <li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
           <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
           <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
           <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
         </ul>
-        <hr>
-    <nav id="toc" data-toggle="toc" aria-label="On this page">
-      <h2>On this page</h2>
-      <div id="book-on-this-page"></div>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#comparing-means">comparing means</a></li>
+<li><a class="nav-link" href="#definitions"><span class="header-section-number">1.14</span> definitions</a></li>
+<li><a class="nav-link" href="#test-selection"><span class="header-section-number">1.15</span> test selection</a></li>
+<li><a class="nav-link" href="#two-means"><span class="header-section-number">1.16</span> two means</a></li>
+<li>
+<a class="nav-link" href="#more-than-two-means"><span class="header-section-number">1.17</span> more than two means</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#anova-tukey-tests"><span class="header-section-number">1.17.1</span> ANOVA, Tukey tests</a></li>
+<li><a class="nav-link" href="#kruskal-dunn-tests"><span class="header-section-number">1.17.2</span> Kruskal, Dunn tests</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#pairs-of-means"><span class="header-section-number">1.18</span> pairs of means</a></li>
+<li><a class="nav-link" href="#further-reading-3"><span class="header-section-number">1.19</span> further reading</a></li>
+<li><a class="nav-link" href="#exercises-5"><span class="header-section-number">1.20</span> exercises</a></li>
+</ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
-          <li><a id="book-source" href="#">View source <i class="fab fa-github"></i></a></li>
-          <li><a id="book-edit" href="#">Edit this page <i class="fab fa-github"></i></a></li>
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
         </ul>
-      </div>
+</div>
     </nav>
-  </div>
+</div>
+</div>
+  
+
+  
 
 </div>
-</div> <!-- .container -->
+ <!-- .container -->
 
-<footer class="bg-primary text-light mt-5">
-  <div class="container"><div class="row">
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
     <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-13.</p>
@@ -612,8 +687,5 @@ library(multcompView)
 
 </div></div>
 </footer>
-
-
 </body>
-
 </html>
