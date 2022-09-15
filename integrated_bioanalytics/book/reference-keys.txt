@@ -1,7 +1,5 @@
 fig:unnamed-chunk-70
 part-data-analysis-in-r
-mutate
-further-reading-1
 theory
 further-reading-2
 exercises-1

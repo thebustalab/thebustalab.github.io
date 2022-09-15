@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>k-means | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="“Do my samples fall into definable clusters?”  1.10 theory One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using...">
+<meta name="description" content="“Do my samples fall into definable clusters?”  1.8 theory One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="k-means | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="“Do my samples fall into definable clusters?”  1.10 theory One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using...">
+<meta property="og:description" content="“Do my samples fall into definable clusters?”  1.8 theory One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="k-means | Integrated Bioanalytics">
-<meta name="twitter:description" content="“Do my samples fall into definable clusters?”  1.10 theory One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using...">
+<meta name="twitter:description" content="“Do my samples fall into definable clusters?”  1.8 theory One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
@@ -108,9 +108,9 @@
 <h1>k-means<a class="anchor" aria-label="anchor" href="#k-means"><i class="fas fa-link"></i></a>
 </h1>
 <p>“Do my samples fall into definable clusters?”</p>
-<div id="theory-1" class="section level2" number="1.10">
+<div id="theory-1" class="section level2" number="1.8">
 <h2>
-<span class="header-section-number">1.10</span> theory<a class="anchor" aria-label="anchor" href="#theory-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.8</span> theory<a class="anchor" aria-label="anchor" href="#theory-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in <strong>A</strong> below:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" width="100%" style="display: block; margin: auto;"></div>
@@ -324,57 +324,57 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Now we are really rockin!!</p>
 </div>
-<div id="exercises-3" class="section level2" number="1.11">
+<div id="exercises-3" class="section level2" number="1.9">
 <h2>
-<span class="header-section-number">1.11</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-3"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9</span> exercises<a class="anchor" aria-label="anchor" href="#exercises-3"><i class="fas fa-link"></i></a>
 </h2>
 <p>Use the wine grapes dataset (it’s stored as <code>wine_grape_data</code> after you run the <code>source(...)</code> command).</p>
-<div id="question-1" class="section level3" number="1.11.1">
+<div id="question-1" class="section level3" number="1.9.1">
 <h3>
-<span class="header-section-number">1.11.1</span> Question 1<a class="anchor" aria-label="anchor" href="#question-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.1</span> Question 1<a class="anchor" aria-label="anchor" href="#question-1"><i class="fas fa-link"></i></a>
 </h3>
 <p>Run a principal components analysis on the dataset. Use <code>na_replacement = "drop"</code> (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting <code>kmeans = "auto"</code>. Make scatter plot of the results. How many clusters does kmeans recommend?</p>
 </div>
-<div id="question-2" class="section level3" number="1.11.2">
+<div id="question-2" class="section level3" number="1.9.2">
 <h3>
-<span class="header-section-number">1.11.2</span> Question 2<a class="anchor" aria-label="anchor" href="#question-2"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.2</span> Question 2<a class="anchor" aria-label="anchor" href="#question-2"><i class="fas fa-link"></i></a>
 </h3>
 <p>Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use <code>geom_mark_ellipse</code> to highlight each cluster in your plot (note that the <code>fill</code> aesthetic is required to mark groups). Which varieties are put into each of the two clusters?</p>
 </div>
-<div id="question-3" class="section level3" number="1.11.3">
+<div id="question-3" class="section level3" number="1.9.3">
 <h3>
-<span class="header-section-number">1.11.3</span> Question 3<a class="anchor" aria-label="anchor" href="#question-3"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.3</span> Question 3<a class="anchor" aria-label="anchor" href="#question-3"><i class="fas fa-link"></i></a>
 </h3>
 <p>Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?</p>
 </div>
-<div id="question-4" class="section level3" number="1.11.4">
+<div id="question-4" class="section level3" number="1.9.4">
 <h3>
-<span class="header-section-number">1.11.4</span> Question 4<a class="anchor" aria-label="anchor" href="#question-4"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.4</span> Question 4<a class="anchor" aria-label="anchor" href="#question-4"><i class="fas fa-link"></i></a>
 </h3>
 <p>Modify your code from Question 2 so that five clusters are generated. Plot the results. Use <code>geom_mark_ellipse</code> to highlight each cluster in your plot (note that the <code>fill</code> aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?</p>
 </div>
-<div id="question-5" class="section level3" number="1.11.5">
+<div id="question-5" class="section level3" number="1.9.5">
 <h3>
-<span class="header-section-number">1.11.5</span> Question 5<a class="anchor" aria-label="anchor" href="#question-5"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.5</span> Question 5<a class="anchor" aria-label="anchor" href="#question-5"><i class="fas fa-link"></i></a>
 </h3>
 <p>Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using <code>na_replacement = "drop"</code>. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?</p>
 </div>
-<div id="question-6" class="section level3" number="1.11.6">
+<div id="question-6" class="section level3" number="1.9.6">
 <h3>
-<span class="header-section-number">1.11.6</span> Question 6<a class="anchor" aria-label="anchor" href="#question-6"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.6</span> Question 6<a class="anchor" aria-label="anchor" href="#question-6"><i class="fas fa-link"></i></a>
 </h3>
 <p>Google “Quercetin”. What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using <code>geom_pointrange</code> and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, <code>theme_classic()</code>).</p>
 <p>Does one cluster have a large amount of variation in Quercetin abundance? Why do you think this might be?</p>
 </div>
-<div id="question-7" class="section level3" number="1.11.7">
+<div id="question-7" class="section level3" number="1.9.7">
 <h3>
-<span class="header-section-number">1.11.7</span> Question 7<a class="anchor" aria-label="anchor" href="#question-7"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.7</span> Question 7<a class="anchor" aria-label="anchor" href="#question-7"><i class="fas fa-link"></i></a>
 </h3>
 <p>Use <code><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">cowplot::plot_grid</a></code> to display your plots from questions 4 and 5 next to each other.</p>
 </div>
-<div id="challenge-optional" class="section level3" number="1.11.8">
+<div id="challenge-optional" class="section level3" number="1.9.8">
 <h3>
-<span class="header-section-number">1.11.8</span> Challenge (optional)<a class="anchor" aria-label="anchor" href="#challenge-optional"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9.8</span> Challenge (optional)<a class="anchor" aria-label="anchor" href="#challenge-optional"><i class="fas fa-link"></i></a>
 </h3>
 <p>Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. <strong>Make your combined plot as attractive as possible!</strong> Use each of the following:</p>
 <p><code>align = TRUE</code> inside <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab()</a></code></p>
@@ -412,17 +412,17 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#k-means">k-means</a></li>
-<li><a class="nav-link" href="#theory-1"><span class="header-section-number">1.10</span> theory</a></li>
+<li><a class="nav-link" href="#theory-1"><span class="header-section-number">1.8</span> theory</a></li>
 <li>
-<a class="nav-link" href="#exercises-3"><span class="header-section-number">1.11</span> exercises</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#question-1"><span class="header-section-number">1.11.1</span> Question 1</a></li>
-<li><a class="nav-link" href="#question-2"><span class="header-section-number">1.11.2</span> Question 2</a></li>
-<li><a class="nav-link" href="#question-3"><span class="header-section-number">1.11.3</span> Question 3</a></li>
-<li><a class="nav-link" href="#question-4"><span class="header-section-number">1.11.4</span> Question 4</a></li>
-<li><a class="nav-link" href="#question-5"><span class="header-section-number">1.11.5</span> Question 5</a></li>
-<li><a class="nav-link" href="#question-6"><span class="header-section-number">1.11.6</span> Question 6</a></li>
-<li><a class="nav-link" href="#question-7"><span class="header-section-number">1.11.7</span> Question 7</a></li>
-<li><a class="nav-link" href="#challenge-optional"><span class="header-section-number">1.11.8</span> Challenge (optional)</a></li>
+<a class="nav-link" href="#exercises-3"><span class="header-section-number">1.9</span> exercises</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#question-1"><span class="header-section-number">1.9.1</span> Question 1</a></li>
+<li><a class="nav-link" href="#question-2"><span class="header-section-number">1.9.2</span> Question 2</a></li>
+<li><a class="nav-link" href="#question-3"><span class="header-section-number">1.9.3</span> Question 3</a></li>
+<li><a class="nav-link" href="#question-4"><span class="header-section-number">1.9.4</span> Question 4</a></li>
+<li><a class="nav-link" href="#question-5"><span class="header-section-number">1.9.5</span> Question 5</a></li>
+<li><a class="nav-link" href="#question-6"><span class="header-section-number">1.9.6</span> Question 6</a></li>
+<li><a class="nav-link" href="#question-7"><span class="header-section-number">1.9.7</span> Question 7</a></li>
+<li><a class="nav-link" href="#challenge-optional"><span class="header-section-number">1.9.8</span> Challenge (optional)</a></li>
 </ul>
 </li>
 </ul>
@@ -442,7 +442,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-13.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

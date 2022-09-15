@@ -520,9 +520,8 @@
 <span class="co">## 3 Desp… NOAT        2.95  6.34 C            2.1 bound</span></code></pre></div>
 <p>It looks like the coldest lakes in the three parks are Devil Mountain Lake, Wild Lake, and Desperation Lake!</p>
 </div>
-<div id="mutate" class="section level2" number="1.1">
-<h2>
-<span class="header-section-number">1.1</span> mutate<a class="anchor" aria-label="anchor" href="#mutate"><i class="fas fa-link"></i></a>
+<div id="mutate" class="section level2 unnumbered">
+<h2>mutate<a class="anchor" aria-label="anchor" href="#mutate"><i class="fas fa-link"></i></a>
 </h2>
 <p>One last thing before our exercises… there is another command called <code>mutate()</code>. It is like summarize it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn’t make the data set smaller, in fact it makes it bigger, by creating a new row for the new variables defined inside <code>mutate()</code>. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park’s total dissolved sulfur does each lake have?</p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
@@ -561,11 +560,12 @@
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises"><i class="fas fa-link"></i></a>
 </h2>
 <p>Isn’t seven the most powerfully magical number? <em>Isn’t seven the most powerfully magical number?</em> Yes… I think the idea of a seven-part assignment would greatly appeal to an alchemist.</p>
-<p>In this set of exercises we are going to use the periodic table. After you run source() you can load that data set using <code>periodic_table</code>. Please use that dataset to run analyses and answer the following quetions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!</p>
+<p>In this set of exercises we are going to use the periodic table. After you run source() you can load that data set using <code>periodic_table</code>. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!</p>
 <p>Some pointers:</p>
 <ul>
-<li><p>If your code goes off the page, don’t be afraid to wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.</p></li>
+<li><p>If your code goes off the page, please wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.</p></li>
 <li><p>Don’t be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.</p></li>
+<li><p>If your axis tick labels are overlapping or not visible, do something to fix that. Some solutions could be: move the legend to the top of the plot (<code>theme(legend.position = "top")</code>), rotate the text (<code>theme(axis.text.x = element_text(angle = 90)</code>), or make the text smaller (<code>theme(axis.text.x = element_text(size = 8)</code>).</p></li>
 </ul>
 <ol style="list-style-type: decimal">
 <li><p>Make a plot using <code>geom_point()</code> that shows the average atomic weight of the elements discovered in each year spanned by the dataset (i.e. what was the average weight of the elements discovered in 1900? 1901? 1902? etc.). You should see a trend, particularly after 1950. What do you think has caused this trend?</p></li>
@@ -574,12 +574,11 @@
 <li><p>Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four <em>periods</em> in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does “CHON” mean? (not the rock band, though they are also excellent, especially that song that features GoYama)</p></li>
 <li><p>Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each <code>group_number</code>. Use <code>geom_point()</code> and <code>geom_errorbar()</code> to illustrate the average, minimum, and maximum values for each group number.</p></li>
 <li><p>Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by <code>color</code>. Now filter out those that have <code>color == "colorless"</code>. Of the remaining elements, which has the widest range of specific heats? Use <code>geom_point()</code> and <code>geom_errorbar()</code> to illustrate the mean and standard deviation of each color’s specific heats.</p></li>
-<li><p>You have learned many things in this course so far. <code>read_csv()</code>, <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, <code>ggplot()</code>, and now <code>group_by()</code> and <code>summarize()</code>. Using <strong>all</strong> these commands, create a graphic to illustrate what you consider to be an interesting trend in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. Impress me!</p></li>
+<li><p>You have learned many things in this course so far. <code>read_csv()</code>, <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, <code>ggplot()</code>, and now <code>group_by()</code>, <code>summarize()</code>, <code>mutate()</code>, <code>arrange()</code>, and <code>slice()</code>. Using <strong>all</strong> these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. Impress me!</p></li>
 </ol>
 </div>
-<div id="further-reading-1" class="section level2" number="1.2">
-<h2>
-<span class="header-section-number">1.2</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading-1"><i class="fas fa-link"></i></a>
+<div id="further-reading-1" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>Be sure to check out the Tidy Data Tutor: <a href="https://tidydatatutor.com/vis.html" class="uri">https://tidydatatutor.com/vis.html</a>. An easy way to visualize what’s going on during data wrangling!</p>
 <!-- start clustering -->
@@ -607,9 +606,9 @@
 <li><a class="nav-link" href="#the-pipe">the pipe (%&gt;%)</a></li>
 <li><a class="nav-link" href="#summary-statistics">summary statistics</a></li>
 <li><a class="nav-link" href="#ordering">ordering</a></li>
-<li><a class="nav-link" href="#mutate"><span class="header-section-number">1.1</span> mutate</a></li>
+<li><a class="nav-link" href="#mutate">mutate</a></li>
 <li><a class="nav-link" href="#exercises">exercises</a></li>
-<li><a class="nav-link" href="#further-reading-1"><span class="header-section-number">1.2</span> further reading</a></li>
+<li><a class="nav-link" href="#further-reading-1">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -627,7 +626,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-13.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
