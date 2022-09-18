@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -146,7 +146,7 @@
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
   column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
   column_w_abundances_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+  columns_w_abundances_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
   columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
   columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
 <span class="op">)</span>
@@ -179,7 +179,7 @@
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_ord"</span><span class="op">)</span>,
   column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
   column_w_abundances_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+  columns_w_abundances_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
   columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
   columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
 <span class="op">)</span>
@@ -225,7 +225,7 @@
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_dim"</span><span class="op">)</span>,
   column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
   column_w_abundances_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+  columns_w_abundances_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
   columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
   columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
 <span class="op">)</span>
@@ -253,7 +253,7 @@
 <div id="exercises-1" class="section level3 unnumbered">
 <h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-1"><i class="fas fa-link"></i></a>
 </h3>
-<p>In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</p>
+<p>In this set of exercises, as you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">periodic_table_subset</span><span class="op">)</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>
 <span class="co">##  [1] "electronegativity_pauling"         </span>
@@ -274,11 +274,11 @@
 <span class="co">## [4] "thermal_conductivity_W_per_m_K"    </span>
 <span class="co">## [5] "polarizability_A_cubed"            </span>
 <span class="co">## [6] "heat_atomization_kJ_per_mol"</span></code></pre></div>
-<p>We can use that command in the template, as in the example below. With the notation <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code>, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run <code>c(5:7,9:25)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code> in the console). With the notation <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run <code>c(1:4, 8)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> in the console).</p>
+<p>We can use that command in the template, as in the example below. With the notation <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code>, we can mark columns 5 - 7 and 9 - 25 as columns_w_abundances_for_single_analyte (note what happens when you run <code>c(5:7,9:25)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code> in the console). With the notation <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run <code>c(1:4, 8)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> in the console).</p>
 <div id="human-metabolomics" class="section level4 unnumbered">
 <h4>human metabolomics<a class="anchor" aria-label="anchor" href="#human-metabolomics"><i class="fas fa-link"></i></a>
 </h4>
-<p>This first option is to work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:</p>
+<p>For these questions, work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. Your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:</p>
 <ol style="list-style-type: decimal">
 <li>Run a PCA analysis on <code>metabolomics_data</code> (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
 <li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.</li>
@@ -290,7 +290,7 @@
 <div id="grape-vine-chemistry" class="section level4 unnumbered">
 <h4>grape vine chemistry<a class="anchor" aria-label="anchor" href="#grape-vine-chemistry"><i class="fas fa-link"></i></a>
 </h4>
-<p>This second option is to work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:</p>
+<p>For this set of quesions, work with a dataset describing metabolomics data (i.e. abundances of &gt; 100 different biochemicals) from 5 different wine grape varieties. Your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:</p>
 <ol style="list-style-type: decimal">
 <li>Run a PCA analysis on <code>wine_grape_data</code> (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
 <li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.</li>

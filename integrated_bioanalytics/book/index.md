@@ -1505,7 +1505,7 @@ AK_lakes_pca <- runMatrixAnalysis(
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = "element",
   column_w_abundances_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_abundances_for_single_analyte = c("water_temp", "pH"),
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
 )
@@ -1548,7 +1548,7 @@ AK_lakes_pca_ord <- runMatrixAnalysis(
   analysis = c("pca_ord"),
   column_w_names_of_multiple_analytes = "element",
   column_w_abundances_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_abundances_for_single_analyte = c("water_temp", "pH"),
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
 )
@@ -1599,7 +1599,7 @@ AK_lakes_pca_dim <- runMatrixAnalysis(
   analysis = c("pca_dim"),
   column_w_names_of_multiple_analytes = "element",
   column_w_abundances_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_abundances_for_single_analyte = c("water_temp", "pH"),
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
 )
@@ -1629,7 +1629,7 @@ Cool! We can see that the first principal component retains nearly 50% of the va
 
 ### exercises {-}
 
-In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
+In this set of exercises, as you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
 
 ```r
@@ -1653,11 +1653,11 @@ colnames(periodic_table_subset)[c(18:20, 23:25)]
 ## [5] "polarizability_A_cubed"            
 ## [6] "heat_atomization_kJ_per_mol"
 ```
-We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
+We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_abundances_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
 
 #### human metabolomics {-}
 
-This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
+For these questions, work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. Your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
 
 1. Run a PCA analysis on `metabolomics_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
 2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
@@ -1669,7 +1669,7 @@ This first option is to work with a dataset describing metabolomics data (i.e. a
 
 #### grape vine chemistry {-}
 
-This second option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
+For this set of quesions, work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. Your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
 
 1. Run a PCA analysis on `wine_grape_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
 2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
@@ -1713,7 +1713,7 @@ AK_lakes_clustered <- runMatrixAnalysis(
     column_w_names_of_multiple_analytes = "element",
     column_w_abundances_for_multiple_analytes = "mg_per_L",
     
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_abundances_for_single_analyte = c("water_temp", "pH"),
     
     columns_w_additional_analyte_info = "element_type",
 
@@ -1832,7 +1832,7 @@ solvents_pca_kmeans <- runMatrixAnalysis(
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
   column_w_abundances_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_abundances_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
   transpose = FALSE,
@@ -1884,7 +1884,7 @@ solvents_pca_kmeans_elbow <- runMatrixAnalysis(
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
   column_w_abundances_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_abundances_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
   transpose = FALSE,
@@ -1936,7 +1936,7 @@ runMatrixAnalysis(
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
   column_w_abundances_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_abundances_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
   transpose = FALSE,
@@ -1967,7 +1967,7 @@ solvents_clustered <- runMatrixAnalysis(
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
   column_w_abundances_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_abundances_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
   transpose = FALSE,
@@ -2005,7 +2005,7 @@ solvents_clustered <- runMatrixAnalysis(
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
   column_w_abundances_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+  columns_w_abundances_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
   transpose = FALSE,
@@ -4351,7 +4351,7 @@ runMatrixAnalysis(
   column_w_names_of_multiple_analytes = NULL,
   column_w_abundances_for_multiple_analytes = NULL,
     
-  columns_w_values_for_single_analyte = NULL,
+  columns_w_abundances_for_single_analyte = NULL,
 
   columns_w_sample_ID_info = NULL
 
@@ -4368,7 +4368,7 @@ runMatrixAnalysis(
   analysis = c("hclust", "pca", "pca_ord", "pca_dim"), # the analysis to conduct
   column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
   column_w_abundances_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
-  columns_w_values_for_single_analyte = NULL, # a column with quantities measured for a single analyte
+  columns_w_abundances_for_single_analyte = NULL, # a column with quantities measured for a single analyte
   columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
   columns_w_sample_ID_info = NULL, # a column with information about the sample (i.e. contents from the test tube's label)
   transpose = FALSE,
