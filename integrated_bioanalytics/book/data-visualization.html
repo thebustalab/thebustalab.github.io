@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -59,9 +59,8 @@
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="active" href="data-visualization.html">data visualization</a></li>
 <li><a class="" href="data-wrangling.html">data wrangling</a></li>
+<li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
-<li><a class="" href="pca.html">pca</a></li>
-<li><a class="" href="k-means.html">k-means</a></li>
 <li><a class="" href="models.html">models</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
 <li class="book-part">GC-MS DATA</li>
@@ -495,9 +494,9 @@ Figure 1.1: Vapor pressure as a function of boiling point. A scatter plot with t
 <li><p>Don’t be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.</p></li>
 </ul>
 <ol style="list-style-type: decimal">
-<li><p>Create two plots that are identical except that one uses the <code>scales = "free"</code> feature of <code>facet_grid</code> while the other does not (i.e. one should use <code>facet_grid(&lt;things&gt;)</code>, whiel the other uses <code>facet_grid(&lt;things&gt;, scales = "free")</code>). Write a single caption that describes <em>both</em> plots, highlighting the advantages provided by each plot over the other. For additional tips on writing captions, please see the “Writing” chapter in this book.</p></li>
-<li><p>Create two plots that are identical except that one uses <code>geom_point()</code>, while the other uses <code>geom_jitter()</code>. Write a single caption that describes <em>both</em> plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use <code>geom_jitter()</code> over <code>geom_point()</code>.</p></li>
-<li><p>Make a plot that has four aesthetic mappings (x and y mappings count). Use the <code>scales_*</code> family of commands to modify some aspect of each scale create by the four mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, …), and some scales are easier to modify (x, y, color, fill, shape).</p></li>
+<li><p>Create a plot that has x and y axes that are continuous variables. Add to this plot <code>facet_grid</code>, and specify that the facets should be based on a categorical variable (ideally a categorical variable with a small number of total categories). Now make two versions of that plot, one that uses the <code>scales = "free"</code> feature of <code>facet_grid</code> and a second the other does not (i.e. one should use <code>facet_grid(&lt;things&gt;)</code>, while the other uses <code>facet_grid(&lt;things&gt;, scales = "free")</code>). Write a single caption that describes <em>both</em> plots, highlighting the advantages provided by each plot over the other. For additional tips on writing captions, please see the “Writing” chapter in this book.</p></li>
+<li><p>Using a continuous variable on one axis and a discrete (categorical) variable on the other, create two plots that are identical except that one uses <code>geom_point()</code>, while the other uses <code>geom_jitter()</code>. Write a single caption that describes <em>both</em> plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use <code>geom_jitter()</code> over <code>geom_point()</code>.</p></li>
+<li><p>Make a plot that has four aesthetic mappings (x and y mappings count). Use the <code>scales_*</code> family of commands to modify some aspect of each scale create by the four mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, …), and some scales are easier to modify (x, y, color, fill, shape). You may need to use some google searches to help you. Queries along the lines of “how to modify point color in ggplot” should direct you to a useful resource.</p></li>
 <li><p>Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as <code>theme_classic()</code>, rather, manually modify components of the theme using <code>theme()</code>). This means that inside your <code>theme()</code> command, there should be three arguments separated by commas.</p></li>
 <li><p>Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot <em>and</em> the trend you’ve identified and highlighted. Note: I realize that the word “optimize” is not clearly defined here. That’s ok! You are the judge of what is optimized and what is not. Use your caption to make a case for <em>why</em> your plot is optimized. <em>Defend</em> your ideas with argument!</p></li>
 </ol>
@@ -569,7 +568,7 @@ Figure 1.1: Vapor pressure as a function of boiling point. A scatter plot with t
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-15.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-18.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

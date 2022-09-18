@@ -803,11 +803,11 @@ Some pointers:
 
 - Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
 
-1. Create two plots that are identical except that one uses the `scales = "free"` feature of `facet_grid` while the other does not (i.e. one should use `facet_grid(<things>)`, whiel the other uses `facet_grid(<things>, scales = "free")`). Write a single caption that describes *both* plots, highlighting the advantages provided by each plot over the other. For additional tips on writing captions, please see the "Writing" chapter in this book.
+1. Create a plot that has x and y axes that are continuous variables. Add to this plot `facet_grid`, and specify that the facets should be based on a categorical variable (ideally a categorical variable with a small number of total categories). Now make two versions of that plot, one that uses the `scales = "free"` feature of `facet_grid` and a second the other does not (i.e. one should use `facet_grid(<things>)`, while the other uses `facet_grid(<things>, scales = "free")`). Write a single caption that describes *both* plots, highlighting the advantages provided by each plot over the other. For additional tips on writing captions, please see the "Writing" chapter in this book.
 
-2. Create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
+2. Using a continuous variable on one axis and a discrete (categorical) variable on the other, create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
 
-3. Make a plot that has four aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the four mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape).
+3. Make a plot that has four aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the four mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape). You may need to use some google searches to help you. Queries along the lines of "how to modify point color in ggplot" should direct you to a useful resource.
 
 4. Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as `theme_classic()`, rather, manually modify components of the theme using `theme()`). This means that inside your `theme()` command, there should be three arguments separated by commas.
 
@@ -1199,16 +1199,19 @@ ggplot(pt_by_year_summ,
 
 Be sure to check out the Tidy Data Tutor: https://tidydatatutor.com/vis.html. An easy way to visualize what's going on during data wrangling!
 
-<!-- start clustering -->
-# clustering {-}
+<!-- end -->
 
-## theory
+<!-- start dimensionality reduction -->
 
-"Which of my samples are most closely related?"
+# dimensionality reduction {-}
 
-So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, and other questions, we need to use matrix analyses. For this, we will use `runMatrixAnalysis()`, a function that is loaded into your R Session when you run the source() command.
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png', dpi = NA)
+```
 
-Matrix analyses can be a bit difficult to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
+In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction useing `runMatrixAnalysis()`, a function that is loaded into your R Session when you run the source() command.
+
+Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
 
 ```{r, message = FALSE}
 alaska_lake_data
@@ -1220,85 +1223,12 @@ We can see that this dataset is comprised of measurements of various *analytes* 
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png', dpi = NA)
 ```
 
-With this in mind, let's try out our template:
-
-```{r, message = FALSE}
-AK_lakes_clustered <- runMatrixAnalysis(
-                                
-    data = alaska_lake_data,
-
-    analysis = "hclust",
-
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    
-    columns_w_additional_analyte_info = "element_type",
-
-    columns_w_sample_ID_info = c("lake", "park")
-
-)
-AK_lakes_clustered
-```
-
-It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
-
-Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
-
-```{r, message = FALSE}
-library(ggtree)
-AK_lakes_clustered %>%
-ggtree() +
-  geom_tiplab() +
-  geom_tippoint() +
-  theme_classic()
-```
-
-Cool! Though that plot could use some tweaking... let's try:
-
-```{r, fig.height = 5, fig.width = 7}
-AK_lakes_clustered %>%
-ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10) +
-    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,15))
-```
-
-Very nice!
-
-## further reading
- 
-For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
-
-## exercises
-
-For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
-
-For this assignment, you may find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
-
-```{r}
-colnames(solvents)
-
-colnames(solvents)[1:3]
-
-colnames(solvents)[c(1,5,7)]
-```
-<!-- end -->
- 
-<!-- start principal components analysis -->
-
-# pca {-}
+## pca {-}
 
 "Which analytes are driving differences among my samples?"
+"Which analytes in my data set are correlated?"
 
-In addition to heirarchical clustering, there is another way to look at our data in a cluster context - i.e. another way to identify clusters of samples that have similar properties based on the analytes in the data set. This method is called k-means, which we will look at later, because for it we first need to have a look at dimensionality reduction techniques, particularly principal components analysis (PCA). 
-
-explain pca as drawing a new set of axes
-pca also answers questions about whether variables are related
-hclust is "who is most closely related to whom?", PCA is about clustering
-
-## pca 
+### theory {-}
 
 PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
 
@@ -1331,7 +1261,7 @@ Great! In this plot we can see that White Fish Lake and North Killeak Lake, both
 
 Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that's the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?
 
-## ordination plots
+### ordination plots {-}
 
 Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
 
@@ -1385,7 +1315,7 @@ Great! Here is how to read the ordination plot:
 
 With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
 
-## principal components
+### principal components {-}
 
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
@@ -1412,7 +1342,7 @@ ggplot(
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
 
-## exercises
+### exercises {-}
 
 In this set of exercises you will choose to complete ONE of the options below. For either option please refer to Chapter 12 for help with principal component and ordination plots. Also, when you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
@@ -1422,7 +1352,7 @@ colnames(periodic_table_subset)[c(18:20, 23:25)]
 ```
 We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
 
-### option 1: human metabolomics.
+#### human metabolomics {-}
 
 This first option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. If you choose this option, your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
 
@@ -1479,7 +1409,7 @@ ggplot() +
 
 ```
 
-### option 2: grape vine chemistry
+#### grape vine chemistry {-}
 
 This second option is to work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. If you choose this option, your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
 
@@ -1527,14 +1457,109 @@ ggplot() +
   geom_segment(data = wine_grape_data_pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
   geom_label(data = filter(wine_grape_data_pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
 ```
+
+### further reading {-}
+
+## UMAP {-}
+
+## tSNE {-}
+
 <!-- end -->
 
+<!-- start clustering -->
+# clustering {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png', dpi = NA)
+```
+
+## heirarchical clustering
+
+### theory
+
+"Which of my samples are most closely related?"
+
+So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties.
+
+With this in mind, let's try out our matrix analysis:
+
+```{r, message = FALSE}
+AK_lakes_clustered <- runMatrixAnalysis(
+                                
+    data = alaska_lake_data,
+
+    analysis = "hclust",
+
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    
+    columns_w_additional_analyte_info = "element_type",
+
+    columns_w_sample_ID_info = c("lake", "park")
+
+)
+AK_lakes_clustered
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+```{r, message = FALSE}
+library(ggtree)
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic()
+```
+
+Cool! Though that plot could use some tweaking... let's try:
+
+```{r, fig.height = 4, fig.width = 5}
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 1, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,10)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.2,0.8)
+    )
+    
+```
+
+Very nice!
+
+### further reading
+ 
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
+
+For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
+
+### exercises
+
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
+
+For this assignment, you may find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
+
+```{r}
+colnames(solvents)
+
+colnames(solvents)[1:3]
+
+colnames(solvents)[c(1,5,7)]
+```
+
 <!-- start k-means -->
-# k-means {-}
+## k-means clustering {-}
 
 "Do my samples fall into definable clusters?"
 
-## theory
+### theory
 
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
@@ -1723,11 +1748,11 @@ cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 
 Now we are really rockin!!
 
-## exercises
+### exercises
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
 
-### Question 1
+* Question 1
 
 Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
 
@@ -1749,7 +1774,7 @@ ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape
 
 ```
 
-### Question 2
+* Question 2
 
 Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
 
@@ -1776,7 +1801,7 @@ ggplot(aes(x = Dim.1, y = Dim.2)) +
 
 ```
 
-### Question 3
+* Question 3
 
 Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
 
@@ -1801,7 +1826,7 @@ ggplot() +
 
 ```
 
-### Question 4
+* Question 4
 
 Modify your code from Question 2 so that five clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?
 
@@ -1828,7 +1853,7 @@ plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
 plot0
 ```
 
-### Question 5
+* Question 5
 
 Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?
 
@@ -1857,7 +1882,7 @@ plot1 <- ggtree(dat, aes(color = kmeans_cluster)) +
 
 ```
 
-### Question 6
+* Question 6
 
 Google "Quercetin". What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using `geom_pointrange` and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, `theme_classic()`).
 
@@ -1872,7 +1897,7 @@ plot2 <- dat %>%
   plot2
 ```
 
-### Question 7
+* Question 7
 
 Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
 
@@ -1880,7 +1905,7 @@ Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to ea
 cowplot::plot_grid(plot1, plot2)
 ```
 
-### Challenge (optional)
+* Challenge (optional)
 
 Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
 
