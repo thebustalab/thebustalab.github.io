@@ -4186,7 +4186,7 @@
                                                         analysis = c("hclust"),
                                                         column_w_names_of_multiple_analytes = NULL,
                                                         column_w_abundances_for_multiple_analytes = NULL,
-                                                        columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
+                                                        columns_w_abundances_for_single_analyte = colnames(lookup_data)[6:805],
                                                         columns_w_additional_analyte_info = NULL,
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
                                                         transpose = FALSE,
@@ -4204,7 +4204,7 @@
                                                         analysis = c("hclust_phylo"),
                                                         column_w_names_of_multiple_analytes = "analyte_name",
                                                         column_w_abundances_for_multiple_analytes = "value",
-                                                        columns_w_values_for_single_analyte = NULL,
+                                                        columns_w_abundances_for_single_analyte = NULL,
                                                         columns_w_additional_analyte_info = NULL,
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
                                                         transpose = FALSE,
@@ -6775,7 +6775,7 @@
                                             ),
                                             column_w_names_of_multiple_analytes = NULL,
                                             column_w_abundances_for_multiple_analytes = NULL,
-                                            columns_w_values_for_single_analyte = NULL,
+                                            columns_w_abundances_for_single_analyte = NULL,
                                             columns_w_additional_analyte_info = NULL,
                                             columns_w_sample_ID_info = NULL,
                                             transpose = FALSE,
@@ -6796,7 +6796,7 @@
                                 !c(
                                     column_w_names_of_multiple_analytes,
                                     column_w_abundances_for_multiple_analytes,
-                                    columns_w_values_for_single_analyte,
+                                    columns_w_abundances_for_single_analyte,
                                     columns_w_additional_analyte_info,
                                     columns_w_sample_ID_info
                                 ) %in% colnames(data)
@@ -6818,7 +6818,7 @@
                                         c(
                                             column_w_names_of_multiple_analytes,
                                             column_w_abundances_for_multiple_analytes,
-                                            columns_w_values_for_single_analyte,
+                                            columns_w_abundances_for_single_analyte,
                                             columns_w_additional_analyte_info,
                                             columns_w_sample_ID_info
                                         )
@@ -6829,7 +6829,7 @@
                                     c(
                                         column_w_names_of_multiple_analytes,
                                         column_w_abundances_for_multiple_analytes,
-                                        columns_w_values_for_single_analyte,
+                                        columns_w_abundances_for_single_analyte,
                                         columns_w_additional_analyte_info,
                                         columns_w_sample_ID_info
                                     )
@@ -6838,9 +6838,9 @@
 
                         # Check for duplicate analyte names
 
-                            if( length(columns_w_values_for_single_analyte) > 0 ) {
-                                if( any(duplicated(columns_w_values_for_single_analyte)) ) {
-                                    stop("There are duplicate analyte names in columns_w_values_for_single_analyte.")
+                            if( length(columns_w_abundances_for_single_analyte) > 0 ) {
+                                if( any(duplicated(columns_w_abundances_for_single_analyte)) ) {
+                                    stop("There are duplicate analyte names in columns_w_abundances_for_single_analyte.")
                                 }
                             }
 
@@ -6865,9 +6865,9 @@
 
                         # If no pivot required, skip pivoting
 
-                            if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
+                            if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_abundances_for_single_analyte) >= 1 ) {
                                 data_wide <- analyte_annotation_free_data
-                                analyte_columns <- columns_w_values_for_single_analyte
+                                analyte_columns <- columns_w_abundances_for_single_analyte
                                 data_wide <- unique(data_wide)
                             }
 
@@ -6880,7 +6880,7 @@
                                     values_from = all_of(column_w_abundances_for_multiple_analytes)
                                 )
                                 analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
-                                analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
+                                analyte_columns <- c(columns_w_abundances_for_single_analyte, analyte_columns)
                             }
 
                         # Check to see if analyte columns are numeric

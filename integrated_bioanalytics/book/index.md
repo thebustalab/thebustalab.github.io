@@ -1504,7 +1504,7 @@ AK_lakes_pca <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
+  column_w_abundances_for_multiple_analytes = "mg_per_L",
   columns_w_values_for_single_analyte = c("water_temp", "pH"),
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
@@ -1547,7 +1547,7 @@ AK_lakes_pca_ord <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca_ord"),
   column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
+  column_w_abundances_for_multiple_analytes = "mg_per_L",
   columns_w_values_for_single_analyte = c("water_temp", "pH"),
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
@@ -1598,7 +1598,7 @@ AK_lakes_pca_dim <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca_dim"),
   column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
+  column_w_abundances_for_multiple_analytes = "mg_per_L",
   columns_w_values_for_single_analyte = c("water_temp", "pH"),
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
@@ -1711,7 +1711,7 @@ AK_lakes_clustered <- runMatrixAnalysis(
     analysis = "hclust",
 
     column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
+    column_w_abundances_for_multiple_analytes = "mg_per_L",
     
     columns_w_values_for_single_analyte = c("water_temp", "pH"),
     
@@ -1831,7 +1831,7 @@ solvents_pca_kmeans <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
+  column_w_abundances_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
@@ -1883,7 +1883,7 @@ solvents_pca_kmeans_elbow <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
+  column_w_abundances_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
@@ -1935,7 +1935,7 @@ runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
+  column_w_abundances_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
@@ -1966,7 +1966,7 @@ solvents_clustered <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
+  column_w_abundances_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
@@ -2004,7 +2004,7 @@ solvents_clustered <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
+  column_w_abundances_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
@@ -4349,7 +4349,7 @@ runMatrixAnalysis(
   analysis = c("hclust", "pca", "pca_ord", "pca_dim"),
 
   column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
+  column_w_abundances_for_multiple_analytes = NULL,
     
   columns_w_values_for_single_analyte = NULL,
 
@@ -4367,7 +4367,7 @@ runMatrixAnalysis(
   data = NULL, # the data set to work on
   analysis = c("hclust", "pca", "pca_ord", "pca_dim"), # the analysis to conduct
   column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
-  column_w_values_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
+  column_w_abundances_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
   columns_w_values_for_single_analyte = NULL, # a column with quantities measured for a single analyte
   columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
   columns_w_sample_ID_info = NULL, # a column with information about the sample (i.e. contents from the test tube's label)
