@@ -4185,7 +4185,7 @@
                                                         data = lookup_data,
                                                         analysis = c("hclust"),
                                                         column_w_names_of_multiple_analytes = NULL,
-                                                        column_w_values_for_multiple_analytes = NULL,
+                                                        column_w_abundances_for_multiple_analytes = NULL,
                                                         columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
                                                         columns_w_additional_analyte_info = NULL,
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
@@ -4203,7 +4203,7 @@
                                                         data = hits[!is.na(hits$sample_unique_ID),],
                                                         analysis = c("hclust_phylo"),
                                                         column_w_names_of_multiple_analytes = "analyte_name",
-                                                        column_w_values_for_multiple_analytes = "value",
+                                                        column_w_abundances_for_multiple_analytes = "value",
                                                         columns_w_values_for_single_analyte = NULL,
                                                         columns_w_additional_analyte_info = NULL,
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
@@ -6754,7 +6754,7 @@
             #' @param data The data frame or tibble to analyze
             #' @param analysis The type of analysis to run. Can be one of: "hclust" (heirarchical clustering), "pca" (principal components analysis), "pca-ord" (principal components analysis ordination plot), or "pca-dim" (principal components scree plot)
             #' @param column_w_names_of_multiple_analytes  
-            #' @param column_w_values_for_multiple_analytes
+            #' @param column_w_abundances_for_multiple_analytes
             #' @param columns_w_additional_analyte_info
             #' @param columns_w_sample_ID_info
             #' @param kmeans
@@ -6774,7 +6774,7 @@
                                                 "tSNE", "DBSCAN"
                                             ),
                                             column_w_names_of_multiple_analytes = NULL,
-                                            column_w_values_for_multiple_analytes = NULL,
+                                            column_w_abundances_for_multiple_analytes = NULL,
                                             columns_w_values_for_single_analyte = NULL,
                                             columns_w_additional_analyte_info = NULL,
                                             columns_w_sample_ID_info = NULL,
@@ -6795,7 +6795,7 @@
                             if( any(
                                 !c(
                                     column_w_names_of_multiple_analytes,
-                                    column_w_values_for_multiple_analytes,
+                                    column_w_abundances_for_multiple_analytes,
                                     columns_w_values_for_single_analyte,
                                     columns_w_additional_analyte_info,
                                     columns_w_sample_ID_info
@@ -6817,7 +6817,7 @@
                                     which(!colnames(data) %in% 
                                         c(
                                             column_w_names_of_multiple_analytes,
-                                            column_w_values_for_multiple_analytes,
+                                            column_w_abundances_for_multiple_analytes,
                                             columns_w_values_for_single_analyte,
                                             columns_w_additional_analyte_info,
                                             columns_w_sample_ID_info
@@ -6828,7 +6828,7 @@
                                 data <- data[,-which(!colnames(data) %in% 
                                     c(
                                         column_w_names_of_multiple_analytes,
-                                        column_w_values_for_multiple_analytes,
+                                        column_w_abundances_for_multiple_analytes,
                                         columns_w_values_for_single_analyte,
                                         columns_w_additional_analyte_info,
                                         columns_w_sample_ID_info
@@ -6877,7 +6877,7 @@
                                 data_wide <- pivot_wider(
                                     analyte_annotation_free_data,
                                     names_from = all_of(column_w_names_of_multiple_analytes),
-                                    values_from = all_of(column_w_values_for_multiple_analytes)
+                                    values_from = all_of(column_w_abundances_for_multiple_analytes)
                                 )
                                 analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
                                 analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
