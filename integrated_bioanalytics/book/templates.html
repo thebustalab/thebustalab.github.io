@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>templates | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content='1.46 matrix analyses  1.46.1 basic runMatrixAnalysis() template  runMatrixAnalysis(          data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  column_w_names_of_multiple_analytes...'>
+<meta name="description" content='1.47 matrix analyses  1.47.1 basic runMatrixAnalysis() template  runMatrixAnalysis(          data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  column_w_names_of_multiple_analytes...'>
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="templates | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content='1.46 matrix analyses  1.46.1 basic runMatrixAnalysis() template  runMatrixAnalysis(          data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  column_w_names_of_multiple_analytes...'>
+<meta property="og:description" content='1.47 matrix analyses  1.47.1 basic runMatrixAnalysis() template  runMatrixAnalysis(          data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  column_w_names_of_multiple_analytes...'>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="templates | Integrated Bioanalytics">
-<meta name="twitter:description" content='1.46 matrix analyses  1.46.1 basic runMatrixAnalysis() template  runMatrixAnalysis(          data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  column_w_names_of_multiple_analytes...'>
+<meta name="twitter:description" content='1.47 matrix analyses  1.47.1 basic runMatrixAnalysis() template  runMatrixAnalysis(          data = NULL,  analysis = c("hclust", "pca", "pca_ord", "pca_dim"),  column_w_names_of_multiple_analytes...'>
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
@@ -106,15 +106,15 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="templates" class="section level1 unnumbered">
 <h1>templates<a class="anchor" aria-label="anchor" href="#templates"><i class="fas fa-link"></i></a>
 </h1>
-<div id="matrix-analyses" class="section level2" number="1.46">
+<div id="matrix-analyses" class="section level2" number="1.47">
 <h2>
-<span class="header-section-number">1.46</span> matrix analyses<a class="anchor" aria-label="anchor" href="#matrix-analyses"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.47</span> matrix analyses<a class="anchor" aria-label="anchor" href="#matrix-analyses"><i class="fas fa-link"></i></a>
 </h2>
-<div id="basic-runmatrixanalysis-template" class="section level3" number="1.46.1">
+<div id="basic-runmatrixanalysis-template" class="section level3" number="1.47.1">
 <h3>
-<span class="header-section-number">1.46.1</span> basic <code>runMatrixAnalysis()</code> template<a class="anchor" aria-label="anchor" href="#basic-runmatrixanalysis-template"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.47.1</span> basic <code>runMatrixAnalysis()</code> template<a class="anchor" aria-label="anchor" href="#basic-runmatrixanalysis-template"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
                 
@@ -123,26 +123,26 @@
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span>, <span class="st">"pca"</span>, <span class="st">"pca_ord"</span>, <span class="st">"pca_dim"</span><span class="op">)</span>,
 
   column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  column_w_abundances_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
     
-  columns_w_abundances_for_single_analyte <span class="op">=</span> <span class="cn">NULL</span>,
+  columns_w_values_for_single_analyte <span class="op">=</span> <span class="cn">NULL</span>,
 
   columns_w_sample_ID_info <span class="op">=</span> <span class="cn">NULL</span>
 
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="advanced-runmatrixanalysis-template" class="section level3" number="1.46.2">
+<div id="advanced-runmatrixanalysis-template" class="section level3" number="1.47.2">
 <h3>
-<span class="header-section-number">1.46.2</span> advanced <code>runMatrixAnalysis()</code> template<a class="anchor" aria-label="anchor" href="#advanced-runmatrixanalysis-template"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.47.2</span> advanced <code>runMatrixAnalysis()</code> template<a class="anchor" aria-label="anchor" href="#advanced-runmatrixanalysis-template"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># the data set to work on</span>
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span>, <span class="st">"pca"</span>, <span class="st">"pca_ord"</span>, <span class="st">"pca_dim"</span><span class="op">)</span>, <span class="co"># the analysis to conduct</span>
   column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># a column with names of multiple analytes</span>
-  column_w_abundances_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span>
-  columns_w_abundances_for_single_analyte <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span>
+  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for multiple analytes</span>
+  columns_w_values_for_single_analyte <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># a column with quantities measured for a single analyte</span>
   columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># a column with character or numeric information about analytes that was not "measured" as part of the experiment.</span>
   columns_w_sample_ID_info <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># a column with information about the sample (i.e. contents from the test tube's label)</span>
   transpose <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -171,9 +171,9 @@
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#templates">templates</a></li>
 <li>
-<a class="nav-link" href="#matrix-analyses"><span class="header-section-number">1.46</span> matrix analyses</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#basic-runmatrixanalysis-template"><span class="header-section-number">1.46.1</span> basic runMatrixAnalysis() template</a></li>
-<li><a class="nav-link" href="#advanced-runmatrixanalysis-template"><span class="header-section-number">1.46.2</span> advanced runMatrixAnalysis() template</a></li>
+<a class="nav-link" href="#matrix-analyses"><span class="header-section-number">1.47</span> matrix analyses</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#basic-runmatrixanalysis-template"><span class="header-section-number">1.47.1</span> basic runMatrixAnalysis() template</a></li>
+<li><a class="nav-link" href="#advanced-runmatrixanalysis-template"><span class="header-section-number">1.47.2</span> advanced runMatrixAnalysis() template</a></li>
 </ul>
 </li>
 </ul>
@@ -193,7 +193,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-18.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-19.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>genome assembly | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.  1.16 assembly  1.16.1 equipment Genome assembly requires computing resources - and since not all genomes are...">
+<meta name="description" content="To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.  1.17 assembly  1.17.1 equipment Genome assembly requires computing resources - and since not all genomes are...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="genome assembly | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.  1.16 assembly  1.16.1 equipment Genome assembly requires computing resources - and since not all genomes are...">
+<meta property="og:description" content="To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.  1.17 assembly  1.17.1 equipment Genome assembly requires computing resources - and since not all genomes are...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="genome assembly | Integrated Bioanalytics">
-<meta name="twitter:description" content="To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.  1.16 assembly  1.16.1 equipment Genome assembly requires computing resources - and since not all genomes are...">
+<meta name="twitter:description" content="To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.  1.17 assembly  1.17.1 equipment Genome assembly requires computing resources - and since not all genomes are...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
@@ -107,13 +107,13 @@
 <h1>genome assembly<a class="anchor" aria-label="anchor" href="#genome-assembly"><i class="fas fa-link"></i></a>
 </h1>
 <p>To some degree, refer to: <a href="https://github.com/dithiii/ant-pipeline/blob/main/README.md" class="uri">https://github.com/dithiii/ant-pipeline/blob/main/README.md</a>.</p>
-<div id="assembly" class="section level2" number="1.16">
+<div id="assembly" class="section level2" number="1.17">
 <h2>
-<span class="header-section-number">1.16</span> assembly<a class="anchor" aria-label="anchor" href="#assembly"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.17</span> assembly<a class="anchor" aria-label="anchor" href="#assembly"><i class="fas fa-link"></i></a>
 </h2>
-<div id="equipment" class="section level3" number="1.16.1">
+<div id="equipment" class="section level3" number="1.17.1">
 <h3>
-<span class="header-section-number">1.16.1</span> equipment<a class="anchor" aria-label="anchor" href="#equipment"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.17.1</span> equipment<a class="anchor" aria-label="anchor" href="#equipment"><i class="fas fa-link"></i></a>
 </h3>
 <p>Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may differ. To run a genome assembly, start by determining what computing resources are available. Some helpful commands when investigating these resources on Linux machines:</p>
 <ul>
@@ -129,19 +129,19 @@
 </ul>
 <p><code>df -h</code></p>
 </div>
-<div id="assembly-software" class="section level3" number="1.16.2">
+<div id="assembly-software" class="section level3" number="1.17.2">
 <h3>
-<span class="header-section-number">1.16.2</span> assembly software<a class="anchor" aria-label="anchor" href="#assembly-software"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.17.2</span> assembly software<a class="anchor" aria-label="anchor" href="#assembly-software"><i class="fas fa-link"></i></a>
 </h3>
-<div id="canu" class="section level4" number="1.16.2.1">
+<div id="canu" class="section level4" number="1.17.2.1">
 <h4>
-<span class="header-section-number">1.16.2.1</span> canu<a class="anchor" aria-label="anchor" href="#canu"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.17.2.1</span> canu<a class="anchor" aria-label="anchor" href="#canu"><i class="fas fa-link"></i></a>
 </h4>
 <p><code>docker pull staphb/canu-racon</code></p>
 <p>For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:</p>
 <p><code>cat *.fastq &gt; all_reads.fastq</code></p>
 <p>Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using <code>nano</code>. In it, try something like:</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="genome-assembly.html#cb122-1" aria-hidden="true" tabindex="-1"></a>sudo docker run <span class="sc">-</span>u <span class="sc">$</span>(id <span class="sc">-</span>u) <span class="sc">-</span>v <span class="sc">/</span>data<span class="sc">/</span>ben_diatom2<span class="sc">/</span>basecalled_reads<span class="sc">/</span><span class="er">:/</span>canu<span class="sc">-</span>racon_wd staphb<span class="sc">/</span>canu<span class="sc">-</span>racon canu <span class="sc">-</span>p n_frust2assembly <span class="sc">-</span>d <span class="sc">/</span>canu<span class="sc">-</span>racon_wd<span class="sc">/</span> <span class="sc">-</span>genomeSize<span class="ot">=</span>150m <span class="sc">-</span>nanopore <span class="sc">/</span>canu<span class="sc">-</span>racon_wd<span class="sc">/</span>all_reads2.fastq <span class="sc">-</span>minReadLength<span class="ot">=</span><span class="dv">1000</span> <span class="sc">-</span>correctedErrorRate<span class="ot">=</span><span class="fl">0.12</span> <span class="sc">-</span>minOverlapLength<span class="ot">=</span><span class="dv">500</span> <span class="sc">-</span>useGrid<span class="ot">=</span>false <span class="sc">-</span>minInputCoverage<span class="ot">=</span><span class="fl">0.5</span> <span class="sc">-</span>maxInputCoverage<span class="ot">=</span><span class="dv">100</span> <span class="sc">-</span>stopOnLowCoverage<span class="ot">=</span><span class="fl">0.5</span> <span class="sc">-</span>corMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>corThreads<span class="ot">=</span><span class="dv">4</span> <span class="sc">-</span>hapMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>hapThreads<span class="ot">=</span><span class="dv">4</span> <span class="sc">-</span>merylMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>merylthreads<span class="ot">=</span><span class="dv">4</span> <span class="sc">-</span>batMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>batThreads<span class="ot">=</span><span class="dv">4</span></span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="genome-assembly.html#cb123-1" aria-hidden="true" tabindex="-1"></a>sudo docker run <span class="sc">-</span>u <span class="sc">$</span>(id <span class="sc">-</span>u) <span class="sc">-</span>v <span class="sc">/</span>data<span class="sc">/</span>ben_diatom2<span class="sc">/</span>basecalled_reads<span class="sc">/</span><span class="er">:/</span>canu<span class="sc">-</span>racon_wd staphb<span class="sc">/</span>canu<span class="sc">-</span>racon canu <span class="sc">-</span>p n_frust2assembly <span class="sc">-</span>d <span class="sc">/</span>canu<span class="sc">-</span>racon_wd<span class="sc">/</span> <span class="sc">-</span>genomeSize<span class="ot">=</span>150m <span class="sc">-</span>nanopore <span class="sc">/</span>canu<span class="sc">-</span>racon_wd<span class="sc">/</span>all_reads2.fastq <span class="sc">-</span>minReadLength<span class="ot">=</span><span class="dv">1000</span> <span class="sc">-</span>correctedErrorRate<span class="ot">=</span><span class="fl">0.12</span> <span class="sc">-</span>minOverlapLength<span class="ot">=</span><span class="dv">500</span> <span class="sc">-</span>useGrid<span class="ot">=</span>false <span class="sc">-</span>minInputCoverage<span class="ot">=</span><span class="fl">0.5</span> <span class="sc">-</span>maxInputCoverage<span class="ot">=</span><span class="dv">100</span> <span class="sc">-</span>stopOnLowCoverage<span class="ot">=</span><span class="fl">0.5</span> <span class="sc">-</span>corMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>corThreads<span class="ot">=</span><span class="dv">4</span> <span class="sc">-</span>hapMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>hapThreads<span class="ot">=</span><span class="dv">4</span> <span class="sc">-</span>merylMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>merylthreads<span class="ot">=</span><span class="dv">4</span> <span class="sc">-</span>batMemory<span class="ot">=</span><span class="dv">48</span> <span class="sc">-</span>batThreads<span class="ot">=</span><span class="dv">4</span></span></code></pre></div>
 <p>Notes on Canu options:</p>
 <p>Defaults:</p>
 <ul>
@@ -160,26 +160,26 @@ correctedErrorRate=0.12</li>
 <li>Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.</li>
 </ul>
 </div>
-<div id="flye" class="section level4" number="1.16.2.2">
+<div id="flye" class="section level4" number="1.17.2.2">
 <h4>
-<span class="header-section-number">1.16.2.2</span> flye<a class="anchor" aria-label="anchor" href="#flye"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.17.2.2</span> flye<a class="anchor" aria-label="anchor" href="#flye"><i class="fas fa-link"></i></a>
 </h4>
 <p><code>docker pull staphb/flye</code></p>
 </div>
 </div>
-<div id="kmer-based-metrics" class="section level3" number="1.16.3">
+<div id="kmer-based-metrics" class="section level3" number="1.17.3">
 <h3>
-<span class="header-section-number">1.16.3</span> kmer-based metrics<a class="anchor" aria-label="anchor" href="#kmer-based-metrics"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.17.3</span> kmer-based metrics<a class="anchor" aria-label="anchor" href="#kmer-based-metrics"><i class="fas fa-link"></i></a>
 </h3>
 <p>Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data found in the .histogram files (i.e. in correction/0-mercounts/x.histogram, trimming/0-mercounts/x.histogram, unitigging/0-mercounts/x.histogram) and process them with <code>canuHistogramToKmerTable()</code>, as shown below. You can upload the output to : <a href="http://qb.cshl.edu/genomescope/genomescope2.0/" class="uri">http://qb.cshl.edu/genomescope/genomescope2.0/</a>. This will give you approximate genome size, ploidy, heterozygosity, repeat content, and read error rate. All good stuff to know!</p>
-<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">canuHistogramToKmerTable</span><span class="op">(</span>
   file_in_path <span class="op">=</span> <span class="st">"/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram"</span>,
   file_out_path <span class="op">=</span> <span class="st">"/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"</span>
 <span class="op">)</span></code></pre></div>
-<div id="merqury" class="section level4" number="1.16.3.1">
+<div id="merqury" class="section level4" number="1.17.3.1">
 <h4>
-<span class="header-section-number">1.16.3.1</span> merqury<a class="anchor" aria-label="anchor" href="#merqury"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.17.3.1</span> merqury<a class="anchor" aria-label="anchor" href="#merqury"><i class="fas fa-link"></i></a>
 </h4>
 <p><code>docker pull quay.io/chai/merqury</code></p>
 <p><code>sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h</code></p>
@@ -189,14 +189,14 @@ Merqury: reference-free quality, completeness, and phasing assessment for genome
 </div>
 </div>
 </div>
-<div id="evaluating-contigs" class="section level2" number="1.17">
+<div id="evaluating-contigs" class="section level2" number="1.18">
 <h2>
-<span class="header-section-number">1.17</span> evaluating contigs<a class="anchor" aria-label="anchor" href="#evaluating-contigs"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.18</span> evaluating contigs<a class="anchor" aria-label="anchor" href="#evaluating-contigs"><i class="fas fa-link"></i></a>
 </h2>
 <p>Can these be merged into a single wrapper that can be run after each step in assembly/polishing/scaffolding etc?</p>
-<div id="busco" class="section level3" number="1.17.1">
+<div id="busco" class="section level3" number="1.18.1">
 <h3>
-<span class="header-section-number">1.17.1</span> BUSCO<a class="anchor" aria-label="anchor" href="#busco"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.18.1</span> BUSCO<a class="anchor" aria-label="anchor" href="#busco"><i class="fas fa-link"></i></a>
 </h3>
 <ul>
 <li>Real BUSCO input will be /home/bust0037/data1/comparative_genomics/Kfedtschenkoi_382_v1.0.fa</li>
@@ -205,9 +205,9 @@ Merqury: reference-free quality, completeness, and phasing assessment for genome
 <p><code>docker pull ezlabgva/busco:v5.3.2_cv1</code></p>
 <p><code>sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10</code></p>
 </div>
-<div id="quast" class="section level3" number="1.17.2">
+<div id="quast" class="section level3" number="1.18.2">
 <h3>
-<span class="header-section-number">1.17.2</span> quast<a class="anchor" aria-label="anchor" href="#quast"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.18.2</span> quast<a class="anchor" aria-label="anchor" href="#quast"><i class="fas fa-link"></i></a>
 </h3>
 <p>Quast provides a score called ALE: alignment liklihood estimate.</p>
 <p><code>docker pull longas/quast</code></p>
@@ -215,13 +215,13 @@ Merqury: reference-free quality, completeness, and phasing assessment for genome
 <p><code>sudo docker run -u $(id -u) -v /home/bust0037/ben_test/_ben_genomes/:/tmp/work/quast_results longas/quast:latest quast.py --fragmented /tmp/work/quast_results/ben_pre_n_frust.contigs.fasta --nanopore /tmp/work/quast_results/all_pass_reads.fastq --space-efficient --memory-efficient --fast</code></p>
 </div>
 </div>
-<div id="polishing-contigs" class="section level2" number="1.18">
+<div id="polishing-contigs" class="section level2" number="1.19">
 <h2>
-<span class="header-section-number">1.18</span> polishing contigs<a class="anchor" aria-label="anchor" href="#polishing-contigs"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.19</span> polishing contigs<a class="anchor" aria-label="anchor" href="#polishing-contigs"><i class="fas fa-link"></i></a>
 </h2>
-<div id="medaka" class="section level3" number="1.18.1">
+<div id="medaka" class="section level3" number="1.19.1">
 <h3>
-<span class="header-section-number">1.18.1</span> medaka<a class="anchor" aria-label="anchor" href="#medaka"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.19.1</span> medaka<a class="anchor" aria-label="anchor" href="#medaka"><i class="fas fa-link"></i></a>
 </h3>
 <p>Pull the docker image:</p>
 <p><code>docker pull ontresearch/medaka</code></p>
@@ -233,21 +233,21 @@ Merqury: reference-free quality, completeness, and phasing assessment for genome
 * Do something else, updates in the form of: <code>21.7% Done (88.2/406.1 Mbases) in 6815.1s</code>.</p>
 </div>
 </div>
-<div id="methylation-with-remora" class="section level2" number="1.19">
+<div id="methylation-with-remora" class="section level2" number="1.20">
 <h2>
-<span class="header-section-number">1.19</span> methylation with remora<a class="anchor" aria-label="anchor" href="#methylation-with-remora"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.20</span> methylation with remora<a class="anchor" aria-label="anchor" href="#methylation-with-remora"><i class="fas fa-link"></i></a>
 </h2>
 <p>can we call methylation status on our Kalanchoe genomes? -&gt; yes, we can use Remora -&gt; watch for new guppy release, MinKNOW integration -&gt; currently in bonito</p>
 <pre><code>bonito basecaller dna_r10.4_e8.1_sup@v3.4 /data/reads --modified-bases 5mC --reference ref.mmi &gt; basecalls_with_mods.bam
 bonito basecaller dna_r10.4_e8.1_sup@v3.4 --reference consensus.fasta --modified-bases 5mC</code></pre>
 </div>
-<div id="scaffolding-assembly" class="section level2" number="1.20">
+<div id="scaffolding-assembly" class="section level2" number="1.21">
 <h2>
-<span class="header-section-number">1.20</span> scaffolding assembly<a class="anchor" aria-label="anchor" href="#scaffolding-assembly"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.21</span> scaffolding assembly<a class="anchor" aria-label="anchor" href="#scaffolding-assembly"><i class="fas fa-link"></i></a>
 </h2>
-<div id="ragtag" class="section level3" number="1.20.1">
+<div id="ragtag" class="section level3" number="1.21.1">
 <h3>
-<span class="header-section-number">1.20.1</span> RagTag<a class="anchor" aria-label="anchor" href="#ragtag"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.21.1</span> RagTag<a class="anchor" aria-label="anchor" href="#ragtag"><i class="fas fa-link"></i></a>
 </h3>
 <p>INSTALL PYTHON (or upgrade python) &lt;- can this be done using docker?</p>
 <p>INSTALL BIOCONDA
@@ -256,13 +256,13 @@ curl -O <a href="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
 sh …</p>
 </div>
 </div>
-<div id="annotation" class="section level2" number="1.21">
+<div id="annotation" class="section level2" number="1.22">
 <h2>
-<span class="header-section-number">1.21</span> annotation<a class="anchor" aria-label="anchor" href="#annotation"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.22</span> annotation<a class="anchor" aria-label="anchor" href="#annotation"><i class="fas fa-link"></i></a>
 </h2>
-<div id="augustus" class="section level3" number="1.21.1">
+<div id="augustus" class="section level3" number="1.22.1">
 <h3>
-<span class="header-section-number">1.21.1</span> augustus<a class="anchor" aria-label="anchor" href="#augustus"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.22.1</span> augustus<a class="anchor" aria-label="anchor" href="#augustus"><i class="fas fa-link"></i></a>
 </h3>
 <p>see: <a href="https://hub.docker.com/r/pegi3s/autoaugustus/" class="uri">https://hub.docker.com/r/pegi3s/autoaugustus/</a></p>
 <pre><code>docker pull pegi3s/autoaugustus</code></pre>
@@ -270,13 +270,13 @@ sh …</p>
 sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species=tomato /augustus/consensus.fasta &gt; consensus-preductions.gff --progress=TRUE</code></pre>
 </div>
 </div>
-<div id="final-assessment" class="section level2" number="1.22">
+<div id="final-assessment" class="section level2" number="1.23">
 <h2>
-<span class="header-section-number">1.22</span> final assessment<a class="anchor" aria-label="anchor" href="#final-assessment"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.23</span> final assessment<a class="anchor" aria-label="anchor" href="#final-assessment"><i class="fas fa-link"></i></a>
 </h2>
-<div id="mosdepth" class="section level3" number="1.22.1">
+<div id="mosdepth" class="section level3" number="1.23.1">
 <h3>
-<span class="header-section-number">1.22.1</span> mosdepth<a class="anchor" aria-label="anchor" href="#mosdepth"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.23.1</span> mosdepth<a class="anchor" aria-label="anchor" href="#mosdepth"><i class="fas fa-link"></i></a>
 </h3>
 <p><code>sudo docker pull quay.io/biocontainers/mosdepth:0.2.4--he527e40_0</code></p>
 <p><code>sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -h</code></p>
@@ -305,7 +305,7 @@ sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species
 /home/bust0037/merqury-1.3/merqury.sh</p>
 <p>sh $MERQURY/best_k.sh <genome_size></genome_size></p>
 <p>Let’s look at some examples. For these example, we will use some fasta files stored in a Google Drive folder:</p>
-<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># reads &lt;- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")</span>
 
 <span class="co"># # post &lt;- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")</span>
@@ -385,30 +385,30 @@ sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#genome-assembly">genome assembly</a></li>
 <li>
-<a class="nav-link" href="#assembly"><span class="header-section-number">1.16</span> assembly</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#equipment"><span class="header-section-number">1.16.1</span> equipment</a></li>
-<li><a class="nav-link" href="#assembly-software"><span class="header-section-number">1.16.2</span> assembly software</a></li>
-<li><a class="nav-link" href="#kmer-based-metrics"><span class="header-section-number">1.16.3</span> kmer-based metrics</a></li>
+<a class="nav-link" href="#assembly"><span class="header-section-number">1.17</span> assembly</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#equipment"><span class="header-section-number">1.17.1</span> equipment</a></li>
+<li><a class="nav-link" href="#assembly-software"><span class="header-section-number">1.17.2</span> assembly software</a></li>
+<li><a class="nav-link" href="#kmer-based-metrics"><span class="header-section-number">1.17.3</span> kmer-based metrics</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#evaluating-contigs"><span class="header-section-number">1.17</span> evaluating contigs</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#busco"><span class="header-section-number">1.17.1</span> BUSCO</a></li>
-<li><a class="nav-link" href="#quast"><span class="header-section-number">1.17.2</span> quast</a></li>
+<a class="nav-link" href="#evaluating-contigs"><span class="header-section-number">1.18</span> evaluating contigs</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#busco"><span class="header-section-number">1.18.1</span> BUSCO</a></li>
+<li><a class="nav-link" href="#quast"><span class="header-section-number">1.18.2</span> quast</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#polishing-contigs"><span class="header-section-number">1.18</span> polishing contigs</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#medaka"><span class="header-section-number">1.18.1</span> medaka</a></li></ul>
+<a class="nav-link" href="#polishing-contigs"><span class="header-section-number">1.19</span> polishing contigs</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#medaka"><span class="header-section-number">1.19.1</span> medaka</a></li></ul>
 </li>
-<li><a class="nav-link" href="#methylation-with-remora"><span class="header-section-number">1.19</span> methylation with remora</a></li>
+<li><a class="nav-link" href="#methylation-with-remora"><span class="header-section-number">1.20</span> methylation with remora</a></li>
 <li>
-<a class="nav-link" href="#scaffolding-assembly"><span class="header-section-number">1.20</span> scaffolding assembly</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#ragtag"><span class="header-section-number">1.20.1</span> RagTag</a></li></ul>
-</li>
-<li>
-<a class="nav-link" href="#annotation"><span class="header-section-number">1.21</span> annotation</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#augustus"><span class="header-section-number">1.21.1</span> augustus</a></li></ul>
+<a class="nav-link" href="#scaffolding-assembly"><span class="header-section-number">1.21</span> scaffolding assembly</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#ragtag"><span class="header-section-number">1.21.1</span> RagTag</a></li></ul>
 </li>
 <li>
-<a class="nav-link" href="#final-assessment"><span class="header-section-number">1.22</span> final assessment</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#mosdepth"><span class="header-section-number">1.22.1</span> mosdepth</a></li></ul>
+<a class="nav-link" href="#annotation"><span class="header-section-number">1.22</span> annotation</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#augustus"><span class="header-section-number">1.22.1</span> augustus</a></li></ul>
+</li>
+<li>
+<a class="nav-link" href="#final-assessment"><span class="header-section-number">1.23</span> final assessment</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#mosdepth"><span class="header-section-number">1.23.1</span> mosdepth</a></li></ul>
 </li>
 </ul>
 
@@ -427,7 +427,7 @@ sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-18.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-19.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

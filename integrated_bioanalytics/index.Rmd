@@ -1239,7 +1239,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
 
-We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below:
+We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case you wish to do further processing.
 
 ```{r, message = FALSE, fig.align = "center"}
 AK_lakes_pca <- runMatrixAnalysis(
@@ -1249,9 +1249,15 @@ AK_lakes_pca <- runMatrixAnalysis(
   column_w_values_for_multiple_analytes = "mg_per_L",
   columns_w_values_for_single_analyte = c("water_temp", "pH"),
   columns_w_additional_analyte_info = "element_type",
-  columns_w_sample_ID_info = c("lake", "park")
+  columns_w_sample_ID_info = c("lake", "park"),
+  scale_variance = TRUE
 )
+AK_lakes_pca
+```
 
+Let's plot the 2D projection of the Alaska lakes data:
+
+```{r, message = FALSE, fig.align = "center"}
 ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
   geom_label_repel(aes(label = lake), alpha = 0.5) +

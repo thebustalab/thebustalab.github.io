@@ -7072,7 +7072,7 @@
                         ## Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                matrix <- scale(matrix)
+                                scaled_matrix <- scale(matrix)
                             }
 
                         ## Distance-based methods. First, get distance matrix:
@@ -7080,7 +7080,7 @@
                             if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
 
                                 if( distance_method[1] == "euclidean") {
-                                    dist_matrix <- stats::dist(matrix, method = "euclidean")
+                                    dist_matrix <- stats::dist(scaled_matrix, method = "euclidean")
                                 } else {
                                     stop("Please specify distance method")
                                 }
@@ -7115,7 +7115,7 @@
                             ## tSNE
 
                                 # library(Rtsne)
-                                # out <- Rtsne(matrix, theta = 0.0, perplexity = 2)
+                                # out <- Rtsne(scaled_matrix, theta = 0.0, perplexity = 2)
                                 # out <- out$Y
                                 # colnames(out) <- c("x","y")
                                 # out <- as.data.frame(out)
@@ -7159,13 +7159,13 @@
                         ## PCA, PCA_ORD, PCA_DIM ## 
 
                             if( analysis == "pca" ) {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
+                                coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
                                 clustering <- as_tibble(coords)
                                 clustering$sample_unique_ID <- rownames(coords)
                             }
 
                             if( analysis == "pca_ord" ) {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
+                                coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
                                 clustering <- as_tibble(coords)
                                 clustering$analyte <- rownames(coords)
                                 clustering <- select(clustering, analyte, Dim.1, Dim.2)
@@ -7174,7 +7174,7 @@
                             }
 
                             if( analysis == "pca_dim" ) {
-                                coords <- FactoMineR::PCA(matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
+                                coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
                                 clustering <- tibble::enframe(coords, name = NULL)
                                 clustering$principal_component <- names(coords)
                                 clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
@@ -7189,13 +7189,13 @@
 
                         ## Density-based clustering = DBSCAN and OPTICS
 
-                            # out <- dbscan::optics(matrix, minPts = 5)
+                            # out <- dbscan::optics(scaled_matrix, minPts = 5)
                             # out <- data.frame(
                             #     order = out$order,
                             #     reach_dist = out$reachdist,
-                            #     name = rownames(matrix)
+                            #     name = rownames(scaled_matrix)
                             # )
-                            # out$name <- factor(out$name, levels = rev(rownames(matrix)[out$order]))
+                            # out$name <- factor(out$name, levels = rev(rownames(scaled_matrix)[out$order]))
                             # ggplot(out[2:19,]) +
                             #     geom_col(aes(x = name, y = reach_dist))
 
@@ -7207,7 +7207,7 @@
 
                                 ## Check for NAs
 
-                                    if( any(is.na(matrix)) == TRUE ) {
+                                    if( any(is.na(scaled_matrix)) == TRUE ) {
                                         stop("kmeans cannot handle NA. Please choose an option for na_replacement.")
                                     }
 
@@ -7291,13 +7291,13 @@
                                                 )
                                 }
 
-                                rownames_matrix <- tibble::enframe(rownames(matrix), name = NULL)
+                                rownames_matrix <- tibble::enframe(rownames(scaled_matrix), name = NULL)
                                 colnames(rownames_matrix)[1] <- "sample_unique_ID"
 
                                 # if (analysis != "pca") { ## Don't do this for pca for some reason?? I don't understand why...
                                     clustering <- full_join(
                                         clustering,
-                                        as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
+                                        as_tibble(cbind(rownames_matrix, as_tibble(scaled_matrix))),
                                         by = "sample_unique_ID"
                                     )
                                 # }
