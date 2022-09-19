@@ -4185,8 +4185,8 @@
                                                         data = lookup_data,
                                                         analysis = c("hclust"),
                                                         column_w_names_of_multiple_analytes = NULL,
-                                                        column_w_abundances_for_multiple_analytes = NULL,
-                                                        columns_w_abundances_for_single_analyte = colnames(lookup_data)[6:805],
+                                                        column_w_values_for_multiple_analytes = NULL,
+                                                        columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
                                                         columns_w_additional_analyte_info = NULL,
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
                                                         transpose = FALSE,
@@ -4203,8 +4203,8 @@
                                                         data = hits[!is.na(hits$sample_unique_ID),],
                                                         analysis = c("hclust_phylo"),
                                                         column_w_names_of_multiple_analytes = "analyte_name",
-                                                        column_w_abundances_for_multiple_analytes = "value",
-                                                        columns_w_abundances_for_single_analyte = NULL,
+                                                        column_w_values_for_multiple_analytes = "value",
+                                                        columns_w_values_for_single_analyte = NULL,
                                                         columns_w_additional_analyte_info = NULL,
                                                         columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
                                                         transpose = FALSE,
@@ -6754,7 +6754,7 @@
             #' @param data The data frame or tibble to analyze
             #' @param analysis The type of analysis to run. Can be one of: "hclust" (heirarchical clustering), "pca" (principal components analysis), "pca-ord" (principal components analysis ordination plot), or "pca-dim" (principal components scree plot)
             #' @param column_w_names_of_multiple_analytes  
-            #' @param column_w_abundances_for_multiple_analytes
+            #' @param column_w_values_for_multiple_analytes
             #' @param columns_w_additional_analyte_info
             #' @param columns_w_sample_ID_info
             #' @param kmeans
@@ -6767,15 +6767,15 @@
                 runMatrixAnalysis <-    function(
                                             data,
                                             analysis = c(
-                                                "hclust", "hclust_phylo",
                                                 "pca", "pca_ord", "pca_dim",
                                                 "mca", "mca_ord", "mca_dim",
                                                 "mds", "mds_ord", "mds_dim",
-                                                "tSNE", "DBSCAN"
+                                                "tsne", "dbscan", "kmeans",
+                                                "hclust", "hclust_phylo"
                                             ),
                                             column_w_names_of_multiple_analytes = NULL,
-                                            column_w_abundances_for_multiple_analytes = NULL,
-                                            columns_w_abundances_for_single_analyte = NULL,
+                                            column_w_values_for_multiple_analytes = NULL,
+                                            columns_w_values_for_single_analyte = NULL,
                                             columns_w_additional_analyte_info = NULL,
                                             columns_w_sample_ID_info = NULL,
                                             transpose = FALSE,
@@ -6795,8 +6795,8 @@
                             if( any(
                                 !c(
                                     column_w_names_of_multiple_analytes,
-                                    column_w_abundances_for_multiple_analytes,
-                                    columns_w_abundances_for_single_analyte,
+                                    column_w_values_for_multiple_analytes,
+                                    columns_w_values_for_single_analyte,
                                     columns_w_additional_analyte_info,
                                     columns_w_sample_ID_info
                                 ) %in% colnames(data)
@@ -6817,8 +6817,8 @@
                                     which(!colnames(data) %in% 
                                         c(
                                             column_w_names_of_multiple_analytes,
-                                            column_w_abundances_for_multiple_analytes,
-                                            columns_w_abundances_for_single_analyte,
+                                            column_w_values_for_multiple_analytes,
+                                            columns_w_values_for_single_analyte,
                                             columns_w_additional_analyte_info,
                                             columns_w_sample_ID_info
                                         )
@@ -6828,8 +6828,8 @@
                                 data <- data[,-which(!colnames(data) %in% 
                                     c(
                                         column_w_names_of_multiple_analytes,
-                                        column_w_abundances_for_multiple_analytes,
-                                        columns_w_abundances_for_single_analyte,
+                                        column_w_values_for_multiple_analytes,
+                                        columns_w_values_for_single_analyte,
                                         columns_w_additional_analyte_info,
                                         columns_w_sample_ID_info
                                     )
@@ -6838,9 +6838,9 @@
 
                         # Check for duplicate analyte names
 
-                            if( length(columns_w_abundances_for_single_analyte) > 0 ) {
-                                if( any(duplicated(columns_w_abundances_for_single_analyte)) ) {
-                                    stop("There are duplicate analyte names in columns_w_abundances_for_single_analyte.")
+                            if( length(columns_w_values_for_single_analyte) > 0 ) {
+                                if( any(duplicated(columns_w_values_for_single_analyte)) ) {
+                                    stop("There are duplicate analyte names in columns_w_values_for_single_analyte.")
                                 }
                             }
 
@@ -6865,9 +6865,9 @@
 
                         # If no pivot required, skip pivoting
 
-                            if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_abundances_for_single_analyte) >= 1 ) {
+                            if( length(column_w_names_of_multiple_analytes) == 0 & length(columns_w_values_for_single_analyte) >= 1 ) {
                                 data_wide <- analyte_annotation_free_data
-                                analyte_columns <- columns_w_abundances_for_single_analyte
+                                analyte_columns <- columns_w_values_for_single_analyte
                                 data_wide <- unique(data_wide)
                             }
 
@@ -6877,10 +6877,10 @@
                                 data_wide <- pivot_wider(
                                     analyte_annotation_free_data,
                                     names_from = all_of(column_w_names_of_multiple_analytes),
-                                    values_from = all_of(column_w_abundances_for_multiple_analytes)
+                                    values_from = all_of(column_w_values_for_multiple_analytes)
                                 )
                                 analyte_columns <- unlist(unique(analyte_annotation_free_data[,colnames(analyte_annotation_free_data) == column_w_names_of_multiple_analytes]))
-                                analyte_columns <- c(columns_w_abundances_for_single_analyte, analyte_columns)
+                                analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
                             }
 
                         # Check to see if analyte columns are numeric
