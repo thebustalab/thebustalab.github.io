@@ -115,7 +115,7 @@
 <li><p>Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn’t matter what the name of that folder is, but it must not contain special characters (including a space <code></code> in the name). For example, if my CDF file is called “sorghum_bicolor.CDF”, then I might create a folder called <code>gc_data</code> on my hard drive, and place the “sorghum_bicolor.CDF” file in that folder.</p></li>
 <li><p>In RStudio, run the source command to load <code>phylochemistry</code>:</p></li>
 </ol>
-<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <ol start="3" style="list-style-type: decimal">
@@ -123,11 +123,11 @@
 </li>
 </ol>
 <p>If you are on a Mac, <em>use single forward slashes</em>. For example:</p>
-<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p>If you are on a PC, <em>use double back slashes</em>. For example:</p>
-<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"C:\\Users\\My_Profile\\gc_data"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p>The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shit+q to load the chromatogram(s).</p>
@@ -137,7 +137,7 @@
 <span class="header-section-number">1.13</span> loading analyzeGCMSdata (advanced)<a class="anchor" aria-label="anchor" href="#loading-analyzegcmsdata-advanced"><i class="fas fa-link"></i></a>
 </h2>
 <p>You can ask <code>analyzeGCMSdata</code> to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying “0” corresponds to the total ion chromatogram. For example:</p>
-<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span>, ions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"0"</span>, <span class="st">"218"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p>Will return an interface that shows chromatograms for the total ion count and for ion 218.</p>

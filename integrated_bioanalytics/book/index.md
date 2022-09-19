@@ -909,48 +909,38 @@ So far, we have always been passing whole data sets to ggplot to do our plotting
 
 ```r
 # To look at a single column (the third column)
-alaska_lake_data[,3]
-## # A tibble: 220 × 1
-##    water_temp
-##         <dbl>
-##  1       6.46
-##  2       6.46
-##  3       6.46
-##  4       6.46
-##  5       6.46
-##  6       6.46
-##  7       6.46
-##  8       6.46
-##  9       6.46
-## 10       6.46
-## # … with 210 more rows
+head(alaska_lake_data[,3])
+## # A tibble: 6 × 1
+##   water_temp
+##        <dbl>
+## 1       6.46
+## 2       6.46
+## 3       6.46
+## 4       6.46
+## 5       6.46
+## 6       6.46
 
 # To look at select columns:
-alaska_lake_data[,2:5]
-## # A tibble: 220 × 4
-##    park  water_temp    pH element
-##    <chr>      <dbl> <dbl> <chr>  
-##  1 BELA        6.46  7.69 C      
-##  2 BELA        6.46  7.69 N      
-##  3 BELA        6.46  7.69 P      
-##  4 BELA        6.46  7.69 Cl     
-##  5 BELA        6.46  7.69 S      
-##  6 BELA        6.46  7.69 F      
-##  7 BELA        6.46  7.69 Br     
-##  8 BELA        6.46  7.69 Na     
-##  9 BELA        6.46  7.69 K      
-## 10 BELA        6.46  7.69 Ca     
-## # … with 210 more rows
+head(alaska_lake_data[,2:5])
+## # A tibble: 6 × 4
+##   park  water_temp    pH element
+##   <chr>      <dbl> <dbl> <chr>  
+## 1 BELA        6.46  7.69 C      
+## 2 BELA        6.46  7.69 N      
+## 3 BELA        6.46  7.69 P      
+## 4 BELA        6.46  7.69 Cl     
+## 5 BELA        6.46  7.69 S      
+## 6 BELA        6.46  7.69 F
 
 # To look at a single row (the second row)
-alaska_lake_data[2,]
+head(alaska_lake_data[2,])
 ## # A tibble: 1 × 7
 ##   lake  park  water_temp    pH element mg_per_L element_type
 ##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
 ## 1 Devi… BELA        6.46  7.69 N          0.028 bound
 
 # To look at select rows:
-alaska_lake_data[2:5,]
+head(alaska_lake_data[2:5,])
 ## # A tibble: 4 × 7
 ##   lake  park  water_temp    pH element mg_per_L element_type
 ##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
@@ -960,44 +950,20 @@ alaska_lake_data[2:5,]
 ## 4 Devi… BELA        6.46  7.69 S          0.62  free
 
 # To look at just a single column, by name
-alaska_lake_data$pH
-##   [1] 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69
-##  [12] 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44
-##  [23] 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45
-##  [34] 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42
-##  [45] 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04
-##  [56] 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82
-##  [67] 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01
-##  [78] 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03
-##  [89] 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95
-## [100] 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15
-## [111] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88
-## [122] 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45
-## [133] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88
-## [144] 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22
-## [155] 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98
-## [166] 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34
-## [177] 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24
-## [188] 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56
-## [199] 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31
-## [210] 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87
+head(alaska_lake_data$pH)
+## [1] 7.69 7.69 7.69 7.69 7.69 7.69
 
 # To look at select columns by name
-select(alaska_lake_data, park, water_temp)
-## # A tibble: 220 × 2
-##    park  water_temp
-##    <chr>      <dbl>
-##  1 BELA        6.46
-##  2 BELA        6.46
-##  3 BELA        6.46
-##  4 BELA        6.46
-##  5 BELA        6.46
-##  6 BELA        6.46
-##  7 BELA        6.46
-##  8 BELA        6.46
-##  9 BELA        6.46
-## 10 BELA        6.46
-## # … with 210 more rows
+head(select(alaska_lake_data, park, water_temp))
+## # A tibble: 6 × 2
+##   park  water_temp
+##   <chr>      <dbl>
+## 1 BELA        6.46
+## 2 BELA        6.46
+## 3 BELA        6.46
+## 4 BELA        6.46
+## 5 BELA        6.46
+## 6 BELA        6.46
 ```
 
 ## tidy data {-}
@@ -1006,8 +972,8 @@ When we make data tables by hand, it's often easy to make a **wide-style table**
 
 
 ```r
-fadb_sample
-## # A tibble: 7 × 11
+head(fadb_sample)
+## # A tibble: 6 × 11
 ##   fatty_acid         Agonandra_brasiliensis Agonandra_silva…
 ##   <chr>                               <dbl>            <dbl>
 ## 1 Hexadecanoic acid                     3.4              1  
@@ -1016,7 +982,6 @@ fadb_sample
 ## 4 Docosanoic acid                      77.4              0.4
 ## 5 Tetracosanoic acid                    1.4              1  
 ## 6 Hexacosanoic acid                     1.9             12.6
-## 7 Octacosanoic acid                     5               81.4
 ## # … with 8 more variables: Agonandra_excelsa <dbl>,
 ## #   Heisteria_silvianii <dbl>, Malania_oleifera <dbl>,
 ## #   Ximenia_americana <dbl>, Ongokea_gore <dbl>,
@@ -1081,24 +1046,20 @@ So far, we have been plotting raw data. This is well and good, but it is not alw
 
 
 ```r
-ny_trees
-## # A tibble: 378,762 × 14
-##    tree_height tree_diameter address       tree_loc pit_type
-##          <dbl>         <dbl> <chr>         <chr>    <chr>   
-##  1        21.1             6 1139 57 STRE… Front    Sidewal…
-##  2        59.0             6 2220 BERGEN … Across   Sidewal…
-##  3        92.4            13 2254 BERGEN … Across   Sidewal…
-##  4        50.2            15 2332 BERGEN … Across   Sidewal…
-##  5        95.0            21 2361 EAST   … Front    Sidewal…
-##  6        67.5            19 2409 EAST   … Front    Continu…
-##  7        75.3            11 1481 EAST   … Front    Lawn    
-##  8        27.9             7 1129 57 STRE… Front    Sidewal…
-##  9       111.             26 2076 EAST   … Across   Sidewal…
-## 10        83.9            20 2025 EAST   … Front    Sidewal…
-## # … with 378,752 more rows, and 9 more variables:
-## #   soil_lvl <chr>, status <chr>, spc_latin <chr>,
-## #   spc_common <chr>, trunk_dmg <chr>, zipcode <dbl>,
-## #   boroname <chr>, latitude <dbl>, longitude <dbl>
+head(ny_trees)
+## # A tibble: 6 × 14
+##   tree_height tree_diameter address        tree_loc pit_type
+##         <dbl>         <dbl> <chr>          <chr>    <chr>   
+## 1        21.1             6 1139 57 STREET Front    Sidewal…
+## 2        59.0             6 2220 BERGEN A… Across   Sidewal…
+## 3        92.4            13 2254 BERGEN A… Across   Sidewal…
+## 4        50.2            15 2332 BERGEN A… Across   Sidewal…
+## 5        95.0            21 2361 EAST   7… Front    Sidewal…
+## 6        67.5            19 2409 EAST   7… Front    Continu…
+## # … with 9 more variables: soil_lvl <chr>, status <chr>,
+## #   spc_latin <chr>, spc_common <chr>, trunk_dmg <chr>,
+## #   zipcode <dbl>, boroname <chr>, latitude <dbl>,
+## #   longitude <dbl>
 ```
 
 More than 300,000 observations of 14 variables! That's 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
@@ -1511,30 +1472,16 @@ AK_lakes_pca <- runMatrixAnalysis(
   columns_w_sample_ID_info = c("lake", "park"),
   scale_variance = TRUE
 )
-AK_lakes_pca
-## # A tibble: 20 × 18
-##    sample_unique_ID     lake  park   Dim.1  Dim.2 water_temp
-##    <chr>                <chr> <chr>  <dbl>  <dbl>      <dbl>
-##  1 Devil_Mountain_Lake… Devi… BELA   0.217 -0.853    -0.868 
-##  2 Imuruk_Lake_BELA     Imur… BELA  -1.18  -1.61      1.29  
-##  3 Kuzitrin_Lake_BELA   Kuzi… BELA  -0.915 -1.14     -0.551 
-##  4 Lava_Lake_BELA       Lava… BELA   0.209 -1.59      1.85  
-##  5 North_Killeak_Lake_… Nort… BELA   9.38   0.431     0.0974
-##  6 White_Fish_Lake_BELA Whit… BELA   4.16  -0.990     0.238 
-##  7 Iniakuk_Lake_GAAR    Inia… GAAR  -0.725  2.56     -0.346 
-##  8 Kurupa_Lake_GAAR     Kuru… GAAR  -0.983  0.896    -0.306 
-##  9 Lake_Matcharak_GAAR  Lake… GAAR  -0.721  1.13     -0.128 
-## 10 Lake_Selby_GAAR      Lake… GAAR  -1.06   0.504     0.841 
-## 11 Nutavukti_Lake_GAAR  Nuta… GAAR  -1.00  -1.01      1.34  
-## 12 Summit_Lake_GAAR     Summ… GAAR  -1.09  -1.04      0.208 
-## 13 Takahula_Lake_GAAR   Taka… GAAR  -0.730  1.42     -0.187 
-## 14 Walker_Lake_GAAR     Walk… GAAR  -0.640  1.66      0.880 
-## 15 Wild_Lake_GAAR       Wild… GAAR  -0.464  4.10     -1.06  
-## 16 Desperation_Lake_NO… Desp… NOAT  -1.53  -0.540    -1.56  
-## 17 Feniak_Lake_NOAT     Feni… NOAT  -0.819 -0.245    -1.25  
-## 18 Lake_Kangilipak_NOAT Lake… NOAT  -0.916 -1.22     -1.09  
-## 19 Lake_Narvakrak_NOAT  Lake… NOAT  -0.479 -1.32      1.47  
-## 20 Okoklik_Lake_NOAT    Okok… NOAT  -0.706 -1.14     -0.868 
+head(AK_lakes_pca)
+## # A tibble: 6 × 18
+##   sample_unique_ID      lake  park   Dim.1  Dim.2 water_temp
+##   <chr>                 <chr> <chr>  <dbl>  <dbl>      <dbl>
+## 1 Devil_Mountain_Lake_… Devi… BELA   0.217 -0.853    -0.868 
+## 2 Imuruk_Lake_BELA      Imur… BELA  -1.18  -1.61      1.29  
+## 3 Kuzitrin_Lake_BELA    Kuzi… BELA  -0.915 -1.14     -0.551 
+## 4 Lava_Lake_BELA        Lava… BELA   0.209 -1.59      1.85  
+## 5 North_Killeak_Lake_B… Nort… BELA   9.38   0.431     0.0974
+## 6 White_Fish_Lake_BELA  Whit… BELA   4.16  -0.990     0.238 
 ## # … with 12 more variables: pH <dbl>, C <dbl>, N <dbl>,
 ## #   P <dbl>, Cl <dbl>, S <dbl>, F <dbl>, Br <dbl>,
 ## #   Na <dbl>, K <dbl>, Ca <dbl>, Mg <dbl>
@@ -1620,7 +1567,47 @@ Great! Here is how to read the ordination plot:
 
 2. When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. If say that one analyte is "1.9" with respect to dimension 2 and another is "-1.9" with respect to dimension 2. Let's also say that these vectors are ~"0" with respect to dimension 1.
 
-With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
+With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a "biplot":
+
+
+```r
+AK_lakes_pca <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park"),
+  scale_variance = TRUE
+)
+
+AK_lakes_pca_ord <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_ord"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+ggplot() +
+  geom_point(
+    data = AK_lakes_pca, 
+    aes(x = Dim.1, y = Dim.2, fill = park), shape = 21, size = 4, alpha = 0.8
+  ) +
+  # geom_label_repel(aes(label = lake), alpha = 0.5) +
+  geom_segment(
+    data = AK_lakes_pca_ord,
+    aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte),
+    size = 1
+  ) +
+  scale_color_manual(values = discrete_palette) +
+  theme_classic()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### principal components {-}
 
@@ -1657,7 +1644,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
 
@@ -1789,7 +1776,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -1807,7 +1794,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
@@ -1906,7 +1893,7 @@ ggplot(solvents_pca_kmeans) +
   geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-117-1.png" width="100%" style="display: block; margin: auto;" />
 
 Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set `kmeans = "elbow"`:
 
@@ -1932,16 +1919,16 @@ solvents_pca_kmeans_elbow
 ## # A tibble: 31 × 2
 ##    cluster_number variance_within_cluster
 ##             <dbl>                   <dbl>
-##  1              1                   186. 
-##  2              2                   128. 
-##  3              3                    99.1
-##  4              4                    73.6
-##  5              5                    62.5
-##  6              6                    51.8
-##  7              7                    42.8
-##  8              8                    36.4
-##  9              9                    31.7
-## 10             10                    27.8
+##  1              1                 142804.
+##  2              2                  67355.
+##  3              3                  49545.
+##  4              4                  38964.
+##  5              5                  30702.
+##  6              6                  25646.
+##  7              7                  20188.
+##  8              8                  16508.
+##  9              9                  14346.
+## 10             10                  12265.
 ## # … with 21 more rows
 ```
 
@@ -1958,7 +1945,7 @@ ggplot(
   geom_line()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-119-1.png" width="100%" style="display: block; margin: auto;" />
 
 Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse`.
 
@@ -1987,7 +1974,7 @@ ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
 ## solubility_in_water vapor_pressure
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-119-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! 
 
@@ -2027,7 +2014,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
@@ -2094,7 +2081,7 @@ bar_plot <- ggplot() +
 cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we are really rockin!!
 
@@ -2202,7 +2189,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = AMP, y = ADP))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-132-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -2272,7 +2259,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, y = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -2284,7 +2271,7 @@ ggplot(model$data) +
   geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -2305,7 +2292,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -2322,7 +2309,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
 
 40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
@@ -2357,7 +2344,7 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exercises
 
@@ -2445,7 +2432,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2526,7 +2513,7 @@ ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2539,7 +2526,7 @@ K_data_1_2 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2628,7 +2615,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-154-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-155-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2642,7 +2629,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-155-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -2749,7 +2736,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -2819,7 +2806,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -2834,7 +2821,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -2978,7 +2965,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading
 
@@ -3600,7 +3587,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -3630,7 +3617,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-184-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -3668,7 +3655,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -3745,7 +3732,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -3754,7 +3741,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -3820,7 +3807,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -3839,7 +3826,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -3919,7 +3906,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-195-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-196-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
 
@@ -4274,7 +4261,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4316,7 +4303,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 

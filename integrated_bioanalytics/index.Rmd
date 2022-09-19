@@ -863,22 +863,22 @@ So far, we have always been passing whole data sets to ggplot to do our plotting
 
 ```{r}
 # To look at a single column (the third column)
-alaska_lake_data[,3]
+head(alaska_lake_data[,3])
 
 # To look at select columns:
-alaska_lake_data[,2:5]
+head(alaska_lake_data[,2:5])
 
 # To look at a single row (the second row)
-alaska_lake_data[2,]
+head(alaska_lake_data[2,])
 
 # To look at select rows:
-alaska_lake_data[2:5,]
+head(alaska_lake_data[2:5,])
 
 # To look at just a single column, by name
-alaska_lake_data$pH
+head(alaska_lake_data$pH)
 
 # To look at select columns by name
-select(alaska_lake_data, park, water_temp)
+head(select(alaska_lake_data, park, water_temp))
 
 ```
 
@@ -887,7 +887,7 @@ select(alaska_lake_data, park, water_temp)
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
 
 ```{r}
-fadb_sample
+head(fadb_sample)
 ```
 
 While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
@@ -927,7 +927,7 @@ The pipe will become more important as our analyses become more sophisticated, w
 So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the `ny_trees` dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
 
 ```{r}
-ny_trees
+head(ny_trees)
 ```
 
 More than 300,000 observations of 14 variables! That's 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don't even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: `group_by()` and `summarize()`. Let's get to it.
@@ -1252,7 +1252,7 @@ AK_lakes_pca <- runMatrixAnalysis(
   columns_w_sample_ID_info = c("lake", "park"),
   scale_variance = TRUE
 )
-AK_lakes_pca
+head(AK_lakes_pca)
 ```
 
 Let's plot the 2D projection of the Alaska lakes data:
@@ -1320,7 +1320,44 @@ Great! Here is how to read the ordination plot:
 
 2. When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. If say that one analyte is "1.9" with respect to dimension 2 and another is "-1.9" with respect to dimension 2. Let's also say that these vectors are ~"0" with respect to dimension 1.
 
-With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.
+With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a "biplot":
+
+```{r, fig.height = 4.5, fig.width = 6}
+AK_lakes_pca <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park"),
+  scale_variance = TRUE
+)
+
+AK_lakes_pca_ord <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_ord"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+ggplot() +
+  geom_point(
+    data = AK_lakes_pca, 
+    aes(x = Dim.1, y = Dim.2, fill = park), shape = 21, size = 4, alpha = 0.8
+  ) +
+  # geom_label_repel(aes(label = lake), alpha = 0.5) +
+  geom_segment(
+    data = AK_lakes_pca_ord,
+    aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte),
+    size = 1
+  ) +
+  scale_color_manual(values = discrete_palette) +
+  theme_classic()
+```
 
 ### principal components {-}
 

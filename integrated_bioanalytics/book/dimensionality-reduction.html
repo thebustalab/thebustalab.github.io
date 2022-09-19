@@ -151,30 +151,16 @@
   columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>,
   scale_variance <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span>
-<span class="va">AK_lakes_pca</span>
-<span class="co">## # A tibble: 20 × 18</span>
-<span class="co">##    sample_unique_ID     lake  park   Dim.1  Dim.2 water_temp</span>
-<span class="co">##    &lt;chr&gt;                &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">##  1 Devil_Mountain_Lake… Devi… BELA   0.217 -0.853    -0.868 </span>
-<span class="co">##  2 Imuruk_Lake_BELA     Imur… BELA  -1.18  -1.61      1.29  </span>
-<span class="co">##  3 Kuzitrin_Lake_BELA   Kuzi… BELA  -0.915 -1.14     -0.551 </span>
-<span class="co">##  4 Lava_Lake_BELA       Lava… BELA   0.209 -1.59      1.85  </span>
-<span class="co">##  5 North_Killeak_Lake_… Nort… BELA   9.38   0.431     0.0974</span>
-<span class="co">##  6 White_Fish_Lake_BELA Whit… BELA   4.16  -0.990     0.238 </span>
-<span class="co">##  7 Iniakuk_Lake_GAAR    Inia… GAAR  -0.725  2.56     -0.346 </span>
-<span class="co">##  8 Kurupa_Lake_GAAR     Kuru… GAAR  -0.983  0.896    -0.306 </span>
-<span class="co">##  9 Lake_Matcharak_GAAR  Lake… GAAR  -0.721  1.13     -0.128 </span>
-<span class="co">## 10 Lake_Selby_GAAR      Lake… GAAR  -1.06   0.504     0.841 </span>
-<span class="co">## 11 Nutavukti_Lake_GAAR  Nuta… GAAR  -1.00  -1.01      1.34  </span>
-<span class="co">## 12 Summit_Lake_GAAR     Summ… GAAR  -1.09  -1.04      0.208 </span>
-<span class="co">## 13 Takahula_Lake_GAAR   Taka… GAAR  -0.730  1.42     -0.187 </span>
-<span class="co">## 14 Walker_Lake_GAAR     Walk… GAAR  -0.640  1.66      0.880 </span>
-<span class="co">## 15 Wild_Lake_GAAR       Wild… GAAR  -0.464  4.10     -1.06  </span>
-<span class="co">## 16 Desperation_Lake_NO… Desp… NOAT  -1.53  -0.540    -1.56  </span>
-<span class="co">## 17 Feniak_Lake_NOAT     Feni… NOAT  -0.819 -0.245    -1.25  </span>
-<span class="co">## 18 Lake_Kangilipak_NOAT Lake… NOAT  -0.916 -1.22     -1.09  </span>
-<span class="co">## 19 Lake_Narvakrak_NOAT  Lake… NOAT  -0.479 -1.32      1.47  </span>
-<span class="co">## 20 Okoklik_Lake_NOAT    Okok… NOAT  -0.706 -1.14     -0.868 </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca</span><span class="op">)</span>
+<span class="co">## # A tibble: 6 × 18</span>
+<span class="co">##   sample_unique_ID      lake  park   Dim.1  Dim.2 water_temp</span>
+<span class="co">##   &lt;chr&gt;                 &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span>
+<span class="co">## 1 Devil_Mountain_Lake_… Devi… BELA   0.217 -0.853    -0.868 </span>
+<span class="co">## 2 Imuruk_Lake_BELA      Imur… BELA  -1.18  -1.61      1.29  </span>
+<span class="co">## 3 Kuzitrin_Lake_BELA    Kuzi… BELA  -0.915 -1.14     -0.551 </span>
+<span class="co">## 4 Lava_Lake_BELA        Lava… BELA   0.209 -1.59      1.85  </span>
+<span class="co">## 5 North_Killeak_Lake_B… Nort… BELA   9.38   0.431     0.0974</span>
+<span class="co">## 6 White_Fish_Lake_BELA  Whit… BELA   4.16  -0.990     0.238 </span>
 <span class="co">## # … with 12 more variables: pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;,</span>
 <span class="co">## #   P &lt;dbl&gt;, Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;,</span>
 <span class="co">## #   Na &lt;dbl&gt;, K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></code></pre></div>
@@ -242,13 +228,49 @@
 <li><p>When considering one analyte’s vector: the vector’s projected value on an axis shows how much its variance is aligned with that principal component.</p></li>
 <li><p>When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. If say that one analyte is “1.9” with respect to dimension 2 and another is “-1.9” with respect to dimension 2. Let’s also say that these vectors are ~“0” with respect to dimension 1.</p></li>
 </ol>
-<p>With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in teh second dimension, whic means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set.</p>
+<p>With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a “biplot”:</p>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">AK_lakes_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
+  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
+  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
+  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
+  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
+  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>,
+  scale_variance <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
+
+<span class="va">AK_lakes_pca_ord</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
+  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_ord"</span><span class="op">)</span>,
+  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
+  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
+  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
+  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">AK_lakes_pca</span>, 
+    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.8</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="co"># geom_label_repel(aes(label = lake), alpha = 0.5) +</span>
+  <span class="fu">geom_segment</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">AK_lakes_pca_ord</span>,
+    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">Dim.1</span>, yend <span class="op">=</span> <span class="va">Dim.2</span>, color <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>,
+    size <span class="op">=</span> <span class="fl">1</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="principal-components" class="section level3 unnumbered">
 <h3>principal components<a class="anchor" aria-label="anchor" href="#principal-components"><i class="fas fa-link"></i></a>
 </h3>
 <p>We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">AK_lakes_pca_dim</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
   analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_dim"</span><span class="op">)</span>,
@@ -276,14 +298,14 @@
   <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.</p>
 </div>
 <div id="exercises-1" class="section level3 unnumbered">
 <h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-1"><i class="fas fa-link"></i></a>
 </h3>
 <p>In this set of exercises, as you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">periodic_table_subset</span><span class="op">)</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>
 <span class="co">##  [1] "electronegativity_pauling"         </span>
 <span class="co">##  [2] "first_ionization_poten_eV"         </span>

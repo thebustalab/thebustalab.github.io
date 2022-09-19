@@ -132,48 +132,38 @@
 <p>So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># To look at a single column (the third column)</span>
-<span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>
-<span class="co">## # A tibble: 220 × 1</span>
-<span class="co">##    water_temp</span>
-<span class="co">##         &lt;dbl&gt;</span>
-<span class="co">##  1       6.46</span>
-<span class="co">##  2       6.46</span>
-<span class="co">##  3       6.46</span>
-<span class="co">##  4       6.46</span>
-<span class="co">##  5       6.46</span>
-<span class="co">##  6       6.46</span>
-<span class="co">##  7       6.46</span>
-<span class="co">##  8       6.46</span>
-<span class="co">##  9       6.46</span>
-<span class="co">## 10       6.46</span>
-<span class="co">## # … with 210 more rows</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span><span class="op">)</span>
+<span class="co">## # A tibble: 6 × 1</span>
+<span class="co">##   water_temp</span>
+<span class="co">##        &lt;dbl&gt;</span>
+<span class="co">## 1       6.46</span>
+<span class="co">## 2       6.46</span>
+<span class="co">## 3       6.46</span>
+<span class="co">## 4       6.46</span>
+<span class="co">## 5       6.46</span>
+<span class="co">## 6       6.46</span>
 
 <span class="co"># To look at select columns:</span>
-<span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
-<span class="co">## # A tibble: 220 × 4</span>
-<span class="co">##    park  water_temp    pH element</span>
-<span class="co">##    &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  </span>
-<span class="co">##  1 BELA        6.46  7.69 C      </span>
-<span class="co">##  2 BELA        6.46  7.69 N      </span>
-<span class="co">##  3 BELA        6.46  7.69 P      </span>
-<span class="co">##  4 BELA        6.46  7.69 Cl     </span>
-<span class="co">##  5 BELA        6.46  7.69 S      </span>
-<span class="co">##  6 BELA        6.46  7.69 F      </span>
-<span class="co">##  7 BELA        6.46  7.69 Br     </span>
-<span class="co">##  8 BELA        6.46  7.69 Na     </span>
-<span class="co">##  9 BELA        6.46  7.69 K      </span>
-<span class="co">## 10 BELA        6.46  7.69 Ca     </span>
-<span class="co">## # … with 210 more rows</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span>
+<span class="co">## # A tibble: 6 × 4</span>
+<span class="co">##   park  water_temp    pH element</span>
+<span class="co">##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  </span>
+<span class="co">## 1 BELA        6.46  7.69 C      </span>
+<span class="co">## 2 BELA        6.46  7.69 N      </span>
+<span class="co">## 3 BELA        6.46  7.69 P      </span>
+<span class="co">## 4 BELA        6.46  7.69 Cl     </span>
+<span class="co">## 5 BELA        6.46  7.69 S      </span>
+<span class="co">## 6 BELA        6.46  7.69 F</span>
 
 <span class="co"># To look at a single row (the second row)</span>
-<span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span><span class="op">)</span>
 <span class="co">## # A tibble: 1 × 7</span>
 <span class="co">##   lake  park  water_temp    pH element mg_per_L element_type</span>
 <span class="co">##   &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span>
 <span class="co">## 1 Devi… BELA        6.46  7.69 N          0.028 bound</span>
 
 <span class="co"># To look at select rows:</span>
-<span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span><span class="op">)</span>
 <span class="co">## # A tibble: 4 × 7</span>
 <span class="co">##   lake  park  water_temp    pH element mg_per_L element_type</span>
 <span class="co">##   &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span>
@@ -183,52 +173,28 @@
 <span class="co">## 4 Devi… BELA        6.46  7.69 S          0.62  free</span>
 
 <span class="co"># To look at just a single column, by name</span>
-<span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">pH</span>
-<span class="co">##   [1] 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69 7.69</span>
-<span class="co">##  [12] 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44 6.44</span>
-<span class="co">##  [23] 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45 7.45</span>
-<span class="co">##  [34] 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42 7.42</span>
-<span class="co">##  [45] 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04 8.04</span>
-<span class="co">##  [56] 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82 7.82</span>
-<span class="co">##  [67] 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01 7.01</span>
-<span class="co">##  [78] 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03 7.03</span>
-<span class="co">##  [89] 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95 6.95</span>
-<span class="co">## [100] 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15 7.15</span>
-<span class="co">## [111] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88</span>
-<span class="co">## [122] 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45 6.45</span>
-<span class="co">## [133] 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88 6.88</span>
-<span class="co">## [144] 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22 7.22</span>
-<span class="co">## [155] 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98 6.98</span>
-<span class="co">## [166] 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34 6.34</span>
-<span class="co">## [177] 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24 7.24</span>
-<span class="co">## [188] 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56 6.56</span>
-<span class="co">## [199] 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31 7.31</span>
-<span class="co">## [210] 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87 6.87</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">pH</span><span class="op">)</span>
+<span class="co">## [1] 7.69 7.69 7.69 7.69 7.69 7.69</span>
 
 <span class="co"># To look at select columns by name</span>
-<span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span>, <span class="va">water_temp</span><span class="op">)</span>
-<span class="co">## # A tibble: 220 × 2</span>
-<span class="co">##    park  water_temp</span>
-<span class="co">##    &lt;chr&gt;      &lt;dbl&gt;</span>
-<span class="co">##  1 BELA        6.46</span>
-<span class="co">##  2 BELA        6.46</span>
-<span class="co">##  3 BELA        6.46</span>
-<span class="co">##  4 BELA        6.46</span>
-<span class="co">##  5 BELA        6.46</span>
-<span class="co">##  6 BELA        6.46</span>
-<span class="co">##  7 BELA        6.46</span>
-<span class="co">##  8 BELA        6.46</span>
-<span class="co">##  9 BELA        6.46</span>
-<span class="co">## 10 BELA        6.46</span>
-<span class="co">## # … with 210 more rows</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span>, <span class="va">water_temp</span><span class="op">)</span><span class="op">)</span>
+<span class="co">## # A tibble: 6 × 2</span>
+<span class="co">##   park  water_temp</span>
+<span class="co">##   &lt;chr&gt;      &lt;dbl&gt;</span>
+<span class="co">## 1 BELA        6.46</span>
+<span class="co">## 2 BELA        6.46</span>
+<span class="co">## 3 BELA        6.46</span>
+<span class="co">## 4 BELA        6.46</span>
+<span class="co">## 5 BELA        6.46</span>
+<span class="co">## 6 BELA        6.46</span></code></pre></div>
 </div>
 <div id="tidy-data" class="section level2 unnumbered">
 <h2>tidy data<a class="anchor" aria-label="anchor" href="#tidy-data"><i class="fas fa-link"></i></a>
 </h2>
 <p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fadb_sample</span>
-<span class="co">## # A tibble: 7 × 11</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">fadb_sample</span><span class="op">)</span>
+<span class="co">## # A tibble: 6 × 11</span>
 <span class="co">##   fatty_acid         Agonandra_brasiliensis Agonandra_silva…</span>
 <span class="co">##   &lt;chr&gt;                               &lt;dbl&gt;            &lt;dbl&gt;</span>
 <span class="co">## 1 Hexadecanoic acid                     3.4              1  </span>
@@ -237,7 +203,6 @@
 <span class="co">## 4 Docosanoic acid                      77.4              0.4</span>
 <span class="co">## 5 Tetracosanoic acid                    1.4              1  </span>
 <span class="co">## 6 Hexacosanoic acid                     1.9             12.6</span>
-<span class="co">## 7 Octacosanoic acid                     5               81.4</span>
 <span class="co">## # … with 8 more variables: Agonandra_excelsa &lt;dbl&gt;,</span>
 <span class="co">## #   Heisteria_silvianii &lt;dbl&gt;, Malania_oleifera &lt;dbl&gt;,</span>
 <span class="co">## #   Ximenia_americana &lt;dbl&gt;, Ongokea_gore &lt;dbl&gt;,</span>
@@ -284,24 +249,20 @@
 </h2>
 <p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ny_trees</span>
-<span class="co">## # A tibble: 378,762 × 14</span>
-<span class="co">##    tree_height tree_diameter address       tree_loc pit_type</span>
-<span class="co">##          &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;   </span>
-<span class="co">##  1        21.1             6 1139 57 STRE… Front    Sidewal…</span>
-<span class="co">##  2        59.0             6 2220 BERGEN … Across   Sidewal…</span>
-<span class="co">##  3        92.4            13 2254 BERGEN … Across   Sidewal…</span>
-<span class="co">##  4        50.2            15 2332 BERGEN … Across   Sidewal…</span>
-<span class="co">##  5        95.0            21 2361 EAST   … Front    Sidewal…</span>
-<span class="co">##  6        67.5            19 2409 EAST   … Front    Continu…</span>
-<span class="co">##  7        75.3            11 1481 EAST   … Front    Lawn    </span>
-<span class="co">##  8        27.9             7 1129 57 STRE… Front    Sidewal…</span>
-<span class="co">##  9       111.             26 2076 EAST   … Across   Sidewal…</span>
-<span class="co">## 10        83.9            20 2025 EAST   … Front    Sidewal…</span>
-<span class="co">## # … with 378,752 more rows, and 9 more variables:</span>
-<span class="co">## #   soil_lvl &lt;chr&gt;, status &lt;chr&gt;, spc_latin &lt;chr&gt;,</span>
-<span class="co">## #   spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;, zipcode &lt;dbl&gt;,</span>
-<span class="co">## #   boroname &lt;chr&gt;, latitude &lt;dbl&gt;, longitude &lt;dbl&gt;</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ny_trees</span><span class="op">)</span>
+<span class="co">## # A tibble: 6 × 14</span>
+<span class="co">##   tree_height tree_diameter address        tree_loc pit_type</span>
+<span class="co">##         &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt;   </span>
+<span class="co">## 1        21.1             6 1139 57 STREET Front    Sidewal…</span>
+<span class="co">## 2        59.0             6 2220 BERGEN A… Across   Sidewal…</span>
+<span class="co">## 3        92.4            13 2254 BERGEN A… Across   Sidewal…</span>
+<span class="co">## 4        50.2            15 2332 BERGEN A… Across   Sidewal…</span>
+<span class="co">## 5        95.0            21 2361 EAST   7… Front    Sidewal…</span>
+<span class="co">## 6        67.5            19 2409 EAST   7… Front    Continu…</span>
+<span class="co">## # … with 9 more variables: soil_lvl &lt;chr&gt;, status &lt;chr&gt;,</span>
+<span class="co">## #   spc_latin &lt;chr&gt;, spc_common &lt;chr&gt;, trunk_dmg &lt;chr&gt;,</span>
+<span class="co">## #   zipcode &lt;dbl&gt;, boroname &lt;chr&gt;, latitude &lt;dbl&gt;,</span>
+<span class="co">## #   longitude &lt;dbl&gt;</span></code></pre></div>
 <p>More than 300,000 observations of 14 variables! That’s 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don’t even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
 <p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and standard deviation can be calculated with <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>. We will use the function <code>summarize()</code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
