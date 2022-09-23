@@ -4249,6 +4249,8 @@ ________________________________________________________________________________
 
 `filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
 
+`filter(<data>, <variable> %in% c(18, 19, 20)` ## equal to 18 or 19 or 20
+
 ## ordering
 
 A list of numeric element has an inherent order to it: -inf -> +inf. A list of character element also has an inherent order to it: A -> Z, or if it's a mixed number and letter list (which is interpreted by R as a character list): 0 -> 9 -> A -> Z.
