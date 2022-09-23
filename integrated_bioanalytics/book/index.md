@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-09-19"
+date: "2022-09-23"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -50,8 +50,6 @@ Integrated Bioanalytics documents methods for analyzing chemical and sequence da
 ```r
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
-
-If you are using R Markdown you may wish to use `cache = TRUE` in the header of the chunk that contains the source command. This way you will not need to rerun the source every time you compile your document.
 
 Features provided by the source script:
 
@@ -871,7 +869,7 @@ For a challenge, try implementing these awesome color scales: [Famous R Color Pa
 
 For a list of data visualization sins: [Friends Don't Let Friends](https://github.com/cxli233/FriendsDontLetFriends). Some interesting things in here!
 
-For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/).
+For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/). A digital text that covers similar topics is here: [Look At Data] (https://socviz.co/lookatdata.html).
 
 Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards).
 
@@ -1682,9 +1680,10 @@ For these questions, work with a dataset describing metabolomics data (i.e. abun
 
 1. Run a PCA analysis on `metabolomics_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
 2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`).
+3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`). In your own words, how does this plot correspond to the original data set?
 4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
 5. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
+6. Complete this PCA analysis by creating a scree plot (i.e. use `analysis = "pca_dim"`). In your own words, what does this plot mean?
 
 
 
@@ -1694,9 +1693,10 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
 
 1. Run a PCA analysis on `wine_grape_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
 2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
-3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`).
+3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`). In your own words, how does this plot correspond to the original data set?
 4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
 5. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
+6. Complete this PCA analysis by creating a scree plot (i.e. use `analysis = "pca_dim"`). In your own words, what does this plot mean?
 
 
 

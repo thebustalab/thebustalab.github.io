@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -333,9 +333,10 @@
 <ol style="list-style-type: decimal">
 <li>Run a PCA analysis on <code>metabolomics_data</code> (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
 <li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.</li>
-<li>Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca_ord"</code>).</li>
+<li>Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca_ord"</code>). In your own words, how does this plot correspond to the original data set?</li>
 <li>Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.</li>
 <li>Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.</li>
+<li>Complete this PCA analysis by creating a scree plot (i.e. use <code>analysis = "pca_dim"</code>). In your own words, what does this plot mean?</li>
 </ol>
 </div>
 <div id="grape-vine-chemistry" class="section level4 unnumbered">
@@ -345,9 +346,10 @@
 <ol style="list-style-type: decimal">
 <li>Run a PCA analysis on <code>wine_grape_data</code> (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca"</code>)</li>
 <li>Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.</li>
-<li>Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca_ord"</code>).</li>
+<li>Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. <code>runMatrixAnalysis()</code> with <code>analysis = "pca_ord"</code>). In your own words, how does this plot correspond to the original data set?</li>
 <li>Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.</li>
 <li>Bingo! These analytes are associated with those varieites and could be biomarkers for such.</li>
+<li>Complete this PCA analysis by creating a scree plot (i.e. use <code>analysis = "pca_dim"</code>). In your own words, what does this plot mean?</li>
 </ol>
 </div>
 </div>
@@ -411,7 +413,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-19.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-23.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

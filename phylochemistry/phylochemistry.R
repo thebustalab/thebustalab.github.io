@@ -6790,6 +6790,30 @@
 
                     # Pre-process data
 
+                        # Check that argument names are spelled correctly
+
+                            passed_args <- names(c(as.list(environment()), list(...)))
+
+                            if (!all(passed_args %in%
+                                c(
+                                    "data",
+                                    "analysis",
+                                    "column_w_names_of_multiple_analytes",
+                                    "column_w_values_for_multiple_analytes",
+                                    "columns_w_values_for_single_analyte",
+                                    "columns_w_additional_analyte_info",
+                                    "columns_w_sample_ID_info",
+                                    "transpose",
+                                    "distance_method",
+                                    "unknown_sample_ID_info",
+                                    "scale_variance",
+                                    "kmeans",
+                                    "na_replacement",
+                                    "output_format",
+                                    "..."
+                                ))
+                            ) {stop("One of your argument names is misspelled, please double check spelling.")}
+
                         # Check that column names are spelled correctly
 
                             if( any(
