@@ -1706,6 +1706,7 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
 
 
 ```r
+set.seed(235)
 runMatrixAnalysis(
   data = hops_components,
   analysis = "pca",
@@ -1769,7 +1770,7 @@ p1 + p2
 
 <img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;" />
 
-### further reading
+### further reading {-}
 
 https://datavizpyr.com/how-to-make-umap-plot-in-r/
 

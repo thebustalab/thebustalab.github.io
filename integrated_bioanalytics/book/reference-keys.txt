@@ -1,6 +1,5 @@
 fig:unnamed-chunk-70
 part-data-analysis-in-r
-further-reading-3
 heirarchical-clustering
 theory-1
 further-reading-4

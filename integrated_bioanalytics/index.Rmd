@@ -1506,7 +1506,8 @@ ggplot() +
 
 ## tsne and umap {-}
 
-```{r}
+```{r, fig.height = 10, fig.width = 15}
+set.seed(235)
 runMatrixAnalysis(
   data = hops_components,
   analysis = "pca",
@@ -1568,7 +1569,7 @@ p2 <- ggplot(data) +
 p1 + p2
 ```
 
-### further reading
+### further reading {-}
 
 https://datavizpyr.com/how-to-make-umap-plot-in-r/
 

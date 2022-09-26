@@ -7334,7 +7334,7 @@
                                 # if (analysis != "pca") { ## Don't do this for pca for some reason?? I don't understand why...
                                     clustering <- full_join(
                                         clustering,
-                                        as_tibble(cbind(rownames_matrix, as_tibble(scaled_matrix))),
+                                        as_tibble(cbind(rownames_matrix, as_tibble(matrix))),
                                         by = "sample_unique_ID"
                                     )
                                 # }
