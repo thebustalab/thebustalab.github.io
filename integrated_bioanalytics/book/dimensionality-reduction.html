@@ -358,15 +358,81 @@
 </h3>
 </div>
 </div>
-<div id="umap" class="section level2 unnumbered">
-<h2>UMAP<a class="anchor" aria-label="anchor" href="#umap"><i class="fas fa-link"></i></a>
+<div id="tsne-and-umap" class="section level2 unnumbered">
+<h2>tsne and umap<a class="anchor" aria-label="anchor" href="#tsne-and-umap"><i class="fas fa-link"></i></a>
 </h2>
-</div>
-<div id="tsne" class="section level2 unnumbered">
-<h2>tSNE<a class="anchor" aria-label="anchor" href="#tsne"><i class="fas fa-link"></i></a>
-</h2>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+  data <span class="op">=</span> <span class="va">hops_components</span>,
+  analysis <span class="op">=</span> <span class="st">"pca"</span>,
+  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,
+  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,
+  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,
+  na_replacement <span class="op">=</span> <span class="st">"mean"</span>
+<span class="op">)</span> <span class="op">-&gt;</span> <span class="va">pca_data</span>
+<span class="va">pca_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"pca_data"</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"\\."</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span><span class="op">)</span>
+<span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span>
+
+
+<span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+  data <span class="op">=</span> <span class="va">hops_components</span>,
+  analysis <span class="op">=</span> <span class="st">"umap"</span>,
+  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,
+  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,
+  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,
+  na_replacement <span class="op">=</span> <span class="st">"mean"</span>
+<span class="op">)</span> <span class="op">-&gt;</span> <span class="va">umap_data</span>
+<span class="va">umap_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"umap_data"</span>
+<span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span>
+
+
+<span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+  data <span class="op">=</span> <span class="va">hops_components</span>,
+  analysis <span class="op">=</span> <span class="st">"tsne"</span>,
+  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,
+  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,
+  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,
+  na_replacement <span class="op">=</span> <span class="st">"mean"</span>
+<span class="op">)</span> <span class="op">-&gt;</span> <span class="va">tsne_data</span>
+<span class="va">tsne_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"tsne_data"</span>
+<span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span>
+
+
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">pca_data</span>, <span class="va">umap_data</span>, <span class="va">tsne_data</span><span class="op">)</span>
+
+<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">hop_origin</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span>
+
+<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">hop_brewing_usage</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span>
+
+<span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div id="further-reading-3" class="section level3" number="1.0.1">
+<h3>
+<span class="header-section-number">1.0.1</span> further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
+</h3>
+<p><a href="https://datavizpyr.com/how-to-make-umap-plot-in-r/" class="uri">https://datavizpyr.com/how-to-make-umap-plot-in-r/</a></p>
+<p><a href="https://datavizpyr.com/how-to-make-tsne-plot-in-r/" class="uri">https://datavizpyr.com/how-to-make-tsne-plot-in-r/</a></p>
+<p><a href="https://pair-code.github.io/understanding-umap/" class="uri">https://pair-code.github.io/understanding-umap/</a></p>
+<p><a href="https://www.youtube.com/watch?v=jth4kEvJ3P8" class="uri">https://www.youtube.com/watch?v=jth4kEvJ3P8</a></p>
 <!-- end -->
 <!-- start clustering -->
+</div>
 </div>
 </div>
   <div class="chapter-nav">
@@ -394,8 +460,9 @@
 <li><a class="nav-link" href="#further-reading-2">further reading</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#umap">UMAP</a></li>
-<li><a class="nav-link" href="#tsne">tSNE</a></li>
+<li>
+<a class="nav-link" href="#tsne-and-umap">tsne and umap</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#further-reading-3"><span class="header-section-number">1.0.1</span> further reading</a></li></ul>
+</li>
 </ul>
 
       <div class="book-extra">
@@ -413,7 +480,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-26.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

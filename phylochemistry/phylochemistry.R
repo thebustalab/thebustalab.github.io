@@ -69,7 +69,6 @@
                 "viridis",
                 "umap",
                 "Rtsne"
-
             )
 
             if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}

@@ -127,7 +127,7 @@
 <li>Avoid abbreviations, but if you do use any, specify what they mean.</li>
 </ol>
 <p>An example:</p>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element_type</span> <span class="op">==</span> <span class="st">"bound"</span><span class="op">)</span>,
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">lake</span>, x <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">)</span>
@@ -145,7 +145,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>
     text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-196-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve.</p>
 </div>
 <div id="exporting-graphics" class="section level2" number="1.34">
@@ -153,12 +153,12 @@
 <span class="header-section-number">1.34</span> Exporting graphics<a class="anchor" aria-label="anchor" href="#exporting-graphics"><i class="fas fa-link"></i></a>
 </h2>
 <p>To export graphics from R, consider the following:</p>
-<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="figures-captions.html#cb142-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">res =</span> <span class="dv">600</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
-<span id="cb142-2"><a href="figures-captions.html#cb142-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb142-3"><a href="figures-captions.html#cb142-3" aria-hidden="true" tabindex="-1"></a>cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(peak_1_to_plot, peak_2_to_plot, peak_3_to_plot,</span>
-<span id="cb142-4"><a href="figures-captions.html#cb142-4" aria-hidden="true" tabindex="-1"></a>peak_4_to_plot, peak_5_to_plot, <span class="at">align =</span> <span class="st">"v"</span>, <span class="at">axis =</span> <span class="st">"b"</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">'Peak 1'</span>,<span class="st">'Peak 2'</span>,<span class="st">'Peak 3'</span>, <span class="st">'Peak 4'</span>, <span class="st">'Peak 5'</span>), <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">label_x =</span> <span class="fl">0.4</span>)</span>
-<span id="cb142-5"><a href="figures-captions.html#cb142-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb142-6"><a href="figures-captions.html#cb142-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="figures-captions.html#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">res =</span> <span class="dv">600</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
+<span id="cb143-2"><a href="figures-captions.html#cb143-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb143-3"><a href="figures-captions.html#cb143-3" aria-hidden="true" tabindex="-1"></a>cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(peak_1_to_plot, peak_2_to_plot, peak_3_to_plot,</span>
+<span id="cb143-4"><a href="figures-captions.html#cb143-4" aria-hidden="true" tabindex="-1"></a>peak_4_to_plot, peak_5_to_plot, <span class="at">align =</span> <span class="st">"v"</span>, <span class="at">axis =</span> <span class="st">"b"</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">'Peak 1'</span>,<span class="st">'Peak 2'</span>,<span class="st">'Peak 3'</span>, <span class="st">'Peak 4'</span>, <span class="st">'Peak 5'</span>), <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">label_x =</span> <span class="fl">0.4</span>)</span>
+<span id="cb143-5"><a href="figures-captions.html#cb143-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb143-6"><a href="figures-captions.html#cb143-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 <p>The <path_to_file_you_want_to_create> should be something like: “C:\Desktop\the_file.png” (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.</path_to_file_you_want_to_create></p>
 </div>
 </div>
@@ -197,7 +197,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-23.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-09-26.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
