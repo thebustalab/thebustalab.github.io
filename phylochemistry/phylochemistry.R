@@ -66,7 +66,10 @@
                 "remotes",
                 "gdata",
                 "treemapify",
-                "viridis"
+                "viridis",
+                "umap",
+                "Rtsne"
+
             )
 
             if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
@@ -7138,13 +7141,24 @@
                         
                             ## tSNE
 
-                                # library(Rtsne)
-                                # out <- Rtsne(scaled_matrix, theta = 0.0, perplexity = 2)
-                                # out <- out$Y
-                                # colnames(out) <- c("x","y")
-                                # out <- as.data.frame(out)
-                                # ggplot(out) +
-                                #     geom_point(aes(x = x, y = y), shape = 21, size= 4)
+                                if( analysis == "tsne" ) {
+                                    clustering <- Rtsne(scaled_matrix, theta = 0.0, perplexity = 2)
+                                    clustering <- as.data.frame(clustering$Y)
+                                    clustering$sample_unique_ID <- rownames(scaled_matrix)
+                                    colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
+                                    clustering <- select(clustering, sample_unique_ID, Dim_1, Dim_2)
+                                    rownames(clustering) <- NULL
+                                }
+
+                            ## umap
+
+                                if( analysis == "umap" ) {
+                                    clustering <- as.data.frame(umap(scaled_matrix)$layout)
+                                    clustering$sample_unique_ID <- rownames(clustering)
+                                    colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
+                                    clustering <- select(clustering, sample_unique_ID, Dim_1, Dim_2)
+                                    rownames(clustering) <- NULL
+                                }
 
                             ## MCA, MCA_ORD, MCA_DIM ##
 

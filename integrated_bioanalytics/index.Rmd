@@ -1504,9 +1504,79 @@ ggplot() +
 
 ### further reading {-}
 
-## UMAP {-}
+## tsne and umap {-}
 
-## tSNE {-}
+```{r}
+# runMatrixAnalysis(
+#   data = hops_components,
+#   analysis = "pca",
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+#   na_replacement = "mean"
+# ) -> pca_data
+# pca_data$technique <- "pca_data"
+# colnames(pca_data) <- gsub("\\.", "_", colnames(pca_data))
+# pca_data$Dim_1 <- as.numeric(scale(pca_data$Dim_1))
+# pca_data$Dim_2 <- as.numeric(scale(pca_data$Dim_2))
+
+
+# runMatrixAnalysis(
+#   data = hops_components,
+#   analysis = "umap",
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+#   na_replacement = "mean"
+# ) -> umap_data
+# umap_data$technique <- "umap_data"
+# umap_data$Dim_1 <- as.numeric(scale(umap_data$Dim_1))
+# umap_data$Dim_2 <- as.numeric(scale(umap_data$Dim_2))
+
+
+# runMatrixAnalysis(
+#   data = hops_components,
+#   analysis = "tsne",
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+#   na_replacement = "mean"
+# ) -> tsne_data
+# tsne_data$technique <- "tsne_data"
+# tsne_data$Dim_1 <- as.numeric(scale(tsne_data$Dim_1))
+# tsne_data$Dim_2 <- as.numeric(scale(tsne_data$Dim_2))
+
+
+# data <- rbind(pca_data, umap_data, tsne_data)
+
+# p1 <- ggplot(data) +
+#   geom_point(aes(x = Dim_1, y = Dim_2, fill = hop_origin), shape = 21, size= 4) +
+#   facet_grid(technique~., scales = "free") +
+#   scale_fill_brewer(palette = "Set1")
+
+# p2 <- ggplot(data) +
+#   geom_point(aes(x = Dim_1, y = Dim_2, fill = hop_brewing_usage), shape = 21, size= 4) +
+#   facet_grid(technique~., scales = "free") +
+#   scale_fill_brewer(palette = "Set1")
+
+# p1 + p2
+```
+
+### further reading
+
+https://datavizpyr.com/how-to-make-umap-plot-in-r/
+
+https://datavizpyr.com/how-to-make-tsne-plot-in-r/
+
+https://pair-code.github.io/understanding-umap/
+
+https://www.youtube.com/watch?v=jth4kEvJ3P8
 
 <!-- end -->
 
