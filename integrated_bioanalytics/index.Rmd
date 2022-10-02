@@ -1588,32 +1588,46 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png', dpi = NA)
 ```
 
-## heirarchical clustering
+## heirarchical clustering {-}
 
-### theory
+### theory {-}
 
 "Which of my samples are most closely related?"
 
-So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties.
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
 
-With this in mind, let's try out our matrix analysis:
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
+```
+
+Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
+
+```{r}
+dist <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("dist"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+as.matrix(dist)[1:3,1:3]
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
 
 ```{r, message = FALSE}
 AK_lakes_clustered <- runMatrixAnalysis(
-                                
     data = alaska_lake_data,
-
     analysis = "hclust",
-
     column_w_names_of_multiple_analytes = "element",
     column_w_values_for_multiple_analytes = "mg_per_L",
-    
     columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    
     columns_w_additional_analyte_info = "element_type",
-
-    columns_w_sample_ID_info = c("lake", "park")
-
+    columns_w_sample_ID_info = c("lake", "park"),
+    na_replacement = "mean"
 )
 AK_lakes_clustered
 ```
@@ -1649,17 +1663,17 @@ ggtree() +
 
 Very nice!
 
-### further reading
+### further reading {-}
  
 For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
 
 For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
 
-### exercises
+### exercises {-}
 
-For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
-For this assignment, you may find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
+For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
 
 ```{r}
 colnames(solvents)
@@ -1673,7 +1687,7 @@ colnames(solvents)[c(1,5,7)]
 
 "Do my samples fall into definable clusters?"
 
-### theory
+### theory {-}
 
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
@@ -1707,62 +1721,62 @@ solvents_pca_kmeans
 We can plot the results and color them according to the group that kmeans suggested:
 
 ```{r}
-ggplot(solvents_pca_kmeans) +
-  geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
+# ggplot(solvents_pca_kmeans) +
+#   geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
 ```
 
 Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set `kmeans = "elbow"`:
 
 ```{r, message = FALSE}
-solvents_pca_kmeans_elbow <- runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = "elbow",
-  na_replacement = "drop"
-)
-
-solvents_pca_kmeans_elbow
+# solvents_pca_kmeans_elbow <- runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = "elbow",
+#   na_replacement = "drop"
+# )
+# 
+# solvents_pca_kmeans_elbow
 ```
 
 This gives us the maximum variance within a cluster for each number of clusters. Let's plot that:
 
 ```{r}
-ggplot(
-  solvents_pca_kmeans_elbow,
-  aes(x = cluster_number, y = variance_within_cluster)
-) +
-  geom_col() +
-  geom_point() +
-  geom_line()
+# ggplot(
+#   solvents_pca_kmeans_elbow,
+#   aes(x = cluster_number, y = variance_within_cluster)
+# ) +
+#   geom_col() +
+#   geom_point() +
+#   geom_line()
 ```
 
 Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse`.
 
 ```{r, message = FALSE}
-runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = 3,
-  na_replacement = "drop"
-) %>%
-
-ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
-  geom_point(shape = 21, size = 5) +
-  geom_mark_ellipse(aes(label = kmeans_cluster), alpha = 0.2) +
-  theme_classic() +
-  coord_cartesian(xlim = c(-4,4), ylim = c(-4,4))
+# runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = 3,
+#   na_replacement = "drop"
+# ) %>%
+# 
+# ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
+#   geom_point(shape = 21, size = 5) +
+#   geom_mark_ellipse(aes(label = kmeans_cluster), alpha = 0.2) +
+#   theme_classic() +
+#   coord_cartesian(xlim = c(-4,4), ylim = c(-4,4))
 ```
 
 Cool! 
@@ -1770,99 +1784,99 @@ Cool!
 One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:
 
 ```{r}
-solvents_clustered <- runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = 2,
-  na_replacement = "drop"
-)
-
-solvents_clustered_summary <- solvents_clustered %>%
-  group_by(kmeans_cluster) %>%
-  summarize(mean_bp = mean(boiling_point))
-
-ggplot() + 
-  geom_col(
-    data = solvents_clustered_summary,
-    aes(x = kmeans_cluster, y = mean_bp),
-    color = "black", fill = "white"
-  ) +
-  geom_point(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point)
-  )
+# solvents_clustered <- runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = 2,
+#   na_replacement = "drop"
+# )
+# 
+# solvents_clustered_summary <- solvents_clustered %>%
+#   group_by(kmeans_cluster) %>%
+#   summarize(mean_bp = mean(boiling_point))
+# 
+# ggplot() + 
+#   geom_col(
+#     data = solvents_clustered_summary,
+#     aes(x = kmeans_cluster, y = mean_bp),
+#     color = "black", fill = "white"
+#   ) +
+#   geom_point(
+#     data = solvents_clustered,
+#     aes(x = kmeans_cluster, y = boiling_point)
+#   )
 ```
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
 ```{r, fig.width = 8, fig.height = 4, message = FALSE}
-solvents_clustered <- runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = 4,
-  na_replacement = "drop"
-)
-
-colors <- c("maroon", "gold", "grey", "white")
-
-pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
-  geom_mark_ellipse(
-    aes(label = kmeans_cluster), 
-    alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
-  geom_point(shape = 21, size = 2) +
-  theme_classic() +
-  guides(fill = "none") +
-  scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
-  scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
-  scale_fill_manual(values = colors) +
-  coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
-
-solvents_clustered_summary <- solvents_clustered %>%
-  group_by(kmeans_cluster) %>%
-  summarize(mean_bp = mean(boiling_point))
-
-bar_plot <- ggplot() + 
-  geom_violin(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
-    size = 0.5, color = "black", alpha = 0.6, width = 0.5
-  ) +
-  geom_crossbar(
-    data = solvents_clustered_summary,
-    aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
-    color = "black", width = 0.5
-  ) +
-  geom_point(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point),
-    size = 2, color = "black", alpha = 0.6
-  ) +
-  scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
-  scale_x_discrete(name = "Cluster") +
-  scale_fill_manual(values = colors) +
-  theme_classic() +
-  coord_flip() +
-  guides(fill = "none") +
-  theme(legend.position = "bottom")
-
-cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
+# solvents_clustered <- runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = 4,
+#   na_replacement = "drop"
+# )
+# 
+# colors <- c("maroon", "gold", "grey", "white")
+# 
+# pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
+#   geom_mark_ellipse(
+#     aes(label = kmeans_cluster), 
+#     alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
+#   geom_point(shape = 21, size = 2) +
+#   theme_classic() +
+#   guides(fill = "none") +
+#   scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
+#   scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
+#   scale_fill_manual(values = colors) +
+#   coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
+# 
+# solvents_clustered_summary <- solvents_clustered %>%
+#   group_by(kmeans_cluster) %>%
+#   summarize(mean_bp = mean(boiling_point))
+# 
+# bar_plot <- ggplot() + 
+#   geom_violin(
+#     data = solvents_clustered,
+#     aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
+#     size = 0.5, color = "black", alpha = 0.6, width = 0.5
+#   ) +
+#   geom_crossbar(
+#     data = solvents_clustered_summary,
+#     aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
+#     color = "black", width = 0.5
+#   ) +
+#   geom_point(
+#     data = solvents_clustered,
+#     aes(x = kmeans_cluster, y = boiling_point),
+#     size = 2, color = "black", alpha = 0.6
+#   ) +
+#   scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
+#   scale_x_discrete(name = "Cluster") +
+#   scale_fill_manual(values = colors) +
+#   theme_classic() +
+#   coord_flip() +
+#   guides(fill = "none") +
+#   theme(legend.position = "bottom")
+# 
+# cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 ```
 
 Now we are really rockin!!
 
-### exercises
+### exercises {-}
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
 
@@ -1871,20 +1885,20 @@ Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the 
 Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "auto",
-  na_replacement = "drop"
-) %>%
-
-ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
+# runMatrixAnalysis(
+#   data = wine_grape_data,
+#   analysis = "pca",
+#   column_w_names_of_multiple_analytes = "metabolite",
+#   column_w_values_for_multiple_analytes = "log_abundance",
+#   columns_w_values_for_single_analyte = NULL,
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("cultivar", "treatment"),
+#   transpose = FALSE,
+#   kmeans = "auto",
+#   na_replacement = "drop"
+# ) %>%
+# 
+# ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
 
 ```
 
@@ -1893,25 +1907,25 @@ ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape
 Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-wine_grape_data
-
-runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "2",
-  na_replacement = "drop"
-) %>%
-
-ggplot(aes(x = Dim.1, y = Dim.2)) +
-  geom_text(aes(label = sample_unique_ID)) +
-  geom_mark_ellipse(aes(fill = kmeans_cluster)) +
-  geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
+# wine_grape_data
+# 
+# runMatrixAnalysis(
+#   data = wine_grape_data,
+#   analysis = "pca",
+#   column_w_names_of_multiple_analytes = "metabolite",
+#   column_w_values_for_multiple_analytes = "log_abundance",
+#   columns_w_values_for_single_analyte = NULL,
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("cultivar", "treatment"),
+#   transpose = FALSE,
+#   kmeans = "2",
+#   na_replacement = "drop"
+# ) %>%
+# 
+# ggplot(aes(x = Dim.1, y = Dim.2)) +
+#   geom_text(aes(label = sample_unique_ID)) +
+#   geom_mark_ellipse(aes(fill = kmeans_cluster)) +
+#   geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
 
 ```
 
@@ -1920,23 +1934,23 @@ ggplot(aes(x = Dim.1, y = Dim.2)) +
 Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-wine_grape_data
-runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca_ord",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "none",
-  na_replacement = "drop"
-) %>%
-filter(Dim.1 > 0.9) %>%
-ggplot() +
-  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
-  geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
+# wine_grape_data
+# runMatrixAnalysis(
+#   data = wine_grape_data,
+#   analysis = "pca_ord",
+#   column_w_names_of_multiple_analytes = "metabolite",
+#   column_w_values_for_multiple_analytes = "log_abundance",
+#   columns_w_values_for_single_analyte = NULL,
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("cultivar", "treatment"),
+#   transpose = FALSE,
+#   kmeans = "none",
+#   na_replacement = "drop"
+# ) %>%
+# filter(Dim.1 > 0.9) %>%
+# ggplot() +
+#   geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+#   geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
 
 ```
 
@@ -1945,26 +1959,26 @@ ggplot() +
 Modify your code from Question 2 so that five clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-wine_grape_data
-da <- runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "3",
-  na_replacement = "drop"
-)
-
-plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
-  geom_text(aes(label = sample_unique_ID)) +
-  geom_mark_ellipse(aes(fill = kmeans_cluster)) +
-  geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
-
-plot0
+# wine_grape_data
+# da <- runMatrixAnalysis(
+#   data = wine_grape_data,
+#   analysis = "pca",
+#   column_w_names_of_multiple_analytes = "metabolite",
+#   column_w_values_for_multiple_analytes = "log_abundance",
+#   columns_w_values_for_single_analyte = NULL,
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("cultivar", "treatment"),
+#   transpose = FALSE,
+#   kmeans = "3",
+#   na_replacement = "drop"
+# )
+# 
+# plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
+#   geom_text(aes(label = sample_unique_ID)) +
+#   geom_mark_ellipse(aes(fill = kmeans_cluster)) +
+#   geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
+# 
+# plot0
 ```
 
 * Question 5
@@ -1972,27 +1986,27 @@ plot0
 Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-wine_grape_data
-
-dat <- runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "hclust",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "3",
-  na_replacement = "drop"
-)
-
-plot1 <- ggtree(dat, aes(color = kmeans_cluster)) +
-  geom_tiplab() +
-  geom_tippoint() +
-  theme_classic() +
-  coord_cartesian(xlim = c(0,20))
-  plot1
+# wine_grape_data
+# 
+# dat <- runMatrixAnalysis(
+#   data = wine_grape_data,
+#   analysis = "hclust",
+#   column_w_names_of_multiple_analytes = "metabolite",
+#   column_w_values_for_multiple_analytes = "log_abundance",
+#   columns_w_values_for_single_analyte = NULL,
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("cultivar", "treatment"),
+#   transpose = FALSE,
+#   kmeans = "3",
+#   na_replacement = "drop"
+# )
+# 
+# plot1 <- ggtree(dat, aes(color = kmeans_cluster)) +
+#   geom_tiplab() +
+#   geom_tippoint() +
+#   theme_classic() +
+#   coord_cartesian(xlim = c(0,20))
+#   plot1
 
 ```
 
@@ -2003,12 +2017,12 @@ Google "Quercetin". What kind of compound is it? Use the clusters created by the
 Does one cluster have a large amount of variation in Quercetin abundance? Why do you think this might be?
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-plot2 <- dat %>%
-  group_by(kmeans_cluster) %>%
-  summarize(mean = mean(Quercetin), sd = sd(Quercetin)) %>%
-  ggplot(aes(x = kmeans_cluster, y = mean, ymin = mean-sd, ymax = mean+sd)) + geom_pointrange() +
-  theme_classic()
-  plot2
+# plot2 <- dat %>%
+#   group_by(kmeans_cluster) %>%
+#   summarize(mean = mean(Quercetin), sd = sd(Quercetin)) %>%
+#   ggplot(aes(x = kmeans_cluster, y = mean, ymin = mean-sd, ymax = mean+sd)) + geom_pointrange() +
+#   theme_classic()
+#   plot2
 ```
 
 * Question 7
@@ -2016,7 +2030,7 @@ plot2 <- dat %>%
 Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-cowplot::plot_grid(plot1, plot2)
+# cowplot::plot_grid(plot1, plot2)
 ```
 
 * Challenge (optional)
@@ -2048,50 +2062,50 @@ Install the RColorBrewer package, and use one of its color schemes. As an exampl
 Save your plot as a png using `ggsave()`.
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-library(RColorBrewer)
-
-plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
-  geom_mark_ellipse(aes(fill = kmeans_cluster, label = kmeans_cluster)) +
-  scale_x_continuous(breaks = seq(-10,12,2), name = "Dimension 1", limits = c(-9, 12)) + 
-  scale_y_continuous(breaks = seq(-10,10,1), name = "Dimension 2", limits = c(-9, 6)) + 
-  geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 ) +
-  # geom_label_repel(aes(label = sample_unique_ID), label.size = 0) +
-  scale_fill_brewer(palette = "Set1", na.value = "grey") +
-  scale_color_brewer(palette = "Set1", na.value = "grey") +
-  guides(fill = "none", color = "none") +
-  theme_classic()
-
-plot1 <- ggtree(dat, aes(color = kmeans_cluster), size = 1.5) +
-  geom_tiplab(align = TRUE, offset = 2) +
-  geom_tippoint() +
-  theme_classic() +
-  scale_x_continuous(breaks = seq(-100,120,5), name = "Distance") + 
-  coord_cartesian(xlim = c(-5,35)) +
-  guides(fill = "none", color = "none") +
-  scale_fill_brewer(palette = "Set1", na.value = "grey") +
-  scale_color_brewer(palette = "Set1", na.value = "grey") +
-  theme_tree2()
-
-plot2 <- dat %>%
-  group_by(kmeans_cluster) %>%
-  summarize(mean = mean(Quercetin), sd = sd(Quercetin)) %>%
-  filter(kmeans_cluster != "NA") %>%
-  ggplot(aes(x = kmeans_cluster, y = mean, ymin = mean-sd, ymax = mean+sd)) + geom_linerange() + geom_point(shape = 21, aes(fill = kmeans_cluster), size = 4) +
-  theme_classic() +
-  guides(fill = "none", color = "none") +
-  scale_fill_brewer(palette = "Set1", na.value = "grey") +
-  scale_color_brewer(palette = "Set1", na.value = "grey") +
-  scale_x_discrete(name = "Cluster") + 
-  scale_y_continuous(breaks = seq(-10,10,0.2), name = "Quercetin concentration", limits = c(-0.1, 1.6))
-
-ggsave(
-  plot = cowplot::plot_grid(plot0, plot1, plot2, align = "h", axis = "b", nrow = 1, rel_widths = c(0.8, 1, 0.5), labels = "AUTO"),
-  filename = "/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/figures/Ex6Challenge.png",
-  height = 4, 
-  width = 12,
-  dpi = 300,
-  units = "in"
-  )
+# library(RColorBrewer)
+# 
+# plot0 <- ggplot(da, aes(x = Dim.1, y = Dim.2)) +
+#   geom_mark_ellipse(aes(fill = kmeans_cluster, label = kmeans_cluster)) +
+#   scale_x_continuous(breaks = seq(-10,12,2), name = "Dimension 1", limits = c(-9, 12)) + 
+#   scale_y_continuous(breaks = seq(-10,10,1), name = "Dimension 2", limits = c(-9, 6)) + 
+#   geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 ) +
+#   # geom_label_repel(aes(label = sample_unique_ID), label.size = 0) +
+#   scale_fill_brewer(palette = "Set1", na.value = "grey") +
+#   scale_color_brewer(palette = "Set1", na.value = "grey") +
+#   guides(fill = "none", color = "none") +
+#   theme_classic()
+# 
+# plot1 <- ggtree(dat, aes(color = kmeans_cluster), size = 1.5) +
+#   geom_tiplab(align = TRUE, offset = 2) +
+#   geom_tippoint() +
+#   theme_classic() +
+#   scale_x_continuous(breaks = seq(-100,120,5), name = "Distance") + 
+#   coord_cartesian(xlim = c(-5,35)) +
+#   guides(fill = "none", color = "none") +
+#   scale_fill_brewer(palette = "Set1", na.value = "grey") +
+#   scale_color_brewer(palette = "Set1", na.value = "grey") +
+#   theme_tree2()
+# 
+# plot2 <- dat %>%
+#   group_by(kmeans_cluster) %>%
+#   summarize(mean = mean(Quercetin), sd = sd(Quercetin)) %>%
+#   filter(kmeans_cluster != "NA") %>%
+#   ggplot(aes(x = kmeans_cluster, y = mean, ymin = mean-sd, ymax = mean+sd)) + geom_linerange() + geom_point(shape = 21, aes(fill = kmeans_cluster), size = 4) +
+#   theme_classic() +
+#   guides(fill = "none", color = "none") +
+#   scale_fill_brewer(palette = "Set1", na.value = "grey") +
+#   scale_color_brewer(palette = "Set1", na.value = "grey") +
+#   scale_x_discrete(name = "Cluster") + 
+#   scale_y_continuous(breaks = seq(-10,10,0.2), name = "Quercetin concentration", limits = c(-0.1, 1.6))
+# 
+# ggsave(
+#   plot = cowplot::plot_grid(plot0, plot1, plot2, align = "h", axis = "b", nrow = 1, rel_widths = c(0.8, 1, 0.5), labels = "AUTO"),
+#   filename = "/Users/lucasbusta/Documents/Science/Website/thebustalab.github.io/R_For_Chemists/figures/Ex6Challenge.png",
+#   height = 4, 
+#   width = 12,
+#   dpi = 300,
+#   units = "in"
+#   )
 ```
 
 Maybe something like this:
@@ -2100,7 +2114,7 @@ Maybe something like this:
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
 ```
 
-## dbscan
+## dbscan {-}
 
 Density based clustering
 

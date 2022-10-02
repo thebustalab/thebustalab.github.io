@@ -1,12 +1,5 @@
 fig:unnamed-chunk-70
 part-data-analysis-in-r
-heirarchical-clustering
-theory-1
-further-reading-4
-exercises-2
-theory-2
-exercises-3
-dbscan
 theory-3
 exercises-4
 definitions
@@ -16,7 +9,7 @@ more-than-two-means
 anova-tukey-tests
 kruskal-dunn-tests
 pairs-of-means
-further-reading-5
+further-reading-6
 exercises-5
 loading-analyzegcmsdata-basic
 loading-analyzegcmsdata-advanced
@@ -62,7 +55,7 @@ structure-1
 suggestions-1
 abstract
 title
-further-reading-6
+further-reading-7
 geoms
 colors
 filtering

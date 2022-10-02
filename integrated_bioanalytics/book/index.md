@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-09-26"
+date: "2022-10-02"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1787,45 +1787,71 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png" width="100%" style="display: block; margin: auto;" />
 
-## heirarchical clustering
+## heirarchical clustering {-}
 
-### theory
+### theory {-}
 
 "Which of my samples are most closely related?"
 
-So far we have been looking at how to plot raw data, as well as data that has been summarize across samples. This is important stuff and very useful. However, we often have questions about how samples in our datasets relate to one another. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties.
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
 
-With this in mind, let's try out our matrix analysis:
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;" />
+
+Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
+
+
+```r
+dist <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("dist"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+as.matrix(dist)[1:3,1:3]
+##                          Devil_Mountain_Lake_BELA
+## Devil_Mountain_Lake_BELA                 0.000000
+## Imuruk_Lake_BELA                         3.667875
+## Kuzitrin_Lake_BELA                       1.642500
+##                          Imuruk_Lake_BELA
+## Devil_Mountain_Lake_BELA         3.667875
+## Imuruk_Lake_BELA                 0.000000
+## Kuzitrin_Lake_BELA               3.061149
+##                          Kuzitrin_Lake_BELA
+## Devil_Mountain_Lake_BELA           1.642500
+## Imuruk_Lake_BELA                   3.061149
+## Kuzitrin_Lake_BELA                 0.000000
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
 
 
 ```r
 AK_lakes_clustered <- runMatrixAnalysis(
-                                
     data = alaska_lake_data,
-
     analysis = "hclust",
-
     column_w_names_of_multiple_analytes = "element",
     column_w_values_for_multiple_analytes = "mg_per_L",
-    
     columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    
     columns_w_additional_analyte_info = "element_type",
-
-    columns_w_sample_ID_info = c("lake", "park")
-
+    columns_w_sample_ID_info = c("lake", "park"),
+    na_replacement = "mean"
 )
+## Replacing NAs in your data with mean
 AK_lakes_clustered
 ## # A tibble: 39 × 25
 ##    sample_unique_ID   lake  park  parent  node branch.length
 ##    <chr>              <chr> <chr>  <int> <int>         <dbl>
-##  1 Devil_Mountain_La… Devi… BELA      33     1         0.979
-##  2 Imuruk_Lake_BELA   Imur… BELA      39     2         0.816
+##  1 Devil_Mountain_La… Devi… BELA      33     1         0.987
+##  2 Imuruk_Lake_BELA   Imur… BELA      39     2         0.820
 ##  3 Kuzitrin_Lake_BELA Kuzi… BELA      38     3         0.703
-##  4 Lava_Lake_BELA     Lava… BELA      27     4         0.738
-##  5 North_Killeak_Lak… Nort… BELA      21     5         5.58 
+##  4 Lava_Lake_BELA     Lava… BELA      31     4         0.743
+##  5 North_Killeak_Lak… Nort… BELA      21     5         5.62 
 ##  6 White_Fish_Lake_B… Whit… BELA      22     6         3.89 
-##  7 Iniakuk_Lake_GAAR  Inia… GAAR      29     7         1.25 
+##  7 Iniakuk_Lake_GAAR  Inia… GAAR      28     7         1.25 
 ##  8 Kurupa_Lake_GAAR   Kuru… GAAR      35     8         0.954
 ##  9 Lake_Matcharak_GA… Lake… GAAR      35     9         0.954
 ## 10 Lake_Selby_GAAR    Lake… GAAR      36    10         1.12 
@@ -1850,7 +1876,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-115-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -1868,21 +1894,21 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-114-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
-### further reading
+### further reading {-}
  
 For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
 
 For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
 
-### exercises
+### exercises {-}
 
-For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
-For this assignment, you may find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
+For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
 
 
 ```r
@@ -1907,7 +1933,7 @@ colnames(solvents)[c(1,5,7)]
 
 "Do my samples fall into definable clusters?"
 
-### theory
+### theory {-}
 
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
@@ -1938,7 +1964,7 @@ solvents_pca_kmeans <- runMatrixAnalysis(
 ## solubility_in_water vapor_pressure
 
 solvents_pca_kmeans
-## # A tibble: 32 × 15
+## # A tibble: 32 × 14
 ##    sample_unique_ID         solvent formula miscible_with_w…
 ##    <chr>                    <chr>   <chr>   <lgl>           
 ##  1 acetic_acid_C2H4O2_TRUE… acetic… C2H4O2  TRUE            
@@ -1951,104 +1977,77 @@ solvents_pca_kmeans
 ##  8 carbon_disulfide_CS2_FA… carbon… CS2     FALSE           
 ##  9 carbon_tetrachloride_CC… carbon… CCl4    FALSE           
 ## 10 chlorobenzene_C6H5Cl_FA… chloro… C6H5Cl  FALSE           
-## # … with 22 more rows, and 11 more variables:
+## # … with 22 more rows, and 10 more variables:
 ## #   CAS_number <chr>, category <chr>, Dim.1 <dbl>,
-## #   Dim.2 <dbl>, kmeans_cluster <chr>, boiling_point <dbl>,
-## #   melting_point <dbl>, density <dbl>,
-## #   relative_polarity <dbl>, formula_weight <dbl>,
-## #   refractive_index <dbl>
+## #   Dim.2 <dbl>, boiling_point <dbl>, melting_point <dbl>,
+## #   density <dbl>, relative_polarity <dbl>,
+## #   formula_weight <dbl>, refractive_index <dbl>
 ```
 
 We can plot the results and color them according to the group that kmeans suggested:
 
 
 ```r
-ggplot(solvents_pca_kmeans) +
-  geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
+# ggplot(solvents_pca_kmeans) +
+#   geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;" />
 
 Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set `kmeans = "elbow"`:
 
 
 ```r
-solvents_pca_kmeans_elbow <- runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = "elbow",
-  na_replacement = "drop"
-)
-## Dropping any variables in your dataset that have NA as a value.
-## Variables dropped:
-## solubility_in_water vapor_pressure
-
-solvents_pca_kmeans_elbow
-## # A tibble: 31 × 2
-##    cluster_number variance_within_cluster
-##             <dbl>                   <dbl>
-##  1              1                 142804.
-##  2              2                  67355.
-##  3              3                  49545.
-##  4              4                  38964.
-##  5              5                  30702.
-##  6              6                  25212.
-##  7              7                  20188.
-##  8              8                  16508.
-##  9              9                  14346.
-## 10             10                  12265.
-## # … with 21 more rows
+# solvents_pca_kmeans_elbow <- runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = "elbow",
+#   na_replacement = "drop"
+# )
+# 
+# solvents_pca_kmeans_elbow
 ```
 
 This gives us the maximum variance within a cluster for each number of clusters. Let's plot that:
 
 
 ```r
-ggplot(
-  solvents_pca_kmeans_elbow,
-  aes(x = cluster_number, y = variance_within_cluster)
-) +
-  geom_col() +
-  geom_point() +
-  geom_line()
+# ggplot(
+#   solvents_pca_kmeans_elbow,
+#   aes(x = cluster_number, y = variance_within_cluster)
+# ) +
+#   geom_col() +
+#   geom_point() +
+#   geom_line()
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
 
 Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse`.
 
 
 ```r
-runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = 3,
-  na_replacement = "drop"
-) %>%
-
-ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
-  geom_point(shape = 21, size = 5) +
-  geom_mark_ellipse(aes(label = kmeans_cluster), alpha = 0.2) +
-  theme_classic() +
-  coord_cartesian(xlim = c(-4,4), ylim = c(-4,4))
-## Dropping any variables in your dataset that have NA as a value.
-## Variables dropped:
-## solubility_in_water vapor_pressure
+# runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = 3,
+#   na_replacement = "drop"
+# ) %>%
+# 
+# ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
+#   geom_point(shape = 21, size = 5) +
+#   geom_mark_ellipse(aes(label = kmeans_cluster), alpha = 0.2) +
+#   theme_classic() +
+#   coord_cartesian(xlim = c(-4,4), ylim = c(-4,4))
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! 
 
@@ -2056,110 +2055,100 @@ One more important point: when using kmeans, the output of runMatrixAnalysis (sp
 
 
 ```r
-solvents_clustered <- runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = 2,
-  na_replacement = "drop"
-)
-## Dropping any variables in your dataset that have NA as a value.
-## Variables dropped:
-## solubility_in_water vapor_pressure
-
-solvents_clustered_summary <- solvents_clustered %>%
-  group_by(kmeans_cluster) %>%
-  summarize(mean_bp = mean(boiling_point))
-
-ggplot() + 
-  geom_col(
-    data = solvents_clustered_summary,
-    aes(x = kmeans_cluster, y = mean_bp),
-    color = "black", fill = "white"
-  ) +
-  geom_point(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point)
-  )
+# solvents_clustered <- runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = 2,
+#   na_replacement = "drop"
+# )
+# 
+# solvents_clustered_summary <- solvents_clustered %>%
+#   group_by(kmeans_cluster) %>%
+#   summarize(mean_bp = mean(boiling_point))
+# 
+# ggplot() + 
+#   geom_col(
+#     data = solvents_clustered_summary,
+#     aes(x = kmeans_cluster, y = mean_bp),
+#     color = "black", fill = "white"
+#   ) +
+#   geom_point(
+#     data = solvents_clustered,
+#     aes(x = kmeans_cluster, y = boiling_point)
+#   )
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
 
 
 ```r
-solvents_clustered <- runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = 4,
-  na_replacement = "drop"
-)
-## Dropping any variables in your dataset that have NA as a value.
-## Variables dropped:
-## solubility_in_water vapor_pressure
-
-colors <- c("maroon", "gold", "grey", "white")
-
-pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
-  geom_mark_ellipse(
-    aes(label = kmeans_cluster), 
-    alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
-  geom_point(shape = 21, size = 2) +
-  theme_classic() +
-  guides(fill = "none") +
-  scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
-  scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
-  scale_fill_manual(values = colors) +
-  coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
-
-solvents_clustered_summary <- solvents_clustered %>%
-  group_by(kmeans_cluster) %>%
-  summarize(mean_bp = mean(boiling_point))
-
-bar_plot <- ggplot() + 
-  geom_violin(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
-    size = 0.5, color = "black", alpha = 0.6, width = 0.5
-  ) +
-  geom_crossbar(
-    data = solvents_clustered_summary,
-    aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
-    color = "black", width = 0.5
-  ) +
-  geom_point(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point),
-    size = 2, color = "black", alpha = 0.6
-  ) +
-  scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
-  scale_x_discrete(name = "Cluster") +
-  scale_fill_manual(values = colors) +
-  theme_classic() +
-  coord_flip() +
-  guides(fill = "none") +
-  theme(legend.position = "bottom")
-
-cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
+# solvents_clustered <- runMatrixAnalysis(
+#   data = solvents,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = NULL,
+#   column_w_values_for_multiple_analytes = NULL,
+#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
+#   columns_w_additional_analyte_info = NULL,
+#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
+#   transpose = FALSE,
+#   kmeans = 4,
+#   na_replacement = "drop"
+# )
+# 
+# colors <- c("maroon", "gold", "grey", "white")
+# 
+# pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
+#   geom_mark_ellipse(
+#     aes(label = kmeans_cluster), 
+#     alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
+#   geom_point(shape = 21, size = 2) +
+#   theme_classic() +
+#   guides(fill = "none") +
+#   scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
+#   scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
+#   scale_fill_manual(values = colors) +
+#   coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
+# 
+# solvents_clustered_summary <- solvents_clustered %>%
+#   group_by(kmeans_cluster) %>%
+#   summarize(mean_bp = mean(boiling_point))
+# 
+# bar_plot <- ggplot() + 
+#   geom_violin(
+#     data = solvents_clustered,
+#     aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
+#     size = 0.5, color = "black", alpha = 0.6, width = 0.5
+#   ) +
+#   geom_crossbar(
+#     data = solvents_clustered_summary,
+#     aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
+#     color = "black", width = 0.5
+#   ) +
+#   geom_point(
+#     data = solvents_clustered,
+#     aes(x = kmeans_cluster, y = boiling_point),
+#     size = 2, color = "black", alpha = 0.6
+#   ) +
+#   scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
+#   scale_x_discrete(name = "Cluster") +
+#   scale_fill_manual(values = colors) +
+#   theme_classic() +
+#   coord_flip() +
+#   guides(fill = "none") +
+#   theme(legend.position = "bottom")
+# 
+# cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we are really rockin!!
 
-### exercises
+### exercises {-}
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
 
@@ -2241,9 +2230,19 @@ Maybe something like this:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png" width="100%" style="display: block; margin: auto;" />
 
-## dbscan
+## dbscan {-}
 
 Density based clustering
+
+### further reading {-}
+
+http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
+
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/
+
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png
+
+https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
 <!-- end -->
 
@@ -2263,7 +2262,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = AMP, y = ADP))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-133-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -2333,7 +2332,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, y = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -2345,7 +2344,7 @@ ggplot(model$data) +
   geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -2366,7 +2365,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -2383,7 +2382,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-143-1.png" width="100%" style="display: block; margin: auto;" />
 
 40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
@@ -2418,7 +2417,7 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-143-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exercises
 
@@ -2506,7 +2505,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-147-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2587,7 +2586,7 @@ ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2600,7 +2599,7 @@ K_data_1_2 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2689,7 +2688,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2703,7 +2702,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -2810,7 +2809,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -2880,7 +2879,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -2895,7 +2894,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3039,7 +3038,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading
 
@@ -3661,7 +3660,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-184-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -3691,7 +3690,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -3729,7 +3728,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -3806,7 +3805,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -3815,7 +3814,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -3881,7 +3880,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -3900,7 +3899,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -3980,7 +3979,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
 
@@ -4337,7 +4336,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4379,7 +4378,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
