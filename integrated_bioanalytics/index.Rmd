@@ -2104,6 +2104,16 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 Density based clustering
 
+### further reading {-}
+
+http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
+
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/
+
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png
+
+https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
+
 <!-- end -->
 
 <!-- start models -->

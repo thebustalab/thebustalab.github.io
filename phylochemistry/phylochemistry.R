@@ -68,6 +68,9 @@
                 "treemapify",
                 "viridis",
                 "umap",
+                "ggside",
+                "fpc",
+                "dbscan",
                 "Rtsne"
             )
 
@@ -6773,7 +6776,8 @@
                                                 "mca", "mca_ord", "mca_dim",
                                                 "mds", "mds_ord", "mds_dim",
                                                 "tsne", "dbscan", "kmeans",
-                                                "hclust", "hclust_phylo"
+                                                "hclust", "hclust_phylo",
+                                                "dbscan"
                                             ),
                                             column_w_names_of_multiple_analytes = NULL,
                                             column_w_values_for_multiple_analytes = NULL,
@@ -7093,15 +7097,13 @@
 
                         }
 
-                    # Run the matrix analysis selected
-
                         ## Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
                                 scaled_matrix <- scale(matrix)
                             }
 
-                        ## Distance-based methods. First, get distance matrix:
+                        ## Get distance matrix
 
                             if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
 
@@ -7111,21 +7113,16 @@
                                     stop("Please specify distance method")
                                 }
 
+                                if( analysis == "dist") {
+                                    return(dist_matrix)
+                                    stop()
+                                }
+
                             }
 
-                            ## HCLUST, HCLUST_PHYLO ##
+                    # Run the matrix analysis selected
 
-                                if( analysis == "hclust" ) {
-                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
-                                    clustering <- ggtree::fortify(phylo)
-                                    clustering$sample_unique_ID <- clustering$label
-                                }
-
-                                if( analysis == "hclust_phylo" ) {                        
-                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
-                                    return(phylo)
-                                    stop("Returning hclust_phylo.")
-                                }
+                        ## Dimensionality reduction
 
                             ## MDS
 
@@ -7135,8 +7132,6 @@
                                     clustering <- as_tibble(coords)
                                     clustering$sample_unique_ID <- rownames(coords)
                                 }
-
-                        ## Non distance-based methods
                         
                             ## tSNE
 
@@ -7193,117 +7188,123 @@
                                     stop("Returning eigenvalues. \nDone!")
                                 }
 
-                        ## PCA, PCA_ORD, PCA_DIM ## 
+                            ## PCA, PCA_ORD, PCA_DIM ## 
 
-                            if( analysis == "pca" ) {
-                                coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
-                                clustering <- as_tibble(coords)
-                                clustering$sample_unique_ID <- rownames(coords)
+                                if( analysis == "pca" ) {
+                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
+                                    clustering <- as_tibble(coords)
+                                    clustering$sample_unique_ID <- rownames(coords)
+                                }
+
+                                if( analysis == "pca_ord" ) {
+                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
+                                    clustering <- as_tibble(coords)
+                                    clustering$analyte <- rownames(coords)
+                                    clustering <- select(clustering, analyte, Dim.1, Dim.2)
+                                    return(clustering)
+                                    stop("Returning ordination plot coordinates.")
+                                }
+
+                                if( analysis == "pca_dim" ) {
+                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
+                                    clustering <- tibble::enframe(coords, name = NULL)
+                                    clustering$principal_component <- names(coords)
+                                    clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
+                                    colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
+                                    clustering <- select(clustering, principal_component, percent_variance_explained)
+                                    return(clustering)
+                                    stop("Returning eigenvalues.")
+                                }
+                    
+                        ## Clustering
+
+                            if( any(is.na(scaled_matrix)) == TRUE ) {
+                                stop("clustering cannot handle NA. Please choose an option for na_replacement.")
                             }
 
-                            if( analysis == "pca_ord" ) {
-                                coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
-                                clustering <- as_tibble(coords)
-                                clustering$analyte <- rownames(coords)
-                                clustering <- select(clustering, analyte, Dim.1, Dim.2)
-                                return(clustering)
-                                stop("Returning ordination plot coordinates.")
-                            }
+                            ## HCLUST, HCLUST_PHYLO ##
 
-                            if( analysis == "pca_dim" ) {
-                                coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$eig[,2]
-                                clustering <- tibble::enframe(coords, name = NULL)
-                                clustering$principal_component <- names(coords)
-                                clustering$principal_component <- as.numeric(gsub("comp ", "", clustering$principal_component))
-                                colnames(clustering)[colnames(clustering) == "value"] <- "percent_variance_explained"
-                                clustering <- select(clustering, principal_component, percent_variance_explained)
-                                return(clustering)
-                                stop("Returning eigenvalues.")
-                            }
+                                if( analysis == "hclust" ) {
+                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
+                                    clustering <- ggtree::fortify(phylo)
+                                    clustering$sample_unique_ID <- clustering$label
+                                }
 
-                        
-                    # Clustering
+                                if( analysis == "hclust_phylo" ) {                        
+                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
+                                    return(phylo)
+                                    stop("Returning hclust_phylo.")
+                                }
 
-                        ## Density-based clustering = DBSCAN and OPTICS
+                            ## DBSCAN
 
-                            # out <- dbscan::optics(scaled_matrix, minPts = 5)
-                            # out <- data.frame(
-                            #     order = out$order,
-                            #     reach_dist = out$reachdist,
-                            #     name = rownames(scaled_matrix)
-                            # )
-                            # out$name <- factor(out$name, levels = rev(rownames(scaled_matrix)[out$order]))
-                            # ggplot(out[2:19,]) +
-                            #     geom_col(aes(x = name, y = reach_dist))
+                                if( analysis == "dbscan" ) {
 
-                        ## K-MEANS ##
+                                    findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "dbscan")
 
-                            if( kmeans[1] %in% c("none", FALSE) ) {}
+                                    clustering <- as_tibble(data.frame(
+                                        sample_unique_ID = colnames(as.matrix(dist_matrix)),
+                                        cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = threshold, MinPts = k, scale = FALSE, method = "dist")[[1]])
+                                    ))
 
-                            if( !kmeans[1] %in% c("none", FALSE) ) {
+                                }
 
-                                ## Check for NAs
+                                if (analysis == "kmeans") {
 
-                                    if( any(is.na(scaled_matrix)) == TRUE ) {
-                                        stop("kmeans cannot handle NA. Please choose an option for na_replacement.")
-                                    }
+                                    findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "kmeans")
 
-                                ## If kmeans = "pca", substitute the matrix kmeans sees with the first two dimensions of the PCA
+                                    ## If auto, determine sharpest angle and return clusters
 
-                                    if ( kmeans[1] == "pca") {
-                                        matrix <- as.matrix(clustering[,1:2])
-                                        rownames(matrix) <- as.character(as.data.frame(clustering)[,3])
-                                    }
+                                        # if( kmeans[1] == "auto" | kmeans[1] == "pca" ) {
+                                        #     angles <- list()
+                                        #     for( i in 1:(length(kmeans_results)-2) ) {
+                                        #         slope_1 <- kmeans_results[i+1] - kmeans_results[i]
+                                        #         slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
+                                        #         angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
+                                        #     }
+                                        #     angles <- do.call(rbind, angles)
 
-                                ## Run k-means
+                                        #     cluster_number <- which(angles == min(angles)) + 1
 
-                                    kmeans_results <- list()
-                                    for( i in 1:(dim(matrix)[1]-1) ) {
-                                        kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
-                                    }
-                                    kmeans_results <- do.call(rbind, kmeans_results)
-                                    kmeans_results
+                                        # }
 
-                                ## If auto, determine sharpest angle and return clusters
+                                        ## Bind kmeans cluster numbers to output
 
-                                    if( kmeans[1] == "auto" | kmeans[1] == "pca" ) {
-                                        angles <- list()
-                                        for( i in 1:(length(kmeans_results)-2) ) {
-                                            slope_1 <- kmeans_results[i+1] - kmeans_results[i]
-                                            slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
-                                            angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
-                                        }
-                                        angles <- do.call(rbind, angles)
+                                }
 
-                                        cluster_number <- which(angles == min(angles)) + 1
+                            ## OPTICS
 
-                                        kmeans_clusters <- stats::kmeans(x = matrix, centers = cluster_number, nstart = 25, iter.max = 1000)$cluster
-                                    }
+                                # out <- dbscan::optics(scaled_matrix, minPts = 5)
+                                # out <- data.frame(
+                                #     order = out$order,
+                                #     reach_dist = out$reachdist,
+                                #     name = rownames(scaled_matrix)
+                                # )
+                                # out$name <- factor(out$name, levels = rev(rownames(scaled_matrix)[out$order]))
+                                # ggplot(out[2:19,]) +
+                                #     geom_col(aes(x = name, y = reach_dist))
 
-                                ## If scree, return raw results
+                            ## K-MEANS ##
 
-                                    if( kmeans[1] == "elbow" ) {
-                                        results <- as_tibble(data.frame(
-                                            cluster_number = seq(1, dim(kmeans_results)[1], 1),
-                                            variance_within_cluster = kmeans_results
-                                        ))
-                                        return( results )
-                                        stop("Returning elbow plot.")
-                                    }
+                                    ## Run k-means
 
-                                ## If a number, return that many clusters
+                                    # ## If scree, return raw results
 
-                                    if( !kmeans[1] %in% c("auto", "elbow", "pca") ) {
-                                        if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', 'pca' or a number.")}
-                                        kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(kmeans[1]), nstart = 25, iter.max = 1000)$cluster
-                                    }
+                                    #     if( kmeans[1] == "elbow" ) {
+                                    #         results <- as_tibble(data.frame(
+                                    #             cluster_number = seq(1, dim(kmeans_results)[1], 1),
+                                    #             variance_within_cluster = kmeans_results
+                                    #         ))
+                                    #         return( results )
+                                    #         stop("Returning elbow plot.")
+                                    #     }
 
-                                ## Bind kmeans cluster numbers to output
+                                    # ## If a number, return that many clusters
 
-                                    kmeans_clusters <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), kmeans_cluster = paste0("cluster_", kmeans_clusters)))
-                                    clustering$kmeans_cluster <- kmeans_clusters$kmeans_cluster[match(clustering$sample_unique_ID, kmeans_clusters$sample_unique_ID)]
-
-                            }
+                                    #     if( !kmeans[1] %in% c("auto", "elbow", "pca") ) {
+                                    #         if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', 'pca' or a number.")}
+                                    #         kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(kmeans[1]), nstart = 25, iter.max = 1000)$cluster
+                                    #     }
 
                     # If transpose = TRUE, then return without annotations
 
@@ -7374,6 +7375,156 @@
                                 return( clustering )
                         }
                 }
+
+        #### findClusterParameters
+
+            #' Interactively find clustering parameters from a distance matrix and source matrix
+            #'
+            #' @param dist_matrix
+            #' @param matrix
+            #' @examples
+            #' @export
+            #' findClusterParameters
+
+            findClusterParameters <- function(dist_matrix, matrix, analysis = c("dbscan", "kmeans")) {
+
+                k_init <- length(dist_matrix)/30
+
+                if (analysis == "dbscan") {
+                    distances <- dbscan::kNNdist(dist_matrix, k = k_init)
+                }
+
+                if (analysis == "kmeans") {
+                    kmeans_results <- list()
+                    for( i in 1:(dim(matrix)[1]-1) ) {
+                        kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
+                    }
+                    distances <- do.call(rbind, kmeans_results)
+                }
+
+                angles <- list()
+                for( i in 1:(length(distances)-2) ) {
+                    slope_1 <- distances[i+1] - distances[i]
+                    slope_2 <- distances[i+2] - distances[i+1]
+                    angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
+                }
+                angles <- do.call(rbind, angles)
+                cluster_number <- which(angles == min(angles)) + 1
+                threshold_init <- distances[cluster_number]
+
+                if (analysis == "kmeans") {threshold_step <- 1}
+                if (analysis == "dbscan") {threshold_step <- 0.05}
+
+                ui <- fluidPage(
+
+                    sidebarLayout(
+
+                        sidebarPanel(
+                    
+                            sliderInput(
+                                inputId = "k",
+                                label = "k",
+                                min = 0,
+                                max = length(dist_matrix)/2,
+                                value = k_init
+                            ),
+
+                            sliderInput(
+                                inputId = "threshold",
+                                label = "threshold",
+                                min = 0,
+                                max = floor(max(distances)),
+                                value = threshold_init,
+                                step = threshold_step
+                            )
+                        ),
+
+                        mainPanel(
+
+                            fluidRow(
+
+                                plotOutput(
+                                    outputId = "plot1",
+                                    width = 200,
+                                    height = 200
+                                ),
+
+                                plotOutput(
+                                    outputId = "plot2",
+                                    width = 500,
+                                    height = 500
+                                )
+                            )
+
+                        )
+
+                    )
+
+                )
+                
+                server <- function(input, output, session) {
+
+                    output$plot1 <- renderPlot({
+
+                        k <<- input$k
+                        threshold <<- input$threshold
+
+                        if (analysis == "dbscan") {
+                            distances <- dbscan::kNNdist(dist_matrix, k = input$k)
+                        }
+
+                        if (analysis == "kmeans") {
+                            distances <- distances
+                        }
+
+                        distances <- as.numeric(distances)[rev(order(as.numeric(distances)))]
+
+                        ggplot(
+                            data.frame(
+                                index = seq(1,length(distances),1),
+                                distance = distances
+                            ), aes(x = index, y = distance)
+                        ) + geom_point() + theme_bw() +
+                        geom_hline(yintercept = input$threshold)
+
+                    })
+
+                    output$plot2 <- renderPlot ({
+
+                        if (analysis == "dbscan") {
+                            clustering <- as_tibble(data.frame(
+                                sample_unique_ID = colnames(as.matrix(dist_matrix)),
+                                cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = input$threshold , MinPts = input$k, scale = FALSE, method = "dist")[[1]])
+                            ))
+                        }
+
+                        if (analysis == "kmeans") {
+                            kmeans_clusters <- stats::kmeans(x = matrix, centers = input$threshold, nstart = 25, iter.max = 1000)$cluster
+                            clustering <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), cluster = paste0("cluster_", kmeans_clusters)))
+                        }
+
+                        clustering <- cbind(
+                            clustering,
+                            matrix[match(rownames(matrix), clustering$sample_unique_ID),]
+                        )
+
+                        ggplot(clustering, aes(x = Dim.1, y = Dim.2, fill = cluster)) +
+                            geom_point(shape = 21, size = 6, alpha = 0.8) +
+                            theme_bw()
+
+                    })
+
+                    session$onSessionEnded(function() {
+                    
+                        stopApp()
+                    
+                    })
+
+                }
+
+                runApp(shinyApp(ui, server))
+
+            }
 
         #### pGroups
 
