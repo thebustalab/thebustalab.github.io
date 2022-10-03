@@ -812,6 +812,8 @@ Some pointers:
 
 5. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted. Note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized. *Defend* your ideas with argument!
 
+6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem.
+
 ## {-}
 
 ## further reading {-}
@@ -2114,9 +2116,9 @@ Maybe something like this:
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
 ```
 
-## dbscan {-}
+## density-based clustering {-}
 
-Density based clustering
+dbscan
 
 ### further reading {-}
 

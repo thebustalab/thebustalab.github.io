@@ -6779,6 +6779,7 @@
                                                 "hclust", "hclust_phylo",
                                                 "dbscan"
                                             ),
+                                            parameters = NULL,
                                             column_w_names_of_multiple_analytes = NULL,
                                             column_w_values_for_multiple_analytes = NULL,
                                             columns_w_values_for_single_analyte = NULL,
@@ -6804,6 +6805,7 @@
                                 c(
                                     "data",
                                     "analysis",
+                                    "parameters",
                                     "column_w_names_of_multiple_analytes",
                                     "column_w_values_for_multiple_analytes",
                                     "columns_w_values_for_single_analyte",
@@ -6921,40 +6923,35 @@
                               are_they_numeric <- c(are_they_numeric, is.numeric(data_wide[[i]]))
                             }
 
-                            ## Convert all to numeric?
-                                # for( i in which_analyte_columns ) {
-                                #   data_wide[[i]] <- as.numeric(data_wide[[i]])
-                                # }
+                        # Should selected analysis proceed?
 
-                            # Should selected analysis proceed?
+                            if ( all(unlist(are_they_numeric)) ) {
+                                if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
+                                    # cat("Analytes are all numeric and compatible with the analysis selected.\n")
+                                }
+                                if ( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+                                    stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
+                                }
+                            }
 
-                                if ( all(unlist(are_they_numeric)) ) {
-                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
-                                        # cat("Analytes are all numeric and compatible with the analysis selected.\n")
-                                    }
-                                    if ( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
-                                        stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
-                                    }
+                            if ( !all(unlist(are_they_numeric)) ) {
+                                if (analysis %in% c("mca", "mca_ord", "mca_dim")) {
+                                    # cat("Analytes are all categorical and compatible with the analysis selected.\n")
+                                }
+                                if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
+                                    stop("Analytes are all categorical, but the analysis selected is for numeric variables. Please choose a different analysis method.\n")
                                 }
 
-                                if ( !all(unlist(are_they_numeric)) ) {
-                                    if (analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                        # cat("Analytes are all categorical and compatible with the analysis selected.\n")
-                                    }
-                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
-                                        stop("Analytes are all categorical, but the analysis selected is for numeric variables. Please choose a different analysis method.\n")
-                                    }
+                            }
 
-                                }
-
-                                # if (    all( 
-                                #             c( !all(unlist(are_they_numeric)), all(unlist(are_they_numeric)) )
-                                #         )
-                                # ) {
-                                #     if (analysis %in% c("mca")) {
-                                #         cat("Analytes are mixed and ...")
-                                #     }
-                                # }
+                            # if (    all( 
+                            #             c( !all(unlist(are_they_numeric)), all(unlist(are_they_numeric)) )
+                            #         )
+                            # ) {
+                            #     if (analysis %in% c("mca")) {
+                            #         cat("Analytes are mixed and ...")
+                            #     }
+                            # }
 
                         # Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
 
@@ -6973,56 +6970,54 @@
                             # Make sure "sample_unique_ID" is character
                                 data_wide$sample_unique_ID <- as.character(data_wide$sample_unique_ID)
 
-                        # Prepare the Matrix for analysis - Clustering analysis
+                        # Prepare the matrix
 
-                            # Prepare the matrix
+                            matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
+                            rownames(matrix) <- data_wide$sample_unique_ID
 
-                                matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
-                                rownames(matrix) <- data_wide$sample_unique_ID
+                        # Replace NAs with colmeans
 
-                            # Replace NAs with colmeans
-
-                                if( na_replacement[1] == "none") {
+                            if( na_replacement[1] == "none") {
+                            }
+                            if( na_replacement[1] == "drop" ) {
+                                cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
+                                if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
+                                    cat(names(which(apply(is.na(matrix), 2, any))))    
+                                } else {
+                                    cat("none")
                                 }
-                                if( na_replacement[1] == "drop" ) {
-                                    cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
-                                    if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
-                                        cat(names(which(apply(is.na(matrix), 2, any))))    
-                                    } else {
-                                        cat("none")
-                                    }
-                                    cat("\n")
-                                    matrix <- matrix[,!apply(is.na(matrix), 2, any)]
-                                }
-                                if( na_replacement[1] %in% c("zero", "mean") ) {
+                                cat("\n")
+                                matrix <- matrix[,!apply(is.na(matrix), 2, any)]
+                            }
+                            if( na_replacement[1] %in% c("zero", "mean") ) {
 
-                                    if( any(is.na(matrix)) ) {
-                                        
-                                        cat(paste0("Replacing NAs in your data with ", na_replacement), "\n")
+                                if( any(is.na(matrix)) ) {
+                                    
+                                    cat(paste0("Replacing NAs in your data with ", na_replacement), "\n")
 
-                                            for( column in 1:dim(matrix)[2]) {
+                                        for( column in 1:dim(matrix)[2]) {
+                                            
+                                            if( any(is.na(matrix[,column])) ) {
+
+                                                if( na_replacement == "mean" ) {
+                                                    replacement <- mean(matrix[,column], na.rm = TRUE)
+                                                }
+                                                if( na_replacement == "zero" ) {
+                                                    replacement <- 0
+                                                }
+                                                if( !any(na_replacement %in% c("mean", "zero")) ) {
+                                                    stop("Your data contains NAs. Please specify how to deal with them using na_replacement. \n")
+                                                }
                                                 
-                                                if( any(is.na(matrix[,column])) ) {
+                                                matrix[,column][is.na(matrix[,column])] <- replacement
 
-                                                    if( na_replacement == "mean" ) {
-                                                        replacement <- mean(matrix[,column], na.rm = TRUE)
-                                                    }
-                                                    if( na_replacement == "zero" ) {
-                                                        replacement <- 0
-                                                    }
-                                                    if( !any(na_replacement %in% c("mean", "zero")) ) {
-                                                        stop("Your data contains NAs. Please specify how to deal with them using na_replacement. \n")
-                                                    }
-                                                    
-                                                    matrix[,column][is.na(matrix[,column])] <- replacement
-
-                                                } else {}
-                                            }
-                                    }
+                                            } else {}
+                                        }
                                 }
+                            }
 
-                            # Transpose matrix, if requested
-                                if( transpose == TRUE ) { matrix <- t(matrix) }
+                        # Transpose matrix, if requested
+                            if( transpose == TRUE ) { matrix <- t(matrix) }
 
                         # Run unknown, if requested
 
@@ -7095,7 +7090,7 @@
                                     ### MIGHT NOT CLUSTER DIRECTLY WITH IT
                                     ### DEPENDING ON HOW RELATED THEY ARE TO OTHER THINGS
 
-                        }
+                            }
 
                         ## Scale data, unless not requested
 
@@ -7240,51 +7235,40 @@
 
                                 if( analysis == "dbscan" ) {
 
-                                    findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "dbscan")
+                                    if ( length(parameters) > 0 ) {
+                                        k <<- parameters[1]
+                                        threshold <<- parameters[2]
+                                    }
 
+                                    if ( length(parameters) == 0 ) {
+
+                                        findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "dbscan")
+
+                                    }
+
+                                    cat("Using", k, "as a value for k.\n")
+                                    cat("Using", threshold, "as a value for threshold.\n")
                                     clustering <- as_tibble(data.frame(
                                         sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                        cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = threshold, MinPts = k, scale = FALSE, method = "dist")[[1]])
+                                        cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = as.numeric(threshold), MinPts = as.numeric(k), scale = FALSE, method = "dist")[[1]])
                                     ))
 
                                 }
 
+                            ## k-means
+
                                 if (analysis == "kmeans") {
 
-                                    findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "kmeans")
+                                    if ( length(parameters) > 0 ) {
+                                        cluster_number <- parameters[1]
+                                    }
 
-                                    ## If auto, determine sharpest angle and return clusters
+                                    if ( length(parameters) == 0 ) {
+                                        findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "kmeans")
+                                    }
 
-                                        # if( kmeans[1] == "auto" | kmeans[1] == "pca" ) {
-                                        #     angles <- list()
-                                        #     for( i in 1:(length(kmeans_results)-2) ) {
-                                        #         slope_1 <- kmeans_results[i+1] - kmeans_results[i]
-                                        #         slope_2 <- kmeans_results[i+2] - kmeans_results[i+1]
-                                        #         angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
-                                        #     }
-                                        #     angles <- do.call(rbind, angles)
-
-                                        #     cluster_number <- which(angles == min(angles)) + 1
-
-                                        # }
-
-                                        ## Bind kmeans cluster numbers to output
-
-                                }
-
-                            ## OPTICS
-
-                                # out <- dbscan::optics(scaled_matrix, minPts = 5)
-                                # out <- data.frame(
-                                #     order = out$order,
-                                #     reach_dist = out$reachdist,
-                                #     name = rownames(scaled_matrix)
-                                # )
-                                # out$name <- factor(out$name, levels = rev(rownames(scaled_matrix)[out$order]))
-                                # ggplot(out[2:19,]) +
-                                #     geom_col(aes(x = name, y = reach_dist))
-
-                            ## K-MEANS ##
+                                    cat("Using", cluster_number, "as a value for cluster_number.\n")
+                                    kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(parameters[1]), nstart = 25, iter.max = 1000)$cluster
 
                                     ## Run k-means
 
@@ -7299,12 +7283,19 @@
                                     #         stop("Returning elbow plot.")
                                     #     }
 
-                                    # ## If a number, return that many clusters
+                                }
 
-                                    #     if( !kmeans[1] %in% c("auto", "elbow", "pca") ) {
-                                    #         if( is.na(as.numeric(kmeans[1])) ) {stop("For kmeans, please use 'none', 'auto', 'elbow', 'pca' or a number.")}
-                                    #         kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(kmeans[1]), nstart = 25, iter.max = 1000)$cluster
-                                    #     }
+                            ## OPTICS
+
+                                # out <- dbscan::optics(scaled_matrix, minPts = 5)
+                                # out <- data.frame(
+                                #     order = out$order,
+                                #     reach_dist = out$reachdist,
+                                #     name = rownames(scaled_matrix)
+                                # )
+                                # out$name <- factor(out$name, levels = rev(rownames(scaled_matrix)[out$order]))
+                                # ggplot(out[2:19,]) +
+                                #     geom_col(aes(x = name, y = reach_dist))                                
 
                     # If transpose = TRUE, then return without annotations
 
