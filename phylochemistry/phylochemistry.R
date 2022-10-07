@@ -7406,6 +7406,8 @@
                 if (analysis == "kmeans") {threshold_step <- 1}
                 if (analysis == "dbscan") {threshold_step <- 0.05}
 
+                print("here1")
+
                 ui <- fluidPage(
 
                     sidebarLayout(
@@ -7417,7 +7419,7 @@
                                 label = "k",
                                 min = 0,
                                 max = length(dist_matrix)/2,
-                                value = k_init
+                                value = as.numeric(k_init)
                             ),
 
                             sliderInput(
@@ -7425,7 +7427,7 @@
                                 label = "threshold",
                                 min = 0,
                                 max = floor(max(distances)),
-                                value = threshold_init,
+                                value = as.numeric(threshold_init),
                                 step = threshold_step
                             )
                         ),
@@ -7445,6 +7447,7 @@
                                     width = 500,
                                     height = 500
                                 )
+                                
                             )
 
                         )
@@ -7456,6 +7459,8 @@
                 server <- function(input, output, session) {
 
                     output$plot1 <- renderPlot({
+
+                        print("here2")
 
                         k <<- input$k
                         threshold <<- input$threshold
@@ -7477,6 +7482,8 @@
                             ), aes(x = index, y = distance)
                         ) + geom_point() + theme_bw() +
                         geom_hline(yintercept = input$threshold)
+
+                        print("here3")
 
                     })
 
