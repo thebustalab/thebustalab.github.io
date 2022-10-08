@@ -285,7 +285,7 @@ new_object <- 1
 Now we've got a new object called `new_object`, and inside of it is the number 1. To look at what's inside an object, we can simply type the name of the object into the console:
 
 ```{r}
-new_object
+new_object 
 ```
 
 Easy! Let's look at one of the objects that comes with our class code base. What are the dimensions of the "algae_data" data set?
@@ -667,6 +667,22 @@ ggplot(
 ```
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
+
+```{r}
+i2 <- iris %>%
+  mutate(Species2 = rep(c("A","B"), 75))
+p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
+  geom_point()
+
+p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")+
+  geom_ysidedensity(aes(x=stat(density), yfill = Species2), position = "stack") +
+  theme_bw() + 
+  facet_grid(Species~Species2, space = "free", scales = "free") +
+  labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
+  ggside(collapse = "all") +
+  scale_xfill_manual(values = c("darkred","darkgreen","darkblue")) +
+  scale_yfill_manual(values = c("black","gold"))
+```
 
 There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
 
@@ -1685,7 +1701,7 @@ colnames(solvents)[1:3]
 colnames(solvents)[c(1,5,7)]
 ```
 
-## k-means clustering {-}
+## k-means and dbscan {-}
 
 "Do my samples fall into definable clusters?"
 
@@ -1699,12 +1715,172 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
 
-Let's try k-means using `runMatrixAnalysis`. We can use it in conjunction with `analysis = "pca"` or `analysis = "hclust"`. Let's do PCA first. To include k-means, we can just set `kmeans = "auto"`. It's important to note that kmeans cannot handle NAs. We must set something for the `na_replacement` argument. One solution is to ignore variables that have NAs for some values, which can be done by setting `na_replacement = "drop"`.
+Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We can set `analysis = "kmeans"`. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the `parameters` argument:
 
-With `kmeans = "auto"` and `na_replacement = "drop"`, we can now run our analyssis. The output now has an additional column called `kmeans_cluster`, which indicates what cluster each sample is in:
 
 ```{r, message = FALSE}
-solvents_pca_kmeans <- runMatrixAnalysis(
+alaska_lake_data_pca <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("pca"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("kmeans"),
+    parameters = c(5),
+    column_w_names_of_multiple_analytes = NULL,
+    column_w_values_for_multiple_analytes = NULL,
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID"
+)
+
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+```
+
+We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
+
+```{r}
+alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
+ggplot() +
+  geom_point(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+  ) +
+  geom_mark_ellipse(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+  ) +
+  theme_classic() +
+  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  scale_fill_manual(values = discrete_palette)
+```
+
+There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
+
+```{r, message = FALSE}
+alaska_lake_data_pca <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("pca"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("dbscan"),
+    parameters = c(4, 0.45),
+    column_w_names_of_multiple_analytes = NULL,
+    column_w_values_for_multiple_analytes = NULL,
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID"
+)
+
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+```
+We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs you need to feed it data without NAs:
+
+```{r}
+alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
+ggplot() +
+  geom_point(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+  ) +
+  geom_mark_ellipse(
+    data = drop_na(alaska_lake_data_pca_clusters),
+    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+  ) +
+  theme_classic() +
+  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  scale_fill_manual(values = discrete_palette)
+```
+
+### summarize by cluster
+
+One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
+
+```{r, fig.width = 8, fig.height = 4, message = FALSE}
+alaska_lake_data_pca <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("pca"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("dbscan"),
+    parameters = c(4, 0.45),
+    column_w_names_of_multiple_analytes = NULL,
+    column_w_values_for_multiple_analytes = NULL,
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID",
+    columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
+)
+
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+
+alaska_lake_data_pca_clusters %>%
+  select(cluster, S, Ca) %>%
+  pivot_longer(cols = c(2,3), names_to = "analyte", values_to = "mg_per_L") %>%
+  drop_na() %>%
+  group_by(cluster, analyte) -> alaska_lake_data_pca_clusters_clean
+
+plot_2 <- ggplot() + 
+  geom_col(
+    data = summarize(
+      alaska_lake_data_pca_clusters_clean,
+      mean = mean(mg_per_L), sd = sd(mg_per_L)
+    ),
+    aes(x = cluster, y = mean, fill = cluster),
+    color = "black", alpha = 0.6
+  ) +
+  geom_errorbar(
+    data = summarize(
+      alaska_lake_data_pca_clusters_clean,
+      mean = mean(mg_per_L), sd = sd(mg_per_L)
+    ),
+    aes(x = cluster, ymin = mean-sd, ymax = mean+sd, fill = cluster),
+    color = "black", alpha = 0.6, width = 0.5, size = 1
+  ) +
+  facet_grid(.~analyte) + theme_bw() +
+  geom_jitter(
+    data = alaska_lake_data_pca_clusters_clean,
+    aes(x = cluster, y = mg_per_L, fill = cluster), width = 0.05,
+    shape = 21
+  ) +
+  scale_fill_manual(values = discrete_palette)
+
+plot_1<- ggplot() +
+  geom_point(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+  ) +
+  geom_mark_ellipse(
+    data = drop_na(alaska_lake_data_pca_clusters),
+    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+  ) +
+  theme_classic() + coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  scale_fill_manual(values = discrete_palette)
+
+plot_1 + plot_2
+```
+
+<!-- Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
+
+```{r, }
+solvents_clustered <- runMatrixAnalysis(
   data = solvents,
   analysis = c("pca"),
   column_w_names_of_multiple_analytes = NULL,
@@ -1713,170 +1889,56 @@ solvents_pca_kmeans <- runMatrixAnalysis(
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
   transpose = FALSE,
-  kmeans = "auto",
+  kmeans = 4,
   na_replacement = "drop"
 )
 
-solvents_pca_kmeans
+colors <- c("maroon", "gold", "grey", "white")
+
+pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
+  geom_mark_ellipse(
+    aes(label = kmeans_cluster), 
+    alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
+  geom_point(shape = 21, size = 2) +
+  theme_classic() +
+  guides(fill = "none") +
+  scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
+  scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
+  scale_fill_manual(values = colors) +
+  coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
+
+solvents_clustered_summary <- solvents_clustered %>%
+  group_by(kmeans_cluster) %>%
+  summarize(mean_bp = mean(boiling_point))
+
+bar_plot <- ggplot() + 
+  geom_violin(
+    data = solvents_clustered,
+    aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
+    size = 0.5, color = "black", alpha = 0.6, width = 0.5
+  ) +
+  geom_crossbar(
+    data = solvents_clustered_summary,
+    aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
+    color = "black", width = 0.5
+  ) +
+  geom_point(
+    data = solvents_clustered,
+    aes(x = kmeans_cluster, y = boiling_point),
+    size = 2, color = "black", alpha = 0.6
+  ) +
+  scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
+  scale_x_discrete(name = "Cluster") +
+  scale_fill_manual(values = colors) +
+  theme_classic() +
+  coord_flip() +
+  guides(fill = "none") +
+  theme(legend.position = "bottom")
+
+cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
 ```
 
-We can plot the results and color them according to the group that kmeans suggested:
-
-```{r}
-# ggplot(solvents_pca_kmeans) +
-#   geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)
-```
-
-Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let's look at the elbow plot itself. For this, we can just set `kmeans = "elbow"`:
-
-```{r, message = FALSE}
-# solvents_pca_kmeans_elbow <- runMatrixAnalysis(
-#   data = solvents,
-#   analysis = c("pca"),
-#   column_w_names_of_multiple_analytes = NULL,
-#   column_w_values_for_multiple_analytes = NULL,
-#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-#   columns_w_additional_analyte_info = NULL,
-#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-#   transpose = FALSE,
-#   kmeans = "elbow",
-#   na_replacement = "drop"
-# )
-# 
-# solvents_pca_kmeans_elbow
-```
-
-This gives us the maximum variance within a cluster for each number of clusters. Let's plot that:
-
-```{r}
-# ggplot(
-#   solvents_pca_kmeans_elbow,
-#   aes(x = cluster_number, y = variance_within_cluster)
-# ) +
-#   geom_col() +
-#   geom_point() +
-#   geom_line()
-```
-
-Hmm, it looks like there aren't any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set `kmeans = 3` if we want three clusters in the output. Below, let's do just that. Let's also plot the results and use `geom_mark_ellipse`.
-
-```{r, message = FALSE}
-# runMatrixAnalysis(
-#   data = solvents,
-#   analysis = c("pca"),
-#   column_w_names_of_multiple_analytes = NULL,
-#   column_w_values_for_multiple_analytes = NULL,
-#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-#   columns_w_additional_analyte_info = NULL,
-#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-#   transpose = FALSE,
-#   kmeans = 3,
-#   na_replacement = "drop"
-# ) %>%
-# 
-# ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +
-#   geom_point(shape = 21, size = 5) +
-#   geom_mark_ellipse(aes(label = kmeans_cluster), alpha = 0.2) +
-#   theme_classic() +
-#   coord_cartesian(xlim = c(-4,4), ylim = c(-4,4))
-```
-
-Cool! 
-
-One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:
-
-```{r}
-# solvents_clustered <- runMatrixAnalysis(
-#   data = solvents,
-#   analysis = c("pca"),
-#   column_w_names_of_multiple_analytes = NULL,
-#   column_w_values_for_multiple_analytes = NULL,
-#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-#   columns_w_additional_analyte_info = NULL,
-#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-#   transpose = FALSE,
-#   kmeans = 2,
-#   na_replacement = "drop"
-# )
-# 
-# solvents_clustered_summary <- solvents_clustered %>%
-#   group_by(kmeans_cluster) %>%
-#   summarize(mean_bp = mean(boiling_point))
-# 
-# ggplot() + 
-#   geom_col(
-#     data = solvents_clustered_summary,
-#     aes(x = kmeans_cluster, y = mean_bp),
-#     color = "black", fill = "white"
-#   ) +
-#   geom_point(
-#     data = solvents_clustered,
-#     aes(x = kmeans_cluster, y = boiling_point)
-#   )
-```
-
-Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
-
-```{r, fig.width = 8, fig.height = 4, message = FALSE}
-# solvents_clustered <- runMatrixAnalysis(
-#   data = solvents,
-#   analysis = c("pca"),
-#   column_w_names_of_multiple_analytes = NULL,
-#   column_w_values_for_multiple_analytes = NULL,
-#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-#   columns_w_additional_analyte_info = NULL,
-#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-#   transpose = FALSE,
-#   kmeans = 4,
-#   na_replacement = "drop"
-# )
-# 
-# colors <- c("maroon", "gold", "grey", "white")
-# 
-# pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
-#   geom_mark_ellipse(
-#     aes(label = kmeans_cluster), 
-#     alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
-#   geom_point(shape = 21, size = 2) +
-#   theme_classic() +
-#   guides(fill = "none") +
-#   scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
-#   scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
-#   scale_fill_manual(values = colors) +
-#   coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
-# 
-# solvents_clustered_summary <- solvents_clustered %>%
-#   group_by(kmeans_cluster) %>%
-#   summarize(mean_bp = mean(boiling_point))
-# 
-# bar_plot <- ggplot() + 
-#   geom_violin(
-#     data = solvents_clustered,
-#     aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
-#     size = 0.5, color = "black", alpha = 0.6, width = 0.5
-#   ) +
-#   geom_crossbar(
-#     data = solvents_clustered_summary,
-#     aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
-#     color = "black", width = 0.5
-#   ) +
-#   geom_point(
-#     data = solvents_clustered,
-#     aes(x = kmeans_cluster, y = boiling_point),
-#     size = 2, color = "black", alpha = 0.6
-#   ) +
-#   scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
-#   scale_x_discrete(name = "Cluster") +
-#   scale_fill_manual(values = colors) +
-#   theme_classic() +
-#   coord_flip() +
-#   guides(fill = "none") +
-#   theme(legend.position = "bottom")
-# 
-# cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
-```
-
-Now we are really rockin!!
+Now we are really rockin!! -->
 
 ### exercises {-}
 

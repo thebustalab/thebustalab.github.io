@@ -6776,8 +6776,7 @@
                                                 "mca", "mca_ord", "mca_dim",
                                                 "mds", "mds_ord", "mds_dim",
                                                 "tsne", "dbscan", "kmeans",
-                                                "hclust", "hclust_phylo",
-                                                "dbscan"
+                                                "hclust", "hclust_phylo"
                                             ),
                                             parameters = NULL,
                                             column_w_names_of_multiple_analytes = NULL,
@@ -6789,8 +6788,7 @@
                                             distance_method = c("euclidean", "coeff_unlike"),
                                             unknown_sample_ID_info = NULL,
                                             scale_variance = TRUE,
-                                            kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc.", "pca"),
-                                            na_replacement = c("none", "mean", "zero", "drop"),
+                                            na_replacement = c("mean", "none", "zero", "drop"),
                                             output_format = c("wide", "long"),
                                             ...
                                         ) {
@@ -6944,15 +6942,6 @@
 
                             }
 
-                            # if (    all( 
-                            #             c( !all(unlist(are_they_numeric)), all(unlist(are_they_numeric)) )
-                            #         )
-                            # ) {
-                            #     if (analysis %in% c("mca")) {
-                            #         cat("Analytes are mixed and ...")
-                            #     }
-                            # }
-
                         # Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
 
                             if( length(columns_w_sample_ID_info) > 1 ) {
@@ -6979,6 +6968,7 @@
 
                             if( na_replacement[1] == "none") {
                             }
+
                             if( na_replacement[1] == "drop" ) {
                                 cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
                                 if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
@@ -6993,16 +6983,16 @@
 
                                 if( any(is.na(matrix)) ) {
                                     
-                                    cat(paste0("Replacing NAs in your data with ", na_replacement), "\n")
+                                    cat(paste0("Replacing NAs in your data with ", na_replacement[1]), "\n")
 
                                         for( column in 1:dim(matrix)[2]) {
                                             
                                             if( any(is.na(matrix[,column])) ) {
 
-                                                if( na_replacement == "mean" ) {
+                                                if( na_replacement[1] == "mean" ) {
                                                     replacement <- mean(matrix[,column], na.rm = TRUE)
                                                 }
-                                                if( na_replacement == "zero" ) {
+                                                if( na_replacement[1] == "zero" ) {
                                                     replacement <- 0
                                                 }
                                                 if( !any(na_replacement %in% c("mean", "zero")) ) {
@@ -7025,7 +7015,7 @@
                             
                                 ## Use na_replacement != "drop"
 
-                                    if( na_replacement != "drop" ) {
+                                    if( na_replacement[1] != "drop" ) {
                                       stop("It is highly recommended that you use na_replacement = \"drop\" when matching an unknown, since anything with an NA value will be sent to the bottom of the matching list.")
                                     }
 
@@ -7252,6 +7242,7 @@
                                         sample_unique_ID = colnames(as.matrix(dist_matrix)),
                                         cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = as.numeric(threshold), MinPts = as.numeric(k), scale = FALSE, method = "dist")[[1]])
                                     ))
+                                    clustering$cluster[clustering$cluster == "cluster_0"] <- NA
 
                                 }
 
@@ -7265,23 +7256,14 @@
 
                                     if ( length(parameters) == 0 ) {
                                         findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "kmeans")
+                                        cluster_number <- threshold
                                     }
 
                                     cat("Using", cluster_number, "as a value for cluster_number.\n")
-                                    kmeans_clusters <- stats::kmeans(x = matrix, centers = as.numeric(parameters[1]), nstart = 25, iter.max = 1000)$cluster
-
-                                    ## Run k-means
-
-                                    # ## If scree, return raw results
-
-                                    #     if( kmeans[1] == "elbow" ) {
-                                    #         results <- as_tibble(data.frame(
-                                    #             cluster_number = seq(1, dim(kmeans_results)[1], 1),
-                                    #             variance_within_cluster = kmeans_results
-                                    #         ))
-                                    #         return( results )
-                                    #         stop("Returning elbow plot.")
-                                    #     }
+                                    clustering <- as_tibble(data.frame(
+                                        sample_unique_ID = colnames(as.matrix(dist_matrix)),
+                                        cluster = stats::kmeans(x = matrix, centers = as.numeric(cluster_number), nstart = 25, iter.max = 1000)$cluster
+                                    ))
 
                                 }
 
@@ -7403,64 +7385,85 @@
                 cluster_number <- which(angles == min(angles)) + 1
                 threshold_init <- distances[cluster_number]
 
-                if (analysis == "kmeans") {threshold_step <- 1}
-                if (analysis == "dbscan") {threshold_step <- 0.05}
+                ui <-   navbarPage(title = "Cluster Parameter Selection", id = "navbar",
+                            
+                            tabPanel(title = "Main",
 
-                print("here1")
+                                sidebarLayout(
 
-                ui <- fluidPage(
+                                    sidebarPanel(
 
-                    sidebarLayout(
+                                        conditionalPanel( "input.selection == 'kmeans'",
+                                        
+                                            sliderInput(
+                                                inputId = "n_clusters",
+                                                label = "Number of clusters",
+                                                min = 0,
+                                                max = floor(max(distances)),
+                                                value = as.numeric(threshold_init),
+                                                step = 1
+                                            )
+                                        
+                                        ),
+                                
+                                        conditionalPanel( "input.selection == 'dbscan'",
 
-                        sidebarPanel(
-                    
-                            sliderInput(
-                                inputId = "k",
-                                label = "k",
-                                min = 0,
-                                max = length(dist_matrix)/2,
-                                value = as.numeric(k_init)
+                                            sliderInput(
+                                                inputId = "k",
+                                                label = "k",
+                                                min = 0,
+                                                max = length(dist_matrix)/2,
+                                                value = as.numeric(k_init)
+                                            ),
+
+                                            sliderInput(
+                                                inputId = "threshold",
+                                                label = "threshold",
+                                                min = 0,
+                                                max = floor(max(distances)),
+                                                value = as.numeric(threshold_init),
+                                                step = 0.05
+                                            )
+
+                                        ),
+
+                                        plotOutput(
+                                            outputId = "plot1",
+                                            width = 200,
+                                            height = 200
+                                        )
+                                    ),
+
+                                    mainPanel(
+
+                                            plotOutput(
+                                                outputId = "plot2",
+                                                width = 500,
+                                                height = 500
+                                            )
+
+                                    )
+
+                                )
+
                             ),
 
-                            sliderInput(
-                                inputId = "threshold",
-                                label = "threshold",
-                                min = 0,
-                                max = floor(max(distances)),
-                                value = as.numeric(threshold_init),
-                                step = threshold_step
-                            )
-                        ),
-
-                        mainPanel(
-
-                            fluidRow(
-
-                                plotOutput(
-                                    outputId = "plot1",
-                                    width = 200,
-                                    height = 200
-                                ),
-
-                                plotOutput(
-                                    outputId = "plot2",
-                                    width = 500,
-                                    height = 500
+                            tabPanel(title = "Quit", value = "stop", icon = icon("circle-notch"),
+                            
+                                selectInput(
+                                    inputId = "selection",
+                                    label = "Do not touch this",
+                                    choices = c("dbscan", "kmeans"),
+                                    selected = analysis
                                 )
-                                
+
                             )
-
-                        )
-
-                    )
 
                 )
                 
                 server <- function(input, output, session) {
 
                     output$plot1 <- renderPlot({
-
-                        print("here2")
 
                         k <<- input$k
                         threshold <<- input$threshold
@@ -7483,8 +7486,6 @@
                         ) + geom_point() + theme_bw() +
                         geom_hline(yintercept = input$threshold)
 
-                        print("here3")
-
                     })
 
                     output$plot2 <- renderPlot ({
@@ -7494,10 +7495,11 @@
                                 sample_unique_ID = colnames(as.matrix(dist_matrix)),
                                 cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = input$threshold , MinPts = input$k, scale = FALSE, method = "dist")[[1]])
                             ))
+                            clustering$cluster[clustering$cluster == "cluster_0"] <- NA
                         }
 
                         if (analysis == "kmeans") {
-                            kmeans_clusters <- stats::kmeans(x = matrix, centers = input$threshold, nstart = 25, iter.max = 1000)$cluster
+                            kmeans_clusters <- stats::kmeans(x = matrix, centers = input$n_clusters, nstart = 25, iter.max = 1000)$cluster
                             clustering <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), cluster = paste0("cluster_", kmeans_clusters)))
                         }
 
@@ -7506,16 +7508,27 @@
                             matrix[match(rownames(matrix), clustering$sample_unique_ID),]
                         )
 
-                        ggplot(clustering, aes(x = Dim.1, y = Dim.2, fill = cluster)) +
+                        ggplot(clustering, aes_string(x = colnames(matrix)[1], y = colnames(matrix)[2], fill = "cluster")) +
                             geom_point(shape = 21, size = 6, alpha = 0.8) +
-                            theme_bw()
+                            theme_bw() +
+                            scale_fill_manual(values = discrete_palette)
 
                     })
 
                     session$onSessionEnded(function() {
                     
+                        # clustering <<- clustering
+
                         stopApp()
                     
+                    })
+
+                    observe({ if (input$navbar == "stop") 
+
+                        # clustering <<- clustering
+
+                        stopApp() 
+
                     })
 
                 }
