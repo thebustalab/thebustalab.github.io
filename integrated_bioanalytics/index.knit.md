@@ -1480,44 +1480,547 @@ In the example above, the three dimensional space can be reduced to a two dimens
 We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case you wish to do further processing.
 
 
+```r
+AK_lakes_pca <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park"),
+  scale_variance = TRUE
+)
+## Replacing NAs in your data with mean
+head(AK_lakes_pca)
+## # A tibble: 6 × 18
+##   sample_unique_ID      lake  park   Dim.1  Dim.2 water_temp
+##   <chr>                 <chr> <chr>  <dbl>  <dbl>      <dbl>
+## 1 Devil_Mountain_Lake_… Devi… BELA   0.229 -0.861       6.46
+## 2 Imuruk_Lake_BELA      Imur… BELA  -1.17  -1.62       17.4 
+## 3 Kuzitrin_Lake_BELA    Kuzi… BELA  -0.918 -1.15        8.06
+## 4 Lava_Lake_BELA        Lava… BELA   0.219 -1.60       20.2 
+## 5 North_Killeak_Lake_B… Nort… BELA   9.46   0.450      11.3 
+## 6 White_Fish_Lake_BELA  Whit… BELA   4.17  -0.972      12.0 
+## # … with 12 more variables: pH <dbl>, C <dbl>, N <dbl>,
+## #   P <dbl>, Cl <dbl>, S <dbl>, F <dbl>, Br <dbl>,
+## #   Na <dbl>, K <dbl>, Ca <dbl>, Mg <dbl>
+```
+
+Let's plot the 2D projection of the Alaska lakes data:
+
+
+```r
+ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
+  geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
+  geom_label_repel(aes(label = lake), alpha = 0.5) +
+  theme_classic()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-103-1.png" width="100%" style="display: block; margin: auto;" />
+
+Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
+
+Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that's the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?
+
+### ordination plots {-}
+
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
+
+
+```
+## Replacing NAs in your data with mean
+## # A tibble: 6 × 3
+##   analyte      Dim.1   Dim.2
+##   <chr>        <dbl>   <dbl>
+## 1 water_temp 0.0750  -0.261 
+## 2 pH         0.686    0.0185
+## 3 C          0.290   -0.242 
+## 4 N          0.00435  0.714 
+## 5 P          0.473   -0.0796
+## 6 Cl         0.953    0.0148
+```
+
+We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
+
+
+```r
+AK_lakes_pca_ord <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_ord"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+## Replacing NAs in your data with mean
+head(AK_lakes_pca_ord)
+## # A tibble: 6 × 3
+##   analyte      Dim.1   Dim.2
+##   <chr>        <dbl>   <dbl>
+## 1 water_temp 0.0750  -0.261 
+## 2 pH         0.686    0.0185
+## 3 C          0.290   -0.242 
+## 4 N          0.00435  0.714 
+## 5 P          0.473   -0.0796
+## 6 Cl         0.953    0.0148
+
+ggplot(AK_lakes_pca_ord) +
+  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
+  geom_circle(aes(x0 = 0, y0 = 0, r = 1)) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.1 > 0.9, Dim.2 < 0.1, Dim.2 > -0.1),
+    aes(x = Dim.1, y = Dim.2, label = analyte), xlim = c(1,1.5)
+  ) +
+  geom_label_repel(
+    data = filter(AK_lakes_pca_ord, Dim.2 > 0.5),
+    aes(x = Dim.1, y = Dim.2, label = analyte), direction = "y", ylim = c(1,1.5)
+  ) +
+  coord_cartesian(xlim = c(-1,1.5), ylim = c(-1,1.5)) +
+  theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;" />
+
+Great! Here is how to read the ordination plot:
+
+1. When considering one analyte's vector: the vector's projected value on an axis shows how much its variance is aligned with that principal component.
+
+2. When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. If say that one analyte is "1.9" with respect to dimension 2 and another is "-1.9" with respect to dimension 2. Let's also say that these vectors are ~"0" with respect to dimension 1.
+
+With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a "biplot":
+
+
+```r
+AK_lakes_pca <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park"),
+  scale_variance = TRUE
+)
+## Replacing NAs in your data with mean
+
+AK_lakes_pca_ord <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_ord"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+## Replacing NAs in your data with mean
+
+ggplot() +
+  geom_point(
+    data = AK_lakes_pca, 
+    aes(x = Dim.1, y = Dim.2, fill = park), shape = 21, size = 4, alpha = 0.8
+  ) +
+  # geom_label_repel(aes(label = lake), alpha = 0.5) +
+  geom_segment(
+    data = AK_lakes_pca_ord,
+    aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte),
+    size = 1
+  ) +
+  scale_color_manual(values = discrete_palette) +
+  theme_classic()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;" />
+
+### principal components {-}
+
+We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
+
+
+```r
+AK_lakes_pca_dim <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca_dim"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+## Replacing NAs in your data with mean
+head(AK_lakes_pca_dim)
+## # A tibble: 6 × 2
+##   principal_component percent_variance_explained
+##                 <dbl>                      <dbl>
+## 1                   1                      48.8 
+## 2                   2                      18.6 
+## 3                   3                      11.6 
+## 4                   4                       7.88
+## 5                   5                       4.68
+## 6                   6                       3.33
+
+ggplot(
+  data = AK_lakes_pca_dim, 
+  aes(x = principal_component, y = percent_variance_explained)
+) +
+  geom_line() +
+  geom_point() +
+  theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;" />
+
+Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
+
+### exercises {-}
+
+In this set of exercises, as you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
+
+
+```r
+colnames(periodic_table_subset)[10:20]
+##  [1] "electronegativity_pauling"         
+##  [2] "first_ionization_poten_eV"         
+##  [3] "second_ionization_poten_eV"        
+##  [4] "third_ionization_poten_eV"         
+##  [5] "electron_affinity_eV"              
+##  [6] "atomic_radius_ang"                 
+##  [7] "ionic_radius_ang"                  
+##  [8] "covalent_radius_ang"               
+##  [9] "atomic_volume_cm3_per_mol"         
+## [10] "electrical_conductivity_mho_per_cm"
+## [11] "specific_heat_J_per_g_K"
+colnames(periodic_table_subset)[c(18:20, 23:25)]
+## [1] "atomic_volume_cm3_per_mol"         
+## [2] "electrical_conductivity_mho_per_cm"
+## [3] "specific_heat_J_per_g_K"           
+## [4] "thermal_conductivity_W_per_m_K"    
+## [5] "polarizability_A_cubed"            
+## [6] "heat_atomization_kJ_per_mol"
+```
+We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
+
+#### human metabolomics {-}
+
+For these questions, work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. Your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
+
+1. Run a PCA analysis on `metabolomics_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`). In your own words, how does this plot correspond to the original data set?
+4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
+5. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
+6. Complete this PCA analysis by creating a scree plot (i.e. use `analysis = "pca_dim"`). In your own words, what does this plot mean?
 
 
 
+#### grape vine chemistry {-}
+
+For this set of quesions, work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. Your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
+
+1. Run a PCA analysis on `wine_grape_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
+2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`). In your own words, how does this plot correspond to the original data set?
+4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
+5. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
+6. Complete this PCA analysis by creating a scree plot (i.e. use `analysis = "pca_dim"`). In your own words, what does this plot mean?
 
 
 
+### further reading {-}
+
+## tsne and umap {-}
+
+
+```r
+set.seed(235)
+runMatrixAnalysis(
+  data = hops_components,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+  na_replacement = "mean"
+) -> pca_data
+pca_data$technique <- "pca_data"
+colnames(pca_data) <- gsub("\\.", "_", colnames(pca_data))
+pca_data$Dim_1 <- as.numeric(scale(pca_data$Dim_1))
+pca_data$Dim_2 <- as.numeric(scale(pca_data$Dim_2))
+
+
+runMatrixAnalysis(
+  data = hops_components,
+  analysis = "umap",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+  na_replacement = "mean"
+) -> umap_data
+umap_data$technique <- "umap_data"
+umap_data$Dim_1 <- as.numeric(scale(umap_data$Dim_1))
+umap_data$Dim_2 <- as.numeric(scale(umap_data$Dim_2))
+
+
+runMatrixAnalysis(
+  data = hops_components,
+  analysis = "tsne",
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+  na_replacement = "mean"
+) -> tsne_data
+tsne_data$technique <- "tsne_data"
+tsne_data$Dim_1 <- as.numeric(scale(tsne_data$Dim_1))
+tsne_data$Dim_2 <- as.numeric(scale(tsne_data$Dim_2))
+
+
+data <- rbind(pca_data, umap_data, tsne_data)
+
+p1 <- ggplot(data) +
+  geom_point(aes(x = Dim_1, y = Dim_2, fill = hop_origin), shape = 21, size= 4) +
+  facet_grid(technique~., scales = "free") +
+  scale_fill_brewer(palette = "Set1")
+
+p2 <- ggplot(data) +
+  geom_point(aes(x = Dim_1, y = Dim_2, fill = hop_brewing_usage), shape = 21, size= 4) +
+  facet_grid(technique~., scales = "free") +
+  scale_fill_brewer(palette = "Set1")
+
+p1 + p2
+```
+
+<img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" />
+
+### further reading {-}
+
+https://datavizpyr.com/how-to-make-umap-plot-in-r/
+
+https://datavizpyr.com/how-to-make-tsne-plot-in-r/
+
+https://pair-code.github.io/understanding-umap/
+
+https://www.youtube.com/watch?v=jth4kEvJ3P8
+
+<!-- end -->
+
+<!-- start clustering -->
+# clustering {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png" width="100%" style="display: block; margin: auto;" />
+
+## heirarchical clustering {-}
+
+### theory {-}
+
+"Which of my samples are most closely related?"
+
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;" />
+
+Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
+
+
+```r
+dist <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("dist"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+## Replacing NAs in your data with mean
+
+as.matrix(dist)[1:3,1:3]
+##                          Devil_Mountain_Lake_BELA
+## Devil_Mountain_Lake_BELA                 0.000000
+## Imuruk_Lake_BELA                         3.672034
+## Kuzitrin_Lake_BELA                       1.663147
+##                          Imuruk_Lake_BELA
+## Devil_Mountain_Lake_BELA         3.672034
+## Imuruk_Lake_BELA                 0.000000
+## Kuzitrin_Lake_BELA               3.062381
+##                          Kuzitrin_Lake_BELA
+## Devil_Mountain_Lake_BELA           1.663147
+## Imuruk_Lake_BELA                   3.062381
+## Kuzitrin_Lake_BELA                 0.000000
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
+
+
+```r
+AK_lakes_clustered <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = "hclust",
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park"),
+    na_replacement = "mean"
+)
+## Replacing NAs in your data with mean
+AK_lakes_clustered
+## # A tibble: 39 × 25
+##    sample_unique_ID   lake  park  parent  node branch.length
+##    <chr>              <chr> <chr>  <int> <int>         <dbl>
+##  1 Devil_Mountain_La… Devi… BELA      33     1         0.987
+##  2 Imuruk_Lake_BELA   Imur… BELA      39     2         0.820
+##  3 Kuzitrin_Lake_BELA Kuzi… BELA      38     3         0.703
+##  4 Lava_Lake_BELA     Lava… BELA      31     4         0.743
+##  5 North_Killeak_Lak… Nort… BELA      21     5         5.62 
+##  6 White_Fish_Lake_B… Whit… BELA      22     6         3.89 
+##  7 Iniakuk_Lake_GAAR  Inia… GAAR      28     7         1.25 
+##  8 Kurupa_Lake_GAAR   Kuru… GAAR      35     8         0.954
+##  9 Lake_Matcharak_GA… Lake… GAAR      35     9         0.954
+## 10 Lake_Selby_GAAR    Lake… GAAR      36    10         1.12 
+## # … with 29 more rows, and 19 more variables: label <chr>,
+## #   isTip <lgl>, x <dbl>, y <dbl>, branch <dbl>,
+## #   angle <dbl>, water_temp <dbl>, pH <dbl>, C <dbl>,
+## #   N <dbl>, P <dbl>, Cl <dbl>, S <dbl>, F <dbl>, Br <dbl>,
+## #   Na <dbl>, K <dbl>, Ca <dbl>, Mg <dbl>
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+
+```r
+library(ggtree)
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;" />
+
+Cool! Though that plot could use some tweaking... let's try:
+
+
+```r
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 1, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,10)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.2,0.8)
+    )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-117-1.png" width="100%" style="display: block; margin: auto;" />
+
+Very nice!
+
+### further reading {-}
+ 
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
+
+For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
+
+### exercises {-}
+
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
+
+For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
+
+
+```r
+colnames(solvents)
+##  [1] "solvent"             "formula"            
+##  [3] "boiling_point"       "melting_point"      
+##  [5] "density"             "miscible_with_water"
+##  [7] "solubility_in_water" "relative_polarity"  
+##  [9] "vapor_pressure"      "CAS_number"         
+## [11] "formula_weight"      "refractive_index"   
+## [13] "specific_gravity"    "category"
+
+colnames(solvents)[1:3]
+## [1] "solvent"       "formula"       "boiling_point"
+
+colnames(solvents)[c(1,5,7)]
+## [1] "solvent"             "density"            
+## [3] "solubility_in_water"
+```
+
+## k-means and dbscan {-}
+
+"Do my samples fall into definable clusters?"
+
+### theory {-}
+
+One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" width="100%" style="display: block; margin: auto;" />
+
+One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
+
+Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We can set `analysis = "kmeans"`. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the `parameters` argument:
 
 
 
+```r
+alaska_lake_data_pca <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("pca"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+## Replacing NAs in your data with mean
+
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("kmeans"),
+    parameters = c(5),
+    column_w_names_of_multiple_analytes = NULL,
+    column_w_values_for_multiple_analytes = NULL,
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID"
+)
+## Using 5 as a value for cluster_number.
+
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+```
+
+We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
 
+```r
+alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
+ggplot() +
+  geom_point(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+  ) +
+  geom_mark_ellipse(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+  ) +
+  theme_classic() +
+  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  scale_fill_manual(values = discrete_palette)
+```
 
+<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
 
 

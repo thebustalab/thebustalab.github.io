@@ -7226,8 +7226,8 @@
                                 if( analysis == "dbscan" ) {
 
                                     if ( length(parameters) > 0 ) {
-                                        k <<- parameters[1]
-                                        threshold <<- parameters[2]
+                                        k <- parameters[1]
+                                        threshold <- parameters[2]
                                     }
 
                                     if ( length(parameters) == 0 ) {
