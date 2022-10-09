@@ -1744,7 +1744,7 @@ alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska
 
 We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
-```{r}
+```{r, fig.width = 6, fig.height = 6}
 alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
 ggplot() +
   geom_point(
@@ -1787,7 +1787,7 @@ alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska
 ```
 We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs you need to feed it data without NAs:
 
-```{r}
+```{r, fig.width = 6, fig.height = 6}
 alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
 ggplot() +
   geom_point(
@@ -1803,7 +1803,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-### summarize by cluster
+### summarize by cluster {-}
 
 One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
 
@@ -1876,70 +1876,7 @@ plot_1<- ggplot() +
 
 plot_1 + plot_2
 ```
-
-<!-- Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it's possible that we'll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the `plot_grid` function from the `cowplot` package. Let's check it out:
-
-```{r, }
-solvents_clustered <- runMatrixAnalysis(
-  data = solvents,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),
-  transpose = FALSE,
-  kmeans = 4,
-  na_replacement = "drop"
-)
-
-colors <- c("maroon", "gold", "grey", "white")
-
-pca_plot <- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +
-  geom_mark_ellipse(
-    aes(label = kmeans_cluster), 
-    alpha = 0.5, label.lineheight = 0.2, size = 0.5) +
-  geom_point(shape = 21, size = 2) +
-  theme_classic() +
-  guides(fill = "none") +
-  scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +
-  scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +
-  scale_fill_manual(values = colors) +
-  coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))
-
-solvents_clustered_summary <- solvents_clustered %>%
-  group_by(kmeans_cluster) %>%
-  summarize(mean_bp = mean(boiling_point))
-
-bar_plot <- ggplot() + 
-  geom_violin(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),
-    size = 0.5, color = "black", alpha = 0.6, width = 0.5
-  ) +
-  geom_crossbar(
-    data = solvents_clustered_summary,
-    aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),
-    color = "black", width = 0.5
-  ) +
-  geom_point(
-    data = solvents_clustered,
-    aes(x = kmeans_cluster, y = boiling_point),
-    size = 2, color = "black", alpha = 0.6
-  ) +
-  scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +
-  scale_x_discrete(name = "Cluster") +
-  scale_fill_manual(values = colors) +
-  theme_classic() +
-  coord_flip() +
-  guides(fill = "none") +
-  theme(legend.position = "bottom")
-
-cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")
-```
-
-Now we are really rockin!! -->
-
+ 
 ### exercises {-}
 
 Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
@@ -1961,7 +1898,7 @@ Run a principal components analysis on the dataset. Use `na_replacement = "drop"
 #   kmeans = "auto",
 #   na_replacement = "drop"
 # ) %>%
-# 
+
 # ggplot(aes(x = Dim.1, y = Dim.2)) + geom_point(aes(fill = kmeans_cluster), shape = 21, size = 5 )
 
 ```
@@ -2109,7 +2046,7 @@ Use cowplot to display your plots from questions 4, 5, and 6 alongside each othe
 
 `name = <your_choice>` inside `scale_*_*`
 
-`label = kmeans_cluster` inside `geom_mark_ellipse()`
+`label = cluster` inside `geom_mark_ellipse()`
 
 `breaks = <your_choice>` inside `scale_x_continuous()` or `scale_y_continuous()` (as an example, `breaks = seq(0,10,1)`)
 

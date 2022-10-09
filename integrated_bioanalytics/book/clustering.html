@@ -117,7 +117,7 @@
 <p>So far we have been looking at how to plot raw data, summarize data, and reduce a data set’s dimensionality. It’s time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;"></div>
 <p>Please note that we can get distance matrices directly from <code>runMatrixAnalysis</code> by specifying <code>analysis = "dist"</code>:</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
     data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
     analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist"</span><span class="op">)</span>,
@@ -127,22 +127,23 @@
     columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
     columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
 <span class="op">)</span>
+<span class="co">## Replacing NAs in your data with mean</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>
 <span class="co">##                          Devil_Mountain_Lake_BELA</span>
 <span class="co">## Devil_Mountain_Lake_BELA                 0.000000</span>
-<span class="co">## Imuruk_Lake_BELA                         3.667875</span>
-<span class="co">## Kuzitrin_Lake_BELA                       1.642500</span>
+<span class="co">## Imuruk_Lake_BELA                         3.672034</span>
+<span class="co">## Kuzitrin_Lake_BELA                       1.663147</span>
 <span class="co">##                          Imuruk_Lake_BELA</span>
-<span class="co">## Devil_Mountain_Lake_BELA         3.667875</span>
+<span class="co">## Devil_Mountain_Lake_BELA         3.672034</span>
 <span class="co">## Imuruk_Lake_BELA                 0.000000</span>
-<span class="co">## Kuzitrin_Lake_BELA               3.061149</span>
+<span class="co">## Kuzitrin_Lake_BELA               3.062381</span>
 <span class="co">##                          Kuzitrin_Lake_BELA</span>
-<span class="co">## Devil_Mountain_Lake_BELA           1.642500</span>
-<span class="co">## Imuruk_Lake_BELA                   3.061149</span>
+<span class="co">## Devil_Mountain_Lake_BELA           1.663147</span>
+<span class="co">## Imuruk_Lake_BELA                   3.062381</span>
 <span class="co">## Kuzitrin_Lake_BELA                 0.000000</span></code></pre></div>
 <p>There is more that we can do with distance matrices though, lots more. Let’s start by looking at an example of hierarchical clustering. For this, we just need to tell <code>runMatrixAnalysis()</code> to use <code>analysis = "hclust"</code>:</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">AK_lakes_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
     data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
     analysis <span class="op">=</span> <span class="st">"hclust"</span>,
@@ -175,16 +176,16 @@
 <span class="co">## #   Na &lt;dbl&gt;, K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></code></pre></div>
 <p>It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We’ve seen that ggplot takes a “data” argument (i.e. <code>ggplot(data = &lt;some_data&gt;) + geom_*()</code> etc.). In contrast, ggtree takes an argument called <code>tr</code>, though if you’re using the <code>runMatrixAnalysis()</code> function, you can treat these two (<code>data</code> and <code>tr</code>) the same, so, use: <code>ggtree(tr = &lt;output_from_runMatrixAnalysis&gt;) + geom_*()</code> etc.</p>
 <p>Note that <code>ggtree</code> also comes with several great new geoms: <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab()</a></code> and <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint()</a></code>. Let’s try those out:</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/treedata-book/">ggtree</a></span><span class="op">)</span>
 <span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
 <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-115-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
 <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, offset <span class="op">=</span> <span class="fl">1</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
@@ -195,7 +196,7 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>
       legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.8</span><span class="op">)</span>
     <span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-117-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very nice!</p>
 </div>
 <div id="further-reading-4" class="section level3 unnumbered">
@@ -209,7 +210,7 @@
 </h3>
 <p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: <code>algae_data</code> (which algae strains are most similar to each other?), <code>alaska_lake_data</code> (which lakes are most similar to each other?). and <code>solvents</code> (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code. For each of these, create (i) a tree diagram that shows how the “samples” in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as “additional_analyte_info”.</p>
 <p>For this assignment, you may again find the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">solvents</span><span class="op">)</span>
 <span class="co">##  [1] "solvent"             "formula"            </span>
 <span class="co">##  [3] "boiling_point"       "melting_point"      </span>
@@ -227,8 +228,8 @@
 <span class="co">## [3] "solubility_in_water"</span></code></pre></div>
 </div>
 </div>
-<div id="k-means-clustering" class="section level2 unnumbered">
-<h2>k-means clustering<a class="anchor" aria-label="anchor" href="#k-means-clustering"><i class="fas fa-link"></i></a>
+<div id="k-means-and-dbscan" class="section level2 unnumbered">
+<h2>k-means and dbscan<a class="anchor" aria-label="anchor" href="#k-means-and-dbscan"><i class="fas fa-link"></i></a>
 </h2>
 <p>“Do my samples fall into definable clusters?”</p>
 <div id="theory-2" class="section level3 unnumbered">
@@ -237,182 +238,166 @@
 <p>One of the questions we’ve been asking is “which of my samples are most closely related?”. We’ve been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in <strong>A</strong> below:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" width="100%" style="display: block; margin: auto;"></div>
 <p>One we know within-group variances, we find the “elbow” point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in <strong>B</strong> and <strong>C</strong>.)</p>
-<p>Let’s try k-means using <code>runMatrixAnalysis</code>. We can use it in conjunction with <code>analysis = "pca"</code> or <code>analysis = "hclust"</code>. Let’s do PCA first. To include k-means, we can just set <code>kmeans = "auto"</code>. It’s important to note that kmeans cannot handle NAs. We must set something for the <code>na_replacement</code> argument. One solution is to ignore variables that have NAs for some values, which can be done by setting <code>na_replacement = "drop"</code>.</p>
-<p>With <code>kmeans = "auto"</code> and <code>na_replacement = "drop"</code>, we can now run our analyssis. The output now has an additional column called <code>kmeans_cluster</code>, which indicates what cluster each sample is in:</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">solvents_pca_kmeans</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">solvents</span>,
-  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">solvents</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">7</span><span class="op">:</span><span class="fl">9</span>, <span class="fl">11</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"solvent"</span>, <span class="st">"formula"</span>, <span class="st">"miscible_with_water"</span>, <span class="st">"CAS_number"</span>, <span class="st">"category"</span><span class="op">)</span>,
-  transpose <span class="op">=</span> <span class="cn">FALSE</span>,
-  kmeans <span class="op">=</span> <span class="st">"auto"</span>,
-  na_replacement <span class="op">=</span> <span class="st">"drop"</span>
-<span class="op">)</span>
-<span class="co">## Dropping any variables in your dataset that have NA as a value.</span>
-<span class="co">## Variables dropped:</span>
-<span class="co">## solubility_in_water vapor_pressure</span>
-
-<span class="va">solvents_pca_kmeans</span>
-<span class="co">## # A tibble: 32 × 14</span>
-<span class="co">##    sample_unique_ID         solvent formula miscible_with_w…</span>
-<span class="co">##    &lt;chr&gt;                    &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;           </span>
-<span class="co">##  1 acetic_acid_C2H4O2_TRUE… acetic… C2H4O2  TRUE            </span>
-<span class="co">##  2 acetone_C3H6O_TRUE_67-6… acetone C3H6O   TRUE            </span>
-<span class="co">##  3 acetonitrile_C2H3N_TRUE… aceton… C2H3N   TRUE            </span>
-<span class="co">##  4 benzene_C6H6_FALSE_71-4… benzene C6H6    FALSE           </span>
-<span class="co">##  5 benzonitrile_C7H5N_FALS… benzon… C7H5N   FALSE           </span>
-<span class="co">##  6 1-butanol_C4H10O_FALSE_… 1-buta… C4H10O  FALSE           </span>
-<span class="co">##  7 2-butanone_C4H8O_FALSE_… 2-buta… C4H8O   FALSE           </span>
-<span class="co">##  8 carbon_disulfide_CS2_FA… carbon… CS2     FALSE           </span>
-<span class="co">##  9 carbon_tetrachloride_CC… carbon… CCl4    FALSE           </span>
-<span class="co">## 10 chlorobenzene_C6H5Cl_FA… chloro… C6H5Cl  FALSE           </span>
-<span class="co">## # … with 22 more rows, and 10 more variables:</span>
-<span class="co">## #   CAS_number &lt;chr&gt;, category &lt;chr&gt;, Dim.1 &lt;dbl&gt;,</span>
-<span class="co">## #   Dim.2 &lt;dbl&gt;, boiling_point &lt;dbl&gt;, melting_point &lt;dbl&gt;,</span>
-<span class="co">## #   density &lt;dbl&gt;, relative_polarity &lt;dbl&gt;,</span>
-<span class="co">## #   formula_weight &lt;dbl&gt;, refractive_index &lt;dbl&gt;</span></code></pre></div>
-<p>We can plot the results and color them according to the group that kmeans suggested:</p>
+<p>Let’s try k-means using <code>runMatrixAnalysis</code>. For this example, let’s run it on the PCA projection of the alaska lakes data set. We can set <code>analysis = "kmeans"</code>. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the <code>parameters</code> argument:</p>
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># ggplot(solvents_pca_kmeans) +</span>
-<span class="co">#   geom_point(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster), shape = 21, size = 5, alpha = 0.6)</span></code></pre></div>
-<p>Hmmm, it looks like the elbow algorithm is suggesting lots of clusters. Why is this? Let’s look at the elbow plot itself. For this, we can just set <code>kmeans = "elbow"</code>:</p>
+<code class="sourceCode R"><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
+    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
+    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
+    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
+    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+    columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
+    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="co">## Replacing NAs in your data with mean</span>
+
+<span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca</span>,
+    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,
+    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,
+    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Dim.1"</span>, <span class="st">"Dim.2"</span><span class="op">)</span>,
+    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"sample_unique_ID"</span>
+<span class="op">)</span>
+<span class="co">## Using 5 as a value for cluster_number.</span>
+
+<span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span>, <span class="va">alaska_lake_data_pca</span><span class="op">)</span></code></pre></div>
+<p>We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using <code>geom_mark_ellipse</code>. Note that it is recommended to specify both <code>fill</code> and <code>label</code> for geom_mark_ellipse:</p>
 <div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># solvents_pca_kmeans_elbow &lt;- runMatrixAnalysis(</span>
-<span class="co">#   data = solvents,</span>
-<span class="co">#   analysis = c("pca"),</span>
-<span class="co">#   column_w_names_of_multiple_analytes = NULL,</span>
-<span class="co">#   column_w_values_for_multiple_analytes = NULL,</span>
-<span class="co">#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],</span>
-<span class="co">#   columns_w_additional_analyte_info = NULL,</span>
-<span class="co">#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),</span>
-<span class="co">#   transpose = FALSE,</span>
-<span class="co">#   kmeans = "elbow",</span>
-<span class="co">#   na_replacement = "drop"</span>
-<span class="co"># )</span>
-<span class="co"># </span>
-<span class="co"># solvents_pca_kmeans_elbow</span></code></pre></div>
-<p>This gives us the maximum variance within a cluster for each number of clusters. Let’s plot that:</p>
+<code class="sourceCode R"><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca_clusters</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_mark_ellipse</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca_clusters</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="va">cluster</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">7</span>,<span class="fl">12</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, <code>runMatrixAnalysis()</code> will again load an interactive means of selecting parameters for defining dbscan clusters (“k”, and “threshold”). In the context of markdown document, simply provide “k” and “threshold” to the <code>parameters</code> argument:</p>
 <div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># ggplot(</span>
-<span class="co">#   solvents_pca_kmeans_elbow,</span>
-<span class="co">#   aes(x = cluster_number, y = variance_within_cluster)</span>
-<span class="co"># ) +</span>
-<span class="co">#   geom_col() +</span>
-<span class="co">#   geom_point() +</span>
-<span class="co">#   geom_line()</span></code></pre></div>
-<p>Hmm, it looks like there aren’t any strong elbows in this plot - probably the reason that the elbow method chooses such a high number of clusters. Suppose we want to manually set the number of clusters? We can set <code>kmeans = 3</code> if we want three clusters in the output. Below, let’s do just that. Let’s also plot the results and use <code>geom_mark_ellipse</code>.</p>
+<code class="sourceCode R"><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
+    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
+    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
+    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
+    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+    columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
+    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="co">## Replacing NAs in your data with mean</span>
+
+<span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca</span>,
+    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>,
+    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">0.45</span><span class="op">)</span>,
+    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Dim.1"</span>, <span class="st">"Dim.2"</span><span class="op">)</span>,
+    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"sample_unique_ID"</span>
+<span class="op">)</span>
+<span class="co">## Using 4 as a value for k.</span>
+<span class="co">## Using 0.45 as a value for threshold.</span>
+
+<span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span>, <span class="va">alaska_lake_data_pca</span><span class="op">)</span></code></pre></div>
+<p>We can make the plot in the same way, but please note that to get <code>geom_mark_ellipse</code> to omit the ellipse for NAs you need to feed it data without NAs:</p>
 <div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># runMatrixAnalysis(</span>
-<span class="co">#   data = solvents,</span>
-<span class="co">#   analysis = c("pca"),</span>
-<span class="co">#   column_w_names_of_multiple_analytes = NULL,</span>
-<span class="co">#   column_w_values_for_multiple_analytes = NULL,</span>
-<span class="co">#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],</span>
-<span class="co">#   columns_w_additional_analyte_info = NULL,</span>
-<span class="co">#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),</span>
-<span class="co">#   transpose = FALSE,</span>
-<span class="co">#   kmeans = 3,</span>
-<span class="co">#   na_replacement = "drop"</span>
-<span class="co"># ) %&gt;%</span>
-<span class="co"># </span>
-<span class="co"># ggplot(aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster)) +</span>
-<span class="co">#   geom_point(shape = 21, size = 5) +</span>
-<span class="co">#   geom_mark_ellipse(aes(label = kmeans_cluster), alpha = 0.2) +</span>
-<span class="co">#   theme_classic() +</span>
-<span class="co">#   coord_cartesian(xlim = c(-4,4), ylim = c(-4,4))</span></code></pre></div>
-<p>Cool!</p>
-<p>One more important point: when using kmeans, the output of runMatrixAnalysis (specifically the kmeans_cluster column) can be used to create groupings for summary statistics. For example, suppose we want two groups of solvents and we want to calculate the mean and standard deviation in boiling points for each of those groups:</p>
+<code class="sourceCode R"><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca_clusters</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_mark_ellipse</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="fu">drop_na</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">)</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="va">cluster</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">7</span>,<span class="fl">12</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="summarize-by-cluster" class="section level3 unnumbered">
+<h3>summarize by cluster<a class="anchor" aria-label="anchor" href="#summarize-by-cluster"><i class="fas fa-link"></i></a>
+</h3>
+<p>One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:</p>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># solvents_clustered &lt;- runMatrixAnalysis(</span>
-<span class="co">#   data = solvents,</span>
-<span class="co">#   analysis = c("pca"),</span>
-<span class="co">#   column_w_names_of_multiple_analytes = NULL,</span>
-<span class="co">#   column_w_values_for_multiple_analytes = NULL,</span>
-<span class="co">#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],</span>
-<span class="co">#   columns_w_additional_analyte_info = NULL,</span>
-<span class="co">#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),</span>
-<span class="co">#   transpose = FALSE,</span>
-<span class="co">#   kmeans = 2,</span>
-<span class="co">#   na_replacement = "drop"</span>
-<span class="co"># )</span>
-<span class="co"># </span>
-<span class="co"># solvents_clustered_summary &lt;- solvents_clustered %&gt;%</span>
-<span class="co">#   group_by(kmeans_cluster) %&gt;%</span>
-<span class="co">#   summarize(mean_bp = mean(boiling_point))</span>
-<span class="co"># </span>
-<span class="co"># ggplot() + </span>
-<span class="co">#   geom_col(</span>
-<span class="co">#     data = solvents_clustered_summary,</span>
-<span class="co">#     aes(x = kmeans_cluster, y = mean_bp),</span>
-<span class="co">#     color = "black", fill = "white"</span>
-<span class="co">#   ) +</span>
-<span class="co">#   geom_point(</span>
-<span class="co">#     data = solvents_clustered,</span>
-<span class="co">#     aes(x = kmeans_cluster, y = boiling_point)</span>
-<span class="co">#   )</span></code></pre></div>
-<p>Very good! Since we can use the outputs of our k-means analyses to run and visualize summary statistics, it’s possible that we’ll want to see the cluster plot (dendrogram or pca plot) alongside the summary stats plot. For this we can use the <code>plot_grid</code> function from the <code>cowplot</code> package. Let’s check it out:</p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># solvents_clustered &lt;- runMatrixAnalysis(</span>
-<span class="co">#   data = solvents,</span>
-<span class="co">#   analysis = c("pca"),</span>
-<span class="co">#   column_w_names_of_multiple_analytes = NULL,</span>
-<span class="co">#   column_w_values_for_multiple_analytes = NULL,</span>
-<span class="co">#   columns_w_values_for_single_analyte = colnames(solvents)[c(3:5, 7:9, 11:12)],</span>
-<span class="co">#   columns_w_additional_analyte_info = NULL,</span>
-<span class="co">#   columns_w_sample_ID_info = c("solvent", "formula", "miscible_with_water", "CAS_number", "category"),</span>
-<span class="co">#   transpose = FALSE,</span>
-<span class="co">#   kmeans = 4,</span>
-<span class="co">#   na_replacement = "drop"</span>
-<span class="co"># )</span>
-<span class="co"># </span>
-<span class="co"># colors &lt;- c("maroon", "gold", "grey", "white")</span>
-<span class="co"># </span>
-<span class="co"># pca_plot &lt;- ggplot( data = solvents_clustered, aes(x = Dim.1, y = Dim.2, fill = kmeans_cluster) ) +</span>
-<span class="co">#   geom_mark_ellipse(</span>
-<span class="co">#     aes(label = kmeans_cluster), </span>
-<span class="co">#     alpha = 0.5, label.lineheight = 0.2, size = 0.5) +</span>
-<span class="co">#   geom_point(shape = 21, size = 2) +</span>
-<span class="co">#   theme_classic() +</span>
-<span class="co">#   guides(fill = "none") +</span>
-<span class="co">#   scale_x_continuous(name = "PCA dimension 1", breaks = seq(-8,8,1)) +</span>
-<span class="co">#   scale_y_continuous(name = "PCA dimension 2", breaks = seq(-7,7,1)) +</span>
-<span class="co">#   scale_fill_manual(values = colors) +</span>
-<span class="co">#   coord_cartesian(xlim = c(-8,8), ylim = c(-7,7))</span>
-<span class="co"># </span>
-<span class="co"># solvents_clustered_summary &lt;- solvents_clustered %&gt;%</span>
-<span class="co">#   group_by(kmeans_cluster) %&gt;%</span>
-<span class="co">#   summarize(mean_bp = mean(boiling_point))</span>
-<span class="co"># </span>
-<span class="co"># bar_plot &lt;- ggplot() + </span>
-<span class="co">#   geom_violin(</span>
-<span class="co">#     data = solvents_clustered,</span>
-<span class="co">#     aes(x = kmeans_cluster, y = boiling_point, fill = kmeans_cluster),</span>
-<span class="co">#     size = 0.5, color = "black", alpha = 0.6, width = 0.5</span>
-<span class="co">#   ) +</span>
-<span class="co">#   geom_crossbar(</span>
-<span class="co">#     data = solvents_clustered_summary,</span>
-<span class="co">#     aes(x = kmeans_cluster, y = mean_bp, ymin = mean_bp, ymax = mean_bp),</span>
-<span class="co">#     color = "black", width = 0.5</span>
-<span class="co">#   ) +</span>
-<span class="co">#   geom_point(</span>
-<span class="co">#     data = solvents_clustered,</span>
-<span class="co">#     aes(x = kmeans_cluster, y = boiling_point),</span>
-<span class="co">#     size = 2, color = "black", alpha = 0.6</span>
-<span class="co">#   ) +</span>
-<span class="co">#   scale_y_continuous(name = "Boiling point", breaks = seq(0,250,20)) +</span>
-<span class="co">#   scale_x_discrete(name = "Cluster") +</span>
-<span class="co">#   scale_fill_manual(values = colors) +</span>
-<span class="co">#   theme_classic() +</span>
-<span class="co">#   coord_flip() +</span>
-<span class="co">#   guides(fill = "none") +</span>
-<span class="co">#   theme(legend.position = "bottom")</span>
-<span class="co"># </span>
-<span class="co"># cowplot::plot_grid(pca_plot, bar_plot, align = "h", axis = "b", labels = "AUTO")</span></code></pre></div>
-<p>Now we are really rockin!!</p>
+<code class="sourceCode R"><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
+    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
+    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
+    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
+    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
+    columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
+    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="co">## Replacing NAs in your data with mean</span>
+
+<span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca</span>,
+    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>,
+    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">0.45</span><span class="op">)</span>,
+    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
+    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Dim.1"</span>, <span class="st">"Dim.2"</span><span class="op">)</span>,
+    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"sample_unique_ID"</span>,
+    columns_w_additional_analyte_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_pca</span><span class="op">)</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">18</span><span class="op">]</span>
+<span class="op">)</span>
+<span class="co">## Using 4 as a value for k.</span>
+<span class="co">## Using 0.45 as a value for threshold.</span>
+
+<span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span>, <span class="va">alaska_lake_data_pca</span><span class="op">)</span>
+
+<span class="va">alaska_lake_data_pca_clusters</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">cluster</span>, <span class="va">S</span>, <span class="va">Ca</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"analyte"</span>, values_to <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">drop_na</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">cluster</span>, <span class="va">analyte</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_pca_clusters_clean</span>
+
+<span class="va">plot_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">geom_col</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="fu">summarize</span><span class="op">(</span>
+      <span class="va">alaska_lake_data_pca_clusters_clean</span>,
+      mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span>
+    <span class="op">)</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cluster</span>, y <span class="op">=</span> <span class="va">mean</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>,
+    color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_errorbar</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="fu">summarize</span><span class="op">(</span>
+      <span class="va">alaska_lake_data_pca_clusters_clean</span>,
+      mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">mg_per_L</span><span class="op">)</span>
+    <span class="op">)</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cluster</span>, ymin <span class="op">=</span> <span class="va">mean</span><span class="op">-</span><span class="va">sd</span>, ymax <span class="op">=</span> <span class="va">mean</span><span class="op">+</span><span class="va">sd</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>,
+    color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, width <span class="op">=</span> <span class="fl">0.5</span>, size <span class="op">=</span> <span class="fl">1</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_jitter</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca_clusters_clean</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cluster</span>, y <span class="op">=</span> <span class="va">mg_per_L</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">0.05</span>,
+    shape <span class="op">=</span> <span class="fl">21</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span>
+
+<span class="va">plot_1</span><span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">alaska_lake_data_pca_clusters</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_mark_ellipse</span><span class="op">(</span>
+    data <span class="op">=</span> <span class="fu">drop_na</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">)</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="va">cluster</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.2</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">7</span>,<span class="fl">12</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span>
+
+<span class="va">plot_1</span> <span class="op">+</span> <span class="va">plot_2</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="exercises-3" class="section level3 unnumbered">
 <h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-3"><i class="fas fa-link"></i></a>
@@ -455,7 +440,7 @@
 <p><code>nrow = 1</code> inside <code>plot_grid()</code></p>
 <p><code>rel_widths = &lt;your_choice&gt;</code> inside <code>plot_grid()</code></p>
 <p><code>name = &lt;your_choice&gt;</code> inside <code>scale_*_*</code></p>
-<p><code>label = kmeans_cluster</code> inside <code>geom_mark_ellipse()</code></p>
+<p><code>label = cluster</code> inside <code>geom_mark_ellipse()</code></p>
 <p><code>breaks = &lt;your_choice&gt;</code> inside <code>scale_x_continuous()</code> or <code>scale_y_continuous()</code> (as an example, <code>breaks = seq(0,10,1)</code>)</p>
 <p>Also, consider using:</p>
 <p><code>guides(fill = "none", color = "none")</code></p>
@@ -467,10 +452,10 @@
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
-<div id="dbscan" class="section level2 unnumbered">
-<h2>dbscan<a class="anchor" aria-label="anchor" href="#dbscan"><i class="fas fa-link"></i></a>
+<div id="density-based-clustering" class="section level2 unnumbered">
+<h2>density-based clustering<a class="anchor" aria-label="anchor" href="#density-based-clustering"><i class="fas fa-link"></i></a>
 </h2>
-<p>Density based clustering</p>
+<p>dbscan</p>
 <div id="further-reading-5" class="section level3 unnumbered">
 <h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-5"><i class="fas fa-link"></i></a>
 </h3>
@@ -507,13 +492,14 @@
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#k-means-clustering">k-means clustering</a><ul class="nav navbar-nav">
+<a class="nav-link" href="#k-means-and-dbscan">k-means and dbscan</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#theory-2">theory</a></li>
+<li><a class="nav-link" href="#summarize-by-cluster">summarize by cluster</a></li>
 <li><a class="nav-link" href="#exercises-3">exercises</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#dbscan">dbscan</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#further-reading-5">further reading</a></li></ul>
+<a class="nav-link" href="#density-based-clustering">density-based clustering</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#further-reading-5">further reading</a></li></ul>
 </li>
 </ul>
 
@@ -532,7 +518,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-10-02.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-10-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
