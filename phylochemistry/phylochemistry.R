@@ -7226,21 +7226,19 @@
                                 if( analysis == "dbscan" ) {
 
                                     if ( length(parameters) > 0 ) {
-                                        k <- parameters[1]
-                                        threshold <- parameters[2]
+                                        cluster_k <- parameters[1]
+                                        cluster_threshold <- parameters[2]
                                     }
 
                                     if ( length(parameters) == 0 ) {
-
                                         findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "dbscan")
-
                                     }
 
-                                    cat("Using", k, "as a value for k.\n")
-                                    cat("Using", threshold, "as a value for threshold.\n")
+                                    cat("Using", cluster_k, "as a value for k.\n")
+                                    cat("Using", cluster_threshold, "as a value for threshold.\n")
                                     clustering <- as_tibble(data.frame(
                                         sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                        cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = as.numeric(threshold), MinPts = as.numeric(k), scale = FALSE, method = "dist")[[1]])
+                                        cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = as.numeric(cluster_threshold), MinPts = as.numeric(cluster_k), scale = FALSE, method = "dist")[[1]])
                                     ))
                                     clustering$cluster[clustering$cluster == "cluster_0"] <- NA
 
@@ -7251,18 +7249,17 @@
                                 if (analysis == "kmeans") {
 
                                     if ( length(parameters) > 0 ) {
-                                        cluster_number <- parameters[1]
+                                        cluster_threshold <- parameters[1]
                                     }
 
                                     if ( length(parameters) == 0 ) {
                                         findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "kmeans")
-                                        cluster_number <- threshold
                                     }
 
-                                    cat("Using", cluster_number, "as a value for cluster_number.\n")
+                                    cat("Using", n_clusters, "as a value for cluster_number.\n")
                                     clustering <- as_tibble(data.frame(
                                         sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                        cluster = stats::kmeans(x = matrix, centers = as.numeric(cluster_number), nstart = 25, iter.max = 1000)$cluster
+                                        cluster = stats::kmeans(x = matrix, centers = as.numeric(n_clusters), nstart = 25, iter.max = 1000)$cluster
                                     ))
 
                                 }
@@ -7361,11 +7358,11 @@
 
             findClusterParameters <- function(dist_matrix, matrix, analysis = c("dbscan", "kmeans")) {
 
-                k_init <- length(dist_matrix)/30
+                # k_init <- length(dist_matrix)/30
 
-                if (analysis == "dbscan") {
-                    distances <- dbscan::kNNdist(dist_matrix, k = k_init)
-                }
+                # if (analysis == "dbscan") {
+                #     distances <- dbscan::kNNdist(dist_matrix, k = k_init)
+                # }
 
                 if (analysis == "kmeans") {
                     kmeans_results <- list()
@@ -7375,15 +7372,15 @@
                     distances <- do.call(rbind, kmeans_results)
                 }
 
-                angles <- list()
-                for( i in 1:(length(distances)-2) ) {
-                    slope_1 <- distances[i+1] - distances[i]
-                    slope_2 <- distances[i+2] - distances[i+1]
-                    angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
-                }
-                angles <- do.call(rbind, angles)
-                cluster_number <- which(angles == min(angles)) + 1
-                threshold_init <- distances[cluster_number]
+                # angles <- list()
+                # for( i in 1:(length(distances)-2) ) {
+                #     slope_1 <- distances[i+1] - distances[i]
+                #     slope_2 <- distances[i+2] - distances[i+1]
+                #     angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
+                # }
+                # angles <- do.call(rbind, angles)
+                # cluster_number <- which(angles == min(angles)) + 1
+                # threshold_init <- distances[cluster_number]
 
                 ui <-   navbarPage(title = "Cluster Parameter Selection", id = "navbar",
                             
@@ -7399,8 +7396,8 @@
                                                 inputId = "n_clusters",
                                                 label = "Number of clusters",
                                                 min = 0,
-                                                max = floor(max(distances)),
-                                                value = as.numeric(threshold_init),
+                                                max = length(dist_matrix),
+                                                value = 1,
                                                 step = 1
                                             )
                                         
@@ -7409,19 +7406,19 @@
                                         conditionalPanel( "input.selection == 'dbscan'",
 
                                             sliderInput(
-                                                inputId = "k",
+                                                inputId = "cluster_k",
                                                 label = "k",
-                                                min = 0,
-                                                max = length(dist_matrix)/2,
-                                                value = as.numeric(k_init)
+                                                min = 1,
+                                                max = length(dist_matrix)/10,
+                                                value = 1
                                             ),
 
                                             sliderInput(
-                                                inputId = "threshold",
+                                                inputId = "cluster_threshold",
                                                 label = "threshold",
                                                 min = 0,
-                                                max = floor(max(distances)),
-                                                value = as.numeric(threshold_init),
+                                                max = length(dist_matrix)/10,
+                                                value = 1,
                                                 step = 0.05
                                             )
 
@@ -7465,11 +7462,15 @@
 
                     output$plot1 <- renderPlot({
 
-                        k <<- input$k
-                        threshold <<- input$threshold
+                        n_clusters <<- input$n_clusters
+                        cluster_k <<- input$cluster_k
+                        cluster_threshold <<- input$cluster_threshold
+                        # print(paste0("n_clusters is ", n_clusters))
+                        # print(paste0("cluster_threshold is ", cluster_threshold))
+                        # print(paste0("cluster_k is ", cluster_k))
 
                         if (analysis == "dbscan") {
-                            distances <- dbscan::kNNdist(dist_matrix, k = input$k)
+                            distances <- dbscan::kNNdist(dist_matrix, k = input$cluster_k)
                         }
 
                         if (analysis == "kmeans") {
@@ -7484,7 +7485,7 @@
                                 distance = distances
                             ), aes(x = index, y = distance)
                         ) + geom_point() + theme_bw() +
-                        geom_hline(yintercept = input$threshold)
+                        geom_hline(yintercept = input$cluster_threshold)
 
                     })
 
@@ -7493,7 +7494,7 @@
                         if (analysis == "dbscan") {
                             clustering <- as_tibble(data.frame(
                                 sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = input$threshold , MinPts = input$k, scale = FALSE, method = "dist")[[1]])
+                                cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = input$cluster_threshold , MinPts = input$cluster_k, scale = FALSE, method = "dist")[[1]])
                             ))
                             clustering$cluster[clustering$cluster == "cluster_0"] <- NA
                         }
@@ -7515,21 +7516,9 @@
 
                     })
 
-                    session$onSessionEnded(function() {
-                    
-                        # clustering <<- clustering
+                    session$onSessionEnded(function() { stopApp() })
 
-                        stopApp()
-                    
-                    })
-
-                    observe({ if (input$navbar == "stop") 
-
-                        # clustering <<- clustering
-
-                        stopApp() 
-
-                    })
+                    observe({ if (input$navbar == "stop") stopApp() })
 
                 }
 
