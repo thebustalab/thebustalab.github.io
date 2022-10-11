@@ -1887,7 +1887,7 @@ plot_2 <- ggplot() +
     aes(x = cluster, y = mg_per_L, fill = cluster), width = 0.05,
     shape = 21
   ) +
-  scale_fill_manual(values = discrete_palette)
+  scale_fill_manual(values = discrete_palette) 
 
 plot_1<- ggplot() +
   geom_point(
