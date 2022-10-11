@@ -7091,12 +7091,12 @@
                         ## Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                # scaled_matrix <- scale(matrix)
+                                scaled_matrix <- scale(matrix)
 
-                                for (column in 1:length(matrix)) {
-                                    scaled_matrix <- matrix
-                                    scaled_matrix[,column] <- normalize(scaled_matrix[,column], new_min = -1, na_zero = TRUE)
-                                }
+                                # for (column in 1:length(matrix)) {
+                                #     scaled_matrix <- matrix
+                                #     scaled_matrix[,column] <- normalize(scaled_matrix[,column], new_min = -1, na_zero = TRUE)
+                                # }
 
                             }
 
