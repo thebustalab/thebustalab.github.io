@@ -7091,12 +7091,18 @@
                         ## Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
+                                
                                 scaled_matrix <- scale(matrix)
 
                                 # for (column in 1:length(matrix)) {
                                 #     scaled_matrix <- matrix
                                 #     scaled_matrix[,column] <- normalize(scaled_matrix[,column], new_min = -1, na_zero = TRUE)
                                 # }
+
+                                if( any(is.na(scaled_matrix)) ) {
+                                    cat("Some analytes have zero variance and will be assigned a value of zero in the scaled matrix.")
+                                    scaled_matrix[is.na(scaled_matrix)] <- 0
+                                }
 
                             }
 
