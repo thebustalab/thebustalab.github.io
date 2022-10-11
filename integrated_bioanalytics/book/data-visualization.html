@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -498,6 +498,32 @@ Figure 1.1: Vapor pressure as a function of boiling point. A scatter plot with t
 </p>
 </div>
 </div>
+<div id="subplots" class="section level2 unnumbered">
+<h2>subplots<a class="anchor" aria-label="anchor" href="#subplots"><i class="fas fa-link"></i></a>
+</h2>
+<p>We can make subplots using the <code>patchwork</code> package, which comes with the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command. Let’s see:</p>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">plot1</span> <span class="op">&lt;-</span>  <span class="fu">ggplot</span><span class="op">(</span>
+            <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element_type</span> <span class="op">==</span> <span class="st">"free"</span><span class="op">)</span>
+          <span class="op">)</span> <span class="op">+</span>
+          <span class="fu">geom_violin</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">park</span>, y <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+          <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"A"</span><span class="op">)</span>
+
+<span class="va">plot2</span> <span class="op">&lt;-</span>  <span class="fu">ggplot</span><span class="op">(</span>
+            <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element_type</span> <span class="op">==</span> <span class="st">"bound"</span><span class="op">)</span>
+          <span class="op">)</span> <span class="op">+</span>
+          <span class="fu">geom_violin</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">park</span>, y <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+          <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"B"</span><span class="op">)</span>
+
+<span class="va">plot3</span> <span class="op">&lt;-</span>  <span class="fu">ggplot</span><span class="op">(</span>
+            <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">element</span> <span class="op">==</span> <span class="st">"C"</span><span class="op">)</span>
+          <span class="op">)</span> <span class="op">+</span>
+          <span class="fu">geom_violin</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">park</span>, y <span class="op">=</span> <span class="va">mg_per_L</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+          <span class="fu">coord_flip</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"C"</span><span class="op">)</span>
+
+<span class="op">(</span><span class="va">plot1</span> <span class="op">+</span> <span class="va">plot2</span><span class="op">)</span> <span class="op">/</span> <span class="va">plot3</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
 <div id="data-vis-exercises-ii" class="section level2 unnumbered">
 <h2>data vis exercises II<a class="anchor" aria-label="anchor" href="#data-vis-exercises-ii"><i class="fas fa-link"></i></a>
 </h2>
@@ -564,6 +590,7 @@ Figure 1.1: Vapor pressure as a function of boiling point. A scatter plot with t
 <li><a class="nav-link" href="#facets">facets</a></li>
 <li><a class="nav-link" href="#scales">scales</a></li>
 <li><a class="nav-link" href="#themes">themes</a></li>
+<li><a class="nav-link" href="#subplots">subplots</a></li>
 <li><a class="nav-link" href="#data-vis-exercises-ii">data vis exercises II</a></li>
 <li><a class="nav-link" href="#section-2"></a></li>
 <li><a class="nav-link" href="#further-reading">further reading</a></li>

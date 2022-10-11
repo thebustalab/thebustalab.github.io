@@ -856,6 +856,36 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 <p class="caption">(\#fig:unnamed-chunk-71)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
 </div>
 
+## subplots {-}
+
+We can make subplots using the `patchwork` package, which comes with the `source()` command. Let's see:
+
+
+```r
+plot1 <-  ggplot(
+            filter(alaska_lake_data, element_type == "free")
+          ) +
+          geom_violin(aes(x = park, y = mg_per_L)) + theme_classic() +
+          ggtitle("A")
+
+plot2 <-  ggplot(
+            filter(alaska_lake_data, element_type == "bound")
+          ) +
+          geom_violin(aes(x = park, y = mg_per_L)) + theme_classic() +
+          ggtitle("B")
+
+plot3 <-  ggplot(
+            filter(alaska_lake_data, element == "C")
+          ) +
+          geom_violin(aes(x = park, y = mg_per_L)) + theme_classic() +
+          coord_flip() + ggtitle("C")
+
+(plot1 + plot2) / plot3
+```
+
+<img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" />
+
+
 ## data vis exercises II {-}
 
 In this set of exercises we're going to practice making more plots using the dataset `solvents`. Well, you don't have to use `solvents`, you could use something else if you want, but `solvents` is a fun one to explore. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
@@ -1040,7 +1070,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-77-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1051,7 +1081,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-77-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-78-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1194,7 +1224,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-85-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1244,7 +1274,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-86-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1276,7 +1306,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1517,7 +1547,7 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-103-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
@@ -1581,7 +1611,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -1631,7 +1661,7 @@ ggplot() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### principal components {-}
 
@@ -1669,7 +1699,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-108-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
@@ -1795,7 +1825,7 @@ p2 <- ggplot(data) +
 p1 + p2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -1904,7 +1934,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-117-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -1922,7 +1952,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-117-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
@@ -2018,7 +2048,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
 
 There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
@@ -2068,7 +2098,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### summarize by cluster {-}
 
@@ -2148,7 +2178,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
  
 ### further reading {-}
 
@@ -2173,7 +2203,7 @@ For this set of exercises, please use the dataset `hawaii_aquifers`, available a
 
 4. Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.
 
-5. Create a plot with four subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups.
+5. Create a plot with four subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.
 
 6. Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
 
@@ -2284,7 +2314,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = AMP, y = ADP))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-133-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-134-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -2354,7 +2384,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, y = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -2366,7 +2396,7 @@ ggplot(model$data) +
   geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -2387,7 +2417,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -2404,7 +2434,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;" />
 
 40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
@@ -2439,7 +2469,7 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-143-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-144-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exercises {-}
 
@@ -2484,7 +2514,7 @@ I find many of the concepts discussed in this chapter easier to think about with
 
 ```r
 hawaii_aquifers
-## # A tibble: 990 × 6
+## # A tibble: 954 × 6
 ##    aquifer_code well_name         longitude latitude analyte
 ##    <chr>        <chr>                 <dbl>    <dbl> <chr>  
 ##  1 aquifer_1    Alewa_Heights_Sp…        NA       NA SiO2   
@@ -2497,7 +2527,7 @@ hawaii_aquifers
 ##  8 aquifer_1    Alewa_Heights_Sp…        NA       NA dissol…
 ##  9 aquifer_1    Alewa_Heights_Sp…        NA       NA Ca     
 ## 10 aquifer_1    Beretania_High_S…        NA       NA SiO2   
-## # … with 980 more rows, and 1 more variable:
+## # … with 944 more rows, and 1 more variable:
 ## #   abundance <dbl>
 unique(hawaii_aquifers$aquifer_code)
 ##  [1] "aquifer_1"  "aquifer_2"  "aquifer_3"  "aquifer_4" 
@@ -2531,7 +2561,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-147-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2567,7 +2597,7 @@ We can check our data for normality and similar variances using the Shapiro test
 K_data <- hawaii_aquifers %>%
   filter(analyte == "K")
   K_data
-## # A tibble: 110 × 6
+## # A tibble: 106 × 6
 ##    aquifer_code well_name         longitude latitude analyte
 ##    <chr>        <chr>                 <dbl>    <dbl> <chr>  
 ##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      
@@ -2580,8 +2610,7 @@ K_data <- hawaii_aquifers %>%
 ##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      
 ##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      
 ## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      
-## # … with 100 more rows, and 1 more variable:
-## #   abundance <dbl>
+## # … with 96 more rows, and 1 more variable: abundance <dbl>
 ```
 
 To work with two means, let's just look at aquifers 1 and 6:
@@ -2612,7 +2641,7 @@ ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2625,7 +2654,7 @@ K_data_1_2 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2693,7 +2722,7 @@ K_data <- hawaii_aquifers %>%
   filter(analyte == "K")
 
 K_data
-## # A tibble: 110 × 6
+## # A tibble: 106 × 6
 ##    aquifer_code well_name         longitude latitude analyte
 ##    <chr>        <chr>                 <dbl>    <dbl> <chr>  
 ##  1 aquifer_1    Alewa_Heights_Sp…       NA      NA   K      
@@ -2706,15 +2735,14 @@ K_data
 ##  8 aquifer_1    Moanalua_Wells_P…     -158.     21.4 K      
 ##  9 aquifer_1    Nuuanu_Aerator_W…     -158.     21.4 K      
 ## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      
-## # … with 100 more rows, and 1 more variable:
-## #   abundance <dbl>
+## # … with 96 more rows, and 1 more variable: abundance <dbl>
 
 ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2728,7 +2756,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -2738,18 +2766,18 @@ K_data %>%
   group_by(aquifer_code) %>% 
   shapiro_test(abundance)
 ## # A tibble: 10 × 4
-##    aquifer_code variable  statistic          p
-##    <chr>        <chr>         <dbl>      <dbl>
-##  1 aquifer_1    abundance     0.885 0.102     
-##  2 aquifer_10   abundance     0.864 0.163     
-##  3 aquifer_2    abundance     0.913 0.459     
-##  4 aquifer_3    abundance     0.893 0.363     
-##  5 aquifer_4    abundance     0.948 0.421     
-##  6 aquifer_5    abundance     0.902 0.421     
-##  7 aquifer_6    abundance     0.914 0.239     
-##  8 aquifer_7    abundance     0.915 0.355     
-##  9 aquifer_8    abundance     0.842 0.220     
-## 10 aquifer_9    abundance     0.786 0.00000866
+##    aquifer_code variable  statistic         p
+##    <chr>        <chr>         <dbl>     <dbl>
+##  1 aquifer_1    abundance     0.885 0.102    
+##  2 aquifer_10   abundance     0.864 0.163    
+##  3 aquifer_2    abundance     0.913 0.459    
+##  4 aquifer_3    abundance     0.893 0.363    
+##  5 aquifer_4    abundance     0.948 0.421    
+##  6 aquifer_5    abundance     0.993 0.972    
+##  7 aquifer_6    abundance     0.914 0.239    
+##  8 aquifer_7    abundance     0.915 0.355    
+##  9 aquifer_8    abundance     0.842 0.220    
+## 10 aquifer_9    abundance     0.790 0.0000214
 ```
 
 
@@ -2759,7 +2787,7 @@ K_data %>%
 ## # A tibble: 1 × 4
 ##     df1   df2 statistic       p
 ##   <int> <int>     <dbl>   <dbl>
-## 1     9   100      3.12 0.00239
+## 1     9    96      2.95 0.00387
 ```
 
 Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the variances are certainly different from one another (Levene test p = 0.002).
@@ -2777,8 +2805,8 @@ K_data %>%
 ## Coefficient covariances computed by hccm()
 ## ANOVA Table (type II tests)
 ## 
-##         Effect DFn DFd      F        p p<.05   ges
-## 1 aquifer_code   9 100 10.021 7.72e-11     * 0.474
+##         Effect DFn DFd     F        p p<.05   ges
+## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471
 ```
 
 A p-value of 7.7e-11! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
@@ -2790,16 +2818,16 @@ K_data %>%
 ## # A tibble: 45 × 9
 ##    term         group1   group2 null.value estimate conf.low
 ##  * <chr>        <chr>    <chr>       <dbl>    <dbl>    <dbl>
-##  1 aquifer_code aquifer… aquif…          0  0.00357   -2.00 
-##  2 aquifer_code aquifer… aquif…          0  1.44      -0.668
-##  3 aquifer_code aquifer… aquif…          0  0.375     -2.35 
-##  4 aquifer_code aquifer… aquif…          0 -1.15      -2.75 
-##  5 aquifer_code aquifer… aquif…          0 -0.845     -3.09 
-##  6 aquifer_code aquifer… aquif…          0  1.98       0.261
-##  7 aquifer_code aquifer… aquif…          0  2.70       0.837
-##  8 aquifer_code aquifer… aquif…          0 -0.125     -2.85 
-##  9 aquifer_code aquifer… aquif…          0 -0.378     -1.78 
-## 10 aquifer_code aquifer… aquif…          0  1.44      -0.910
+##  1 aquifer_code aquifer… aquif…          0  0.00357   -2.04 
+##  2 aquifer_code aquifer… aquif…          0  1.44      -0.708
+##  3 aquifer_code aquifer… aquif…          0  0.375     -2.40 
+##  4 aquifer_code aquifer… aquif…          0 -1.15      -2.78 
+##  5 aquifer_code aquifer… aquif…          0 -0.875     -3.36 
+##  6 aquifer_code aquifer… aquif…          0  1.98       0.228
+##  7 aquifer_code aquifer… aquif…          0  2.70       0.801
+##  8 aquifer_code aquifer… aquif…          0 -0.125     -2.90 
+##  9 aquifer_code aquifer… aquif…          0 -0.349     -1.80 
+## 10 aquifer_code aquifer… aquif…          0  1.44      -0.954
 ## # … with 35 more rows, and 3 more variables:
 ## #   conf.high <dbl>, p.adj <dbl>, p.adj.signif <chr>
 ```
@@ -2821,7 +2849,7 @@ groups_based_on_tukey
 ## aquifer_5   aquifer_5    ab         ab  
 ## aquifer_6   aquifer_6    cd           cd
 ## aquifer_7   aquifer_7     d            d
-## aquifer_8   aquifer_8   abc         abc 
+## aquifer_8   aquifer_8  abcd         abcd
 ## aquifer_9   aquifer_9    ab         ab
 ```
 
@@ -2835,7 +2863,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -2848,9 +2876,9 @@ The above ANOVA example is great, but remember - our data did not pass the Shapi
 K_data %>%
   kruskal_test(abundance ~ aquifer_code)
 ## # A tibble: 1 × 6
-##   .y.           n statistic    df            p method       
-## * <chr>     <int>     <dbl> <int>        <dbl> <chr>        
-## 1 abundance   110      57.7     9 0.0000000037 Kruskal-Wall…
+##   .y.           n statistic    df             p method      
+## * <chr>     <int>     <dbl> <int>         <dbl> <chr>       
+## 1 abundance   106      55.9     9 0.00000000807 Kruskal-Wal…
 ```
 
 A p-value of 3.9e-9! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
@@ -2860,18 +2888,18 @@ A p-value of 3.9e-9! This is higher than the p-value from running ANOVA on the s
 K_data %>%
   dunn_test(abundance ~ aquifer_code)
 ## # A tibble: 45 × 9
-##    .y.    group1 group2    n1    n2 statistic       p  p.adj
-##  * <chr>  <chr>  <chr>  <int> <int>     <dbl>   <dbl>  <dbl>
-##  1 abund… aquif… aquif…    12     7    -0.205 0.838   1     
-##  2 abund… aquif… aquif…    12     6     2.25  0.0242  0.702 
-##  3 abund… aquif… aquif…    12     3     0.911 0.362   1     
-##  4 abund… aquif… aquif…    12    17    -2.70  0.00702 0.232 
-##  5 abund… aquif… aquif…    12     5    -1.15  0.252   1     
-##  6 abund… aquif… aquif…    12    12     2.53  0.0113  0.351 
-##  7 abund… aquif… aquif…    12     9     3.02  0.00254 0.0967
-##  8 abund… aquif… aquif…    12     3     0.182 0.855   1     
-##  9 abund… aquif… aquif…    12    36    -0.518 0.605   1     
-## 10 abund… aquif… aquif…     7     6     2.20  0.0278  0.777 
+##    .y.     group1 group2    n1    n2 statistic       p p.adj
+##  * <chr>   <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>
+##  1 abunda… aquif… aquif…    12     7    -0.194 0.846   1    
+##  2 abunda… aquif… aquif…    12     6     2.24  0.0254  0.736
+##  3 abunda… aquif… aquif…    12     3     0.866 0.387   1    
+##  4 abunda… aquif… aquif…    12    17    -2.65  0.00806 0.266
+##  5 abunda… aquif… aquif…    12     4    -1.12  0.263   1    
+##  6 abunda… aquif… aquif…    12    12     2.51  0.0121  0.388
+##  7 abunda… aquif… aquif…    12     9     3.01  0.00257 0.100
+##  8 abunda… aquif… aquif…    12     3     0.143 0.886   1    
+##  9 abunda… aquif… aquif…    12    33    -0.470 0.639   1    
+## 10 abunda… aquif… aquif…     7     6     2.17  0.0296  0.830
 ## # … with 35 more rows, and 1 more variable:
 ## #   p.adj.signif <chr>
 ```
@@ -2905,7 +2933,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -2920,7 +2948,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -2938,21 +2966,21 @@ hawaii_aquifers %>%
 ##  3 aquifer_2    Cl      abundance     0.869 2.24e- 1
 ##  4 aquifer_3    Cl      abundance     0.75  0       
 ##  5 aquifer_4    Cl      abundance     0.903 7.49e- 2
-##  6 aquifer_5    Cl      abundance     0.767 4.22e- 2
+##  6 aquifer_5    Cl      abundance     0.849 2.24e- 1
 ##  7 aquifer_6    Cl      abundance     0.741 2.15e- 3
 ##  8 aquifer_7    Cl      abundance     0.893 2.12e- 1
 ##  9 aquifer_8    Cl      abundance     0.878 3.17e- 1
-## 10 aquifer_9    Cl      abundance     0.414 7.58e-11
+## 10 aquifer_9    Cl      abundance     0.420 2.68e-10
 ## 11 aquifer_1    Na      abundance     0.886 1.06e- 1
 ## 12 aquifer_10   Na      abundance     0.593 2.26e- 4
 ## 13 aquifer_2    Na      abundance     0.884 2.88e- 1
 ## 14 aquifer_3    Na      abundance     0.822 1.69e- 1
 ## 15 aquifer_4    Na      abundance     0.933 2.41e- 1
-## 16 aquifer_5    Na      abundance     0.782 5.71e- 2
+## 16 aquifer_5    Na      abundance     0.827 1.61e- 1
 ## 17 aquifer_6    Na      abundance     0.764 3.80e- 3
 ## 18 aquifer_7    Na      abundance     0.915 3.51e- 1
 ## 19 aquifer_8    Na      abundance     0.855 2.53e- 1
-## 20 aquifer_9    Na      abundance     0.544 2.09e- 9
+## 20 aquifer_9    Na      abundance     0.531 3.97e- 9
 ```
 
 Looks like some of those distributions are significantly different from normal! Let's run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
@@ -2971,11 +2999,11 @@ hawaii_aquifers %>%
 ##  3 aquifer_2        1    10    0.0243 0.879  
 ##  4 aquifer_3        1     4    0.320  0.602  
 ##  5 aquifer_4        1    32    1.57   0.219  
-##  6 aquifer_5        1     8    0.474  0.511  
+##  6 aquifer_5        1     6    2      0.207  
 ##  7 aquifer_6        1    22    1.03   0.322  
 ##  8 aquifer_7        1    16    1.54   0.232  
 ##  9 aquifer_8        1     4    0.515  0.512  
-## 10 aquifer_9        1    70    1.07   0.304
+## 10 aquifer_9        1    64    1.10   0.298
 ```
 
 It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use the `wilcox_test`, but we have may pairs, so we will use `pairwise_wilcox_test` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?pairwise_wilcox_test`):
@@ -2994,11 +3022,11 @@ hawaii_aquifers %>%
 ##  3 aquifer_2    abundan… Cl     Na         6     6      36  
 ##  4 aquifer_3    abundan… Cl     Na         3     3       3  
 ##  5 aquifer_4    abundan… Cl     Na        17    17     189  
-##  6 aquifer_5    abundan… Cl     Na         5     5      17.5
+##  6 aquifer_5    abundan… Cl     Na         4     4      13  
 ##  7 aquifer_6    abundan… Cl     Na        12    12      53  
 ##  8 aquifer_7    abundan… Cl     Na         9     9      42  
 ##  9 aquifer_8    abundan… Cl     Na         3     3       6  
-## 10 aquifer_9    abundan… Cl     Na        36    36     248. 
+## 10 aquifer_9    abundan… Cl     Na        33    33     195  
 ## # … with 3 more variables: p <dbl>, p.adj <dbl>,
 ## #   p.adj.signif <chr>
 ```
@@ -3022,11 +3050,11 @@ hawaii_aquifers %>%
 ##  3 aquifer_2    abundance Cl     Na         6     6  3.75e-5
 ##  4 aquifer_3    abundance Cl     Na         3     3  6.83e-1
 ##  5 aquifer_4    abundance Cl     Na        17    17  1.03e-1
-##  6 aquifer_5    abundance Cl     Na         5     5  1.45e-1
+##  6 aquifer_5    abundance Cl     Na         4     4  9.75e-2
 ##  7 aquifer_6    abundance Cl     Na        12    12  5.66e-1
 ##  8 aquifer_7    abundance Cl     Na         9     9  5.21e-1
 ##  9 aquifer_8    abundance Cl     Na         3     3  4.28e-1
-## 10 aquifer_9    abundance Cl     Na        36    36  9.48e-1
+## 10 aquifer_9    abundance Cl     Na        33    33  8.96e-1
 ## # … with 3 more variables: p.signif <chr>, p.adj <dbl>,
 ## #   p.adj.signif <chr>
 ```
@@ -3064,7 +3092,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading
 
@@ -3686,7 +3714,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-184-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -3716,7 +3744,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -3754,7 +3782,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -3831,7 +3859,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -3840,7 +3868,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -3906,7 +3934,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -3925,7 +3953,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4005,7 +4033,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-198-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
 
@@ -4362,7 +4390,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4404,7 +4432,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
