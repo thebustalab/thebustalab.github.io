@@ -2026,7 +2026,7 @@ alaska_lake_data_pca_clusters <- runMatrixAnalysis(
 )
 ## Using 5 as a value for cluster_number.
 
-alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca) 
 ```
 
 We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
@@ -2045,7 +2045,7 @@ ggplot() +
   ) +
   theme_classic() +
   coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
-  scale_fill_manual(values = discrete_palette)
+  scale_fill_manual(values = discrete_palette) 
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
@@ -2062,7 +2062,7 @@ alaska_lake_data_pca <- runMatrixAnalysis(
     columns_w_values_for_single_analyte = c("water_temp", "pH"),
     columns_w_additional_analyte_info = "element_type",
     columns_w_sample_ID_info = c("lake", "park")
-)
+) 
 ## Replacing NAs in your data with mean
 
 alaska_lake_data_pca_clusters <- runMatrixAnalysis(
@@ -2095,7 +2095,7 @@ ggplot() +
   ) +
   theme_classic() +
   coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
-  scale_fill_manual(values = discrete_palette)
+  scale_fill_manual(values = discrete_palette) 
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
@@ -2126,7 +2126,7 @@ alaska_lake_data_pca_clusters <- runMatrixAnalysis(
   columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
   columns_w_sample_ID_info = "sample_unique_ID",
   columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
-)
+) 
 ## Using 4 as a value for k.
 ## Using 0.45 as a value for threshold.
 
