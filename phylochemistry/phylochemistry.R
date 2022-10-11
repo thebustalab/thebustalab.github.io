@@ -7261,7 +7261,7 @@
                                 if (analysis == "kmeans") {
 
                                     if ( length(parameters) > 0 ) {
-                                        cluster_threshold <- parameters[1]
+                                        n_clusters <- parameters[1]
                                     }
 
                                     if ( length(parameters) == 0 ) {
