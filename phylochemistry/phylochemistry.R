@@ -6726,17 +6726,23 @@
             #' @export
             #' normalize
 
-            normalize <- function( x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1 ) {
+            normalize <- function( x, old_min = NULL, old_max = NULL, new_min = 0, new_max = 1, na_zero = FALSE ) {
 
                 if ( length(old_min) == 0 & length(old_max) == 0 ) {
                     
-                    (x - min(x)) * (new_max - new_min) / (max(x) - min(x)) + new_min                
+                    x <- (x - min(x)) * (new_max - new_min) / (max(x) - min(x)) + new_min
                 
                 } else {
 
-                    (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min
+                    x <- (x - old_min) * (new_max - new_min) / (old_max - old_min) + new_min
 
                 }
+
+                if (na_zero == TRUE) {
+                    x[is.na(x)] <- 0
+                }
+
+                return(x)
 
             }
 
@@ -6999,7 +7005,7 @@
                                                     stop("Your data contains NAs. Please specify how to deal with them using na_replacement. \n")
                                                 }
                                                 
-                                                matrix[,column][is.na(matrix[,column])] <- replacement
+                                                matrix[,column][is.na(matrix[,column])] <- as.numeric(replacement)
 
                                             } else {}
                                         }
@@ -7085,7 +7091,13 @@
                         ## Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                scaled_matrix <- scale(matrix)
+                                # scaled_matrix <- scale(matrix)
+
+                                for (column in 1:length(matrix)) {
+                                    scaled_matrix <- matrix
+                                    scaled_matrix[,column] <- normalize(scaled_matrix[,column], new_min = -1, na_zero = TRUE)
+                                }
+
                             }
 
                         ## Get distance matrix
@@ -7358,30 +7370,6 @@
 
             findClusterParameters <- function(dist_matrix, matrix, analysis = c("dbscan", "kmeans")) {
 
-                # k_init <- length(dist_matrix)/30
-
-                # if (analysis == "dbscan") {
-                #     distances <- dbscan::kNNdist(dist_matrix, k = k_init)
-                # }
-
-                if (analysis == "kmeans") {
-                    kmeans_results <- list()
-                    for( i in 1:(dim(matrix)[1]-1) ) {
-                        kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
-                    }
-                    distances <- do.call(rbind, kmeans_results)
-                }
-
-                # angles <- list()
-                # for( i in 1:(length(distances)-2) ) {
-                #     slope_1 <- distances[i+1] - distances[i]
-                #     slope_2 <- distances[i+2] - distances[i+1]
-                #     angles[[i]] <- atan( (slope_1 - slope_2) / (1 + slope_1*slope_2) )
-                # }
-                # angles <- do.call(rbind, angles)
-                # cluster_number <- which(angles == min(angles)) + 1
-                # threshold_init <- distances[cluster_number]
-
                 ui <-   navbarPage(title = "Cluster Parameter Selection", id = "navbar",
                             
                             tabPanel(title = "Main",
@@ -7395,10 +7383,7 @@
                                             sliderInput(
                                                 inputId = "n_clusters",
                                                 label = "Number of clusters",
-                                                min = 0,
-                                                max = length(dist_matrix),
-                                                value = 1,
-                                                step = 1
+                                                min = 0, max = 25, value = 1, step = 1
                                             )
                                         
                                         ),
@@ -7406,41 +7391,29 @@
                                         conditionalPanel( "input.selection == 'dbscan'",
 
                                             sliderInput(
-                                                inputId = "cluster_k",
-                                                label = "k",
-                                                min = 1,
-                                                max = length(dist_matrix)/10,
-                                                value = 1
+                                                inputId = "cluster_k", label = "k",
+                                                min = 1, max = 40, value = 2
                                             ),
 
                                             sliderInput(
-                                                inputId = "cluster_threshold",
-                                                label = "threshold",
-                                                min = 0,
-                                                max = length(dist_matrix)/10,
-                                                value = 1,
-                                                step = 0.05
+                                                inputId = "cluster_threshold", label = "threshold",
+                                                min = 0, max = 50, value = 2, step = 0.05
                                             )
 
                                         ),
 
                                         plotOutput(
                                             outputId = "plot1",
-                                            width = 200,
-                                            height = 200
+                                            width = 200, height = 200
                                         )
                                     ),
 
                                     mainPanel(
-
                                             plotOutput(
-                                                outputId = "plot2",
-                                                width = 500,
-                                                height = 500
+                                                outputId = "plot2", width = "100%"
+                                                # height = 800
                                             )
-
                                     )
-
                                 )
 
                             ),
@@ -7465,16 +7438,17 @@
                         n_clusters <<- input$n_clusters
                         cluster_k <<- input$cluster_k
                         cluster_threshold <<- input$cluster_threshold
-                        # print(paste0("n_clusters is ", n_clusters))
-                        # print(paste0("cluster_threshold is ", cluster_threshold))
-                        # print(paste0("cluster_k is ", cluster_k))
 
                         if (analysis == "dbscan") {
                             distances <- dbscan::kNNdist(dist_matrix, k = input$cluster_k)
                         }
 
                         if (analysis == "kmeans") {
-                            distances <- distances
+                            kmeans_results <- list()
+                            for( i in 1:(dim(matrix)[1]-1) ) {
+                                kmeans_results[[i]] <- sum(stats::kmeans(x = matrix, centers = i, nstart = 25, iter.max = 1000)$withinss)
+                            }
+                            distances <- do.call(rbind, kmeans_results)
                         }
 
                         distances <- as.numeric(distances)[rev(order(as.numeric(distances)))]
@@ -7510,9 +7484,10 @@
                         )
 
                         ggplot(clustering, aes_string(x = colnames(matrix)[1], y = colnames(matrix)[2], fill = "cluster")) +
-                            geom_point(shape = 21, size = 6, alpha = 0.8) +
+                            geom_point(shape = 21, size = 3, alpha = 0.6) +
                             theme_bw() +
-                            scale_fill_manual(values = discrete_palette)
+                            scale_fill_manual(values = discrete_palette) +
+                            coord_fixed()
 
                     })
 

@@ -806,6 +806,33 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   )
 ```
 
+## subplots {-}
+
+We can make subplots using the `patchwork` package, which comes with the `source()` command. Let's see:
+
+```{r}
+plot1 <-  ggplot(
+            filter(alaska_lake_data, element_type == "free")
+          ) +
+          geom_violin(aes(x = park, y = mg_per_L)) + theme_classic() +
+          ggtitle("A")
+
+plot2 <-  ggplot(
+            filter(alaska_lake_data, element_type == "bound")
+          ) +
+          geom_violin(aes(x = park, y = mg_per_L)) + theme_classic() +
+          ggtitle("B")
+
+plot3 <-  ggplot(
+            filter(alaska_lake_data, element == "C")
+          ) +
+          geom_violin(aes(x = park, y = mg_per_L)) + theme_classic() +
+          coord_flip() + ggtitle("C")
+
+(plot1 + plot2) / plot3
+```
+
+
 ## data vis exercises II {-}
 
 In this set of exercises we're going to practice making more plots using the dataset `solvents`. Well, you don't have to use `solvents`, you could use something else if you want, but `solvents` is a fun one to explore. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
@@ -1400,7 +1427,7 @@ ggplot(
   theme_bw()
 ```
 
-Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%.
+Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
 ### exercises {-}
 
@@ -1807,26 +1834,26 @@ ggplot() +
 
 One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
 
-```{r, fig.width = 8, fig.height = 4, message = FALSE}
+```{r, fig.width = 10, fig.height = 6, message = FALSE}
 alaska_lake_data_pca <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = c("pca"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park")
+  data = alaska_lake_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
 )
 
 alaska_lake_data_pca_clusters <- runMatrixAnalysis(
-    data = alaska_lake_data_pca,
-    analysis = c("dbscan"),
-    parameters = c(4, 0.45),
-    column_w_names_of_multiple_analytes = NULL,
-    column_w_values_for_multiple_analytes = NULL,
-    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID",
-    columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
+  data = alaska_lake_data_pca,
+  analysis = c("dbscan"),
+  parameters = c(4, 0.45),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+  columns_w_sample_ID_info = "sample_unique_ID",
+  columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
 )
 
 alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
@@ -1877,9 +1904,41 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
  
+### further reading {-}
+
+http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
+
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/
+
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png
+
+https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
+
+
 ### exercises {-}
 
-Use the wine grapes dataset (it's stored as `wine_grape_data` after you run the `source(...)` command).
+For this set of exercises, please use the dataset `hawaii_aquifers`, available after you run the `source()` command. Do the following:
+
+1. Run a PCA analysis on the data set and plot the results. 
+
+2.  Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
+
+3. Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
+
+4. Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.
+
+5. Create a plot with four subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.
+
+6. Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
+
+7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
+
+8. Create a plot with four subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.
+
+
+<!-- 
+
+
 
 * Question 1
 
@@ -2111,23 +2170,9 @@ Save your plot as a png using `ggsave()`.
 
 Maybe something like this:
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
-```
-
-## density-based clustering {-}
-
-dbscan
-
-### further reading {-}
-
-http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
-
-https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/
-
-https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png
-
-https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
+ -->
 
 <!-- end -->
 
@@ -2135,7 +2180,7 @@ https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
 # models {-}
 
-## theory
+## theory {-}
 
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildLinearModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.
 
@@ -2243,7 +2288,7 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-## exercises
+## exercises {-}
 
 To practice creating linear models, try the following:
 
@@ -2333,6 +2378,10 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 model$metrics
 
 ```
+
+## further reading {-}
+
+https://github.com/easystats/performance
 
 <!-- end -->
 
