@@ -6773,7 +6773,7 @@
             #' @param output_format
             #' @examples
             #' @export
-            #' runMatrixAnalysis
+            #' runMatrixAnalysis 
 
                 runMatrixAnalysis <-    function(
                                             data,
