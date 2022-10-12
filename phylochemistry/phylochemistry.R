@@ -7339,11 +7339,11 @@
                                     for( node in dplyr::filter(clustering, isTip == FALSE)$node ) {
                                         for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
                                             descends <- clustering[clustering$node %in% ips::descendants(phylo, node),]
-                                            if ( length(unique(descends[,colnames(descends) == sample_property])) == 1 ) {
+                                            if (length( unlist(unique(descends[,colnames(descends) == sample_property])) ) == 1 ) {
                                                 clustering[
                                                     which(clustering$node == node),
                                                     which(colnames(clustering) == sample_property)
-                                                ] <- descends[,colnames(descends) == sample_property][1]
+                                                ] <- unlist(descends[,colnames(descends) == sample_property])[1]
                                             }
                                         }
                                     }
