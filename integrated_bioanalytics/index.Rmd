@@ -1402,6 +1402,16 @@ ggplot() +
   theme_classic()
 ```
 
+Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
+
+```{r}
+AK_lakes_pca_ord %>%
+  ggplot(aes(x = Dim.1, y = analyte)) +
+    geom_point(aes(fill = analyte), shape = 22, size = 3) +
+    scale_fill_manual(values = discrete_palette) +
+    theme_bw()
+```
+
 ### principal components {-}
 
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
