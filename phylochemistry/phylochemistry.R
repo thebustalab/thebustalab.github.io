@@ -7327,23 +7327,23 @@
                                         by = "sample_unique_ID"
                                     )
                                 # }
-                                clustering
+                                # clustering
 
                                 ## Order the returned matrix so that the sample_unique_ID comes first
 
                                     clustering <- select(clustering, sample_unique_ID, everything())
 
-                            # Annotate internal branches if tree output
+                            # Annotate internal nodes in tree output if all its descendants share a property
 
                                 if( analysis == "hclust" ) {
                                     for( node in dplyr::filter(clustering, isTip == FALSE)$node ) {
                                         for (sample_property in colnames(clustering)[colnames(clustering) %in% columns_w_sample_ID_info] ) {
                                             descends <- clustering[clustering$node %in% ips::descendants(phylo, node),]
-                                            if ( table(duplicated(descends[,colnames(descends) == sample_property]))[1] == 1 ) {
+                                            if ( length(unique(descends[,colnames(descends) == sample_property])) == 1 ) {
                                                 clustering[
                                                     which(clustering$node == node),
                                                     which(colnames(clustering) == sample_property)
-                                                ] <- descends[,colnames(descends) == sample_property][1,1]
+                                                ] <- descends[,colnames(descends) == sample_property][1]
                                             }
                                         }
                                     }
