@@ -6,19 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>r faq | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="1.40 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
+<meta name="description" content="1.31 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="r faq | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="1.40 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
+<meta property="og:description" content="1.31 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="r faq | Integrated Bioanalytics">
-<meta name="twitter:description" content="1.40 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
+<meta name="twitter:description" content="1.31 filtering filter(&lt;data&gt;, &lt;variable&gt; &lt; 18) ## less than 18 filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18) ## less than or equal to 18 filter(&lt;data&gt;, &lt;variable&gt; &gt; 18) ## greater than 18 filter(&lt;data&gt;,...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -106,9 +106,9 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="r-faq" class="section level1 unnumbered">
 <h1>r faq<a class="anchor" aria-label="anchor" href="#r-faq"><i class="fas fa-link"></i></a>
 </h1>
-<div id="filtering" class="section level2" number="1.40">
+<div id="filtering" class="section level2" number="1.31">
 <h2>
-<span class="header-section-number">1.40</span> filtering<a class="anchor" aria-label="anchor" href="#filtering"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.31</span> filtering<a class="anchor" aria-label="anchor" href="#filtering"><i class="fas fa-link"></i></a>
 </h2>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt; 18)</code> ## less than 18</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18)</code> ## less than or equal to 18</p>
@@ -119,9 +119,9 @@
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
 <p><code>filter(&lt;data&gt;, &lt;variable&gt; %in% c(18, 19, 20)</code> ## equal to 18 or 19 or 20</p>
 </div>
-<div id="ordering-1" class="section level2" number="1.41">
+<div id="ordering-1" class="section level2" number="1.32">
 <h2>
-<span class="header-section-number">1.41</span> ordering<a class="anchor" aria-label="anchor" href="#ordering-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.32</span> ordering<a class="anchor" aria-label="anchor" href="#ordering-1"><i class="fas fa-link"></i></a>
 </h2>
 <p>A list of numeric element has an inherent order to it: -inf -&gt; +inf. A list of character element also has an inherent order to it: A -&gt; Z, or if it’s a mixed number and letter list (which is interpreted by R as a character list): 0 -&gt; 9 -&gt; A -&gt; Z.</p>
 <p>However, there are cases where we will want a list of character elements to have some order other than A -&gt; Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -&gt; Z. For example, in the plot below, the y axis is not, perhaps, in the “correct” order:</p>
@@ -164,9 +164,9 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>VICTORY!</p>
 </div>
-<div id="column-manipulation" class="section level2" number="1.42">
+<div id="column-manipulation" class="section level2" number="1.33">
 <h2>
-<span class="header-section-number">1.42</span> column manipulation<a class="anchor" aria-label="anchor" href="#column-manipulation"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.33</span> column manipulation<a class="anchor" aria-label="anchor" href="#column-manipulation"><i class="fas fa-link"></i></a>
 </h2>
 <p>How to select specific columns:</p>
 <div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
@@ -224,9 +224,9 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#r-faq">r faq</a></li>
-<li><a class="nav-link" href="#filtering"><span class="header-section-number">1.40</span> filtering</a></li>
-<li><a class="nav-link" href="#ordering-1"><span class="header-section-number">1.41</span> ordering</a></li>
-<li><a class="nav-link" href="#column-manipulation"><span class="header-section-number">1.42</span> column manipulation</a></li>
+<li><a class="nav-link" href="#filtering"><span class="header-section-number">1.31</span> filtering</a></li>
+<li><a class="nav-link" href="#ordering-1"><span class="header-section-number">1.32</span> ordering</a></li>
+<li><a class="nav-link" href="#column-manipulation"><span class="header-section-number">1.33</span> column manipulation</a></li>
 </ul>
 
       <div class="book-extra">

@@ -2509,15 +2509,6 @@ https://github.com/easystats/performance
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" />
 
-shapiroTest
-leveneTest
-tTest
-wilcoxTest
-anovaTest
-tukeyTest
-kruskalTest
-dunnTest
-
 **"Are these two things the same?"**
 
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
@@ -2585,7 +2576,7 @@ library(agricolae)
 library(multcompView)
 ``` -->
 
-## definitions
+## definitions {-}
 
 1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
 
@@ -2595,7 +2586,7 @@ library(multcompView)
 
 Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
 
-## test selection
+## test selection {-}
 
 There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
 
@@ -2697,7 +2688,7 @@ K_data_1_2 %>%
 
 The p-value from this test is 0.596! This means that their variances are not significantly different.
 
-## two means
+## two means {-}
 
 Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
@@ -2716,7 +2707,7 @@ A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that 
 
 ```r
 K_data_1_2 %>%
-  wilcox_test(abundance ~ aquifer_code)
+  wilcoxTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 7
 ##   .y.       group1    group2       n1    n2 statistic      p
 ## * <chr>     <chr>     <chr>     <int> <int>     <dbl>  <dbl>
@@ -2725,7 +2716,7 @@ K_data_1_2 %>%
 
 A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.
 
-## more than two means
+## more than two means {-}
 
 In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let's consider our hawaii aquifer data again, though this time let's use all the aquifers, not just two:
 
@@ -2807,7 +2798,7 @@ Based on these tests, it looks like the data for aquifer 9 is significantly diff
 
 Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
 
-### ANOVA, Tukey tests
+### ANOVA, Tukey tests {-}
 
 We will use the `anovaTest` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
 
@@ -2843,6 +2834,9 @@ K_data %>%
 ## 10 aquifer_code aquifer… aquif…          0  1.44      -0.954
 ## # … with 35 more rows, and 3 more variables:
 ## #   conf.high <dbl>, p.adj <dbl>, p.adj.signif <chr>
+
+# K_data %>%
+#   tukeyHSD(abundance ~ aquifer_code)
 ```
 
 Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
@@ -2880,7 +2874,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
-### Kruskal, Dunn tests
+### Kruskal, Dunn tests {-}
 
 The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
 
@@ -2950,7 +2944,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
-## pairs of means
+## pairs of means {-}
 
 Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among *all* values of Na and Cl, rather, we want to test all *pairs* of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:
 
@@ -3107,7 +3101,7 @@ hawaii_aquifers %>%
 
 <img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
-## further reading
+## further reading {-}
 
 For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
 
@@ -3116,7 +3110,7 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
 
 
-## exercises
+## exercises {-}
 
 Using the `hawaii_aquifers` data set, please complete the following:
 
@@ -3140,7 +3134,7 @@ ________________________________________________________________________________
 
 # mass spectrometric analysis {-}
 
-## loading analyzeGCMSdata (basic)
+## loading analyzeGCMSdata (basic) {-}
 
 `phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:
 
@@ -3173,7 +3167,7 @@ analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 
 The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shit+q to load the chromatogram(s).
 
-## loading analyzeGCMSdata (advanced)
+## loading analyzeGCMSdata (advanced) {-}
 
 You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram. For example:
 

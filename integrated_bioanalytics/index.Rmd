@@ -2516,7 +2516,7 @@ A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that 
 
 ```{r}
 K_data_1_2 %>%
-  wilcox_test(abundance ~ aquifer_code)
+  wilcoxTest(abundance ~ aquifer_code)
 ```
 
 A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.
@@ -2573,18 +2573,21 @@ K_data %>%
   anovaTest(abundance ~ aquifer_code)
 ```
 
-A p-value of 7.7e-11! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukeyHSD`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+A p-value of 7.7e-11! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
 
 ```{r}
 K_data %>%
-  tukeyHSD(abundance ~ aquifer_code)
+  tukey_hsd(abundance ~ aquifer_code)
+
+# K_data %>%
+#   tukeyHSD(abundance ~ aquifer_code)
 ```
 
 Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
 
 ```{r, message = FALSE}
 groups_based_on_tukey <- K_data %>%
-  tukeyHSD(abundance ~ aquifer_code) %>%
+  tukey_hsd(abundance ~ aquifer_code) %>%
   pGroups()
 groups_based_on_tukey
 ```
