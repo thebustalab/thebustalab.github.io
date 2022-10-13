@@ -6,19 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>setup | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Get docker. https://hub.docker.com/ Connecting to remote host: ssh-keygen -t rsa ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address">
+<meta name="description" content="Get docker. https://hub.docker.com/ Connecting to remote host: Make sure the remote host has openSSH installed: sudo apt install openssh-server On the client computer (usually your laptop or...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="setup | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Get docker. https://hub.docker.com/ Connecting to remote host: ssh-keygen -t rsa ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address">
+<meta property="og:description" content="Get docker. https://hub.docker.com/ Connecting to remote host: Make sure the remote host has openSSH installed: sudo apt install openssh-server On the client computer (usually your laptop or...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="setup | Integrated Bioanalytics">
-<meta name="twitter:description" content="Get docker. https://hub.docker.com/ Connecting to remote host: ssh-keygen -t rsa ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address">
+<meta name="twitter:description" content="Get docker. https://hub.docker.com/ Connecting to remote host: Make sure the remote host has openSSH installed: sudo apt install openssh-server On the client computer (usually your laptop or...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -113,8 +113,13 @@
 <ul>
 <li>Connecting to remote host:</li>
 </ul>
-<p><code>ssh-keygen -t rsa</code>
-<code>ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address</code></p>
+<p>Make sure the remote host has openSSH installed:</p>
+<p><code>sudo apt install openssh-server</code></p>
+<p>On the client computer (usually your laptop or something), first create the key:</p>
+<p><code>ssh-keygen -t rsa</code></p>
+<p>Then copy that key to the host (usually the computer you want to connect remotely to):</p>
+<p><code>ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address</code></p>
+<p>Done! Log in with <code>ssh {username}@host.address</code></p>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="transcriptomic-analyses.html">transcriptomic analyses</a></div>
@@ -147,7 +152,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-10-12.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-10-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -2678,7 +2678,7 @@ It looks like the variances of the pair in aquifer 1 have significantly differen
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
-  pairwise_wilcox_test(abundance~analyte)
+  pairwiseWilcoxTest(abundance~analyte)
 ```
 
 Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
@@ -2689,13 +2689,13 @@ What would we have done if our Shaprio and Levene tests had revealed no signific
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
-  pairwise_tTest(abundance~analyte) -> test_output
+  pairwiseTTest(abundance~analyte) -> test_output
   test_output
 ```
 
 Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:
 
-```{r}
+```{r, fig.width = 8}
 
 anno <- data.frame(
   xmin = test_output$group1,

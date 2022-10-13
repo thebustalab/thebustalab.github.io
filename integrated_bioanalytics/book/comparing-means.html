@@ -16,9 +16,9 @@
 <meta name="twitter:description" content="shapiroTest leveneTest tTest wilcoxTest anovaTest tukeyTest kruskalTest dunnTest “Are these two things the same?” Often, we want to know if our study subjects contain different amounts of certain...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
+<link href="libs/_Montserrat-0.4.1/font.css" rel="stylesheet">
 <script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -245,7 +245,7 @@ library(multcompView)
 <div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu">shapiro_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
+  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
 <span class="co">## # A tibble: 2 × 4</span>
 <span class="co">##   aquifer_code variable  statistic     p</span>
 <span class="co">##   &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -254,7 +254,7 @@ library(multcompView)
 <p>Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the variances about the two means? Are they similar? For this we need a Levene test. With that test, we are not looking within each group, but rather across groups - this means we do NOT need to <code>group_by(aquifer_code)</code> and should specify a <code>y ~ x</code> formula instead:</p>
 <div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">levene_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+  <span class="fu">leveneTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
 <span class="co">## # A tibble: 1 × 4</span>
 <span class="co">##     df1   df2 statistic     p</span>
 <span class="co">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -268,7 +268,7 @@ library(multcompView)
 <p>Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let’s try it out:</p>
 <div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data_1_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">t_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+  <span class="fu">tTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
 <span class="co">## # A tibble: 1 × 8</span>
 <span class="co">##   .y.       group1 group2    n1    n2 statistic    df      p</span>
 <span class="co">## * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
@@ -325,7 +325,7 @@ library(multcompView)
 <div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
-  <span class="fu">shapiro_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
+  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
 <span class="co">## # A tibble: 10 × 4</span>
 <span class="co">##    aquifer_code variable  statistic         p</span>
 <span class="co">##    &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;</span>
@@ -341,7 +341,7 @@ library(multcompView)
 <span class="co">## 10 aquifer_9    abundance     0.790 0.0000214</span></code></pre></div>
 <div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">levene_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+  <span class="fu">leveneTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
 <span class="co">## # A tibble: 1 × 4</span>
 <span class="co">##     df1   df2 statistic       p</span>
 <span class="co">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span>
@@ -352,10 +352,10 @@ library(multcompView)
 <h3>
 <span class="header-section-number">1.4.1</span> ANOVA, Tukey tests<a class="anchor" aria-label="anchor" href="#anova-tukey-tests"><i class="fas fa-link"></i></a>
 </h3>
-<p>We will use the <code>anova_test</code> function from the package <code>rstatix</code>. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.</p>
+<p>We will use the <code>anovaTest</code> function from the package <code>rstatix</code>. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.</p>
 <div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">anova_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+  <span class="fu">anovaTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
 <span class="co">## Coefficient covariances computed by hccm()</span>
 <span class="co">## ANOVA Table (type II tests)</span>
 <span class="co">## </span>
@@ -380,11 +380,11 @@ library(multcompView)
 <span class="co">## 10 aquifer_code aquifer… aquif…          0  1.44      -0.954</span>
 <span class="co">## # … with 35 more rows, and 3 more variables:</span>
 <span class="co">## #   conf.high &lt;dbl&gt;, p.adj &lt;dbl&gt;, p.adj.signif &lt;chr&gt;</span></code></pre></div>
-<p>Using the output from our tukey test, we can determine which means are similar. We can do this using the p_groups function:</p>
+<p>Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:</p>
 <div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">groups_based_on_tukey</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">tukey_hsd</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">p_groups</span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span>
 <span class="va">groups_based_on_tukey</span>
 <span class="co">##             treatment group spaced_group</span>
 <span class="co">## aquifer_1   aquifer_1    ab         ab  </span>
@@ -397,7 +397,7 @@ library(multcompView)
 <span class="co">## aquifer_7   aquifer_7     d            d</span>
 <span class="co">## aquifer_8   aquifer_8  abcd         abcd</span>
 <span class="co">## aquifer_9   aquifer_9    ab         ab</span></code></pre></div>
-<p>We can use the output from <code>p_groups</code> to annotate our plot:</p>
+<p>We can use the output from <code>pGroups</code> to annotate our plot:</p>
 <div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -413,7 +413,7 @@ library(multcompView)
 <p>The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let’s try it out:</p>
 <div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">kruskal_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+  <span class="fu">kruskalTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
 <span class="co">## # A tibble: 1 × 6</span>
 <span class="co">##   .y.           n statistic    df             p method      </span>
 <span class="co">## * &lt;chr&gt;     &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;       </span>
@@ -421,7 +421,7 @@ library(multcompView)
 <p>A p-value of 3.9e-9! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey’s HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let’s try:</p>
 <div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dunn_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
+  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span>
 <span class="co">## # A tibble: 45 × 9</span>
 <span class="co">##    .y.     group1 group2    n1    n2 statistic       p p.adj</span>
 <span class="co">##  * &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -437,11 +437,11 @@ library(multcompView)
 <span class="co">## 10 abunda… aquif… aquif…     7     6     2.17  0.0296  0.830</span>
 <span class="co">## # … with 35 more rows, and 1 more variable:</span>
 <span class="co">## #   p.adj.signif &lt;chr&gt;</span></code></pre></div>
-<p>This gives us adjusted p-values for all pairwise comparisons. Once again, we can use <code>p_groups()</code> to give us a compact letter display for each group, which can then be used to annotate the plot:</p>
+<p>This gives us adjusted p-values for all pairwise comparisons. Once again, we can use <code>pGroups()</code> to give us a compact letter display for each group, which can then be used to annotate the plot:</p>
 <div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">groups_based_on_dunn</span> <span class="op">&lt;-</span> <span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dunn_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">p_groups</span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">pGroups</span><span class="op">(</span><span class="op">)</span>
 <span class="va">groups_based_on_dunn</span>
 <span class="co">##             treatment group spaced_group</span>
 <span class="co">## aquifer_1   aquifer_1  abcd         abcd</span>
@@ -481,7 +481,7 @@ library(multcompView)
 <code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">analyte</span>, <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">shapiro_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
+  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>
 <span class="co">## # A tibble: 20 × 5</span>
 <span class="co">##    aquifer_code analyte variable  statistic        p</span>
 <span class="co">##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;</span>
@@ -510,7 +510,7 @@ library(multcompView)
 <code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">levene_test</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">analyte</span><span class="op">)</span>
+  <span class="fu">leveneTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">analyte</span><span class="op">)</span>
 <span class="co">## # A tibble: 10 × 5</span>
 <span class="co">##    aquifer_code   df1   df2 statistic       p</span>
 <span class="co">##    &lt;chr&gt;        &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span>
@@ -529,7 +529,7 @@ library(multcompView)
 <code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">pairwise_wilcox_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span>
+  <span class="fu">pairwiseWilcoxTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span>
 <span class="co">## # A tibble: 10 × 10</span>
 <span class="co">##    aquifer_code .y.      group1 group2    n1    n2 statistic</span>
 <span class="co">##  * &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;</span>
@@ -546,12 +546,12 @@ library(multcompView)
 <span class="co">## # … with 3 more variables: p &lt;dbl&gt;, p.adj &lt;dbl&gt;,</span>
 <span class="co">## #   p.adj.signif &lt;chr&gt;</span></code></pre></div>
 <p>Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).</p>
-<p>What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a <code>pairwise_t_test</code> of course!</p>
+<p>What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a <code>pairwise_tTest</code> of course!</p>
 <div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">pairwise_t_test</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_output</span>
+  <span class="fu">pairwiseTTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">~</span><span class="va">analyte</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_output</span>
   <span class="va">test_output</span>
 <span class="co">## # A tibble: 10 × 10</span>
 <span class="co">##    aquifer_code .y.       group1 group2    n1    n2        p</span>
@@ -675,7 +675,7 @@ library(multcompView)
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-10-12.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-10-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-10-12"
+date: "2022-10-13"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -2675,7 +2675,7 @@ Based on this graphic, it's hard to say! Let's use a statistical test to help. W
 ```r
 K_data_1_2 %>%
   group_by(aquifer_code) %>% 
-  shapiro_test(abundance)
+  shapiroTest(abundance)
 ## # A tibble: 2 × 4
 ##   aquifer_code variable  statistic     p
 ##   <chr>        <chr>         <dbl> <dbl>
@@ -2688,7 +2688,7 @@ Both p-values are above 0.05! This means that the distributions are not signific
 
 ```r
 K_data_1_2 %>%
-  levene_test(abundance ~ aquifer_code)
+  leveneTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 4
 ##     df1   df2 statistic     p
 ##   <int> <int>     <dbl> <dbl>
@@ -2704,7 +2704,7 @@ Now, since our data passed both test, this means we can use a normal t-test. A t
 
 ```r
 K_data_1_2 %>%
-  t_test(abundance ~ aquifer_code)
+  tTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 8
 ##   .y.       group1 group2    n1    n2 statistic    df      p
 ## * <chr>     <chr>  <chr>  <int> <int>     <dbl> <dbl>  <dbl>
@@ -2777,7 +2777,7 @@ Again, it is somewhat hard to tell visually if these data are normally distribut
 ```r
 K_data %>%
   group_by(aquifer_code) %>% 
-  shapiro_test(abundance)
+  shapiroTest(abundance)
 ## # A tibble: 10 × 4
 ##    aquifer_code variable  statistic         p
 ##    <chr>        <chr>         <dbl>     <dbl>
@@ -2796,7 +2796,7 @@ K_data %>%
 
 ```r
 K_data %>%
-  levene_test(abundance ~ aquifer_code)
+  leveneTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 4
 ##     df1   df2 statistic       p
 ##   <int> <int>     <dbl>   <dbl>
@@ -2809,12 +2809,12 @@ Let's assume for a second that our data passed these tests. This means that we c
 
 ### ANOVA, Tukey tests
 
-We will use the `anova_test` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
+We will use the `anovaTest` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
 
 
 ```r
 K_data %>%
-  anova_test(abundance ~ aquifer_code)
+  anovaTest(abundance ~ aquifer_code)
 ## Coefficient covariances computed by hccm()
 ## ANOVA Table (type II tests)
 ## 
@@ -2845,13 +2845,13 @@ K_data %>%
 ## #   conf.high <dbl>, p.adj <dbl>, p.adj.signif <chr>
 ```
 
-Using the output from our tukey test, we can determine which means are similar. We can do this using the p_groups function:
+Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
 
 
 ```r
 groups_based_on_tukey <- K_data %>%
   tukey_hsd(abundance ~ aquifer_code) %>%
-  p_groups()
+  pGroups()
 groups_based_on_tukey
 ##             treatment group spaced_group
 ## aquifer_1   aquifer_1    ab         ab  
@@ -2866,7 +2866,7 @@ groups_based_on_tukey
 ## aquifer_9   aquifer_9    ab         ab
 ```
 
-We can use the output from `p_groups` to annotate our plot:
+We can use the output from `pGroups` to annotate our plot:
 
 
 ```r
@@ -2887,7 +2887,7 @@ The above ANOVA example is great, but remember - our data did not pass the Shapi
 
 ```r
 K_data %>%
-  kruskal_test(abundance ~ aquifer_code)
+  kruskalTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 6
 ##   .y.           n statistic    df             p method      
 ## * <chr>     <int>     <dbl> <int>         <dbl> <chr>       
@@ -2899,7 +2899,7 @@ A p-value of 3.9e-9! This is higher than the p-value from running ANOVA on the s
 
 ```r
 K_data %>%
-  dunn_test(abundance ~ aquifer_code)
+  dunnTest(abundance ~ aquifer_code)
 ## # A tibble: 45 × 9
 ##    .y.     group1 group2    n1    n2 statistic       p p.adj
 ##  * <chr>   <chr>  <chr>  <int> <int>     <dbl>   <dbl> <dbl>
@@ -2917,13 +2917,13 @@ K_data %>%
 ## #   p.adj.signif <chr>
 ```
 
-This gives us adjusted p-values for all pairwise comparisons. Once again, we can use `p_groups()` to give us a compact letter display for each group, which can then be used to annotate the plot:
+This gives us adjusted p-values for all pairwise comparisons. Once again, we can use `pGroups()` to give us a compact letter display for each group, which can then be used to annotate the plot:
 
 
 ```r
 groups_based_on_dunn <- K_data %>%
-  dunn_test(abundance ~ aquifer_code) %>%
-  p_groups()
+  dunnTest(abundance ~ aquifer_code) %>%
+  pGroups()
 groups_based_on_dunn
 ##             treatment group spaced_group
 ## aquifer_1   aquifer_1  abcd         abcd
@@ -2970,7 +2970,7 @@ Fortunately, we can use an approach that is very similar to the what we've learn
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(analyte, aquifer_code) %>%
-  shapiro_test(abundance)
+  shapiroTest(abundance)
 ## # A tibble: 20 × 5
 ##    aquifer_code analyte variable  statistic        p
 ##    <chr>        <chr>   <chr>         <dbl>    <dbl>
@@ -3003,7 +3003,7 @@ Looks like some of those distributions are significantly different from normal! 
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
-  levene_test(abundance ~ analyte)
+  leveneTest(abundance ~ analyte)
 ## # A tibble: 10 × 5
 ##    aquifer_code   df1   df2 statistic       p
 ##    <chr>        <int> <int>     <dbl>   <dbl>
@@ -3026,7 +3026,7 @@ It looks like the variances of the pair in aquifer 1 have significantly differen
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
-  pairwise_wilcox_test(abundance~analyte)
+  pairwiseWilcoxTest(abundance~analyte)
 ## # A tibble: 10 × 10
 ##    aquifer_code .y.      group1 group2    n1    n2 statistic
 ##  * <chr>        <chr>    <chr>  <chr>  <int> <int>     <dbl>
@@ -3046,14 +3046,14 @@ hawaii_aquifers %>%
 
 Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
 
-What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_t_test` of course!
+What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_tTest` of course!
 
 
 ```r
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
-  pairwise_t_test(abundance~analyte) -> test_output
+  pairwiseTTest(abundance~analyte) -> test_output
   test_output
 ## # A tibble: 10 × 10
 ##    aquifer_code .y.       group1 group2    n1    n2        p
@@ -3355,8 +3355,19 @@ https://hub.docker.com/
 
 * Connecting to remote host:
 
+Make sure the remote host has openSSH installed:
+
+`sudo apt install openssh-server`
+
+On the client computer (usually your laptop or something), first create the key:
+
 `ssh-keygen -t rsa`
+
+Then copy that key to the host (usually the computer you want to connect remotely to):
+
 `ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address`
+
+Done! Log in with `ssh {username}@host.address`
 
 # genome assembly {-}
 
