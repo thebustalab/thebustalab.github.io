@@ -160,6 +160,8 @@
         tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
         kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = data, ... )}
         dunnTest <- function( data, ... ) {rstatix::dunn_test( data = data, ... )}
+        pairwiseWilcoxTest <- function( data, ... ) {rstatix::pairwise_wilcox_test( data = data, ... )}
+        pairwiseTTest <- function( data, ... ) {rstatix::pairwise_t_test( data = data, ... )}
 
     ## Set up lookups
 
@@ -3393,6 +3395,7 @@
                                                             rt_last_row_in_raw = max(row_number)
                                                         ) -> chromatogram
                                                     chromatogram <- as.data.frame(chromatogram)
+                                                    
                                                     chromatogram$rt <- as.numeric(chromatogram$rt)
                                                     chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
                                                     chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)   
