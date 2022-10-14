@@ -162,7 +162,7 @@
         dunnTest <- function( data, ... ) {rstatix::dunn_test( data = data, ... )}
         pairwiseWilcoxTest <- function( data, ... ) {rstatix::pairwise_wilcox_test( data = data, ... )}
         pairwiseTTest <- function( data, ... ) {rstatix::pairwise_t_test( data = data, ... )}
-        tukeyHSD <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
+        # tukeyHSD <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
 
     ## Set up lookups
 

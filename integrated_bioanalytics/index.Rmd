@@ -2466,12 +2466,12 @@ K_data <- hawaii_aquifers %>%
 To work with two means, let's just look at aquifers 1 and 6:
 
 ```{r}
-K_data_1_2 <- K_data %>%
+K_data_1_6 <- K_data %>%
     filter(aquifer_code %in% c("aquifer_1", "aquifer_6"))
 
-K_data_1_2
+K_data_1_6
 
-ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
+ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_boxplot() +
     geom_point()
 ```
@@ -2479,7 +2479,7 @@ ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
 ```{r}
-K_data_1_2 %>%
+K_data_1_6 %>%
   ggplot(aes(x = abundance)) + 
     geom_histogram(bins = 30) +
     facet_wrap(~aquifer_code) +
@@ -2489,7 +2489,7 @@ K_data_1_2 %>%
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
 ```{r}
-K_data_1_2 %>%
+K_data_1_6 %>%
   group_by(aquifer_code) %>% 
   shapiroTest(abundance)
 ```
@@ -2497,25 +2497,25 @@ K_data_1_2 %>%
 Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the variances about the two means? Are they similar? For this we need a Levene test. With that test, we are not looking within each group, but rather across groups - this means we do NOT need to `group_by(aquifer_code)` and should specify a `y ~ x` formula instead:
 
 ```{r}
-K_data_1_2 %>%
+K_data_1_6 %>%
   leveneTest(abundance ~ aquifer_code)
 ```
 
-The p-value from this test is 0.596! This means that their variances are not significantly different.
+The p-value from this test is 0.596! This means that their variances are not significantly different. If their shape is the same (normality) and their variances are the same (equal variances), then the only thing that can be different is their means. This allows us to set up our null hypothesis and calculate the probability of obtaining these different means if the two sets of observations come from an identical source.
 
 ## two means {-}
 
 Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
 ```{r}
-K_data_1_2 %>%
+K_data_1_6 %>%
   tTest(abundance ~ aquifer_code)
 ```
 
 A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that the two means are different. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
 
 ```{r}
-K_data_1_2 %>%
+K_data_1_6 %>%
   wilcoxTest(abundance ~ aquifer_code)
 ```
 
