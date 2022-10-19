@@ -871,6 +871,8 @@ For more information on data visualization and graphics theory, check out the wo
 
 Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards).
 
+Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer).
+
 <!-- end -->
 
 <!-- start data wrangling -->
@@ -3723,6 +3725,8 @@ The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\th
 ## further reading
 
 * [Titles Guide](https://libguides.usc.edu/writingguide/title)
+
+* [Abstract Guide] (https://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)
 
 <!-- end -->
 

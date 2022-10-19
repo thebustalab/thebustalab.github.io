@@ -7225,8 +7225,12 @@
                     
                         ## Clustering
 
-                            if( any(is.na(scaled_matrix)) == TRUE ) {
-                                stop("clustering cannot handle NA. Please choose an option for na_replacement.")
+                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+
+                                if( any(is.na(scaled_matrix)) == TRUE ) {
+                                    stop("clustering cannot handle NA. Please choose an option for na_replacement.")
+                                }
+
                             }
 
                             ## HCLUST, HCLUST_PHYLO ##
