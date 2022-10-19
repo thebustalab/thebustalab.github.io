@@ -7127,6 +7127,12 @@
 
                             }
 
+                            if( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+                            
+                                scaled_matrix <- matrix
+                            
+                            }
+
                     # Run the matrix analysis selected
 
                         ## Dimensionality reduction
