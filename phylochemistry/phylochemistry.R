@@ -8364,6 +8364,7 @@
                     c("wine_grape_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv"),
                     c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
                     c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
+                    c("wood_smoke", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wood_smoke_data.csv"),
                     c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
                 ))
 

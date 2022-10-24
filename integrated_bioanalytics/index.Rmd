@@ -871,7 +871,7 @@ For more information on data visualization and graphics theory, check out the wo
 
 Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards).
 
-Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer).
+Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer) and [Paletteer](https://github.com/EmilHvitfeldt/paletteer).
 
 <!-- end -->
 
@@ -2745,6 +2745,25 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 
 <!-- end -->
+
+# midterm exam {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg', dpi = NA)
+```
+
+Load the wood smoke data by running `source()`, inspect the data, then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
+
+1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke? Within that wood type's smoke, which compound class is the most abundant and what is the single most abundant compound? Show these two things in the second and third subplots, respectively. Write a detailed figure caption for your figure (`labs(caption = "Figure 1...")`).
+
+2. Considering all the species together, regardless of wood type, what are the ten most abundant compounds in wood smoke? Communicate this via a plot that shows averages and standard deviations. Run a statistical analysis to determine whether there are significant differences among the abundances of these compounds. Show the output of the statistical analyses in your plot. Write a detailed figure caption for your figure.
+
+3. Conduct a PCA analysis of the `wood_smoke` data set. Make a figure with three subpanels: a plot of where each species is located in the first two principal components (a "pca" plot), a plot with ordination information, and a scree plot. In your figure caption, answer: How much of the overall variance in the data set is contained within the first two dimensions?
+
+4. Using your PCA analysis from question 3, select four compound classes, two that are negatively correlated with each other along dimension 1 and two that are positively correlated with each other along dimension 2. Create a plot that shows the abundances of these four compound classes in each wood species. In your figure caption, explain: are these abundances consistent with your understanding of PCA and ordination? Why or why not?
+
+5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3, (ii) a kmeans-based clustering of your PCA analysis output from question 3, and (iii) a hierarchical clustering analysis of the raw data. For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not?
+
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
