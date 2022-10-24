@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-10-13"
+date: "2022-10-24"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -923,6 +923,8 @@ For a list of data visualization sins: [Friends Don't Let Friends](https://githu
 For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/). A digital text that covers similar topics is here: [Look At Data] (https://socviz.co/lookatdata.html).
 
 Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards).
+
+Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer) and [Paletteer](https://github.com/EmilHvitfeldt/paletteer).
 
 <!-- end -->
 
@@ -2621,10 +2623,10 @@ To work with two means, let's just look at aquifers 1 and 6:
 
 
 ```r
-K_data_1_2 <- K_data %>%
+K_data_1_6 <- K_data %>%
     filter(aquifer_code %in% c("aquifer_1", "aquifer_6"))
 
-K_data_1_2
+K_data_1_6
 ## # A tibble: 24 × 6
 ##    aquifer_code well_name         longitude latitude analyte
 ##    <chr>        <chr>                 <dbl>    <dbl> <chr>  
@@ -2640,7 +2642,7 @@ K_data_1_2
 ## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      
 ## # … with 14 more rows, and 1 more variable: abundance <dbl>
 
-ggplot(K_data_1_2, aes(x = aquifer_code, y = abundance)) +
+ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_boxplot() +
     geom_point()
 ```
@@ -2651,7 +2653,7 @@ Are these data normally distributed? Do they have similar variance? Let's get a 
 
 
 ```r
-K_data_1_2 %>%
+K_data_1_6 %>%
   ggplot(aes(x = abundance)) + 
     geom_histogram(bins = 30) +
     facet_wrap(~aquifer_code) +
@@ -2664,7 +2666,7 @@ Based on this graphic, it's hard to say! Let's use a statistical test to help. W
 
 
 ```r
-K_data_1_2 %>%
+K_data_1_6 %>%
   group_by(aquifer_code) %>% 
   shapiroTest(abundance)
 ## # A tibble: 2 × 4
@@ -2678,7 +2680,7 @@ Both p-values are above 0.05! This means that the distributions are not signific
 
 
 ```r
-K_data_1_2 %>%
+K_data_1_6 %>%
   leveneTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 4
 ##     df1   df2 statistic     p
@@ -2686,7 +2688,7 @@ K_data_1_2 %>%
 ## 1     1    22     0.289 0.596
 ```
 
-The p-value from this test is 0.596! This means that their variances are not significantly different.
+The p-value from this test is 0.596! This means that their variances are not significantly different. If their shape is the same (normality) and their variances are the same (equal variances), then the only thing that can be different is their means. This allows us to set up our null hypothesis and calculate the probability of obtaining these different means if the two sets of observations come from an identical source.
 
 ## two means {-}
 
@@ -2694,7 +2696,7 @@ Now, since our data passed both test, this means we can use a normal t-test. A t
 
 
 ```r
-K_data_1_2 %>%
+K_data_1_6 %>%
   tTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 8
 ##   .y.       group1 group2    n1    n2 statistic    df      p
@@ -2706,7 +2708,7 @@ A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that 
 
 
 ```r
-K_data_1_2 %>%
+K_data_1_6 %>%
   wilcoxTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 7
 ##   .y.       group1    group2       n1    n2 statistic      p
@@ -3124,6 +3126,23 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 
 <!-- end -->
+
+# midterm exam {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg" width="100%" style="display: block; margin: auto;" />
+
+Load the wood smoke data by running `source()`, inspect the data, then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
+
+1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke. Within that wood type's smoke, which compound class is the most abundant and what is the single most abundant compound? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot. Write a detailed figure caption for your figure (`labs(caption = "Figure 1...")`).
+
+2. Considering all the species together, regardless of wood type, what are the ten most abundant compounds in wood smoke? Communicate this via a plot that shows averages and standard deviations. Run a statistical analysis to determine whether there are significant differences among the abundances of these compounds. Show the output of the statistical analyses in your plot. Write a detailed figure caption for your figure.
+
+3. Create a summarized wood smoke data set that contains the sum abundance of each compound class for each species. Conduct a PCA analysis of your summarized data set. Make a figure with three subpanels: a plot of where each species is located in a space defined by the first two principal components (a classical "pca" plot), a plot with ordination information  (as opposed to on the single compound level), and a scree plot. In your detailed figure caption, answer: How much of the overall variance in the data set is contained within the first two dimensions?
+
+4. Using your PCA analysis from question 3, select four compound classes, two that are negatively correlated with each other along dimension 1 and two that are positively correlated with each other along dimension 2. Create a plot that shows the abundances of these four compound classes in each wood species. In your figure caption, explain: are these abundances consistent with your understanding of PCA and ordination? Why or why not?
+
+5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3, (ii) a kmeans-based clustering of your PCA analysis output from question 3, and (iii) a hierarchical clustering analysis of the raw data. For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not?
+
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3732,7 +3751,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -3762,7 +3781,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -3800,7 +3819,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -3877,7 +3896,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -3886,7 +3905,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -3952,7 +3971,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -3971,7 +3990,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-195-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4051,7 +4070,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
 
@@ -4250,6 +4269,8 @@ The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\th
 
 * [Titles Guide](https://libguides.usc.edu/writingguide/title)
 
+* [Abstract Guide] (https://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)
+
 <!-- end -->
 
 <!-- start Proposal -->
@@ -4408,7 +4429,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4450,7 +4471,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
