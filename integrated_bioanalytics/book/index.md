@@ -3131,7 +3131,7 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg" width="100%" style="display: block; margin: auto;" />
 
-Load the wood smoke data by running `source()`, inspect the data, then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
+Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
 
 1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke. Within that wood type's smoke, which compound class is the most abundant and what is the single most abundant compound? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot. Write a detailed figure caption for your figure (`labs(caption = "Figure 1...")`).
 
