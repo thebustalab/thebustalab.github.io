@@ -71,7 +71,8 @@
                 "ggside",
                 "fpc",
                 "dbscan",
-                "Rtsne"
+                "Rtsne",
+                "ggdist"
             )
 
             if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
@@ -6715,7 +6716,47 @@
                     message("Consider using 'do.call(\"grid.arrange\", c(plot_list))' to plot all the plots")
         }
 
-    ##### Mathematics, Statistical Testing, and Modeling
+    ##### Mathematics, Statistical Testing, Modeling, Signal Processing
+
+        #### drawBaseline
+
+            #' Draws a baseline on a signal
+            #'
+            #' @param data x, y dataframe
+            #' @param prelim_baseline_window interval at which to draw baseline
+            #' @examples
+            #' @export
+            #' drawBaseline
+
+            drawBaseline <- function(data, prelim_baseline_window) {
+      
+                n_prelim_baseline_windows <- floor(length(data$x)/prelim_baseline_window)
+                prelim_baseline <- list()
+                for ( i in 1:n_prelim_baseline_windows ) {
+                  abundances_in_window <- data$y[((prelim_baseline_window*(i-1))+1):(prelim_baseline_window*i)]
+                  prelim_baseline[[i]] <- data.frame(
+                      x = data$x[(which.min(abundances_in_window)+((i-1)*prelim_baseline_window))],
+                      min = min(abundances_in_window)
+                  )
+                }
+                prelim_baseline <- do.call(rbind, prelim_baseline)
+                data$in_prelim_baseline <- FALSE
+                data$in_prelim_baseline[data$x %in% prelim_baseline$x] <- TRUE
+
+                y = prelim_baseline$min
+                x = prelim_baseline$x
+
+                baseline2 <- data.frame(
+                  x = data$x,
+                  y = approx(x, y, xout = data$x)$y
+                )
+                baseline2 <- baseline2[!is.na(baseline2$y),]
+                data <- data[data$x %in% baseline2$x,]
+                data$baseline <- baseline2$y
+
+                return(data)
+
+            }
 
         #### normalize
 
@@ -8413,4 +8454,4 @@
 
         # message("\n")
 
-message("Donezo!")
+message("Done!")

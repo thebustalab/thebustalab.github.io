@@ -686,6 +686,18 @@ p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")
 
 There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
 
+You can also combine geoms to create more detailed representations of distributions:
+
+```{r}
+mpg %>% filter(cyl %in% c(4,6,8)) %>%
+  ggplot(aes(x = factor(cyl), y = hwy, fill = factor(cyl))) +
+  ggdist::stat_halfeye(
+    adjust = 0.5, justification = -0.2, .width = 0, point_colour = NA
+  ) +
+  geom_boxplot(width = 0.12, outlier.color = NA, alpha = 0.5) +
+  ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
+```
+
 ## facets {-}
 
 As alluded to in Exercises 1, it is possible to map variables in your dataset to more than the geometric features of shapes (i.e. geoms). One very common way of doing this is with facets. Faceting creates small multiples of your plot, each of which shows a different subset of your data based on a categorical variable of your choice. Let's check it out.
