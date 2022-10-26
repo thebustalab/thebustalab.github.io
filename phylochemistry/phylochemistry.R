@@ -4337,7 +4337,7 @@
                         }
                         
 
-                }
+            }
 
         #### readChromatograms
 
@@ -7584,10 +7584,16 @@
                 p <- data$p.adj
                 names(p) <- paste(data$group1, data$group2, sep = "-")
 
+                if (is.null(multcompLetters(p)$monospacedLetters)) {
+                    spaced_group <- multcompLetters(p)$Letters 
+                } else {
+                    spaced_group <- multcompLetters(p)$monospacedLetters   
+                }
+
                 output <- data.frame(
                     treatment = names(multcompLetters(p)$Letters),
                     group = multcompLetters(p)$Letters,
-                    spaced_group = multcompLetters(p)$monospacedLetters
+                    spaced_group = spaced_group
                 )
                 return(output)
             }
