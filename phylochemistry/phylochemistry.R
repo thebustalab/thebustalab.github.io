@@ -15,7 +15,9 @@
                 "Biostrings",
                 "GenomicRanges",
                 "GenomicFeatures",
-                "Rsamtools"
+                "Rsamtools",
+                "ggtree",
+                "ggtreeExtra"
             )
 
         }
@@ -3283,7 +3285,8 @@
                     x_axis_end_default = NULL,
                     path_to_reference_library = busta_spectral_library,
                     samples_monolist_subset = NULL,
-                    ions = 0
+                    ions = 0,
+                    jupyter = FALSE
                 ) {
 
                     setwd(CDF_directory_path)
@@ -4327,7 +4330,12 @@
 
                     ## Call the app
                         
-                        shinyApp(ui = ui, server = server)
+                        if ( jupyter == TRUE ) {
+                            runApp(shinyApp(ui = ui, server = server), host = "0.0.0.0")
+                        } else {
+                            shinyApp(ui = ui, server = server)
+                        }
+                        
 
                 }
 
