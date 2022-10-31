@@ -4331,7 +4331,7 @@
                     ## Call the app
                         
                         if ( jupyter == TRUE ) {
-                            runApp(shinyApp(ui = ui, server = server), host = "0.0.0.0")
+                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = 5627)
                         } else {
                             shinyApp(ui = ui, server = server)
                         }

@@ -3497,28 +3497,45 @@ ________________________________________________________________________________
 
 # overview {-}
 
-One of the largest obstacles facing scientists is communicating about our work with non-scientists. We must practice written science communication in both technical and non-technical formats.
-
-
-# a mini manuscript {-}
-
-For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results.
+For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/project_overview.png', dpi = NA)
 ```
 
+1. Find a data set: Large! >10ish variables, >5ish categories
++ Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
++ Relevant to your research or interests (ideally).
++ Requires approval from Dr. Busta.
+
+2. Ask at least three scientific questions.
++ These should drive your data analyses.
++ Requires approval from Dr. Busta.
+
+3. Analyze your data using what you learned in class.
++ Refer to our book.
++ Ask Dr. Busta for assistance.
+
+4. Create a written overview of your analysis, a mini-manuscript in R Markdown:
++ *Content* similar to the articles we looked at in class, though shorter.
++ *Layout* similar to this example (pdf, rmd).
+
+## scope {-}
+
+When conducting a project of this type, it is very common for there to be mismatches in the scope of how the project was conducted and how the written report is presented (see image below). We often spend LOTS of time exploring our data and running into dead ends, conclusions that are mundane, or questions we can't answer. When we write a report on the project, we often focus the report of a specific discovery we made during our vast avenues of exploration, rather than boring the reader with all the mundane details.
+
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/scope.jpeg', dpi = NA)
 ```
 
-The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript:
+## order {-}
+
+The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript: the orders of presentation and preparation do not have to be the same (see the images below)! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/writing_order.png', dpi = NA)
 ```
 
-The orders of presentation and preparation do not have to be the same! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
 
 # figures & captions {-}
 
