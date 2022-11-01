@@ -20,6 +20,8 @@
                 "ggtreeExtra"
             )
 
+            source("https://thebustalab.github.io/phylochemistry/genomescope.R")
+
         }
 
     }
