@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-10-30"
+date: "2022-11-02"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4060,6 +4060,33 @@ When conducting a project of this type, it is very common for there to be mismat
 The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript: the orders of presentation and preparation do not have to be the same (see the images below)! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/writing_order.png" width="100%" style="display: block; margin: auto;" />
+
+## scientific questions {-}
+
+**Descriptive questions (often addressed with summary statistics):**
+
+- How many white pines are in the Duluth area?
+
+- What is the wolf pack’s distribution range?
+
+- How frequently do blizzards occurr?
+
+
+**Correlative questions (often addressed with regression modeling):**
+
+- What is the relationship between leaf color and soil nitrogen content in oak seedlings?
+
+- How does a spider’s reproduction rate change with a change in season?
+
+
+**Comparative questions (often addressed with dimensionality reduction, clustering, and/or comparisons of means):**
+
+- Of the rivers and streams along the North Shore, when are most similar in terms of their chemistry?
+
+- What factors drive differences in chemistry between Lake Superior and inland lakes?
+
+- Is there a difference in diversity of cyanobacteria that live in the St. Louis estuary and the Twin Ports Harbor area?
+
 
 
 # figures & captions {-}

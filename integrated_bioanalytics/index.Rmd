@@ -3536,6 +3536,33 @@ The manuscript will be comprised of a title, abstract, introduction, results and
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/writing_order.png', dpi = NA)
 ```
 
+## scientific questions {-}
+
+**Descriptive questions (often addressed with summary statistics):**
+
+- How many white pines are in the Duluth area?
+
+- What is the wolf pack’s distribution range?
+
+- How frequently do blizzards occurr?
+
+
+**Correlative questions (often addressed with regression modeling):**
+
+- What is the relationship between leaf color and soil nitrogen content in oak seedlings?
+
+- How does a spider’s reproduction rate change with a change in season?
+
+
+**Comparative questions (often addressed with dimensionality reduction, clustering, and/or comparisons of means):**
+
+- Of the rivers and streams along the North Shore, when are most similar in terms of their chemistry?
+
+- What factors drive differences in chemistry between Lake Superior and inland lakes?
+
+- Is there a difference in diversity of cyanobacteria that live in the St. Louis estuary and the Twin Ports Harbor area?
+
+
 
 # figures & captions {-}
 
