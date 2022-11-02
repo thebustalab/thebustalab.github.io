@@ -130,7 +130,7 @@
                     stop("Cannot load phylochemistry without the required packages. Exiting.")
                 }
             }
-            flush.console()
+            
             message("Loading packages...")
             invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
     
@@ -185,7 +185,7 @@
 
 ###### Functions
 
-    flush.console()
+    
     message("Loading functions...")
 
     ##### Read and write functions
@@ -8665,7 +8665,7 @@
             message("Object 'datasets' exists, not loading phylochemistry datasets....")
 
         } else {
-            flush.console()
+            
             message("Loading datasets...")
 
             ## Sample datasets for CHEM5725
@@ -8730,5 +8730,6 @@
         )
 
         # message("\n")
-flush.console()
+
 message("Done!")
+cat("\014")
