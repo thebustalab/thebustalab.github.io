@@ -280,7 +280,7 @@
 
                 # Identify location of centroid
                     center_column <- unlist(apply(polylist, 1, function(x) grep(centroid, x)))
-                    center_row <- grep(centroid, polylist[,center_column])
+                    center_row <- as.numeric(grep(centroid, polylist[,center_column]))
 
                 # Use centroid to extract vertical_monolist
                     vertical_monolist <- as.data.frame(polylist[(center_row+1):dim(polylist)[1], 1:(center_column-1)])
