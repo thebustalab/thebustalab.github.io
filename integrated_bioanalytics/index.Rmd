@@ -3503,22 +3503,23 @@ For your final project in this course you will use the techniques we have learne
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/project_overview.png', dpi = NA)
 ```
 
-1. Find a data set: Large! >10ish variables, >5ish categories
+1. **Find a data set: Large!** >10ish variables, >5ish categories
 + Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
 + Relevant to your research or interests (ideally).
 + Requires approval from Dr. Busta.
 
-2. Ask at least three scientific questions.
+
+2. **Ask at least three scientific questions.**
 + These should drive your data analyses.
 + Requires approval from Dr. Busta.
 
-3. Analyze your data using what you learned in class.
+3. **Analyze your data using what you learned in class.**
 + Refer to our book.
 + Ask Dr. Busta for assistance.
 
-4. Create a written overview of your analysis, a mini-manuscript in R Markdown:
+4. **Create a written overview of your analysis**. A mini-manuscript in R Markdown:
 + *Content* similar to the articles we looked at in class, though shorter.
-+ *Layout* similar to this example (pdf, rmd).
++ *Layout* similar to this example ([pdf](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.pdf), [rmd](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.Rmd)).
 
 ## scope {-}
 
@@ -3538,7 +3539,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 ## scientific questions {-}
 
-**Descriptive questions (often addressed with summary statistics):**
+**DESCRIPTIVE questions (often addressed with summary statistics):**
 
 - How many white pines are in the Duluth area?
 
@@ -3547,14 +3548,14 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 - How frequently do blizzards occurr?
 
 
-**Correlative questions (often addressed with regression modeling):**
+**CORRELATIVE questions (often addressed with regression modeling):**
 
 - What is the relationship between leaf color and soil nitrogen content in oak seedlings?
 
 - How does a spider’s reproduction rate change with a change in season?
 
 
-**Comparative questions (often addressed with dimensionality reduction, clustering, and/or comparisons of means):**
+**COMPARATIVE questions (often addressed with dimensionality reduction, clustering, and/or comparisons of means):**
 
 - Of the rivers and streams along the North Shore, when are most similar in terms of their chemistry?
 
@@ -3562,6 +3563,20 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 - Is there a difference in diversity of cyanobacteria that live in the St. Louis estuary and the Twin Ports Harbor area?
 
+
+<!-- Unclear: How should social networking sites address the harm they cause?
+Clear: What action should social networking sites like MySpace and Facebook take to protect users’ personal information and privacy?
+
+The unclear version of this question doesn’t specify which social networking sites or suggest what kind of harm the sites might be causing. It also assumes that this “harm” is proven and/or accepted. The clearer version specifies sites (MySpace and Facebook), the type of potential harm (privacy issues), and who may be experiencing that harm (users). A strong research question should never leave room for ambiguity or interpretation.
+
+Unfocused: What is the effect on the environment from global warming?
+Focused: What is the most significant effect of glacial melting on the lives of penguins in Antarctica?
+
+The unfocused research question is so broad that it couldn’t be adequately answered in a book-length piece, let alone a standard college-level paper. The focused version narrows down to a specific effect of global warming (glacial melting), a specific place (Antarctica), and a specific animal that is affected (penguins). It also requires the writer to take a stance on which effect has the greatest impact on the affected animal. When in doubt, make a research question as narrow and focused as possible.
+
+
+Too simple: How are doctors addressing diabetes in the U.S.?
+Appropriately Complex:  What main environmental, behavioral, and genetic factors predict whether Americans will develop diabetes, and how can these commonalities be used to aid the medical community in prevention of the disease? -->
 
 
 # figures & captions {-}
@@ -3809,18 +3824,27 @@ The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\th
 
 # proposals {-}
 
-Grant writing is a game. You need to understand the rules (written or unwritten). This is a somewhat arbitrary list of them:
+Grant writing is a game. Here are some suggestions:
 
-\#1: Show excitement. If you are not excited, the reviewers will not be either. This is the most important rule.
-\#2: Significance means how your work will advance the field. It does not mean your work has to cure all cancers. It almost certainly will not, but it can still have high impact.
-\#3: You have to establish feasibility in the Approach section. This is a chicken and egg problem. If it is 100% feasible, it may be boring. If it is super exciting, it may not be feasible. Try to find a balance. 3/10 
-\#4: Reviewers decide based on the big picture. If you made a convincing case that your study will have a high impact, most reviewers are willing to overlook small problems in the details. Some details are more important than others however.
-\#5: Always customize the Personal Statement in your Biosketch to the grant you are writing. Explain briefly why you are the right person to do this particular work.
-\#6: Use the Facilities page to make a case why you institution is a great place for your studies. List collaborators, experts, core facilities, even if not directly relevant to your proposal. This is especially important if you are not at a tier 1 university.
-\#7: Send your Specific aims page and Significance section to a colleague who is not on your close field at least 2-3 weeks before the deadline. If they do not understand it, or do not find it exciting, rewrite them.
-\#8: When you revise a grant or try to renew, the reviewers do not see the previous version. What they see is the previous summary statement, that includes the abstract. Keep this in mind when you write the grant.
-\#9: Just because you responded to all comments does not mean you will get a better score. Sounds cruel, but this is how it is. Go beyond what is requested in the revised version to make your grant more compelling and to show progress.
-\#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
++\#1: Show excitement. If you are not excited, the reviewers will not be either. This is the most important rule.
+
++\#2: Significance means how your work will advance the field. It does not mean your work has to cure all cancers. It almost certainly will not, but it can still have high impact.
+
++\#3: You have to establish feasibility in the Approach section. This is a chicken and egg problem. If it is 100% feasible, it may be boring. If it is super exciting, it may not be feasible. Try to find a balance. 3/10 
+
++\#4: Reviewers decide based on the big picture. If you made a convincing case that your study will have a high impact, most reviewers are willing to overlook small problems in the details. Some details are more important than others however.
+
++\#5: Always customize the Personal Statement in your Biosketch to the grant you are writing. Explain briefly why you are the right person to do this particular work.
+
++\#6: Use the Facilities page to make a case why you institution is a great place for your studies. List collaborators, experts, core facilities, even if not directly relevant to your proposal. This is especially important if you are not at a tier 1 university.
+
++\#7: Send your Specific aims page and Significance section to a colleague who is not on your close field at least 2-3 weeks before the deadline. If they do not understand it, or do not find it exciting, rewrite them.
+
++\#8: When you revise a grant or try to renew, the reviewers do not see the previous version. What they see is the previous summary statement, that includes the abstract. Keep this in mind when you write the grant.
+
++\#9: Just because you responded to all comments does not mean you will get a better score. Sounds cruel, but this is how it is. Go beyond what is requested in the revised version to make your grant more compelling and to show progress.
+
++\#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
 
 <!-- end -->
 ________________________________________________________________________________________________
