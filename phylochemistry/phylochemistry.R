@@ -61,6 +61,7 @@
                 "network",
                 "pracma",
                 "ggnetwork",
+                "patchwork",
                 "FactoMineR",
                 "dplyr",
                 "stringr", 
@@ -8730,6 +8731,5 @@
         )
 
         # message("\n")
-
-message("Done!")
 cat("\014")
+message("phylochemistry loaded!")
