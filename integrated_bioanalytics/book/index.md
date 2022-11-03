@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-11-02"
+date: "2022-11-03"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -205,6 +205,8 @@ First, attempt to load phylochemistry, if you are on Windows, be sure you've ope
 bustalab <- TRUE
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
+
+
 
 The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?" You should say "yes".
 
@@ -4110,7 +4112,98 @@ A high quality figure is one in which, for example, axes tick labels do not over
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
 
-## Components of a caption
+## composite figures {-}
+
+Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
+
+
+```r
+color_palette <- RColorBrewer::brewer.pal(11, "Paired")
+names(color_palette) <- unique(alaska_lake_data$element)
+
+plot1 <- ggplot(
+  data = filter(alaska_lake_data, element_type == "bound"),
+  aes(y = lake, x = mg_per_L)
+) +
+  geom_col(
+    aes(fill = element), size = 0.5, position = "dodge",
+    color = "black"
+  ) +
+  facet_grid(park~., scales = "free", space = "free") +
+  theme_bw() + 
+  scale_fill_manual(values = color_palette) +
+  scale_y_discrete(name = "Lake Name") +
+  scale_x_continuous(name = "Abundance mg/L)") +
+  theme(
+    text = element_text(size = 14)
+  )
+
+plot2 <- ggplot(
+  data = filter(alaska_lake_data, element_type == "free"),
+  aes(y = lake, x = mg_per_L)
+) +
+  geom_col(
+    aes(fill = element), size = 0.5, position = "dodge",
+    color = "black"
+  ) +
+  facet_grid(park~., scales = "free", space = "free") +
+  theme_bw() + 
+  scale_fill_manual(values = color_palette) +
+  scale_y_discrete(name = "Lake Name") +
+  scale_x_continuous(name = "Abundance mg/L)") +
+  theme(
+    text = element_text(size = 14)
+  )
+```
+
+Now, add them together to lay them out. `plot_annotation()` allows quick numbering or lettering of the subpanels. Note that `&` is used to add ggplot elements to the entire plot, as opposed to the last plot in the list. Let's look at various ways to lay this out:
+
+
+```r
+plot1 + plot2 + plot_annotation(tag_levels = 'A')
+```
+
+<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+```r
+plot1 / plot2 + plot_annotation(tag_levels = 'A')
+```
+
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+```r
+(plot1 + plot2) / plot1 + plot_annotation(tag_levels = 'A')
+```
+
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+```r
+(plot1 + plot2) + plot_annotation(tag_levels = 'A') + 
+  plot_layout(widths = c(1.1, 3), guides = 'collect') &
+  theme(legend.position = 'right')
+```
+
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+
+## exporting graphics {-}
+
+To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
+
+
+```r
+plot <- ggplot(data, aes(x = x, y = y)) + geom_point()
+
+png(filename = <path_to_file_you_want_to_create>, width = 8, height = 8, res = 600, units = "in")
+
+plot
+
+dev.off()
+```
+
+## captions {-}
 
 1. Title - an overall description of the what is shown
 2. For each subplot:
@@ -4121,48 +4214,25 @@ A high quality figure is one in which, for example, axes tick labels do not over
   * Describe where the data are from.
 3. Avoid abbreviations, but if you do use any, specify what they mean.
 
-An example:
+## an example {-}
 
 
 ```r
-ggplot(
-  data = filter(alaska_lake_data, element_type == "bound"),
-  aes(y = lake, x = mg_per_L)
-) +
-  geom_col(
-    aes(fill = element),
-    alpha = 0.5, size = 0.5, position = "dodge",
-    color = "black"
-  ) +
-  facet_grid(park~., scales = "free", space = "free") +
-  theme_bw() + 
-  scale_fill_brewer(palette = "Set1") +
-  scale_y_discrete(name = "Lake Name") +
-  scale_x_continuous(name = "Abundance mg/L)") +
-  theme(
-    text = element_text(size = 14)
-  )
+(plot1 + plot2 + labs(caption = str_wrap("Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.", 90))) + plot_annotation(tag_levels = 'A') + 
+  plot_layout(widths = c(1.1, 3), guides = 'collect') &
+  theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
-Fig. 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A bar chart showing the abundance (in mg per L, x-axis) of C, N, and P in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
+## further reading {-}
 
-## Exporting graphics
+One option for plot layout, `patchwork`. This one is quick and simple.
+[patchwork, for plot layout](https://patchwork.data-imaginist.com/index.html)
 
-To export graphics from R, consider the following:
+Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, but is more versatile.
+[cowplot on Github](https://wilkelab.org/cowplot/articles/plot_grid.html)
 
-
-```r
-png(filename = <path_to_file_you_want_to_create>, width = 10, height = 10, res = 600, units = "in")
-
-cowplot::plot_grid(peak_1_to_plot, peak_2_to_plot, peak_3_to_plot,
-peak_4_to_plot, peak_5_to_plot, align = "v", axis = "b", labels = c('Peak 1','Peak 2','Peak 3', 'Peak 4', 'Peak 5'), ncol = 1, label_x = 0.4)
-
-dev.off()
-```
-
-The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
 # results and discussion {-}
 
@@ -4512,7 +4582,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4554,7 +4624,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 

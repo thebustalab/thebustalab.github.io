@@ -3587,7 +3587,7 @@ A high quality figure is one in which, for example, axes tick labels do not over
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg', dpi = NA)
 ```
 
-## composite figures
+## composite figures {-}
 
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
 
@@ -3632,25 +3632,25 @@ plot2 <- ggplot(
 
 Now, add them together to lay them out. `plot_annotation()` allows quick numbering or lettering of the subpanels. Note that `&` is used to add ggplot elements to the entire plot, as opposed to the last plot in the list. Let's look at various ways to lay this out:
 
-```{r, fig.height = 5, fig.width = 6}
+```{r, fig.height = 5, fig.width = 10}
 plot1 + plot2 + plot_annotation(tag_levels = 'A')
 ```
 
-```{r, fig.height = 5, fig.width = 6}
+```{r, fig.height = 8, fig.width = 6}
 plot1 / plot2 + plot_annotation(tag_levels = 'A')
 ```
 
-```{r, fig.height = 5, fig.width = 6}
+```{r, fig.height = 8, fig.width = 10}
 (plot1 + plot2) / plot1 + plot_annotation(tag_levels = 'A')
 ```
 
-```{r, fig.height = 5, fig.width = 6}
+```{r, fig.height = 5, fig.width = 10}
 (plot1 + plot2) + plot_annotation(tag_levels = 'A') + 
   plot_layout(widths = c(1.1, 3), guides = 'collect') &
   theme(legend.position = 'right')
 ```
 
-## exporting graphics
+## exporting graphics {-}
 
 To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
@@ -3664,7 +3664,7 @@ plot
 dev.off()
 ```
 
-## captions
+## captions {-}
 
 1. Title - an overall description of the what is shown
 2. For each subplot:
@@ -3675,15 +3675,15 @@ dev.off()
   * Describe where the data are from.
 3. Avoid abbreviations, but if you do use any, specify what they mean.
 
-## an example
+## an example {-}
 
-```{r, fig.height = 5, fig.width = 6}
+```{r, fig.height = 8, fig.width = 12}
 (plot1 + plot2 + labs(caption = str_wrap("Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.", 90))) + plot_annotation(tag_levels = 'A') + 
   plot_layout(widths = c(1.1, 3), guides = 'collect') &
   theme(legend.position = 'right')
 ```
 
-## further reading
+## further reading {-}
 
 One option for plot layout, `patchwork`. This one is quick and simple.
 [patchwork, for plot layout](https://patchwork.data-imaginist.com/index.html)
