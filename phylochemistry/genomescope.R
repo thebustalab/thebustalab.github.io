@@ -1,78 +1,6 @@
 ###### GENOMESCOPE FUNCTIONS #######
 
-## estimate_Genome_peakp (now implemented directly in genomeScope)
-
-
-  #' Function to fit 2p peak model, with p forms
-  #'
-  #' @param kmer_hist_orig A data frame of the original histogram data (starting at 1 and with last position removed).
-  #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
-  #' @param y A numeric vector of the y-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
-  #' @param k An integer corresponding to the kmer length.
-  #' @param p An integer corresponding to the ploidy.
-  #' @param topology An integer corresponding to the topology to use.
-  #' @param estKmercov An integer corresponding to the estimated kmer coverage of the polyploid genome.
-  #' Set to -1 if not specified by user.
-  #' @param round An integer corresponding to the iteration number (0, 1, 2, 3) for the fitting process.
-  #' @param foldername A character vector corresponding to the name of the output directory.
-  #' @param arguments A data frame of the user-specified inputs.
-  #' @return A list (nls, nlsscore) where nls is the nlsLM model object (with some additional components)
-  #' and nlsscore is the score (model RSSE) corresponding to the best fit (of the p forms).
-  #' @export
-    # estimate_Genome_peakp <- function(kmer_hist_orig, x, y, k, p, topology, estKmercov, round, foldername, arguments) {
-    #   if (topology==-1) {
-    #     p_to_num_topologies = c(1, 1, 1, 2, 5, 16)
-    #     num_topologies = p_to_num_topologies[p]
-    #     topologies = 1:num_topologies
-    #   }
-    #   else {
-    #     num_topologies = 1
-    #     topologies = c(topology)
-    #   }
-    #   numofKmers = sum(as.numeric(x)*as.numeric(y))
-    #   if (estKmercov==-1) {
-    #     #In situations with low heterozygosity, the peak with highest amplitude typically corresponds to the homozygous peak (i.e. the p-th peak).
-    #     #However, with increasing heterozygosity, the highest amplitude peak may be an earlier peak.
-    #     #Thus, when setting the estimated kmer coverage, we will need to iterate through these possibilities.
-    #     #num_peak_indices indicates how many possibilities we need to iterate through.
-    #     num_peak_indices = p
-    #     y_transform = as.numeric(x)**transform_exp*as.numeric(y)
-    #     estKmercov1 = x[which(y_transform==max(y_transform))][1]
-    #   }
-    #   else {
-    #     # When the user sets the estimated kmer coverage, we only need to iterate through one possibility
-    #     num_peak_indices = 1
-    #     ## We set the estimated kmer coverage to be the user specified value
-    #     estKmercov1 = estKmercov
-    #   }
-    #   estLength1 = numofKmers/estKmercov1
-
-    #   nls00 = NULL
-    #   peak_indices = 1:num_peak_indices
-    #   for (i in peak_indices) {
-    #     nls0 = NULL
-    #     top_count = 0
-    #     ## We see what happens when we set the estimated kmer coverage to be 1/i times the x-coordinate where the max peak occurs (1 <= i <= p if the user doesn't set the estimated kmer coverage, and i=1 if they do)
-    #     estKmercov2 = estKmercov1 / i
-    #     estLength2 = numofKmers/estKmercov2
-
-    #     if (VERBOSE) {cat(paste("trying with kmercov: ", estKmercov2, "\n"))}
-
-    #     for (top in topologies) {
-    #       if (VERBOSE) {cat(paste("trying with topology: ", top, "\n"))}
-    #       top_count = top_count + 1
-    #       nls1 = nls_peak(x, y, k, p, top, estKmercov2, estLength2, MAX_ITERATIONS)
-    #       nls0 = eval_model(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments)[[1]]
-    #     }
-    #     if (i < num_peak_indices) { #if this is not the last evaluation
-    #       nls00 = eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments)[[1]]
-    #     }
-    #   }
-
-    #   return(eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments))
-    # }
-
-## eval_model
+## eval_model (medium)
 
   #' Evaluate distinct model forms, in order to resolve ambiguity of which peak is the homozygous peak
   #'
@@ -86,6 +14,7 @@
   #' and nlsscore is the score (model RSSE) corresponding to the best fit (of the p forms).
   #' @export
   eval_model<-function(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments) {
+    
     VERBOSE <- FALSE
     nls0score = -1
     nls1score = -1
@@ -145,10 +74,9 @@
             model_fit_fullscore   = c(1-sum(abs(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))] - pred[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))]))) / sum(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))])), first_zero, (min(length(y_fit), (2*p+1)*kcovfloor)))
             model_fit_uniquescore = c(1-sum(abs(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)]                       - pred[first_zero:((p+1)*kcovfloor)])))                       / sum(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)])),                       first_zero, ((p+1)*kcovfloor))
 
-          fit = data.frame(all  = model_fit_all,      allscore  = model_fit_allscore,
+        nls0score = data.frame(all  = model_fit_all,      allscore  = model_fit_allscore,
                            full = model_fit_full,     fullscore = model_fit_fullscore,
                            unique = model_fit_unique, uniquescore = model_fit_uniquescore)
-        nls0score = fit
 
       if (VERBOSE) {
         mdir = paste(foldername, "/round", round, ".1", sep="")
@@ -214,10 +142,9 @@
           model_fit_fullscore   = c(1-sum(abs(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))] - pred[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))]))) / sum(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))])), first_zero, (min(length(y_fit), (2*p+1)*kcovfloor)))
           model_fit_uniquescore = c(1-sum(abs(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)]                       - pred[first_zero:((p+1)*kcovfloor)])))                       / sum(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)])),                       first_zero, ((p+1)*kcovfloor))
 
-        fit = data.frame(all  = model_fit_all,      allscore  = model_fit_allscore,
+      nls1score = data.frame(all  = model_fit_all,      allscore  = model_fit_allscore,
                          full = model_fit_full,     fullscore = model_fit_fullscore,
                          unique = model_fit_unique, uniquescore = model_fit_uniquescore)
-      nls1score = fit
 
       if(VERBOSE) {cat(paste("nls1score$all:\t", nls1score$all[[1]], "\n"))}
 
@@ -271,7 +198,7 @@
     return (list(nls1, nls1score))
   }
 
-## predict functions
+## predict functions (big)
 
   #' Produce model estimated (p=1) y-coordinates of the kmer spectra given the kmer size, repetitiveness, average polyploid kmer coverage, bias, and x-coordinates of the kmer spectra.
   #'
@@ -2777,141 +2704,8 @@
     alpha_6_unique  * dnbinom(x, size = kmercov*6 / bias, mu = kmercov*6)
   }
 
-## nls_peak (now implemented directly in genomeScope())
-
-  # #' Uses nlsLM to fit 2p peak model
-  # #'
-  # #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
-  # #' @param y A numeric vector of the y-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
-  # #' @param k An integer corresponding to the kmer length.
-  # #' @param p An integer corresponding to the ploidy.
-  # #' @param top An integer corresponding to the topology.
-  # #' @param estKmercov A numeric corresponding to the estimated average kmer coverage of the polyploid genome.
-  # #' @param estLength A numeric corresponding to the estimated polyploid genome length.
-  # #' @param max_iterations An integer corresponding to the maximum number iterations to use for nlsLM.
-  # #' @return An nlsLM model object with some additional components.
-  # #' @export
-  # nls_peak<-function(x, y, k, p, top, estKmercov, estLength, max_iterations) {
-  #   #Initiate variables
-  #   model = NULL
-  #   best_deviance = Inf
-  #   d_min = 0
-  #   if (d_init!=-1) {
-  #     d_initial = d_init
-  #   } else {
-  #     d_initial = 0.10
-  #   }
-  #   d_max = 1
-  #   r_min = 0.00001
-  #   if (top==0) {
-  #     p_to_num_r = c(0, 1, 2, 4, 6, 10)
-  #   } else {
-  #     p_to_num_r = c(0, 1, 2, 3, 4, 5)
-  #   }
-  #   num_r = p_to_num_r[p]
-  #   r_max = 1
-  #   kmercov_min = 0
-  #   kmercov_initial = estKmercov
-  #   kmercov_max = Inf
-  #   bias_min = 0
-  #   bias_initial = 0.5
-  #   bias_max = Inf
-  #   length_min = 0
-  #   length_initial = estLength/p
-  #   length_max = Inf
-
-  #   #Determine what formula to use, based on p
-  #   if (p==1) {
-  #     r_text = ""
-  #   } else {
-  #     r_text = paste(paste(lapply(1:(num_r), function(x) paste("r", as.character(x), sep="")), collapse=", "), ", ")
-  #   }
-  #   x = x[1:min(2000,length(x))]
-  #   y = y[1:min(2000,length(y))]
-  #   y_transform = as.numeric(x)**transform_exp*as.numeric(y)
-  #   formula = as.formula(paste("y_transform ~ x**transform_exp*length*predict",p,"_",top,"(",r_text, "k, d, kmercov, bias, x)",sep=""))
-
-  #   if (VERBOSE) {cat("trying nlsLM algorithm (Levenberg-Marquardt)\n")}
-
-  #   if (r_inits!=-1) {
-  #     r_initials = unlist(lapply(strsplit(r_inits,","),as.numeric))
-  #     if (length(r_initials)!=num_r) {
-  #       stop("Incorrect number of initial rates supplied.")
-  #     }
-  #     r_initials_list = list(r_initials)
-  #   } else {
-  #     r_initials_list = list(rep(0.001, num_r), 0.001*(1:num_r), 0.001*(num_r:1), rep(0.01, num_r), 0.01*(1:num_r), 0.01*(num_r:1))
-  #   }
-
-  #   for (r_initials in r_initials_list) {
-
-  #     model1 = NULL
-  #     r_start = vector("list", num_r)
-  #     if (p > 1) {
-  #       names(r_start) = paste("r", 1:(num_r), sep="")
-  #       for (i in 1:(num_r)) {
-  #         r_start[[paste("r",i,sep="")]] = r_initials[i]
-  #       }
-  #     }
-
-  #     try(model1 <- nlsLM(formula = formula,
-  #                        start   = c(list(d = d_initial), r_start, list(kmercov = kmercov_initial, bias = bias_initial, length = length_initial)),
-  #                        lower   = c(c(d_min), rep(r_min, num_r), c(kmercov_min, bias_min, length_min)),
-  #                        upper   = c(c(d_max), rep(r_max, num_r), c(kmercov_max, bias_max, length_max)),
-  #                        control = list(minFactor=1e-12, maxiter=max_iterations, factor=0.1), trace=TRACE_FLAG), silent = TRUE)
-
-  #     if (!is.null(model1)) {
-  #       current_deviance = model1$m$deviance()
-  #       #cat("Model deviance: ", current_deviance, "\n")
-  #       if (current_deviance < best_deviance) {
-  #         model = model1
-  #         best_deviance = current_deviance
-  #       }
-  #     } else {
-  #       #print("Model did not converge.")
-  #     }
-
-  #   }
-
-  #   if (!is.null(model))
-  #   {
-  #     model_sum    = summary(model)
-  #     model$p      = p
-  #     model$top = top
-  #     if (p==1) {
-  #       model$hets = list(c(0, 0))
-  #     } else {
-  #       model$hets = lapply(1:(num_r), function(x) min_max1(model_sum$coefficients[paste('r', x, sep=""),]))
-  #     }
-  #     #model$het = c(1-Reduce("*", 1-unlist(lapply(model$hets, '[[', 1))), 1-Reduce("*", 1-unlist(lapply(model$hets, '[[', 2))))
-  #     model$het = c(sum(sapply(model$hets, '[[', 1)), sum(sapply(model$hets, '[[', 2)))
-  #     model$homo = 1-model$het
-  #     model$dups   = min_max(model_sum$coefficients['bias',])
-  #     model$kcov   = min_max(model_sum$coefficients['kmercov',])
-  #     model$mlen   = min_max(model_sum$coefficients['length',])
-  #     model$md     = min_max1(model_sum$coefficients['d',])
-  #     if (p==1) {
-  #       model$ahets = list(c(0))
-  #     } else {
-  #       model$ahets = lapply(1:(num_r), function(x) model_sum$coefficients[paste('r', x, sep=""),][[1]])
-  #     }
-  #     #model$ahet = 1-Reduce("*", 1-unlist(model$ahets))
-  #     model$ahet = Reduce("+", model$ahets)
-  #     model$ahomo = 1-model$ahet
-  #     model$adups = model_sum$coefficients['bias',][[1]]
-  #     model$akcov = model_sum$coefficients['kmercov',][[1]]
-  #     model$amlen = model_sum$coefficients['length',][[1]]
-  #     model$amd   = model_sum$coefficients['d',][[1]]
-  #   }
-
-  #   #print(model)
-  #   #print(model$m$deviance())
-
-  #   return(model)
-  # }
-
-## Format numbers
-  ###############################################################################
+## Format numbers (tiny)
+  
 
   bp_format<-function(num) {paste(formatC(round(num),format="f",big.mark=",", digits=0), "bp",sep=" ")}
 
@@ -2919,7 +2713,7 @@
 
   X_format<-function(num) {paste(signif(num,4),"X",sep="")}
 
-## report_results
+## report_results (big)
 
   #' Report results and make plots
   #'
@@ -4003,7 +3797,7 @@
     
     }
 
-## score model
+## score model (now implemented directly in eval_model())
 
   #' Score nlsLM model by number and percent of residual errors after excluding sequencing errors
   #'
@@ -4016,62 +3810,267 @@
   #' Additionally, the variables "allscore", "fullscore", and "uniquescore" are the
   #' corresponding percentage of kmers that are correctly modeled.
   #' @export
-  score_model<-function(kmer_hist_orig, nls, round, foldername, transform_exp) {
+  # score_model<-function(kmer_hist_orig, nls, round, foldername, transform_exp) {
 
-      x = kmer_hist_orig[[1]]
-      y = kmer_hist_orig[[2]]
-      y_transform = as.numeric(x)**transform_exp*as.numeric(y)
+  #     x = kmer_hist_orig[[1]]
+  #     y = kmer_hist_orig[[2]]
+  #     y_transform = as.numeric(x)**transform_exp*as.numeric(y)
 
-      pred=predict(nls, newdata=data.frame(x))
-      model_sum=summary(nls)
-      p=nls$p
-      kcovfloor = max(1, floor(min_max(model_sum$coefficients['kmercov',])[[1]]))
+  #     pred=predict(nls, newdata=data.frame(x))
+  #     model_sum=summary(nls)
+  #     p=nls$p
+  #     kcovfloor = max(1, floor(min_max(model_sum$coefficients['kmercov',])[[1]]))
 
-      ## Compute error rate, by counting kmers unexplained by model through first peak
-      ## truncate errors as soon as it goes to zero, dont allow it to go back up
-        error_xcutoff = kcovfloor
-        error_xcutoff_ind = tail(which(x<=error_xcutoff),n=1)
-        if (length(error_xcutoff_ind)==0) {error_xcutoff_ind=1}
+  #     ## Compute error rate, by counting kmers unexplained by model through first peak
+  #     ## truncate errors as soon as it goes to zero, dont allow it to go back up
+  #       error_xcutoff = kcovfloor
+  #       error_xcutoff_ind = tail(which(x<=error_xcutoff),n=1)
+  #       if (length(error_xcutoff_ind)==0) {error_xcutoff_ind=1}
 
-      error_kmers = x[1:error_xcutoff_ind]**(-transform_exp)*(y_transform[1:error_xcutoff_ind] - pred[1:error_xcutoff_ind])
+  #     error_kmers = x[1:error_xcutoff_ind]**(-transform_exp)*(y_transform[1:error_xcutoff_ind] - pred[1:error_xcutoff_ind])
 
-      first_zero = -1
+  #     first_zero = -1
 
-      for (i in 1:error_xcutoff_ind) {
-        if (first_zero == -1) {
-          if (error_kmers[i] < 1.0) {
-            first_zero = i
-          }
-        }
-        else {
-          error_kmers[i] = 0
-        }
-      }
+  #     for (i in 1:error_xcutoff_ind) {
+  #       if (first_zero == -1) {
+  #         if (error_kmers[i] < 1.0) {
+  #           first_zero = i
+  #         }
+  #       }
+  #       else {
+  #         error_kmers[i] = 0
+  #       }
+  #     }
 
-      if (first_zero == -1) {
-        first_zero = error_xcutoff_ind
-      }
+  #     if (first_zero == -1) {
+  #       first_zero = error_xcutoff_ind
+  #     }
 
-      #if (TRANSFORM) {
-      #  y_fit = y_transform
-      #} else {
-      #  y_fit = y
-      #}
-      y_fit = y_transform
+  #     #if (TRANSFORM) {
+  #     #  y_fit = y_transform
+  #     #} else {
+  #     #  y_fit = y
+  #     #}
+  #     y_fit = y_transform
 
-      ## The fit is residual sum of square error, excluding sequencing errors
-        model_fit_all    = c(sum(as.numeric(y_fit[first_zero:length(y_fit)]                          - pred[first_zero:length(y_fit)])                           ** 2), first_zero, x[length(y_fit)])
-        model_fit_full   = c(sum(as.numeric(y_fit[first_zero:(min(length(y_fit),(2*p+1)*kcovfloor))] - pred[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))]) ** 2), first_zero, (min(length(y_fit), (2*p+1)*kcovfloor)))
-        model_fit_unique = c(sum(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)]                      - pred[first_zero:((p+1)*kcovfloor)])                       ** 2), first_zero, ((p+1)*kcovfloor))
+  #     ## The fit is residual sum of square error, excluding sequencing errors
+  #       model_fit_all    = c(sum(as.numeric(y_fit[first_zero:length(y_fit)]                          - pred[first_zero:length(y_fit)])                           ** 2), first_zero, x[length(y_fit)])
+  #       model_fit_full   = c(sum(as.numeric(y_fit[first_zero:(min(length(y_fit),(2*p+1)*kcovfloor))] - pred[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))]) ** 2), first_zero, (min(length(y_fit), (2*p+1)*kcovfloor)))
+  #       model_fit_unique = c(sum(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)]                      - pred[first_zero:((p+1)*kcovfloor)])                       ** 2), first_zero, ((p+1)*kcovfloor))
 
-      ## The score is the percentage of kmers correctly modeled, excluding sequencing errors
-        model_fit_allscore    = c(1-sum(abs(as.numeric(y_fit[first_zero:length(y_fit)]                           - pred[first_zero:length(y_fit)])))                           / sum(as.numeric(y_fit[first_zero:length(y_fit)])),                           first_zero, x[length(y_fit)])
-        model_fit_fullscore   = c(1-sum(abs(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))] - pred[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))]))) / sum(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))])), first_zero, (min(length(y_fit), (2*p+1)*kcovfloor)))
-        model_fit_uniquescore = c(1-sum(abs(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)]                       - pred[first_zero:((p+1)*kcovfloor)])))                       / sum(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)])),                       first_zero, ((p+1)*kcovfloor))
+  #     ## The score is the percentage of kmers correctly modeled, excluding sequencing errors
+  #       model_fit_allscore    = c(1-sum(abs(as.numeric(y_fit[first_zero:length(y_fit)]                           - pred[first_zero:length(y_fit)])))                           / sum(as.numeric(y_fit[first_zero:length(y_fit)])),                           first_zero, x[length(y_fit)])
+  #       model_fit_fullscore   = c(1-sum(abs(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))] - pred[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))]))) / sum(as.numeric(y_fit[first_zero:(min(length(y_fit), (2*p+1)*kcovfloor))])), first_zero, (min(length(y_fit), (2*p+1)*kcovfloor)))
+  #       model_fit_uniquescore = c(1-sum(abs(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)]                       - pred[first_zero:((p+1)*kcovfloor)])))                       / sum(as.numeric(y_fit[first_zero:((p+1)*kcovfloor)])),                       first_zero, ((p+1)*kcovfloor))
 
-      fit = data.frame(all  = model_fit_all,      allscore  = model_fit_allscore,
-                       full = model_fit_full,     fullscore = model_fit_fullscore,
-                       unique = model_fit_unique, uniquescore = model_fit_uniquescore)
+  #     fit = data.frame(all  = model_fit_all,      allscore  = model_fit_allscore,
+  #                      full = model_fit_full,     fullscore = model_fit_fullscore,
+  #                      unique = model_fit_unique, uniquescore = model_fit_uniquescore)
 
-      return (fit)
-  }
+  #     return (fit)
+  # }
+
+## nls_peak (now implemented directly in genomeScope())
+
+  # #' Uses nlsLM to fit 2p peak model
+  # #'
+  # #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
+  # #' @param y A numeric vector of the y-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
+  # #' @param k An integer corresponding to the kmer length.
+  # #' @param p An integer corresponding to the ploidy.
+  # #' @param top An integer corresponding to the topology.
+  # #' @param estKmercov A numeric corresponding to the estimated average kmer coverage of the polyploid genome.
+  # #' @param estLength A numeric corresponding to the estimated polyploid genome length.
+  # #' @param max_iterations An integer corresponding to the maximum number iterations to use for nlsLM.
+  # #' @return An nlsLM model object with some additional components.
+  # #' @export
+  # nls_peak<-function(x, y, k, p, top, estKmercov, estLength, max_iterations) {
+  #   #Initiate variables
+  #   model = NULL
+  #   best_deviance = Inf
+  #   d_min = 0
+  #   if (d_init!=-1) {
+  #     d_initial = d_init
+  #   } else {
+  #     d_initial = 0.10
+  #   }
+  #   d_max = 1
+  #   r_min = 0.00001
+  #   if (top==0) {
+  #     p_to_num_r = c(0, 1, 2, 4, 6, 10)
+  #   } else {
+  #     p_to_num_r = c(0, 1, 2, 3, 4, 5)
+  #   }
+  #   num_r = p_to_num_r[p]
+  #   r_max = 1
+  #   kmercov_min = 0
+  #   kmercov_initial = estKmercov
+  #   kmercov_max = Inf
+  #   bias_min = 0
+  #   bias_initial = 0.5
+  #   bias_max = Inf
+  #   length_min = 0
+  #   length_initial = estLength/p
+  #   length_max = Inf
+
+  #   #Determine what formula to use, based on p
+  #   if (p==1) {
+  #     r_text = ""
+  #   } else {
+  #     r_text = paste(paste(lapply(1:(num_r), function(x) paste("r", as.character(x), sep="")), collapse=", "), ", ")
+  #   }
+  #   x = x[1:min(2000,length(x))]
+  #   y = y[1:min(2000,length(y))]
+  #   y_transform = as.numeric(x)**transform_exp*as.numeric(y)
+  #   formula = as.formula(paste("y_transform ~ x**transform_exp*length*predict",p,"_",top,"(",r_text, "k, d, kmercov, bias, x)",sep=""))
+
+  #   if (VERBOSE) {cat("trying nlsLM algorithm (Levenberg-Marquardt)\n")}
+
+  #   if (r_inits!=-1) {
+  #     r_initials = unlist(lapply(strsplit(r_inits,","),as.numeric))
+  #     if (length(r_initials)!=num_r) {
+  #       stop("Incorrect number of initial rates supplied.")
+  #     }
+  #     r_initials_list = list(r_initials)
+  #   } else {
+  #     r_initials_list = list(rep(0.001, num_r), 0.001*(1:num_r), 0.001*(num_r:1), rep(0.01, num_r), 0.01*(1:num_r), 0.01*(num_r:1))
+  #   }
+
+  #   for (r_initials in r_initials_list) {
+
+  #     model1 = NULL
+  #     r_start = vector("list", num_r)
+  #     if (p > 1) {
+  #       names(r_start) = paste("r", 1:(num_r), sep="")
+  #       for (i in 1:(num_r)) {
+  #         r_start[[paste("r",i,sep="")]] = r_initials[i]
+  #       }
+  #     }
+
+  #     try(model1 <- nlsLM(formula = formula,
+  #                        start   = c(list(d = d_initial), r_start, list(kmercov = kmercov_initial, bias = bias_initial, length = length_initial)),
+  #                        lower   = c(c(d_min), rep(r_min, num_r), c(kmercov_min, bias_min, length_min)),
+  #                        upper   = c(c(d_max), rep(r_max, num_r), c(kmercov_max, bias_max, length_max)),
+  #                        control = list(minFactor=1e-12, maxiter=max_iterations, factor=0.1), trace=TRACE_FLAG), silent = TRUE)
+
+  #     if (!is.null(model1)) {
+  #       current_deviance = model1$m$deviance()
+  #       #cat("Model deviance: ", current_deviance, "\n")
+  #       if (current_deviance < best_deviance) {
+  #         model = model1
+  #         best_deviance = current_deviance
+  #       }
+  #     } else {
+  #       #print("Model did not converge.")
+  #     }
+
+  #   }
+
+  #   if (!is.null(model))
+  #   {
+  #     model_sum    = summary(model)
+  #     model$p      = p
+  #     model$top = top
+  #     if (p==1) {
+  #       model$hets = list(c(0, 0))
+  #     } else {
+  #       model$hets = lapply(1:(num_r), function(x) min_max1(model_sum$coefficients[paste('r', x, sep=""),]))
+  #     }
+  #     #model$het = c(1-Reduce("*", 1-unlist(lapply(model$hets, '[[', 1))), 1-Reduce("*", 1-unlist(lapply(model$hets, '[[', 2))))
+  #     model$het = c(sum(sapply(model$hets, '[[', 1)), sum(sapply(model$hets, '[[', 2)))
+  #     model$homo = 1-model$het
+  #     model$dups   = min_max(model_sum$coefficients['bias',])
+  #     model$kcov   = min_max(model_sum$coefficients['kmercov',])
+  #     model$mlen   = min_max(model_sum$coefficients['length',])
+  #     model$md     = min_max1(model_sum$coefficients['d',])
+  #     if (p==1) {
+  #       model$ahets = list(c(0))
+  #     } else {
+  #       model$ahets = lapply(1:(num_r), function(x) model_sum$coefficients[paste('r', x, sep=""),][[1]])
+  #     }
+  #     #model$ahet = 1-Reduce("*", 1-unlist(model$ahets))
+  #     model$ahet = Reduce("+", model$ahets)
+  #     model$ahomo = 1-model$ahet
+  #     model$adups = model_sum$coefficients['bias',][[1]]
+  #     model$akcov = model_sum$coefficients['kmercov',][[1]]
+  #     model$amlen = model_sum$coefficients['length',][[1]]
+  #     model$amd   = model_sum$coefficients['d',][[1]]
+  #   }
+
+  #   #print(model)
+  #   #print(model$m$deviance())
+
+  #   return(model)
+  # }
+
+## estimate_Genome_peakp (now implemented directly in genomeScope())
+
+
+  #' Function to fit 2p peak model, with p forms
+  #'
+  #' @param kmer_hist_orig A data frame of the original histogram data (starting at 1 and with last position removed).
+  #' @param x An integer vector of the x-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
+  #' @param y A numeric vector of the y-coordinates of the histogram (after filtering out low coverage errors and high coverage kmers).
+  #' @param k An integer corresponding to the kmer length.
+  #' @param p An integer corresponding to the ploidy.
+  #' @param topology An integer corresponding to the topology to use.
+  #' @param estKmercov An integer corresponding to the estimated kmer coverage of the polyploid genome.
+  #' Set to -1 if not specified by user.
+  #' @param round An integer corresponding to the iteration number (0, 1, 2, 3) for the fitting process.
+  #' @param foldername A character vector corresponding to the name of the output directory.
+  #' @param arguments A data frame of the user-specified inputs.
+  #' @return A list (nls, nlsscore) where nls is the nlsLM model object (with some additional components)
+  #' and nlsscore is the score (model RSSE) corresponding to the best fit (of the p forms).
+  #' @export
+    # estimate_Genome_peakp <- function(kmer_hist_orig, x, y, k, p, topology, estKmercov, round, foldername, arguments) {
+    #   if (topology==-1) {
+    #     p_to_num_topologies = c(1, 1, 1, 2, 5, 16)
+    #     num_topologies = p_to_num_topologies[p]
+    #     topologies = 1:num_topologies
+    #   }
+    #   else {
+    #     num_topologies = 1
+    #     topologies = c(topology)
+    #   }
+    #   numofKmers = sum(as.numeric(x)*as.numeric(y))
+    #   if (estKmercov==-1) {
+    #     #In situations with low heterozygosity, the peak with highest amplitude typically corresponds to the homozygous peak (i.e. the p-th peak).
+    #     #However, with increasing heterozygosity, the highest amplitude peak may be an earlier peak.
+    #     #Thus, when setting the estimated kmer coverage, we will need to iterate through these possibilities.
+    #     #num_peak_indices indicates how many possibilities we need to iterate through.
+    #     num_peak_indices = p
+    #     y_transform = as.numeric(x)**transform_exp*as.numeric(y)
+    #     estKmercov1 = x[which(y_transform==max(y_transform))][1]
+    #   }
+    #   else {
+    #     # When the user sets the estimated kmer coverage, we only need to iterate through one possibility
+    #     num_peak_indices = 1
+    #     ## We set the estimated kmer coverage to be the user specified value
+    #     estKmercov1 = estKmercov
+    #   }
+    #   estLength1 = numofKmers/estKmercov1
+
+    #   nls00 = NULL
+    #   peak_indices = 1:num_peak_indices
+    #   for (i in peak_indices) {
+    #     nls0 = NULL
+    #     top_count = 0
+    #     ## We see what happens when we set the estimated kmer coverage to be 1/i times the x-coordinate where the max peak occurs (1 <= i <= p if the user doesn't set the estimated kmer coverage, and i=1 if they do)
+    #     estKmercov2 = estKmercov1 / i
+    #     estLength2 = numofKmers/estKmercov2
+
+    #     if (VERBOSE) {cat(paste("trying with kmercov: ", estKmercov2, "\n"))}
+
+    #     for (top in topologies) {
+    #       if (VERBOSE) {cat(paste("trying with topology: ", top, "\n"))}
+    #       top_count = top_count + 1
+    #       nls1 = nls_peak(x, y, k, p, top, estKmercov2, estLength2, MAX_ITERATIONS)
+    #       nls0 = eval_model(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments)[[1]]
+    #     }
+    #     if (i < num_peak_indices) { #if this is not the last evaluation
+    #       nls00 = eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments)[[1]]
+    #     }
+    #   }
+
+    #   return(eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments))
+    # }
