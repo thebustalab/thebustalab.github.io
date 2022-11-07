@@ -3144,7 +3144,7 @@
                         topology    <- arguments$topology
                         d_init      <- arguments$initial_repetitiveness
                         r_inits     <- arguments$initial_heterozygosities
-                        transform_exp <- 1
+                        transform_exp <- arguments$transform_exp
                         TESTING     <- arguments$testing
                         TRUE_PARAMS <- arguments$true_params
                         TRACE_FLAG <- arguments$trace_flag
@@ -3323,7 +3323,16 @@
                 
                 ## Report the results, note using the original full profile
                     
-                    report_results(kmer_prof,kmer_prof_orig, k, p, best_container, foldername, arguments, FALSE)
+                    report_results(
+                        kmer_prof,
+                        kmer_prof_orig,
+                        k,
+                        p,
+                        best_container,
+                        foldername,
+                        arguments,
+                        FALSE
+                    )
 
             }
 
