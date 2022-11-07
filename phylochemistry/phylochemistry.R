@@ -3505,14 +3505,18 @@
                         model = container[[1]]
 
                     # automatically zoom into the relevant regions of the plot, ignore first 15 positions
-                        xmax=length(x)
-                        start_orig=which(y_orig == min(y_orig[1:TYPICAL_ERROR]))
-                        start=which(y == min(y[1:TYPICAL_ERROR]))
-                        zoomx=x[start:(xmax-1)]
-                        zoomy_orig=y_orig[start_orig:(xmax-1)]
-                        zoomy=y[start:(xmax-1)]
+                    ## I think this is just for plotting and can be turned off
+                        
+                        xmax = length(x)
+                        start_orig = which(y_orig == min(y_orig[1:TYPICAL_ERROR]))
+                        start = which(y == min(y[1:TYPICAL_ERROR]))
+                        zoomx = x[start:(xmax-1)]
+                        zoomy_orig = y_orig[start_orig:(xmax-1)]
+                        zoomy = y[start:(xmax-1)]
             
                     ## allow for a little space above max value past the noise
+                    ## I think this is just for plotting and can be turned off
+                        
                         y_limit_orig = max(zoomy_orig[start_orig:length(zoomy_orig)])*1.1
                         y_limit = max(zoomy[start:length(zoomy)])*1.1
 
@@ -3546,6 +3550,7 @@
                         }
             
                     ## Uncomment this to enforce a specific number
+                    ## I think this is just for plotting and can be turned off
                     # x_limit=150
             
                     ## Define some initial values
@@ -3708,7 +3713,7 @@
                         # abline(v=length(kmer_hist[,1]),col=COLOR_COVTHRES,lty="dashed", lwd=3)
                         # }
                         # box(col="black")
-            
+
                     ## Now the modeling
                             
                             if(!is.null(model)) {
@@ -3940,7 +3945,7 @@
 
                                 ### THIS IS ALL NOW TURNED OFF
 
-                            # ## finish plots
+                            # ## finish plots (off)
 
                             #   ## Finish Linear Plot
                             #     title(paste("\n\nlen:",  prettyNum(total_len[1], big.mark=","),
