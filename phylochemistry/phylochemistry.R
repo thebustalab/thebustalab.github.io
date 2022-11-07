@@ -3105,34 +3105,35 @@
                     ## Define default arguments
 
                         arguments <- vector()
-                        arguments$input <- input_histogram_file
-                        arguments$output <- output_dir
-                        arguments$ploidy <- ploidy
-                        arguments$kmer_length <- kmer_length
+                        arguments$input <- input_histogram_file # parser$add_argument("-i", "--input", help = "input histogram file")
+                        arguments$output <- output_dir # parser$add_argument("-o", "--output", help = "output directory name")
+                        arguments$ploidy <- ploidy # parser$add_argument("-p", "--ploidy", type = "integer", default = 2, help = "ploidy (1, 2, 3, 4, 5, or 6) for model to use [default 2]")
+                        arguments$kmer_length <- kmer_length # parser$add_argument("-k", "--kmer_length", type = "integer", default = 21, help = "kmer length used to calculate kmer spectra [default 21]")
                         arguments$version <- FALSE
-                        arguments$name_prefix <- "test"
-                        arguments$fitted_hist <- FALSE
-                        arguments$initial_heterozygosities <- -1
-                        arguments$initial_repetitiveness <- -1
-                        arguments$lambda <- -1
-                        arguments$max_kmercov <- -1
+                        arguments$name_prefix <- "test" # parser$add_argument("-n", "--name_prefix", default = "", help = "optional name_prefix for output files")
+                        arguments$fitted_hist <- FALSE # parser$add_argument("--fitted_hist", action="store_true", default=FALSE, help = "ADVANCED: generates a fitted histogram for kmer multiplicity 0-4 and a lookup table of probabilities")
+                        arguments$initial_heterozygosities <- -1 # parser$add_argument("--initial_heterozygosities", type="character", default = -1, help = "ADVANCED: flag to set initial values for nucleotide heterozygosity rates")
+                        arguments$initial_repetitiveness <- -1 # parser$add_argument("--initial_repetitiveness", type="character", default = -1, help = "ADVANCED: flag to set initial value for repetitiveness")
+                        arguments$lambda <- -1 # parser$add_argument("-l", "--lambda", "--kcov", "--kmercov", type = "integer", default=-1, help = "optional initial kmercov estimate for model to use")
+                        arguments$max_kmercov <- -1 # parser$add_argument("-m", "--max_kmercov", type = "integer", default=-1, help = "optional maximum kmer coverage threshold (kmers with coverage greater than max_kmercov are ignored by the model)")
                         arguments$name_prefix <- ""
-                        arguments$no_unique_sequence <- FALSE
-                        arguments$num_rounds <- 4
-                        arguments$start_shift <- 5
-                        arguments$testing <- FALSE
-                        arguments$topology <- 0
-                        arguments$trace_flag <- FALSE
-                        arguments$transform_exp <- 1
-                        arguments$true_params <- -1
-                        arguments$typical_error <- 15
-                        arguments$verbose <- FALSE
-                        arguments$version <- FALSE
+                        arguments$no_unique_sequence <- FALSE # parser$add_argument("--no_unique_sequence", action="store_true", default=FALSE, help = "optional flag to turn off yellow unique sequence line in plots")
+                        arguments$num_rounds <- 4 # parser$add_argument("--num_rounds", type = "integer", default = 4, help = "ADVANCED: parameter for the number of optimization rounds")
+                        arguments$start_shift <- 5 # parser$add_argument("--start_shift", type = "integer", default=START_SHIFT, help = "ADVANCED: coverage shifts to exclude between fitting rounds")
+                        arguments$testing <- FALSE # parser$add_argument("--testing", action="store_true", default=FALSE, help = "ADVANCED: flag to create testing.tsv file with model parameters")
+                        arguments$topology <- 0 # parser$add_argument("-t", "--topology", type = "integer", default = 0, help = "ADVANCED: flag for topology for model to use")
+                        arguments$trace_flag <- FALSE # parser$add_argument("--trace_flag", action="store_true", default=FALSE, help = "ADVANCED: flag to turn on printing of iteration progress of nlsLM function")
+                        arguments$transform_exp <- 1 # parser$add_argument("--transform_exp", type="integer", default=1, help = "ADVANCED: parameter for the exponent when fitting a transformed (x**transform_exp*y vs. x) kmer histogram [default 1]")
+                        arguments$true_params <- -1 # parser$add_argument("--true_params", type="character", default = -1, help = "ADVANCED: flag to state true simulated parameters for testing mode")
+                        arguments$typical_error <- 15 # parser$add_argument("--typical_error", type = "integer", default=TYPICAL_ERROR, help = "ADVANCED: typical level of sequencing error")
+                        arguments$verbose <- FALSE # parser$add_argument("--verbose", action="store_true", default=FALSE, help = "optional flag to print messages during execution")
+                        arguments$version <- FALSE # parser$add_argument("-v", "--version", action="store_true", default=FALSE, help="print the version and exit")
                         version_message <- "GenomeScope 2.0\n"
 
                         if (is.null(arguments$input) | is.null(arguments$output)) { stop("Please provide input and output") }
 
                     ## Transfer arguments to variable names
+                        
                         histfile <- arguments$input
                         foldername  <- arguments$output
                         p           <- arguments$ploidy
@@ -3160,29 +3161,6 @@
                         SCORE_CLOSE = 0.20 ## Overrule if two scores are within this percent (0.05 = 5%) but larger difference in het
                         SCORE_HET_FOLD_DIFFERENCE = 10 ## Overrule heterozygosity if there is a large difference in het rate
                     
-                    ## info about args
-                        # parser$add_argument("-v", "--version", action="store_true", default=FALSE, help="print the version and exit")
-                        # parser$add_argument("-i", "--input", help = "input histogram file")
-                        # parser$add_argument("-o", "--output", help = "output directory name")
-                        # parser$add_argument("-p", "--ploidy", type = "integer", default = 2, help = "ploidy (1, 2, 3, 4, 5, or 6) for model to use [default 2]")
-                        # parser$add_argument("-k", "--kmer_length", type = "integer", default = 21, help = "kmer length used to calculate kmer spectra [default 21]")
-                        # parser$add_argument("-n", "--name_prefix", default = "", help = "optional name_prefix for output files")
-                        # parser$add_argument("-l", "--lambda", "--kcov", "--kmercov", type = "integer", default=-1, help = "optional initial kmercov estimate for model to use")
-                        # parser$add_argument("-m", "--max_kmercov", type = "integer", default=-1, help = "optional maximum kmer coverage threshold (kmers with coverage greater than max_kmercov are ignored by the model)")
-                        # parser$add_argument("--verbose", action="store_true", default=FALSE, help = "optional flag to print messages during execution")
-                        # parser$add_argument("--no_unique_sequence", action="store_true", default=FALSE, help = "optional flag to turn off yellow unique sequence line in plots")
-                        # parser$add_argument("-t", "--topology", type = "integer", default = 0, help = "ADVANCED: flag for topology for model to use")
-                        # parser$add_argument("--initial_repetitiveness", type="character", default = -1, help = "ADVANCED: flag to set initial value for repetitiveness")
-                        # parser$add_argument("--initial_heterozygosities", type="character", default = -1, help = "ADVANCED: flag to set initial values for nucleotide heterozygosity rates")
-                        # parser$add_argument("--transform_exp", type="integer", default=1, help = "ADVANCED: parameter for the exponent when fitting a transformed (x**transform_exp*y vs. x) kmer histogram [default 1]")
-                        # parser$add_argument("--testing", action="store_true", default=FALSE, help = "ADVANCED: flag to create testing.tsv file with model parameters")
-                        # parser$add_argument("--true_params", type="character", default = -1, help = "ADVANCED: flag to state true simulated parameters for testing mode")
-                        # parser$add_argument("--trace_flag", action="store_true", default=FALSE, help = "ADVANCED: flag to turn on printing of iteration progress of nlsLM function")
-                        # parser$add_argument("--num_rounds", type = "integer", default = 4, help = "ADVANCED: parameter for the number of optimization rounds")
-                        # parser$add_argument("--fitted_hist", action="store_true", default=FALSE, help = "ADVANCED: generates a fitted histogram for kmer multiplicity 0-4 and a lookup table of probabilities")
-                        # parser$add_argument("--start_shift", type = "integer", default=START_SHIFT, help = "ADVANCED: coverage shifts to exclude between fitting rounds")
-                        # parser$add_argument("--typical_error", type = "integer", default=TYPICAL_ERROR, help = "ADVANCED: typical level of sequencing error")
-
                     ## Suppress the warnings if the modeling goes crazy, those are in try/catch blocks anyways
                         options(warn = -1)
 
