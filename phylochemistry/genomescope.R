@@ -79,11 +79,11 @@
                            full = model_fit_full,     fullscore = model_fit_fullscore,
                            unique = model_fit_unique, uniquescore = model_fit_uniquescore)
 
-      if (VERBOSE) {
-        mdir = paste(foldername, "/round", round, ".1", sep="")
-        dir.create(mdir, showWarnings=FALSE)
-        report_results(kmer_prof_orig,kmer_prof_orig, k, p, (list(nls0, nls0score)) , mdir, arguments, TRUE)
-      }
+      # if (VERBOSE) {
+      #   mdir = paste(foldername, "/round", round, ".1", sep="")
+      #   dir.create(mdir, showWarnings=FALSE)
+      #   report_results(kmer_prof_orig,kmer_prof_orig, k, p, (list(nls0, nls0score)) , mdir, arguments, TRUE)
+      # }
     }
     else {
       if (VERBOSE) {cat("nls0score failed to converge\n")}
@@ -149,11 +149,11 @@
 
       if(VERBOSE) {cat(paste("nls1score$all:\t", nls1score$all[[1]], "\n"))}
 
-      if (VERBOSE) {
-        mdir = paste(foldername, "/round", round, ".2", sep="")
-        dir.create(mdir, showWarnings=FALSE)
-        report_results(kmer_prof_orig, kmer_prof_orig, k, p, (list(nls1, nls1score)) , mdir, arguments, FALSE)
-      }
+      # if (VERBOSE) {
+      #   mdir = paste(foldername, "/round", round, ".2", sep="")
+      #   dir.create(mdir, showWarnings=FALSE)
+      #   report_results(kmer_prof_orig, kmer_prof_orig, k, p, (list(nls1, nls1score)) , mdir, arguments, FALSE)
+      # }
     }
     else {
       if (VERBOSE) {cat("nls1score failed to converge\n")}
@@ -2714,6 +2714,11 @@
 
   X_format<-function(num) {paste(signif(num,4),"X",sep="")}
 
+  na.zero <- function (x) {
+    x[is.na(x)] <- 0
+    return(x)
+  }
+
 ## report_results (big)
 
   #' Report results and make plots
@@ -2729,7 +2734,7 @@
   #' @param IN_VERBOSE A boolean flag to designate whether report_results is being called in a VERBOSE block.
   #' @export
   
-    report_results<-function(kmer_hist,kmer_hist_orig, k, p, container, foldername, arguments, IN_VERBOSE) {
+    report_results <- function(kmer_hist,kmer_hist_orig, k, p, container, foldername, arguments, IN_VERBOSE) {
       
       output <- list()
 
@@ -3612,14 +3617,7 @@
         ## Finalize the progress
         progressFilename=paste(foldername, "/", arguments$name_prefix, "progress.txt",sep="")
         cat(model_status, file=progressFilename, sep="\n", append=TRUE)
-        
-      ## 0 if NA
 
-        na.zero <- function (x) {
-        x[is.na(x)] <- 0
-            return(x)
-        }
-      
       ## Merfin probabilities
 
         colors <- c("black","red","green","purple","blue")
@@ -3723,78 +3721,81 @@
           
         }
 
-        if (TESTING) {
-          if (TRUE_PARAMS!=-1) {
-            testingFile <- paste(foldername, "/", arguments$name_prefix, "SIMULATED_testing.tsv",sep="")
-          } else {
-            testingFile <- paste(foldername,"/SIMULATED_testing.tsv",sep="")
-          }
-          if (p==1) {
-            cat(paste(amd, akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-          }
-          if (p==2) {
-            cat(paste(amd, ahets[[1]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-          }
-          if (p==3) {
-            if (TRUE_PARAMS!=-1) {
-              true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
-              cat(paste(amd, ahets[[1]], ahets[[2]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], sep="\t"), file=testingFile, sep="\n", append=FALSE)
-            } else {
-              cat(paste(amd, ahets[[1]], ahets[[2]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-            }
-          }
-          if (p==4) {
-            if (topology==0) {
-              if (TRUE_PARAMS!=-1) {
-                true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], true_params[5], true_params[6], sep="\t"), file=testingFile, sep="\n", append=FALSE)
-              } else {
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-              }
-            } else {
-              if (TRUE_PARAMS!=-1) {
-                true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
-                cat(paste(amd, switch(top, ahets[[1]], 0), switch(top, 0, ahets[[1]]), ahets[[2]], ahets[[3]], akcov, adups, atotal_len, top, true_params[1], switch(true_params[5], true_params[2], 0), switch(true_params[5], 0, true_params[2]), true_params[3], true_params[4], true_params[5], sep="\t"), file=testingFile, sep="\n", append=FALSE)
-              } else {
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-              }
-            }
-          }
-          if (p==5) {
-            if (topology==0) {
-              if (TRUE_PARAMS!=-1) {
-                true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], true_params[5], true_params[6], true_params[7], true_params[8], sep="\t"), file=testingFile, sep="\n", append=FALSE)
-              } else {
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-              }
-            } else {
-              if (TRUE_PARAMS!=-1) {
-                true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
-                cat(paste(amd, switch(top, ahets[[1]], ahets[[1]], 0, 0, 0), switch(top, 0, 0, ahets[[1]], ahets[[1]], ahets[[1]]), switch(top, ahets[[2]], 0, ahets[[2]], 0, 0), switch(top, 0, ahets[[2]], 0, 0, 0), switch(top, 0, 0, 0, ahets[[2]], ahets[[2]]), switch(top, ahets[[3]], ahets[[3]], ahets[[3]], ahets[[3]], 0), switch(top, 0, 0, 0, 0, ahets[[3]]), ahets[[4]], akcov, adups, atotal_len, top, true_params[1], switch(true_params[6], true_params[2], true_params[2], 0, 0, 0), switch(true_params[6], 0, 0, true_params[2], true_params[2], true_params[2]), switch(true_params[6], true_params[3], 0, true_params[3], 0, 0), switch(true_params[6], 0, true_params[3], 0, 0, 0), switch(true_params[6], 0, 0, 0, true_params[3], true_params[3]), switch(true_params[6], true_params[4], true_params[4], true_params[4], true_params[4], 0), switch(true_params[6], 0, 0, 0, 0, true_params[4]), true_params[5], true_params[6], sep="\t"), file=testingFile, sep="\n", append=FALSE)
-              } else {
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-              }
-            }
-          }
-          if (p==6) {
-            if (topology==0) {
-              if (TRUE_PARAMS!=-1) {
-                true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], ahets[[7]], ahets[[8]], ahets[[9]], ahets[[10]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], true_params[5], true_params[6], true_params[7], true_params[8], true_params[9], true_params[10], true_params[11], true_params[12], sep="\t"), file=testingFile, sep="\n", append=FALSE)
-              } else {
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], ahets[[7]], ahets[[8]], ahets[[9]], ahets[[10]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-              }
-            } else {
-              if (TRUE_PARAMS!=-1) {
-                true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
-                cat(paste(amd, ifelse(top %in% c(1,2,3,4,5), ahets[[1]], 0), ifelse(top %in% c(6,7,8,9,10,11,12,13), ahets[[1]], 0), ifelse(top %in% c(14,15,16), ahets[[1]], 0), ifelse(top %in% c(1,2,6,7), ahets[[2]], 0), ifelse(top %in% c(3,4,5,14,15,16), ahets[[2]], 0), ifelse(top %in% c(8,9,10), ahets[[2]], 0), ifelse(top %in% c(11,12,13), ahets[[2]], 0), ifelse(top %in% c(1,3,6,8,14), ahets[[3]], 0), ifelse(top %in% c(2,7,11), ahets[[3]], 0), ifelse(top %in% c(4,5,15,16), ahets[[3]], 0), ifelse(top %in% c(9,10,12,13), ahets[[3]], 0), ifelse(top %in% c(1,2,3,4,6,7,8,9,11,12,14,15), ahets[[4]], 0), ifelse(top %in% c(5,16), ahets[[4]], 0), ifelse(top %in% c(10,13), ahets[[4]], 0), ahets[[5]], akcov, adups, atotal_len, top, true_params[1], ifelse(true_params[7] %in% c(1,2,3,4,5), true_params[2], 0), ifelse(true_params[7] %in% c(6,7,8,9,10,11,12,13), true_params[2], 0), ifelse(true_params[7] %in% c(14,15,16), true_params[2], 0), ifelse(true_params[7] %in% c(1,2,6,7), true_params[3], 0), ifelse(true_params[7] %in% c(3,4,5,14,15,16), true_params[3], 0), ifelse(true_params[7] %in% c(8,9,10), true_params[3], 0), ifelse(true_params[7] %in% c(11,12,13), true_params[3], 0), ifelse(true_params[7] %in% c(1,3,6,8,14), true_params[4], 0), ifelse(true_params[7] %in% c(2,7,11), true_params[4], 0), ifelse(true_params[7] %in% c(4,5,15,16), true_params[4], 0), ifelse(true_params[7] %in% c(9,10,12,13), true_params[4], 0), ifelse(true_params[7] %in% c(1,2,3,4,6,7,8,9,11,12,14,15), true_params[5], 0), ifelse(true_params[7] %in% c(5,16), true_params[5], 0), ifelse(true_params[7] %in% c(10,13), true_params[5], 0), true_params[6], true_params[7], sep="\t"), file=testingFile, sep="\n", append=FALSE)
-              } else {
-                cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
-              }
-            }
-          }
-        }
+        ## Some sort of advanced testing (turned off)
+
+        # if (TESTING) {
+
+        #   if (TRUE_PARAMS!=-1) {
+        #     testingFile <- paste(foldername, "/", arguments$name_prefix, "SIMULATED_testing.tsv",sep="")
+        #   } else {
+        #     testingFile <- paste(foldername,"/SIMULATED_testing.tsv",sep="")
+        #   }
+        #   if (p==1) {
+        #     cat(paste(amd, akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #   }
+        #   if (p==2) {
+        #     cat(paste(amd, ahets[[1]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #   }
+        #   if (p==3) {
+        #     if (TRUE_PARAMS!=-1) {
+        #       true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
+        #       cat(paste(amd, ahets[[1]], ahets[[2]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], sep="\t"), file=testingFile, sep="\n", append=FALSE)
+        #     } else {
+        #       cat(paste(amd, ahets[[1]], ahets[[2]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #     }
+        #   }
+        #   if (p==4) {
+        #     if (topology==0) {
+        #       if (TRUE_PARAMS!=-1) {
+        #         true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], true_params[5], true_params[6], sep="\t"), file=testingFile, sep="\n", append=FALSE)
+        #       } else {
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #       }
+        #     } else {
+        #       if (TRUE_PARAMS!=-1) {
+        #         true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
+        #         cat(paste(amd, switch(top, ahets[[1]], 0), switch(top, 0, ahets[[1]]), ahets[[2]], ahets[[3]], akcov, adups, atotal_len, top, true_params[1], switch(true_params[5], true_params[2], 0), switch(true_params[5], 0, true_params[2]), true_params[3], true_params[4], true_params[5], sep="\t"), file=testingFile, sep="\n", append=FALSE)
+        #       } else {
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #       }
+        #     }
+        #   }
+        #   if (p==5) {
+        #     if (topology==0) {
+        #       if (TRUE_PARAMS!=-1) {
+        #         true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], true_params[5], true_params[6], true_params[7], true_params[8], sep="\t"), file=testingFile, sep="\n", append=FALSE)
+        #       } else {
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #       }
+        #     } else {
+        #       if (TRUE_PARAMS!=-1) {
+        #         true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
+        #         cat(paste(amd, switch(top, ahets[[1]], ahets[[1]], 0, 0, 0), switch(top, 0, 0, ahets[[1]], ahets[[1]], ahets[[1]]), switch(top, ahets[[2]], 0, ahets[[2]], 0, 0), switch(top, 0, ahets[[2]], 0, 0, 0), switch(top, 0, 0, 0, ahets[[2]], ahets[[2]]), switch(top, ahets[[3]], ahets[[3]], ahets[[3]], ahets[[3]], 0), switch(top, 0, 0, 0, 0, ahets[[3]]), ahets[[4]], akcov, adups, atotal_len, top, true_params[1], switch(true_params[6], true_params[2], true_params[2], 0, 0, 0), switch(true_params[6], 0, 0, true_params[2], true_params[2], true_params[2]), switch(true_params[6], true_params[3], 0, true_params[3], 0, 0), switch(true_params[6], 0, true_params[3], 0, 0, 0), switch(true_params[6], 0, 0, 0, true_params[3], true_params[3]), switch(true_params[6], true_params[4], true_params[4], true_params[4], true_params[4], 0), switch(true_params[6], 0, 0, 0, 0, true_params[4]), true_params[5], true_params[6], sep="\t"), file=testingFile, sep="\n", append=FALSE)
+        #       } else {
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #       }
+        #     }
+        #   }
+        #   if (p==6) {
+        #     if (topology==0) {
+        #       if (TRUE_PARAMS!=-1) {
+        #         true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], ahets[[7]], ahets[[8]], ahets[[9]], ahets[[10]], akcov, adups, atotal_len, top, true_params[1], true_params[2], true_params[3], true_params[4], true_params[5], true_params[6], true_params[7], true_params[8], true_params[9], true_params[10], true_params[11], true_params[12], sep="\t"), file=testingFile, sep="\n", append=FALSE)
+        #       } else {
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], ahets[[6]], ahets[[7]], ahets[[8]], ahets[[9]], ahets[[10]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #       }
+        #     } else {
+        #       if (TRUE_PARAMS!=-1) {
+        #         true_params = unlist(lapply(strsplit(TRUE_PARAMS, ","), as.numeric))
+        #         cat(paste(amd, ifelse(top %in% c(1,2,3,4,5), ahets[[1]], 0), ifelse(top %in% c(6,7,8,9,10,11,12,13), ahets[[1]], 0), ifelse(top %in% c(14,15,16), ahets[[1]], 0), ifelse(top %in% c(1,2,6,7), ahets[[2]], 0), ifelse(top %in% c(3,4,5,14,15,16), ahets[[2]], 0), ifelse(top %in% c(8,9,10), ahets[[2]], 0), ifelse(top %in% c(11,12,13), ahets[[2]], 0), ifelse(top %in% c(1,3,6,8,14), ahets[[3]], 0), ifelse(top %in% c(2,7,11), ahets[[3]], 0), ifelse(top %in% c(4,5,15,16), ahets[[3]], 0), ifelse(top %in% c(9,10,12,13), ahets[[3]], 0), ifelse(top %in% c(1,2,3,4,6,7,8,9,11,12,14,15), ahets[[4]], 0), ifelse(top %in% c(5,16), ahets[[4]], 0), ifelse(top %in% c(10,13), ahets[[4]], 0), ahets[[5]], akcov, adups, atotal_len, top, true_params[1], ifelse(true_params[7] %in% c(1,2,3,4,5), true_params[2], 0), ifelse(true_params[7] %in% c(6,7,8,9,10,11,12,13), true_params[2], 0), ifelse(true_params[7] %in% c(14,15,16), true_params[2], 0), ifelse(true_params[7] %in% c(1,2,6,7), true_params[3], 0), ifelse(true_params[7] %in% c(3,4,5,14,15,16), true_params[3], 0), ifelse(true_params[7] %in% c(8,9,10), true_params[3], 0), ifelse(true_params[7] %in% c(11,12,13), true_params[3], 0), ifelse(true_params[7] %in% c(1,3,6,8,14), true_params[4], 0), ifelse(true_params[7] %in% c(2,7,11), true_params[4], 0), ifelse(true_params[7] %in% c(4,5,15,16), true_params[4], 0), ifelse(true_params[7] %in% c(9,10,12,13), true_params[4], 0), ifelse(true_params[7] %in% c(1,2,3,4,6,7,8,9,11,12,14,15), true_params[5], 0), ifelse(true_params[7] %in% c(5,16), true_params[5], 0), ifelse(true_params[7] %in% c(10,13), true_params[5], 0), true_params[6], true_params[7], sep="\t"), file=testingFile, sep="\n", append=FALSE)
+        #       } else {
+        #         cat(paste(amd, ahets[[1]], ahets[[2]], ahets[[3]], ahets[[4]], ahets[[5]], akcov, adups, atotal_len, top, sep="\t"), file=testingFile, sep="\n", append=TRUE)
+        #       }
+        #     }
+        #   }
+        # }
     
     }
 
