@@ -3311,7 +3311,130 @@
                                         for (top in topologies) {
                                             if (VERBOSE) {cat(paste("trying with topology: ", top, "\n"))}
                                             top_count = top_count + 1
-                                            nls1 = nls_peak(x, y, k, p, top, estKmercov2, estLength2, MAX_ITERATIONS)
+                                            
+
+                                            ## Here is a non-subfunction implementation of nls_peak, to simplify code
+    
+                                                # Initiate variables
+                                                    
+                                                    model = NULL
+                                                    best_deviance = Inf
+                                                    d_min = 0
+                                                    if (d_init!=-1) {
+                                                      d_initial = d_init
+                                                    } else {
+                                                      d_initial = 0.10
+                                                    }
+                                                    d_max = 1
+                                                    r_min = 0.00001
+                                                    if (top==0) {
+                                                      p_to_num_r = c(0, 1, 2, 4, 6, 10)
+                                                    } else {
+                                                      p_to_num_r = c(0, 1, 2, 3, 4, 5)
+                                                    }
+                                                    num_r = p_to_num_r[p]
+                                                    r_max = 1
+                                                    kmercov_min = 0
+                                                    kmercov_initial = estKmercov2
+                                                    kmercov_max = Inf
+                                                    bias_min = 0
+                                                    bias_initial = 0.5
+                                                    bias_max = Inf
+                                                    length_min = 0
+                                                    length_initial = estLength2/p
+                                                    length_max = Inf
+
+                                                # Determine what formula to use, based on p
+                                                    
+                                                    if (p==1) {
+                                                      r_text = ""
+                                                    } else {
+                                                      r_text = paste(paste(lapply(1:(num_r), function(x) paste("r", as.character(x), sep="")), collapse=", "), ", ")
+                                                    }
+                                                    
+                                                    x = x[1:min(2000,length(x))]
+                                                    y = y[1:min(2000,length(y))]
+                                                    y_transform = as.numeric(x)**transform_exp*as.numeric(y)
+                                                    formula = as.formula(paste("y_transform ~ x**transform_exp*length*predict",p,"_",top,"(",r_text, "k, d, kmercov, bias, x)",sep=""))
+
+                                                    if (VERBOSE) {cat("trying nlsLM algorithm (Levenberg-Marquardt)\n")}
+
+                                                    if (r_inits!=-1) {
+                                                        r_initials = unlist(lapply(strsplit(r_inits,","),as.numeric))
+                                                        if (length(r_initials)!=num_r) {
+                                                            stop("Incorrect number of initial rates supplied.")
+                                                        }
+                                                        r_initials_list = list(r_initials)
+                                                    } else {
+                                                        r_initials_list = list(rep(0.001, num_r), 0.001*(1:num_r), 0.001*(num_r:1), rep(0.01, num_r), 0.01*(1:num_r), 0.01*(num_r:1))
+                                                    }
+
+                                                    for (r_initials in r_initials_list) {
+
+                                                        model1 = NULL
+                                                        r_start = vector("list", num_r)
+                                                        if (p > 1) {
+                                                            names(r_start) = paste("r", 1:(num_r), sep="")
+                                                            for (i in 1:(num_r)) {
+                                                                r_start[[paste("r",i,sep="")]] = r_initials[i]
+                                                            }
+                                                        }
+
+                                                        try(model1 <- nlsLM(formula = formula,
+                                                            start   = c(list(d = d_initial), r_start, list(kmercov = kmercov_initial, bias = bias_initial, length = length_initial)),
+                                                            lower   = c(c(d_min), rep(r_min, num_r), c(kmercov_min, bias_min, length_min)),
+                                                            upper   = c(c(d_max), rep(r_max, num_r), c(kmercov_max, bias_max, length_max)),
+                                                            control = list(minFactor=1e-12, maxiter=MAX_ITERATIONS, factor=0.1), trace=TRACE_FLAG), silent = TRUE
+                                                        )
+
+                                                        if (!is.null(model1)) {
+                                                            current_deviance = model1$m$deviance()
+                                                            #cat("Model deviance: ", current_deviance, "\n")
+                                                            if (current_deviance < best_deviance) {
+                                                              model = model1
+                                                              best_deviance = current_deviance
+                                                            }
+                                                        } else {
+                                                            #print("Model did not converge.")
+                                                        }
+
+                                                    }
+
+                                                    if (!is.null(model)) {
+                                                        model_sum    = summary(model)
+                                                        model$p      = p
+                                                        model$top = top
+                                                        
+                                                        if (p==1) {
+                                                            model$hets = list(c(0, 0))
+                                                        } else {
+                                                            model$hets = lapply(1:(num_r), function(x) min_max1(model_sum$coefficients[paste('r', x, sep=""),]))
+                                                        }
+
+                                                        #model$het = c(1-Reduce("*", 1-unlist(lapply(model$hets, '[[', 1))), 1-Reduce("*", 1-unlist(lapply(model$hets, '[[', 2))))
+                                                        model$het = c(sum(sapply(model$hets, '[[', 1)), sum(sapply(model$hets, '[[', 2)))
+                                                        model$homo = 1-model$het
+                                                        model$dups   = min_max(model_sum$coefficients['bias',])
+                                                        model$kcov   = min_max(model_sum$coefficients['kmercov',])
+                                                        model$mlen   = min_max(model_sum$coefficients['length',])
+                                                        model$md     = min_max1(model_sum$coefficients['d',])
+                                                        
+                                                        if (p==1) {
+                                                            model$ahets = list(c(0))
+                                                        } else {
+                                                            model$ahets = lapply(1:(num_r), function(x) model_sum$coefficients[paste('r', x, sep=""),][[1]])
+                                                        }
+                                                        
+                                                        #model$ahet = 1-Reduce("*", 1-unlist(model$ahets))
+                                                        model$ahet = Reduce("+", model$ahets)
+                                                        model$ahomo = 1-model$ahet
+                                                        model$adups = model_sum$coefficients['bias',][[1]]
+                                                        model$akcov = model_sum$coefficients['kmercov',][[1]]
+                                                        model$amlen = model_sum$coefficients['length',][[1]]
+                                                        model$amd   = model_sum$coefficients['d',][[1]]
+                                                    }
+
+                                            nls1 = model ## here, model is the output of the non-subfunction version of nls_peak
                                             nls0 = eval_model(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments)[[1]]
                                         }
                                         if (i < num_peak_indices) { #if this is not the last evaluation
@@ -3330,10 +3453,7 @@
                                 dir.create(mdir, showWarnings = FALSE)
                                 report_results(kmer_prof,kmer_prof_orig, k, p, model_peaks, mdir, arguments, TRUE)
                             }
-                        }
-                        else {
-                            cat(paste("unconverged"), file = progressFilename, sep="\n", append=TRUE)
-                        }
+                        } else { cat(paste("unconverged"), file = progressFilename, sep="\n", append=TRUE) }
 
                         #check if this result is better than previous
                         if (!is.null(model_peaks[[1]])) {
