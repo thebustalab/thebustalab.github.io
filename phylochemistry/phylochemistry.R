@@ -3415,14 +3415,14 @@
                                                     }
 
                                             nls1 = model ## here, model is the output of the non-subfunction version of nls_peak
-                                            nls0 = eval_model(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments)[[1]]
+                                            nls0 = eval_model(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments, score_close = SCORE_CLOSE)[[1]]
                                         }
                                         if (i < num_peak_indices) { #if this is not the last evaluation
-                                            nls00 = eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments)[[1]]
+                                            nls00 = eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments, score_close = SCORE_CLOSE)[[1]]
                                         }
                                     }
 
-                                    model_peaks <- eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments)
+                                    model_peaks <- eval_model(kmer_hist_orig, nls00, nls0, p, round, foldername, arguments, score_close = SCORE_CLOSE)
 
 
                         if (!is.null(model_peaks[[1]])) {
@@ -8884,4 +8884,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")

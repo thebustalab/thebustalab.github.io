@@ -13,12 +13,13 @@
   #' @return A list (nls, nlsscore) where nls is the nlsLM model object (with some additional components)
   #' and nlsscore is the score (model RSSE) corresponding to the best fit (of the p forms).
   #' @export
-  eval_model<-function(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments) {
+  eval_model<-function(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments, score_close) {
     
     VERBOSE <- FALSE
     nls0score = -1
     nls1score = -1
     transform_exp = 1
+    SCORE_CLOSE <- score_close
 
     ## Evaluate the score the nls0
     if (!is.null(nls0)) {
