@@ -8883,6 +8883,4 @@
             "darkorange4", "brown"
         )
 
-        # message("\n")
-# cat("\014")
 message("phylochemistry loaded!!")
