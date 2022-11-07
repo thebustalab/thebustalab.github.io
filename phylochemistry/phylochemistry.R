@@ -3102,8 +3102,6 @@
                     # library('argparse') ## Load libraries for non-linear least squares and argument parser
                     # library('genomescope') ## Load the genomescope library
 
-                    if (is.null(arguments$input) | is.null(arguments$output)) { stop("Please provide input and output") }
-
                     ## Define default arguments
 
                         arguments <- vector()
@@ -3131,6 +3129,8 @@
                         arguments$verbose <- FALSE
                         arguments$version <- FALSE
                         version_message <- "GenomeScope 2.0\n"
+
+                        if (is.null(arguments$input) | is.null(arguments$output)) { stop("Please provide input and output") }
 
                     ## Transfer arguments to variable names
                         histfile <- arguments$input
