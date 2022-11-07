@@ -3154,6 +3154,7 @@
                         START_SHIFT <- arguments$start_shift
                   
                     ## Define some other variables
+                        
                         NUM_ROUNDS = 4 ## Number of rounds before giving up
                         START_SHIFT = 5 ## Coverage steps to trim off between rounds
                         TYPICAL_ERROR = 15 ## Typical cutoff for sequencing error
@@ -3175,7 +3176,6 @@
                         COLOR_COVTHRES = "red"
 
                     ## Given mean +/- stderr, report min and max value within 2 SE
-                    ###############################################################################
 
                         min_max <- function(table) {
                           return (c(max(0,table[1] - 2*table[2]), table[1]+ 2*table[2]))
@@ -3207,9 +3207,9 @@
                     kmer_prof_orig <- kmer_prof
 
                     ## try to find the local minimum between errors and the first (heterozygous) peak
-                    kmer_trans = as.numeric(kmer_prof[,1])**transform_exp*as.numeric(kmer_prof[,2])
-                    start <- tail(which(kmer_trans[1:TYPICAL_ERROR]==min(kmer_trans[1:TYPICAL_ERROR])),n=1)
-                    start_max <- start + which(kmer_trans[start:length(kmer_trans)]==max(kmer_trans[start:length(kmer_trans)])) - 1
+                        kmer_trans = as.numeric(kmer_prof[,1])**transform_exp*as.numeric(kmer_prof[,2])
+                        start <- tail(which(kmer_trans[1:TYPICAL_ERROR]==min(kmer_trans[1:TYPICAL_ERROR])),n=1)
+                        start_max <- start + which(kmer_trans[start:length(kmer_trans)]==max(kmer_trans[start:length(kmer_trans)])) - 1
 
                     maxCovIndex = -1
 
@@ -3218,6 +3218,7 @@
                             maxCovIndex <- length(kmer_prof[,1])
                             max_kmercov <- kmer_prof[maxCovIndex,1]
                         } else {
+                    
                     ## Figure out the index we should use for this coverage length
                             x <- kmer_prof[,1]
                             maxCovIndex <- length(x[x<=max_kmercov])
@@ -8883,5 +8884,5 @@
         )
 
         # message("\n")
-cat("\014")
-message("phylochemistry loaded!")
+# cat("\014")
+message("phylochemistry loaded!!")
