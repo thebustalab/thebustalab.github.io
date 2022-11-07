@@ -1,4 +1,4 @@
-###### GENOME SCOPE FUNCTIONS #######
+###### GENOMESCOPE FUNCTIONS #######
 
 ## estimate_Genome_peakp (now implemented directly in genomeScope)
 
