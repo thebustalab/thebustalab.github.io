@@ -86,6 +86,7 @@
   #' and nlsscore is the score (model RSSE) corresponding to the best fit (of the p forms).
   #' @export
   eval_model<-function(kmer_hist_orig, nls0, nls1, p, round, foldername, arguments) {
+    VERBOSE <- FALSE
     nls0score = -1
     nls1score = -1
 

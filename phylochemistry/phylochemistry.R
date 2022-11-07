@@ -6,140 +6,140 @@
 
     ## Load bustalab-specific libraries and functions
 
-    if (exists("bustalab")) {
-        
-        if (bustalab == TRUE) {
+        if (exists("bustalab")) {
             
-            CRAN_packages <- c(
-                # "imager",
-                "minpack.lm"
-            )
-
-            Bioconductor_packages <- c(
-                "xcms",
-                "msa",
-                "rtracklayer",
-                "Biostrings",
-                "GenomicRanges",
-                "GenomicFeatures",
-                "Rsamtools",
-                "ggtree",
-                "ggtreeExtra"
-            )
-
-            source("https://thebustalab.github.io/phylochemistry/genomescope.R")
-
-        }
-
-    }
-
-    if ( !exists("packages") ) {
-
-        ## Define necessary libraries
-            
-            if (!exists("CRAN_packages")) {CRAN_packages <- vector()}
-            CRAN_packages <- c(CRAN_packages, 
-                "gridExtra",
-                "ape",
-                "multcompView",
-                # "imager",
-                "shiny",
-                "DT",
-                "RColorBrewer",
-                "data.table",
-                "rhandsontable",
-                "ips",
-                "eulerr",
-                "phangorn",
-                "seqinr",
-                "Rfast",
-                "picante",
-                "BiocManager",
-                "googlesheets4",
-                "Hmisc",
-                "ggforce",
-                "network",
-                "pracma",
-                "ggnetwork",
-                "patchwork",
-                "FactoMineR",
-                "dplyr",
-                "stringr", 
-                "progress",
-                "tidyverse",
-                "ggrepel",
-                "cowplot",
-                "rstatix",
-                "agricolae",
-                "ggpmisc",
-                "exifr",
-                "lubridate",
-                "bio3d",
-                "remotes",
-                "gdata",
-                "treemapify",
-                "viridis",
-                "umap",
-                "ggside",
-                "fpc",
-                "dbscan",
-                "Rtsne",
-                "ggdist"
-            )
-
-            if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
-            Bioconductor_packages <- c(
-                "ggtree",
-                "ggtreeExtra"
-            )
-
-            Github_packages <- c(
-                # "HajkD/orthologr"
-            )
-
-            packages_needed <- c(CRAN_packages, Bioconductor_packages, Github_packages)[!c(CRAN_packages, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
-
-        ## Determine if anything needs to be installed
-            
-            if (length(packages_needed) > 0) {
-
-                message <- paste0(
-                    "You need to install the following packages before proceeding: ",
-                    paste(packages_needed, collapse = ", "),
-                    " Is it okay if phylochemistry installs them for you?"
+            if (bustalab == TRUE) {
+                
+                CRAN_packages <- c(
+                    # "imager",
+                    "minpack.lm"
                 )
 
-                if (.Platform$OS.type == "unix"){ response <- askYesNo( message ) }
+                Bioconductor_packages <- c(
+                    "xcms",
+                    "msa",
+                    "rtracklayer",
+                    "Biostrings",
+                    "GenomicRanges",
+                    "GenomicFeatures",
+                    "Rsamtools",
+                    "ggtree",
+                    "ggtreeExtra"
+                )
 
-                if (.Platform$OS.type == "windows") { response <- askYesNo("yesnocancel", msg = message) }
-
-                if(response) {
-                    
-                    if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
-                        install.packages(CRAN_packages[CRAN_packages %in% packages_needed], dependencies = TRUE)
-                    }
-
-                    if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
-                        BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed], dependencies = TRUE)
-                    }
-
-                    if (length(Github_packages[Github_packages %in% packages_needed]) > 0) {
-                        remotes::install_github(Github_packages[Github_packages %in% packages_needed], dependencies = TRUE)
-                    }
-
-                } else {
-                    stop("Cannot load phylochemistry without the required packages. Exiting.")
-                }
+                source("https://thebustalab.github.io/phylochemistry/genomescope.R")
             }
-            
-            message("Loading packages...")
-            invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
-    
-    } else {
-    
-        message("Object 'packages' exists, not loading phylochemistry packages...")
-    
-    }
+        }
+
+    ## Load packages in general
+
+        if ( !exists("packages") ) {
+
+            ## Define necessary libraries
+                
+                if (!exists("CRAN_packages")) {CRAN_packages <- vector()}
+                CRAN_packages <- c(CRAN_packages, 
+                    "gridExtra",
+                    "ape",
+                    "multcompView",
+                    # "imager",
+                    "shiny",
+                    "DT",
+                    "RColorBrewer",
+                    "data.table",
+                    "rhandsontable",
+                    "ips",
+                    "eulerr",
+                    "phangorn",
+                    "seqinr",
+                    "Rfast",
+                    "picante",
+                    "BiocManager",
+                    "googlesheets4",
+                    "Hmisc",
+                    "ggforce",
+                    "network",
+                    "pracma",
+                    "ggnetwork",
+                    "patchwork",
+                    "FactoMineR",
+                    "dplyr",
+                    "stringr", 
+                    "progress",
+                    "tidyverse",
+                    "ggrepel",
+                    "cowplot",
+                    "rstatix",
+                    "agricolae",
+                    "ggpmisc",
+                    "exifr",
+                    "lubridate",
+                    "bio3d",
+                    "remotes",
+                    "gdata",
+                    "treemapify",
+                    "viridis",
+                    "umap",
+                    "ggside",
+                    "fpc",
+                    "dbscan",
+                    "Rtsne",
+                    "ggdist"
+                )
+
+                if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
+                Bioconductor_packages <- c(
+                    "ggtree",
+                    "ggtreeExtra"
+                )
+
+                Github_packages <- c(
+                    # "HajkD/orthologr"
+                )
+
+                packages_needed <- c(CRAN_packages, Bioconductor_packages, Github_packages)[!c(CRAN_packages, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
+
+            ## Determine if anything needs to be installed
+                
+                if (length(packages_needed) > 0) {
+
+                    message <- paste0(
+                        "You need to install the following packages before proceeding: ",
+                        paste(packages_needed, collapse = ", "),
+                        " Is it okay if phylochemistry installs them for you?"
+                    )
+
+                    if (.Platform$OS.type == "unix"){ response <- askYesNo( message ) }
+
+                    if (.Platform$OS.type == "windows") { response <- askYesNo("yesnocancel", msg = message) }
+
+                    if(response) {
+                        
+                        if (length(CRAN_packages[CRAN_packages %in% packages_needed]) > 0) {
+                            install.packages(CRAN_packages[CRAN_packages %in% packages_needed], dependencies = TRUE)
+                        }
+
+                        if (length(Bioconductor_packages[Bioconductor_packages %in% packages_needed]) > 0) {
+                            BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed], dependencies = TRUE)
+                        }
+
+                        if (length(Github_packages[Github_packages %in% packages_needed]) > 0) {
+                            remotes::install_github(Github_packages[Github_packages %in% packages_needed], dependencies = TRUE)
+                        }
+
+                    } else {
+                        stop("Cannot load phylochemistry without the required packages. Exiting.")
+                    }
+                }
+                
+                message("Loading packages...")
+                invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
+        
+        } else {
+        
+            message("Object 'packages' exists, not loading phylochemistry packages...")
+        
+        }
 
     ## Set up prioriy functions
 
@@ -166,6 +166,8 @@
 
         }
 
+    ## Rename some stats functions so they use camelCase
+
         leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
         tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
@@ -186,7 +188,6 @@
 
 ###### Functions
 
-    
     message("Loading functions...")
 
     ##### Read and write functions
