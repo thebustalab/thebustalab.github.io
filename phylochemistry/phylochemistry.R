@@ -3586,71 +3586,6 @@
                         font_size=1.2
                         resolution=300
 
-                    ## Make a ggplot-friendly version of the plots
-
-                        output$plots <- data.frame(
-                            kmer_hist_x = kmer_hist_orig[,1],
-                            kmer_hist_y = kmer_hist_orig[,2],
-                            kmer_hist_unique = unique_hist,
-                            kmer_hist_predicted = x**(-transform_exp)*pred,
-                            kmer_hits_error = c(error_kmers, rep(0,length(x)-length(error_kmers))),
-                            kmer_hist_transformed_x = kmer_hist_transform[,1],
-                            kmer_hist_transformed_y = kmer_hist_transform[,2],
-                            kmer_hist_unique_transformed = unique_hist_transform,
-                            kmer_hist_predicted_transformed = x**(-transform_exp)*pred,
-                            kmer_hits_error = c(((x[1:error_xcutoff_ind]**transform_exp)*error_kmers), rep(0,length(x)-length(error_kmers)))
-                        )
-
-                    ## the ggplots
-
-                        # thing1 <- ggplot() +
-                        #   geom_col(data = kmer_hist_orig, aes(x = V1, y = V2), color = "black", fill = "white") +
-                        #   geom_line(data = data.frame(
-                        #     x = x, y = unique_hist
-                        #   ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
-                        #   geom_line(data = data.frame(
-                        #     x = x, y = x**(-transform_exp)*pred
-                        #   ), aes(x = x, y = y), color = "darkblue", size = 2, alpha = 0.6) +
-                        #   geom_line(data = data.frame(
-                        #     x = x[1:error_xcutoff_ind], y = error_kmers
-                        #   ), aes(x = x, y = y), color = "red", size = 2, alpha = 0.6) +
-                        #   scale_x_continuous(limits = c(0,x_limit_orig)) +
-                        #   scale_y_continuous(limits = c(0,y_limit_orig)) +
-                        #   theme_bw()
-
-                        # thing2 <- ggplot() +
-                        #   geom_col(data = kmer_hist_transform, aes(x = V1, y = V2), color = "black", fill = "white") +
-                        #   geom_line(data = data.frame(
-                        #     x = x, y = unique_hist_transform
-                        #   ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
-                        #   geom_line(data = data.frame(
-                        #     x = x, y = pred
-                        #   ), aes(x = x, y = y), color = "darkblue", size = 2, alpha = 0.6) +
-                        #   geom_line(data = data.frame(
-                        #     x = x[1:error_xcutoff_ind], y = (x[1:error_xcutoff_ind]**transform_exp)*error_kmers
-                        #   ), aes(x = x, y = y), color = "red", size = 2, alpha = 0.6) +
-                        #   scale_x_continuous(limits = c(0,x_limit)) +
-                        #   scale_y_continuous(limits = c(0,y_limit)) +
-                        #   theme_bw()
-
-                        # thing3 <- ggplot() +
-                        #   geom_col(data = kmer_hist_orig, aes(x = log(V1), y = log(V2)), color = "black", fill = "white") +
-                        #   # geom_line(data = data.frame(
-                        #   #   x = x, y = unique_hist
-                        #   # ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
-                        #   # scale_x_continuous(limits = c(0,x_limit_orig)) +
-                        #   # scale_y_continuous(limits = c(0,y_limit_orig)) +
-                        #   theme_bw()
-
-                        # thing4 <- ggplot() +
-                        #   geom_col(data = kmer_hist_transform, aes(x = log(V1), y = log(V2)), color = "black", fill = "white") +
-                        #   # geom_line(data = data.frame(
-                        #   #   x = x, y = unique_hist_transform
-                        #   # ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
-                        #   # scale_x_continuous(limits = c(0,x_limit)) +
-                        #   # scale_y_continuous(limits = c(0,y_limit)) +
-                        #   theme_bw()
-
                     ## Plot the distribution, and hopefully with the model fit (currently turned off)
                         
                         # ylabel_orig = "Frequency"
@@ -4536,6 +4471,70 @@
 
                             }
 
+                    ## Make a ggplot-friendly version of the plots
+
+                        output$plots <- data.frame(
+                            kmer_hist_x = kmer_hist_orig[,1],
+                            kmer_hist_y = kmer_hist_orig[,2],
+                            kmer_hist_unique = unique_hist,
+                            kmer_hist_predicted = x**(-transform_exp)*pred,
+                            kmer_hits_error = c(error_kmers, rep(0,length(x)-length(error_kmers))),
+                            kmer_hist_transformed_x = kmer_hist_transform[,1],
+                            kmer_hist_transformed_y = kmer_hist_transform[,2],
+                            kmer_hist_unique_transformed = unique_hist_transform,
+                            kmer_hist_predicted_transformed = x**(-transform_exp)*pred,
+                            kmer_hits_error = c(((x[1:error_xcutoff_ind]**transform_exp)*error_kmers), rep(0,length(x)-length(error_kmers)))
+                        )
+
+                    ## the ggplots
+
+                        # thing1 <- ggplot() +
+                        #   geom_col(data = kmer_hist_orig, aes(x = V1, y = V2), color = "black", fill = "white") +
+                        #   geom_line(data = data.frame(
+                        #     x = x, y = unique_hist
+                        #   ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
+                        #   geom_line(data = data.frame(
+                        #     x = x, y = x**(-transform_exp)*pred
+                        #   ), aes(x = x, y = y), color = "darkblue", size = 2, alpha = 0.6) +
+                        #   geom_line(data = data.frame(
+                        #     x = x[1:error_xcutoff_ind], y = error_kmers
+                        #   ), aes(x = x, y = y), color = "red", size = 2, alpha = 0.6) +
+                        #   scale_x_continuous(limits = c(0,x_limit_orig)) +
+                        #   scale_y_continuous(limits = c(0,y_limit_orig)) +
+                        #   theme_bw()
+
+                        # thing2 <- ggplot() +
+                        #   geom_col(data = kmer_hist_transform, aes(x = V1, y = V2), color = "black", fill = "white") +
+                        #   geom_line(data = data.frame(
+                        #     x = x, y = unique_hist_transform
+                        #   ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
+                        #   geom_line(data = data.frame(
+                        #     x = x, y = pred
+                        #   ), aes(x = x, y = y), color = "darkblue", size = 2, alpha = 0.6) +
+                        #   geom_line(data = data.frame(
+                        #     x = x[1:error_xcutoff_ind], y = (x[1:error_xcutoff_ind]**transform_exp)*error_kmers
+                        #   ), aes(x = x, y = y), color = "red", size = 2, alpha = 0.6) +
+                        #   scale_x_continuous(limits = c(0,x_limit)) +
+                        #   scale_y_continuous(limits = c(0,y_limit)) +
+                        #   theme_bw()
+
+                        # thing3 <- ggplot() +
+                        #   geom_col(data = kmer_hist_orig, aes(x = log(V1), y = log(V2)), color = "black", fill = "white") +
+                        #   # geom_line(data = data.frame(
+                        #   #   x = x, y = unique_hist
+                        #   # ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
+                        #   # scale_x_continuous(limits = c(0,x_limit_orig)) +
+                        #   # scale_y_continuous(limits = c(0,y_limit_orig)) +
+                        #   theme_bw()
+
+                        # thing4 <- ggplot() +
+                        #   geom_col(data = kmer_hist_transform, aes(x = log(V1), y = log(V2)), color = "black", fill = "white") +
+                        #   # geom_line(data = data.frame(
+                        #   #   x = x, y = unique_hist_transform
+                        #   # ), aes(x = x, y = y), color = "darkgreen", size = 2, alpha = 0.6) +
+                        #   # scale_x_continuous(limits = c(0,x_limit)) +
+                        #   # scale_y_continuous(limits = c(0,y_limit)) +
+                        #   theme_bw()
             }
 
     ##### Chemical data handling
