@@ -2877,12 +2877,11 @@
             #' fastxQC
 
             fastxQC <-  function(
-                
                             paths_to_fastxs,
                             type = c("fastq", "fasta"),
                             mode = c("fast", "slow"),
-                            max_n_seqs = NULL
-
+                            max_n_seqs = NULL,
+                            progress = FALSE
                         ) {
 
                 output <- list()
@@ -2895,7 +2894,7 @@
                         paths_to_fastxs[path_to_fastx] <- "TEMP___fasta"
                     }
 
-                    ## Start progress bar for this file
+                    ## Determine max number of reads
 
                         if (length(max_n_seqs) > 0) {
                             n_reads <- max_n_seqs
@@ -2948,7 +2947,7 @@
                             cat(paste("Using Phred_ASCII_33 score conversions...", "\n", sep = ""))
                             cat(paste("Analyzing quality scores...", "\n", sep = ""))
 
-                            pb <- progress::progress_bar$new(total = n_reads)
+                            if( progress ) { pb <- progress::progress_bar$new(total = n_reads) }
                             for (i in 1:n_reads) {
 
                                 data <- data.table::fread(
@@ -2973,7 +2972,7 @@
                                     accuracy = (1-10^(-read_score/10))*100
                                 )
 
-                                pb$tick()
+                                if( progress ) { pb$tick() }
                             
                             }
                         }
