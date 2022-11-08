@@ -4277,8 +4277,6 @@
                                       max = max
                                     )
 
-                                    output
-
                                     # if (VERBOSE)
                                     # {
                                     #   cat(paste("\nPercent Kmers Modeled (All Kmers) = ",  percentage_format(model_fit_allscore[1]),    " [", model_fit_allscore[2],    ", ", model_fit_allscore[3],    "]", sep=""), file=summaryFile, sep="\n", append=TRUE)
@@ -4535,6 +4533,8 @@
                         #   # scale_x_continuous(limits = c(0,x_limit)) +
                         #   # scale_y_continuous(limits = c(0,y_limit)) +
                         #   theme_bw()
+
+                        output
             }
 
     ##### Chemical data handling
