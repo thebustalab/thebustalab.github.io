@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-11-03"
+date: "2022-11-09"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -205,8 +205,6 @@ First, attempt to load phylochemistry, if you are on Windows, be sure you've ope
 bustalab <- TRUE
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
-
-
 
 The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?" You should say "yes".
 
@@ -4242,7 +4240,7 @@ Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, 
  -->
 * As you go: make notes of what should go into the introduction.
 
-## structure
+## structure {-}
 
 * Key: **number of suggested sentences**: *purpose*: "example"
 
@@ -4282,9 +4280,9 @@ Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, 
 >Using the groupings that were identified via principal components analysis, statistical tests were conducted to determine if chemical abundances differed between groups. Tests for normality and homogeneity of variance (Shapiro and Levene tests) revealed that the data could not be assessed using ANOVA but instead required the use of a non-parametric test. Accordingly, the Kruskall-Wallis test followed by post-hoc Dunn tests were applied, which showed that the abundances of halogenated pollutants is significantly higher in urban versus rural areas (p = 0.0035, Fig. 2A). These direct observations are consistent with conclusions drawn by others in recent literature reviews focused on hydrocarbon compounds (Petrucci et al., 2018; Hendrix et al., 2019). *Thus, the new chemical analyses presented here demonstrate that the discrepancy in urban versus rural pollution is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds.* Together, these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.\
 >
 
-## suggestions
+## suggestions {-}
 
-1. **Create paragraph outlines:**
+1. **Create paragraph outlines:** [data features -> literature information -> conclusions]
   + Identify "data features" in your figures, then possible conclusions those could lead to. Example:
     + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1)," (a data feature)
     + "suggesting that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities." (a conclusion)
@@ -4322,6 +4320,7 @@ Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, 
     + There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exhibited other interesting properties.").
     + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
     + The discussion should not require the reader to go back and read its first half in order to understand its second half.
+
 <!-- end -->
 
 <!-- start Conclusions -->
@@ -4334,7 +4333,7 @@ Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, 
 
 * Make sure that the scope of your introduction is in-line with the scope of the conclusion. That way, the reader will not be underwhelmed, nor will your work be undersold.
 
-## structure
+## structure {-}
 
 **Conclusion:**
 
@@ -4365,7 +4364,7 @@ Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, 
   + **1-2**: For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc.
   + **1**: (optional) State the major conclusion from the work and what it means for the application described in paragraph 1.
 
-## suggestions
+## suggestions {-}
 
   + If something is well-established, say so.
   + Be clear about what is speculation.

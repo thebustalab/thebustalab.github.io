@@ -34,10 +34,6 @@ plotting-trees
 collapsetree
 ancestraltraits
 phylogenetic-regression
-structure
-suggestions
-structure-1
-suggestions-1
 abstract
 title
 further-reading-9
