@@ -4242,7 +4242,7 @@ Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, 
 
 ## structure {-}
 
-* Key: **number of suggested sentences**: *purpose*: "example"
+(key: **number of suggested sentences**: *purpose*: "example")
 
 * Introductory paragraph:
   + **1**: *Review the aim of the paper*: "In order to understand…"
@@ -4284,40 +4284,38 @@ Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, 
 
 Is there an efficient way to write a results and discussion section in the format outlined above? Yes. Follow the step-by-step instructions below:
 
-### outline then draft paragraphs
-  1. **Identify "data features" -> "conclusion" combinations.** Using your figures, make a list of all the potentially interesting features in your data, then pair each feature with a possible conclusiona it could lead to. Example:
-    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1)," (a data feature)
-    + "suggesting that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities." (a conclusion)
+### outline then draft paragraphs {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/res_disc_1.jpg" width="100%" style="display: block; margin: auto;" />
+
+1. **Identify "data features" -> "conclusion" combinations.** Using your figures, make a list of all the potentially interesting features in your data, then pair each feature with a possible conclusiona it could lead to. Example:
+  + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1)," (a data feature)
+  + "suggesting that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities." (a conclusion)
   
-  2. **Perform targeted literature searches.** Expand your "data feature" -> "conclusion" combinations with "supplementary information" or "literature information". Example:
-    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas." (data feature)
-    + "These direct observations are consistent with conclusions drawn by others in recent literature reviews (Petrucci., 2018; Hendrix et al., 2019)"
-    + "Overall, this suggests that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities."
+2. **Perform targeted literature searches.** Expand your "data feature" -> "conclusion" combinations with "supplementary information" or "literature information". Example:
+  + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas." (data feature)
+  + "These direct observations are consistent with conclusions drawn by others in recent literature reviews (Petrucci., 2018; Hendrix et al., 2019)" (literature information)
+  + "Overall, this suggests that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities." (conclusion)
   
-  3. **Group "data feature" -> "supp/lit info" -> "conclusion" combinations into paragraphs.** Edit each paragraph so that it highlights what new contribution your data makes to the situation. Example (note the sentence in italics that highlights the new findings):
-    + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1). These direct observations are consistent with meta-analyses of previously published observations (Supplemental Figure 1), as well as with conclusions drawn by others in recent literature reviews (So and so et al., 2018; The other person et al., 2019). *The new chemical analyses presented here thus confirm this is true for hydrocarbon compounds, and extend the observation to halogenated compounds in the atmosphere.* Together these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.
+3. **Group "data feature" -> "supp/lit info" -> "conclusion" combinations into paragraphs.** Edit each conclusion so that it highlights what new contribution your data makes to the situation. Also consider whether any of the parargaphs now suggest the existence of mechanisms. Example (note the conclusion sentence in italics that highlights the new findings):
+  + "The GC-MS data presented here indicates that cities have higher levels of pollution than rural areas (Fig. 1). These direct observations are consistent with meta-analyses of previously published observations (Supplemental Figure 1), as well as with conclusions drawn by others in recent literature reviews (So and so et al., 2018; The other person et al., 2019). *The new chemical analyses presented here thus confirm this is true for hydrocarbon compounds, and extend the observation to halogenated compounds in the atmosphere.* Together these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.
 
-### order then edit paragraphs
+### order then edit paragraphs {-}
 
-  + Identify characteristics of your paragraphs that can help determine what order they should go in:
-    + Whether any of your paragraphs are prerequisites for others.
-    + Whether any paragraphs can be grouped according to topic.
-
+1. **Identify paragraph characteristics and group**
+  + Consider whether any of your paragraphs are prerequisites for others and whether any paragraphs can be grouped according to topic.
   + Group paragraphs according to topic and prerequisite dependencies (putting prereq dependencies as close to eachother as possible.)
 
-  + Rearrange groups for what seems like the most natural flow. Consider:
-    + Starting with group of paragraphs most relevant to the overall pitch/goal of the paper
-    + Ending on the group of paragraphs that has the most future perspective
-    + Ending in a strong suit (i.e. not something too speculative)
+2. **Rearrange paragraph groups** Create the most natural flow. Consider:
+  + Starting with group of paragraphs most relevant to the overall pitch/goal of the paper
+  + Ending on the group of paragraphs that has the most future perspective
+  + Ending in a strong suit (i.e. not something too speculative)
+  + Consider putting orphaned paragraphs (or a shortened version of them) into the conclusion section.
 
-  + After this, if you have any orphaned paragraphs, consider putting them (or a shortened version of them) into the conclusion section.
-
-  + Throughout this process, read lots of literature and incorporate it into your discussion section. Place your research into the context of what has been done previously.
-
-  + Edit each paragraph, particularly its first and last sentences, to connect the paragraphs into a flowing document. Specifically, this means several things:
-    + There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exhibited other interesting properties.").
-    + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
-    + The discussion should not require the reader to go back and read its first half in order to understand its second half.
+3. **Edit transitions between groups.** Edit each paragraph, particularly its first and last sentences, to connect the paragraphs into a flowing document. Specifically, this means several things:
+  + There should be no implicit cross-paragraph references (i.e. a new paragraph should not begin "The compound described above exhibited other interesting properties", rather, "3-hydroxycinnamic acid exhibited other interesting properties.").
+  + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
+  + The discussion should not require the reader to go back and read its first half in order to understand its second half.
 
 <!-- end -->
 
@@ -4579,7 +4577,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4621,7 +4619,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 

@@ -34,8 +34,6 @@ plotting-trees
 collapsetree
 ancestraltraits
 phylogenetic-regression
-outline-then-draft-paragraphs
-order-then-edit-paragraphs
 abstract
 title
 further-reading-9
