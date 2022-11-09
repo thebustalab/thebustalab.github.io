@@ -9917,9 +9917,7 @@
                         plant_species <- readMonolist("https://thebustalab.github.io/data/plant_species.csv")
                     
                     }
-
                 }
-
         }
 
     ## Load color schemes
