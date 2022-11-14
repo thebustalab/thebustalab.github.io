@@ -2758,7 +2758,86 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- end -->
 
-# midterm exam {-}
+<!-- start comparing means -->
+
+# map data {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
+```
+
+## plotting boundaries {-}
+
+There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
+
+```{r}
+head(map_data("world"))
+```
+```{r}
+head(map_data("state"))
+```
+
+```{r}
+head(map_data("county"))
+```
+
+```{r}
+head(map_data("france"))
+```
+
+Cool! We can see that lat, lon, group, order, region, and subregion are included. That makes plotting easy. Note that `coord_map()` can help preserve aspect ratios:
+
+```{r, fig.height = 8, fig.width = 10}
+ggplot(map_data("world")) +
+  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
+  theme_void() +
+  coord_map()
+```
+
+Note that we can use `coord_map()` to do some pretty cool things!
+
+```{r, fig.height = 8, fig.width = 10}
+ggplot(map_data("world")) +
+  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
+  theme_void() +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+```
+
+We can use filtering to produce maps of specific regions.
+
+```{r, fig.height = 8, fig.width = 10}
+ggplot() +
+  geom_polygon(
+    data = filter(map_data("county"), region == "minnesota"),
+    aes(x = long, y = lat, group = subregion, fill = subregion),
+    color = "black"
+  ) +
+  theme_void() +
+  coord_map()
+```
+
+## further reading {-}
+
+For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
+
+For more advanced map plotting: [R Spatial](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+
+<!-- ## exercises {-} -->
+
+<!-- Using the `hawaii_aquifers` data set, please complete the following:
+
+1. Choose one analyte and filter the data so only the rows for that analyte are shown.
+
+2. Choose two of the aquifers. Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
+
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
+
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
+
+
+<!-- end -->
+
+<!-- # midterm exam {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg', dpi = NA)
@@ -2774,7 +2853,7 @@ Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`),
 
 4. Using your PCA analysis from question 3, select four compound classes, two that are negatively correlated with each other along dimension 1 and two that are positively correlated with each other along dimension 2. Create a plot that shows the abundances of these four compound classes in each wood species. In your figure caption, explain: are these abundances consistent with your understanding of PCA and ordination? Why or why not?
 
-5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3, (ii) a kmeans-based clustering of your PCA analysis output from question 3, and (iii) a hierarchical clustering analysis of the raw data. For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not?
+5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3, (ii) a kmeans-based clustering of your PCA analysis output from question 3, and (iii) a hierarchical clustering analysis of the raw data. For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not? -->
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3079,6 +3158,10 @@ canuHistogramToKmerTable(
   file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
 )
 ```
+
+Also check on this tutorial:
+
+[genomics tutorial](https://ucdavis-bioinformatics-training.github.io/2020-Genome_Assembly_Workshop/kmers/kmers)
 
 #### merqury
 

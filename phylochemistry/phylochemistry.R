@@ -17,6 +17,7 @@
 
                 Bioconductor_packages <- c(
                     "xcms",
+                    "DESeq2",
                     "msa",
                     "rtracklayer",
                     "Biostrings",
