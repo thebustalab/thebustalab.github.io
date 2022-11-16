@@ -4074,11 +4074,11 @@ ________________________________________________________________________________
 
 # links {-}
 
-## geoms
+## geoms {-}
 
 [geoms and ggplot2 cheatsheet](https://thebustalab.github.io/integrated_bioanalytics/images/ggplot2_geoms.pdf)
 
-## colors
+## colors {-}
 
 [ColorBrewer2](https://colorbrewer2.org/)
 
@@ -4087,7 +4087,7 @@ ________________________________________________________________________________
 <!-- start R FAQ -->
 # r faq {-}
 
-## filtering
+## filtering {-}
 
 `filter(<data>, <variable> < 18)` ## less than 18
 
@@ -4105,7 +4105,7 @@ ________________________________________________________________________________
 
 `filter(<data>, <variable> %in% c(18, 19, 20)` ## equal to 18 or 19 or 20
 
-## ordering
+## ordering {-}
 
 A list of numeric element has an inherent order to it: -inf -> +inf. A list of character element also has an inherent order to it: A -> Z, or if it's a mixed number and letter list (which is interpreted by R as a character list): 0 -> 9 -> A -> Z.
 
@@ -4136,7 +4136,7 @@ ggplot(periodic_table) +
 
 VICTORY!
 
-## column manipulation
+## column manipulation {-}
 
 
 How to select specific columns:
@@ -4152,7 +4152,7 @@ alaska_lake_data %>%
   select(!water_temp)
 ```
 
-## user color palettes
+## user color palettes {-}
 
 Suppose we want to create a specific color palette for each pack in `alaska_lake_data`. There are three unique parks:
 
