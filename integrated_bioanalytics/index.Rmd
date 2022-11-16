@@ -4152,6 +4152,36 @@ alaska_lake_data %>%
   select(!water_temp)
 ```
 
+## user color palettes
+
+Suppose we want to create a specific color palette for each pack in `alaska_lake_data`. There are three unique parks:
+
+```{r}
+unique(alaska_lake_data$park)
+```
+
+First we define the colors we want:
+
+```{r}
+custom_colors_for_lakes <- c("#1a9850", "#ffffbf", "#d73027")
+custom_colors_for_lakes
+```
+
+Then we name that vector according to which park we want to be which color:
+
+```{r}
+names(custom_colors_for_lakes) <- c("GAAR", "NOAT", "BELA")
+custom_colors_for_lakes
+```
+
+Now we feed that object to the `values` argument of scale_color_manual (or scale_fill_manual, if you want fill):
+
+```{r}
+ggplot(alaska_lake_data) + 
+  geom_point(aes(x = pH, y = water_temp, fill = park), size = 5, shape = 21, color = "black") +
+  scale_fill_manual(values = custom_colors_for_lakes) +
+  theme_classic()
+```
 <!-- end -->
 
 <!-- start templates -->

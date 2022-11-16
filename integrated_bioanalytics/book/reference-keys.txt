@@ -42,6 +42,7 @@ colors
 filtering
 ordering-1
 column-manipulation
+user-color-palettes
 matrix-analyses
 basic-runmatrixanalysis-template
 advanced-runmatrixanalysis-template

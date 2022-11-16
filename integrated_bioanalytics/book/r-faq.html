@@ -204,7 +204,35 @@
 <span class="co">##  9 Devil_Mountain… BELA   7.69 K          1.2   free        </span>
 <span class="co">## 10 Devil_Mountain… BELA   7.69 Ca         5.73  free        </span>
 <span class="co">## # … with 210 more rows</span></code></pre></div>
-<!-- end -->
+</div>
+<div id="user-color-palettes" class="section level2" number="1.28">
+<h2>
+<span class="header-section-number">1.28</span> user color palettes<a class="anchor" aria-label="anchor" href="#user-color-palettes"><i class="fas fa-link"></i></a>
+</h2>
+<p>Suppose we want to create a specific color palette for each pack in <code>alaska_lake_data</code>. There are three unique parks:</p>
+<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">park</span><span class="op">)</span>
+<span class="co">## [1] "BELA" "GAAR" "NOAT"</span></code></pre></div>
+<p>First we define the colors we want:</p>
+<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">custom_colors_for_lakes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#1a9850"</span>, <span class="st">"#ffffbf"</span>, <span class="st">"#d73027"</span><span class="op">)</span>
+<span class="va">custom_colors_for_lakes</span>
+<span class="co">## [1] "#1a9850" "#ffffbf" "#d73027"</span></code></pre></div>
+<p>Then we name that vector according to which park we want to be which color:</p>
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">custom_colors_for_lakes</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GAAR"</span>, <span class="st">"NOAT"</span>, <span class="st">"BELA"</span><span class="op">)</span>
+<span class="va">custom_colors_for_lakes</span>
+<span class="co">##      GAAR      NOAT      BELA </span>
+<span class="co">## "#1a9850" "#ffffbf" "#d73027"</span></code></pre></div>
+<p>Now we feed that object to the <code>values</code> argument of scale_color_manual (or scale_fill_manual, if you want fill):</p>
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">water_temp</span>, fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">custom_colors_for_lakes</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure">
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;"><!-- end -->
+</div>
 <!-- start templates -->
 </div>
 </div>
@@ -227,6 +255,7 @@
 <li><a class="nav-link" href="#filtering"><span class="header-section-number">1.25</span> filtering</a></li>
 <li><a class="nav-link" href="#ordering-1"><span class="header-section-number">1.26</span> ordering</a></li>
 <li><a class="nav-link" href="#column-manipulation"><span class="header-section-number">1.27</span> column manipulation</a></li>
+<li><a class="nav-link" href="#user-color-palettes"><span class="header-section-number">1.28</span> user color palettes</a></li>
 </ul>
 
       <div class="book-extra">
@@ -244,7 +273,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-11-14.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2022-11-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

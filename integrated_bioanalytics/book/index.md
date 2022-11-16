@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2022-11-14"
+date: "2022-11-16"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4791,6 +4791,46 @@ alaska_lake_data %>%
 ## # … with 210 more rows
 ```
 
+## user color palettes
+
+Suppose we want to create a specific color palette for each pack in `alaska_lake_data`. There are three unique parks:
+
+
+```r
+unique(alaska_lake_data$park)
+## [1] "BELA" "GAAR" "NOAT"
+```
+
+First we define the colors we want:
+
+
+```r
+custom_colors_for_lakes <- c("#1a9850", "#ffffbf", "#d73027")
+custom_colors_for_lakes
+## [1] "#1a9850" "#ffffbf" "#d73027"
+```
+
+Then we name that vector according to which park we want to be which color:
+
+
+```r
+names(custom_colors_for_lakes) <- c("GAAR", "NOAT", "BELA")
+custom_colors_for_lakes
+##      GAAR      NOAT      BELA 
+## "#1a9850" "#ffffbf" "#d73027"
+```
+
+Now we feed that object to the `values` argument of scale_color_manual (or scale_fill_manual, if you want fill):
+
+
+```r
+ggplot(alaska_lake_data) + 
+  geom_point(aes(x = pH, y = water_temp, fill = park), size = 5, shape = 21, color = "black") +
+  scale_fill_manual(values = custom_colors_for_lakes) +
+  theme_classic()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
