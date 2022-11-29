@@ -85,6 +85,7 @@
                     "fpc",
                     "dbscan",
                     "Rtsne",
+                    "readxl",
                     "ggdist"
                 )
 
@@ -4869,18 +4870,20 @@
                                                     framedDataFile %>% 
                                                         group_by(rt) %>% 
                                                         filter(mz > (numeric_ions[ion] - 0.6)) %>%
-                                                        filter(mz < (numeric_ions[ion] + 0.6)) %>%
-                                                        summarize(
+                                                        filter(mz < (numeric_ions[ion] + 0.6)) -> signal
+                                                        summarize(signal,
                                                             abundance = sum(intensity),
                                                             ion = numeric_ions[ion],
-                                                            rt_first_row_in_raw = min(row_number),
-                                                            rt_last_row_in_raw = max(row_number)
+                                                            rt_first_row_in_raw = if (dim(signal)[1] > 0) { min(row_number) } else { 0 },
+                                                            rt_last_row_in_raw = if (dim(signal)[1] > 0) { max(row_number) } else { 0 }
                                                         ) -> chromatogram
                                                     chromatogram <- as.data.frame(chromatogram)
-                                                    
                                                     chromatogram$rt <- as.numeric(chromatogram$rt)
-                                                    chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
-                                                    chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)   
+
+                                                    if (dim(signal)[1] > 0) { 
+                                                        chromatogram$path_to_cdf_csv <- paste(paths_to_cdfs[file], ".csv", sep = "")
+                                                        chromatograms_to_add <- rbind(chromatograms_to_add, chromatogram)   
+                                                    }
                                                 }
                                             }
                                     }
@@ -9587,6 +9590,7 @@
                         coefficients <- data.frame(
                             variable = names(coefficients(fit)),
                             value = as.numeric(coefficients(fit)),
+                            std_err = round(as.numeric(summary(fit)$coefficients[,2]), 4),
                             type = "coefficient",
                             p_value = round(summary(fit)$coefficients[,4], 4)
                         )
@@ -9595,12 +9599,12 @@
                         residual_sum_squares <- sum((summary(fit)$residuals)^2, na.rm = TRUE)
 
                         statistics <- rbind(
-                            c("median_residual", median(summary(fit)$residuals), "statistic", NA),
-                            c("total_sum_squares", total_sum_squares, "statistic", NA),
-                            c("residual_sum_squares", residual_sum_squares, "statistic", NA),
-                            c("r_squared", summary(fit)$r.squared, "statistic", NA)
+                            c("median_residual", median(summary(fit)$residuals), NA, "statistic", NA),
+                            c("total_sum_squares", total_sum_squares, NA, "statistic", NA),
+                            c("residual_sum_squares", residual_sum_squares, NA, "statistic", NA),
+                            c("r_squared", summary(fit)$r.squared, NA, "statistic", NA)
                         )
-                        colnames(statistics) <- c("variable", "value", "type", "p_value")
+                        colnames(statistics) <- c("variable", "value", "std_err", "type", "p_value")
 
                         # round(1-(residual_sum_squares/total_sum_squares), 4) == round(summary(fit)$r.squared, 4)
 
