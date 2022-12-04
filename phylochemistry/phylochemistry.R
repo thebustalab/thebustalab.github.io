@@ -7297,6 +7297,141 @@
                 return(venn_circle_data)
             }
 
+        #### points3D
+
+            #' Get coordinates for a 3D scatter plot
+            #'
+            #' @param data Data frame with columns x, y, z, and sample_unique_ID
+            #' @param angle Angle of the z axis
+            #' @param tick_round Integer to which tick labels should be rounded
+            #' @param x_tick_interval Interval of ticks on x axis
+            #' @param y_tick_interval Interval of ticks on y axis
+            #' @param z_tick_interval Interval of ticks on z axis
+            #' @examples
+            #' points3D()
+
+            points3D <- function( data, angle, tick_round, x_tick_interval, y_tick_interval, z_tick_interval ) {
+
+                ## Initial calculations
+
+                    output <- list()
+
+                    ymin = plyr::round_any(min(data$y), tick_round, f = floor)
+                    ymax = plyr::round_any(max(data$y), tick_round, f = ceiling)
+                    ylength = ymax - ymin
+
+                    zmin = plyr::round_any(min(data$z), tick_round, f = floor)
+                    zmax = plyr::round_any(max(data$z), tick_round, f = ceiling)
+                    zlength = zmax - zmin
+
+                    xmin = plyr::round_any(min(data$x), tick_round, f = floor)
+                    xmax = plyr::round_any(max(data$x), tick_round, f = ceiling)
+                    xend = xmax+(zlength*cos(angle))
+                    xlength = xmax - xmin
+
+                    xintervals = seq(xmin, xmax, x_tick_interval)
+                    yintervals = seq(ymin, ymax, y_tick_interval)
+                    zintervals = seq(zmin, zmax, z_tick_interval)
+
+                ## Draw grid
+
+                    grid_x <- data.frame(
+                        y = ((zintervals-zmin) * sin(angle)),
+                        yend = ((zintervals-zmin) * sin(angle)),
+                        x = ((zintervals-zmin) * cos(angle)) + xmin,
+                        xend = (((zintervals-zmin) * cos(angle)) + xmax)
+                    )
+
+                    grid_z <- data.frame(
+                        y = 0,
+                        yend = zlength*sin(angle),
+                        x = xintervals,
+                        xend = zlength*cos(angle) + xintervals
+                    )
+
+                    output$grid <- rbind(grid_z, grid_x)
+
+                ## Draw ticks
+
+                    ticks_x <- data.frame(
+                        y = 0,
+                        yend = zlength*0.02*sin(angle),
+                        x = xintervals,
+                        xend = zlength*0.02*cos(angle) + xintervals
+                    )
+
+                    ticks_x2 <- data.frame(
+                        y = 0,
+                        yend = -zlength*0.02*sin(angle),
+                        x = xintervals,
+                        xend = -zlength*0.02*cos(angle) + xintervals
+                    )
+
+                    ticks_y <- data.frame( ### HERE
+                        y = yintervals-ymin,
+                        yend = yintervals-ymin,
+                        x = -0.02*xlength + xmin,
+                        xend = 0.02*xlength + xmin
+                    )
+                    
+                    ticks_z <- data.frame(
+                        y = ((zintervals-zmin) * sin(angle)),
+                        yend = ((zintervals-zmin) * sin(angle)),
+                        x = (((zintervals-zmin) * cos(angle)) + xmax) - 0.02*xlength,
+                        xend = (((zintervals-zmin) * cos(angle)) + xmax) + 0.02*xlength
+                    )
+
+                    output$ticks <- rbind(ticks_x, ticks_x2, ticks_y, ticks_z)
+
+                ## Draw tick labels
+
+                    labels_x <- data.frame(
+                        y = -ylength*0.04,
+                        x = xintervals-0.04*xlength,
+                        label = xintervals
+                    )
+
+                    labels_y <- data.frame(
+                        y = yintervals-ymin,
+                        x = -xlength*0.08 + xmin,
+                        label = yintervals
+                    )
+
+                    labels_z <- data.frame(
+                        y = ((zintervals-zmin) * sin(angle)),
+                        x = (((zintervals-zmin) * cos(angle)) + xmax) + xlength*0.08,
+                        label = zintervals
+                    )
+
+                    output$labels <- rbind(labels_x, labels_y, labels_z)
+
+                ## Draw axes
+
+                    output$axes <- data.frame(
+                        x = c(xmin, xmin, xmax),
+                        xend = c(xmax, xmin, xend),
+                        y = c(0, 0, 0),
+                        yend = c(0, ylength, zlength*sin(angle))
+                    )
+                
+                ## Draw points and their dashed lines
+
+                    output$point_segments <- data.frame(
+                        x = data$x + (data$z-zmin)*cos(angle),
+                        xend = data$x + (data$z-zmin)*cos(angle),
+                        y = data$y - ymin + (data$z-zmin)*sin(angle),
+                        yend = (data$z-zmin)*sin(angle)
+                    )
+
+                    output$points <- data.frame(
+                        x = data$x + (data$z-zmin)*cos(angle),
+                        y = data$y - ymin + (data$z-zmin)*sin(angle),
+                        sample_unique_ID = data$sample_unique_ID
+                    )
+
+                return(output)
+            }
+
     ##### Image Analysis
 
         #### analyzeImages
