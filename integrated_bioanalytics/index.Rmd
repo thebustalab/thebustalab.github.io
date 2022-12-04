@@ -844,7 +844,7 @@ plot3 <-  ggplot(
 (plot1 + plot2) / plot3
 ```
 
-## 3D scatter plots
+## 3D scatter plots {-}
 
 `phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
 
@@ -866,7 +866,7 @@ output <- points3D(
   z_tick_interval = 20
 )
 
-output
+str(output)
 ```
 
 The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segement. We can take the output from points3D and join it with the original data, which will occurr according to our sample_unique_ID column. Then, we can also plot point metadata:
@@ -892,7 +892,7 @@ ggplot() +
   ) +
   geom_point(
     data = output$points, aes(x = x, y = y, fill = aquifer_code),
-    size = 4, shape = 21
+    size = 3, shape = 21
   ) +
   theme_void() +
   scale_fill_manual(values = discrete_palette)
