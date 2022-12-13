@@ -86,6 +86,7 @@
                     "dbscan",
                     "Rtsne",
                     "readxl",
+                    "httpuv",
                     "ggdist"
                 )
 
@@ -4764,7 +4765,7 @@
                     path_to_reference_library = busta_spectral_library,
                     samples_monolist_subset = NULL,
                     ions = 0,
-                    jupyter_user = FALSE
+                    jupyter = FALSE
                 ) {
 
                     setwd(CDF_directory_path)
@@ -5810,19 +5811,62 @@
 
                     ## Call the app
                         
-                        if ( jupyter_user == "busta_lab" ) {
-                            runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10123)
+                        if ( jupyter == TRUE) {
+
+                            available_ports <- vector()
+
+                            if ( length( unique( c(
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
+                            ))) == 2 ) { available_ports <- c(available_ports, 10123) }
+
+                            if ( length( unique( c(
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
+                            ))) == 2 ) { available_ports <- c(available_ports, 10456) }
+
+                            if ( length( unique( c(
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                        randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
+                            ))) == 2 ) { available_ports <- c(available_ports, 10789) }
+
+                            if (length(available_ports) > 0) {
+                                cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
+                                runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
+                            } else {
+                                cat("All available ports are in use. Please try again later.")
+                            }
+                        
                         }
-                        if ( jupyter_user == "emma" ) {
-                            runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10456)
-                        }
-                        if ( jupyter_user == "noah" ) {
-                            runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10789)
-                        }
-                        if ( jupyter_user == FALSE ) {
+
+                        if (jupyter == FALSE) {
                             shinyApp(ui = ui, server = server)
                         }
-                        
+                    
 
             }
 
