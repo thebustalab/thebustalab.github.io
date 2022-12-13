@@ -5810,13 +5810,13 @@
 
                     ## Call the app
                         
-                        if ( jupyter_user == "busta" ) {
+                        if ( jupyter_user == "busta_lab" ) {
                             runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10123)
                         }
                         if ( jupyter_user == "emma" ) {
                             runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10456)
                         }
-                        if ( jupyter_user == "busta" ) {
+                        if ( jupyter_user == "noah" ) {
                             runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10789)
                         }
                         if ( jupyter_user == FALSE ) {
