@@ -4764,7 +4764,7 @@
                     path_to_reference_library = busta_spectral_library,
                     samples_monolist_subset = NULL,
                     ions = 0,
-                    jupyter = FALSE
+                    jupyter_user = FALSE
                 ) {
 
                     setwd(CDF_directory_path)
@@ -5810,9 +5810,16 @@
 
                     ## Call the app
                         
-                        if ( jupyter == TRUE ) {
-                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = 5627)
-                        } else {
+                        if ( jupyter_user == "busta" ) {
+                            runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10123)
+                        }
+                        if ( jupyter_user == "emma" ) {
+                            runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10456)
+                        }
+                        if ( jupyter_user == "busta" ) {
+                            runApp(shinyApp(ui = ui, server = server), host = "131.212.57.4", port = 10789)
+                        }
+                        if ( jupyter_user == FALSE ) {
                             shinyApp(ui = ui, server = server)
                         }
                         
