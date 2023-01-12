@@ -10,7 +10,7 @@
             
             if (bustalab) {
 
-                message("bustalab is true\n")
+                message("bustalab is true")
                 
                 CRAN_packages <- c(
                     # "imager",
@@ -137,7 +137,7 @@
                 }
                 
                 message("Loading packages...")
-                message(c(Bioconductor_packages))
+
                 invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
         
         } else {
