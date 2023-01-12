@@ -7,18 +7,10 @@
     ## Load bustalab-specific libraries and functions
 
         if (exists("bustalab")) {
-
-            if (bustalab == TRUE) {
-
-                cat("bustalab is true")
-
-            }
-
-        }
-
-        if (exists("bustalab")) {
             
-            if (bustalab == TRUE) {
+            if (bustalab) {
+
+                message("bustalab is true\n")
                 
                 CRAN_packages <- c(
                     # "imager",
@@ -33,9 +25,7 @@
                     "Biostrings",
                     "GenomicRanges",
                     "GenomicFeatures",
-                    "Rsamtools",
-                    "ggtree",
-                    "ggtreeExtra"
+                    "Rsamtools"
                 )
 
                 source("https://thebustalab.github.io/phylochemistry/genomescope.R")
@@ -102,6 +92,7 @@
 
                 if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
                 Bioconductor_packages <- c(
+                    Bioconductor_packages,
                     "ggtree",
                     "ggtreeExtra"
                 )
@@ -146,6 +137,7 @@
                 }
                 
                 message("Loading packages...")
+                message(c(Bioconductor_packages))
                 invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
         
         } else {
