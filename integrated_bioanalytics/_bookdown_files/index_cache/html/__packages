@@ -83,3 +83,4 @@ ggdist
 minpack.lm
 patchwork
 readxl
+httpuv

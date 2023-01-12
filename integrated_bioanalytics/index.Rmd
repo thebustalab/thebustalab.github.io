@@ -319,6 +319,10 @@ algae_data_small
 
 Now we have a nice, small table that we can use to practice data visualization. For visualization, we're going to use `ggplot2` - a powerful set of commands for plot generation. 
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/what_is_ggplot.jpeg', dpi = NA)
+```
+
 There are three steps to setting up a ggplot:
 
 1. **Define the data you want to use.**
@@ -648,6 +652,10 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 ## more geoms {-}
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chart_suggestions.jpeg', dpi = NA)
+```
+
 We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. In these examples, I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
 ```{r}
@@ -925,6 +933,8 @@ Some pointers:
 ## {-}
 
 ## further reading {-}
+
+For additional explanations of ggplot2: [ggplot2-book](https://ggplot2-book.org/).
 
 Check out some of the incredible geoms that are easy to access using R and ggplot2: [R Graph Gallery](https://r-graph-gallery.com/). Use these to make your figures attractive and easy to interpret!
 
@@ -3287,6 +3297,8 @@ sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species
 
 ## final assessment
 
+https://www.molecularecologist.com/2017/03/29/whats-n50/
+
 ### mosdepth
 
 `sudo docker pull quay.io/biocontainers/mosdepth:0.2.4--he527e40_0`
@@ -3390,7 +3402,9 @@ Let's look at some examples. For these example, we will use some fasta files sto
 #   theme_classic() +
 #   coord_polar()
 ```
+# annotation {-}
 
+docker pull nanozoo/braker2
 
 # comparative genomics {-}
 
@@ -3922,6 +3936,10 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. -->
 
 **Introduction:**
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/knowledge_gaps.jpeg', dpi = NA)
+```
   
 * *Paragraph 1: Introduce the topic*
   + **1**: Introduce a topic and, ideally, an application of the research you will describe. Grab reader's attention.
@@ -3954,6 +3972,10 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 # abstract and title {-}
 
 ## abstract
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/abstract_guide.jpeg', dpi = NA)
+```
 
 * **Structure** *One paragraph* Use about 200 - 500 words (ideally no more than 400 words)
   + **1-2 sentences**: Introduction: Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?)
@@ -3996,6 +4018,10 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 # proposals {-}
 
+Grant proposal examples:
+
+GRFP: https://github.com/ybrandvain/GRFP
+
 Grant writing is a game. Here are some suggestions:
 
 +\#1: Show excitement. If you are not excited, the reviewers will not be either. This is the most important rule.
@@ -4018,6 +4044,29 @@ Grant writing is a game. Here are some suggestions:
 
 +\#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
 
+<!-- end -->
+
+<!-- start grad school apps -->
+# grad school apps
+
+A personal statement should ideally tell the reader (the prof(s) who you want to work with) what you want to work on.
+The main thing readers want is to understand how your interests would gel and to imagine where they might be able to advise you.
+Consider writing the Statement in three acts.
+
+Act I: Research interests
+Act II: Supporting evidence (background/experience)
+Act III: Fit to the faculty/department 
+
+Act I: What are your research interests? What are the intellectual issues you want to better understand? This should be specific enough to make it clear that you know the major open questions in your research area, but not so specific that you're proposing one study.
+Act II: What is the experience and background you have that enables you to carry out graduate work on these issues? Your thesis/RA experience shouldn't be autobiography, it should be evidence -- look, I really have the skills, ability, perseverance, etc. to do this work!
+Act III: How do your interests match specific faculty members at the department you're applying to? This is the part that changes the most between applications. You core interests (Act I) shouldn't change much -- they're what you generally want to work on, regardless of where!
+
+This leads me to an important point: Act I should really be the actual reason you're applying.
+It takes a long time and lots of trial-and-error to figure out your intellectual interests.
+If you haven't figured them out yet, that's not a knock on you!
+
+But if you find yourself feeling like you're making stuff up or only trying to appeal to a PI just to get accepted, take a step back and ask yourself why you're applying.
+A PhD takes too long and pays too little to do something you're not genuinely excited about.
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

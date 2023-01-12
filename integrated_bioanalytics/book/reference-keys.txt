@@ -1,4 +1,4 @@
-fig:unnamed-chunk-72
+fig:unnamed-chunk-74
 part-data-analysis-in-r
 using-analyzegcmsdata
 cdf-export
@@ -37,6 +37,7 @@ phylogenetic-regression
 abstract
 title
 further-reading-10
+grad-school-apps
 matrix-analyses
 basic-runmatrixanalysis-template
 advanced-runmatrixanalysis-template

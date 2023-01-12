@@ -7,6 +7,16 @@
     ## Load bustalab-specific libraries and functions
 
         if (exists("bustalab")) {
+
+            if (bustalab == TRUE) {
+
+                cat("bustalab is true")
+
+            }
+
+        }
+
+        if (exists("bustalab")) {
             
             if (bustalab == TRUE) {
                 
@@ -1870,6 +1880,7 @@
 
                     query_seqs <- Biostrings::readBStringSet(filepath = query_in_path, format = "fasta")
                     if (blast_mode %in% c("ptblastp")) { blast_type <- "blastp" }
+                    if (blast_mode %in% c("nnblastn")) { blast_type <- "blastn" }
 
                         ## Loop over each member of the query and use it to blast each transcriptome
                             
@@ -1881,7 +1892,7 @@
                                     
                                     Biostrings::writeXStringSet(
                                         query_seqs[query_seq], 
-                                        filepath = paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""), 
+                                        filepath = paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""), 
                                         append = FALSE
                                     )
 
@@ -1902,7 +1913,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out", sep = ""),
                                                         " -evalue ",
@@ -1921,7 +1932,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_length", sep = ""),
                                                         " -evalue ",
@@ -1940,7 +1951,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
                                                         " -evalue ",
@@ -1959,7 +1970,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
                                                         " -evalue ",
@@ -1978,7 +1989,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""),
                                                         " -evalue ",
@@ -2002,7 +2013,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out", sep = ""),
                                                         " -evalue ",
@@ -2021,7 +2032,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_length", sep = ""),
                                                         " -evalue ",
@@ -2040,7 +2051,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
                                                         " -evalue ",
@@ -2059,7 +2070,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
                                                         " -evalue ",
@@ -2078,7 +2089,7 @@
                                                         " -db ", 
                                                         transcriptomes[transcriptome],
                                                         " -query ",
-                                                        paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
+                                                        paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""),
                                                         " -out ",
                                                         paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""),
                                                         " -evalue ",
@@ -2181,7 +2192,7 @@
                                                                     subset_all = TRUE,
                                                                     query = query_seqs@ranges@NAMES[query_seq],
                                                                     query_length = query_seqs@ranges@width[query_seq],
-                                                                    query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                                                    query_longestORF = extractORFs(paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
                                                                 ))
                                                         }
                                                 }
@@ -2194,7 +2205,7 @@
                                         if (blast_type == "blastp") {
                                                 longestORF <- 3*query_seqs@ranges@width[query_seq] 
                                             } else {
-                                                longestORF <- extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                                longestORF <- extractORFs(paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
                                             }
                                         
                                         monolist <- rbind(monolist, data.frame(
@@ -2211,7 +2222,7 @@
                                             subset_all = TRUE,
                                             query = query_seqs@ranges@NAMES[query_seq],
                                             query_length = query_seqs@ranges@width[query_seq],
-                                            query_longestORF = extractORFs(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
+                                            query_longestORF = extractORFs(paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
                                         ))
 
                                         Biostrings::writeXStringSet(
@@ -2222,8 +2233,8 @@
                                     }
 
                                 ## Remove individual query files
-                                    if (file.exists(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = "")) ) {
-                                        file.remove(paste(initial_query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))
+                                    if (file.exists(paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = "")) ) {
+                                        file.remove(paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))
                                     }
                             }
 
@@ -9839,34 +9850,73 @@
             #' geomSignif
             #'
             #' @param data
+            #' @param orientation
             #' @export
             #' @examples
             #' geomSignif()
 
-            geomSignif <- function(data) {
-                
-                list(
-                    geom_segment(
-                        data = data,
-                        aes(x = xmin, xend = xmax, y = y_position, yend = y_position),
-                        inherit.aes = FALSE
-                    ),
-                    geom_segment(
-                        data = data,
-                        aes(x = xmin, xend = xmin, y = y_position, yend = y_position - tip_length_xmin),
-                        inherit.aes = FALSE
-                    ),
-                    geom_segment(
-                        data = data,
-                        aes(x = xmax, xend = xmax, y = y_position, yend = y_position - tip_length_xmax),
-                        inherit.aes = FALSE
-                    ),
-                    geom_text(
-                        data = data,
-                        aes(x = text_horiz_offset, y = y_position+text_vert_offset, label = text, size = text_size),
-                        show.legend = FALSE, inherit.aes = FALSE, hjust = 0.5
+            geomSignif <- function(data, orientation) {
+
+                if (orientation == "horizontal") {
+                    return(
+                        list(
+                            geom_segment(
+                                data = data,
+                                aes(x = xmin, xend = xmax, y = y_position, yend = y_position),
+                                inherit.aes = FALSE
+                            ),
+                            geom_segment(
+                                data = data,
+                                aes(x = xmin, xend = xmin, y = y_position, yend = y_position - tip_length_xmin),
+                                inherit.aes = FALSE
+                            ),
+                            geom_segment(
+                                data = data,
+                                aes(x = xmax, xend = xmax, y = y_position, yend = y_position - tip_length_xmax),
+                                inherit.aes = FALSE
+                            ),
+                            geom_text(
+                                data = data,
+                                aes(
+                                    x = text_horiz_offset, y = y_position+text_vert_offset,
+                                    label = text, size = text_size, hjust = hjust, vjust = vjust
+                                ),
+                                show.legend = FALSE, inherit.aes = FALSE
+                            )
+                        )
                     )
-                )
+                }
+
+                if (orientation == "vertical") {
+                    return(
+                        list(
+                            geom_segment(
+                                data = data,
+                                aes(x = x_position, xend = x_position, y = ymin, yend = ymax),
+                                inherit.aes = FALSE
+                            ),
+                            geom_segment(
+                                data = data,
+                                aes(x = x_position, xend = x_position - tip_length_ymin, y = ymin, yend = ymin),
+                                inherit.aes = FALSE
+                            ),
+                            geom_segment(
+                                data = data,
+                                aes(x = x_position, xend = x_position - tip_length_ymax, y = ymax, yend = ymax),
+                                inherit.aes = FALSE
+                            ),
+                            geom_text(
+                                data = data,
+                                aes(
+                                    x = x_position+text_vert_offset, y = text_horiz_offset,
+                                    label = text, size = text_size, hjust = hjust, vjust = vjust
+                                ),
+                                show.legend = FALSE, inherit.aes = FALSE
+                            )
+                        )
+                    )
+                }
+                
             }
 
         #### grubbsFilter
