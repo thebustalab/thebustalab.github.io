@@ -10,7 +10,7 @@
             
             if (bustalab) {
 
-                message("bustalab is truee")
+                message("bustalab is true")
                 
                 CRAN_packages <- c(
                     # "imager",
