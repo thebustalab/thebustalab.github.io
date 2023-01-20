@@ -1804,7 +1804,7 @@
                                     query_in_path,
                                     sequences_of_interest_directory_path,
                                     blast_module_directory_path,
-                                    blast_mode = c("nnblastn", "dc-megablast", "blastp", "tblastn", "ptblastp"), 
+                                    blast_mode = c("nnblastn", "dc-megablast", "pnblastp", "tblastn", "ptblastp"), 
                                     e_value_cutoff = 1,
                                     queries_in_output = TRUE,
                                     monolist_out_path
@@ -1880,6 +1880,7 @@
 
                     query_seqs <- Biostrings::readBStringSet(filepath = query_in_path, format = "fasta")
                     if (blast_mode %in% c("ptblastp")) { blast_type <- "blastp" }
+                    if (blast_mode %in% c("pnblastp")) { blast_type <- "blastp" }
                     if (blast_mode %in% c("nnblastn")) { blast_type <- "blastn" }
 
                         ## Loop over each member of the query and use it to blast each transcriptome
