@@ -4013,61 +4013,6 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 * [Abstract Guide] (https://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)
 
 <!-- end -->
-
-<!-- start Proposal -->
-
-# proposals {-}
-
-Grant proposal examples:
-
-GRFP: https://github.com/ybrandvain/GRFP
-
-Grant writing is a game. Here are some suggestions:
-
-+\#1: Show excitement. If you are not excited, the reviewers will not be either. This is the most important rule.
-
-+\#2: Significance means how your work will advance the field. It does not mean your work has to cure all cancers. It almost certainly will not, but it can still have high impact.
-
-+\#3: You have to establish feasibility in the Approach section. This is a chicken and egg problem. If it is 100% feasible, it may be boring. If it is super exciting, it may not be feasible. Try to find a balance. 3/10 
-
-+\#4: Reviewers decide based on the big picture. If you made a convincing case that your study will have a high impact, most reviewers are willing to overlook small problems in the details. Some details are more important than others however.
-
-+\#5: Always customize the Personal Statement in your Biosketch to the grant you are writing. Explain briefly why you are the right person to do this particular work.
-
-+\#6: Use the Facilities page to make a case why you institution is a great place for your studies. List collaborators, experts, core facilities, even if not directly relevant to your proposal. This is especially important if you are not at a tier 1 university.
-
-+\#7: Send your Specific aims page and Significance section to a colleague who is not on your close field at least 2-3 weeks before the deadline. If they do not understand it, or do not find it exciting, rewrite them.
-
-+\#8: When you revise a grant or try to renew, the reviewers do not see the previous version. What they see is the previous summary statement, that includes the abstract. Keep this in mind when you write the grant.
-
-+\#9: Just because you responded to all comments does not mean you will get a better score. Sounds cruel, but this is how it is. Go beyond what is requested in the revised version to make your grant more compelling and to show progress.
-
-+\#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
-
-<!-- end -->
-
-<!-- start grad school apps -->
-# grad school apps
-
-A personal statement should ideally tell the reader (the prof(s) who you want to work with) what you want to work on.
-The main thing readers want is to understand how your interests would gel and to imagine where they might be able to advise you.
-Consider writing the Statement in three acts.
-
-Act I: Research interests
-Act II: Supporting evidence (background/experience)
-Act III: Fit to the faculty/department 
-
-Act I: What are your research interests? What are the intellectual issues you want to better understand? This should be specific enough to make it clear that you know the major open questions in your research area, but not so specific that you're proposing one study.
-Act II: What is the experience and background you have that enables you to carry out graduate work on these issues? Your thesis/RA experience shouldn't be autobiography, it should be evidence -- look, I really have the skills, ability, perseverance, etc. to do this work!
-Act III: How do your interests match specific faculty members at the department you're applying to? This is the part that changes the most between applications. You core interests (Act I) shouldn't change much -- they're what you generally want to work on, regardless of where!
-
-This leads me to an important point: Act I should really be the actual reason you're applying.
-It takes a long time and lots of trial-and-error to figure out your intellectual interests.
-If you haven't figured them out yet, that's not a knock on you!
-
-But if you find yourself feeling like you're making stuff up or only trying to appeal to a PI just to get accepted, take a step back and ask yourself why you're applying.
-A PhD takes too long and pays too little to do something you're not genuinely excited about.
-<!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

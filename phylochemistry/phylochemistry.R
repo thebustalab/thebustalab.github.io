@@ -554,8 +554,16 @@
             #' @export
             #' writeFasta
 
-            writeFasta <- function( XStringSet, fasta_out_path, append = FALSE) {
-            	Biostrings::writeXStringSet( x = DNAStringSet(XStringSet), filepath = fasta_out_path, append = append )
+            writeFasta <- function( XStringSet, fasta_out_path, append = FALSE, type = c("DNA", "AA")) {
+
+                if (type[1] == "DNA") {
+            	   Biostrings::writeXStringSet( x = DNAStringSet(XStringSet), filepath = fasta_out_path, append = append )
+                }
+
+                if (type[1] == "AA") {
+                    Biostrings::writeXStringSet( x = XStringSet, filepath = fasta_out_path, append = append )
+                }
+
             }
 
         #### writeSupplementalTable
