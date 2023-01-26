@@ -1887,7 +1887,7 @@
                         ## Loop over each member of the query and use it to blast each transcriptome
                             
                             monolist <- data.frame()
-                            cat("\n")
+                            cat("\n\n")
                             
                             for ( query_seq in 1:length(query_seqs) ) {
 
