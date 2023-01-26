@@ -1827,7 +1827,8 @@
                         for ( transcriptome in 1:length(transcriptomes) ) {
                             writeFasta(
                                 XStringSet = translate(readDNAStringSet(transcriptomes[transcriptome]), if.fuzzy.codon = "solve"),
-                                fasta_out_path = paste(transcriptomes[transcriptome], "trans", sep = "_")
+                                fasta_out_path = paste(transcriptomes[transcriptome], "trans", sep = "_"),
+                                type = "AA"
                             )
                             transcriptomes[transcriptome] <- paste(transcriptomes[transcriptome], "trans", sep = "_")
                         }
@@ -1880,7 +1881,7 @@
 
                     query_seqs <- Biostrings::readBStringSet(filepath = query_in_path, format = "fasta")
                     if (blast_mode %in% c("ptblastp")) { blast_type <- "blastp" }
-                    if (blast_mode %in% c("pnblastp")) { blast_type <- "blastp" }
+                    if (blast_mode %in% c("ppblastp")) { blast_type <- "blastp" }
                     if (blast_mode %in% c("nnblastn")) { blast_type <- "blastn" }
 
                         ## Loop over each member of the query and use it to blast each transcriptome
