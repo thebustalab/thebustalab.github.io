@@ -1887,6 +1887,7 @@
                         ## Loop over each member of the query and use it to blast each transcriptome
                             
                             monolist <- data.frame()
+                            print("\n")
                             
                             for ( query_seq in 1:length(query_seqs) ) {
 
@@ -10210,4 +10211,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
