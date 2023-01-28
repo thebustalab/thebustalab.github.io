@@ -1884,8 +1884,8 @@
                 ### Start BLAST process
 
                     query_seqs <- Biostrings::readBStringSet(filepath = query_in_path, format = "fasta")
-                    if ( substr(blast_mode, 8, 8) == "p") { blast_type <- "p" }
-                    if ( substr(blast_mode, 8, 8) == "n") { blast_type <- "n" }
+                    if ( substr(blast_mode, 8, 8) == "p") { blast_type <- "blastp" }
+                    if ( substr(blast_mode, 8, 8) == "n") { blast_type <- "blastn" }
 
                         ## Loop over each member of the query and use it to blast each transcriptome
                             
@@ -10214,4 +10214,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
