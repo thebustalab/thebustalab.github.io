@@ -1782,12 +1782,12 @@
                 return(ORFs)
             }
 
-        #### blastTranscriptomes
+        #### polyBlast
 
-            #' BLAST search local transcriptomes
+            #' BLAST search local sequence collections
             #'
-            #' Search locally stored transcriptomes for query sequences. Download Blast+ here: https://www.ncbi.nlm.nih.gov/books/NBK279671/
-            #' @param transcriptomes A list of paths to the transcriptomes that should be searched, named by taxonomic identifier (e.g. species names)
+            #' Search locally stored sequence collections for query sequences. Download Blast+ here: https://www.ncbi.nlm.nih.gov/books/NBK279671/
+            #' @param named_subjects_list A list of paths to the transcriptomes that should be searched, named by taxonomic identifier (e.g. species names)
             #' @param query_in_path Path to a fasta file containing the query or queries
             #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
             #' @param blast_module_directory_path Path to directory containing the BLAST+ module (perhaps something like "/usr/local/ncbi/blast/bin/")
@@ -1797,14 +1797,14 @@
             #' @param monolist_out_path Path to where the output monolist should be written
             #' @examples
             #' @export
-            #' blastTranscriptomes
+            #' polyBlast
 
-            blastTranscriptomes <- function(
-                                    transcriptomes,
+            polyBlast <- function(
+                                    named_subjects_list,
                                     query_in_path,
                                     sequences_of_interest_directory_path,
                                     blast_module_directory_path,
-                                    blast_mode = c("nnblastn", "dc-megablast", "pnblastp", "tblastn", "ptblastp"), 
+                                    blast_mode = c("nnblastn", "ntblastp", "pnblastp"), 
                                     e_value_cutoff = 1,
                                     queries_in_output = TRUE,
                                     monolist_out_path
@@ -1832,16 +1832,20 @@
                             )
                             transcriptomes[transcriptome] <- paste(transcriptomes[transcriptome], "trans", sep = "_")
                         }
+                    } else if ( substr(blast_mode, 2, 2) == "n" ) {
+
+                    } else {
+                        stop("Please specify t or n to indicate whether the subjects should be translated.")
                     }
 
                 ### Build blast database(s)
 
-                    if ( substr(blast_mode, 2, 2) %in% c("n") ) {
+                    if ( substr(blast_mode, 1, 1) %in% c("n") ) {
                         dbtype = "nucl"
-                    } else if ( substr(blast_mode, 2, 2) %in% c("t", "p") ) {
+                    } else if ( substr(blast_mode, 1, 1) %in% c("p") ) {
                         dbtype = "prot"
                     } else {
-                        stop("Please specify a target type of n t or p")
+                        stop("Please specify a subject type of n or p")
                     }
 
                     if ( .Platform$OS == "unix" ) {
@@ -1880,9 +1884,8 @@
                 ### Start BLAST process
 
                     query_seqs <- Biostrings::readBStringSet(filepath = query_in_path, format = "fasta")
-                    if (blast_mode %in% c("ptblastp")) { blast_type <- "blastp" }
-                    if (blast_mode %in% c("ppblastp")) { blast_type <- "blastp" }
-                    if (blast_mode %in% c("nnblastn")) { blast_type <- "blastn" }
+                    if ( substr(blast_mode, 8, 8) == "p") { blast_type <- "p" }
+                    if ( substr(blast_mode, 8, 8) == "n") { blast_type <- "n" }
 
                         ## Loop over each member of the query and use it to blast each transcriptome
                             

@@ -3074,33 +3074,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) TRANSCRIPTOME ANALYSIS {-}
+<!-- # (PART) TRANSCRIPTOME ANALYSIS {-} -->
 
 <!-- start transcriptomic analyses -->
 
-# transcriptomic analyses {-}
-
-## BLAST
-
-### interpretation
-
-From Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
-
-"BLAST, FASTA, SSEARCH, and other commonly used similarity searching programs produce accurate statistical estimates that can be used to reliably infer homology. Searches with protein sequences (BLASTP, FASTP, SSEARCH,) or translated DNA sequences (BLASTX, FASTX) are preferred because they are 5–10-fold more sensitive than DNA:DNA sequence comparison. The 30% identity rule-of-thumb is too conservative; statistically significant (E() < 10−6 – 10−3) protein homologs can share less than 20% identity. E()-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.""
-
-* e-values
-
-The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
-E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
-E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
-10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
-10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
-10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
-E-value > 1 Proteins are most likely not related
-E-value > 10 Hits are most likely junk unless the query sequence is very short.
-reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
-
-* bit-scores
+<!-- # transcriptomic analyses {-} -->
 
 
 <!-- end -->
@@ -3420,34 +3398,72 @@ ________________________________________________________________________________
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
-# blast searches {-}
+# blast {-}
 
-## blastTranscriptomes
+## polyBlast
 
-On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what this function is designed for. This funtion relies on the BLAST+ program available from [...]. Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Let's check it out by looking at an example. For this example, we need to set up a few things:
+### setup
 
-* A named list of sequence collections (often transcriptomes) to search (one fasta for each collection).
-* One or more queries, all listed in a single fasta file.
-* The path to the BLAST+ executable.
-* The path to where we want a summary of the BLAST results to be written.
-* The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Let's check it out by looking at an example. For this example, we need to set up a few things:
 
-Once we have those things, we can set up the search:
+* "named_subjects_list": A named list of sequence collections (often transcriptomes) to search (one fasta for each collection, often one collection for each species or accession).
+* "query_in_path": One or more queries, all listed in a single fasta file.
+* "sequences_of_interest_directory_path": The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+* "blast_module_directory_path": The path to the folder of BLAST+ executable.
+* "blast_mode": The format is XYblastZ where X is subject type (the transcriptome or proteome, use "n" for nucleotide, "p" for amino acids). Y is whether the subjects should be translated ("t" for translate, "n" for no translation, if you choose "t" your subjects will not be searched for ORFs, every three base pairs are just translated verbatim). Z is the format of the query/queries ("n" for nucleotide, "p" for amino acids). Allowed formats: nnblastn, ntblastp, pnblastp.
+* "e_value_cutoff": Hits with a e-value below this cutoff will not be returned. Default = 1.
+* "queries_in_outout": TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.
+* "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
+
+Once we have those things, we can set up the search. Below is a generic example.
 
 ```{r, eval = FALSE}
-blastTranscriptomes(
-  transcriptomes = "",
-  query_in_path = "",
-  sequences_of_interest_directory_path = "",
-  blast_module_directory_path = "",
-  blast_mode = c("nnblastn", "dc-megablast", "blastp", "tblastn", "ptblastp"), 
+the_transcriptomes <- c(
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_benthamiana.fa"
+)
+
+names(the_transcriptomes) <- c(
+  "Nicotiana_glauca.fa",
+  "Nicotiana_tabacum.fa",
+  "Nicotiana_benthamiana.fa"
+)
+
+polyBlast(
+  named_subjects_list = the_transcriptomes,
+  query_in_path = "/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa",
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  blast_module_directory_path = "/path_to/the_blast_module/",
+  blast_mode = c("nnblastn", "ntblastp", "pnblastp", "dc-megablast"), 
   e_value_cutoff = 1,
   queries_in_output = TRUE,
-  monolist_out_path = ""
+  monolist_out_path = "/path_to/a_csv_file_that_will_list_all_blast_hits.csv"
 )
 ```
 
 There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments (see below).
+
+### interpretation
+
+From Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+"BLAST, FASTA, SSEARCH, and other commonly used similarity searching programs produce accurate statistical estimates that can be used to reliably infer homology. Searches with protein sequences (BLASTP, FASTP, SSEARCH,) or translated DNA sequences (BLASTX, FASTX) are preferred because they are 5–10-fold more sensitive than DNA:DNA sequence comparison. The 30% identity rule-of-thumb is too conservative; statistically significant (E() < 10−6 – 10−3) protein homologs can share less than 20% identity. E()-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.""
+
+* e-values
+
+The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
+E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
+E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
+10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+E-value > 1 Proteins are most likely not related
+E-value > 10 Hits are most likely junk unless the query sequence is very short.
+reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
+
+* bit-scores
+
 
 # alignments {-}
 
