@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-01-04"
+date: "2023-01-29"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -57,7 +57,7 @@ Features provided by the source script:
 
 * A GC-MS data analysis application with a MS reference library.
 * A sequence alignment analysis application for trimming alignments.
-* Hard-to-find color palettes (for example, a 25-member discrete color palette)
+* Functions for dimensionality reduction, clustering, modeling, and visualization.
 
 --Useful data--
 
@@ -1036,7 +1036,7 @@ For a list of data visualization sins: [Friends Don't Let Friends](https://githu
 
 For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/). A digital text that covers similar topics is here: [Look At Data] (https://socviz.co/lookatdata.html).
 
-Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards).
+Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards) and [Data Vis Inspiration](https://www.dataviz-inspiration.com/).
 
 Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer) and [Paletteer](https://github.com/EmilHvitfeldt/paletteer).
 
@@ -3539,33 +3539,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) TRANSCRIPTOME ANALYSIS {-}
+<!-- # (PART) TRANSCRIPTOME ANALYSIS {-} -->
 
 <!-- start transcriptomic analyses -->
 
-# transcriptomic analyses {-}
-
-## BLAST
-
-### interpretation
-
-From Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
-
-"BLAST, FASTA, SSEARCH, and other commonly used similarity searching programs produce accurate statistical estimates that can be used to reliably infer homology. Searches with protein sequences (BLASTP, FASTP, SSEARCH,) or translated DNA sequences (BLASTX, FASTX) are preferred because they are 5–10-fold more sensitive than DNA:DNA sequence comparison. The 30% identity rule-of-thumb is too conservative; statistically significant (E() < 10−6 – 10−3) protein homologs can share less than 20% identity. E()-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.""
-
-* e-values
-
-The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
-E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
-E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
-10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
-10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
-10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
-E-value > 1 Proteins are most likely not related
-E-value > 10 Hits are most likely junk unless the query sequence is very short.
-reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
-
-* bit-scores
+<!-- # transcriptomic analyses {-} -->
 
 
 <!-- end -->
@@ -3888,51 +3866,101 @@ ________________________________________________________________________________
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
-# blast searches {-}
+# blast {-}
 
-## blastTranscriptomes
+## polyBlast
 
-On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what this function is designed for. This funtion relies on the BLAST+ program available from [...]. Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Let's check it out by looking at an example. For this example, we need to set up a few things:
+### setup
 
-* A named list of sequence collections (often transcriptomes) to search (one fasta for each collection).
-* One or more queries, all listed in a single fasta file.
-* The path to the BLAST+ executable.
-* The path to where we want a summary of the BLAST results to be written.
-* The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
 
-Once we have those things, we can set up the search:
+Let's check out `polyBlast()` by looking at an example. For this example, we need to set up a few things:
+
+* "named_subjects_list": A named list of sequence collections (often transcriptomes) to search (one fasta for each collection, often one collection for each species or accession).
+* "query_in_path": One or more queries, all listed in a single fasta file.
+* "sequences_of_interest_directory_path": The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+* "blast_module_directory_path": The path to the folder of BLAST+ executable.
+* "blast_mode": The format is XYblastZ where X is subject type (the transcriptome or proteome, use "n" for nucleotide, "p" for amino acids). Y is whether the subjects should be translated ("t" for translate, "n" for no translation, if you choose "t" your subjects will not be searched for ORFs, every three base pairs are just translated verbatim). Z is the format of the query/queries ("n" for nucleotide, "p" for amino acids). Allowed formats: nnblastn, ntblastp, pnblastp.
+* "e_value_cutoff": Hits with a e-value below this cutoff will not be returned. Default = 1.
+* "queries_in_outout": TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.
+* "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
+
+Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
 
 
 ```r
-blastTranscriptomes(
-  transcriptomes = "",
-  query_in_path = "",
-  sequences_of_interest_directory_path = "",
-  blast_module_directory_path = "",
-  blast_mode = c("nnblastn", "dc-megablast", "blastp", "tblastn", "ptblastp"), 
+the_transcriptomes <- c(
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_benthamiana.fa"
+)
+
+names(the_transcriptomes) <- c(
+  "Nicotiana_glauca.fa",
+  "Nicotiana_tabacum.fa",
+  "Nicotiana_benthamiana.fa"
+)
+
+polyBlast(
+  named_subjects_list = the_transcriptomes,
+  query_in_path = "/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa",
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  blast_module_directory_path = "/path_to/the_blast_module/",
+  blast_mode = c("nnblastn", "ntblastp", "pnblastp", "dc-megablast"), 
   e_value_cutoff = 1,
   queries_in_output = TRUE,
-  monolist_out_path = ""
+  monolist_out_path = "/path_to/a_csv_file_that_will_list_all_blast_hits.csv"
 )
 ```
 
-There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments (see below).
+### interpretation
+
+The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
+
+The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
+
+* E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+* 10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+* 10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
+* 10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+* E-value > 1 Proteins are most likely not related
+* E-value > 10 Hits are most likely junk unless the query sequence is very short.
+
+reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
+
+reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+<!-- * bit-scores Taylor to write something? -->
 
 # alignments {-}
 
 ## alignSequences
 
-There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but if you are using 
+There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_directory_path.
+
+* "monolist": a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the "sequences_of_interest_directory_path".
+
+* "subset": The monolist .csv also needs to contain at least one "subset_*" column. The most simple implementation of this is a column called "subset_all" which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.
+
+* "alignment_directory_path": a path to a directory that should contain the output alignment.
+
+* "sequences_of_interest_directory_path": a path to a directory that contains one fasta file for each of the accessions in the monolist.
+
+* "input_sequence_type": options are "nucl" or "amin" specifying what type of sequence is to be aligned.
+
+* "mode": options are "nucl_align", a basic nucleotide alignment, "amin_align", a basic amino acid alignment, "codon_align", a codon alignment, and "fragment_align", which will align all the sequences to a base fragment.
+
+* "base_fragment": a path to a fasta file containing the base fragment to which the subjects should be aligned.
 
 
 ```r
 alignSequences(
-  monolist = readMonolist(""), 
+  monolist = readMonolist("/path_to/a_csv_file_that_will_list_all_blast_hits.csv"), 
   subset = "subset_all", 
-  alignment_directory_path = "", 
-  sequences_of_interest_directory_path = "",
-  input_sequence_type = c("nucl", "amin"), 
-  mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
+  alignment_directory_path = "/path_to/a_folder_for_alignments/", 
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  input_sequence_type = "amin", 
+  mode = "amin_alignment",
   base_fragment = NULL
 )
 ```
@@ -4010,14 +4038,23 @@ plot(tree)
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
+Arguments in this case are:
+
+* "scaffold_type": "amin_alignment" or "nucl_alignment" for amino acids or nucleotides.
+* "scaffold_in_path": path to the fasta file that contains the alignment from which you want to build a tree.
+* "ml": Logical, TRUE if you want to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
+* "model_test": if you say TRUE to "ml", should buildTree test different maximum liklihood models and then use the "best" one? 
+* "bootstrap": TRUE or FALSE, whether you want bootstrap values on the nodes.
+* "ancestral_states": TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?
+* "root": NULL, or the name of an accession that should form the root of the tree.
+
 ### alignment input
 
 
 ```r
 buildTree(
-  scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
-  scaffold_in_path = NULL,
-  members = NULL,
+  scaffold_type = "amin_alignment",
+  scaffold_in_path = "/path_to/a_folder_for_alignments/all_amin_seqs.fa",
   ml = FALSE, 
   model_test = FALSE,
   bootstrap = FALSE,
@@ -4624,61 +4661,6 @@ Is there an efficient way to write a results and discussion section in the forma
 
 * [Abstract Guide] (https://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)
 
-<!-- end -->
-
-<!-- start Proposal -->
-
-# proposals {-}
-
-Grant proposal examples:
-
-GRFP: https://github.com/ybrandvain/GRFP
-
-Grant writing is a game. Here are some suggestions:
-
-+\#1: Show excitement. If you are not excited, the reviewers will not be either. This is the most important rule.
-
-+\#2: Significance means how your work will advance the field. It does not mean your work has to cure all cancers. It almost certainly will not, but it can still have high impact.
-
-+\#3: You have to establish feasibility in the Approach section. This is a chicken and egg problem. If it is 100% feasible, it may be boring. If it is super exciting, it may not be feasible. Try to find a balance. 3/10 
-
-+\#4: Reviewers decide based on the big picture. If you made a convincing case that your study will have a high impact, most reviewers are willing to overlook small problems in the details. Some details are more important than others however.
-
-+\#5: Always customize the Personal Statement in your Biosketch to the grant you are writing. Explain briefly why you are the right person to do this particular work.
-
-+\#6: Use the Facilities page to make a case why you institution is a great place for your studies. List collaborators, experts, core facilities, even if not directly relevant to your proposal. This is especially important if you are not at a tier 1 university.
-
-+\#7: Send your Specific aims page and Significance section to a colleague who is not on your close field at least 2-3 weeks before the deadline. If they do not understand it, or do not find it exciting, rewrite them.
-
-+\#8: When you revise a grant or try to renew, the reviewers do not see the previous version. What they see is the previous summary statement, that includes the abstract. Keep this in mind when you write the grant.
-
-+\#9: Just because you responded to all comments does not mean you will get a better score. Sounds cruel, but this is how it is. Go beyond what is requested in the revised version to make your grant more compelling and to show progress.
-
-+\#10: If you do not get a good score, or get triaged, do not despair. Keep submitting and resubmitting. Persistence is the most important factor on the long run.
-
-<!-- end -->
-
-<!-- start grad school apps -->
-# grad school apps
-
-A personal statement should ideally tell the reader (the prof(s) who you want to work with) what you want to work on.
-The main thing readers want is to understand how your interests would gel and to imagine where they might be able to advise you.
-Consider writing the Statement in three acts.
-
-Act I: Research interests
-Act II: Supporting evidence (background/experience)
-Act III: Fit to the faculty/department 
-
-Act I: What are your research interests? What are the intellectual issues you want to better understand? This should be specific enough to make it clear that you know the major open questions in your research area, but not so specific that you're proposing one study.
-Act II: What is the experience and background you have that enables you to carry out graduate work on these issues? Your thesis/RA experience shouldn't be autobiography, it should be evidence -- look, I really have the skills, ability, perseverance, etc. to do this work!
-Act III: How do your interests match specific faculty members at the department you're applying to? This is the part that changes the most between applications. You core interests (Act I) shouldn't change much -- they're what you generally want to work on, regardless of where!
-
-This leads me to an important point: Act I should really be the actual reason you're applying.
-It takes a long time and lots of trial-and-error to figure out your intellectual interests.
-If you haven't figured them out yet, that's not a knock on you!
-
-But if you find yourself feeling like you're making stuff up or only trying to appeal to a PI just to get accepted, take a step back and ask yourself why you're applying.
-A PhD takes too long and pays too little to do something you're not genuinely excited about.
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

@@ -66,7 +66,7 @@ Features provided by the source script:
 
 * A GC-MS data analysis application with a MS reference library.
 * A sequence alignment analysis application for trimming alignments.
-* Hard-to-find color palettes (for example, a 25-member discrete color palette)
+* Functions for dimensionality reduction, clustering, modeling, and visualization.
 
 --Useful data--
 
@@ -3404,7 +3404,9 @@ ________________________________________________________________________________
 
 ### setup
 
-On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Let's check it out by looking at an example. For this example, we need to set up a few things:
+On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
+
+Let's check out `polyBlast()` by looking at an example. For this example, we need to set up a few things:
 
 * "named_subjects_list": A named list of sequence collections (often transcriptomes) to search (one fasta for each collection, often one collection for each species or accession).
 * "query_in_path": One or more queries, all listed in a single fasta file.
@@ -3415,7 +3417,7 @@ On NCBI, you can search various sequence collections with one or more queries. H
 * "queries_in_outout": TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.
 * "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
 
-Once we have those things, we can set up the search. Below is a generic example.
+Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
 
 ```{r, eval = FALSE}
 the_transcriptomes <- c(
@@ -3442,43 +3444,57 @@ polyBlast(
 )
 ```
 
-There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments (see below).
-
 ### interpretation
 
-From Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
 
-"BLAST, FASTA, SSEARCH, and other commonly used similarity searching programs produce accurate statistical estimates that can be used to reliably infer homology. Searches with protein sequences (BLASTP, FASTP, SSEARCH,) or translated DNA sequences (BLASTX, FASTX) are preferred because they are 5–10-fold more sensitive than DNA:DNA sequence comparison. The 30% identity rule-of-thumb is too conservative; statistically significant (E() < 10−6 – 10−3) protein homologs can share less than 20% identity. E()-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.""
+The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
 
-* e-values
+* E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+* 10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+* 10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
+* 10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+* E-value > 1 Proteins are most likely not related
+* E-value > 10 Hits are most likely junk unless the query sequence is very short.
 
-The expect value(E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone.
-E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as a guide but should be considered with common sense.
-E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
-10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
-10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
-10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
-E-value > 1 Proteins are most likely not related
-E-value > 10 Hits are most likely junk unless the query sequence is very short.
 reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
 
-* bit-scores
+reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
 
+<!-- * bit-scores Taylor to write something? -->
 
 # alignments {-}
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg', dpi = NA)
+```
+
 ## alignSequences
 
-There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but if you are using 
+There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_directory_path.
+
+* "monolist": a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the "sequences_of_interest_directory_path".
+
+* "subset": The monolist .csv also needs to contain at least one "subset_*" column. The most simple implementation of this is a column called "subset_all" which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.
+
+* "alignment_directory_path": a path to a directory that should contain the output alignment.
+
+* "sequences_of_interest_directory_path": a path to a directory that contains one fasta file for each of the accessions in the monolist.
+
+* "input_sequence_type": options are "nucl" or "amin" specifying what type of sequence is to be aligned.
+
+* "mode": options are "nucl_align", a basic nucleotide alignment, "amin_align", a basic amino acid alignment, "codon_align", a codon alignment, and "fragment_align", which will align all the sequences to a base fragment.
+
+* "base_fragment": a path to a fasta file containing the base fragment to which the subjects should be aligned.
 
 ```{r, eval = FALSE}
 alignSequences(
-  monolist = readMonolist(""), 
+  monolist = readMonolist("/path_to/a_csv_file_that_will_list_all_blast_hits.csv"), 
   subset = "subset_all", 
-  alignment_directory_path = "", 
-  sequences_of_interest_directory_path = "",
-  input_sequence_type = c("nucl", "amin"), 
-  mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
+  alignment_directory_path = "/path_to/a_folder_for_alignments/", 
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  input_sequence_type = "amin", 
+  mode = "amin_alignment",
   base_fragment = NULL
 )
 ```
@@ -3527,13 +3543,22 @@ plot(tree)
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
+Arguments in this case are:
+
+* "scaffold_type": "amin_alignment" or "nucl_alignment" for amino acids or nucleotides.
+* "scaffold_in_path": path to the fasta file that contains the alignment from which you want to build a tree.
+* "ml": Logical, TRUE if you want to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
+* "model_test": if you say TRUE to "ml", should buildTree test different maximum liklihood models and then use the "best" one? 
+* "bootstrap": TRUE or FALSE, whether you want bootstrap values on the nodes.
+* "ancestral_states": TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?
+* "root": NULL, or the name of an accession that should form the root of the tree.
+
 ### alignment input
 
 ```{r, eval = FALSE}
 buildTree(
-  scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
-  scaffold_in_path = NULL,
-  members = NULL,
+  scaffold_type = "amin_alignment",
+  scaffold_in_path = "/path_to/a_folder_for_alignments/all_amin_seqs.fa",
   ml = FALSE, 
   model_test = FALSE,
   bootstrap = FALSE,

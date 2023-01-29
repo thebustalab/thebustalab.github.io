@@ -84,3 +84,7 @@ minpack.lm
 patchwork
 readxl
 httpuv
+matrixStats
+MatrixGenerics
+SummarizedExperiment
+DESeq2

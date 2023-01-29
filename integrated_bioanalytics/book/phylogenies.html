@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>phylogenies | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="1.15 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
+<meta name="description" content="1.14 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="phylogenies | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="1.15 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
+<meta property="og:description" content="1.14 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phylogenies | Integrated Bioanalytics">
-<meta name="twitter:description" content="1.15 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
+<meta name="twitter:description" content="1.14 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
@@ -71,15 +71,13 @@
 <li><a class="" href="data-transfer.html">data transfer</a></li>
 <li><a class="" href="sequence-assessment.html">sequence assessment</a></li>
 <li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
-<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
-<li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
 <li class="book-part">GENOMIC ANALYSIS</li>
 <li><a class="" href="setup.html">setup</a></li>
 <li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li><a class="" href="annotation-1.html">annotation</a></li>
 <li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
 <li class="book-part">EVOLUTIONARY ANALYSIS</li>
-<li><a class="" href="blast-searches.html">blast searches</a></li>
+<li><a class="" href="blast.html">blast</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
 <li><a class="active" href="phylogenies.html">phylogenies</a></li>
 <li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
@@ -89,8 +87,6 @@
 <li><a class="" href="results-and-discussion.html">results and discussion</a></li>
 <li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
-<li><a class="" href="proposals.html">proposals</a></li>
-<li><a class="" href="grad-school-apps.html"><span class="header-section-number">2</span> grad school apps</a></li>
 <li class="book-part">IMAGE ANALYSIS</li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
 <li><a class="" href="images-of-mass-spectra.html">images of mass spectra</a></li>
@@ -108,14 +104,14 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="phylogenies" class="section level1 unnumbered">
 <h1>phylogenies<a class="anchor" aria-label="anchor" href="#phylogenies"><i class="fas fa-link"></i></a>
 </h1>
-<div id="buildtree" class="section level2" number="1.15">
+<div id="buildtree" class="section level2" number="1.14">
 <h2>
-<span class="header-section-number">1.15</span> buildTree<a class="anchor" aria-label="anchor" href="#buildtree"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.14</span> buildTree<a class="anchor" aria-label="anchor" href="#buildtree"><i class="fas fa-link"></i></a>
 </h2>
 <p>This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum liklihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let’s look at some examples:</p>
-<div id="newick-input" class="section level3" number="1.15.1">
+<div id="newick-input" class="section level3" number="1.14.1">
 <h3>
-<span class="header-section-number">1.15.1</span> newick input<a class="anchor" aria-label="anchor" href="#newick-input"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.14.1</span> newick input<a class="anchor" aria-label="anchor" href="#newick-input"><i class="fas fa-link"></i></a>
 </h3>
 <p>Let’s use the Busta lab’s plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.</p>
 <div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
@@ -167,16 +163,25 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tree</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that <code>buildTree</code> informs us: “Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta”. This means that <em>Arabidopsis neglecta</em> was grafted onto the tip originally occupied by <em>Arabidopsis thaliana</em>. This behaviour is useful when operating on a large phylogenetic scale (i.e. where <em>exact</em> phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology <em>is</em> critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let’s look at how to do that:</p>
+<p>Arguments in this case are:</p>
+<ul>
+<li>“scaffold_type”: “amin_alignment” or “nucl_alignment” for amino acids or nucleotides.</li>
+<li>“scaffold_in_path”: path to the fasta file that contains the alignment from which you want to build a tree.</li>
+<li>“ml”: Logical, TRUE if you want to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.</li>
+<li>“model_test”: if you say TRUE to “ml”, should buildTree test different maximum liklihood models and then use the “best” one?</li>
+<li>“bootstrap”: TRUE or FALSE, whether you want bootstrap values on the nodes.</li>
+<li>“ancestral_states”: TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?</li>
+<li>“root”: NULL, or the name of an accession that should form the root of the tree.</li>
+</ul>
 </div>
-<div id="alignment-input" class="section level3" number="1.15.2">
+<div id="alignment-input" class="section level3" number="1.14.2">
 <h3>
-<span class="header-section-number">1.15.2</span> alignment input<a class="anchor" aria-label="anchor" href="#alignment-input"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.14.2</span> alignment input<a class="anchor" aria-label="anchor" href="#alignment-input"><i class="fas fa-link"></i></a>
 </h3>
 <div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">buildTree</span><span class="op">(</span>
-  scaffold_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"amin_alignment"</span>, <span class="st">"nucl_alignment"</span>, <span class="st">"newick"</span><span class="op">)</span>,
-  scaffold_in_path <span class="op">=</span> <span class="cn">NULL</span>,
-  members <span class="op">=</span> <span class="cn">NULL</span>,
+  scaffold_type <span class="op">=</span> <span class="st">"amin_alignment"</span>,
+  scaffold_in_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_alignments/all_amin_seqs.fa"</span>,
   ml <span class="op">=</span> <span class="cn">FALSE</span>, 
   model_test <span class="op">=</span> <span class="cn">FALSE</span>,
   bootstrap <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -185,9 +190,9 @@
 <span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="plotting-trees" class="section level2" number="1.16">
+<div id="plotting-trees" class="section level2" number="1.15">
 <h2>
-<span class="header-section-number">1.16</span> plotting trees<a class="anchor" aria-label="anchor" href="#plotting-trees"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.15</span> plotting trees<a class="anchor" aria-label="anchor" href="#plotting-trees"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are several approaches to plotting trees. A simple one is using the base <code>plot</code> function:</p>
 <div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
@@ -337,9 +342,9 @@
   <span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="collapsetree" class="section level2" number="1.17">
+<div id="collapsetree" class="section level2" number="1.16">
 <h2>
-<span class="header-section-number">1.17</span> collapseTree<a class="anchor" aria-label="anchor" href="#collapsetree"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.16</span> collapseTree<a class="anchor" aria-label="anchor" href="#collapsetree"><i class="fas fa-link"></i></a>
 </h2>
 <p>Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the <code>collapseTree</code> function. It takes two arguments: an un-fortified tree (<code>tree</code>), and a two-column data frame (<code>associations</code>). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let’s look at the tree from the previous section at the family level:</p>
 <div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
@@ -372,13 +377,13 @@
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#phylogenies">phylogenies</a></li>
 <li>
-<a class="nav-link" href="#buildtree"><span class="header-section-number">1.15</span> buildTree</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#newick-input"><span class="header-section-number">1.15.1</span> newick input</a></li>
-<li><a class="nav-link" href="#alignment-input"><span class="header-section-number">1.15.2</span> alignment input</a></li>
+<a class="nav-link" href="#buildtree"><span class="header-section-number">1.14</span> buildTree</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#newick-input"><span class="header-section-number">1.14.1</span> newick input</a></li>
+<li><a class="nav-link" href="#alignment-input"><span class="header-section-number">1.14.2</span> alignment input</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#plotting-trees"><span class="header-section-number">1.16</span> plotting trees</a></li>
-<li><a class="nav-link" href="#collapsetree"><span class="header-section-number">1.17</span> collapseTree</a></li>
+<li><a class="nav-link" href="#plotting-trees"><span class="header-section-number">1.15</span> plotting trees</a></li>
+<li><a class="nav-link" href="#collapsetree"><span class="header-section-number">1.16</span> collapseTree</a></li>
 </ul>
 
       <div class="book-extra">
@@ -396,7 +401,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-01-04.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-01-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

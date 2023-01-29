@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>alignments | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="1.13 alignSequences There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to...">
+<meta name="description" content="1.12 alignSequences There are, of course, many tools for aligning sequences. alignSequences(), the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="alignments | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="1.13 alignSequences There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to...">
+<meta property="og:description" content="1.12 alignSequences There are, of course, many tools for aligning sequences. alignSequences(), the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="alignments | Integrated Bioanalytics">
-<meta name="twitter:description" content="1.13 alignSequences There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to...">
+<meta name="twitter:description" content="1.12 alignSequences There are, of course, many tools for aligning sequences. alignSequences(), the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/_Lato-0.4.1/font.css" rel="stylesheet">
@@ -71,15 +71,13 @@
 <li><a class="" href="data-transfer.html">data transfer</a></li>
 <li><a class="" href="sequence-assessment.html">sequence assessment</a></li>
 <li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
-<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
-<li><a class="" href="transcriptomic-analyses.html">transcriptomic analyses</a></li>
 <li class="book-part">GENOMIC ANALYSIS</li>
 <li><a class="" href="setup.html">setup</a></li>
 <li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li><a class="" href="annotation-1.html">annotation</a></li>
 <li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
 <li class="book-part">EVOLUTIONARY ANALYSIS</li>
-<li><a class="" href="blast-searches.html">blast searches</a></li>
+<li><a class="" href="blast.html">blast</a></li>
 <li><a class="active" href="alignments.html">alignments</a></li>
 <li><a class="" href="phylogenies.html">phylogenies</a></li>
 <li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
@@ -89,8 +87,6 @@
 <li><a class="" href="results-and-discussion.html">results and discussion</a></li>
 <li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
-<li><a class="" href="proposals.html">proposals</a></li>
-<li><a class="" href="grad-school-apps.html"><span class="header-section-number">2</span> grad school apps</a></li>
 <li class="book-part">IMAGE ANALYSIS</li>
 <li><a class="" href="image-color-analysis.html">image color analysis</a></li>
 <li><a class="" href="images-of-mass-spectra.html">images of mass spectra</a></li>
@@ -108,30 +104,39 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="alignments" class="section level1 unnumbered">
 <h1>alignments<a class="anchor" aria-label="anchor" href="#alignments"><i class="fas fa-link"></i></a>
 </h1>
-<div id="alignsequences" class="section level2" number="1.13">
+<div id="alignsequences" class="section level2" number="1.12">
 <h2>
-<span class="header-section-number">1.13</span> alignSequences<a class="anchor" aria-label="anchor" href="#alignsequences"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.12</span> alignSequences<a class="anchor" aria-label="anchor" href="#alignsequences"><i class="fas fa-link"></i></a>
 </h2>
-<p>There are, of course, many tools for aligning sequences. This tool is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but if you are using</p>
+<p>There are, of course, many tools for aligning sequences. <code>alignSequences()</code>, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_directory_path.</p>
+<ul>
+<li><p>“monolist”: a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the “sequences_of_interest_directory_path”.</p></li>
+<li><p>“subset”: The monolist .csv also needs to contain at least one “subset_*” column. The most simple implementation of this is a column called “subset_all” which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.</p></li>
+<li><p>“alignment_directory_path”: a path to a directory that should contain the output alignment.</p></li>
+<li><p>“sequences_of_interest_directory_path”: a path to a directory that contains one fasta file for each of the accessions in the monolist.</p></li>
+<li><p>“input_sequence_type”: options are “nucl” or “amin” specifying what type of sequence is to be aligned.</p></li>
+<li><p>“mode”: options are “nucl_align”, a basic nucleotide alignment, “amin_align”, a basic amino acid alignment, “codon_align”, a codon alignment, and “fragment_align”, which will align all the sequences to a base fragment.</p></li>
+<li><p>“base_fragment”: a path to a fasta file containing the base fragment to which the subjects should be aligned.</p></li>
+</ul>
 <div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">alignSequences</span><span class="op">(</span>
-  monolist <span class="op">=</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="st">""</span><span class="op">)</span>, 
+  monolist <span class="op">=</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="st">"/path_to/a_csv_file_that_will_list_all_blast_hits.csv"</span><span class="op">)</span>, 
   subset <span class="op">=</span> <span class="st">"subset_all"</span>, 
-  alignment_directory_path <span class="op">=</span> <span class="st">""</span>, 
-  sequences_of_interest_directory_path <span class="op">=</span> <span class="st">""</span>,
-  input_sequence_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"nucl"</span>, <span class="st">"amin"</span><span class="op">)</span>, 
-  mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"nucl_align"</span>, <span class="st">"amin_align"</span>, <span class="st">"codon_align"</span>, <span class="st">"fragment_align"</span><span class="op">)</span>,
+  alignment_directory_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_alignments/"</span>, 
+  sequences_of_interest_directory_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_hit_sequences/"</span>,
+  input_sequence_type <span class="op">=</span> <span class="st">"amin"</span>, 
+  mode <span class="op">=</span> <span class="st">"amin_alignment"</span>,
   base_fragment <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="analyzealignment" class="section level2" number="1.14">
+<div id="analyzealignment" class="section level2" number="1.13">
 <h2>
-<span class="header-section-number">1.14</span> analyzeAlignment<a class="anchor" aria-label="anchor" href="#analyzealignment"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.13</span> analyzeAlignment<a class="anchor" aria-label="anchor" href="#analyzealignment"><i class="fas fa-link"></i></a>
 </h2>
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="blast-searches.html">blast searches</a></div>
+<div class="prev"><a href="blast.html">blast</a></div>
 <div class="next"><a href="phylogenies.html">phylogenies</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
@@ -146,8 +151,8 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#alignments">alignments</a></li>
-<li><a class="nav-link" href="#alignsequences"><span class="header-section-number">1.13</span> alignSequences</a></li>
-<li><a class="nav-link" href="#analyzealignment"><span class="header-section-number">1.14</span> analyzeAlignment</a></li>
+<li><a class="nav-link" href="#alignsequences"><span class="header-section-number">1.12</span> alignSequences</a></li>
+<li><a class="nav-link" href="#analyzealignment"><span class="header-section-number">1.13</span> analyzeAlignment</a></li>
 </ul>
 
       <div class="book-extra">
@@ -165,7 +170,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-01-04.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-01-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
