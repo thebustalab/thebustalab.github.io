@@ -3400,6 +3400,10 @@ ________________________________________________________________________________
 <!-- start evolutionary analyses -->
 # blast {-}
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/homology.png', dpi = NA)
+```
+
 ## polyBlast
 
 ### setup
