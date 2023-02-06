@@ -5227,7 +5227,7 @@
                                                 if ( is.null(input$chromatogram_brush) ) {
                                                     x_axis_start <<- x_axis_start_default
                                                     x_axis_end <<- x_axis_end_default
-                                                    y_axis_end <<- max(peak_points$abundance)
+                                                    y_axis_end <<- max(chromatograms$abundance)
                                                 }
 
                                             ## If brush is not null, assign brush values to start and end
