@@ -5227,6 +5227,7 @@
                                                 if ( is.null(input$chromatogram_brush) ) {
                                                     x_axis_start <<- x_axis_start_default
                                                     x_axis_end <<- x_axis_end_default
+                                                    y_axis_end <<- max(peak_points$abundance)
                                                 }
 
                                             ## If brush is not null, assign brush values to start and end
@@ -5235,6 +5236,8 @@
                                                     peak_points <<- isolate(brushedPoints(chromatograms_updated, input$chromatogram_brush))
                                                     x_axis_start <<- min(peak_points$rt)
                                                     x_axis_end <<- max(peak_points$rt)
+                                                    y_axis_end <<- max(peak_points$abundance)
+                                                    # x_axis_end <<- max(peak_points$rt)
                                                 }
                                             
                                             ## Filter chromatogram
@@ -5259,12 +5262,12 @@
                                                 #     alpha = 0.8
                                                 # ) +
                                                 scale_x_continuous(limits = c(x_axis_start, x_axis_end), name = "Retention (Scan number)") +
-                                                scale_y_continuous(name = "Abundance (counts)") +
+                                                scale_y_continuous(limits = c(0, y_axis_end), name = "Abundance (counts)") +
                                                 facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                                 theme_classic() +
                                                 guides(fill = "none") +
                                                 scale_fill_continuous(type = "viridis") +
-                                                scale_color_brewer(palette = "Paired")
+                                                scale_color_manual(values = discrete_palette)
 
                                         ## Add peaks, if any
                                             
@@ -10214,4 +10217,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
