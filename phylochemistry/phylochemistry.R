@@ -5384,7 +5384,7 @@
                                                         # print("\n")
                                                         # print("thing2")
                                                             ribbon <- filter(signal_for_this_peak, ion == 0)
-                                                            ribbon$baseline <- filter(signal_for_this_peak, ion == 0)$abundance
+                                                            ribbon$baseline <- filter(signal_for_this_peak, ion == "baseline")$abundance
                                                         # print("\n")
                                                         # print("thing3")
                                                             chromatogram_plot <- chromatogram_plot +
@@ -10221,4 +10221,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
