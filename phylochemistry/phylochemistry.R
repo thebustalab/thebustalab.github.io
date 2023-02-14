@@ -5242,22 +5242,22 @@
                                             
                                             ## Filter chromatogram
                                                 
-                                                chromatograms_updated <- dplyr::filter(
+                                                chromatograms_updated_filtered <- dplyr::filter(
                                                     chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end
                                                 )
 
                                         ## Plot
                                                 
-                                            facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated$path_to_cdf_csv))
-                                            names(facet_labels) <- chromatograms_updated$path_to_cdf_csv
+                                            facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated_filtered$path_to_cdf_csv))
+                                            names(facet_labels) <- chromatograms_updated_filtered$path_to_cdf_csv
 
                                             chromatogram_plot <- ggplot() +
                                                 geom_line(
-                                                    data = filter(chromatograms_updated, ion == "baseline"),
+                                                    data = filter(chromatograms_updated_filtered, ion == "baseline"),
                                                     mapping = aes(x = rt_rt_offset, y = abundance), color = "grey"
                                                 ) +
                                                 # geom_line(
-                                                #     data = filter(chromatograms_updated, ion != "baseline"),
+                                                #     data = filter(chromatograms_updated_filtered, ion != "baseline"),
                                                 #     mapping = aes(x = rt_rt_offset, y = abundance, color = ion),
                                                 #     alpha = 0.8
                                                 # ) +
