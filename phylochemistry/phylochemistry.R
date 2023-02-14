@@ -5262,7 +5262,7 @@
                                                 #     alpha = 0.8
                                                 # ) +
                                                 scale_x_continuous(limits = c(x_axis_start, x_axis_end), name = "Retention (Scan number)") +
-                                                scale_y_continuous(limits = c(0, y_axis_end), name = "Abundance (counts)", oob = scales::squish()) +
+                                                scale_y_continuous(limits = c(0, y_axis_end), name = "Abundance (counts)", oob = scales::squish) +
                                                 facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                                 theme_classic() +
                                                 guides(fill = "none") +
