@@ -4745,6 +4745,7 @@
                     if ( file.exists(paths_to_peak_monolists[i]) ) {
 
                         data <- readMonolist(paths_to_peak_monolists[i])
+                        data$area <- as.numeric(data$area)
 
                         if (dim(data)[1] > 0) {
                             peak_list[[i]] <- data[,1:9]
