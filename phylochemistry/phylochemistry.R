@@ -5367,23 +5367,26 @@
                                                     print(x_axis_end)
 
                                                     peak_table <- dplyr::filter(peak_table, peak_start_rt_offset > x_axis_start & peak_end_rt_offset < x_axis_end)
-                                                    print("filter passed")
+                                                    # print("filter passed")
 
                                                     for (peak in 1:dim(peak_table)[1]) {
-                                                        
+                                                        print(peak)
                                                         signal_for_this_peak <- dplyr::filter(
                                                             chromatograms_updated[chromatograms_updated$path_to_cdf_csv == peak_table[peak,]$path_to_cdf_csv,], 
                                                             rt_rt_offset > peak_table[peak,]$peak_start_rt_offset, 
                                                             rt_rt_offset < peak_table[peak,]$peak_end_rt_offset
                                                         )
-
+                                                        # print("\n")
+                                                        # print("thing1")
                                                         if (dim(signal_for_this_peak)[1] > 0) {
 
                                                             signal_for_this_peak$peak_number_within_sample <- peak_table$peak_number_within_sample[peak]
-                                                            
+                                                        # print("\n")
+                                                        # print("thing2")
                                                             ribbon <- filter(signal_for_this_peak, ion == 0)
-                                                            ribbon$baseline <- filter(signal_for_this_peak, ion == "baseline")$abundance
-
+                                                            ribbon$baseline <- filter(signal_for_this_peak, ion == 0)$abundance
+                                                        # print("\n")
+                                                        # print("thing3")
                                                             chromatogram_plot <- chromatogram_plot +
                                                                 geom_vline(data = signal_for_this_peak[1,], mapping = aes(xintercept = rt_rt_offset), alpha = 0.3) +
                                                                 geom_ribbon(
@@ -5397,6 +5400,7 @@
                                                                 )
                                                         }
                                                     }
+
                                             }
 
                                         ## Draw the plot and communicate
@@ -10217,4 +10221,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
