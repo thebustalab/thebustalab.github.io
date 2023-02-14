@@ -5370,7 +5370,7 @@
                                                     # print("filter passed")
 
                                                     for (peak in 1:dim(peak_table)[1]) {
-                                                        print(peak)
+                                                        # print(peak)
                                                         signal_for_this_peak <- dplyr::filter(
                                                             chromatograms_updated[chromatograms_updated$path_to_cdf_csv == peak_table[peak,]$path_to_cdf_csv,], 
                                                             rt_rt_offset > peak_table[peak,]$peak_start_rt_offset, 
@@ -9948,7 +9948,7 @@
                             geom_text(
                                 data = data,
                                 aes(
-                                    x = x_position+text_vert_offset, y = text_horiz_offset,
+                                    x = x_position+text_horiz_offset, y = text_vert_offset,
                                     label = text, size = text_size, hjust = hjust, vjust = vjust
                                 ),
                                 show.legend = FALSE, inherit.aes = FALSE
