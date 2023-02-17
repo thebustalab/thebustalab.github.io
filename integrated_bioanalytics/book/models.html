@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="theory Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build...">
+<meta name="description" content="univariate Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to...">
 <meta name="generator" content="bookdown 0.25 with bs4_book()">
 <meta property="og:title" content="models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="theory Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build...">
+<meta property="og:description" content="univariate Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="models | Integrated Bioanalytics">
-<meta name="twitter:description" content="theory Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build...">
+<meta name="twitter:description" content="univariate Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
@@ -104,8 +104,8 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="models" class="section level1 unnumbered">
 <h1>models<a class="anchor" aria-label="anchor" href="#models"><i class="fas fa-link"></i></a>
 </h1>
-<div id="theory-3" class="section level2 unnumbered">
-<h2>theory<a class="anchor" aria-label="anchor" href="#theory-3"><i class="fas fa-link"></i></a>
+<div id="univariate" class="section level2 unnumbered">
+<h2>univariate<a class="anchor" aria-label="anchor" href="#univariate"><i class="fas fa-link"></i></a>
 </h2>
 <p>Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called <code>buildLinearModel</code>. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.</p>
 <p>Let’s look at an example. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:</p>
@@ -226,6 +226,72 @@
 <span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">top</span>, <span class="va">bottom</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
+<div id="multivariate" class="section level2 unnumbered">
+<h2>multivariate<a class="anchor" aria-label="anchor" href="#multivariate"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">model1</span> <span class="op">&lt;-</span> <span class="fu">buildLinearModel</span><span class="op">(</span><span class="va">metabolomics_data</span>, formula <span class="op">=</span> <span class="st">"ADP = AMP"</span><span class="op">)</span>
+<span class="va">model1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
+<span class="co">## $metrics</span>
+<span class="co">##               variable   value std_err        type p_value</span>
+<span class="co">## 1          (Intercept)  0.7842  1.0056 coefficient  0.4375</span>
+<span class="co">## 2                  AMP  0.9142  0.0757 coefficient       0</span>
+<span class="co">## 3      median_residual  0.0415    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+<span class="co">## 4    total_sum_squares 40.3224    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+<span class="co">## 5 residual_sum_squares 15.3901    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+<span class="co">## 6            r_squared  0.6183    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+<span class="va">model2</span> <span class="op">&lt;-</span> <span class="fu">buildLinearModel</span><span class="op">(</span><span class="va">metabolomics_data</span>, formula <span class="op">=</span> <span class="st">"ADP = AMP + IMP"</span><span class="op">)</span>
+<span class="va">model2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
+<span class="co">## $metrics</span>
+<span class="co">##               variable   value std_err        type p_value</span>
+<span class="co">## 1          (Intercept)  2.0057  0.9222 coefficient  0.0323</span>
+<span class="co">## 2                  AMP  0.6201  0.0907 coefficient       0</span>
+<span class="co">## 3                  IMP  0.2303  0.0606 coefficient   3e-04</span>
+<span class="co">## 4      median_residual  0.0462    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+<span class="co">## 5    total_sum_squares 40.3224    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+<span class="co">## 6 residual_sum_squares 11.6145    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+<span class="co">## 7            r_squared  0.6494    &lt;NA&gt;   statistic    &lt;NA&gt;</span>
+
+<span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">metabolomics_data</span>, 
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="op">(</span><span class="va">AMP</span><span class="op">*</span><span class="fl">0.9142</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.7842</span>, y <span class="op">=</span> <span class="va">ADP</span><span class="op">)</span>,
+    fill <span class="op">=</span> <span class="st">"gold"</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span>, size <span class="op">=</span> <span class="fl">4</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_segment</span><span class="op">(</span>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">10</span>, y <span class="op">=</span> <span class="fl">10</span>, xend <span class="op">=</span> <span class="fl">15</span>, yend <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>,
+    color <span class="op">=</span> <span class="st">"black"</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>
+    geom <span class="op">=</span> <span class="st">"table"</span>,
+    x <span class="op">=</span> <span class="fl">10</span>,
+    y <span class="op">=</span> <span class="fl">15</span>,
+    label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">model1</span><span class="op">$</span><span class="va">metrics</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span>
+
+<span class="va">plot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>
+    data <span class="op">=</span> <span class="va">metabolomics_data</span>, 
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="op">(</span><span class="va">AMP</span><span class="op">*</span><span class="fl">0.6201</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="va">IMP</span><span class="op">*</span><span class="fl">0.2303</span><span class="op">)</span> <span class="op">+</span> <span class="fl">2.0057</span>, y <span class="op">=</span> <span class="va">ADP</span><span class="op">)</span>, 
+    fill <span class="op">=</span> <span class="st">"maroon"</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span>, size <span class="op">=</span> <span class="fl">4</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>
+    geom <span class="op">=</span> <span class="st">"table"</span>,
+    x <span class="op">=</span> <span class="fl">10</span>,
+    y <span class="op">=</span> <span class="fl">15</span>,
+    label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">model2</span><span class="op">$</span><span class="va">metrics</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_segment</span><span class="op">(</span>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">10</span>, y <span class="op">=</span> <span class="fl">10</span>, xend <span class="op">=</span> <span class="fl">15</span>, yend <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>,
+    color <span class="op">=</span> <span class="st">"black"</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span>
+
+<span class="va">plot1</span><span class="op">/</span><span class="va">plot2</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
 <div id="exercises-4" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-4"><i class="fas fa-link"></i></a>
 </h2>
@@ -260,7 +326,8 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#models">models</a></li>
-<li><a class="nav-link" href="#theory-3">theory</a></li>
+<li><a class="nav-link" href="#univariate">univariate</a></li>
+<li><a class="nav-link" href="#multivariate">multivariate</a></li>
 <li><a class="nav-link" href="#exercises-4">exercises</a></li>
 <li><a class="nav-link" href="#further-reading-6">further reading</a></li>
 </ul>

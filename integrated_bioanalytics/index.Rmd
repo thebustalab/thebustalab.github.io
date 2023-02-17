@@ -2267,7 +2267,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 # models {-}
 
-## theory {-}
+## univariate {-}
 
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildLinearModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.
 
@@ -2373,6 +2373,55 @@ bottom <- ggplot(model$data) +
   theme_bw()
 
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
+```
+
+## multivariate {-}
+
+```{r, fig.width = 9, fig.height = 9}
+
+model1 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP")
+model1[1]
+model2 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP + IMP")
+model2[1]
+
+plot1 <- ggplot() + 
+  geom_point(
+    data = metabolomics_data, 
+    aes(x = (AMP*0.9142) + 0.7842, y = ADP),
+    fill = "gold", shape = 21, color = "black", size = 4
+  ) +
+  geom_segment(
+    aes(x = 10, y = 10, xend = 15, yend = 15),
+    color = "black"
+  ) +
+  annotate(
+    geom = "table",
+    x = 10,
+    y = 15,
+    label = list(model1$metrics)
+  ) +
+  theme_bw()
+
+plot2 <- ggplot() + 
+  geom_point(
+    data = metabolomics_data, 
+    aes(x = (AMP*0.6201) + (IMP*0.2303) + 2.0057, y = ADP), 
+    fill = "maroon", shape = 21, color = "black", size = 4
+  ) +
+  annotate(
+    geom = "table",
+    x = 10,
+    y = 15,
+    label = list(model2$metrics)
+  ) +
+  geom_segment(
+    aes(x = 10, y = 10, xend = 15, yend = 15),
+    color = "black"
+  ) +
+  theme_bw()
+
+plot1/plot2
+
 ```
 
 ## exercises {-}
@@ -2778,7 +2827,9 @@ anno <- data.frame(
   text_horiz_offset = 1.5,
   tip_length_xmin = 5,
   tip_length_xmax = 5,
-  aquifer_code = test_output$aquifer_code
+  aquifer_code = test_output$aquifer_code,
+  hjust = 0.5,
+  vjust = 0.5
 )
 
 hawaii_aquifers %>%
@@ -2787,7 +2838,7 @@ hawaii_aquifers %>%
   geom_violin(fill = "gold", color = "black") +
   geom_point(shape = 21, fill = "maroon", color = "black") +
   facet_grid(.~aquifer_code) +
-  geomSignif(data = anno) +
+  geomSignif(data = anno, orientation = "horizontal") +
   scale_x_discrete(name = "Analyte") +
   scale_y_continuous(name = "Abundance") +
   theme_bw() +
