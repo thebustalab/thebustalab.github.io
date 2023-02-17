@@ -3764,6 +3764,82 @@ A high quality figure is one in which, for example, axes tick labels do not over
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg', dpi = NA)
 ```
 
+## zoomed figures {-}
+
+Zoom in on certain plot regions
+
+```{r}
+p <- ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point() 
+
+data.tb <- 
+  tibble(x = 7, y = 44, 
+         plot = list(p + 
+                       coord_cartesian(xlim = c(4.9, 6.2), 
+                                       ylim = c(13, 21)) +
+                       labs(x = NULL, y = NULL) +
+                       theme_bw(8) +
+                       scale_colour_discrete(guide = "none")))
+
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_plot(data = data.tb, aes(x, y, label = plot)) +
+  annotate(geom = "rect", 
+           xmin = 4.9, xmax = 6.2, ymin = 13, ymax = 21,
+           linetype = "dotted", fill = NA, colour = "black") +
+  geom_point() 
+```
+
+## inset figures {-}
+
+### plot insets {-}
+
+```{r}
+p <- ggplot(mpg, aes(factor(cyl), hwy, fill = factor(cyl))) +
+  stat_summary(geom = "col", fun = mean, width = 2/3) +
+  labs(x = "Number of cylinders", y = NULL, title = "Means") +
+  scale_fill_discrete(guide = "none")
+
+data.tb <- tibble(x = 7, y = 44, 
+                  plot = list(p +
+                                theme_bw(8)))
+
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_plot(data = data.tb, aes(x, y, label = plot)) +
+  geom_point() +
+  labs(x = "Engine displacement (l)", y = "Fuel use efficiency (MPG)",
+       colour = "Engine cylinders\n(number)") +
+  theme_bw()
+```
+
+### image insets {-}
+
+```{r}
+Isoquercitin_synthase <- magick::image_read("https://thebustalab.github.io/integrated_bioanalytics/images/homology.png")
+grobs.tb <- tibble(x = c(0, 10, 20, 40), y = c(4, 5, 6, 9),
+                   width = c(0.05, 0.05, 0.01, 1),
+                   height =  c(0.05, 0.05, 0.01, 0.3),
+                   grob = list(grid::circleGrob(), 
+                               grid::rectGrob(), 
+                               grid::textGrob("I am a Grob"),
+                               grid::rasterGrob(image = Isoquercitin_synthase)))
+
+ggplot() +
+  geom_grob(data = grobs.tb, 
+            aes(x, y, label = grob, vp.width = width, vp.height = height),
+            hjust = 0.7, vjust = 0.55) +
+  scale_y_continuous(expand = expansion(mult = 0.3, add = 0)) +
+  scale_x_continuous(expand = expansion(mult = 0.2, add = 0)) +
+  theme_bw(12)
+```
+
+```{r}
+
+ggplot() +
+  annotate("grob", x = 1, y = 3, vp.width = 0.5,
+           label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
+  theme_bw(12)
+```
+
 ## composite figures {-}
 
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
@@ -3852,7 +3928,7 @@ dev.off()
   * Describe where the data are from.
 3. Avoid abbreviations, but if you do use any, specify what they mean.
 
-## an example {-}
+An example:
 
 ```{r, fig.height = 8, fig.width = 12}
 (plot1 + plot2 + labs(caption = str_wrap("Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.", 90))) + plot_annotation(tag_levels = 'A') + 
@@ -3861,6 +3937,12 @@ dev.off()
 ```
 
 ## further reading {-}
+
+### insets {-}
+
+https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot
+
+### plot layout {-}
 
 One option for plot layout, `patchwork`. This one is quick and simple.
 [patchwork, for plot layout](https://patchwork.data-imaginist.com/index.html)

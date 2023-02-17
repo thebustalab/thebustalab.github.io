@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-01-29"
+date: "2023-02-17"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4361,6 +4361,94 @@ A high quality figure is one in which, for example, axes tick labels do not over
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
 
+## zoomed figures {-}
+
+Zoom in on certain plot regions
+
+
+```r
+p <- ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point() 
+
+data.tb <- 
+  tibble(x = 7, y = 44, 
+         plot = list(p + 
+                       coord_cartesian(xlim = c(4.9, 6.2), 
+                                       ylim = c(13, 21)) +
+                       labs(x = NULL, y = NULL) +
+                       theme_bw(8) +
+                       scale_colour_discrete(guide = "none")))
+
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_plot(data = data.tb, aes(x, y, label = plot)) +
+  annotate(geom = "rect", 
+           xmin = 4.9, xmax = 6.2, ymin = 13, ymax = 21,
+           linetype = "dotted", fill = NA, colour = "black") +
+  geom_point() 
+```
+
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+
+## inset figures {-}
+
+### plot insets {-}
+
+
+```r
+p <- ggplot(mpg, aes(factor(cyl), hwy, fill = factor(cyl))) +
+  stat_summary(geom = "col", fun = mean, width = 2/3) +
+  labs(x = "Number of cylinders", y = NULL, title = "Means") +
+  scale_fill_discrete(guide = "none")
+
+data.tb <- tibble(x = 7, y = 44, 
+                  plot = list(p +
+                                theme_bw(8)))
+
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_plot(data = data.tb, aes(x, y, label = plot)) +
+  geom_point() +
+  labs(x = "Engine displacement (l)", y = "Fuel use efficiency (MPG)",
+       colour = "Engine cylinders\n(number)") +
+  theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+
+### image insets {-}
+
+
+```r
+Isoquercitin_synthase <- magick::image_read("https://thebustalab.github.io/integrated_bioanalytics/images/homology.png")
+grobs.tb <- tibble(x = c(0, 10, 20, 40), y = c(4, 5, 6, 9),
+                   width = c(0.05, 0.05, 0.01, 1),
+                   height =  c(0.05, 0.05, 0.01, 0.3),
+                   grob = list(grid::circleGrob(), 
+                               grid::rectGrob(), 
+                               grid::textGrob("I am a Grob"),
+                               grid::rasterGrob(image = Isoquercitin_synthase)))
+
+ggplot() +
+  geom_grob(data = grobs.tb, 
+            aes(x, y, label = grob, vp.width = width, vp.height = height),
+            hjust = 0.7, vjust = 0.55) +
+  scale_y_continuous(expand = expansion(mult = 0.3, add = 0)) +
+  scale_x_continuous(expand = expansion(mult = 0.2, add = 0)) +
+  theme_bw(12)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+```r
+
+ggplot() +
+  annotate("grob", x = 1, y = 3, vp.width = 0.5,
+           label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
+  theme_bw(12)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
+
 ## composite figures {-}
 
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
@@ -4412,21 +4500,21 @@ Now, add them together to lay them out. `plot_annotation()` allows quick numberi
 plot1 + plot2 + plot_annotation(tag_levels = 'A')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot1 / plot2 + plot_annotation(tag_levels = 'A')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 (plot1 + plot2) / plot1 + plot_annotation(tag_levels = 'A')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4435,7 +4523,7 @@ plot1 / plot2 + plot_annotation(tag_levels = 'A')
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -4463,7 +4551,7 @@ dev.off()
   * Describe where the data are from.
 3. Avoid abbreviations, but if you do use any, specify what they mean.
 
-## an example {-}
+An example:
 
 
 ```r
@@ -4472,9 +4560,15 @@ dev.off()
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
+
+### insets {-}
+
+https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot
+
+### plot layout {-}
 
 One option for plot layout, `patchwork`. This one is quick and simple.
 [patchwork, for plot layout](https://patchwork.data-imaginist.com/index.html)
@@ -4804,7 +4898,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -4846,7 +4940,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -4935,7 +5029,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
