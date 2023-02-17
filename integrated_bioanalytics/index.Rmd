@@ -3547,6 +3547,8 @@ plot(tree)
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
+### alignment input
+
 Arguments in this case are:
 
 * "scaffold_type": "amin_alignment" or "nucl_alignment" for amino acids or nucleotides.
@@ -3556,8 +3558,6 @@ Arguments in this case are:
 * "bootstrap": TRUE or FALSE, whether you want bootstrap values on the nodes.
 * "ancestral_states": TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?
 * "root": NULL, or the name of an accession that should form the root of the tree.
-
-### alignment input
 
 ```{r, eval = FALSE}
 buildTree(

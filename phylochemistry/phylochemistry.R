@@ -2462,7 +2462,8 @@
 
             analyzeAlignment <- function(
                 alignment_in_path,
-                type = c("DNA", "AA")
+                type = c("DNA", "AA"),
+                jupyter = FALSE
             ) {
 
                 ## Prelim stuff
@@ -2534,15 +2535,40 @@
                                     value = 50
                                 ),
 
+                                "Here is a NJ representation of the original alignment:",
+
                                 plotOutput(
                                     outputId = "tree",
                                     height = "300px"
                                 ),
 
+                                "Here is a NJ representation of the alignment AFTER trimming:",
+
                                 plotOutput(
                                     outputId = "filtered_tree",
                                     height = "300px"
                                 ),
+
+                                tags$head(
+                                    HTML(
+                                        "
+                                        <script>
+                                            var socket_timeout_interval
+                                            var n = 0
+                                            $(document).on('shiny:connected', function(event) {
+                                            socket_timeout_interval = setInterval(function(){
+                                            Shiny.onInputChange('count', n++)
+                                            }, 15000)
+                                            });
+                                            $(document).on('shiny:disconnected', function(event) {
+                                            clearInterval(socket_timeout_interval)
+                                            });
+                                        </script>
+                                        "
+                                    )
+                                ),
+
+                                textOutput("keepAlive"),
 
                                 width = 3
 
@@ -2562,9 +2588,16 @@
 
                     server <- function(input, output) {
 
+                        ## Don't let it time out
+                            
+                            output$keepAlive <- renderText({
+                                req(input$count)
+                                paste("\nstayin' alive ", input$count)
+                            })
+
                         ## Original tree
 
-                            output$tree <- renderPlot({ ggtree(tree) + geom_tiplab(aes(label = gsub(" .*$", "", label))) })
+                            output$tree <- renderPlot({ ggtree(tree) })
 
                         ## Plot alignment
 
@@ -2649,35 +2682,91 @@
                                     pivot_wider(names_from = position, values_from = state) -> alignment_wide
 
                                 if (type == "DNA") {
-                                    blocked_alignment <- DNAStringSet()
+                                    trimmed_alignment <- DNAStringSet()
                                     for (i in 1:dim(alignment_wide)[1]) {
-                                        blocked_alignment <- c(blocked_alignment, DNAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
+                                        trimmed_alignment <- c(trimmed_alignment, DNAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
                                     }
-                                    blocked_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
-                                    writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
+                                    trimmed_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
+                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), type = "DNA")
                                 }
 
                                 if (type == "AA") {
-                                    blocked_alignment <- AAStringSet()
+                                    trimmed_alignment <- AAStringSet()
                                     for (i in 1:dim(alignment_wide)[1]) {
-                                        blocked_alignment <- c(blocked_alignment, AAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
+                                        trimmed_alignment <- c(trimmed_alignment, AAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
                                     }
-                                    blocked_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
-                                    writeFasta(blocked_alignment, paste0(alignment_in_path, "_blocked"))
+                                    trimmed_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
+                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), type = "AA")
                                 }
 
-                                blocked_tree <- fortify(buildTree(
+                                trimmed_tree <- fortify(buildTree(
                                     scaffold_type = scaffold_type,
-                                    scaffold_in_path = paste0(alignment_in_path, "_blocked"),
+                                    scaffold_in_path = paste0(alignment_in_path, "_trimmed"),
                                 ))
 
-                                ggtree(blocked_tree)
+                                ggtree(trimmed_tree)
 
                             })
 
                     }
 
-                shinyApp(ui, server)
+                ## Call the app
+
+                    if ( jupyter == TRUE) {
+
+                        available_ports <- vector()
+
+                        if ( length( unique( c(
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
+                        ))) == 2 ) { available_ports <- c(available_ports, 10123) }
+
+                        if ( length( unique( c(
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
+                        ))) == 2 ) { available_ports <- c(available_ports, 10456) }
+
+                        if ( length( unique( c(
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
+                        ))) == 2 ) { available_ports <- c(available_ports, 10789) }
+
+                        if (length(available_ports) > 0) {
+                            cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
+                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
+                        } else {
+                            cat("All available ports are in use. Please try again later.")
+                        }
+                    
+                    }
+
+                    if (jupyter == FALSE) {
+                        shinyApp(ui = ui, server = server)
+                    }
 
             }
 
