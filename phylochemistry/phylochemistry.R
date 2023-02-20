@@ -8966,6 +8966,10 @@
 
                             }
 
+                            if( scale_variance == FALSE ) {
+                                scaled_matrix <- matrix
+                            }
+
                         ## Get distance matrix
 
                             if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
