@@ -2521,7 +2521,7 @@
 
                                 sliderInput(
                                     inputId = "nongap_threshold",
-                                    label = "nongap_threshold",
+                                    label = "Maximum Percent Gaps Allowed",
                                     min = 0,
                                     max = 100,
                                     value = 50
@@ -2529,7 +2529,7 @@
 
                                 sliderInput(
                                     inputId = "conservation_threshold",
-                                    label = "conservation_threshold",
+                                    label = "Minimum Conservation Percent",
                                     min = 0,
                                     max = 100,
                                     value = 50
@@ -2660,7 +2660,7 @@
                                                 axis.text.y = element_blank()
                                             ) -> filtered_alignment_plot
 
-                                    stats_plot + filtered_alignment_plot + alignment_plot + patchwork::plot_layout(ncol = 1)
+                                    stats_plot + alignment_plot + filtered_alignment_plot + patchwork::plot_layout(ncol = 1)
 
                             })
 
@@ -10315,4 +10315,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
