@@ -2490,7 +2490,7 @@
                         alignment %>%
                             group_by(position) %>%
                             summarize(
-                                nongap_percent = 100-(sum(str_count(state, "-"))/n()*100),
+                                gap_percent = sum(str_count(state, "-"))/n()*100,
                                 conservation_percent = suppressWarnings(sum(state == mode(state))/n()*100)
                             ) %>%
                             pivot_longer(cols = c(2,3), names_to = "metric", values_to = "value") -> alignment_stats
@@ -2520,8 +2520,8 @@
                                 ),
 
                                 sliderInput(
-                                    inputId = "nongap_threshold",
-                                    label = "Maximum Percent Gaps Allowed",
+                                    inputId = "gap_threshold",
+                                    label = "Maximum Gap Percent",
                                     min = 0,
                                     max = 100,
                                     value = 50
@@ -2613,8 +2613,8 @@
                                             ), aes(yintercept = yintercept)
                                         ) +
                                         geom_hline(data = data.frame(
-                                            metric = "nongap_percent",
-                                            yintercept = input$nongap_threshold
+                                            metric = "gap_percent",
+                                            yintercept = input$gap_threshold
                                             ), aes(yintercept = yintercept)
                                         ) +
                                         scale_color_viridis(discrete = TRUE, guide = "none") +
@@ -2641,7 +2641,7 @@
                                     alignment_stats %>%
                                         pivot_wider(names_from = "metric", values_from = "value") %>%
                                         filter(
-                                            nongap_percent > input$nongap_threshold &
+                                            gap_percent < input$gap_threshold &
                                             conservation_percent > input$conservation_threshold
                                         ) %>% 
                                         select(position) %>% as.data.frame() -> positions_to_keep
@@ -2671,7 +2671,7 @@
                                 alignment_stats %>%
                                     pivot_wider(names_from = "metric", values_from = "value") %>%
                                     filter(
-                                        nongap_percent > input$nongap_threshold &
+                                        gap_percent < input$gap_threshold &
                                         conservation_percent > input$conservation_threshold
                                     ) %>% 
                                     select(position) %>% as.data.frame() -> positions_to_keep
