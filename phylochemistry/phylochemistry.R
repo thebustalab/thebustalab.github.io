@@ -62,7 +62,6 @@
                     "network",
                     "pracma",
                     "ggnetwork",
-                    "patchwork",
                     "FactoMineR",
                     "dplyr",
                     "stringr", 
@@ -87,7 +86,8 @@
                     "Rtsne",
                     "readxl",
                     "httpuv",
-                    "ggdist"
+                    "ggdist",
+                    "patchwork"
                 )
 
                 if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
@@ -1811,7 +1811,7 @@
                                 ) {
 
                 ### Make sure transcriptomes object is character and has names
-
+                    transcriptomes <- named_subjects_list
                     if( length(names(transcriptomes)) != length(transcriptomes) ) {
                         stop("Please provide a set of named paths to the argument `transcriptomes`")
                     }
@@ -2276,6 +2276,7 @@
                                     monolist, 
                                     subset, 
                                     alignment_directory_path, 
+                                    # alignment_out_name,
                                     sequences_of_interest_directory_path,
                                     input_sequence_type = c("nucl", "amin"), 
                                     mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
@@ -10092,6 +10093,37 @@
                 # group_by(id) -> data
 
                 # grubbsFilter(data = data, col = "val")
+
+            }
+
+        #### anovaTestMean
+
+            #' anova on means and standard deviations
+            #'
+            #' @param category
+            #' @param n
+            #' @param mean
+            #' @param stdev
+            #' @export
+            #' @examples
+            #' anovaTestMean()
+
+            # https://stackoverflow.com/questions/5526922/r-t-test-from-n-mean-sd
+
+            anovaTestMean <- function(category, n, mean, stdev) {
+
+                output <- as.data.frame(
+                    anovaMean(
+                        object = category,
+                        n = as.numeric(n),
+                        ybar = as.numeric(mean),
+                        s = as.numeric(stdev),
+                        ylabel = "output"
+                    )
+                )
+
+                colnames(output)[5] <- "p_value"
+                return(output)
 
             }
 
