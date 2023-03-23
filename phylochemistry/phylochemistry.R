@@ -863,6 +863,40 @@
 
     ##### Tree and taxa manipulation
 
+        #### descendantsFortified
+
+            #' Provides a descendants list for a fortified tree
+            #'
+            #' @param fortified_tree The fortified tree that should be analyzed
+            #' @examples
+            #' @export
+            #' descendantsFortified
+
+            descendantsFortified <- function(fortified_tree){
+        
+                input <- fortified_tree
+                
+                if(any(duplicated(filter(input, isTip == TRUE)$label))){ stop("There are duplicate tip labels") }
+                output <- list()
+                entry <- 1
+                root_node_number <- min(input$parent)
+
+                for (node in 1:length(dropNA(input$node))) {
+                    parent <- 0
+                    if(input$isTip[node] == TRUE) {label = input$label[node]} else {label = node}
+                    while(node != root_node_number) {
+                        parent <- input[input$node == node,]$parent
+                        output[[entry]] <- data.frame(label = label, parent = parent)
+                        node <- parent
+                        entry <- entry + 1
+                    }
+                }
+
+                output <- do.call(rbind, output)
+                return(output)
+               
+            }
+
         #### gblocks
 
             #' Subset an alignment
@@ -6625,6 +6659,28 @@
 
     ##### Data Visualization
         
+        #### -.gg
+
+            #' Insert a geom layer below others
+            #'
+            #' Allows the user to plot a multiple alignent using ggplot's grammar of graphics
+            #' @param plot The plot to which the layer should be added
+            #' @param layer The layer to be added
+            #' @export
+            #' @examples
+            #' -.gg()
+
+            `-.gg` <- function(plot, layer) {
+                if (missing(layer)) {
+                    stop("Cannot use `-.gg()` with a single argument. Did you accidentally put - on a new line?")
+                }
+                if (!is.ggplot(plot)) {
+                    stop('Need a plot on the left side')
+                }
+                plot$layers = c(layer, plot$layers)
+                plot
+            }
+
         #### drawAlignment
 
             #' Generate a multiple alignment graphic using ggplot
