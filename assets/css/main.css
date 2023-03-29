@@ -3722,7 +3722,7 @@ h2{
 
 	.grid-style-three {
 		width: 100%;
-		margin: 0 0 0 0;
+		margin: 0 0.5rem 0 0.5rem;
 		display: -moz-flex;
 		display: -webkit-flex;
 		display: -ms-flex;
