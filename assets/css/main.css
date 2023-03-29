@@ -3748,13 +3748,13 @@ h2{
 			flex-grow: 0;
 		}
 
-		.grid-style-three > * {
+		/*.grid-style-three > * {
 			width: 33%;
-		}
+		}*/
 
 		.grid-style-three > * {
-			padding: 2rem;
-			width: calc(33% + 2rem);
+			padding: 1rem;
+			width: 33%;
 		}
 
 		/*.grid-style-three > :nth-child(-n + 3) {
