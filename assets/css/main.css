@@ -3749,12 +3749,12 @@ h2{
 		}
 
 		.grid-style-three > * {
-			width: 50%;
+			width: 33%;
 		}
 
 		.grid-style-three > * {
 			padding: 2rem;
-			width: calc(33% + 2rem);
+			width: calc(50% + 2rem);
 		}
 
 		.grid-style-three > :nth-child(-n + 2) {
