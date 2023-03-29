@@ -3765,13 +3765,13 @@ h2{
 			padding-bottom: 0;
 		}
 
-		.grid-style-three > :nth-child(3n + 1) {
+		/*.grid-style-three > :nth-child(3n + 1) {
 			padding-left: 0;
 		}
 
 		.grid-style-three > :nth-child(3n) {
 			padding-right: 0;
-		}
+		}*/
 
 		.grid-style-three > :nth-child(3n + 1),
 		.grid-style-three > :nth-child(3n) {
@@ -3801,13 +3801,13 @@ h2{
 				padding-bottom: 1rem;
 			}
 
-			.grid-style-three > :nth-child(3n + 1) {
+			/*.grid-style-three > :nth-child(3n + 1) {
 				padding-left: 1rem;
 			}
 
 			.grid-style-three > :nth-child(3n) {
 				padding-right: 1rem;
-			}
+			}*/
 
 			.grid-style-three > :nth-child(3n + 1),
 			.grid-style-three > :nth-child(3n) {
@@ -3828,13 +3828,13 @@ h2{
 				padding-bottom: 0;
 			}
 
-			.grid-style-three > :nth-child(1n + 1) {
+			/*.grid-style-three > :nth-child(1n + 1) {
 				padding-left: 0;
 			}
 
 			.grid-style-three > :nth-child(1n) {
 				padding-right: 0;
-			}
+			}*/
 
 			.grid-style-three > :nth-child(1n + 1),
 			.grid-style-three > :nth-child(1n) {
