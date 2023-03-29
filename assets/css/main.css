@@ -3754,7 +3754,7 @@ h2{
 
 		.grid-style-three > * {
 			padding: 2rem;
-			width: calc(50% + 2rem);
+			width: calc(33% + 2rem);
 		}
 
 		.grid-style-three > :nth-child(-n + 2) {
