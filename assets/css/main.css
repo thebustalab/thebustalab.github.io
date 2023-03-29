@@ -3757,24 +3757,24 @@ h2{
 			width: calc(33% + 2rem);
 		}
 
-		.grid-style-three > :nth-child(-n + 2) {
+		.grid-style-three > :nth-child(-n + 3) {
 			padding-top: 0;
 		}
 
-		.grid-style-three > :nth-last-child(-n + 2) {
+		.grid-style-three > :nth-last-child(-n + 3) {
 			padding-bottom: 0;
 		}
 
-		.grid-style-three > :nth-child(2n + 1) {
+		.grid-style-three > :nth-child(3n + 1) {
 			padding-left: 0;
 		}
 
-		.grid-style-three > :nth-child(2n) {
+		.grid-style-three > :nth-child(3n) {
 			padding-right: 0;
 		}
 
-		.grid-style-three > :nth-child(2n + 1),
-		.grid-style-three > :nth-child(2n) {
+		.grid-style-three > :nth-child(3n + 1),
+		.grid-style-three > :nth-child(3n) {
 			width: calc(33% + 0rem);
 		}
 
@@ -3793,24 +3793,24 @@ h2{
 				width: calc(33% + 1rem);
 			}
 
-			.grid-style-three > :nth-child(-n + 2) {
+			.grid-style-three > :nth-child(-n + 3) {
 				padding-top: 1rem;
 			}
 
-			.grid-style-three > :nth-last-child(-n + 2) {
+			.grid-style-three > :nth-last-child(-n + 3) {
 				padding-bottom: 1rem;
 			}
 
-			.grid-style-three > :nth-child(2n + 1) {
+			.grid-style-three > :nth-child(3n + 1) {
 				padding-left: 1rem;
 			}
 
-			.grid-style-three > :nth-child(2n) {
+			.grid-style-three > :nth-child(3n) {
 				padding-right: 1rem;
 			}
 
-			.grid-style-three > :nth-child(2n + 1),
-			.grid-style-three > :nth-child(2n) {
+			.grid-style-three > :nth-child(3n + 1),
+			.grid-style-three > :nth-child(3n) {
 				padding: 1rem;
 				width: calc(100% + 2rem);
 			}
