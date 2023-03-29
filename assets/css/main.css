@@ -3754,7 +3754,7 @@ h2{
 
 		.grid-style-three > * {
 			padding: 2rem;
-			width: calc(50% + 2rem);
+			width: calc(33% + 2rem);
 		}
 
 		.grid-style-three > :nth-child(-n + 2) {
@@ -3775,7 +3775,7 @@ h2{
 
 		.grid-style-three > :nth-child(2n + 1),
 		.grid-style-three > :nth-child(2n) {
-			width: calc(50% + 0rem);
+			width: calc(33% + 0rem);
 		}
 
 		.grid-style-three .box {
@@ -3790,7 +3790,7 @@ h2{
 
 			.grid-style-three > * {
 				padding: 1rem;
-				width: calc(50% + 1rem);
+				width: calc(33% + 1rem);
 			}
 
 			.grid-style-three > :nth-child(-n + 2) {
