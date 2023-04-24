@@ -257,7 +257,8 @@
             #' writeMonolist
 
             writeMonolist <- function( monolist, monolist_out_path, ... ) {
-                    write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
+                    # write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
+                write_csv(monolist, file = monolist_out_path)
             }
 
         #### readPolylist
