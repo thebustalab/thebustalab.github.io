@@ -554,13 +554,13 @@
             #' @export
             #' writeFasta
 
-            writeFasta <- function( XStringSet, fasta_out_path, append = FALSE, type = c("DNA", "AA")) {
+            writeFasta <- function( XStringSet, fasta_out_path, append = FALSE, fasta_type = c("DNA", "AA")) {
 
-                if (type[1] == "DNA") {
+                if (fasta_type[1] == "DNA") {
             	   Biostrings::writeXStringSet( x = DNAStringSet(XStringSet), filepath = fasta_out_path, append = append )
                 }
 
-                if (type[1] == "AA") {
+                if (fasta_type[1] == "AA") {
                     Biostrings::writeXStringSet( x = XStringSet, filepath = fasta_out_path, append = append )
                 }
 
@@ -1512,6 +1512,65 @@
             numbersOnly <- function(x) { all(suppressWarnings(!is.na(as.numeric(as.character(x))))) }
 
     ##### Sequence data handling
+
+        #### predictDomains
+
+            #' predict PFAM domains from sequences in a fasta file
+            #'
+            #' @param fasta_in_path The multifasta file to analyze
+            #' @param domain_library_in_path The path to the hmm file that contains a library of domains
+            #' @examples
+            #' @export
+            #' predictDomains
+
+            predictDomains <- function(fasta_in_path, domain_library_in_path = "/home/bustalab/Documents/general_lab_resources/hmmer/Pfam-A.hmm") {
+
+                temp_file_name <- tempfile()
+                
+                ## Run HMM3SCAN
+                    system(
+                        paste0(
+                            "hmmscan ",
+                            "--domtblout ",
+                            temp_file_name,
+                            ".txt ",
+                            domain_library_in_path, " ",
+                            fasta_in_path
+                        )
+                    )
+
+                ## Process the HMM3SCAN output
+                    predat <- readLines(paste0(temp_file_name, ".txt"))
+                    dat <- predat[-c(grep("#", substr(predat, 1,1)))]
+
+                    results <- list()
+                    for (i in 1:length(dat)) {
+
+                        out <- list()
+                        indices_for_this_row <- gsub("#", "-", predat[3])
+                        indices_for_this_row <- gsub(" ", "N", indices_for_this_row)
+                        indices_for_this_row <- unlist(gregexpr("N", indices_for_this_row))
+                        indices_for_this_row <- c(1,indices_for_this_row, nchar(dat[i]))
+                        indices_for_this_row
+
+                        for (index in 1:(length(indices_for_this_row)-1)) {
+                            out <- c(out, substring(dat[i], indices_for_this_row[index], indices_for_this_row[index+1]))
+                            out <- gsub(" ", "", out)
+                        }
+
+                        results[[i]] <- out
+
+                    }
+
+                    results <- do.call(rbind, results)
+                    results %>%
+                        as.data.frame() %>%
+                        mutate_at(c(3, 6:22), as.numeric) -> results
+                    colnames(results) <- c("target_name", "accession", "tlen", "query_name", "accession_b", "qlen", "E_value_full_seq", "score_full_seq", "bias_full_seq", "number_this_domain", "of_this_domain", "c_Evalue_this_domain", "i_Evalue_this_domain", "score_this_domain", "bias_this_domain", "from_hmm_coord", "to_hmm_coord", "from_ali_coord", "to_ali_coord", "from_env_coord", "to_env_coord", "acc", "description_of_target")
+
+                    return(results)
+
+            }
 
         #### extractORFs
 
@@ -10403,4 +10462,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
