@@ -1524,24 +1524,23 @@
             #' @export
             #' predictDomains
 
-            predictDomains <- function(fasta_in_path, domain_library_in_path = "/home/bustalab/Documents/general_lab_resources/hmmer/Pfam-A.hmm") {
+            predictDomains <- function(
+                fasta_in_path,
+                domain_library_in_path = "/project_data/shared/general_lab_resources/hmmer/Pfam-A.hmm"
+            ) {
 
-                temp_file_name <- tempfile()
+                temp_file_path <- paste0(getwd(), "/predict_domains.txt")
+                if (file.exists(temp_file_path)) {file.remove(temp_file_path)}
                 
                 ## Run HMM3SCAN
-                    system(
-                        paste0(
-                            "hmmscan ",
-                            "--domtblout ",
-                            temp_file_name,
-                            ".txt ",
-                            domain_library_in_path, " ",
-                            fasta_in_path
-                        )
-                    )
+                    system(paste0(
+                        "hmmscan --domtblout ", temp_file_path,
+                        " ", domain_library_in_path, " ",
+                        fasta_in_path
+                    ))
 
                 ## Process the HMM3SCAN output
-                    predat <- readLines(paste0(temp_file_name, ".txt"))
+                    predat <- readLines(temp_file_path)
                     dat <- predat[-c(grep("#", substr(predat, 1,1)))]
 
                     results <- list()
@@ -6530,6 +6529,84 @@
             }
 
     ##### Text data handling
+
+        #### removeSpecialCharacters
+
+            removeSpecialCharacters <- function(text_string) {
+        
+                    text_string <- gsub("−", "-", text_string)
+                    text_string <- gsub("≤", " ", text_string)
+                    text_string <- gsub("≥", " ", text_string)
+                    text_string <- gsub("′", " ", text_string)
+                    text_string <- gsub("✔", " ", text_string)
+                    text_string <- gsub("⋅", " ", text_string)
+                    text_string <- gsub("ƛ", " ", text_string)
+                    text_string <- gsub("ƛ", " ", text_string)
+                    text_string <- stringi::stri_trans_general(text_string, "Latin")
+                    text_string <- gsub("[^[:alnum:] !\"#$%&'()*+,-./:\\{\\};<=>~?@[\\]", "", text_string)
+                
+                return(text_string)
+                
+            }
+
+        #### splitIntoChunks
+
+            splitIntoChunks <- function(
+                data_frame,
+                column_to_split,
+                chunk_size_in_tokens,
+                overlap_in_tokens
+            ) {
+
+                output <- list()
+                for( i in 1:dim(data_frame)[1] ) {
+                
+                    # Extract text_to_split
+                        text_to_split <- data_frame[i,which(colnames(data_frame) == column_to_split)]
+                    
+                    # Calculate the number of tokens in the element and the number of chunks needed
+                        tokens_in_pdf <- length(unlist(tokenizers::tokenize_words(text_to_split)))
+                        n_chunks <- ceiling(1/((chunk_size_in_tokens - overlap_in_tokens)/tokens_in_pdf))
+
+                    # Calculate the number of characters per chunk and per overlap
+                        characters_per_chunk <- ceiling(nchar(text_to_split)/n_chunks)
+                        characters_per_overlap <- characters_per_chunk*(overlap_in_tokens/chunk_size_in_tokens)
+
+                    # Initialize variables to store the starting and ending positions of each chunk
+                        chunk_starts <- 0
+                        chunk_ends <- characters_per_chunk
+
+                    # Calculate the start and end positions for all the chunks
+                        last_character <- 0
+                        while(last_character < nchar(text_to_split)) {
+                            chunk_starts <- c(
+                                chunk_starts,
+                                floor((tail(chunk_starts, 1) + (characters_per_chunk - characters_per_overlap)))
+                            )
+                            chunk_ends <- c(
+                                chunk_ends,
+                                floor((tail(chunk_ends, 1) + (characters_per_chunk - characters_per_overlap)))
+                            )
+                            last_character <- tail(chunk_ends,1)
+                        }
+
+                    # Iterate through all the chunks and store them in the 'chunks' list
+                        chunks <- list()
+                        for (chunk in 1:length(chunk_ends)) {
+                            chunks[[chunk]] <- data.frame(
+                                text = substr(text_to_split, chunk_starts[chunk], chunk_ends[chunk])
+                            )
+                        }
+                        chunks <- do.call(rbind, chunks)
+                    # print(as_tibble(head(chunks)))
+                    
+                    # Merge with other row data
+                        data_frame[i,-c(which(colnames(data_frame) == column_to_split))] %>%
+                        slice(rep(1, dim(chunks)[1])) -> duplicated_row_data
+                        output[[i]] <- cbind(duplicated_row_data, chunks)
+                }
+                return(do.call(rbind, output))
+            }
 
         #### searchField
 
