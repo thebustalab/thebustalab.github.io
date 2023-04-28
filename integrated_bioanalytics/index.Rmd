@@ -3199,11 +3199,11 @@ Genome assembly requires computing resources - and since not all genomes are of 
 
 #### abyss
 
-abyss-pe k=111 name=SS1 B=1G in='/project_data/shared/yeast_engineering/stowaway_seq/SS1_S6_L001_R1_001.fastq /project_data/shared/yeast_engineering/stowaway_seq/SS1_S6_L001_R2_001.fastq'
+`abyss-pe k=111 name=SS1 B=10G in='SS1_1.fa SS1_2.fa'`
 
 A rough indicator is, for 2x150bp reads and 40x coverage, the right k value is often around 70 to 90. For 2x250bp reads and 40x coverage, the right value might be around 110 to 140.
 
-A good value for B depends on a number of factors, but primarily on the genome being assembled. A general guideline is: P. glauca (~20Gbp): B=500G; H. sapiens (~3.1Gbp): B=50G; C. elegans (~101Mbp): B=2G
+A good value for B depends on a number of factors, but primarily on the genome being assembled. A general guideline is: P. glauca (~20Gbp): B=500G; H. sapiens (~3.1Gbp): B=50G; C. elegans (~101Mbp): B=2G. Using more is fine though, 
 
 #### canu
 

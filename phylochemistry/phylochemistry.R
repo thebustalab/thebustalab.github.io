@@ -257,8 +257,8 @@
             #' writeMonolist
 
             writeMonolist <- function( monolist, monolist_out_path, ... ) {
-                    # write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
-                write_csv(monolist, file = monolist_out_path)
+                write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
+                # write_csv(monolist, file = monolist_out_path)
             }
 
         #### readPolylist
@@ -6594,7 +6594,7 @@
                         chunks <- list()
                         for (chunk in 1:length(chunk_ends)) {
                             chunks[[chunk]] <- data.frame(
-                                text = substr(text_to_split, chunk_starts[chunk], chunk_ends[chunk])
+                                temporary_chunks_colname = substr(text_to_split, chunk_starts[chunk], chunk_ends[chunk])
                             )
                         }
                         chunks <- do.call(rbind, chunks)
@@ -6605,7 +6605,9 @@
                         slice(rep(1, dim(chunks)[1])) -> duplicated_row_data
                         output[[i]] <- cbind(duplicated_row_data, chunks)
                 }
-                return(do.call(rbind, output))
+                output <- do.call(rbind, output)
+                colnames(output)[colnames(output) == "temporary_chunks_colname"] <- as.character(column_to_split)
+                return(output)
             }
 
         #### searchField
