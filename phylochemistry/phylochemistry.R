@@ -6554,6 +6554,7 @@
             splitIntoChunks <- function(
                 data_frame,
                 column_to_split,
+                source_ID_column,
                 chunk_size_in_tokens,
                 overlap_in_tokens
             ) {
@@ -6594,7 +6595,11 @@
                         chunks <- list()
                         for (chunk in 1:length(chunk_ends)) {
                             chunks[[chunk]] <- data.frame(
-                                temporary_chunks_colname = substr(text_to_split, chunk_starts[chunk], chunk_ends[chunk])
+                                temporary_chunks_colname = paste(
+                                    "This information is from: ",
+                                    data_frame[i,colnames(data_frame) == source_ID_column],
+                                    substr(text_to_split, chunk_starts[chunk], chunk_ends[chunk])
+                                )
                             )
                         }
                         chunks <- do.call(rbind, chunks)
@@ -6695,14 +6700,10 @@
 
             #' Build a network from an edgelist
             #'
-            #' @param infile The multiple alignment to (analyze and) plot.
-            #' @param roi Plot a subset of the alignment. 
-            #' @param consensus Include in the output graphic a line plot corresponding to the degree of conservation at each site in the alignment.
-            #' @param funct_assoc Include in the output graphic a line plot of the association between AA residues and 
-            #' @importFrom phangorn read.aa
-            #' @import tidyr
-            #' @import ggplot2
-            #' @import ggtree  
+            #' @param edgelist The multiple alignment to (analyze and) plot.
+            #' @param node_attributes Plot a subset of the alignment. 
+            #' @param facet_variable Include in the output graphic a line plot corresponding to the degree of conservation at each site in the alignment.
+            #' @import
             #' @export
             #' @examples
             #' buildNetwork()
