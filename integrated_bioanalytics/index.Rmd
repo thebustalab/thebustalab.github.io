@@ -2856,6 +2856,7 @@ For more on parametric versus non-parametric tests: [Statistics by Jim](https://
 
 For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
 
+Ten common statistical mistakes and their solutions: [Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript](https://elifesciences.org/articles/48175)
 
 ## exercises {-}
 
@@ -3125,9 +3126,12 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-<!-- # (PART) TRANSCRIPTOME ANALYSIS {-} -->
+# (PART) TRANSCRIPTOME ANALYSIS {-}
 
 <!-- start transcriptomic analyses -->
+
+`conda install -c bioconda trimmomatic`
+`trimmomatic PE -version`
 
 <!-- # transcriptomic analyses {-} -->
 
@@ -3137,7 +3141,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) GENOMIC ANALYSIS {-}
+# (PART) GENOME ANALYSIS {-}
 
 <!-- start genomic analyses -->
 
