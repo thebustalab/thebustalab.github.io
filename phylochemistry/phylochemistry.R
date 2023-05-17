@@ -87,6 +87,7 @@
                     "readxl",
                     "httpuv",
                     "ggdist",
+                    "grid",
                     "patchwork"
                 )
 
@@ -2781,7 +2782,7 @@
                                         trimmed_alignment <- c(trimmed_alignment, DNAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
                                     }
                                     trimmed_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
-                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), type = "DNA")
+                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), fasta_type = "DNA")
                                 }
 
                                 if (type == "AA") {
@@ -2790,7 +2791,7 @@
                                         trimmed_alignment <- c(trimmed_alignment, AAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
                                     }
                                     trimmed_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
-                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), type = "AA")
+                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), fasta_type = "AA")
                                 }
 
                                 trimmed_tree <- fortify(buildTree(
