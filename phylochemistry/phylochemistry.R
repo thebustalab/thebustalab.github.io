@@ -5017,6 +5017,7 @@
                                             }
                                             framedDataFile <- do.call(rbind, filteredRawDataFile)
                                             framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
+                                            framedDataFile <- drop_na(framedDataFile)
 
                                         cat("   Merging duplicate rows ...\n")
                                             if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
@@ -6701,8 +6702,8 @@
 
             #' Build a network from an edgelist
             #'
-            #' @param edgelist The multiple alignment to (analyze and) plot.
-            #' @param node_attributes Plot a subset of the alignment. 
+            #' @param edgelist A data frame with names of origin nodes in first column, destination nodes in second column, and an optional third column of edgeweights.
+            #' @param node_attributes A dataframe of attributes associated with the nodes.
             #' @param facet_variable Include in the output graphic a line plot corresponding to the degree of conservation at each site in the alignment.
             #' @import
             #' @export
@@ -6717,15 +6718,15 @@
                     edgelist[,2] <- as.character(edgelist[,2])
 
                 ## If edgelist has more than two columns, assume that 3rd column is edge weights and build matrix from adjacency matrix
-                    # if (dim(edgelist)[2] > 2) {
-                    #     adjacency_matrix <- as.matrix(as.data.frame(tidyr::pivot_wider(edgelist, names_from = 1, values_from = 3)))
-                    #     rownames(adjacency_matrix) <- adjacency_matrix[,1]
-                    #     adjacency_matrix <- adjacency_matrix[,-1]
-                    #     network_object <- network::network(adjacency_matrix, matrix.type = "adjacency")
-                    # }
+                    if (dim(edgelist)[2] > 2) {
+                        adjacency_matrix <- as.matrix(as.data.frame(tidyr::pivot_wider(edgelist, names_from = 1, values_from = 3)))
+                        rownames(adjacency_matrix) <- adjacency_matrix[,1]
+                        adjacency_matrix <- adjacency_matrix[,-1]
+                        network_object <- network::network(adjacency_matrix, matrix.type = "adjacency")
+                    }
 
                 ## Just build a network with the edgelist
-                    if (dim(edgelist)[2] == 3) {
+                    if (dim(edgelist)[2] == 2) {
                         network_object <- network::network(edgelist, matrix.type = "edgelist", ignore.eval = FALSE)
                     }
 
