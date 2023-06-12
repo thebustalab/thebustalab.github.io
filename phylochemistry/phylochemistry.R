@@ -9200,7 +9200,7 @@
 
                                 if( analysis == "mds" ) {
                                     coords <- stats::cmdscale(dist_matrix)
-                                    colnames(coords) <- c("Dim.1", "Dim.2")
+                                    colnames(coords) <- c("Dim_1", "Dim_2")
                                     clustering <- as_tibble(coords)
                                     clustering$sample_unique_ID <- rownames(coords)
                                 }
@@ -10342,6 +10342,7 @@
                 phylogeneticSignal <- function( traits, tree, replicates = 999, cost = NULL ) {
 
                     results <- list()
+                    traits <- as.data.frame(traits)
 
                     ## Loop over columns
                     
