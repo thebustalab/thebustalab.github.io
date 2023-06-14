@@ -88,7 +88,9 @@
                     "httpuv",
                     "ggdist",
                     "grid",
-                    "patchwork"
+                    "patchwork",
+                    "ggnewscale",
+                    "later"
                 )
 
                 if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
@@ -10344,6 +10346,10 @@
                     results <- list()
                     traits <- as.data.frame(traits)
 
+                    ## Reorder traits to match the order of the input
+
+                        traits <- traits[match(tree$tip.label, traits[,1]),]
+
                     ## Loop over columns
                     
                         for (i in 2:dim(traits)[2]) {
@@ -10359,7 +10365,7 @@
 
                                         levels <- attributes(factor(trait))$levels
 
-                                    ## Chech that the variable is indeed categorical
+                                    ## Check that the variable is indeed categorical by comparing the length of the levels vector to the length of the trait vector
                                                     
                                         if (length(levels) == length(trait)) {
                                         
@@ -10370,11 +10376,11 @@
                                     ## Make the transition matrix
                                         
                                         if (is.null(cost)) {
-                                        
+                                            # By default, all transitions have a cost of 1, except transitions from a state to itself which have a cost of 0
                                             cost1 <- 1-diag(length(levels))
                                         
                                         } else {
-                                        
+                                            # If a custom cost matrix is provided, it should have dimensions that match the number of levels
                                         if (length(levels) != dim(cost)[1])
                                             
                                             stop("Dimensions of the character state transition matrix do not agree with the number of levels")
@@ -10392,6 +10398,7 @@
 
                                         # obs <- t(data.frame(trait))
                                         obs <- phyDat( trait, type = "USER", levels = attributes(factor(trait))$levels )
+                                        # This parsimony score represents the minimum total cost of all state changes that must have occurred on the tree given the observed trait data
                                         OBS <- parsimony( tree, obs, method = "sankoff", cost = cost1 )
 
                                     ## Make "replicates" number of random tree-trait associations and check their parsimony score
