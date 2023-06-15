@@ -6856,7 +6856,7 @@
 
                                 for (k in 1:length(unique(profile_data$cluster))) {
 
-                                    palette_options <- c("Reds", "Oranges", "Greens", "Blues", "Purples", "Teal", "BluYl", "RdPu", "Lajolla")
+                                    palette_options <- c("Reds", "Oranges", "Greens", "Blues", "Purples", "Teal", "BluYl", "RdPu", "Lajolla", "Viridis")
                                     option <- palette_options[(k - 1) %% length(palette_options) + 1]
 
                                     n_colors_this_cluster <- length(unique(filter(profile_data, cluster == paste0("cluster_", k))$doi))
