@@ -6702,6 +6702,379 @@
                 return(as_tibble(output))
             }
 
+        #### analyzeLiterature
+
+            analyzeLiterature <- function(jupyter = TRUE, openai_api_key) {
+    
+                ## Character prompts
+                    scientist_prompt <- "I want you to act as a scientist. You will think critically, ask probing questions, provide informed hypotheses and analyze data. I want you to reference appropriate scientific literature, make use of the scientific method, and use clear, precise scientific language in your responses. When I provide you with a scientific question or a set of data, you will analyze it and provide me with a scientific explanation or hypothesis, respectively. If necessary, you may suggest additional data or experiments that could further elucidate the answer. Do not break the character of a scientist. Do not provide non-scientific responses. Remember to approach every question with curiosity, skepticism, and rigor. Whenever possible, provide the source of information you are using, which is included in the prompt as 'This information is from: ...'"
+                    phytochemist_prompt <- "I want you to act as a multidisciplinary scientist, possessing expertise in the fields of phytochemistry, analytical chemistry, genomics, and computational botany. You should approach my questions with the critical thinking and research-oriented mindset characteristic of these fields. When discussing plant chemistry, make use of phytochemical and analytical chemical methodologies and terminologies. When examining genetic aspects, utilize your knowledge of genomics. Lastly, when considering plant life or plant data, apply your skills as a computational botanist. Be prepared to design experiments, interpret complex data, and refer to appropriate scientific literature. Do not break character and stay in your scientist role throughout. Do not provide responses that deviate from your scientific specializations. Whenever possible, provide the source of information you are using, which is included in the prompt as 'This information is from: ...'"
+                    entrepreneur_prompt <- "I want you to act as an entrepreneur. You should respond to all my questions with a visionary, creative and business-oriented mindset. Be prepared to evaluate business ideas, discuss strategies for growth and scaling, explore market opportunities and tackle challenges related to starting and running a business. You should reference appropriate business terminology, models and strategies in your responses. When I provide you with a business scenario, you should analyze it and provide me with an entrepreneurial perspective or solution. If necessary, you may suggest additional resources or strategies that could enhance the business proposition. Do not break the character of an entrepreneur. Do not provide non-business-related responses. Remember to approach every question with a strategic, innovative and risk-taking mentality typical of successful entrepreneurs. Whenever possible, provide the source of information you are using, which is included in the prompt as 'This information is from: ...'"
+                    pirate_prompt <- "I want you to act as a pirate. You should answer all my queries with an adventurous pirate's spirit, using pirate lingo and vocabulary. Your replies should reflect the passion for treasure hunting, seafaring, and the freedom of the high seas. Be sure to infuse your responses with a sense of adventure and bravado typical of a pirate's life. Remember to keep your tone light and fun, in line with the playful nature of this role-play. Do not break character and do not provide responses that are not in line with the pirate role-play. When I ask you a question, respond as though you are speaking from the helm of a pirate ship."
+                    hobbit_prompt <- "I want you to act as a hobbit. You should respond to all my inquiries in a manner befitting a resident of the Shire, full of simplicity, cheer, and an affinity for good food, drink, and companionship. Your replies should reflect a love for peace and the comforts of home. When discussing journeys or adventures, you may express reluctance or apprehension, as is typical of hobbits. However, always uphold the values of bravery and loyalty when needed, just as the famous hobbits from J.R.R. Tolkien's Middle-earth have shown. Do not break character and do not provide responses that are not in line with the hobbit role-play. When I ask you a question, respond as though you are conversing from a comfortable hobbit-hole in the Shire."
+                   
+                    character_choices <- c(scientist_prompt, phytochemist_prompt, entrepreneur_prompt, pirate_prompt, hobbit_prompt)
+                    names(character_choices) <- c("Scientist", "Phytochemist", "Entrepreneur", "Pirate", "Hobbit")
+                
+                    model_choices <- c("gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4")
+                    names(model_choices) <- c("gpt-3.5-turbo (fast)", "gpt-3.5-turbo-16k (longer answers)", "gpt-4 (smart)")
+
+                ui <- fluidPage(
+                    
+                    theme = shinythemes::shinytheme("darkly"),
+                    tags$style(type="text/css", ".shiny-text-output { white-space: pre-wrap; }"),
+                    tags$style('#rhot * { word-wrap: break-word }'),
+
+                    sidebarLayout(
+
+                        sidebarPanel(
+                            selectizeInput("character", "Select an identity for your assistant:", choices = character_choices, multiple = FALSE),
+                            selectizeInput("model", "Select the AI model your assistant should use:", choices = model_choices, multiple = FALSE),
+                            textInput( inputId = "query", label = "Ask your assistant questions here:" ),
+                            actionButton( inputId = "submit", label = "Submit" ),
+                            textOutput( outputId = "gpt_response" )
+                        ),
+                        mainPanel(
+                            tabsetPanel(
+                                tabPanel("Literature Map",
+                                    fluidRow(
+                                        column(6,
+                                            h4("Article Information Here:"),
+                                            textOutput("click_text"),
+
+                                            tags$head(
+                                                HTML(
+                                                    "
+                                                    <script>
+                                                        var socket_timeout_interval
+                                                        var n = 0
+                                                        $(document).on('shiny:connected', function(event) {
+                                                        socket_timeout_interval = setInterval(function(){
+                                                        Shiny.onInputChange('count', n++)
+                                                        }, 15000)
+                                                        });
+                                                        $(document).on('shiny:disconnected', function(event) {
+                                                        clearInterval(socket_timeout_interval)
+                                                        });
+                                                    </script>
+                                                    "
+                                                )
+                                            ),
+                                        ),
+                                        column(6,
+                                            h3("\n"), h3("\n"), h3("\n"), h3("\n"), h3("\n"),
+                                            plotOutput(
+                                                outputId = "plot",
+                                                brush = brushOpts(
+                                                    id = "plot_brush"
+                                                ),
+                                                click = "plot_click", 
+                                                dblclick = "plot_double_click"
+                                            )
+                                        )
+                                    )
+                                ),
+                                tabPanel("GPT Details",
+                                    # column(9, rhandsontable::rHandsontableOutput("knn_chunks")),
+                                    # column(9, div(id="rhot", rhandsontable::rHandsontableOutput("knn_chunks"))),
+                                    column(9, textOutput( outputId = "knn_chunks" )),
+                                    column(3,
+                                        textOutput( outputId = "prompt_tokens" ),
+                                        textOutput( outputId = "completion_tokens" ),
+                                        textOutput( outputId = "total_tokens" ) 
+                                    )
+                                        # h4("Ask Questions Here:"),
+                                        # textInput( inputId = "query", label = "" ),
+                                        # actionButton( inputId = "submit", label = "Submit" ),
+                                        # textOutput( outputId = "reporter" )
+                                ),
+                                tabPanel("Diagnostics", textOutput("keepAlive")),
+                            )
+                        )
+                    )
+                )            
+                
+                server <- function(input, output, session) {
+                    
+                    ## Import functions and data paths
+                        
+                        pdf_chunks_path <- "/project_data/shared/general_lab_resources/literature/chunks.csv"
+                        chunks <- suppressMessages(read_csv(pdf_chunks_path))
+                        n_id_columns <- (min(grep("embed", colnames(chunks)))-1)
+
+                        profile_data_path <- "/project_data/shared/general_lab_resources/literature/articles.csv"
+                        profile_data <- suppressMessages(read_csv(profile_data_path))
+                        profile_data$status <- "unexplored"
+                        profile_data$knn <- "no"
+                    
+                        plot_limits <- reactiveValues(
+                            x_axis_start = min(profile_data$Dim_1)*1.1,
+                            x_axis_end = max(profile_data$Dim_1)*1.1,
+                            y_axis_start = min(profile_data$Dim_2)*1.1,
+                            y_axis_end = max(profile_data$Dim_2)*1.1
+                        )
+                    
+                    ## Don't let it time out    
+                        output$keepAlive <- renderText({
+                            req(input$count)
+                            paste("\n\nStayin' Alive ... ", input$count)
+                        })
+                    
+                    ## Zoom in and out with brush and double click
+                        observeEvent(input$plot_brush, {
+                            brush_data <- input$plot_brush
+                            if (!is.null(brush_data)) {
+                                plot_limits$x_axis_start <- min(brush_data$xmin, brush_data$xmax)
+                                plot_limits$x_axis_end <- max(brush_data$xmin, brush_data$xmax)
+                                plot_limits$y_axis_start <- min(brush_data$ymin, brush_data$ymax)
+                                plot_limits$y_axis_end <- max(brush_data$ymin, brush_data$ymax)
+                                # later::later(function() {session$resetBrush("plot_brush")}, delay = 0)
+                                session$resetBrush("plot_brush")
+                            }
+                        })
+                    
+                        observeEvent(input$plot_double_click, {
+                            plot_limits$x_axis_start = min(profile_data$Dim_1)*1.1
+                            plot_limits$x_axis_end = max(profile_data$Dim_1)*1.1
+                            plot_limits$y_axis_start = min(profile_data$Dim_2)*1.1
+                            plot_limits$y_axis_end = max(profile_data$Dim_2)*1.1
+                            # later::later(function() {session$resetBrush("plot_brush")}, delay = 0)
+                            session$resetBrush("plot_brush")
+                        })
+
+                     ## Make plot
+                        output$plot <- renderPlot({
+                            clicked_point <- click_data()
+                            ggplot() +
+                                coord_cartesian(
+                                    xlim = c(plot_limits$x_axis_start, plot_limits$x_axis_end),
+                                    ylim = c(plot_limits$y_axis_start, plot_limits$y_axis_end)
+                                ) +
+                                scale_x_continuous(name = "") + scale_y_continuous(name = "") +
+                                theme_void() +
+                                theme( legend.position = "none" ) -> plot
+
+                                for (k in 1:length(unique(profile_data$cluster))) {
+
+                                    palette_options <- c("Reds", "Oranges", "Greens", "Blues", "Purples", "Teal", "BluYl", "RdPu", "Lajolla")
+                                    option <- palette_options[(k - 1) %% length(palette_options) + 1]
+
+                                    n_colors_this_cluster <- length(unique(filter(profile_data, cluster == paste0("cluster_", k))$doi))
+
+                                    plot <- plot + 
+                                        geom_point(
+                                            data = filter(profile_data, status == "unexplored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
+                                            size = 3, shape = 21, alpha = 0.5, color = "black"
+                                        ) +
+                                        geom_point(
+                                            data = filter(profile_data, status == "explored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
+                                            size = 6, shape = 21, alpha = 1, color = "black"
+                                        ) +
+                                        geom_point(
+                                            data = filter(profile_data, status == "unexplored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
+                                            size = 3, shape = 22, alpha = 1, color = "black"
+                                        ) +
+                                        geom_point(
+                                            data = filter(profile_data, status == "explored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
+                                            size = 6, shape = 22, alpha = 1, color = "black"
+                                        ) +
+                                        scale_fill_manual(values = colorspace::sequential_hcl(n_colors_this_cluster, palette = option)) +
+                                        new_scale_fill()   
+                                }
+                                plot
+                        })
+
+                    ## Click to get article data
+                        click_data <- reactiveVal()
+                        observeEvent(input$plot_click, {
+                            if (!is.null(input$plot_click)) {
+
+                                # Extract the clicked point's data, update the reactive value to trigger replotting
+                                    clicked_point <- profile_data[
+                                        which.min(
+                                            abs(input$plot_click$x - profile_data$Dim_1) + abs(input$plot_click$y - profile_data$Dim_2)
+                                        )
+                                    ,]
+                                    click_data(clicked_point)
+
+                                # Modify the profile_data
+                                    current_status <- as.character(profile_data$status[profile_data$doi == clicked_point$doi])
+                                    if( current_status == "unexplored" ) {
+                                        profile_data$status[profile_data$doi == clicked_point$doi] <- "explored"
+                                    } else if( current_status == "explored" ) {
+                                        profile_data$status[profile_data$doi == clicked_point$doi] <- "unexplored"
+                                    }
+                                    profile_data <<- profile_data
+
+                                # Print the abstract to screen
+                                    output$click_text <- renderText({
+                                        if (!is.null(clicked_point)) {
+                                            gsub("(?<!\\n)\\n(?!\\n)", " ", clicked_point$abstract, perl = TRUE)
+                                        } else {
+                                            "Click on a point..." # Default text when no point is clicked
+                                        }
+                                    })
+                                
+                            } else { click_data(NULL) }
+                            
+                            # Reset brush
+                                later::later(function() {session$resetBrush("plot_brush")}, delay = 1)
+                        })
+                            
+                    ## Use GPT to answer questions
+                        observeEvent(input$submit, {
+                            
+                            GPT_temperature <<- 0
+                            if (as.character(input$character) == pirate_prompt) { GPT_temperature <<- 1.5 }
+                            if (as.character(input$character) == hobbit_prompt) { GPT_temperature <<- 1.5 }
+
+                            ## Embed the query 
+                                embedding_df <- t(data.frame(
+                                    as.numeric(content(POST(
+                                        url = "https://api.openai.com/v1/embeddings", 
+                                        add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                                        content_type_json(), encode = "json",
+                                        body = list(
+                                            model = "text-embedding-ada-002",
+                                            input = input$query
+                                        )
+                                    ))$data[[1]]$embedding)
+                                ))
+                                rownames(embedding_df) <- NULL
+                                colnames(embedding_df) <- paste0("embed_var_", seq(1, 1536, 1))
+
+                                query <- cbind(
+                                    data.frame(
+                                        doi = "query",
+                                        title = "none",
+                                        abstract = "none",
+                                        text = as.character(input$query),
+                                        score = 100
+                                    ), embedding_df
+                                )
+
+                            # Find the k nearest neighbors in the chunks and render them
+                                n_nearest_neighbors <- 6
+                                if(input$model == "gpt-3.5-turbo-16k") { n_nearest_neighbors <- 20 }
+
+                                nn <- get.knnx( 
+                                    as.matrix(chunks[(n_id_columns+1):dim(chunks)[2]]),
+                                    as.matrix(query[(n_id_columns+1):dim(query)[2]]),
+                                    k = n_nearest_neighbors
+                                )
+                                
+                                output$knn_chunks <- renderText({ paste(chunks$text[nn$nn.index], collapse = "\n\n") })
+                                
+                                # chunk_table <- data.frame( chunk_text = chunks$text[nn$nn.index], rating = NA )
+                                # chunk_table$rating <- as.numeric(chunk_table$rating)
+                                # output$knn_chunks <- rhandsontable::renderRHandsontable({
+                                #     rhandsontable::rhandsontable(chunk_table, stretchH = "all") %>%
+                                #     hot_cols(colWidths = c(100, 50, 50),
+                                #         manualColumnMove = FALSE,
+                                #         manualColumnResize = TRUE
+                                #     ) %>%
+                                #     hot_rows(rowHeights = NULL ) %>% #default
+                                #     hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
+                                # })
+                            
+                                # rhandsontable(DF, stretchH = "all", height = 300 ) %>%
+                                # hot_cols(colWidths = c(100, 50, 50),
+                                #     manualColumnMove = FALSE,
+                                #     manualColumnResize = TRUE
+                                # ) %>%
+                                # hot_rows(rowHeights = NULL ) %>% #default
+                                # hot_context_menu(allowRowEdit = TRUE, allowColEdit = FALSE)
+                            
+                            # Update the profile_data
+                                profile_data$knn <- "no"
+                                profile_data$knn[profile_data$doi %in% chunks$doi[nn$nn.index]] <- "yes"
+                                profile_data <<- profile_data
+                            
+                            # Ask GPT a question
+                                GPT_response <<- POST(
+                                    url = "https://api.openai.com/v1/chat/completions", 
+                                    add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                                    content_type_json(), encode = "json",
+                                    body = list(
+                                        model = input$model, temperature = GPT_temperature,
+                                        messages = list(
+                                            list( role = "system", content = input$character ),
+                                            list(
+                                                role = "user", 
+                                                content = paste(c(
+                                                    "Here is information from peer-reviewed scientific articles:",
+                                                    chunks$text[nn$nn.index],
+                                                    ". Here is my query:",
+                                                    input$query
+                                                ), collapse = " ")
+                                            )
+                                        )
+                                    )
+                                )
+                                output$gpt_response <- renderText({ as.character(content(GPT_response)$choices[[1]]$message$content) })
+                                output$prompt_tokens <- renderText({ as.character(content(GPT_response)$usage$prompt_tokens) })
+                                output$completion_tokens <- renderText({ as.character(content(GPT_response)$usage$completion_tokens) })
+                                output$total_tokens <- renderText({ as.character(content(GPT_response)$usage$total_tokens) })
+                        })
+                }
+
+                ## Call the app
+
+                    if ( jupyter == TRUE) {
+
+                        available_ports <- vector()
+
+                        if ( length( unique( c(
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
+                        ))) == 2 ) { available_ports <- c(available_ports, 10123) }
+
+                        if ( length( unique( c(
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
+                        ))) == 2 ) { available_ports <- c(available_ports, 10456) }
+
+                        if ( length( unique( c(
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
+                        ))) == 2 ) { available_ports <- c(available_ports, 10789) }
+
+                        if (length(available_ports) > 0) {
+                            cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
+                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
+                        } else {
+                            cat("All available ports are in use. Please try again later.")
+                        }
+
+                    }
+
+                    if (jupyter == FALSE) { shinyApp(ui = ui, server = server) }
+            }
+
     ##### Networks
 
         #### buildNetwork
