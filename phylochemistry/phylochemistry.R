@@ -25,7 +25,11 @@
                     "Biostrings",
                     "GenomicRanges",
                     "GenomicFeatures",
-                    "Rsamtools"
+                    "Rsamtools",
+                    "httr",
+                    "shinythemes",
+                    "FNN",
+                    "rentrez"
                 )
 
                 source("https://thebustalab.github.io/phylochemistry/genomescope.R")
