@@ -7208,9 +7208,9 @@
                     # }
 
                 ## Just build a network with the edgelist
-                    if (dim(edgelist)[2] == 2) {
+                    # if (dim(edgelist)[2] == 2) {
                         network_object <- network::network(edgelist, matrix.type = "edgelist", ignore.eval = FALSE)
-                    }
+                    # }
 
                 ## Fortify the network object into a dataframe, modify it with new colnames and additional information, crack into a list of edges and nodes
                     combined_network_frame <- ggnetwork::ggnetwork(network_object, arrow.gap = 0, layout = "kamadakawai")
