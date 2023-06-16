@@ -6538,6 +6538,67 @@
 
     ##### Text data handling
 
+        #### completionGPT
+
+            completionGPT <- function(system_prompt, query, model, temperature, openai_api_key) {
+    
+                model_options <- c("gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001")
+                
+                if( !model %in% model_options) {
+                    stop(paste0("The model you specified is not available. Please choose from one of: ", paste(model_options, collapse = ", ")))
+                }
+                
+                if (model %in% c("gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613")) {
+                    
+                    endpoint_url <- "https://api.openai.com/v1/chat/completions"
+                    
+                    response <- content(POST(
+                        url = endpoint_url, 
+                        add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                        content_type_json(), encode = "json",
+                        body = list(
+                            model = model, temperature = temperature,
+                            messages = list(
+                                list( role = "system", content = system_prompt),
+                                list( role = "user", content = query )
+                            )
+                        )
+                    ))
+                    
+                    output <- list()
+                    output$model <- response$model
+                    output$response <- response$choices[[1]]$message$content
+                    output$prompt_tokens <- response$usage$prompt_tokens
+                    output$completion_tokens <- response$usage$completion_tokens
+                    output$total_tokens <- response$usage$total_tokens
+                }
+                
+                if (model %in% c("text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001")) {
+                    
+                    endpoint_url <- "https://api.openai.com/v1/completions"
+                    
+                    response <- content(POST(
+                        url = endpoint_url, 
+                        add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                        content_type_json(), encode = "json",
+                        body = list(
+                            model = model, temperature = temperature,
+                            prompt = query
+                        )
+                    ))
+                    
+                    output <- list()
+                    output$model <- response$model
+                    output$response <- response$choices[[1]]$text
+                    output$prompt_tokens <- response$usage$prompt_tokens
+                    output$completion_tokens <- response$usage$completion_tokens
+                    output$total_tokens <- response$usage$total_tokens
+                }
+                
+                return(output)
+
+            }
+
         #### removeSpecialCharacters
 
             removeSpecialCharacters <- function(text_string) {
@@ -6623,6 +6684,37 @@
                 return(output)
             }
 
+        #### analyzeTerms
+
+            analyzeTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term) {
+
+                # Prepare text_vector to analyze
+                    text_vector <- list()
+                    for (i in 1:dim(dataframe)[1]) {
+                        text_vector[[i]] <- paste(dataframe[i, cols], collapse = " ")
+                    }
+                    text_vector <- as.character(do.call(rbind, text_vector))
+
+                # Extract terms from from title and text
+                    search_hits_terms <- litsearchr::extract_terms(
+                      text = text_vector,
+                      method = "fakerake", min_freq = min_freq_for_terms, min_n = min_n_words_per_term,
+                      stopwords = stopwords::data_stopwords_stopwordsiso$en
+                    )
+                    cat("Found", length(search_hits_terms), "search terms.")    
+                    if(length(search_hits_terms) == 0) { stop("Consider reducing min_n") }
+
+                # Create Co-Occurrence Network and bind it to the data
+                    gs_dfm <- as.data.frame(litsearchr::create_dfm(
+                        elements = text_vector,
+                        features = search_hits_terms
+                    ))
+                    data <- cbind(dataframe, gs_dfm)
+
+                # Return
+                    return(data)
+            }
+
         #### searchField
 
             searchField <- function(subject_list, query_list) {
@@ -6703,6 +6795,17 @@
             }
 
         #### analyzeLiterature
+
+            # library(htm2txt)
+            # library(RCurl)
+            # library(stringi)
+            # library(reticulate)
+            # library(tokenizers)
+            # library(rvest)
+            # library(XML)
+            # library(stringdist)
+            # library(plotly)
+            # library(rhandsontable)
 
             analyzeLiterature <- function(jupyter = TRUE, openai_api_key) {
     
