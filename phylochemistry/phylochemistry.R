@@ -7200,12 +7200,12 @@
                     edgelist[,2] <- as.character(edgelist[,2])
 
                 ## If edgelist has more than two columns, assume that 3rd column is edge weights and build matrix from adjacency matrix
-                    if (dim(edgelist)[2] > 2) {
-                        adjacency_matrix <- as.matrix(as.data.frame(tidyr::pivot_wider(edgelist, names_from = 1, values_from = 3)))
-                        rownames(adjacency_matrix) <- adjacency_matrix[,1]
-                        adjacency_matrix <- adjacency_matrix[,-1]
-                        network_object <- network::network(adjacency_matrix, matrix.type = "adjacency")
-                    }
+                    # if (dim(edgelist)[2] > 2) {
+                    #     adjacency_matrix <- as.matrix(as.data.frame(tidyr::pivot_wider(edgelist, names_from = 1, values_from = 3)))
+                    #     rownames(adjacency_matrix) <- adjacency_matrix[,1]
+                    #     adjacency_matrix <- adjacency_matrix[,-1]
+                    #     network_object <- network::network(adjacency_matrix, matrix.type = "adjacency")
+                    # }
 
                 ## Just build a network with the edgelist
                     if (dim(edgelist)[2] == 2) {
