@@ -851,9 +851,10 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 ## subplots {-}
 
-We can make subplots using the `patchwork` package, which comes with the `source()` command. Let's see:
+We can make subplots using the `cowplot` package, which comes with the `source()` command. Let's see:
 
 ```{r}
+library(patchwork)
 plot1 <-  ggplot(
             filter(alaska_lake_data, element_type == "free")
           ) +
@@ -872,7 +873,7 @@ plot3 <-  ggplot(
           geom_violin(aes(x = park, y = mg_per_L)) + theme_classic() +
           coord_flip() + ggtitle("C")
 
-(plot1 + plot2) / plot3
+plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
 ## 3D scatter plots {-}
@@ -4011,24 +4012,18 @@ plot2 <- ggplot(
   )
 ```
 
-Now, add them together to lay them out. `plot_annotation()` allows quick numbering or lettering of the subpanels. Note that `&` is used to add ggplot elements to the entire plot, as opposed to the last plot in the list. Let's look at various ways to lay this out:
+Now, add them together to lay them out. Let's look at various ways to lay this out:
 
 ```{r, fig.height = 5, fig.width = 10}
-plot1 + plot2 + plot_annotation(tag_levels = 'A')
+plot_grid(plot1, plot2)
 ```
 
 ```{r, fig.height = 8, fig.width = 6}
-plot1 / plot2 + plot_annotation(tag_levels = 'A')
+plot_grid(plot1, plot2, ncol = 1)
 ```
 
 ```{r, fig.height = 8, fig.width = 10}
-(plot1 + plot2) / plot1 + plot_annotation(tag_levels = 'A')
-```
-
-```{r, fig.height = 5, fig.width = 10}
-(plot1 + plot2) + plot_annotation(tag_levels = 'A') + 
-  plot_layout(widths = c(1.1, 3), guides = 'collect') &
-  theme(legend.position = 'right')
+plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
 ## exporting graphics {-}
@@ -4290,7 +4285,7 @@ analyzeImage(
 # images of mass spectra {-}
 
 ```{r, eval = FALSE}
-analyzeMassSpectralImages()
+# analyzeMassSpectralImages()
 ```
 
 

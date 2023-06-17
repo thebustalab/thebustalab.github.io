@@ -7,7 +7,7 @@
 <title>dimensionality reduction | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it...">
-<meta name="generator" content="bookdown 0.25 with bs4_book()">
+<meta name="generator" content="bookdown 0.34 with bs4_book()">
 <meta property="og:title" content="dimensionality reduction | Integrated Bioanalytics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it...">
@@ -16,10 +16,10 @@
 <meta name="twitter:description" content="In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
-<script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.6/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 <script>
@@ -66,12 +66,13 @@
 <li><a class="" href="map-data.html">map data</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
-<li class="book-part">DNA AND RNA SEQUENCE DATA</li>
+<li class="book-part">SEQUENCE DATA</li>
 <li><a class="" href="data-acquisition.html">data acquisition</a></li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
 <li><a class="" href="sequence-assessment.html">sequence assessment</a></li>
 <li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
-<li class="book-part">GENOMIC ANALYSIS</li>
+<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
+<li class="book-part">GENOME ANALYSIS</li>
 <li><a class="" href="setup.html">setup</a></li>
 <li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li><a class="" href="annotation-1.html">annotation</a></li>
@@ -107,23 +108,23 @@
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png" width="100%" style="display: block; margin: auto;"></div>
 <p>In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction useing <code>runMatrixAnalysis()</code>, a function that is loaded into your R Session when you run the source() command.</p>
 <p>Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for <code>runMatrixAnalysis()</code> (see below) and (ii) it is <em>critical</em> that we think about our data in terms of <strong>samples</strong> and <strong>analytes</strong>. Let’s consider our Alaska lakes data set:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">alaska_lake_data</span>
-<span class="co">## # A tibble: 220 × 7</span>
-<span class="co">##    lake              park  water_temp    pH element mg_per_L</span>
-<span class="co">##    &lt;chr&gt;             &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;</span>
-<span class="co">##  1 Devil_Mountain_L… BELA        6.46  7.69 C          3.4  </span>
-<span class="co">##  2 Devil_Mountain_L… BELA        6.46  7.69 N          0.028</span>
-<span class="co">##  3 Devil_Mountain_L… BELA        6.46  7.69 P          0    </span>
-<span class="co">##  4 Devil_Mountain_L… BELA        6.46  7.69 Cl        10.4  </span>
-<span class="co">##  5 Devil_Mountain_L… BELA        6.46  7.69 S          0.62 </span>
-<span class="co">##  6 Devil_Mountain_L… BELA        6.46  7.69 F          0.04 </span>
-<span class="co">##  7 Devil_Mountain_L… BELA        6.46  7.69 Br         0.02 </span>
-<span class="co">##  8 Devil_Mountain_L… BELA        6.46  7.69 Na         8.92 </span>
-<span class="co">##  9 Devil_Mountain_L… BELA        6.46  7.69 K          1.2  </span>
-<span class="co">## 10 Devil_Mountain_L… BELA        6.46  7.69 Ca         5.73 </span>
-<span class="co">## # … with 210 more rows, and 1 more variable:</span>
-<span class="co">## #   element_type &lt;chr&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span></span>
+<span><span class="co">## # A tibble: 220 × 7</span></span>
+<span><span class="co">##    lake              park  water_temp    pH element mg_per_L</span></span>
+<span><span class="co">##    &lt;chr&gt;             &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 Devil_Mountain_L… BELA        6.46  7.69 C          3.4  </span></span>
+<span><span class="co">##  2 Devil_Mountain_L… BELA        6.46  7.69 N          0.028</span></span>
+<span><span class="co">##  3 Devil_Mountain_L… BELA        6.46  7.69 P          0    </span></span>
+<span><span class="co">##  4 Devil_Mountain_L… BELA        6.46  7.69 Cl        10.4  </span></span>
+<span><span class="co">##  5 Devil_Mountain_L… BELA        6.46  7.69 S          0.62 </span></span>
+<span><span class="co">##  6 Devil_Mountain_L… BELA        6.46  7.69 F          0.04 </span></span>
+<span><span class="co">##  7 Devil_Mountain_L… BELA        6.46  7.69 Br         0.02 </span></span>
+<span><span class="co">##  8 Devil_Mountain_L… BELA        6.46  7.69 Na         8.92 </span></span>
+<span><span class="co">##  9 Devil_Mountain_L… BELA        6.46  7.69 K          1.2  </span></span>
+<span><span class="co">## 10 Devil_Mountain_L… BELA        6.46  7.69 Ca         5.73 </span></span>
+<span><span class="co">## # ℹ 210 more rows</span></span>
+<span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
 <p>We can see that this dataset is comprised of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalysis()</code> function how each column relates to this samples and analytes structure. See the image below for an explanation.</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png" width="100%" style="display: block; margin: auto;"></div>
 <div id="pca" class="section level2 unnumbered">
@@ -138,38 +139,38 @@
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png" width="100%" style="display: block; margin: auto;"></div>
 <p>In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).</p>
 <p>We can run and visualize principal components analyses using the <code>runMatrixAnalysis()</code> function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the “PCA plot”) and the raw data, in case you wish to do further processing.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">AK_lakes_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
-  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>,
-  scale_variance <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-<span class="co">## Replacing NAs in your data with mean</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca</span><span class="op">)</span>
-<span class="co">## # A tibble: 6 × 18</span>
-<span class="co">##   sample_unique_ID      lake  park   Dim.1  Dim.2 water_temp</span>
-<span class="co">##   &lt;chr&gt;                 &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">## 1 Devil_Mountain_Lake_… Devi… BELA   0.229 -0.861       6.46</span>
-<span class="co">## 2 Imuruk_Lake_BELA      Imur… BELA  -1.17  -1.62       17.4 </span>
-<span class="co">## 3 Kuzitrin_Lake_BELA    Kuzi… BELA  -0.918 -1.15        8.06</span>
-<span class="co">## 4 Lava_Lake_BELA        Lava… BELA   0.219 -1.60       20.2 </span>
-<span class="co">## 5 North_Killeak_Lake_B… Nort… BELA   9.46   0.450      11.3 </span>
-<span class="co">## 6 White_Fish_Lake_BELA  Whit… BELA   4.17  -0.972      12.0 </span>
-<span class="co">## # … with 12 more variables: pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;,</span>
-<span class="co">## #   P &lt;dbl&gt;, Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;,</span>
-<span class="co">## #   Na &lt;dbl&gt;, K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></code></pre></div>
-<p>Let’s plot the 2D projection of the Alaska lakes data:</p>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">AK_lakes_pca</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_label_repel</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;"></div>
+<code class="sourceCode R"><span><span class="va">AK_lakes_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>,</span>
+<span>  scale_variance <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 18</span></span>
+<span><span class="co">##   sample_unique_ID      lake  park   Dim.1  Dim.2 water_temp</span></span>
+<span><span class="co">##   &lt;chr&gt;                 &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Devil_Mountain_Lake_… Devi… BELA   0.229 -0.861       6.46</span></span>
+<span><span class="co">## 2 Imuruk_Lake_BELA      Imur… BELA  -1.17  -1.62       17.4 </span></span>
+<span><span class="co">## 3 Kuzitrin_Lake_BELA    Kuzi… BELA  -0.918 -1.15        8.06</span></span>
+<span><span class="co">## 4 Lava_Lake_BELA        Lava… BELA   0.219 -1.60       20.2 </span></span>
+<span><span class="co">## 5 North_Killeak_Lake_B… Nort… BELA   9.46   0.450      11.3 </span></span>
+<span><span class="co">## 6 White_Fish_Lake_BELA  Whit… BELA   4.17  -0.972      12.0 </span></span>
+<span><span class="co">## # ℹ 12 more variables: pH &lt;dbl&gt;, C &lt;dbl&gt;, N &lt;dbl&gt;, P &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   Cl &lt;dbl&gt;, S &lt;dbl&gt;, F &lt;dbl&gt;, Br &lt;dbl&gt;, Na &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
+<p>Let’s plot the 2D projection of the Alaska lakes data:</p>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">AK_lakes_pca</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_label_repel</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).</p>
 <p>Important question: what makes the lakes listed above different from the others? Certainly some aspect of their chemistry, since that’s the data that this analysis is built upon, but how do we determine which analyte(s) are driving the differences among the lakes that we see in the PCA plot?</p>
 </div>
@@ -188,155 +189,155 @@
 ## 5 P          0.473   -0.0796
 ## 6 Cl         0.953    0.0148</code></pre>
 <p>We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of <code>geom_label_repel()</code> and <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> to label certain segments in the ordination plot. You do not need to use <code>geom_label_repel()</code>, you could use the built in <code>geom_label()</code>, but <code>geom_label_repel()</code> can make labelling your segments easier.</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">AK_lakes_pca_ord</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
-  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_ord"</span><span class="op">)</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">## Replacing NAs in your data with mean</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span><span class="op">)</span>
-<span class="co">## # A tibble: 6 × 3</span>
-<span class="co">##   analyte      Dim.1   Dim.2</span>
-<span class="co">##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;</span>
-<span class="co">## 1 water_temp 0.0750  -0.261 </span>
-<span class="co">## 2 pH         0.686    0.0185</span>
-<span class="co">## 3 C          0.290   -0.242 </span>
-<span class="co">## 4 N          0.00435  0.714 </span>
-<span class="co">## 5 P          0.473   -0.0796</span>
-<span class="co">## 6 Cl         0.953    0.0148</span>
-
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">Dim.1</span>, yend <span class="op">=</span> <span class="va">Dim.2</span>, color <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_circle</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x0 <span class="op">=</span> <span class="fl">0</span>, y0 <span class="op">=</span> <span class="fl">0</span>, r <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_label_repel</span><span class="op">(</span>
-    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span>, <span class="va">Dim.1</span> <span class="op">&gt;</span> <span class="fl">0.9</span>, <span class="va">Dim.2</span> <span class="op">&lt;</span> <span class="fl">0.1</span>, <span class="va">Dim.2</span> <span class="op">&gt;</span> <span class="op">-</span><span class="fl">0.1</span><span class="op">)</span>,
-    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span>
-  <span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_label_repel</span><span class="op">(</span>
-    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span>, <span class="va">Dim.2</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span>,
-    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, direction <span class="op">=</span> <span class="st">"y"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span>
-  <span class="op">)</span> <span class="op">+</span>
-  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">AK_lakes_pca_ord</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_ord"</span><span class="op">)</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 3</span></span>
+<span><span class="co">##   analyte      Dim.1   Dim.2</span></span>
+<span><span class="co">##   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 water_temp 0.0750  -0.261 </span></span>
+<span><span class="co">## 2 pH         0.686    0.0185</span></span>
+<span><span class="co">## 3 C          0.290   -0.242 </span></span>
+<span><span class="co">## 4 N          0.00435  0.714 </span></span>
+<span><span class="co">## 5 P          0.473   -0.0796</span></span>
+<span><span class="co">## 6 Cl         0.953    0.0148</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">Dim.1</span>, yend <span class="op">=</span> <span class="va">Dim.2</span>, color <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_circle</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x0 <span class="op">=</span> <span class="fl">0</span>, y0 <span class="op">=</span> <span class="fl">0</span>, r <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_label_repel</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span>, <span class="va">Dim.1</span> <span class="op">&gt;</span> <span class="fl">0.9</span>, <span class="va">Dim.2</span> <span class="op">&lt;</span> <span class="fl">0.1</span>, <span class="va">Dim.2</span> <span class="op">&gt;</span> <span class="op">-</span><span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_label_repel</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">AK_lakes_pca_ord</span>, <span class="va">Dim.2</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, direction <span class="op">=</span> <span class="st">"y"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Great! Here is how to read the ordination plot:</p>
 <ol style="list-style-type: decimal">
 <li><p>When considering one analyte’s vector: the vector’s projected value on an axis shows how much its variance is aligned with that principal component.</p></li>
 <li><p>When considering two analyte vectors: the angle between two vectors indicates how correlated those two variables are. If they point in the same direction, they are highly correlated. If they meet each other at 90 degrees, they are not very correlated. If they meet at ~180 degrees, they are negatively correlated. If say that one analyte is “1.9” with respect to dimension 2 and another is “-1.9” with respect to dimension 2. Let’s also say that these vectors are ~“0” with respect to dimension 1.</p></li>
 </ol>
 <p>With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a “biplot”:</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">AK_lakes_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
-  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>,
-  scale_variance <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-<span class="co">## Replacing NAs in your data with mean</span>
-
-<span class="va">AK_lakes_pca_ord</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
-  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_ord"</span><span class="op">)</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">## Replacing NAs in your data with mean</span>
-
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span>
-    data <span class="op">=</span> <span class="va">AK_lakes_pca</span>, 
-    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.8</span>
-  <span class="op">)</span> <span class="op">+</span>
-  <span class="co"># geom_label_repel(aes(label = lake), alpha = 0.5) +</span>
-  <span class="fu">geom_segment</span><span class="op">(</span>
-    data <span class="op">=</span> <span class="va">AK_lakes_pca_ord</span>,
-    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">Dim.1</span>, yend <span class="op">=</span> <span class="va">Dim.2</span>, color <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>,
-    size <span class="op">=</span> <span class="fl">1</span>
-  <span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:</p>
 <div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">AK_lakes_pca_ord</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">22</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">AK_lakes_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>,</span>
+<span>  scale_variance <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span></span>
+<span><span class="va">AK_lakes_pca_ord</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_ord"</span><span class="op">)</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">AK_lakes_pca</span>, </span>
+<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">0.8</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># geom_label_repel(aes(label = lake), alpha = 0.5) +</span></span>
+<span>  <span class="fu">geom_segment</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">AK_lakes_pca_ord</span>,</span>
+<span>    <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">Dim.1</span>, yend <span class="op">=</span> <span class="va">Dim.2</span>, color <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:</p>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">AK_lakes_pca_ord</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">analyte</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">22</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-114-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="principal-components" class="section level3 unnumbered">
 <h3>principal components<a class="anchor" aria-label="anchor" href="#principal-components"><i class="fas fa-link"></i></a>
 </h3>
 <p>We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">AK_lakes_pca_dim</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,
-  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_dim"</span><span class="op">)</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">## Replacing NAs in your data with mean</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca_dim</span><span class="op">)</span>
-<span class="co">## # A tibble: 6 × 2</span>
-<span class="co">##   principal_component percent_variance_explained</span>
-<span class="co">##                 &lt;dbl&gt;                      &lt;dbl&gt;</span>
-<span class="co">## 1                   1                      48.8 </span>
-<span class="co">## 2                   2                      18.6 </span>
-<span class="co">## 3                   3                      11.6 </span>
-<span class="co">## 4                   4                       7.88</span>
-<span class="co">## 5                   5                       4.68</span>
-<span class="co">## 6                   6                       3.33</span>
-
-<span class="fu">ggplot</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">AK_lakes_pca_dim</span>, 
-  <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">principal_component</span>, y <span class="op">=</span> <span class="va">percent_variance_explained</span><span class="op">)</span>
-<span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-114-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">AK_lakes_pca_dim</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca_dim"</span><span class="op">)</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AK_lakes_pca_dim</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 2</span></span>
+<span><span class="co">##   principal_component percent_variance_explained</span></span>
+<span><span class="co">##                 &lt;dbl&gt;                      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1                   1                      48.8 </span></span>
+<span><span class="co">## 2                   2                      18.6 </span></span>
+<span><span class="co">## 3                   3                      11.6 </span></span>
+<span><span class="co">## 4                   4                       7.88</span></span>
+<span><span class="co">## 5                   5                       4.68</span></span>
+<span><span class="co">## 6                   6                       3.33</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">AK_lakes_pca_dim</span>, </span>
+<span>  <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">principal_component</span>, y <span class="op">=</span> <span class="va">percent_variance_explained</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-115-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using <code>coord_fixed()</code> as an addition to your ggplots.</p>
 </div>
 <div id="exercises-1" class="section level3 unnumbered">
 <h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-1"><i class="fas fa-link"></i></a>
 </h3>
 <p>In this set of exercises, as you are filling out the <code>runMatrixAnalysis()</code> template, you can use the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:</p>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">periodic_table_subset</span><span class="op">)</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>
-<span class="co">##  [1] "electronegativity_pauling"         </span>
-<span class="co">##  [2] "first_ionization_poten_eV"         </span>
-<span class="co">##  [3] "second_ionization_poten_eV"        </span>
-<span class="co">##  [4] "third_ionization_poten_eV"         </span>
-<span class="co">##  [5] "electron_affinity_eV"              </span>
-<span class="co">##  [6] "atomic_radius_ang"                 </span>
-<span class="co">##  [7] "ionic_radius_ang"                  </span>
-<span class="co">##  [8] "covalent_radius_ang"               </span>
-<span class="co">##  [9] "atomic_volume_cm3_per_mol"         </span>
-<span class="co">## [10] "electrical_conductivity_mho_per_cm"</span>
-<span class="co">## [11] "specific_heat_J_per_g_K"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">periodic_table_subset</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">18</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">23</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span><span class="op">]</span>
-<span class="co">## [1] "atomic_volume_cm3_per_mol"         </span>
-<span class="co">## [2] "electrical_conductivity_mho_per_cm"</span>
-<span class="co">## [3] "specific_heat_J_per_g_K"           </span>
-<span class="co">## [4] "thermal_conductivity_W_per_m_K"    </span>
-<span class="co">## [5] "polarizability_A_cubed"            </span>
-<span class="co">## [6] "heat_atomization_kJ_per_mol"</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">periodic_table_subset</span><span class="op">)</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span></span>
+<span><span class="co">##  [1] "electronegativity_pauling"         </span></span>
+<span><span class="co">##  [2] "first_ionization_poten_eV"         </span></span>
+<span><span class="co">##  [3] "second_ionization_poten_eV"        </span></span>
+<span><span class="co">##  [4] "third_ionization_poten_eV"         </span></span>
+<span><span class="co">##  [5] "electron_affinity_eV"              </span></span>
+<span><span class="co">##  [6] "atomic_radius_ang"                 </span></span>
+<span><span class="co">##  [7] "ionic_radius_ang"                  </span></span>
+<span><span class="co">##  [8] "covalent_radius_ang"               </span></span>
+<span><span class="co">##  [9] "atomic_volume_cm3_per_mol"         </span></span>
+<span><span class="co">## [10] "electrical_conductivity_mho_per_cm"</span></span>
+<span><span class="co">## [11] "specific_heat_J_per_g_K"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">periodic_table_subset</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">18</span><span class="op">:</span><span class="fl">20</span>, <span class="fl">23</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">## [1] "atomic_volume_cm3_per_mol"         </span></span>
+<span><span class="co">## [2] "electrical_conductivity_mho_per_cm"</span></span>
+<span><span class="co">## [3] "specific_heat_J_per_g_K"           </span></span>
+<span><span class="co">## [4] "thermal_conductivity_W_per_m_K"    </span></span>
+<span><span class="co">## [5] "polarizability_A_cubed"            </span></span>
+<span><span class="co">## [6] "heat_atomization_kJ_per_mol"</span></span></code></pre></div>
 <p>We can use that command in the template, as in the example below. With the notation <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code>, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run <code>c(5:7,9:25)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(5:7,9:25)]</code> in the console). With the notation <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run <code>c(1:4, 8)</code> in the console, and what happens when you run <code>colnames(periodic_table_subset)[c(1:4, 8)]</code> in the console).</p>
 <div id="human-metabolomics" class="section level4 unnumbered">
 <h4>human metabolomics<a class="anchor" aria-label="anchor" href="#human-metabolomics"><i class="fas fa-link"></i></a>
@@ -373,68 +374,68 @@
 <div id="tsne-and-umap" class="section level2 unnumbered">
 <h2>tsne and umap<a class="anchor" aria-label="anchor" href="#tsne-and-umap"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">235</span><span class="op">)</span>
-<span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">hops_components</span>,
-  analysis <span class="op">=</span> <span class="st">"pca"</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,
-  na_replacement <span class="op">=</span> <span class="st">"mean"</span>
-<span class="op">)</span> <span class="op">-&gt;</span> <span class="va">pca_data</span>
-<span class="va">pca_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"pca_data"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"\\."</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span><span class="op">)</span>
-<span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span>
-
-
-<span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">hops_components</span>,
-  analysis <span class="op">=</span> <span class="st">"umap"</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,
-  na_replacement <span class="op">=</span> <span class="st">"mean"</span>
-<span class="op">)</span> <span class="op">-&gt;</span> <span class="va">umap_data</span>
-<span class="va">umap_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"umap_data"</span>
-<span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span>
-
-
-<span class="fu">runMatrixAnalysis</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="va">hops_components</span>,
-  analysis <span class="op">=</span> <span class="st">"tsne"</span>,
-  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,
-  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,
-  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,
-  na_replacement <span class="op">=</span> <span class="st">"mean"</span>
-<span class="op">)</span> <span class="op">-&gt;</span> <span class="va">tsne_data</span>
-<span class="va">tsne_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"tsne_data"</span>
-<span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span>
-
-
-<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">pca_data</span>, <span class="va">umap_data</span>, <span class="va">tsne_data</span><span class="op">)</span>
-
-<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">hop_origin</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span>
-
-<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">hop_brewing_usage</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span>
-
-<span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">235</span><span class="op">)</span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">hops_components</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  na_replacement <span class="op">=</span> <span class="st">"mean"</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">pca_data</span></span>
+<span><span class="va">pca_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"pca_data"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"\\."</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">hops_components</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"umap"</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  na_replacement <span class="op">=</span> <span class="st">"mean"</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">umap_data</span></span>
+<span><span class="va">umap_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"umap_data"</span></span>
+<span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">hops_components</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"tsne"</span>,</span>
+<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hops_components</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  na_replacement <span class="op">=</span> <span class="st">"mean"</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">tsne_data</span></span>
+<span><span class="va">tsne_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"tsne_data"</span></span>
+<span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">pca_data</span>, <span class="va">umap_data</span>, <span class="va">tsne_data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">hop_origin</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">hop_brewing_usage</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-119-1.png" width="100%" style="display: block; margin: auto;"></div>
 <div id="further-reading-3" class="section level3 unnumbered">
 <h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
 </h3>
@@ -492,7 +493,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-02-17.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-06-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

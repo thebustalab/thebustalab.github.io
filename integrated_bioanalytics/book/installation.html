@@ -7,7 +7,7 @@
 <title>installation | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to...">
-<meta name="generator" content="bookdown 0.25 with bs4_book()">
+<meta name="generator" content="bookdown 0.34 with bs4_book()">
 <meta property="og:title" content="installation | Integrated Bioanalytics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to...">
@@ -16,10 +16,10 @@
 <meta name="twitter:description" content="R R is the computing language we will use to run our analyses and produce high quality plots. If you already have R installed (you will need at least version 4.1.1), you can go straight to...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Roboto%20Mono-0.4.1/font.css" rel="stylesheet">
-<link href="libs/Montserrat-0.4.1/font.css" rel="stylesheet">
-<script src="libs/bs3compat-0.3.1.9000/transition.js"></script><script src="libs/bs3compat-0.3.1.9000/tabs.js"></script><script src="libs/bs3compat-0.3.1.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.6/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 <script>
@@ -66,12 +66,13 @@
 <li><a class="" href="map-data.html">map data</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
-<li class="book-part">DNA AND RNA SEQUENCE DATA</li>
+<li class="book-part">SEQUENCE DATA</li>
 <li><a class="" href="data-acquisition.html">data acquisition</a></li>
 <li><a class="" href="data-transfer.html">data transfer</a></li>
 <li><a class="" href="sequence-assessment.html">sequence assessment</a></li>
 <li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
-<li class="book-part">GENOMIC ANALYSIS</li>
+<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
+<li class="book-part">GENOME ANALYSIS</li>
 <li><a class="" href="setup.html">setup</a></li>
 <li><a class="" href="genome-assembly.html">genome assembly</a></li>
 <li><a class="" href="annotation-1.html">annotation</a></li>
@@ -139,18 +140,18 @@
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/rstudio_components.png" width="100%" style="display: block; margin: auto;"></div>
 <p>The R Console window should have a <code>&gt;</code> in it. Type <code>head(Indometh)</code>. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">Indometh</span><span class="op">)</span>
-<span class="co">## Grouped Data: conc ~ time | Subject</span>
-<span class="co">##   Subject time conc</span>
-<span class="co">## 1       1 0.25 1.50</span>
-<span class="co">## 2       1 0.50 0.94</span>
-<span class="co">## 3       1 0.75 0.78</span>
-<span class="co">## 4       1 1.00 0.48</span>
-<span class="co">## 5       1 1.25 0.37</span>
-<span class="co">## 6       1 2.00 0.19</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">Indometh</span><span class="op">)</span></span>
+<span><span class="co">## Grouped Data: conc ~ time | Subject</span></span>
+<span><span class="co">##   Subject time conc</span></span>
+<span><span class="co">## 1       1 0.25 1.50</span></span>
+<span><span class="co">## 2       1 0.50 0.94</span></span>
+<span><span class="co">## 3       1 0.75 0.78</span></span>
+<span><span class="co">## 4       1 1.00 0.48</span></span>
+<span><span class="co">## 5       1 1.25 0.37</span></span>
+<span><span class="co">## 6       1 2.00 0.19</span></span></code></pre></div>
 <p>Next, type <code>plot(Indometh)</code> into the R Console. This will plot the indomethacin dataset in a basic way.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Indometh</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">Indometh</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>If both the above commands (<code>head(Indometh)</code> and <code>plot(Indometh)</code>) worked and there were no error messages during installation, then you should be ready to proceed.</p>
 <!-- ## tidyverse
@@ -177,14 +178,14 @@ If the library load correctly - then you are set to go! If not, try updating you
 </h2>
 <p>In this class we will generate high quality reports suitable for submission to supervisors, academic journals, etc. For this, we need the typesetting engine TeX. There are a few ways to do this. The easiest way is using the following commands:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'tinytex'</span>, <span class="st">'rmarkdown'</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'tinytex'</span>, <span class="st">'rmarkdown'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>If you are on Mac, you may get an error about “not being able to write to a path” or something like that. In that case you probably need to open your terminal and run the following two commands:</p>
 <pre><code>sudo chown -R \`whoami\`:admin /usr/local/bin</code></pre>
 <p>and then</p>
 <pre><code>~/Library/TinyTeX/bin/\*/tlmgr path add</code></pre>
 <p>Then, on both Mac and PC, you then need to do:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">tinytex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html">install_tinytex</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">tinytex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html">install_tinytex</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Other options are: if you have Windows, download and install <a href="https://miktex.org/download">MikTeX</a>. If you have OSX, you can download and install <a href="https://www.tug.org/mactex/morepackages.html">MacTeX</a>.</p>
 </div>
 <div id="phylochemistry" class="section level2 unnumbered">
@@ -193,8 +194,8 @@ If the library load correctly - then you are set to go! If not, try updating you
 <p>In addition to the tidyverse, there are a variety of other packages we will need, as well as some datasets and custom functions. These call all be loaded by doing the following.</p>
 <p>First, attempt to load phylochemistry, if you are on Windows, be sure you’ve opened RStudio as an administrator (right click, “run as administrator”):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">bustalab</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>
-<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">bustalab</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></span></code></pre></div>
 <p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?” You should say “yes”.</p>
 <!-- Run: installPhylochemistry() to automatically install the required packages." -->
 <!-- This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following: -->
@@ -212,29 +213,47 @@ If the library load correctly - then you are set to go! If not, try updating you
 <!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
 </div>
+<div id="gptstudio" class="section level2 unnumbered">
+<h2>gptstudio<a class="anchor" aria-label="anchor" href="#gptstudio"><i class="fas fa-link"></i></a>
+</h2>
+<p>First, install gptstudio using: <code>remotes::install_github("MichelNivard/gptstudio")</code></p>
+<p>Next, go to: <a href="https://openai.com/blog/openai-api" class="uri">https://openai.com/blog/openai-api</a> and create an account and get an API key. Here are the steps:</p>
+<ul>
+<li>Visit the OpenAI website at <a href="https://openai.com/" class="uri">https://openai.com/</a> and sign in to your account. If you don’t have an account, you’ll need to create one first.</li>
+<li>Once logged in you’ll need to click the option that brings you to the open AI API homepage (not the chatGPT homepage)</li>
+<li>Once on the open AI API homepage, click in the top right corner of your screen where it says “personal” and select “view API keys”</li>
+<li>Click the button that says “create new secret key” to create a new API key.</li>
+</ul>
+<p>Do not share you API key with others!</p>
+<p>Then, in RStudio, run:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>OPENAI_API_KEY <span class="op">=</span> <span class="st">"&lt;insert_your_api_key_here&gt;"</span><span class="op">)</span></span></code></pre></div>
+<p>This will enable an add in that you can access by clicking: Addins &gt; GPTStudio. It has four major functions that can help you with spelling and grammar, commenting your code, and writing code. Please see the examples here: <a href="https://github.com/MichelNivard/gptstudio" class="uri">https://github.com/MichelNivard/gptstudio</a>.</p>
+<p>For further ideas on how to use GPT: <a href="https://github.com/dsdanielpark/amazing-bard-prompts/blob/main/bard_prompts/bard_prompts_english.csv" class="uri">https://github.com/dsdanielpark/amazing-bard-prompts/blob/main/bard_prompts/bard_prompts_english.csv</a></p>
+</div>
 <div id="updating-r-and-r-packages" class="section level2 unnumbered">
 <h2>Updating R and R Packages<a class="anchor" aria-label="anchor" href="#updating-r-and-r-packages"><i class="fas fa-link"></i></a>
 </h2>
 <p>Close RStudio, open the plain R GUI, then run the following:</p>
 <p>On Mac:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'remotes'</span><span class="op">)</span> <span class="co">#assuming it is not remotes installed</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'andreacirilloac/updateR'</span><span class="op">)</span>
-<span class="fu">updateR</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>On PC:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"installr"</span><span class="op">)</span>
-<span class="fu">installr</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'remotes'</span><span class="op">)</span> <span class="co">#assuming it is not remotes installed</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'andreacirilloac/updateR'</span><span class="op">)</span></span>
+<span><span class="fu">updateR</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>On PC:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"installr"</span><span class="op">)</span></span>
+<span><span class="fu">installr</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="r-scripts-on-google-drive" class="section level2 unnumbered">
 <h2>R scripts on Google Drive<a class="anchor" aria-label="anchor" href="#r-scripts-on-google-drive"><i class="fas fa-link"></i></a>
 </h2>
 <p>Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">openRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></code></pre></div>
-<p>When you do this, “IN_USE___” will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">closeRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">openRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></span></code></pre></div>
+<p>When you do this, “IN_USE___” will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">closeRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></span></code></pre></div>
 <!-- end -->
 <!-- start data visualization -->
 </div>
@@ -260,6 +279,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <li><a class="nav-link" href="#verification">verification</a></li>
 <li><a class="nav-link" href="#tex">TeX</a></li>
 <li><a class="nav-link" href="#phylochemistry">phylochemistry</a></li>
+<li><a class="nav-link" href="#gptstudio">gptstudio</a></li>
 <li><a class="nav-link" href="#updating-r-and-r-packages">Updating R and R Packages</a></li>
 <li><a class="nav-link" href="#r-scripts-on-google-drive">R scripts on Google Drive</a></li>
 </ul>
@@ -279,7 +299,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-02-17.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-06-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
