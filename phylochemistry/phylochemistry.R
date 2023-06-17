@@ -6872,7 +6872,8 @@
                                                     id = "plot_brush"
                                                 ),
                                                 click = "plot_click", 
-                                                dblclick = "plot_double_click"
+                                                dblclick = "plot_double_click",
+                                                height = "800px"
                                             )
                                         )
                                     )
