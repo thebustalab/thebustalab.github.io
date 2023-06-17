@@ -229,6 +229,29 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
 
+## gptstudio {-}
+
+First, install gptstudio using: `remotes::install_github("MichelNivard/gptstudio")`
+
+Next, go to: https://openai.com/blog/openai-api and create an account and get an API key. Here are the steps:
+
+- Visit the OpenAI website at https://openai.com/ and sign in to your account. If you don't have an account, you'll need to create one first.
+- Once logged in you’ll need to click the option that brings you to the open AI API homepage (not the chatGPT homepage)
+- Once on the open AI API homepage, click in the top right corner of your screen where it says “personal” and select “view API keys”
+- Click the button that says “create new secret key” to create a new API key.
+
+Do not share you API key with others!
+
+Then, in RStudio, run:
+
+```{r}
+Sys.setenv(OPENAI_API_KEY = "<insert_your_api_key_here>")
+```
+
+This will enable an add in that you can access by clicking: Addins > GPTStudio. It has four major functions that can help you with spelling and grammar, commenting your code, and writing code. Please see the examples here: https://github.com/MichelNivard/gptstudio.
+
+For further ideas on how to use GPT: https://github.com/dsdanielpark/amazing-bard-prompts/blob/main/bard_prompts/bard_prompts_english.csv
+
 ## Updating R and R Packages {-}
 
 Close RStudio, open the plain R GUI, then run the following:

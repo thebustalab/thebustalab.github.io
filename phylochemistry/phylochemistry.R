@@ -6955,33 +6955,43 @@
                                 ) +
                                 scale_x_continuous(name = "") + scale_y_continuous(name = "") +
                                 theme_void() +
-                                theme( legend.position = "none" ) -> plot
+                                theme(
+                                    legend.position = "bottom",
+                                    legend.box = "vertical",
+                                    text = element_text(size = 16)
+                                ) -> plot
 
+                                palette_options_high <- c("#e41a1c", "#ff7f00", "#ffff33", "#4daf4a", "#377eb8", "#984ea3", "#a65628", "#f781bf")
+                                # palette_options_low <- c("#9e0142", "white", "#a63603", "#004529", "#081d58", "#5e4fa2", "#543005", "#003c30")
+                                
                                 for (k in 1:length(unique(profile_data$cluster))) {
-
-                                    palette_options <- c("Reds", "Oranges", "Greens", "Blues", "Purples", "Teal", "BluYl", "RdPu", "Lajolla", "Viridis")
-                                    option <- palette_options[(k - 1) %% length(palette_options) + 1]
-
+                                    
                                     n_colors_this_cluster <- length(unique(filter(profile_data, cluster == paste0("cluster_", k))$doi))
-
+                                    clusters_profile_data <- profile_data[profile_data$cluster == paste0("cluster_", k),]
+                                    clusters_profile_data$color_n <- as.numeric(seq(1,dim(clusters_profile_data)[1], 1))
+                                    
                                     plot <- plot + 
                                         geom_point(
-                                            data = filter(profile_data, status == "unexplored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
-                                            size = 3, shape = 21, alpha = 0.5, color = "black"
+                                            data = filter(clusters_profile_data, status == "unexplored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            size = 4, shape = 21, alpha = 0.7, color = "black"
                                         ) +
                                         geom_point(
-                                            data = filter(profile_data, status == "explored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
-                                            size = 6, shape = 21, alpha = 1, color = "black"
+                                            data = filter(clusters_profile_data, status == "explored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            size = 7, shape = 21, alpha = 1, color = "black"
                                         ) +
                                         geom_point(
-                                            data = filter(profile_data, status == "unexplored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
-                                            size = 3, shape = 22, alpha = 1, color = "black"
+                                            data = filter(clusters_profile_data, status == "unexplored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            size = 4, shape = 22, alpha = 0.7, color = "black"
                                         ) +
                                         geom_point(
-                                            data = filter(profile_data, status == "explored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = doi),
-                                            size = 6, shape = 22, alpha = 1, color = "black"
+                                            data = filter(clusters_profile_data, status == "explored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            size = 7, shape = 22, alpha = 1, color = "black"
                                         ) +
-                                        scale_fill_manual(values = colorspace::sequential_hcl(n_colors_this_cluster, palette = option)) +
+                                        scale_fill_gradient(
+                                            low = "white", high = palette_options_high[k], 
+                                            guide = guide_colorbar(direction = "horizontal", ticks = FALSE, label = FALSE, title.vjust = 0.8, title.hjust = 0),
+                                            name = tolower(gsub("\\.", "", paste0(unique(clusters_profile_data$keywords), "   ")))
+                                        ) +
                                         new_scale_fill()   
                                 }
                                 plot
