@@ -6873,7 +6873,7 @@
                                                 ),
                                                 click = "plot_click", 
                                                 dblclick = "plot_double_click",
-                                                height = "800px"
+                                                height = "700px"
                                             )
                                         )
                                     )
@@ -6959,7 +6959,8 @@
                                 theme(
                                     legend.position = "bottom",
                                     legend.box = "vertical",
-                                    text = element_text(size = 16)
+                                    text = element_text(size = 12),
+                                    legend.spacing = unit(0.05, "cm")
                                 ) -> plot
 
                                 palette_options_high <- c("#e41a1c", "#ff7f00", "#ffff33", "#4daf4a", "#377eb8", "#984ea3", "#a65628", "#f781bf")
