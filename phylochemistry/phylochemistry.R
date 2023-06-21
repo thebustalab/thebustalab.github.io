@@ -1397,7 +1397,7 @@
             #' @param x The vector to drop NAs from 
             #' @examples
             #' @export
-            #' normalize
+            #' dropNA
 
             dropNA <- function( x ) {
 
@@ -1892,7 +1892,7 @@
             #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
             #' @param blast_module_directory_path Path to directory containing the BLAST+ module (perhaps something like "/usr/local/ncbi/blast/bin/")
             #' @param blast_mode One of "blastn" or "dc-megablast". "blastn" is a traditional BLASTN requiring an exact match of 11. "dc-megablast" is a discontiguous megablast used to find more distant (e.g., interspecies) sequences.
-            #' @param e_value_cutoff e-value cutoff to apply to results. Defaults to 1. Set to 1e-10 for heavy filtering.
+            #' @param e_value_cutoff e-value cutoff to apply to results. Defaults to 1.
             #' @param queries_in_output Should the queries be included in the fasta output?
             #' @param monolist_out_path Path to where the output monolist should be written
             #' @examples
@@ -10975,6 +10975,23 @@
                         return(results)
 
                 }
+
+        #### independentContrasts
+
+            independentContrasts <- function(traits, tree) {
+                results <- list()
+                for (i in 2:(dim(traits)[2])) {
+
+                    results[[i]] <- unname(pic(
+                        x = as.numeric(as.data.frame(traits)[,i]),
+                        phy = tree
+                    ))
+
+                }
+                results <- do.call(cbind, results)
+                colnames(results) <- colnames(traits)[2:dim(traits)[2]]
+                return(results)
+            }
 
 ###### Datasets
 

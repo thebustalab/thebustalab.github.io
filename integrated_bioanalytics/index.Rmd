@@ -3154,10 +3154,9 @@ ________________________________________________________________________________
 
 <!-- start transcriptomic analyses -->
 
-`conda install -c bioconda trimmomatic`
-`trimmomatic PE -version`
+## nonmodel species
 
-`transXpress` make sure to add conda-forge::ncurses as a dependency in the yaml file. should look like:
+For nonmodel species transcriptome analysis, `transXpress` is recommended. `transXpress` uses the Trinity assembler by default, which can require ~300GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpress` for it to run properly. First, make sure to add conda-forge::ncurses as a dependency in the trinity_utils.yaml file to avoid errors with the script not being able to detect the samtools installation. The trinity_utils.yaml file should look like:
 
 `
 channels:
@@ -3177,7 +3176,62 @@ dependencies:
   - rsem=1.3.3=pl5321ha04fe3b_5 
 `
 
+Also add an explicit pip dependencey to the tmhmm.yaml file:
+`
+channels:
+  - conda-forge
+  - bioconda
+  - r
+  - defaults
+dependencies:
+  - pip
+  - pip:
+    - tmhmm-py
+`
+
+Also, you may also need to scale your memory usage in trinity:
+`
+rule trinity_inchworm_chrysalis:
+...
+params:
+    memory="50"
+`
+
+Finally, it's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
+`
+pip install "numpy<1.24.0"
+`
+
+
+## model species
+
+
 <!-- # transcriptomic analyses {-} -->
+conda create --name foldseek
+conda activate foldseek
+conda install -c conda-forge -c bioconda foldseek
+
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) PROTEOME ANALYSIS {-}
+
+<!-- start proteome analyses -->
+
+## structure similarity
+
+`
+conda create --name foldseek
+conda activate foldseek
+conda install -c conda-forge -c bioconda foldseek
+`
+
+
+
+<!-- # proteome analyses {-} -->
 
 
 <!-- end -->
