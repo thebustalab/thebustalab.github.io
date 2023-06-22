@@ -6963,7 +6963,7 @@
                                     legend.spacing = unit(0.05, "cm")
                                 ) -> plot
 
-                                palette_options_high <- c("#e41a1c", "#ff7f00", "#ffff33", "#4daf4a", "#377eb8", "#984ea3", "#a65628", "#f781bf")
+                                palette_options_high <- discrete_palette
                                 # palette_options_low <- c("#9e0142", "white", "#a63603", "#004529", "#081d58", "#5e4fa2", "#543005", "#003c30")
                                 
                                 for (k in 1:length(unique(profile_data$cluster))) {
