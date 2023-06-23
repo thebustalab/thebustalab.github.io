@@ -6873,7 +6873,7 @@
                                                 ),
                                                 click = "plot_click", 
                                                 dblclick = "plot_double_click",
-                                                height = "600px"
+                                                height = "900px"
                                             )
                                         )
                                     )
@@ -11062,4 +11062,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
