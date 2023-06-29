@@ -6902,12 +6902,12 @@
                                         # textOutput( outputId = "reporter" )
                                 ),
                                 tabPanel("Listen",
-                                    column(9, textOutput( outputId = "knn_chunks" )),
-                                    column(3,
-                                        textOutput( outputId = "prompt_tokens" ),
-                                        textOutput( outputId = "completion_tokens" ),
-                                        textOutput( outputId = "total_tokens" ) 
-                                    )
+                                    # column(9, textOutput( outputId = "knn_chunks" )),
+                                    # column(3,
+                                    #     textOutput( outputId = "prompt_tokens" ),
+                                    #     textOutput( outputId = "completion_tokens" ),
+                                    #     textOutput( outputId = "total_tokens" ) 
+                                    # )
                                 ),
                                 tabPanel("Diagnostics", textOutput("keepAlive")),
                             )
@@ -7171,39 +7171,39 @@
 
                     ## Listen
                         
-                        observeEvent(input$listen, {
+                        # observeEvent(input$listen, {
 
-                            file_name_out <- "lukes_test_audio_file.mp3"
+                        #     file_name_out <- "lukes_test_audio_file.mp3"
 
-                            ## Check voices
-                                headers <- c(
-                                    "Accept" = "application/json",
-                                    "xi-api-key" = xi_api_key
-                                )
-                                response <- content(GET("https://api.elevenlabs.io/v1/voices", add_headers(headers)))
+                        #     ## Check voices
+                        #         headers <- c(
+                        #             "Accept" = "application/json",
+                        #             "xi-api-key" = xi_api_key
+                        #         )
+                        #         response <- content(GET("https://api.elevenlabs.io/v1/voices", add_headers(headers)))
 
-                            ## Send request
-                                voice_id <- "8U0VZ2d9gStUUkHVvngK"
-                                headers["Content-Type"] <- "application/json"
-                                stability <- 0.75
-                                similarity_boost <- 0.75
+                        #     ## Send request
+                        #         voice_id <- "8U0VZ2d9gStUUkHVvngK"
+                        #         headers["Content-Type"] <- "application/json"
+                        #         stability <- 0.75
+                        #         similarity_boost <- 0.75
 
-                                response <- POST(
-                                    paste0("https://api.elevenlabs.io/v1/text-to-speech/", voice_id),
-                                    add_headers(headers),
-                                        body = list(
-                                          text = "Betulinic acid is a pentacyclic lupane-type triterpenoid and a  potential antiviral and antitumor drug, but the amount of betulinic acid in  plants is low and cannot meet the demand for this compound. Yarrowia lipolytica,  as an oleaginous yeast, is a promising microbial cell factory for the production  of highly hydrophobic compounds due to the ability of this organism to  accumulate large amounts of lipids that can store hydrophobic products and  supply sufficient precursors for terpene synthesis. However, engineering for the  heterologous production of betulinic acid and related triterpenoids has not  developed as systematically as that for the production of other terpenoids, thus  the production of betulinic acid in microbes remains unsatisfactory. RESULTS: In this study, we applied a multimodular strategy to systematically  improve the biosynthesis of betulinic acid and related triterpenoids in Y.  lipolytica by engineering four functional modules, namely, the heterogenous  CYP/CPR, MVA, acetyl-CoA generation, and redox cofactor supply modules. First,  by screening 25 combinations of cytochrome P450 monooxygenases (CYPs) and  NADPH-cytochrome P450 reductases (CPRs), each of which originated from 5  different sources, we selected two optimal betulinic acid-producing strains.  Then, ERG1, ERG9, and HMG1 in the MVA module were overexpressed in the two  strains, which dramatically increased betulinic acid production and resulted in  a strain (YLJCC56) that exhibited the highest betulinic acid yield of  51.87 ± 2.77 mg/L. Then, we engineered the redox cofactor supply module by  introducing NADPH- or NADH-generating enzymes and the acetyl-CoA generation  module by directly overexpressing acetyl-CoA synthases or reinforcing the  β-oxidation pathway, which further increased the total triterpenoid yield (the  sum of the betulin, betulinic acid, betulinic aldehyde yields). Finally, we  engineered these modules in combination, and the total triterpenoid yield  reached 204.89 ± 11.56 mg/L (composed of 65.44% betulin, 23.71% betulinic acid  and 10.85% betulinic aldehyde) in shake flask cultures. CONCLUSIONS: Here, we systematically engineered Y. lipolytica and achieved, to  the best of our knowledge, the highest betulinic acid and total triterpenoid  yields reported in microbes. Our study provides a suitable reference for studies  on heterologous exploitation of P450 enzymes and manipulation of triterpenoid  production in Y. lipolytica.",
-                                          model_id = "eleven_monolingual_v1",
-                                          voice_settings = list(
-                                            stability = stability,
-                                            similarity_boost = similarity_boost
-                                          )
-                                        ),
-                                        encode = "json"
-                                )
+                        #         response <- POST(
+                        #             paste0("https://api.elevenlabs.io/v1/text-to-speech/", voice_id),
+                        #             add_headers(headers),
+                        #                 body = list(
+                        #                   text = "Betulinic acid is a pentacyclic lupane-type triterpenoid and a  potential antiviral and antitumor drug, but the amount of betulinic acid in  plants is low and cannot meet the demand for this compound. Yarrowia lipolytica,  as an oleaginous yeast, is a promising microbial cell factory for the production  of highly hydrophobic compounds due to the ability of this organism to  accumulate large amounts of lipids that can store hydrophobic products and  supply sufficient precursors for terpene synthesis. However, engineering for the  heterologous production of betulinic acid and related triterpenoids has not  developed as systematically as that for the production of other terpenoids, thus  the production of betulinic acid in microbes remains unsatisfactory. RESULTS: In this study, we applied a multimodular strategy to systematically  improve the biosynthesis of betulinic acid and related triterpenoids in Y.  lipolytica by engineering four functional modules, namely, the heterogenous  CYP/CPR, MVA, acetyl-CoA generation, and redox cofactor supply modules. First,  by screening 25 combinations of cytochrome P450 monooxygenases (CYPs) and  NADPH-cytochrome P450 reductases (CPRs), each of which originated from 5  different sources, we selected two optimal betulinic acid-producing strains.  Then, ERG1, ERG9, and HMG1 in the MVA module were overexpressed in the two  strains, which dramatically increased betulinic acid production and resulted in  a strain (YLJCC56) that exhibited the highest betulinic acid yield of  51.87 ± 2.77 mg/L. Then, we engineered the redox cofactor supply module by  introducing NADPH- or NADH-generating enzymes and the acetyl-CoA generation  module by directly overexpressing acetyl-CoA synthases or reinforcing the  β-oxidation pathway, which further increased the total triterpenoid yield (the  sum of the betulin, betulinic acid, betulinic aldehyde yields). Finally, we  engineered these modules in combination, and the total triterpenoid yield  reached 204.89 ± 11.56 mg/L (composed of 65.44% betulin, 23.71% betulinic acid  and 10.85% betulinic aldehyde) in shake flask cultures. CONCLUSIONS: Here, we systematically engineered Y. lipolytica and achieved, to  the best of our knowledge, the highest betulinic acid and total triterpenoid  yields reported in microbes. Our study provides a suitable reference for studies  on heterologous exploitation of P450 enzymes and manipulation of triterpenoid  production in Y. lipolytica.",
+                        #                   model_id = "eleven_monolingual_v1",
+                        #                   voice_settings = list(
+                        #                     stability = stability,
+                        #                     similarity_boost = similarity_boost
+                        #                   )
+                        #                 ),
+                        #                 encode = "json"
+                        #         )
 
-                                writeBin(content(response, "raw"), "/project_data/shared/general_lab_resources/literature/test.mp3")
-                        })
+                        #         writeBin(content(response, "raw"), "/project_data/shared/general_lab_resources/literature/test.mp3")
+                        # })
                 }
 
                 ## Call the app
@@ -11135,4 +11135,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
