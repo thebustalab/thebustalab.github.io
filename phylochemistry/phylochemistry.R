@@ -6898,6 +6898,20 @@
                                         # actionButton( inputId = "submit", label = "Submit" ),
                                         # textOutput( outputId = "reporter" )
                                 ),
+                                tabPanel("Listen",
+                                    # column(9, rhandsontable::rHandsontableOutput("knn_chunks")),
+                                    # column(9, div(id="rhot", rhandsontable::rHandsontableOutput("knn_chunks"))),
+                                    column(9, textOutput( outputId = "knn_chunks" )),
+                                    column(3,
+                                        textOutput( outputId = "prompt_tokens" ),
+                                        textOutput( outputId = "completion_tokens" ),
+                                        textOutput( outputId = "total_tokens" ) 
+                                    )
+                                        # h4("Ask Questions Here:"),
+                                        # textInput( inputId = "query", label = "" ),
+                                        # actionButton( inputId = "submit", label = "Submit" ),
+                                        # textOutput( outputId = "reporter" )
+                                ),
                                 tabPanel("Diagnostics", textOutput("keepAlive")),
                             )
                         )
@@ -11088,4 +11102,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
