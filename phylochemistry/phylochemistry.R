@@ -6993,8 +6993,8 @@
                                         geom_point(
                                             data = filter(
                                                 clusters_profile_data, status == "unexplored", knn == "no",
-                                                Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
-                                                Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
+                                                # Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
+                                                # Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
                                                 cluster == paste0("cluster_", k)
                                             ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 4, shape = 21, alpha = 0.7, color = "black"
@@ -7002,8 +7002,8 @@
                                         geom_point(
                                             data = filter(
                                                 clusters_profile_data, status == "explored", knn == "no",
-                                                Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
-                                                Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
+                                                # Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
+                                                # Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
                                                 cluster == paste0("cluster_", k)
                                             ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 7, shape = 21, alpha = 1, color = "black"
@@ -7011,8 +7011,8 @@
                                         geom_point(
                                             data = filter(
                                                 clusters_profile_data, status == "unexplored", knn == "yes",
-                                                Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
-                                                Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
+                                                # Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
+                                                # Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
                                                 cluster == paste0("cluster_", k)
                                             ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 4, shape = 22, alpha = 0.7, color = "black"
@@ -7020,8 +7020,8 @@
                                         geom_point(
                                             data = filter(
                                                 clusters_profile_data, status == "explored", knn == "yes",
-                                                Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
-                                                Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
+                                                # Dim_1 > plot_limits$x_axis_start, Dim_1 < plot_limits$x_axis_end,
+                                                # Dim_2 > plot_limits$y_axis_start, Dim_2 < plot_limits$y_axis_end,
                                                 cluster == paste0("cluster_", k)
                                             ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 7, shape = 22, alpha = 1, color = "black"
@@ -7203,7 +7203,6 @@
                                 )
 
                                 writeBin(content(response, "raw"), "/project_data/shared/general_lab_resources/literature/test.mp3")
-
                         })
                 }
 
@@ -11136,4 +11135,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
