@@ -6807,8 +6807,14 @@
             # library(plotly)
             # library(rhandsontable)
 
-            analyzeLiterature <- function(jupyter = TRUE, openai_api_key) {
+            analyzeLiterature <- function(jupyter = TRUE, openai_api_key = "busta_lab") {
     
+                ## API Key
+                    if (openai_api_key == "busta_lab") {
+                        openai_api_key <- readLines("/project_data/shared/general_lab_resources/literature/openai_api_key.txt")
+                    }
+
+
                 ## Character prompts
                     scientist_prompt <- "I want you to act as a scientist. You will think critically, ask probing questions, provide informed hypotheses and analyze data. I want you to reference appropriate scientific literature, make use of the scientific method, and use clear, precise scientific language in your responses. When I provide you with a scientific question or a set of data, you will analyze it and provide me with a scientific explanation or hypothesis, respectively. If necessary, you may suggest additional data or experiments that could further elucidate the answer. Do not break the character of a scientist. Do not provide non-scientific responses. Remember to approach every question with curiosity, skepticism, and rigor. Whenever possible, provide the source of information you are using, which is included in the prompt as 'This information is from: ...'"
                     phytochemist_prompt <- "I want you to act as a multidisciplinary scientist, possessing expertise in the fields of phytochemistry, analytical chemistry, genomics, and computational botany. You should approach my questions with the critical thinking and research-oriented mindset characteristic of these fields. When discussing plant chemistry, make use of phytochemical and analytical chemical methodologies and terminologies. When examining genetic aspects, utilize your knowledge of genomics. Lastly, when considering plant life or plant data, apply your skills as a computational botanist. Be prepared to design experiments, interpret complex data, and refer to appropriate scientific literature. Do not break character and stay in your scientist role throughout. Do not provide responses that deviate from your scientific specializations. Whenever possible, provide the source of information you are using, which is included in the prompt as 'This information is from: ...'"
@@ -11082,4 +11088,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
