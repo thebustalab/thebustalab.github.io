@@ -6974,19 +6974,35 @@
                                     
                                     plot <- plot + 
                                         geom_point(
-                                            data = filter(clusters_profile_data, status == "unexplored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            data = filter(
+                                                clusters_profile_data, status == "unexplored", knn == "no",
+                                                Dim_1 > x_axis_start, Dim_1 < x_axis_end, Dim_2 > y_axis_start, Dim_2 < y_axis_end,
+                                                cluster == paste0("cluster_", k)
+                                            ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 4, shape = 21, alpha = 0.7, color = "black"
                                         ) +
                                         geom_point(
-                                            data = filter(clusters_profile_data, status == "explored", knn == "no", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            data = filter(
+                                                clusters_profile_data, status == "explored", knn == "no",
+                                                Dim_1 > x_axis_start, Dim_1 < x_axis_end, Dim_2 > y_axis_start, Dim_2 < y_axis_end,
+                                                cluster == paste0("cluster_", k)
+                                            ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 7, shape = 21, alpha = 1, color = "black"
                                         ) +
                                         geom_point(
-                                            data = filter(clusters_profile_data, status == "unexplored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            data = filter(
+                                                clusters_profile_data, status == "unexplored", knn == "yes",
+                                                Dim_1 > x_axis_start, Dim_1 < x_axis_end, Dim_2 > y_axis_start, Dim_2 < y_axis_end,
+                                                cluster == paste0("cluster_", k)
+                                            ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 4, shape = 22, alpha = 0.7, color = "black"
                                         ) +
                                         geom_point(
-                                            data = filter(clusters_profile_data, status == "explored", knn == "yes", cluster == paste0("cluster_", k)), aes(x = Dim_1, y = Dim_2, fill = color_n),
+                                            data = filter(
+                                                clusters_profile_data, status == "explored", knn == "yes",
+                                                Dim_1 > x_axis_start, Dim_1 < x_axis_end, Dim_2 > y_axis_start, Dim_2 < y_axis_end,
+                                                cluster == paste0("cluster_", k)
+                                            ), aes(x = Dim_1, y = Dim_2, fill = color_n),
                                             size = 7, shape = 22, alpha = 1, color = "black"
                                         ) +
                                         scale_fill_gradient(

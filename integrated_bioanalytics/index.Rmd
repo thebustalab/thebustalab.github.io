@@ -3614,9 +3614,9 @@ the_transcriptomes <- c(
 )
 
 names(the_transcriptomes) <- c(
-  "Nicotiana_glauca.fa",
-  "Nicotiana_tabacum.fa",
-  "Nicotiana_benthamiana.fa"
+  "Nicotiana_glauca",
+  "Nicotiana_tabacum",
+  "Nicotiana_benthamiana"
 )
 
 polyBlast(
