@@ -2216,7 +2216,7 @@
                                                     )
                                                 } else if ( substr(blast_mode, 8, 8) == "n" ) {
                                                     temp_seqs <- Biostrings::readDNAStringSet( 
-                                                        filepath = as.character(gsub("_trans", "", transcriptomes)[transcriptome]), 
+                                                        filepath = as.character(gsub("_trans$", "", transcriptomes)[transcriptome]), 
                                                         format = "fasta"
                                                     )
                                                 }

@@ -1660,6 +1660,8 @@ ggplot() +
 
 ### further reading {-}
 
+Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
+
 ## tsne and umap {-}
 
 ```{r, fig.height = 10, fig.width = 15}
@@ -2448,6 +2450,64 @@ plot1/plot2
 
 ```
 
+## classification {-}
+
+We will use random forests, a type of machine learning, to make classification models. Start by watching these videos:
+1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
+2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
+
+Now we will make a classification model using random forests. The overall idea is to make a workflow, which consists of a recipe (the data) and a model (random forest and associated parameters), then tune the model and add the best parameters to the workflow, and finally evaluate the model with the test data. That model can then be used on further data for classification. Here is the general idea in schematic form:
+
+`workflow %>% add_recipe() %>% add_model() -> workflow`
+`workflow %>% tune_grid() %>% select_best() -> best_parameters`
+`workflow %>% finalize_workflow() %>% last_fit()`
+
+Start by making a number of forests that is the square of the number of variables and then try a few values above and below that number.
+
+```{r}
+## Randomly split data into a traing set and a testing set
+    metabolomics_data_split <- initial_split(metabolomics_data, prop = 3/4)
+
+## Create a workflow that has a recipe and a model
+  workflow() %>%
+    add_recipe(
+      recipe( patient_status ~ ., data = metabolomics_data ) %>%
+      step_normalize(all_numeric()) %>% step_impute_knn(all_predictors())
+    ) %>%
+    add_model(
+      rand_forest() %>% # specify that the model is a random forest
+      set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
+      set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
+      set_mode("classification") # choose either the continuous regression or binary classification mode
+    ) -> workflow
+
+## Tune the model on the training set
+  tune_results <- tune_grid(
+    workflow,
+    resamples = vfold_cv(training(metabolomics_data_split)), #CV object
+    grid = expand.grid(mtry = c(2, 3, 4, 5, 6, 7, 8, 9), trees = seq(50,800,50)), # grid of values to try
+    metrics = metric_set(accuracy, roc_auc) # metrics we care about
+  )
+
+# Check model parameters if you want
+  collect_metrics(tune_results) %>%
+    filter(.metric == "accuracy") %>%
+    ggplot(aes(x = factor(mtry), y = factor(trees), fill = mean)) +
+      geom_tile(color = "black", size = 1) + scale_fill_viridis() + theme_classic() +
+      scale_x_discrete(expand = c(0,0)) + scale_y_discrete(expand = c(0,0)) +
+      theme(text = element_text(size = 18))
+    select_best(tune_results, metric = "accuracy")
+
+## Apply the best parameters to the workflow and evaluate performance on test data
+  workflow %>%
+    finalize_workflow( select_best(tune_results, metric = "accuracy") ) %>% # Select best parameters
+    last_fit(metabolomics_data_split) -> wf_fit # Fit the test data
+  collect_metrics(wf_fit) # Check on the metrics if you want
+  test_predictions <- collect_predictions(wf_fit) # Collect predictions
+  table(test_predictions$.pred_class == test_predictions$patient_status) # number right and wrong
+  conf_mat(test_predictions, truth = patient_status, estimate = .pred_class) # confusion matrix
+```
+
 ## exercises {-}
 
 To practice creating linear models, try the following:
@@ -2542,6 +2602,19 @@ model$metrics
 ## further reading {-}
 
 https://github.com/easystats/performance
+
+Here is more information on common machine learning tasks:
+https://pythonprogramminglanguage.com/machine-learning-tasks/
+
+Some major tasks include:
+  Classification
+  Regression
+  Clustering
+
+Classification with random forests:
+1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
+3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 <!-- end -->
 
@@ -2897,7 +2970,7 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- end -->
 
-<!-- start comparing means -->
+<!-- start map data -->
 
 # map data {-}
 
@@ -3845,6 +3918,59 @@ Note that this is different from `buildTree`'s "ancestral_states", which estimat
 ancestral states: https://www.phytools.org/eqg2015/asr.html
 
 ## phylogenetic regression
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) LANGUAGE MODELS
+
+<!-- start language models -->
+
+# completionGPT
+
+You can run completions using:
+
+```{r, eval = FALSE}
+
+completionGPT(
+  system_prompt = "",
+  query = "",
+  model = "",
+  temperature = 0,
+  openai_api_key = ""
+)
+```
+
+The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`.
+
+The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.`
+
+Available options for `model` include "gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.
+
+Temperature goes from 0 to 2 and adds randomness to the answer. 
+
+You have to provide your openAI api key.
+
+# analyzeLiterature
+
+If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
+
+- Simple question: What are wax blooms?
+
+- Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
+
+- High-Complexity question: Can you describe the transcriptional regulation of lipid transfer proteins in plants?
+
+- Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
+
+ "In earlier studies, different other compounds including β-amyrin were overproduced through using strong constitutive promoters [12], enhancers [13] and transcription factors [14]. The β-amyrin is the triterpenoids belongs to oleanane group [15], which harbors anti-hyperglycemic, anti-inflammatory, hypolipidemic effects along with several other pharmacological activities [16,17]. The β-amyrin synthase (βAS) is responsible to synthesize the β-amyrin from 2,3-oxidosqualene[18]. This 2,3-oxidosqualene is synthesized from squalene through squalene epoxidase (SQE), encoded by the ERG1 gene in S. cerevisiae [19]. Squalene is synthesized from farnesyl-pyrophosphate through the
+action of squalene synthase (SQS) (ERG9 gene); and this farnesyl-pyrophosphate (FPP) is synthesized by farnesyl diphosphate synthase (FPPS) (ERG20 gene), from isopentenyl pyrophosphate (IPP), a precursor supplied by mevalonate (MVA) pathway (Fig. 1). The 3-Hydroxy-3-Methyl glutaryl-CoA reductase (HMG1) [20,21] and squalene
+monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway in yeast. For the biosynthesis of triterpenoids, SQS and SQE are important enzymes [23] and were previously overexpressed for
+the overproduction of triterpenoids [14,24]."
+
+- Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms? 
 
 <!-- end -->
 ________________________________________________________________________________________________
