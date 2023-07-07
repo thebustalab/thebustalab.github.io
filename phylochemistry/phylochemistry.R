@@ -1538,7 +1538,7 @@
 
                 temp_file_path <- paste0(getwd(), "/predict_domains.txt")
                 if (file.exists(temp_file_path)) {file.remove(temp_file_path)}
-                
+
                 ## Run HMM3SCAN
                     system(paste0(
                         "hmmscan --domtblout ", temp_file_path,
@@ -1546,37 +1546,94 @@
                         fasta_in_path
                     ))
 
-                ## Process the HMM3SCAN output
-                    predat <- readLines(temp_file_path)
-                    dat <- predat[-c(grep("#", substr(predat, 1,1)))]
+                ## Parse the output (from https://github.com/arendsee/rhmmer)
+                    col_types <- readr::cols(
+                        domain_name         = readr::col_character(),
+                        domain_accession    = readr::col_character(),
+                        domain_len          = readr::col_integer(),
+                        query_name          = readr::col_character(),
+                        query_accession     = readr::col_character(),
+                        qlen                = readr::col_integer(),
+                        sequence_evalue     = readr::col_double(),
+                        sequence_score      = readr::col_double(),
+                        sequence_bias       = readr::col_double(),
+                        domain_N            = readr::col_integer(),
+                        domain_of           = readr::col_integer(),
+                        domain_cevalue      = readr::col_double(),
+                        domain_ievalue      = readr::col_double(),
+                        domain_score        = readr::col_double(),
+                        domain_bias         = readr::col_double(),
+                        hmm_from            = readr::col_integer(),
+                        hmm_to              = readr::col_integer(),
+                        ali_from            = readr::col_integer(),
+                        ali_to              = readr::col_integer(),
+                        env_from            = readr::col_integer(),
+                        env_to              = readr::col_integer(),
+                        acc                 = readr::col_double()
+                    )
 
-                    results <- list()
-                    for (i in 1:length(dat)) {
+                    N <- length(col_types$cols)
 
-                        out <- list()
-                        indices_for_this_row <- gsub("#", "-", predat[3])
-                        indices_for_this_row <- gsub(" ", "N", indices_for_this_row)
-                        indices_for_this_row <- unlist(gregexpr("N", indices_for_this_row))
-                        indices_for_this_row <- c(1,indices_for_this_row, nchar(dat[i]))
-                        indices_for_this_row
+                    # the line delimiter should always be just "\n", even on Windows
+                    lines <- readr::read_lines(temp_file_path, lazy=FALSE, progress=FALSE)
 
-                        for (index in 1:(length(indices_for_this_row)-1)) {
-                            out <- c(out, substring(dat[i], indices_for_this_row[index], indices_for_this_row[index+1]))
-                            out <- gsub(" ", "", out)
-                        }
+                    table <- sub(
+                        pattern = sprintf("(%s).*", paste0(rep('\\S+', N), collapse=" +")),
+                        replacement = '\\1',
+                        x=lines,
+                        perl = TRUE
+                    ) %>%
+                    gsub(pattern="  *", replacement="\t") %>%
+                    paste0(collapse="\n") %>%
+                    readr::read_tsv(
+                        col_names=names(col_types$cols),
+                        comment='#',
+                        na='-',
+                        col_types = col_types,
+                        lazy=FALSE,
+                        progress=FALSE
+                    )
 
-                        results[[i]] <- out
+                    descriptions <- lines[!grepl("^#", lines, perl=TRUE)] %>%
+                    sub(
+                        pattern = sprintf("%s *(.*)", paste0(rep('\\S+', N), collapse=" +")),
+                        replacement = '\\1',
+                        perl = TRUE
+                    )
 
-                    }
+                    table$description <- descriptions[!grepl(" *#", descriptions, perl=TRUE)]
 
-                    results <- do.call(rbind, results)
-                    results %>%
-                        as.data.frame() %>%
-                        mutate_at(c(3, 6:22), as.numeric) -> results
-                    colnames(results) <- c("target_name", "accession", "tlen", "query_name", "accession_b", "qlen", "E_value_full_seq", "score_full_seq", "bias_full_seq", "number_this_domain", "of_this_domain", "c_Evalue_this_domain", "i_Evalue_this_domain", "score_this_domain", "bias_this_domain", "from_hmm_coord", "to_hmm_coord", "from_ali_coord", "to_ali_coord", "from_env_coord", "to_env_coord", "acc", "description_of_target")
+                    return(table)
+                
+                ## Process the HMM3SCAN output (old)
+                    # predat <- readLines(temp_file_path)
+                    # dat <- predat[-c(grep("#", substr(predat, 1,1)))]
 
-                    return(results)
+                    # results <- list()
+                    # for (i in 1:length(dat)) { #i=1
 
+                    #     out <- list()
+                    #     indices_for_this_row <- gsub("#", "-", predat[3])
+                    #     indices_for_this_row <- gsub(" ", "N", indices_for_this_row)
+                    #     indices_for_this_row <- unlist(gregexpr("N", indices_for_this_row))
+                    #     indices_for_this_row <- c(1,indices_for_this_row, nchar(dat[i]))
+                    #     indices_for_this_row
+
+                    #     for (index in 1:(length(indices_for_this_row)-1)) {
+                    #         out <- c(out, substring(dat[i], indices_for_this_row[index], indices_for_this_row[index+1]))
+                    #         out <- gsub(" ", "", out)
+                    #     }
+
+                    #     results[[i]] <- out
+
+                    # }
+
+                    # results <- do.call(rbind, results)
+                    # results %>%
+                    #     as.data.frame() %>%
+                    #     mutate_at(c(3, 6:22), as.numeric) -> results
+                    # colnames(results) <- c("target_name", "accession", "tlen", "query_name", "accession_b", "qlen", "E_value_full_seq", "score_full_seq", "bias_full_seq", "number_this_domain", "of_this_domain", "c_Evalue_this_domain", "i_Evalue_this_domain", "score_this_domain", "bias_this_domain", "from_hmm_coord", "to_hmm_coord", "from_ali_coord", "to_ali_coord", "from_env_coord", "to_env_coord", "acc", "description_of_target")
+                    # return(results)
             }
 
         #### extractORFs
@@ -6896,18 +6953,8 @@
                                         textOutput( outputId = "completion_tokens" ),
                                         textOutput( outputId = "total_tokens" ) 
                                     )
-                                        # h4("Ask Questions Here:"),
-                                        # textInput( inputId = "query", label = "" ),
-                                        # actionButton( inputId = "submit", label = "Submit" ),
-                                        # textOutput( outputId = "reporter" )
                                 ),
                                 tabPanel("Listen",
-                                    # column(9, textOutput( outputId = "knn_chunks" )),
-                                    # column(3,
-                                    #     textOutput( outputId = "prompt_tokens" ),
-                                    #     textOutput( outputId = "completion_tokens" ),
-                                    #     textOutput( outputId = "total_tokens" ) 
-                                    # )
                                 ),
                                 tabPanel("Diagnostics", textOutput("keepAlive")),
                             )
@@ -7106,7 +7153,7 @@
                                 )
 
                             # Find the k nearest neighbors in the chunks and render them
-                                n_nearest_neighbors <- 6
+                                n_nearest_neighbors <- 8
                                 if(input$model == "gpt-3.5-turbo-16k") { n_nearest_neighbors <- 20 }
 
                                 nn <- get.knnx( 
@@ -11135,4 +11182,4 @@
             "darkorange4", "brown"
         )
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
