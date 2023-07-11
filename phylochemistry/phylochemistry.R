@@ -7310,6 +7310,33 @@
                     if (jupyter == FALSE) { shinyApp(ui = ui, server = server) }
             }
 
+        #### computeEmbeddings
+
+            computeEmbeddings <- function(df, column_to_embed, openai_api_key) {
+    
+                embedding_df <- list()
+                for (i in 1:dim(df)[1]) {
+                    embedding_df[[i]] <- t(data.frame(
+                        as.numeric(content(POST(
+                            url = "https://api.openai.com/v1/embeddings", 
+                            add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                            content_type_json(), encode = "json",
+                            body = list(
+                                model = "text-embedding-ada-002",
+                                input = df[i,which(colnames(df) == column_to_embed)]
+                            )
+                        ))$data[[1]]$embedding)
+                    ))
+                }
+                embedding_df <- do.call(rbind, embedding_df)
+                rownames(embedding_df) <- NULL
+                colnames(embedding_df) <- paste0("embed_var_", seq(1, 1536, 1))
+                extracted_pdf_text_chunked_embedded <- cbind(df, embedding_df)
+                
+                return(extracted_pdf_text_chunked_embedded)
+            }
+
+
     ##### Networks
 
         #### buildNetwork
@@ -11138,7 +11165,8 @@
                     c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
                     c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
                     c("wood_smoke", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wood_smoke_data.csv"),
-                    c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv")
+                    c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv"),
+                    c("tequila_chemistry", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/tequila_chemistry.csv")
                 ))
 
                 pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
