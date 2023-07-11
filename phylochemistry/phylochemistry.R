@@ -7336,6 +7336,98 @@
                 return(extracted_pdf_text_chunked_embedded)
             }
 
+        #### readPDF
+
+            readPDF <- function(path_to_pdf) {
+
+                # set the path to the PDF file to be read
+                    txt <- pdf_text(path_to_pdf)
+
+                # loop over each page of the PDF file
+                    full_pdf_text <- list()
+                    for (page_number in 1:length(txt)) { 
+
+                        page <- txt[page_number]
+                        
+                        # split the text of the page into lines
+                            t1 <- unlist(strsplit(page, "\n"))
+                            if (length(t1) < 10) {next} # Handles essentially empty pages
+
+                        # pad each line with spaces to ensure they all have the same length
+                            maxSize <- max(nchar(t1))
+                            t1 <- paste0(t1,strrep(" ", maxSize-nchar(t1)))
+                            # if (page_number == 2) {print(t1)}
+
+                        # Get all index of " " from page.
+                            lstops <- gregexpr(pattern = " ", t1)
+                            out <- list()
+                            for (row in 1:length(lstops)) {
+                                out[[row]] <- data.frame(
+                                    position = unlist(lstops[row]),
+                                    row = row
+                                )
+                            }
+                            do.call(rbind, out) %>%
+                            group_by(position) %>%
+                            summarize(n_spaces = n()) -> space_pattern
+
+                        # Find approximate column starts
+                            smoothing_order = 3
+                            smoothing_window = 15
+                            percent_extreme_deriv <- 0.2
+                            threshold <- 6
+
+                            space_pattern$n_spaces_smoothed <- signal::sgolayfilt(x = space_pattern$n_spaces, p = smoothing_order, n = smoothing_window)
+                            space_pattern$n_spaces_smoothed_deriv <- ceiling(predict(pspline::sm.spline(space_pattern$position, space_pattern$n_spaces_smoothed), space_pattern$position, 1))
+                            space_pattern$n_spaces_smoothed_deriv[space_pattern$n_spaces_smoothed_deriv > 0 & space_pattern$n_spaces_smoothed_deriv < percent_extreme_deriv*max(space_pattern$n_spaces_smoothed_deriv)] <- 0
+                            space_pattern$n_spaces_smoothed_deriv[space_pattern$n_spaces_smoothed_deriv < 0 & space_pattern$n_spaces_smoothed_deriv > percent_extreme_deriv*min(space_pattern$n_spaces_smoothed_deriv)] <- 0
+
+                            col_breaks <- list()
+                            for (position in 1:length(space_pattern$position)) {
+                                col_breaks[[position]] <- all(
+                                    all(space_pattern$n_spaces_smoothed_deriv[position:abs(position+threshold)] <= space_pattern$n_spaces_smoothed_deriv[position]),
+                                    any(space_pattern$n_spaces_smoothed_deriv[position:abs(position+threshold)] < 0),
+                                    !all(space_pattern$n_spaces_smoothed_deriv[position:abs(position+threshold)] == 0)
+                                )
+                            }
+                            col_breaks <- do.call(rbind, col_breaks)
+                            col_breaks <- which(col_breaks)
+                            split_vector <- split(col_breaks, cumsum(seq_along(col_breaks) %in% (which(diff(col_breaks) > 10) + 1)))
+                            if (length(split_vector) == 0) {next} # Handles pages with no columns/full page image
+                            column_starts <- floor(unlist(lapply(split_vector, mean)))
+                            column_starts <- c(column_starts, nchar(t1[1]))
+                            if( (sum(substr(t1, 0,1) != " ")/length(t1)) > 0.5) {column_starts <- c(0, column_starts)} # Detect if column begins on first position
+
+                            # if (page_number == 2) {
+                            #     print(ggplot() +
+                            #         geom_point(data = space_pattern, aes(x = position, y = n_spaces)) +
+                            #         geom_line(data = space_pattern, aes(x = position, y = n_spaces_smoothed)) +
+                            #         geom_line(data = space_pattern, aes(x = position, y = n_spaces_smoothed_deriv)) +
+                            #         geom_vline(aes(xintercept = column_starts))
+                            #     )
+                            # }
+
+                        # Break rows
+                            
+                            column_contents <- list()
+                            for( column_start in 1:(length(column_starts)-1) ) {
+                                text <- list()
+                                for (row in 1:length(t1)) {
+                                    text <- c(text, list(substr(t1[row], column_starts[column_start], (column_starts[column_start+1]))))
+                                }
+                                column_contents <- c(column_contents, list(gsub("\\s+", " ", paste(unlist(text), collapse = ""))))
+                            }
+                            # column_contents
+                            page_text <- paste(unlist(column_contents), collapse = "")
+                            # if (page_number == 2) {print(page_text)}
+
+                        full_pdf_text <- c(full_pdf_text, page_text)
+
+                    }
+                
+                return(paste(unlist(full_pdf_text), collapse = ""))
+            }
+
 
     ##### Networks
 
