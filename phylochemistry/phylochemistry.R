@@ -11104,53 +11104,58 @@
 
         #### allPairsTTestMean
 
-            allPairsTTestMean <- function(category, mean, stdev, n, correction_method = c("BH", "holm", "bonferroni")) {
+            allPairsTTestMean <- function(category, mean, stdev, n, correction_method = c("BH", "holm", "bonferroni", "none")) {
 
-            df <- data.frame(
-                category = category,
-                mean = mean,
-                stdev = stdev,
-                n = n
-            )
+                df <- data.frame(
+                    category = category,
+                    mean = mean,
+                    stdev = stdev,
+                    n = n
+                )
 
-            # Initialize list to store results
-                results <- list()
+                # Initialize list to store results
+                    results <- list()
 
-            # Compute all possible combinations
-                combinations <- combn(df$category, 2)
+                # Compute all possible combinations
+                    combinations <- combn(df$category, 2)
 
-            # Loop over all combinations
-                for (i in seq(ncol(combinations))) {
-                    # Select the two groups
-                    group1 <- df[df$category == combinations[1, i],]
-                    group2 <- df[df$category == combinations[2, i],]
+                # Loop over all combinations
+                    for (i in seq(ncol(combinations))) {
+                        # Select the two groups
+                        group1 <- df[df$category == combinations[1, i],]
+                        group2 <- df[df$category == combinations[2, i],]
 
-                    # Compute standard error for each group
-                    group1_se <- group1$stdev / sqrt(group1$n)
-                    group2_se <- group2$stdev / sqrt(group2$n)
+                        # Compute standard error for each group
+                        group1_se <- group1$stdev / sqrt(group1$n)
+                        group2_se <- group2$stdev / sqrt(group2$n)
 
-                    # Compute standard error for the difference between means
-                    diff_se <- sqrt(group1_se^2 + group2_se^2)
+                        # Compute the difference and standard error for the difference between means
+                        diff <- group1$mean - group2$mean
+                        diff_se <- sqrt(group1_se^2 + group2_se^2)
 
-                    # Compute p-value
-                    p_value <- round((2 * pt(-abs(diff / diff_se), (group1$n + group2$n - 2))), 4)
+                        # Compute p-value
+                        p_value <- round((2 * pt(-abs(diff / diff_se), (group1$n + group2$n - 2))), 5)
 
-                    # Store results
-                    results[[i]] <- data.frame(
-                        group1 = group1$category,
-                        group2 = group2$category,
-                        difference_in_means = (group1$mean - group2$mean),
-                        difference_in_means_se = round(diff_se, 4),
-                        p_value = p_value
-                    )
+                        # Store results
+                        results[[i]] <- data.frame(
+                            group1 = group1$category,
+                            group2 = group2$category,
+                            difference_in_means = diff,
+                            difference_in_means_se = round(diff_se, 4),
+                            p_value = p_value
+                        )
+                    }
+
+                # Check the results
+                results <- do.call(rbind, results)
+                if (correction_method[1] == "none") {
+                    results$p.adj <- results$p_value
+                } else {
+                    results$p.adj <- p.adjust(results$p_value, method = correction_method[1])
                 }
-
-            # Check the results
-            results <- do.call(rbind, results)
-            results$p.adj <- p.adjust(results$p_value, method = correction_method[1])
-            results$signif <- ifelse(results$p.adj < 0.05, "*", "")
-            return(results)
-        }
+                results$signif <- ifelse(results$p.adj < 0.05, "*", "")
+                return(results)
+            }
 
     ##### Phylogenetic statistical testing
 
