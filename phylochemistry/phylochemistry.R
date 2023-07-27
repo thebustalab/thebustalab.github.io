@@ -61,6 +61,7 @@
                     "picante",
                     "BiocManager",
                     "googlesheets4",
+                    "googledrive",
                     "Hmisc",
                     "ggforce",
                     "network",
@@ -7431,6 +7432,28 @@
 
     ##### Networks
 
+        #### extractModules
+
+            extractModules <- function(data, baits, module_size) {
+                ## All this code assumes a Gene1-Gene2-Metric format    
+                    connections_to_baits <- list()
+                    for( i in 1:length(baits) ) {
+                        ## Find entries in the coexpression table that include the bait as Gene1 or Gene2
+                        connections_to_bait <- unique(rbind(data[data[,1] == baits[i],], data[data[,2] == baits[i],]))
+                        ## Order entries according to "Metric" and then take the top n (module_size) entries
+                        connections_to_baits[[i]] <- connections_to_bait[order(connections_to_bait[,3], decreasing = TRUE),][1:module_size,]
+                    }
+                    connections_to_baits <- do.call(rbind, connections_to_baits)
+
+                ## Append all connections between module members so you dont get a sun shape
+                    data[apply(cbind(
+                        data[,1] %in% c(connections_to_baits[,1], connections_to_baits[,2]),
+                        data[,2] %in% c(connections_to_baits[,1], connections_to_baits[,2])
+                    ), 1, all),] -> module_member_connections
+                    connections <- unique(rbind(connections_to_baits, module_member_connections))
+                    return(connections[!is.na(connections[,3]),])
+            }
+
         #### buildNetwork
 
             #' Build a network from an edgelist
@@ -11028,6 +11051,29 @@
             }
 
         #### anovaTestMean
+
+            anovaMean <- function(object, n, ybar, s, ..., ylabel="ylabel") {
+                ## the object argument contains the levels of the factor
+                df <- sum(n)-length(ybar)
+                sigmahat <- (sum((n-1)*s^2) / df)^.5
+
+                SS.group <- sum(n*(ybar - (ybar %*% n)/sum(n))^2)
+
+                Df <- c(length(ybar)-1, sum(n)-length(ybar))
+                Sum.of.Sq <- c(SS.group, df*sigmahat^2)
+                Mean.Sq <- c(SS.group/(length(ybar)-1), sigmahat^2)
+                F.Value <- c(Mean.Sq[1]/Mean.Sq[2], NA)
+                Pr.F <- c(1-pf(F.Value[1], Df[1], Df[2]), NA)
+                result <- list(Df=Df, "Sum of Sq"=Sum.of.Sq, "Mean Sq"=Mean.Sq,
+                     "F value"=F.Value, "Pr(F)"=Pr.F)
+                oldClass(result) <- c("anova","data.frame")
+                attr(result,"row.names") <- format(c(ylabel,"Residuals"))
+                attr(result, "heading") <-
+                c("Analysis of Variance Table\n",
+                paste("Response: ", ylabel, "\n", sep=""),
+                "Terms added sequentially (first to last)")
+                result
+            }
 
             #' anova on means and standard deviations
             #'

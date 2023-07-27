@@ -3229,7 +3229,9 @@ ________________________________________________________________________________
 
 ## nonmodel species
 
-For nonmodel species transcriptome analysis, `transXpress` is recommended. `transXpress` uses the Trinity assembler by default, which can require ~300GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpress` for it to run properly. First, make sure to add conda-forge::ncurses as a dependency in the trinity_utils.yaml file to avoid errors with the script not being able to detect the samtools installation. The trinity_utils.yaml file should look like:
+For nonmodel species transcriptome analysis, `transXpress` is recommended. `transXpress` uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpress` for it to run properly.
+
+1. First, make sure to add conda-forge::ncurses as a dependency in the trinity_utils.yaml file to avoid errors with the script not being able to detect the samtools installation. The trinity_utils.yaml file in the emv directory should look like:
 
 `
 channels:
@@ -3249,7 +3251,7 @@ dependencies:
   - rsem=1.3.3=pl5321ha04fe3b_5 
 `
 
-Also add an explicit pip dependencey to the tmhmm.yaml file:
+2. Also add an explicit pip dependencey to the tmhmm.yaml file (it's also in the env directory):
 `
 channels:
   - conda-forge
@@ -3262,7 +3264,7 @@ dependencies:
     - tmhmm-py
 `
 
-Also, you may also need to scale your memory usage in trinity:
+3. Also, you may also need to scale your memory usage in trinity by editing the file called `Snakefile`:
 `
 rule trinity_inchworm_chrysalis:
 ...
@@ -3270,11 +3272,27 @@ params:
     memory="50"
 `
 
-Finally, it's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
+4. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
 `
 pip install "numpy<1.24.0"
 `
 
+5. You also need to add targetp to the PATH variable in the transexpress environment:
+`export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
+
+6. Important! Remember that there must be an empty line on the end of the samples.tex file.
+
+Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
+
+- all the sample name folders (ex. "fed_epi_hi_rep1")
+- kallisto.isoform.count.matrix
+- transcriptome_annotated_no_spaces.fasta (if you created it)
+- transcriptome_annotated.fasta
+- transcriptome.fasta.transdecoder.pep
+- samples.txt
+- samples_trimmed.txt
+- busco_report.txt
+- /transdecoder/longest_orfs.pep
 
 ## model species
 
