@@ -10364,28 +10364,6 @@
                 return(output)
             }
 
-        #### p_groups
-
-            #' Determine which samples are identical based on p values
-            #'
-            #' @param data 
-            #' @examples
-            #' @export
-            #' p_groups
-
-            p_groups <- function(data) {
-                
-                p <- data$p.adj
-                names(p) <- paste(data$group1, data$group2, sep = "-")
-
-                output <- data.frame(
-                    treatment = names(multcompLetters(p)$Letters),
-                    group = multcompLetters(p)$Letters,
-                    spaced_group = multcompLetters(p)$monospacedLetters
-                )
-                return(output)
-            }
-
         #### fitGaussians
 
             #' Fit a Gaussian curve to a set of x y data
