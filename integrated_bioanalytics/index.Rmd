@@ -2900,7 +2900,7 @@ hawaii_aquifers %>%
 
 Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
 
-What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_tTest` of course!
+What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_TTest` of course!
 
 ```{r}
 hawaii_aquifers %>%
