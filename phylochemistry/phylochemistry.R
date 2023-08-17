@@ -911,7 +911,9 @@
             #' Subset an alignment
             #'
             #' @param alignment_in_path The path to the information that should be used to build the tree.
-            #' @param members The tips of the tree that should be included. Default is to include everything.
+            #' @param max_gap_percent The maximum percentage of gaps allowed in a column of the alignment. Default is 0.5.
+            #' @param min_conservation_percent The minimum percentage of conservation allowed in a column of the alignment. Default is 0.3.
+            #' @param sequence_type The type of sequence in the alignment, either "DNA" or "AA"
             #' @examples
             #' @export
             #' gblocks
@@ -1015,7 +1017,6 @@
             #' @param scaffold_type The type of information that should be used to build the tree. One of "amin_alignment", "nucl_alignment", or "newick"
             #' @param scaffold_in_path The path to the information that should be used to build the tree.
             #' @param members The tips of the tree that should be included. Default is to include everything.
-            #' @param gblocks TRUE/FALSE whether to use gblocks on the alignment
             #' @param ml TRUE/FALSE whether to use maximum likelihood when constructing the tree.
             #' @param model_test TRUE/FALSE whether to test various maximum likelihood models while constructing the tree
             #' @param bootstrap TRUE/FALSE whether to calculate bootstrap values for tree nodes.
@@ -1250,7 +1251,7 @@
 
             #' Prune a tree so it only contains user-specified tips
             #'
-            #' @param tree The tree to manipulate
+            #' @param tree_in_path The path to the tree to manipulate
             #' @param tips_to_keep The tips to keep
             #' @importFrom ape drop.tip
             #' @examples
@@ -1400,11 +1401,7 @@
             #' @export
             #' dropNA
 
-            dropNA <- function( x ) {
-
-                return(x[!is.na(x)])
-
-            }
+            dropNA <- function( x ) { return(x[!is.na(x)]) }
 
         #### rotate_coord
 
@@ -1413,7 +1410,7 @@
             #' @param x The x values
             #' @param y The y values
             #' @param angle The angle to rotate (in degrees)
-            #' @param center The center about which to rotate
+            #' @param center The center of rotation (default = 0,0)
             #' @examples
             #' @export
             #' rotate_coord
@@ -1435,6 +1432,8 @@
             }
 
         #### question
+
+            #' Create a question
 
             question <- function(question, distractors, correct, no, fb = "", print_question = TRUE){
                 allanswers <- c(distractors, correct)[sample.int(length(distractors)+1)]
@@ -1605,36 +1604,6 @@
                     table$description <- descriptions[!grepl(" *#", descriptions, perl=TRUE)]
 
                     return(table)
-                
-                ## Process the HMM3SCAN output (old)
-                    # predat <- readLines(temp_file_path)
-                    # dat <- predat[-c(grep("#", substr(predat, 1,1)))]
-
-                    # results <- list()
-                    # for (i in 1:length(dat)) { #i=1
-
-                    #     out <- list()
-                    #     indices_for_this_row <- gsub("#", "-", predat[3])
-                    #     indices_for_this_row <- gsub(" ", "N", indices_for_this_row)
-                    #     indices_for_this_row <- unlist(gregexpr("N", indices_for_this_row))
-                    #     indices_for_this_row <- c(1,indices_for_this_row, nchar(dat[i]))
-                    #     indices_for_this_row
-
-                    #     for (index in 1:(length(indices_for_this_row)-1)) {
-                    #         out <- c(out, substring(dat[i], indices_for_this_row[index], indices_for_this_row[index+1]))
-                    #         out <- gsub(" ", "", out)
-                    #     }
-
-                    #     results[[i]] <- out
-
-                    # }
-
-                    # results <- do.call(rbind, results)
-                    # results %>%
-                    #     as.data.frame() %>%
-                    #     mutate_at(c(3, 6:22), as.numeric) -> results
-                    # colnames(results) <- c("target_name", "accession", "tlen", "query_name", "accession_b", "qlen", "E_value_full_seq", "score_full_seq", "bias_full_seq", "number_this_domain", "of_this_domain", "c_Evalue_this_domain", "i_Evalue_this_domain", "score_this_domain", "bias_this_domain", "from_hmm_coord", "to_hmm_coord", "from_ali_coord", "to_ali_coord", "from_env_coord", "to_env_coord", "acc", "description_of_target")
-                    # return(results)
             }
 
         #### extractORFs
@@ -1644,6 +1613,7 @@
             #' @param file_in_path The multifasta file to analyze
             #' @param write_out_ORFs TRUE/FALSE whether to write out a new fasta that contains the ORFs
             #' @param overwrite TRUE/FALSE Optionally overwrite the input file with the ORF file
+            #' @param alternative_ORFs TRUE/FALSE Whether to search for alternative ORFs
             ####### Searching for ORFs in the reverse direction leads to issues during codon alignment...
             #' @examples
             #' @export
@@ -2419,6 +2389,7 @@
             #' @param monolist Monolist of the sequences to be aligned. First column should be "accession"
             #' @param subset TRUE/FALSE column in monolist that specifies which sequences should be included in the alignment
             #' @param alignment_directory_path Path to where the alignment should be written
+            #' @param alignment_out_path Path to the file to which the alignment should be written
             #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
             #' @param input_sequence_type One of "nucl" or "amin"
             #' @param mode One of "nucl_align", "amin_align", or "codon_align"
@@ -2434,7 +2405,7 @@
                                     monolist, 
                                     subset, 
                                     alignment_directory_path, 
-                                    # alignment_out_name,
+                                    alignment_out_path,
                                     sequences_of_interest_directory_path,
                                     input_sequence_type = c("nucl", "amin"), 
                                     mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
@@ -2935,8 +2906,11 @@
             #'
             #' Read multiple genome feature files into a tidy dataframe
             #' @param input_frame A dataframe with columns: Genus_species, GFF_in_path, region_reach (20000), concatenation_spacing (10000)
-            #' @param query A .fa file containing the query
-            #' @param phylochem The phylochem object to which the data should be bound
+            #' @param subset_mode A character vector of length 1. One of: "none", "goi_only", "goi_region", "name_check"
+            #' @param goi A character vector of gene names. Labelling by species is not necessary
+            #' @param concatenate_by_species A logical. If TRUE, concatenate all GFFs for a species into a single GFF
+            #' @param chromosomes_only A logical. If TRUE, only keep chromosome features
+            #' @param omit A character vector of columns to omit from the output dataframe
             #' @examples
             #' @export
             #' readGFFs
@@ -3270,18 +3244,18 @@
 
             #' Reverse translate a protein sequence
             #'
-            #' @param fasta_in_path
-            #' @param fasta_out_path
+            #' @param fasta_in_path The path to the fasta file containing the protein sequence
+            #' @param fasta_out_path The path to the fasta file to write the nucleotide sequence to
             #' @param organism The codon table to use. One of "Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", or "Saccharomyces_cerevisiae".
-            #' @examples
-            #' @export
+            #' @examples reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta", "peptide.fasta", "Arabidopsis_thaliana")
+            #' @export reverseTranslate
             #' reverseTranslate
 
             reverseTranslate <- function(
-                
                 fasta_in_path,
                 fasta_out_path,
-                organism = c("Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", "Saccharomyces_cerevisiae")) {
+                organism = c("Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", "Saccharomyces_cerevisiae")
+            ) {
 
                 codon_tables <- readMonolist("https://thebustalab.github.io/R_For_Chemists/sample_data/codon_tables.csv")
                 codon_tables$Genus_species <- paste(codon_tables$Genus, codon_tables$species, sep = "_")
@@ -3311,17 +3285,16 @@
                 }
                 output@ranges@NAMES <- amin_seqs@ranges@NAMES
                 Biostrings::writeXStringSet(output, fasta_out_path)
-
             }
 
         #### fastqToFasta
 
             #' Convert fastq to fasta
             #'
-            #' @param file_in_path
-            #' @param file_out_path
-            #' @examples
-            #' @export
+            #' @param file_in_path The path to the fastq file
+            #' @param file_out_path The path to the fasta file to write
+            #' @examples fastqToFasta("https://thebustalab.github.io/R_For_Chemists/sample_data/reads.fastq", "reads.fasta")
+            #' @export fastqToFasta
             #' fastqToFasta
 
             fastqToFasta <- function(file_in_path, file_out_path) {
@@ -3336,10 +3309,10 @@
             #' Convert a kmer report file from Canu into a table that can be accepted by genomescope
             #' Use http://qb.cshl.edu/genomescope/genomescope2.0/
             #'
-            #' @param file_in_path
-            #' @param file_out_path
-            #' @examples
-            #' @export
+            #' @param file_in_path The path to the kmer report file
+            #' @param file_out_path The path to the table file to write
+            #' @examples canuHistogramToKmerTable("https://thebustalab.github.io/R_For_Chemists/sample_data/kmer_report.txt", "kmer_report.txt")
+            #' @export canuHistogramToKmerTable
             #' canuHistogramToKmerTable
 
             canuHistogramToKmerTable <- function(file_in_path, file_out_path) {
@@ -5897,14 +5870,14 @@
                                                 # Set ranges on mass spec (allow zooming in with selection), Sometimes brush returns Inf or -Inf if the range gets too small, so if that happens, just go up to the main view
                                             
                                                     if (isolate(is.null(input$massSpectra_1_brush))) {
-                                                        MS1_low_x_limit <- 0; MS1_high_x_limit <- 800; MS1_high_y_limit <- 110
+                                                        MS1_low_x_limit <- 0; MS1_high_x_limit <- 1200; MS1_high_y_limit <- 110
                                                     } else {
                                                         MS1_low_x_limit <- isolate(min(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
                                                         MS1_high_x_limit <- isolate(max(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
                                                         MS1_high_y_limit <- max(dplyr::filter(MS_out_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)$intensity) + 8
                                                     }
                                                     if (MS1_low_x_limit %in% c(Inf, -Inf) | MS1_high_x_limit %in% c(Inf, -Inf) | MS1_high_y_limit %in% c(Inf, -Inf)) {
-                                                        MS1_low_x_limit <- 0; MS1_high_x_limit <- 800; MS1_high_y_limit <- 110
+                                                        MS1_low_x_limit <- 0; MS1_high_x_limit <- 1200; MS1_high_y_limit <- 110
                                                     }
 
                                                 # Make plot
@@ -8341,10 +8314,10 @@
                 #' @examples
                 #' annotatePDB()
 
-                    annotatePDB <- function(pdb_path, alignment, pdb_name_in_alignment, highlights_data, out_file) {
+                    annotatePDB <- function(pdb_in_path, alignment_in_path, pdb_name_in_alignment, highlights_data, out_file) {
 
                         ## Read in PDB file
-                            pdb <- bio3d::read.pdb(pdb_path)
+                            pdb <- bio3d::read.pdb(pdb_in_path)
                             pdb$atom
                             pdb_sequence <- bio3d::aa321(pdb$atom$resid[bio3d::atom.select(pdb, "calpha")$atom])
                             pdb_frame <- data.frame(pdb_sequence=pdb_sequence, pdb_position=seq(1,length(pdb_sequence),1))
@@ -8352,7 +8325,7 @@
                             head(pdb_frame)
 
                         ## Read in alignment
-                            AA_phydat <- as.data.frame(as.character(phangorn::read.aa(file=alignment, format="fasta")))
+                            AA_phydat <- as.data.frame(as.character(phangorn::read.aa(file = alignment_in_path, format="fasta")))
                             alignment_sequence <- as.data.frame(AA_phydat)[,grep(pdb_name_in_alignment, colnames(as.data.frame(AA_phydat)))]
                             alignment_frame <- data.frame(alignment_sequence = alignment_sequence, alignment_position = seq(1,length(alignment_sequence),1))
                             head(alignment_frame)
