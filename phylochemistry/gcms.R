@@ -81,6 +81,8 @@
         # write_csv(monolist, file = monolist_out_path)
     }
 
+    dropNA <- function( x ) { return(x[!is.na(x)]) }
+
     #### analyzeGCMSdata
 
         #' A Shiny app to integrate GC-FID and GC-MS data
