@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>blast | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="1.3 polyBlast  1.3.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
+<meta name="description" content="2.1 polyBlast  2.1.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
 <meta name="generator" content="bookdown 0.35 with bs4_book()">
 <meta property="og:title" content="blast | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="1.3 polyBlast  1.3.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
+<meta property="og:description" content="2.1 polyBlast  2.1.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="blast | Integrated Bioanalytics">
-<meta name="twitter:description" content="1.3 polyBlast  1.3.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
+<meta name="twitter:description" content="2.1 polyBlast  2.1.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.6/font.css" rel="stylesheet">
@@ -66,6 +66,8 @@
 <li><a class="" href="special-topics.html">special topics</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
+<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
+<li><a class="" href="assembly.html"><span class="header-section-number">2</span> assembly</a></li>
 <li class="book-part">EVOLUTIONARY ANALYSIS</li>
 <li><a class="active" href="blast.html">blast</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
@@ -96,13 +98,13 @@
 <h1>blast<a class="anchor" aria-label="anchor" href="#blast"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology.png" width="100%" style="display: block; margin: auto;"></div>
-<div id="polyblast" class="section level2" number="1.3">
+<div id="polyblast" class="section level2" number="2.1">
 <h2>
-<span class="header-section-number">1.3</span> polyBlast<a class="anchor" aria-label="anchor" href="#polyblast"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.1</span> polyBlast<a class="anchor" aria-label="anchor" href="#polyblast"><i class="fas fa-link"></i></a>
 </h2>
-<div id="setup" class="section level3" number="1.3.1">
+<div id="setup" class="section level3" number="2.1.1">
 <h3>
-<span class="header-section-number">1.3.1</span> setup<a class="anchor" aria-label="anchor" href="#setup"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.1.1</span> setup<a class="anchor" aria-label="anchor" href="#setup"><i class="fas fa-link"></i></a>
 </h3>
 <p>On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&amp;DOC_TYPE=Download">NCBI BLAST+</a>. Download the program and then point this function to the executable via the <code>blast_module_directory_path</code> argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.</p>
 <p>Let’s check out <code>polyBlast()</code> by looking at an example. For this example, we need to set up a few things:</p>
@@ -141,9 +143,9 @@
 <span>  monolist_out_path <span class="op">=</span> <span class="st">"/path_to/a_csv_file_that_will_list_all_blast_hits.csv"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="interpretation" class="section level3" number="1.3.2">
+<div id="interpretation" class="section level3" number="2.1.2">
 <h3>
-<span class="header-section-number">1.3.2</span> interpretation<a class="anchor" aria-label="anchor" href="#interpretation"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.1.2</span> interpretation<a class="anchor" aria-label="anchor" href="#interpretation"><i class="fas fa-link"></i></a>
 </h3>
 <p>The “30% identity rule-of-thumb” is too conservative. Statistically significant (E &lt; 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits &gt; 50) are far more sensitive and reliable than percent identity for inferring homology.</p>
 <p>The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as “false positive” hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:</p>
@@ -170,7 +172,7 @@
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></div>
+<div class="prev"><a href="assembly.html"><span class="header-section-number">2</span> assembly</a></div>
 <div class="next"><a href="alignments.html">alignments</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
@@ -186,9 +188,9 @@
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#blast">blast</a></li>
 <li>
-<a class="nav-link" href="#polyblast"><span class="header-section-number">1.3</span> polyBlast</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#setup"><span class="header-section-number">1.3.1</span> setup</a></li>
-<li><a class="nav-link" href="#interpretation"><span class="header-section-number">1.3.2</span> interpretation</a></li>
+<a class="nav-link" href="#polyblast"><span class="header-section-number">2.1</span> polyBlast</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#setup"><span class="header-section-number">2.1.1</span> setup</a></li>
+<li><a class="nav-link" href="#interpretation"><span class="header-section-number">2.1.2</span> interpretation</a></li>
 </ul>
 </li>
 </ul>

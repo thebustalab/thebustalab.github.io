@@ -2,6 +2,7 @@ fig:unnamed-chunk-75
 part-data-analysis-in-r
 using-analyzegcmsdata
 cdf-export
+assembly
 polyblast
 setup
 interpretation

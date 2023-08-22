@@ -3266,7 +3266,7 @@
                 organism = c("Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", "Saccharomyces_cerevisiae")
             ) {
 
-                codon_tables <- readMonolist("https://thebustalab.github.io/R_For_Chemists/sample_data/codon_tables.csv")
+                codon_tables <- readMonolist("https://thebustalab.github.io/phylochemistry/sample_data/codon_tables.csv")
                 codon_tables$Genus_species <- paste(codon_tables$Genus, codon_tables$species, sep = "_")
                 codon_tables <- dplyr::filter(codon_tables, Genus_species == organism)
                     
@@ -11301,23 +11301,24 @@
             
             message("Loading datasets...")
 
-            ## Sample datasets for CHEM5725
+            ## Sample datasets
 
                 sample_datasets <- as.data.frame(rbind(
-                    c("algae_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/algae_data.csv"),
-                    c("alaska_lake_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/alaska_lake_data.csv"),
-                    c("solvents", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/solvents.csv"),
-                    c("periodic_table", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table.csv"),
-                    c("fadb_sample", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/fadb_sample.csv"),
-                    c("periodic_table_subset", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/per_table_small.csv"),
-                    c("ny_trees", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/ny_trees.csv"),
-                    c("metabolomics_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/metabolomics_data.csv"),
-                    c("wine_grape_data", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wine_grape_data.csv"),
-                    c("hawaii_aquifers", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hawaii_aquifers.csv"),
-                    c("beer_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/beer_components.csv"),
-                    c("wood_smoke", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/wood_smoke_data.csv"),
-                    c("hops_components", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/hops_components.csv"),
-                    c("tequila_chemistry", "https://thebustalab.github.io/R_For_Chemists_2/sample_data/tequila_chemistry.csv")
+                    c("algae_data", "https://thebustalab.github.io/phylochemistry/sample_data/algae_data.csv"),
+                    c("alaska_lake_data", "https://thebustalab.github.io/phylochemistry/sample_data/alaska_lake_data.csv"),
+                    c("solvents", "https://thebustalab.github.io/phylochemistry/sample_data/solvents.csv"),
+                    c("periodic_table", "https://thebustalab.github.io/phylochemistry/sample_data/per_table.csv"),
+                    c("fadb_sample", "https://thebustalab.github.io/phylochemistry/sample_data/fadb_sample.csv"),
+                    c("periodic_table_subset", "https://thebustalab.github.io/phylochemistry/sample_data/per_table_small.csv"),
+                    c("ny_trees", "https://thebustalab.github.io/phylochemistry/sample_data/ny_trees.csv"),
+                    c("metabolomics_data", "https://thebustalab.github.io/phylochemistry/sample_data/metabolomics_data.csv"),
+                    c("wine_grape_data", "https://thebustalab.github.io/phylochemistry/sample_data/wine_grape_data.csv"),
+                    c("hawaii_aquifers", "https://thebustalab.github.io/phylochemistry/sample_data/hawaii_aquifers.csv"),
+                    c("beer_components", "https://thebustalab.github.io/phylochemistry/sample_data/beer_components.csv"),
+                    c("wood_smoke", "https://thebustalab.github.io/phylochemistry/sample_data/wood_smoke_data.csv"),
+                    c("hops_components", "https://thebustalab.github.io/phylochemistry/sample_data/hops_components.csv"),
+                    c("tequila_chemistry", "https://thebustalab.github.io/phylochemistry/sample_data/tequila_chemistry.csv")
+                    c("chemical_blooms", "https://thebustalab.github.io/phylochemistry/sample_data/chemical_blooms.csv")
                 ))
 
                 pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
@@ -11333,7 +11334,7 @@
                     
                     if (bustalab == TRUE) {
 
-                        busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
+                        busta_spectral_library <- read_csv("https://thebustalab.github.io/phylochemistry/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
                         plant_phylogeny <- read.tree("https://thebustalab.github.io/data/plant_phylogeny.newick")
                         plant_species <- readMonolist("https://thebustalab.github.io/data/plant_species.csv")
                     

@@ -3739,83 +3739,54 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-<!-- # (PART) TRANSCRIPTOME ANALYSIS {-} -->
+# (PART) TRANSCRIPTOME ANALYSIS {-}
 
 <!-- start transcriptomic analyses -->
 
-<!-- # nonmodel species
+# assembly
 
-For nonmodel species transcriptome analysis, `transXpress` is recommended. `transXpress` uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpress` for it to run properly.
+For nonmodel species transcriptome analysis, `transXpress` is recommended. We often use a modified version of `transXpress` we call `transXpressLite`. It uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpressLite` for it to run properly.
 
-1. First, make sure to add conda-forge::ncurses as a dependency in the trinity_utils.yaml file to avoid errors with the script not being able to detect the samtools installation. The trinity_utils.yaml file in the emv directory should look like:
+1. Download the transXpressLite code into the directory in which you wish to perform the assembly:
 
+`git clone https://github.com/thebustalab/transXpressLite.git`
 
-```r
-channels:
-  - conda-forge
-  - bioconda
-  - r
-  - defaults
-dependencies:
-  - conda-forge::ncurses
-  - trinity=2.13.2=hea94271_3
-  - bioconductor-edger=3.36.0=r41hc247a5b_2
-  - kallisto=0.48.0=h15996b6_2
-  - r=4.1=r41hd8ed1ab_1006
-  - r-tidyverse=1.3.2=r41hc72bb7e_1
-  - bowtie2=2.5.0=py310h8d7afc0_0
-  - samtools=1.16.1=h6899075_1
-  - rsem=1.3.3=pl5321ha04fe3b_5 
-```
+2. Rename the downloaded folder to make it unique. Perhaps:
 
-2. Also add an explicit pip dependencey to the tmhmm.yaml file (it's also in the env directory):
+`mv transXpressLite transXpressLite-kfed`
 
+2. Move into that directory and set up and activate the main transXpress environment:
 
-```r
-channels:
-  - conda-forge
-  - bioconda
-  - r
-  - defaults
-dependencies:
-  - pip
-  - pip:
-    - tmhmm-py
-```
+`cd transXpressLite-kfed`
+`conda create --name transxpress`
+`conda activate transxpress`
 
-3. Also, you may also need to scale your memory usage in trinity by editing the file called `Snakefile`:
+3. Create a tab-separated file called *samples.txt* with the following contents. Important! Remember that there must be an empty line on the end of the samples.tex file.
+`
+cond_A    cond_A_rep1    A_rep1_left.fq    A_rep1_right.fq
+cond_A    cond_A_rep2    A_rep2_left.fq    A_rep2_right.fq
+cond_B    cond_B_rep1    B_rep1_left.fq    B_rep1_right.fq
+cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
+`
+
+4. Start `transXpressLite`:
+
+`./transXpress.sh`
 
 
-```r
-rule trinity_inchworm_chrysalis:
-...
-params:
-    memory="50"
-```
-
-4. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
-`pip install "numpy<1.24.0"`
-
-5. You also need to add targetp to the PATH variable in the transexpress environment:
-`export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
-
-6. Important! Remember that there must be an empty line on the end of the samples.tex file.
-
-Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
+5. Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
 
 * all the sample name folders (ex. "fed_epi_hi_rep1")
 * samples.txt
 * samples_trimmed.txt
 * busco_report.txt
-* /transdecoder/longest_orfs.pep -->
+* /transdecoder/longest_orfs.pep
 
-<!-- # model species -->
-
-<!-- # transcriptomic analyses {-} -->
-
-<!-- `conda create --name foldseek`
-`conda activate foldseek`
-`conda install -c conda-forge -c bioconda foldseek`
+<!-- 1. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
+`pip install "numpy<1.24.0"`
+ -->
+<!-- 2. You also need to add targetp to the PATH variable in the transexpress environment:
+`export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
  -->
 
 <!-- end -->
@@ -3833,7 +3804,6 @@ ________________________________________________________________________________
 `conda activate foldseek`
 `conda install -c conda-forge -c bioconda foldseek`
  -->
-<!-- # proteome analyses {-} -->
 
 
 <!-- end -->
@@ -4316,7 +4286,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4346,7 +4316,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4393,7 +4363,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4470,7 +4440,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4479,7 +4449,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4546,7 +4516,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -4565,7 +4535,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4757,7 +4727,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4782,7 +4752,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4806,7 +4776,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4817,7 +4787,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -4870,21 +4840,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -4921,7 +4891,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5259,7 +5229,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5301,7 +5271,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5390,7 +5360,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
