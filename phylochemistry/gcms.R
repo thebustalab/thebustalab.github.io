@@ -67,6 +67,11 @@
         "darkorange4", "brown"
     )
 
+    writeMonolist <- function( monolist, monolist_out_path, ... ) {
+        write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
+        # write_csv(monolist, file = monolist_out_path)
+    }
+
     #### analyzeGCMSdata
 
         #' A Shiny app to integrate GC-FID and GC-MS data
