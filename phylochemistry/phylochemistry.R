@@ -11317,7 +11317,7 @@
                     c("beer_components", "https://thebustalab.github.io/phylochemistry/sample_data/beer_components.csv"),
                     c("wood_smoke", "https://thebustalab.github.io/phylochemistry/sample_data/wood_smoke_data.csv"),
                     c("hops_components", "https://thebustalab.github.io/phylochemistry/sample_data/hops_components.csv"),
-                    c("tequila_chemistry", "https://thebustalab.github.io/phylochemistry/sample_data/tequila_chemistry.csv")
+                    c("tequila_chemistry", "https://thebustalab.github.io/phylochemistry/sample_data/tequila_chemistry.csv"),
                     c("chemical_blooms", "https://thebustalab.github.io/phylochemistry/sample_data/chemical_blooms.csv")
                 ))
 

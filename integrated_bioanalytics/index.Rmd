@@ -3893,7 +3893,6 @@ phylogeneticSignal(
     traits = chemical_blooms,
     tree = chemical_bloom_tree
 )
-
 ```
 
 ## ancestralTraits
