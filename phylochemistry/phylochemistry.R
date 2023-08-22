@@ -63,9 +63,12 @@
                     "googlesheets4",
                     "googledrive",
                     "Hmisc",
+                    "parsnip",
                     "ggforce",
                     "network",
                     "pracma",
+                    "rsample",
+                    "workflows"
                     "ggnetwork",
                     "FactoMineR",
                     "dplyr",

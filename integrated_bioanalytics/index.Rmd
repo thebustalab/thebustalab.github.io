@@ -2466,7 +2466,7 @@ Start by making a number of forests that is the square of the number of variable
 
 ```{r}
 ## Randomly split data into a traing set and a testing set
-    metabolomics_data_split <- initial_split(metabolomics_data, prop = 3/4)
+    metabolomics_data_split <- rsample::initial_split(metabolomics_data, prop = 3/4)
 
 ## Create a workflow that has a recipe and a model
   workflow() %>%
@@ -2970,15 +2970,17 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- end -->
 
-<!-- start map data -->
+<!-- start map dataspecial topics -->
 
-# map data {-}
+# special topics
+
+## map data {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
 ```
 
-## plotting boundaries {-}
+### plotting boundaries {-}
 
 There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
 
@@ -3028,7 +3030,7 @@ ggplot() +
   coord_map()
 ```
 
-## further reading {-}
+### further reading {-}
 
 For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
 
@@ -3065,10 +3067,10 @@ ________________________________________________________________________________
 
 1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
-2. In RStudio, run the source command to load `phylochemistry`:
+2. In RStudio, run the source command to load `gcms` (note: if you are loading the `phylochemistry` source, you can skip this step):
 
 ```{r, message = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+source("https://thebustalab.github.io/phylochemistry/gcms.R")
 ```
  \
 
@@ -3087,22 +3089,7 @@ analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
 
-The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shit+q to load the chromatogram(s).
-
-## loading analyzeGCMSdata (advanced) {-}
-
-You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. For example:
-
-```{r, message = FALSE, eval = FALSE}
-analyzeGCMSdata("/Volumes/My_Drive/gc_data", ions = c("0", "218"))
-```
- \
-
-Will return an interface that shows chromatograms for the total ion count and for ion 218.
-
-At this point, note that you have a new set of files in your data-containing folder. There will be one `*.CDF.csv` file for each CDF file you have in the folder. This contains a matrix of all the mass measurements in your entire sample - the abundance of each m/z value during each scan. There is also a `chromatograms.csv` file. This is a list of all the chromatograms (total ion + whatever single ions were specified). These can be useful for creating plots of chromatograms via ggplot.
-
-<!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
+The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).
 
 ## using analyzeGCMSdata
 
@@ -3125,9 +3112,23 @@ To control the mass spectrum window:
 * shift+1 = extract mass spectra from highlighted chromatogram region, plot average mass spectrum in panel 1.
 * shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.
 * shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.
-* shift+4 = search current spectrum in panel 1 against library of mass spectra.
-* shift+5 = save the current spectrum in panel 1 as a csv file.
+* shift+4 = search current spectrum in panel 1 against library of mass spectra (only available if you load via `phylochemistry`).
+* shift+5 = save the current spectrum in panel 1 as a csv file (only available if you load via `phylochemistry`). 
 
+## loading analyzeGCMSdata (advanced) {-}
+
+You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. For example:
+
+```{r, message = FALSE, eval = FALSE}
+analyzeGCMSdata("/Volumes/My_Drive/gc_data", ions = c("0", "218"))
+```
+ \
+
+Will return an interface that shows chromatograms for the total ion count and for ion 218.
+
+At this point, note that you have a new set of files in your data-containing folder. There will be one `*.CDF.csv` file for each CDF file you have in the folder. This contains a matrix of all the mass measurements in your entire sample - the abundance of each m/z value during each scan. There is also a `chromatograms.csv` file. This is a list of all the chromatograms (total ion + whatever single ions were specified). These can be useful for creating plots of chromatograms via ggplot.
+
+<!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
 
 ## CDF export
 
