@@ -68,7 +68,7 @@
                     "network",
                     "pracma",
                     "rsample",
-                    "workflows"
+                    "workflows",
                     "ggnetwork",
                     "FactoMineR",
                     "dplyr",
