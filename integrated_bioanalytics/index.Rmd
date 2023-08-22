@@ -2452,7 +2452,7 @@ plot1/plot2
 
 ## classification {-}
 
-We will use random forests, a type of machine learning, to make classification models. Start by watching these videos:
+We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
 1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
 2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
 
@@ -2972,7 +2972,7 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- start map dataspecial topics -->
 
-# special topics
+# special topics {-}
 
 ## map data {-}
 
@@ -3063,7 +3063,7 @@ ________________________________________________________________________________
 
 ## loading analyzeGCMSdata (basic) {-}
 
-`phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:
+`phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the application, use the following guidelines:
 
 1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
@@ -3115,7 +3115,7 @@ To control the mass spectrum window:
 * shift+4 = search current spectrum in panel 1 against library of mass spectra (only available if you load via `phylochemistry`).
 * shift+5 = save the current spectrum in panel 1 as a csv file (only available if you load via `phylochemistry`). 
 
-## loading analyzeGCMSdata (advanced) {-}
+## using analyzeGCMSdata (advanced) {-}
 
 You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. For example:
 
@@ -3138,12 +3138,11 @@ At this point, note that you have a new set of files in your data-containing fol
 4. Copy the .D files for the samples you wish to analyze to the same folder
 5. Move this folder to your personal computer
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
+
 <!-- end -->
 
 
-# (PART) SEQUENCE DATA {-}
-
-<!-- start nanopore data -->
+<!-- # (PART) SEQUENCE DATA {-}
 
 # data acquisition {-}
 
@@ -3184,7 +3183,12 @@ Display more data pertaining to the identification of disks. Can also change par
 
 -Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
 
-# sequence assessment {-}
+4. Additional Information
+
+bootable USB: https://rufus.ie/en/#
+
+
+# nanopore read assessment {-}
 
 With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
 
@@ -3211,30 +3215,30 @@ qc_data %>%
     scale_fill_manual(values = c("gold", "maroon"))
 ```
 
-4. Additional Information
-
-bootable USB: https://rufus.ie/en/#
-
 # illumina read assessment {-}
 
-Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples
+Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples.
+
+## fastqc
+
+See transXpress. -->
 
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) TRANSCRIPTOME ANALYSIS {-}
+<!-- # (PART) TRANSCRIPTOME ANALYSIS {-} -->
 
 <!-- start transcriptomic analyses -->
 
-## nonmodel species
+<!-- # nonmodel species
 
 For nonmodel species transcriptome analysis, `transXpress` is recommended. `transXpress` uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpress` for it to run properly.
 
 1. First, make sure to add conda-forge::ncurses as a dependency in the trinity_utils.yaml file to avoid errors with the script not being able to detect the samtools installation. The trinity_utils.yaml file in the emv directory should look like:
 
-`
+```{r, eval = FALSE}
 channels:
   - conda-forge
   - bioconda
@@ -3250,10 +3254,11 @@ dependencies:
   - bowtie2=2.5.0=py310h8d7afc0_0
   - samtools=1.16.1=h6899075_1
   - rsem=1.3.3=pl5321ha04fe3b_5 
-`
+```
 
 2. Also add an explicit pip dependencey to the tmhmm.yaml file (it's also in the env directory):
-`
+
+```{r, eval = FALSE}
 channels:
   - conda-forge
   - bioconda
@@ -3263,20 +3268,19 @@ dependencies:
   - pip
   - pip:
     - tmhmm-py
-`
+```
 
 3. Also, you may also need to scale your memory usage in trinity by editing the file called `Snakefile`:
-`
+
+```{r, eval = FALSE}
 rule trinity_inchworm_chrysalis:
 ...
 params:
     memory="50"
-`
+```
 
 4. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
-`
-pip install "numpy<1.24.0"
-`
+`pip install "numpy<1.24.0"`
 
 5. You also need to add targetp to the PATH variable in the transexpress environment:
 `export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
@@ -3285,42 +3289,36 @@ pip install "numpy<1.24.0"
 
 Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
 
-- all the sample name folders (ex. "fed_epi_hi_rep1")
-<!-- - kallisto.isoform.counts.matrix -->
-<!-- - transcriptome_annotated.fasta
-- transcriptome.fasta.transdecoder.pep -->
-- samples.txt
-- samples_trimmed.txt
-- busco_report.txt
-- /transdecoder/longest_orfs.pep
+* all the sample name folders (ex. "fed_epi_hi_rep1")
+* samples.txt
+* samples_trimmed.txt
+* busco_report.txt
+* /transdecoder/longest_orfs.pep -->
 
-## model species
+<!-- # model species -->
 
 <!-- # transcriptomic analyses {-} -->
-conda create --name foldseek
-conda activate foldseek
-conda install -c conda-forge -c bioconda foldseek
 
+<!-- `conda create --name foldseek`
+`conda activate foldseek`
+`conda install -c conda-forge -c bioconda foldseek`
+ -->
 
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) PROTEOME ANALYSIS {-}
+<!-- # (PART) PROTEOME ANALYSIS {-} -->
 
 <!-- start proteome analyses -->
 
-## structure similarity
+<!-- ## structure similarity
 
-`
-conda create --name foldseek
-conda activate foldseek
-conda install -c conda-forge -c bioconda foldseek
-`
-
-
-
+`conda create --name foldseek`
+`conda activate foldseek`
+`conda install -c conda-forge -c bioconda foldseek`
+ -->
 <!-- # proteome analyses {-} -->
 
 
@@ -3329,11 +3327,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) GENOME ANALYSIS {-}
+<!-- # (PART) GENOME ANALYSIS {-} -->
 
 <!-- start genomic analyses -->
 
-# setup {-}
+<!-- # setup {-}
 
 * Get docker.
 
@@ -3367,8 +3365,6 @@ Done! Log in with `ssh {username}@host.address`
 To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.
 
 ## assembly
-
-
 
 
 ### equipment
@@ -3578,7 +3574,7 @@ https://www.molecularecologist.com/2017/03/29/whats-n50/
 sh $MERQURY/best_k.sh <genome_size>
 
 
-Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder:
+Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: -->
 
 ```{r}
 # reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
@@ -3641,28 +3637,10 @@ Let's look at some examples. For these example, we will use some fasta files sto
 #   theme_classic() +
 #   coord_polar()
 ```
-# annotation {-}
+<!-- # annotation {-} -->
 
-docker pull nanozoo/braker2
+<!-- docker pull nanozoo/braker2 -->
 
-Pfam scores
-E-values and Bit-scores
-Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
-
-E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
-
-Sequence versus domain scores
-There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
-
-Meaning of bit-score for non-mathematicians
-A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
-
-# comparative genomics {-}
-
-GENESPACE: syntenic pan-genome annotations for eukaryotes
-
-
-## loading GFF files
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -3737,6 +3715,14 @@ The expect value (E-value) can be changed in order to limit the number of hits t
 reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
 
 reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
+
+E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
+
+* Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
+
+* Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
 <!-- * bit-scores Taylor to write something? -->
 
@@ -3936,16 +3922,23 @@ ancestral states: https://www.phytools.org/eqg2015/asr.html
 
 ## phylogenetic regression
 
+# comparative genomics {-}
+
+GENESPACE: syntenic pan-genome annotations for eukaryotes
+
+
+## loading GFF files
+
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) LANGUAGE MODELS
+# (PART) LANGUAGE MODELS {-}
 
 <!-- start language models -->
 
-# completionGPT
+# completionGPT {-}
 
 You can run completions using:
 
@@ -3970,7 +3963,7 @@ Temperature goes from 0 to 2 and adds randomness to the answer.
 
 You have to provide your openAI api key.
 
-# analyzeLiterature
+# analyzeLiterature {-}
 
 If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
 
@@ -4464,11 +4457,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) IMAGE ANALYSIS {-}
+<!-- # (PART) IMAGE ANALYSIS {-} -->
 
 <!-- start IMAGE ANALYSIS -->
 
-# image color analysis {-}
+<!-- # image color analysis {-}
 
 For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
 
@@ -4484,7 +4477,7 @@ analyzeImage(
 ```{r, eval = FALSE}
 # analyzeMassSpectralImages()
 ```
-
+ -->
 
 
 <!-- end -->

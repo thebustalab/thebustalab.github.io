@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-06-16"
+date: "2023-08-22"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1913,6 +1913,8 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
 
 ### further reading {-}
 
+Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
+
 ## tsne and umap {-}
 
 
@@ -2695,6 +2697,86 @@ plot1/plot2
 
 <img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
 
+## classification {-}
+
+We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
+1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
+2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
+
+Now we will make a classification model using random forests. The overall idea is to make a workflow, which consists of a recipe (the data) and a model (random forest and associated parameters), then tune the model and add the best parameters to the workflow, and finally evaluate the model with the test data. That model can then be used on further data for classification. Here is the general idea in schematic form:
+
+`workflow %>% add_recipe() %>% add_model() -> workflow`
+`workflow %>% tune_grid() %>% select_best() -> best_parameters`
+`workflow %>% finalize_workflow() %>% last_fit()`
+
+Start by making a number of forests that is the square of the number of variables and then try a few values above and below that number.
+
+
+```r
+## Randomly split data into a traing set and a testing set
+    metabolomics_data_split <- rsample::initial_split(metabolomics_data, prop = 3/4)
+
+## Create a workflow that has a recipe and a model
+  workflow() %>%
+    add_recipe(
+      recipe( patient_status ~ ., data = metabolomics_data ) %>%
+      step_normalize(all_numeric()) %>% step_impute_knn(all_predictors())
+    ) %>%
+    add_model(
+      rand_forest() %>% # specify that the model is a random forest
+      set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
+      set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
+      set_mode("classification") # choose either the continuous regression or binary classification mode
+    ) -> workflow
+
+## Tune the model on the training set
+  tune_results <- tune_grid(
+    workflow,
+    resamples = vfold_cv(training(metabolomics_data_split)), #CV object
+    grid = expand.grid(mtry = c(2, 3, 4, 5, 6, 7, 8, 9), trees = seq(50,800,50)), # grid of values to try
+    metrics = metric_set(accuracy, roc_auc) # metrics we care about
+  )
+
+# Check model parameters if you want
+  collect_metrics(tune_results) %>%
+    filter(.metric == "accuracy") %>%
+    ggplot(aes(x = factor(mtry), y = factor(trees), fill = mean)) +
+      geom_tile(color = "black", size = 1) + scale_fill_viridis() + theme_classic() +
+      scale_x_discrete(expand = c(0,0)) + scale_y_discrete(expand = c(0,0)) +
+      theme(text = element_text(size = 18))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
+
+```r
+    select_best(tune_results, metric = "accuracy")
+## # A tibble: 1 × 3
+##    mtry trees .config               
+##   <dbl> <dbl> <chr>                 
+## 1     7   100 Preprocessor1_Model014
+
+## Apply the best parameters to the workflow and evaluate performance on test data
+  workflow %>%
+    finalize_workflow( select_best(tune_results, metric = "accuracy") ) %>% # Select best parameters
+    last_fit(metabolomics_data_split) -> wf_fit # Fit the test data
+  collect_metrics(wf_fit) # Check on the metrics if you want
+## # A tibble: 2 × 4
+##   .metric  .estimator .estimate .config             
+##   <chr>    <chr>          <dbl> <chr>               
+## 1 accuracy binary         0.875 Preprocessor1_Model1
+## 2 roc_auc  binary         0.958 Preprocessor1_Model1
+  test_predictions <- collect_predictions(wf_fit) # Collect predictions
+  table(test_predictions$.pred_class == test_predictions$patient_status) # number right and wrong
+## 
+## FALSE  TRUE 
+##     3    21
+  conf_mat(test_predictions, truth = patient_status, estimate = .pred_class) # confusion matrix
+##                 Truth
+## Prediction       healthy kidney_disease
+##   healthy             10              1
+##   kidney_disease       2             11
+```
+
 ## exercises {-}
 
 To practice creating linear models, try the following:
@@ -2711,6 +2793,19 @@ To practice creating linear models, try the following:
 ## further reading {-}
 
 https://github.com/easystats/performance
+
+Here is more information on common machine learning tasks:
+https://pythonprogramminglanguage.com/machine-learning-tasks/
+
+Some major tasks include:
+  Classification
+  Regression
+  Clustering
+
+Classification with random forests:
+1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
+3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 <!-- end -->
 
@@ -2776,7 +2871,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2858,7 +2953,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-160-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2871,7 +2966,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-160-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2960,7 +3055,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2974,7 +3069,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3084,7 +3179,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3154,7 +3249,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3169,7 +3264,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3254,7 +3349,7 @@ hawaii_aquifers %>%
 
 Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
 
-What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_tTest` of course!
+What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_TTest` of course!
 
 
 ```r
@@ -3315,7 +3410,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -3342,13 +3437,15 @@ Using the `hawaii_aquifers` data set, please complete the following:
 
 <!-- end -->
 
-<!-- start comparing means -->
+<!-- start map dataspecial topics -->
 
-# map data {-}
+# special topics {-}
+
+## map data {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" />
 
-## plotting boundaries {-}
+### plotting boundaries {-}
 
 There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
 
@@ -3409,7 +3506,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -3421,7 +3518,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -3437,9 +3534,9 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
-## further reading {-}
+### further reading {-}
 
 For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
 
@@ -3472,15 +3569,15 @@ ________________________________________________________________________________
 
 ## loading analyzeGCMSdata (basic) {-}
 
-`phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the lite version of the integration app, use the following guidelines:
+`phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the application, use the following guidelines:
 
 1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
-2. In RStudio, run the source command to load `phylochemistry`:
+2. In RStudio, run the source command to load `gcms` (note: if you are loading the `phylochemistry` source, you can skip this step):
 
 
 ```r
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+source("https://thebustalab.github.io/phylochemistry/gcms.R")
 ```
  \
 
@@ -3501,23 +3598,7 @@ analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
 
-The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shit+q to load the chromatogram(s).
-
-## loading analyzeGCMSdata (advanced) {-}
-
-You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. For example:
-
-
-```r
-analyzeGCMSdata("/Volumes/My_Drive/gc_data", ions = c("0", "218"))
-```
- \
-
-Will return an interface that shows chromatograms for the total ion count and for ion 218.
-
-At this point, note that you have a new set of files in your data-containing folder. There will be one `*.CDF.csv` file for each CDF file you have in the folder. This contains a matrix of all the mass measurements in your entire sample - the abundance of each m/z value during each scan. There is also a `chromatograms.csv` file. This is a list of all the chromatograms (total ion + whatever single ions were specified). These can be useful for creating plots of chromatograms via ggplot.
-
-<!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
+The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).
 
 ## using analyzeGCMSdata
 
@@ -3540,9 +3621,24 @@ To control the mass spectrum window:
 * shift+1 = extract mass spectra from highlighted chromatogram region, plot average mass spectrum in panel 1.
 * shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.
 * shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.
-* shift+4 = search current spectrum in panel 1 against library of mass spectra.
-* shift+5 = save the current spectrum in panel 1 as a csv file.
+* shift+4 = search current spectrum in panel 1 against library of mass spectra (only available if you load via `phylochemistry`).
+* shift+5 = save the current spectrum in panel 1 as a csv file (only available if you load via `phylochemistry`). 
 
+## using analyzeGCMSdata (advanced) {-}
+
+You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. For example:
+
+
+```r
+analyzeGCMSdata("/Volumes/My_Drive/gc_data", ions = c("0", "218"))
+```
+ \
+
+Will return an interface that shows chromatograms for the total ion count and for ion 218.
+
+At this point, note that you have a new set of files in your data-containing folder. There will be one `*.CDF.csv` file for each CDF file you have in the folder. This contains a matrix of all the mass measurements in your entire sample - the abundance of each m/z value during each scan. There is also a `chromatograms.csv` file. This is a list of all the chromatograms (total ion + whatever single ions were specified). These can be useful for creating plots of chromatograms via ggplot.
+
+<!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
 
 ## CDF export
 
@@ -3552,12 +3648,11 @@ To control the mass spectrum window:
 4. Copy the .D files for the samples you wish to analyze to the same folder
 5. Move this folder to your personal computer
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
+
 <!-- end -->
 
 
-# (PART) SEQUENCE DATA {-}
-
-<!-- start nanopore data -->
+<!-- # (PART) SEQUENCE DATA {-}
 
 # data acquisition {-}
 
@@ -3598,7 +3693,12 @@ Display more data pertaining to the identification of disks. Can also change par
 
 -Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
 
-# sequence assessment {-}
+4. Additional Information
+
+bootable USB: https://rufus.ie/en/#
+
+
+# nanopore read assessment {-}
 
 With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
 
@@ -3626,29 +3726,31 @@ qc_data %>%
     scale_fill_manual(values = c("gold", "maroon"))
 ```
 
-4. Additional Information
-
-bootable USB: https://rufus.ie/en/#
-
 # illumina read assessment {-}
 
-Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples
+Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples.
+
+## fastqc
+
+See transXpress. -->
 
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) TRANSCRIPTOME ANALYSIS {-}
+<!-- # (PART) TRANSCRIPTOME ANALYSIS {-} -->
 
 <!-- start transcriptomic analyses -->
 
-`conda install -c bioconda trimmomatic`
-`trimmomatic PE -version`
+<!-- # nonmodel species
 
-`transXpress` make sure to add conda-forge::ncurses as a dependency in the yaml file. should look like:
+For nonmodel species transcriptome analysis, `transXpress` is recommended. `transXpress` uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpress` for it to run properly.
 
-`
+1. First, make sure to add conda-forge::ncurses as a dependency in the trinity_utils.yaml file to avoid errors with the script not being able to detect the samtools installation. The trinity_utils.yaml file in the emv directory should look like:
+
+
+```r
 channels:
   - conda-forge
   - bioconda
@@ -3664,9 +3766,74 @@ dependencies:
   - bowtie2=2.5.0=py310h8d7afc0_0
   - samtools=1.16.1=h6899075_1
   - rsem=1.3.3=pl5321ha04fe3b_5 
-`
+```
+
+2. Also add an explicit pip dependencey to the tmhmm.yaml file (it's also in the env directory):
+
+
+```r
+channels:
+  - conda-forge
+  - bioconda
+  - r
+  - defaults
+dependencies:
+  - pip
+  - pip:
+    - tmhmm-py
+```
+
+3. Also, you may also need to scale your memory usage in trinity by editing the file called `Snakefile`:
+
+
+```r
+rule trinity_inchworm_chrysalis:
+...
+params:
+    memory="50"
+```
+
+4. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
+`pip install "numpy<1.24.0"`
+
+5. You also need to add targetp to the PATH variable in the transexpress environment:
+`export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
+
+6. Important! Remember that there must be an empty line on the end of the samples.tex file.
+
+Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
+
+* all the sample name folders (ex. "fed_epi_hi_rep1")
+* samples.txt
+* samples_trimmed.txt
+* busco_report.txt
+* /transdecoder/longest_orfs.pep -->
+
+<!-- # model species -->
 
 <!-- # transcriptomic analyses {-} -->
+
+<!-- `conda create --name foldseek`
+`conda activate foldseek`
+`conda install -c conda-forge -c bioconda foldseek`
+ -->
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+<!-- # (PART) PROTEOME ANALYSIS {-} -->
+
+<!-- start proteome analyses -->
+
+<!-- ## structure similarity
+
+`conda create --name foldseek`
+`conda activate foldseek`
+`conda install -c conda-forge -c bioconda foldseek`
+ -->
+<!-- # proteome analyses {-} -->
 
 
 <!-- end -->
@@ -3674,11 +3841,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) GENOME ANALYSIS {-}
+<!-- # (PART) GENOME ANALYSIS {-} -->
 
 <!-- start genomic analyses -->
 
-# setup {-}
+<!-- # setup {-}
 
 * Get docker.
 
@@ -3712,8 +3879,6 @@ Done! Log in with `ssh {username}@host.address`
 To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.
 
 ## assembly
-
-
 
 
 ### equipment
@@ -3925,7 +4090,7 @@ https://www.molecularecologist.com/2017/03/29/whats-n50/
 sh $MERQURY/best_k.sh <genome_size>
 
 
-Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder:
+Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: -->
 
 
 ```r
@@ -3989,28 +4154,10 @@ Let's look at some examples. For these example, we will use some fasta files sto
 #   theme_classic() +
 #   coord_polar()
 ```
-# annotation {-}
+<!-- # annotation {-} -->
 
-docker pull nanozoo/braker2
+<!-- docker pull nanozoo/braker2 -->
 
-Pfam scores
-E-values and Bit-scores
-Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
-
-E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
-
-Sequence versus domain scores
-There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
-
-Meaning of bit-score for non-mathematicians
-A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
-
-# comparative genomics {-}
-
-GENESPACE: syntenic pan-genome annotations for eukaryotes
-
-
-## loading GFF files
 <!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -4051,9 +4198,9 @@ the_transcriptomes <- c(
 )
 
 names(the_transcriptomes) <- c(
-  "Nicotiana_glauca.fa",
-  "Nicotiana_tabacum.fa",
-  "Nicotiana_benthamiana.fa"
+  "Nicotiana_glauca",
+  "Nicotiana_tabacum",
+  "Nicotiana_benthamiana"
 )
 
 polyBlast(
@@ -4084,6 +4231,14 @@ The expect value (E-value) can be changed in order to limit the number of hits t
 reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
 
 reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
+
+E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
+
+* Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
+
+* Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
 <!-- * bit-scores Taylor to write something? -->
 
@@ -4161,7 +4316,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4191,7 +4346,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4238,7 +4393,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4315,7 +4470,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4324,7 +4479,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4391,7 +4546,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -4410,7 +4565,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4421,6 +4576,67 @@ Note that this is different from `buildTree`'s "ancestral_states", which estimat
 ancestral states: https://www.phytools.org/eqg2015/asr.html
 
 ## phylogenetic regression
+
+# comparative genomics {-}
+
+GENESPACE: syntenic pan-genome annotations for eukaryotes
+
+
+## loading GFF files
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) LANGUAGE MODELS {-}
+
+<!-- start language models -->
+
+# completionGPT {-}
+
+You can run completions using:
+
+
+```r
+
+completionGPT(
+  system_prompt = "",
+  query = "",
+  model = "",
+  temperature = 0,
+  openai_api_key = ""
+)
+```
+
+The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`.
+
+The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.`
+
+Available options for `model` include "gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.
+
+Temperature goes from 0 to 2 and adds randomness to the answer. 
+
+You have to provide your openAI api key.
+
+# analyzeLiterature {-}
+
+If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
+
+- Simple question: What are wax blooms?
+
+- Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
+
+- High-Complexity question: Can you describe the transcriptional regulation of lipid transfer proteins in plants?
+
+- Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
+
+ "In earlier studies, different other compounds including β-amyrin were overproduced through using strong constitutive promoters [12], enhancers [13] and transcription factors [14]. The β-amyrin is the triterpenoids belongs to oleanane group [15], which harbors anti-hyperglycemic, anti-inflammatory, hypolipidemic effects along with several other pharmacological activities [16,17]. The β-amyrin synthase (βAS) is responsible to synthesize the β-amyrin from 2,3-oxidosqualene[18]. This 2,3-oxidosqualene is synthesized from squalene through squalene epoxidase (SQE), encoded by the ERG1 gene in S. cerevisiae [19]. Squalene is synthesized from farnesyl-pyrophosphate through the
+action of squalene synthase (SQS) (ERG9 gene); and this farnesyl-pyrophosphate (FPP) is synthesized by farnesyl diphosphate synthase (FPPS) (ERG20 gene), from isopentenyl pyrophosphate (IPP), a precursor supplied by mevalonate (MVA) pathway (Fig. 1). The 3-Hydroxy-3-Methyl glutaryl-CoA reductase (HMG1) [20,21] and squalene
+monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway in yeast. For the biosynthesis of triterpenoids, SQS and SQE are important enzymes [23] and were previously overexpressed for
+the overproduction of triterpenoids [14,24]."
+
+- Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms? 
 
 <!-- end -->
 ________________________________________________________________________________________________
@@ -4541,7 +4757,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4566,7 +4782,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4590,7 +4806,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4601,7 +4817,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -4654,21 +4870,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -4705,7 +4921,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -4909,11 +5125,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) IMAGE ANALYSIS {-}
+<!-- # (PART) IMAGE ANALYSIS {-} -->
 
 <!-- start IMAGE ANALYSIS -->
 
-# image color analysis {-}
+<!-- # image color analysis {-}
 
 For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
 
@@ -4931,7 +5147,7 @@ analyzeImage(
 ```r
 # analyzeMassSpectralImages()
 ```
-
+ -->
 
 
 <!-- end -->
@@ -5043,7 +5259,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5068,13 +5284,13 @@ periodic_table
 ##  8             8 oxygen       O             16          
 ##  9             9 fluorine     F             17          
 ## 10            10 neon         Ne            18          
-## # … with 108 more rows, and 37 more variables:
-## #   period <dbl>, atomic_mass_rounded <dbl>,
-## #   melting_point_C <dbl>, boiling_point_C <dbl>,
-## #   state_at_RT <chr>, density_g_per_mL <dbl>,
+## # ℹ 108 more rows
+## # ℹ 37 more variables: period <dbl>,
+## #   atomic_mass_rounded <dbl>, melting_point_C <dbl>,
+## #   boiling_point_C <dbl>, state_at_RT <chr>,
+## #   density_g_per_mL <dbl>,
 ## #   electronegativity_pauling <dbl>,
-## #   first_ionization_poten_eV <dbl>,
-## #   second_ionization_poten_eV <dbl>, …
+## #   first_ionization_poten_eV <dbl>, …
 ```
 
 Notice that now when we look at the type of data that is contained in the column `group_number` it says "<fct>". This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?
@@ -5085,7 +5301,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5111,7 +5327,7 @@ alaska_lake_data %>%
 ##  8       6.46  7.69
 ##  9       6.46  7.69
 ## 10       6.46  7.69
-## # … with 210 more rows
+## # ℹ 210 more rows
 ```
 
 How to remove certain columns:
@@ -5132,7 +5348,7 @@ alaska_lake_data %>%
 ##  8 Devil_Mountain… BELA   7.69 Na         8.92  free        
 ##  9 Devil_Mountain… BELA   7.69 K          1.2   free        
 ## 10 Devil_Mountain… BELA   7.69 Ca         5.73  free        
-## # … with 210 more rows
+## # ℹ 210 more rows
 ```
 
 ## user color palettes {-}
@@ -5174,7 +5390,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

@@ -1,46 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <title>alignments | Integrated Bioanalytics</title>
-
-    <meta name="author" content="Lucas Busta and members of the Busta lab" />
-  
-   <meta name="description" content="alignments | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses." />
-   <meta name="generator" content="placeholder" />
-  <meta property="og:title" content="alignments | Integrated Bioanalytics" />
-  <meta property="og:type" content="book" />
-  
-  
-  <meta property="og:description" content="alignments | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses." />
-
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="alignments | Integrated Bioanalytics" />
-  
-  <meta name="twitter:description" content="alignments | Integrated Bioanalytics is a book describing how to perform chemical, phylogenetic, and genomic analyses." />
-  
-  <!-- JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script>
-  <script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script>
-    <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet" />
-    <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script>
-    <link href="libs/Lato-0.4.6/font.css" rel="stylesheet" />
-    <link href="libs/Roboto_Mono-0.4.6/font.css" rel="stylesheet" />
-    <link href="libs/Montserrat-0.4.6/font.css" rel="stylesheet" />
-    <script src="libs/bs3compat-0.4.2/transition.js"></script>
-    <script src="libs/bs3compat-0.4.2/tabs.js"></script>
-    <script src="libs/bs3compat-0.4.2/bs3compat.js"></script>
-    <link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet" />
-    <script src="libs/bs4_book-1.0.0/bs4_book.js"></script>
-    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-
-    <script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>alignments | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="1.4 alignSequences There are, of course, many tools for aligning sequences. alignSequences(), the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino...">
+<meta name="generator" content="bookdown 0.35 with bs4_book()">
+<meta property="og:title" content="alignments | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="1.4 alignSequences There are, of course, many tools for aligning sequences. alignSequences(), the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="alignments | Integrated Bioanalytics">
+<meta name="twitter:description" content="1.4 alignSequences There are, of course, many tools for aligning sequences. alignSequences(), the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.6/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -49,21 +31,13 @@
       ga('create', 'UA-99618359-1', 'auto');
       ga('send', 'pageview');
 
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script>
-
-  <!-- CSS -->
-    <link rel="stylesheet" href="style/style.css" />
-  
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
 </head>
-
 <body data-spy="scroll" data-target="#toc">
 
 <div class="container-fluid">
 <div class="row">
-  <header class="col-sm-12 col-lg-3 sidebar sidebar-book">
-    <a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
 
     <div class="d-flex align-items-start justify-content-between">
       <h2>
@@ -75,25 +49,57 @@
     <div id="main-nav" class="collapse-lg">
       <form role="search">
         <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
-      </form>
+</form>
 
-      <nav aria-label="Table of contents">
-        <h2>Table of contents</h2>
-        <div id="book-toc"></div>
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA ANALYSIS IN R</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="data-visualization.html">data visualization</a></li>
+<li><a class="" href="data-wrangling.html">data wrangling</a></li>
+<li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
+<li><a class="" href="clustering.html">clustering</a></li>
+<li><a class="" href="models.html">models</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="special-topics.html">special topics</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
+<li class="book-part">EVOLUTIONARY ANALYSIS</li>
+<li><a class="" href="blast.html">blast</a></li>
+<li><a class="active" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">LANGUAGE MODELS</li>
+<li><a class="" href="completiongpt.html">completionGPT</a></li>
+<li><a class="" href="analyzeliterature.html">analyzeLiterature</a></li>
+<li class="book-part">SCIENTIFIC WRITING</li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html">results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
 
         <div class="book-extra">
-          <p><a id="book-repo" href="#">View book source <i class="fab fa-github"></i></a></li></p>
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
         </div>
       </nav>
-    </div>
-  </header>
-
-  <main class="col-sm-12 col-md-9 col-lg-7" id="content">
-<div id="alignments" class="section level1 unnumbered">
-<h1>alignments</h1>
-<p><img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" width="100%" style="display: block; margin: auto;" /></p>
-<div id="alignsequences" class="section level2" number="1.12">
-<h2><span class="header-section-number">1.12</span> alignSequences</h2>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="alignments" class="section level1 unnumbered">
+<h1>alignments<a class="anchor" aria-label="anchor" href="#alignments"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<div id="alignsequences" class="section level2" number="1.4">
+<h2>
+<span class="header-section-number">1.4</span> alignSequences<a class="anchor" aria-label="anchor" href="#alignsequences"><i class="fas fa-link"></i></a>
+</h2>
 <p>There are, of course, many tools for aligning sequences. <code>alignSequences()</code>, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_directory_path.</p>
 <ul>
 <li><p>“monolist”: a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the “sequences_of_interest_directory_path”.</p></li>
@@ -104,53 +110,59 @@
 <li><p>“mode”: options are “nucl_align”, a basic nucleotide alignment, “amin_align”, a basic amino acid alignment, “codon_align”, a codon alignment, and “fragment_align”, which will align all the sequences to a base fragment.</p></li>
 <li><p>“base_fragment”: a path to a fasta file containing the base fragment to which the subjects should be aligned.</p></li>
 </ul>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="alignments.html#cb146-1" aria-hidden="true" tabindex="-1"></a><span class="fu">alignSequences</span>(</span>
-<span id="cb146-2"><a href="alignments.html#cb146-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">monolist =</span> <span class="fu">readMonolist</span>(<span class="st">&quot;/path_to/a_csv_file_that_will_list_all_blast_hits.csv&quot;</span>), </span>
-<span id="cb146-3"><a href="alignments.html#cb146-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">subset =</span> <span class="st">&quot;subset_all&quot;</span>, </span>
-<span id="cb146-4"><a href="alignments.html#cb146-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">alignment_directory_path =</span> <span class="st">&quot;/path_to/a_folder_for_alignments/&quot;</span>, </span>
-<span id="cb146-5"><a href="alignments.html#cb146-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sequences_of_interest_directory_path =</span> <span class="st">&quot;/path_to/a_folder_for_hit_sequences/&quot;</span>,</span>
-<span id="cb146-6"><a href="alignments.html#cb146-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">input_sequence_type =</span> <span class="st">&quot;amin&quot;</span>, </span>
-<span id="cb146-7"><a href="alignments.html#cb146-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;amin_alignment&quot;</span>,</span>
-<span id="cb146-8"><a href="alignments.html#cb146-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">base_fragment =</span> <span class="cn">NULL</span></span>
-<span id="cb146-9"><a href="alignments.html#cb146-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">alignSequences</span><span class="op">(</span></span>
+<span>  monolist <span class="op">=</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="st">"/path_to/a_csv_file_that_will_list_all_blast_hits.csv"</span><span class="op">)</span>, </span>
+<span>  subset <span class="op">=</span> <span class="st">"subset_all"</span>, </span>
+<span>  alignment_directory_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_alignments/"</span>, </span>
+<span>  sequences_of_interest_directory_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_hit_sequences/"</span>,</span>
+<span>  input_sequence_type <span class="op">=</span> <span class="st">"amin"</span>, </span>
+<span>  mode <span class="op">=</span> <span class="st">"amin_alignment"</span>,</span>
+<span>  base_fragment <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="analyzealignment" class="section level2" number="1.13">
-<h2><span class="header-section-number">1.13</span> analyzeAlignment</h2>
+<div id="analyzealignment" class="section level2" number="1.5">
+<h2>
+<span class="header-section-number">1.5</span> analyzeAlignment<a class="anchor" aria-label="anchor" href="#analyzealignment"><i class="fas fa-link"></i></a>
+</h2>
 </div>
 </div>
-  </main>
-
-  <div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+  <div class="chapter-nav">
+<div class="prev"><a href="blast.html">blast</a></div>
+<div class="next"><a href="phylogenies.html">phylogenies</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
         <ul class="list-unstyled">
-          <li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
           <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
           <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
           <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
         </ul>
-        <hr>
-    <nav id="toc" data-toggle="toc" aria-label="On this page">
-      <h2>On this page</h2>
-      <div id="book-on-this-page"></div>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#alignments">alignments</a></li>
+<li><a class="nav-link" href="#alignsequences"><span class="header-section-number">1.4</span> alignSequences</a></li>
+<li><a class="nav-link" href="#analyzealignment"><span class="header-section-number">1.5</span> analyzeAlignment</a></li>
+</ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
-          <li><a id="book-source" href="#">View source <i class="fab fa-github"></i></a></li>
-          <li><a id="book-edit" href="#">Edit this page <i class="fab fa-github"></i></a></li>
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
         </ul>
-      </div>
+</div>
     </nav>
-  </div>
+</div>
 
 </div>
 </div> <!-- .container -->
 
-<footer class="bg-primary text-light mt-5">
-  <div class="container"><div class="row">
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-06-16.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-22.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
@@ -159,8 +171,5 @@
 
 </div></div>
 </footer>
-
-
 </body>
-
 </html>

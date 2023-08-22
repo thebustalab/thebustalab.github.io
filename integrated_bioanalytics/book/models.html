@@ -7,7 +7,7 @@
 <title>models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
 <meta name="description" content="univariate Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to...">
-<meta name="generator" content="bookdown 0.34 with bs4_book()">
+<meta name="generator" content="bookdown 0.35 with bs4_book()">
 <meta property="og:title" content="models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
 <meta property="og:description" content="univariate Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to...">
@@ -63,34 +63,24 @@
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="active" href="models.html">models</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
-<li><a class="" href="map-data.html">map data</a></li>
+<li><a class="" href="special-topics.html">special topics</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
-<li class="book-part">SEQUENCE DATA</li>
-<li><a class="" href="data-acquisition.html">data acquisition</a></li>
-<li><a class="" href="data-transfer.html">data transfer</a></li>
-<li><a class="" href="sequence-assessment.html">sequence assessment</a></li>
-<li><a class="" href="illumina-read-assessment.html">illumina read assessment</a></li>
-<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
-<li class="book-part">GENOME ANALYSIS</li>
-<li><a class="" href="setup.html">setup</a></li>
-<li><a class="" href="genome-assembly.html">genome assembly</a></li>
-<li><a class="" href="annotation-1.html">annotation</a></li>
-<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
 <li class="book-part">EVOLUTIONARY ANALYSIS</li>
 <li><a class="" href="blast.html">blast</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
 <li><a class="" href="phylogenies.html">phylogenies</a></li>
 <li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">LANGUAGE MODELS</li>
+<li><a class="" href="completiongpt.html">completionGPT</a></li>
+<li><a class="" href="analyzeliterature.html">analyzeLiterature</a></li>
 <li class="book-part">SCIENTIFIC WRITING</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
 <li><a class="" href="results-and-discussion.html">results and discussion</a></li>
 <li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
-<li class="book-part">IMAGE ANALYSIS</li>
-<li><a class="" href="image-color-analysis.html">image color analysis</a></li>
-<li><a class="" href="images-of-mass-spectra.html">images of mass spectra</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
@@ -293,6 +283,78 @@
 <span><span class="va">plot1</span><span class="op">/</span><span class="va">plot2</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
+<div id="classification" class="section level2 unnumbered">
+<h2>classification<a class="anchor" aria-label="anchor" href="#classification"><i class="fas fa-link"></i></a>
+</h2>
+<p>We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
+1. Decision trees: <a href="https://www.youtube.com/watch?v=_L39rN6gz7Y" class="uri">https://www.youtube.com/watch?v=_L39rN6gz7Y</a>
+2. Random forests: <a href="https://www.youtube.com/watch?v=J4Wdy0Wc_xQ" class="uri">https://www.youtube.com/watch?v=J4Wdy0Wc_xQ</a></p>
+<p>Now we will make a classification model using random forests. The overall idea is to make a workflow, which consists of a recipe (the data) and a model (random forest and associated parameters), then tune the model and add the best parameters to the workflow, and finally evaluate the model with the test data. That model can then be used on further data for classification. Here is the general idea in schematic form:</p>
+<p><code>workflow %&gt;% add_recipe() %&gt;% add_model() -&gt; workflow</code>
+<code>workflow %&gt;% tune_grid() %&gt;% select_best() -&gt; best_parameters</code>
+<code>workflow %&gt;% finalize_workflow() %&gt;% last_fit()</code></p>
+<p>Start by making a number of forests that is the square of the number of variables and then try a few values above and below that number.</p>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Randomly split data into a traing set and a testing set</span></span>
+<span>    <span class="va">metabolomics_data_split</span> <span class="op">&lt;-</span> <span class="fu">rsample</span><span class="fu">::</span><span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">initial_split</a></span><span class="op">(</span><span class="va">metabolomics_data</span>, prop <span class="op">=</span> <span class="fl">3</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Create a workflow that has a recipe and a model</span></span>
+<span>  <span class="fu">workflow</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">add_recipe</span><span class="op">(</span></span>
+<span>      <span class="fu">recipe</span><span class="op">(</span> <span class="va">patient_status</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">metabolomics_data</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu">step_normalize</span><span class="op">(</span><span class="fu">all_numeric</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">step_impute_knn</span><span class="op">(</span><span class="fu">all_predictors</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">add_model</span><span class="op">(</span></span>
+<span>      <span class="fu">rand_forest</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co"># specify that the model is a random forest</span></span>
+<span>      <span class="fu">set_args</span><span class="op">(</span>mtry <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, trees <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co"># specify that the `mtry` and `trees` parameters needs to be tuned</span></span>
+<span>      <span class="fu">set_engine</span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="st">"impurity"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co"># select the engine/package that underlies the model</span></span>
+<span>      <span class="fu">set_mode</span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span> <span class="co"># choose either the continuous regression or binary classification mode</span></span>
+<span>    <span class="op">)</span> <span class="op">-&gt;</span> <span class="va">workflow</span></span>
+<span></span>
+<span><span class="co">## Tune the model on the training set</span></span>
+<span>  <span class="va">tune_results</span> <span class="op">&lt;-</span> <span class="fu">tune_grid</span><span class="op">(</span></span>
+<span>    <span class="va">workflow</span>,</span>
+<span>    resamples <span class="op">=</span> <span class="fu">vfold_cv</span><span class="op">(</span><span class="fu">training</span><span class="op">(</span><span class="va">metabolomics_data_split</span><span class="op">)</span><span class="op">)</span>, <span class="co">#CV object</span></span>
+<span>    grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>mtry <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span><span class="op">)</span>, trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">800</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span>, <span class="co"># grid of values to try</span></span>
+<span>    metrics <span class="op">=</span> <span class="fu">metric_set</span><span class="op">(</span><span class="va">accuracy</span>, <span class="va">roc_auc</span><span class="op">)</span> <span class="co"># metrics we care about</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check model parameters if you want</span></span>
+<span>  <span class="fu">collect_metrics</span><span class="op">(</span><span class="va">tune_results</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">.metric</span> <span class="op">==</span> <span class="st">"accuracy"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">mtry</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu">geom_tile</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"black"</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu">scale_x_discrete</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">scale_y_discrete</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">18</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span>    <span class="fu">select_best</span><span class="op">(</span><span class="va">tune_results</span>, metric <span class="op">=</span> <span class="st">"accuracy"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 1 × 3</span></span>
+<span><span class="co">##    mtry trees .config               </span></span>
+<span><span class="co">##   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                 </span></span>
+<span><span class="co">## 1     7   100 Preprocessor1_Model014</span></span>
+<span></span>
+<span><span class="co">## Apply the best parameters to the workflow and evaluate performance on test data</span></span>
+<span>  <span class="va">workflow</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">finalize_workflow</span><span class="op">(</span> <span class="fu">select_best</span><span class="op">(</span><span class="va">tune_results</span>, metric <span class="op">=</span> <span class="st">"accuracy"</span><span class="op">)</span> <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co"># Select best parameters</span></span>
+<span>    <span class="fu">last_fit</span><span class="op">(</span><span class="va">metabolomics_data_split</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">wf_fit</span> <span class="co"># Fit the test data</span></span>
+<span>  <span class="fu">collect_metrics</span><span class="op">(</span><span class="va">wf_fit</span><span class="op">)</span> <span class="co"># Check on the metrics if you want</span></span>
+<span><span class="co">## # A tibble: 2 × 4</span></span>
+<span><span class="co">##   .metric  .estimator .estimate .config             </span></span>
+<span><span class="co">##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               </span></span>
+<span><span class="co">## 1 accuracy binary         0.875 Preprocessor1_Model1</span></span>
+<span><span class="co">## 2 roc_auc  binary         0.958 Preprocessor1_Model1</span></span>
+<span>  <span class="va">test_predictions</span> <span class="op">&lt;-</span> <span class="fu">collect_predictions</span><span class="op">(</span><span class="va">wf_fit</span><span class="op">)</span> <span class="co"># Collect predictions</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">test_predictions</span><span class="op">$</span><span class="va">.pred_class</span> <span class="op">==</span> <span class="va">test_predictions</span><span class="op">$</span><span class="va">patient_status</span><span class="op">)</span> <span class="co"># number right and wrong</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## FALSE  TRUE </span></span>
+<span><span class="co">##     3    21</span></span>
+<span>  <span class="fu">conf_mat</span><span class="op">(</span><span class="va">test_predictions</span>, truth <span class="op">=</span> <span class="va">patient_status</span>, estimate <span class="op">=</span> <span class="va">.pred_class</span><span class="op">)</span> <span class="co"># confusion matrix</span></span>
+<span><span class="co">##                 Truth</span></span>
+<span><span class="co">## Prediction       healthy kidney_disease</span></span>
+<span><span class="co">##   healthy             10              1</span></span>
+<span><span class="co">##   kidney_disease       2             11</span></span></code></pre></div>
+</div>
 <div id="exercises-4" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-4"><i class="fas fa-link"></i></a>
 </h2>
@@ -307,6 +369,16 @@
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-6"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="https://github.com/easystats/performance" class="uri">https://github.com/easystats/performance</a></p>
+<p>Here is more information on common machine learning tasks:
+<a href="https://pythonprogramminglanguage.com/machine-learning-tasks/" class="uri">https://pythonprogramminglanguage.com/machine-learning-tasks/</a></p>
+<p>Some major tasks include:
+Classification
+Regression
+Clustering</p>
+<p>Classification with random forests:
+1. <a href="http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/" class="uri">http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/</a>
+2. <a href="https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/" class="uri">https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/</a>
+3. <a href="https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173" class="uri">https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173</a></p>
 <!-- end -->
 <!-- start comparing means -->
 </div>
@@ -329,6 +401,7 @@
 <li><a class="nav-link" href="#models">models</a></li>
 <li><a class="nav-link" href="#univariate">univariate</a></li>
 <li><a class="nav-link" href="#multivariate">multivariate</a></li>
+<li><a class="nav-link" href="#classification">classification</a></li>
 <li><a class="nav-link" href="#exercises-4">exercises</a></li>
 <li><a class="nav-link" href="#further-reading-6">further reading</a></li>
 </ul>
@@ -348,7 +421,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-06-16.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-22.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
