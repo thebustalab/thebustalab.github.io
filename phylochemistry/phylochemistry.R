@@ -47,6 +47,7 @@
                     "gridExtra",
                     "ape",
                     "multcompView",
+                    "recipes",
                     # "imager",
                     "shiny",
                     "DT",
