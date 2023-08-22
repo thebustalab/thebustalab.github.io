@@ -47,7 +47,13 @@
                     "gridExtra",
                     "ape",
                     "multcompView",
-                    "recipes",
+                    
+                    ## ML packages
+                        "recipes",
+                        "rsample",
+                        "workflows",
+                        "tune",
+
                     # "imager",
                     "shiny",
                     "DT",
@@ -68,8 +74,6 @@
                     "ggforce",
                     "network",
                     "pracma",
-                    "rsample",
-                    "workflows",
                     "ggnetwork",
                     "FactoMineR",
                     "dplyr",
