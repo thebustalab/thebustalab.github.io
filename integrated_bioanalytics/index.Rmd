@@ -3883,11 +3883,16 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 ## phylogenetic signal
 
 ```{r}
-unfortified_tree <- buildTree(
-      scaffold_type = "newick",
-      scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
-      members = unique(chemical_blooms$genus_species)
-    )
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$genus_species)
+)
+
+phylogeneticSignal(
+    traits = chemical_blooms,
+    tree = chemical_bloom_tree
+)
 
 ```
 

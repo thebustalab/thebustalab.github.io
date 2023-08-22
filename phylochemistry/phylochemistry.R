@@ -10838,7 +10838,7 @@
                             value = as.numeric(coefficients(fit)),
                             std_err = round(as.numeric(summary(fit)$coefficients[,2]), 4),
                             type = "coefficient",
-                            p_value = round(summary(fit)$coefficients[,4], 4)
+                            p_value = round(summary(fit)$coefficients[,4], 8)
                         )
 
                         total_sum_squares <- sum((input_y - mean(input_y, na.rm = TRUE))^2, na.rm = TRUE)
