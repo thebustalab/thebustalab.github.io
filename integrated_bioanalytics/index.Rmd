@@ -3880,13 +3880,24 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 # phylogenetic analyses {-}
 
+## phylogenetic signal
+
+```{r}
+unfortified_tree <- buildTree(
+      scaffold_type = "newick",
+      scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+      members = unique(chemical_blooms$genus_species)
+    )
+
+```
+
 ## ancestralTraits
 
 Note that this is different from `buildTree`'s "ancestral_states", which estimates ancestral sequence states at phylogeny nodes. Instead, `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
 
 ancestral states: https://www.phytools.org/eqg2015/asr.html
 
-## phylogenetic regression
+
 
 # comparative genomics {-}
 
@@ -3909,7 +3920,6 @@ ________________________________________________________________________________
 You can run completions using:
 
 ```{r, eval = FALSE}
-
 completionGPT(
   system_prompt = "",
   query = "",
