@@ -11098,14 +11098,14 @@
                     }
 
                 # Check the results
-                results <- do.call(rbind, results)
-                if (correction_method[1] == "none") {
-                    results$p.adj <- results$p_value
-                } else {
-                    results$p.adj <- p.adjust(results$p_value, method = correction_method[1])
-                }
-                results$signif <- ifelse(results$p.adj < 0.05, "*", "")
-                return(results)
+                    results <- do.call(rbind, results)
+                    if (correction_method[1] == "none") {
+                        results$p.adj <- results$p_value
+                    } else {
+                        results$p.adj <- p.adjust(results$p_value, method = correction_method[1])
+                    }
+                    results$signif <- ifelse(results$p.adj < 0.05, "*", "")
+                    return(results)
             }
 
     ##### Phylogenetic statistical testing

@@ -3285,10 +3285,9 @@ pip install "numpy<1.24.0"
 Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
 
 - all the sample name folders (ex. "fed_epi_hi_rep1")
-- kallisto.isoform.counts.matrix
-- transcriptome_annotated_no_spaces.fasta (if you created it)
-- transcriptome_annotated.fasta
-- transcriptome.fasta.transdecoder.pep
+<!-- - kallisto.isoform.counts.matrix -->
+<!-- - transcriptome_annotated.fasta
+- transcriptome.fasta.transdecoder.pep -->
 - samples.txt
 - samples_trimmed.txt
 - busco_report.txt
