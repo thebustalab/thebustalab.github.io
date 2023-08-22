@@ -67,6 +67,15 @@
         "darkorange4", "brown"
     )
 
+    readMonolist <- function( monolist_in_path ) {
+        if (length(grep("http", monolist_in_path)) > 0) {
+            monolist <- read_csv(monolist_in_path, show_col_types = FALSE)        
+        } else {
+            monolist <- as.data.frame(data.table::fread(file = monolist_in_path))
+        }
+        return( monolist )
+    }
+
     writeMonolist <- function( monolist, monolist_out_path, ... ) {
         write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
         # write_csv(monolist, file = monolist_out_path)
