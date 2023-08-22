@@ -53,6 +53,7 @@
                         "rsample",
                         "workflows",
                         "tune",
+                        "yardstick",
 
                     # "imager",
                     "shiny",
