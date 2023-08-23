@@ -67,7 +67,7 @@
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
 <li class="book-part">TRANSCRIPTOME ANALYSIS</li>
-<li><a class="" href="assembly.html"><span class="header-section-number">2</span> assembly</a></li>
+<li><a class="" href="transcriptome-assembly.html">transcriptome assembly</a></li>
 <li class="book-part">EVOLUTIONARY ANALYSIS</li>
 <li><a class="" href="blast.html">blast</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
@@ -103,7 +103,7 @@
 <h2>zoomed figures<a class="anchor" aria-label="anchor" href="#zoomed-figures"><i class="fas fa-link"></i></a>
 </h2>
 <p>Zoom in on certain plot regions</p>
-<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> </span>
 <span></span>
@@ -122,7 +122,7 @@
 <span>           xmin <span class="op">=</span> <span class="fl">4.9</span>, xmax <span class="op">=</span> <span class="fl">6.2</span>, ymin <span class="op">=</span> <span class="fl">13</span>, ymax <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>           linetype <span class="op">=</span> <span class="st">"dotted"</span>, fill <span class="op">=</span> <span class="cn">NA</span>, colour <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="inset-figures" class="section level2 unnumbered">
 <h2>inset figures<a class="anchor" aria-label="anchor" href="#inset-figures"><i class="fas fa-link"></i></a>
@@ -130,7 +130,7 @@
 <div id="plot-insets" class="section level3 unnumbered">
 <h3>plot insets<a class="anchor" aria-label="anchor" href="#plot-insets"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, <span class="va">hwy</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">stat_summary</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"col"</span>, fun <span class="op">=</span> <span class="va">mean</span>, width <span class="op">=</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Number of cylinders"</span>, y <span class="op">=</span> <span class="cn">NULL</span>, title <span class="op">=</span> <span class="st">"Means"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -146,12 +146,12 @@
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Engine displacement (l)"</span>, y <span class="op">=</span> <span class="st">"Fuel use efficiency (MPG)"</span>,</span>
 <span>       colour <span class="op">=</span> <span class="st">"Engine cylinders\n(number)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="image-insets" class="section level3 unnumbered">
 <h3>image insets<a class="anchor" aria-label="anchor" href="#image-insets"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Isoquercitin_synthase</span> <span class="op">&lt;-</span> <span class="fu">magick</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_read</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/integrated_bioanalytics/images/homology.png"</span><span class="op">)</span></span>
 <span><span class="va">grobs.tb</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">40</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">9</span><span class="op">)</span>,</span>
 <span>                   width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="fl">0.01</span>, <span class="fl">1</span><span class="op">)</span>,</span>
@@ -168,21 +168,21 @@
 <span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu">expansion</span><span class="op">(</span>mult <span class="op">=</span> <span class="fl">0.3</span>, add <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu">expansion</span><span class="op">(</span>mult <span class="op">=</span> <span class="fl">0.2</span>, add <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"grob"</span>, x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="fl">3</span>, vp.width <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>           label <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.raster.html">rasterGrob</a></span><span class="op">(</span>image <span class="op">=</span> <span class="va">Isoquercitin_synthase</span>, width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
 <div id="composite-figures" class="section level2 unnumbered">
 <h2>composite figures<a class="anchor" aria-label="anchor" href="#composite-figures"><i class="fas fa-link"></i></a>
 </h2>
 <p>Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:</p>
-<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">color_palette</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span><span class="fl">11</span>, <span class="st">"Paired"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">color_palette</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">element</span><span class="op">)</span></span>
 <span></span>
@@ -220,27 +220,27 @@
 <span>    text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Now, add them together to lay them out. Let’s look at various ways to lay this out:</p>
-<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>,<span class="va">plot2</span><span class="op">)</span>, <span class="va">plot1</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>,<span class="va">plot2</span><span class="op">)</span>, <span class="va">plot1</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="exporting-graphics" class="section level2 unnumbered">
 <h2>exporting graphics<a class="anchor" aria-label="anchor" href="#exporting-graphics"><i class="fas fa-link"></i></a>
 </h2>
 <p>To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: “C:\Desktop\the_file.png” (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.</path_to_file_you_want_to_create></p>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="figures-captions.html#cb161-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
-<span id="cb161-2"><a href="figures-captions.html#cb161-2" tabindex="-1"></a></span>
-<span id="cb161-3"><a href="figures-captions.html#cb161-3" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>, <span class="at">res =</span> <span class="dv">600</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
-<span id="cb161-4"><a href="figures-captions.html#cb161-4" tabindex="-1"></a></span>
-<span id="cb161-5"><a href="figures-captions.html#cb161-5" tabindex="-1"></a>plot</span>
-<span id="cb161-6"><a href="figures-captions.html#cb161-6" tabindex="-1"></a></span>
-<span id="cb161-7"><a href="figures-captions.html#cb161-7" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="figures-captions.html#cb162-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb162-2"><a href="figures-captions.html#cb162-2" tabindex="-1"></a></span>
+<span id="cb162-3"><a href="figures-captions.html#cb162-3" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="sc">&lt;</span>path_to_file_you_want_to_create<span class="sc">&gt;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>, <span class="at">res =</span> <span class="dv">600</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
+<span id="cb162-4"><a href="figures-captions.html#cb162-4" tabindex="-1"></a></span>
+<span id="cb162-5"><a href="figures-captions.html#cb162-5" tabindex="-1"></a>plot</span>
+<span id="cb162-6"><a href="figures-captions.html#cb162-6" tabindex="-1"></a></span>
+<span id="cb162-7"><a href="figures-captions.html#cb162-7" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 </div>
 <div id="captions" class="section level2 unnumbered">
 <h2>captions<a class="anchor" aria-label="anchor" href="#captions"><i class="fas fa-link"></i></a>
@@ -260,11 +260,11 @@
 <li>Avoid abbreviations, but if you do use any, specify what they mean.</li>
 </ol>
 <p>An example:</p>
-<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">plot1</span> <span class="op">+</span> <span class="va">plot2</span> <span class="op">+</span> <span class="fu">labs</span><span class="op">(</span>caption <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="st">"Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve."</span>, <span class="fl">90</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">'A'</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html">plot_layout</a></span><span class="op">(</span>widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.1</span>, <span class="fl">3</span><span class="op">)</span>, guides <span class="op">=</span> <span class="st">'collect'</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">'right'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="further-reading-9" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>

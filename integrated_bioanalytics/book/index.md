@@ -3726,13 +3726,7 @@ qc_data %>%
     scale_fill_manual(values = c("gold", "maroon"))
 ```
 
-# illumina read assessment {-}
-
-Check out: fastqcr: An R Package Facilitating Quality Controls of Sequencing Data for Large Numbers of Samples.
-
-## fastqc
-
-See transXpress. -->
+-->
 
 <!-- end -->
 ________________________________________________________________________________________________
@@ -3743,7 +3737,7 @@ ________________________________________________________________________________
 
 <!-- start transcriptomic analyses -->
 
-# assembly
+# transcriptome assembly {-}
 
 For nonmodel species transcriptome analysis, `transXpress` is recommended. We often use a modified version of `transXpress` we call `transXpressLite`. It uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpressLite` for it to run properly.
 
@@ -3772,7 +3766,6 @@ cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
 4. Start `transXpressLite`:
 
 `./transXpress.sh`
-
 
 5. Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
 
@@ -4539,13 +4532,117 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 # phylogenetic analyses {-}
 
+## phylogenetic signal
+
+
+```r
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto 
+## Scaffold newick tip Iris_lazica substituted with Iris_sp 
+## Scaffold newick tip Iris_lacustris substituted with Iris_germanica 
+## Scaffold newick tip Allium_textile substituted with Allium_sp 
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum 
+## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans 
+## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp 
+## Scaffold newick tip Agave_striata substituted with Agave_cerulata 
+## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha 
+## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata 
+## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum 
+## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum 
+## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni 
+## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp 
+## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta 
+## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii 
+## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor 
+## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima 
+## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata 
+## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp 
+## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis 
+## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata 
+## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor 
+## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens 
+## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata 
+## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp 
+## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis 
+## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi 
+## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata 
+## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae 
+## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora 
+## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis 
+## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera 
+## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii 
+## Scaffold newick tip Rubus_repens substituted with Rubus_sp 
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+phylogeneticSignal(
+    traits = chemical_blooms,
+    tree = chemical_bloom_tree
+)
+##             trait trait_type n_species number_of_levels
+## 1         Alkanes continuous        78               NA
+## 2    Sec_Alcohols continuous        78               NA
+## 3          Others continuous        78               NA
+## 4     Fatty_acids continuous        78               NA
+## 5        Alcohols continuous        78               NA
+## 6   Triterpenoids continuous        78               NA
+## 7         Ketones continuous        78               NA
+## 8 Other_compounds continuous        78               NA
+## 9       Aldehydes continuous        78               NA
+##   evolutionary_transitions_observed
+## 1                                NA
+## 2                                NA
+## 3                                NA
+## 4                                NA
+## 5                                NA
+## 6                                NA
+## 7                                NA
+## 8                                NA
+## 9                                NA
+##   median_evolutionary_transitions_in_randomization
+## 1                                               NA
+## 2                                               NA
+## 3                                               NA
+## 4                                               NA
+## 5                                               NA
+## 6                                               NA
+## 7                                               NA
+## 8                                               NA
+## 9                                               NA
+##   minimum_evolutionary_transitions_in_randomization
+## 1                                                NA
+## 2                                                NA
+## 3                                                NA
+## 4                                                NA
+## 5                                                NA
+## 6                                                NA
+## 7                                                NA
+## 8                                                NA
+## 9                                                NA
+##   evolutionary_transitions_in_randomization p_value
+## 1                                        NA   0.160
+## 2                                        NA   0.001
+## 3                                        NA   0.731
+## 4                                        NA   0.261
+## 5                                        NA   0.327
+## 6                                        NA   0.001
+## 7                                        NA   0.043
+## 8                                        NA   0.849
+## 9                                        NA   0.931
+```
+
 ## ancestralTraits
 
 Note that this is different from `buildTree`'s "ancestral_states", which estimates ancestral sequence states at phylogeny nodes. Instead, `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
 
 ancestral states: https://www.phytools.org/eqg2015/asr.html
 
-## phylogenetic regression
+
 
 # comparative genomics {-}
 
@@ -4569,7 +4666,6 @@ You can run completions using:
 
 
 ```r
-
 completionGPT(
   system_prompt = "",
   query = "",
@@ -4727,7 +4823,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4752,7 +4848,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4776,7 +4872,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4787,7 +4883,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -4840,21 +4936,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -4891,7 +4987,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5229,7 +5325,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5271,7 +5367,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5360,7 +5456,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

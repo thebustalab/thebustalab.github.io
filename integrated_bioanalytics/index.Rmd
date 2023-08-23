@@ -54,7 +54,7 @@ options(pillar.sigfig = 3)
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg', dpi = NA)
 ```
 
-Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and data sets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
 
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
@@ -3880,20 +3880,38 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 # phylogenetic analyses {-}
 
-## phylogenetic signal
+## phylogeneticSignal
 
 ```{r}
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
-  members = unique(chemical_blooms$genus_species)
+  members = unique(chemical_blooms$label)
 )
 
 phylogeneticSignal(
-    traits = chemical_blooms,
-    tree = chemical_bloom_tree
+  traits = chemical_blooms,
+  tree = chemical_bloom_tree
 )
 ```
+
+## independentContrasts
+
+```{r}
+contrasts <- independentContrasts(
+  traits = chemical_blooms,
+  tree = chemical_bloom_tree
+)
+
+buildLinearModel(
+  data = contrasts,
+  formula = "Fatty_acids = Alcohols + 0"
+) -> model
+
+ggplot(model$data) +
+  geom_point(aes(x = input_x, y = input_y)) +
+  geom_line(aes(x = model_x, model_y))
+``` 
 
 ## ancestralTraits
 
