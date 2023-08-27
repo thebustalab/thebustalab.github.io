@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-08-22"
+date: "2023-08-27"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -44,7 +44,7 @@ output:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg" width="100%" style="display: block; margin: auto;" />
 
-Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and data sets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
+Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
 
 
 ```r
@@ -231,30 +231,6 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
 
-## gptstudio {-}
-
-First, install gptstudio using: `remotes::install_github("MichelNivard/gptstudio")`
-
-Next, go to: https://openai.com/blog/openai-api and create an account and get an API key. Here are the steps:
-
-- Visit the OpenAI website at https://openai.com/ and sign in to your account. If you don't have an account, you'll need to create one first.
-- Once logged in you’ll need to click the option that brings you to the open AI API homepage (not the chatGPT homepage)
-- Once on the open AI API homepage, click in the top right corner of your screen where it says “personal” and select “view API keys”
-- Click the button that says “create new secret key” to create a new API key.
-
-Do not share you API key with others!
-
-Then, in RStudio, run:
-
-
-```r
-Sys.setenv(OPENAI_API_KEY = "<insert_your_api_key_here>")
-```
-
-This will enable an add in that you can access by clicking: Addins > GPTStudio. It has four major functions that can help you with spelling and grammar, commenting your code, and writing code. Please see the examples here: https://github.com/MichelNivard/gptstudio.
-
-For further ideas on how to use GPT: https://github.com/dsdanielpark/amazing-bard-prompts/blob/main/bard_prompts/bard_prompts_english.csv
-
 ## Updating R and R Packages {-}
 
 Close RStudio, open the plain R GUI, then run the following:
@@ -425,7 +401,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" />
 
 2. **Define how your variables map onto the axes.**
 
@@ -436,7 +412,7 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="100%" style="display: block; margin: auto;" />
 
 3. **Use geometric shapes to represent other variables in your data.**
 
@@ -448,7 +424,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
@@ -458,7 +434,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
 
 In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data(as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
@@ -468,7 +444,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
@@ -478,7 +454,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-30-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;" />
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
@@ -491,7 +467,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-31-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-30-1.png" width="100%" style="display: block; margin: auto;" />
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
@@ -502,7 +478,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-32-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-31-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -510,7 +486,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-33-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-32-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## markdown {-}
 
@@ -572,7 +548,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-40-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-39-1.png" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -658,7 +634,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -683,7 +659,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
@@ -696,7 +672,7 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", size = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -717,7 +693,7 @@ p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
 
 There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
 
@@ -734,7 +710,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## facets {-}
 
@@ -748,7 +724,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(.~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can facet in the vertical direction:
 
@@ -758,7 +734,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(replicate~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
 
 And we can do both at the same time:
 
@@ -768,7 +744,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
 
@@ -780,7 +756,7 @@ ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) +
   facet_wrap(chemical_species~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- HERE INTRODUCE COWPLOT!! -->
 
@@ -798,7 +774,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
 
 One particularly useful type of scale are the color scales provided by RColorBrewer:
 
@@ -807,7 +783,7 @@ One particularly useful type of scale are the color scales provided by RColorBre
 display.brewer.all()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" />
 
 ```r
 ggplot(mtcars) +
@@ -818,7 +794,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-70-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
   
 ## themes {-}
   
@@ -836,7 +812,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-71-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-70-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -848,7 +824,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-71-1.png" width="100%" style="display: block; margin: auto;" />
   
 
 ```r
@@ -860,7 +836,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" />
 
 You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
 
@@ -876,7 +852,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-74-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
 
 Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
 
@@ -901,8 +877,8 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-75-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-75)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-74-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-74)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
 </div>
 
 ## subplots {-}
@@ -933,7 +909,7 @@ plot3 <-  ggplot(
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## 3D scatter plots {-}
 
@@ -1021,7 +997,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-78-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-77-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## data vis exercises II {-}
 
@@ -1068,7 +1044,7 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 <!-- end -->
 
 <!-- start data wrangling -->
-# data wrangling {-}
+# data wrangling and summaries {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" width="100%" style="display: block; margin: auto;" />
 
@@ -1211,7 +1187,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1222,7 +1198,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1365,7 +1341,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-91-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-90-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1415,7 +1391,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-92-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1447,7 +1423,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1688,7 +1664,7 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
@@ -1752,7 +1728,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -1802,7 +1778,7 @@ ggplot() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
@@ -1815,7 +1791,7 @@ AK_lakes_pca_ord %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-114-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### principal components {-}
 
@@ -1853,7 +1829,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-115-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-114-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
@@ -1981,7 +1957,7 @@ p2 <- ggplot(data) +
 p1 + p2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-119-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -2091,7 +2067,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2109,7 +2085,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
@@ -2205,7 +2181,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-129-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-128-1.png" width="100%" style="display: block; margin: auto;" />
 
 There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
@@ -2255,7 +2231,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### summarize by cluster {-}
 
@@ -2335,7 +2311,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-132-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
  
 ### further reading {-}
 
@@ -2471,7 +2447,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = AMP, y = ADP))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -2488,7 +2464,7 @@ str(model, strict.width = "cut")
 ##   ..$ value   : num [1:6] 0.7842 0.9142 0.0415 40.3224 15...
 ##   ..$ std_err : chr [1:6] "1.0056" "0.0757" NA NA ...
 ##   ..$ type    : chr [1:6] "coefficient" "coefficient" "st"..
-##   ..$ p_value : chr [1:6] "0.4375" "0" NA NA ...
+##   ..$ p_value : chr [1:6] "0.43750684" "0" NA NA ...
 ##  $ data   :'data.frame':	92 obs. of  7 variables:
 ##   ..$ input_x  : num [1:92] 13.2 13.5 14.3 13.3 12 ...
 ##   ..$ input_y  : num [1:92] 12.8 13.1 13.3 13.2 11.9 ...
@@ -2503,13 +2479,20 @@ The model consists of two thigs: metrics and data. Let's look at the metrics:
 
 ```r
 model$metrics
-##               variable   value std_err        type p_value
-## 1          (Intercept)  0.7842  1.0056 coefficient  0.4375
-## 2                  AMP  0.9142  0.0757 coefficient       0
-## 3      median_residual  0.0415    <NA>   statistic    <NA>
-## 4    total_sum_squares 40.3224    <NA>   statistic    <NA>
-## 5 residual_sum_squares 15.3901    <NA>   statistic    <NA>
-## 6            r_squared  0.6183    <NA>   statistic    <NA>
+##               variable   value std_err        type
+## 1          (Intercept)  0.7842  1.0056 coefficient
+## 2                  AMP  0.9142  0.0757 coefficient
+## 3      median_residual  0.0415    <NA>   statistic
+## 4    total_sum_squares 40.3224    <NA>   statistic
+## 5 residual_sum_squares 15.3901    <NA>   statistic
+## 6            r_squared  0.6183    <NA>   statistic
+##      p_value
+## 1 0.43750684
+## 2          0
+## 3       <NA>
+## 4       <NA>
+## 5       <NA>
+## 6       <NA>
 ```
 
 It shows us the intercept (b), the variable for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second). The other thing the model contains is the data (below). This includes the input_x and y values. The raw values for ADP and AMP, the residuals (see below for details), and the x and y values generated by the model.
@@ -2542,7 +2525,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, y = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-144-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -2554,7 +2537,7 @@ ggplot(model$data) +
   geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -2575,7 +2558,7 @@ ggplot(metabolomics_data) +
   geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-147-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -2592,7 +2575,7 @@ ggplot(metabolomics_data) +
   geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
 
 40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
@@ -2627,7 +2610,7 @@ bottom <- ggplot(model$data) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## multivariate {-}
 
@@ -2637,24 +2620,39 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 model1 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP")
 model1[1]
 ## $metrics
-##               variable   value std_err        type p_value
-## 1          (Intercept)  0.7842  1.0056 coefficient  0.4375
-## 2                  AMP  0.9142  0.0757 coefficient       0
-## 3      median_residual  0.0415    <NA>   statistic    <NA>
-## 4    total_sum_squares 40.3224    <NA>   statistic    <NA>
-## 5 residual_sum_squares 15.3901    <NA>   statistic    <NA>
-## 6            r_squared  0.6183    <NA>   statistic    <NA>
+##               variable   value std_err        type
+## 1          (Intercept)  0.7842  1.0056 coefficient
+## 2                  AMP  0.9142  0.0757 coefficient
+## 3      median_residual  0.0415    <NA>   statistic
+## 4    total_sum_squares 40.3224    <NA>   statistic
+## 5 residual_sum_squares 15.3901    <NA>   statistic
+## 6            r_squared  0.6183    <NA>   statistic
+##      p_value
+## 1 0.43750684
+## 2          0
+## 3       <NA>
+## 4       <NA>
+## 5       <NA>
+## 6       <NA>
 model2 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP + IMP")
 model2[1]
 ## $metrics
-##               variable   value std_err        type p_value
-## 1          (Intercept)  2.0057  0.9222 coefficient  0.0323
-## 2                  AMP  0.6201  0.0907 coefficient       0
-## 3                  IMP  0.2303  0.0606 coefficient   3e-04
-## 4      median_residual  0.0462    <NA>   statistic    <NA>
-## 5    total_sum_squares 40.3224    <NA>   statistic    <NA>
-## 6 residual_sum_squares 11.6145    <NA>   statistic    <NA>
-## 7            r_squared  0.6494    <NA>   statistic    <NA>
+##               variable   value std_err        type
+## 1          (Intercept)  2.0057  0.9222 coefficient
+## 2                  AMP  0.6201  0.0907 coefficient
+## 3                  IMP  0.2303  0.0606 coefficient
+## 4      median_residual  0.0462    <NA>   statistic
+## 5    total_sum_squares 40.3224    <NA>   statistic
+## 6 residual_sum_squares 11.6145    <NA>   statistic
+## 7            r_squared  0.6494    <NA>   statistic
+##      p_value
+## 1 0.03232768
+## 2          0
+## 3 0.00026437
+## 4       <NA>
+## 5       <NA>
+## 6       <NA>
+## 7       <NA>
 
 plot1 <- ggplot() + 
   geom_point(
@@ -2695,7 +2693,7 @@ plot2 <- ggplot() +
 plot1/plot2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## classification {-}
 
@@ -2746,7 +2744,7 @@ Start by making a number of forests that is the square of the number of variable
       theme(text = element_text(size = 18))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
 
 ```r
     select_best(tune_results, metric = "accuracy")
@@ -2871,7 +2869,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2953,7 +2951,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-160-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2966,7 +2964,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-160-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -3055,7 +3053,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -3069,7 +3067,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3179,7 +3177,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3249,7 +3247,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3264,7 +3262,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3410,7 +3408,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -3506,7 +3504,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -3518,7 +3516,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -3534,7 +3532,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -3773,7 +3771,7 @@ cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
 * samples.txt
 * samples_trimmed.txt
 * busco_report.txt
-* /transdecoder/longest_orfs.pep
+* /transdecoder/longest_orfs.pep -> is actually "transcriptome.orfs"
 
 <!-- 1. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
 `pip install "numpy<1.24.0"`
@@ -4279,7 +4277,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4309,7 +4307,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4356,7 +4354,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4433,7 +4431,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4442,7 +4440,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4509,7 +4507,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -4528,11 +4526,13 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
-## phylogenetic signal
+## phylogeneticSignal
+
+Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species' evolutionary history. `phylochemistry` provides the `phylogeneticSignal` function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:
 
 
 ```r
@@ -4581,8 +4581,8 @@ chemical_bloom_tree <- buildTree(
 ## Do not save your tree as a newick or nexus file.
 
 phylogeneticSignal(
-    traits = chemical_blooms,
-    tree = chemical_bloom_tree
+  traits = chemical_blooms,
+  tree = chemical_bloom_tree
 )
 ##             trait trait_type n_species number_of_levels
 ## 1         Alkanes continuous        78               NA
@@ -4635,6 +4635,27 @@ phylogeneticSignal(
 ## 8                                        NA   0.849
 ## 9                                        NA   0.931
 ```
+
+## independentContrasts
+
+
+```r
+contrasts <- independentContrasts(
+  traits = chemical_blooms,
+  tree = chemical_bloom_tree
+)
+
+buildLinearModel(
+  data = contrasts,
+  formula = "Fatty_acids = Alcohols + 0"
+) -> model
+
+ggplot(model$data) +
+  geom_point(aes(x = input_x, y = input_y)) +
+  geom_line(aes(x = model_x, model_y))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## ancestralTraits
 

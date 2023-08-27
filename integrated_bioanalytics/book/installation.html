@@ -58,7 +58,7 @@
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="active" href="installation.html">installation</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
-<li><a class="" href="data-wrangling.html">data wrangling</a></li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="models.html">models</a></li>
@@ -205,35 +205,17 @@ If the library load correctly - then you are set to go! If not, try updating you
 <!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
 </div>
-<div id="gptstudio" class="section level2 unnumbered">
-<h2>gptstudio<a class="anchor" aria-label="anchor" href="#gptstudio"><i class="fas fa-link"></i></a>
-</h2>
-<p>First, install gptstudio using: <code>remotes::install_github("MichelNivard/gptstudio")</code></p>
-<p>Next, go to: <a href="https://openai.com/blog/openai-api" class="uri">https://openai.com/blog/openai-api</a> and create an account and get an API key. Here are the steps:</p>
-<ul>
-<li>Visit the OpenAI website at <a href="https://openai.com/" class="uri">https://openai.com/</a> and sign in to your account. If you don’t have an account, you’ll need to create one first.</li>
-<li>Once logged in you’ll need to click the option that brings you to the open AI API homepage (not the chatGPT homepage)</li>
-<li>Once on the open AI API homepage, click in the top right corner of your screen where it says “personal” and select “view API keys”</li>
-<li>Click the button that says “create new secret key” to create a new API key.</li>
-</ul>
-<p>Do not share you API key with others!</p>
-<p>Then, in RStudio, run:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span><span class="op">(</span>OPENAI_API_KEY <span class="op">=</span> <span class="st">"&lt;insert_your_api_key_here&gt;"</span><span class="op">)</span></span></code></pre></div>
-<p>This will enable an add in that you can access by clicking: Addins &gt; GPTStudio. It has four major functions that can help you with spelling and grammar, commenting your code, and writing code. Please see the examples here: <a href="https://github.com/MichelNivard/gptstudio" class="uri">https://github.com/MichelNivard/gptstudio</a>.</p>
-<p>For further ideas on how to use GPT: <a href="https://github.com/dsdanielpark/amazing-bard-prompts/blob/main/bard_prompts/bard_prompts_english.csv" class="uri">https://github.com/dsdanielpark/amazing-bard-prompts/blob/main/bard_prompts/bard_prompts_english.csv</a></p>
-</div>
 <div id="updating-r-and-r-packages" class="section level2 unnumbered">
 <h2>Updating R and R Packages<a class="anchor" aria-label="anchor" href="#updating-r-and-r-packages"><i class="fas fa-link"></i></a>
 </h2>
 <p>Close RStudio, open the plain R GUI, then run the following:</p>
 <p>On Mac:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'remotes'</span><span class="op">)</span> <span class="co">#assuming it is not remotes installed</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'andreacirilloac/updateR'</span><span class="op">)</span></span>
 <span><span class="fu">updateR</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>On PC:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"installr"</span><span class="op">)</span></span>
 <span><span class="fu">installr</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -241,10 +223,10 @@ If the library load correctly - then you are set to go! If not, try updating you
 <h2>R scripts on Google Drive<a class="anchor" aria-label="anchor" href="#r-scripts-on-google-drive"><i class="fas fa-link"></i></a>
 </h2>
 <p>Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">openRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></span></code></pre></div>
 <p>When you do this, “IN_USE___” will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">closeRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></span></code></pre></div>
 <!-- end -->
 <!-- start data visualization -->
@@ -271,7 +253,6 @@ If the library load correctly - then you are set to go! If not, try updating you
 <li><a class="nav-link" href="#verification">verification</a></li>
 <li><a class="nav-link" href="#tex">TeX</a></li>
 <li><a class="nav-link" href="#phylochemistry">phylochemistry</a></li>
-<li><a class="nav-link" href="#gptstudio">gptstudio</a></li>
 <li><a class="nav-link" href="#updating-r-and-r-packages">Updating R and R Packages</a></li>
 <li><a class="nav-link" href="#r-scripts-on-google-drive">R scripts on Google Drive</a></li>
 </ul>
@@ -291,7 +272,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-22.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -229,29 +229,6 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
 <!-- ``` -->
 
-## gptstudio {-}
-
-First, install gptstudio using: `remotes::install_github("MichelNivard/gptstudio")`
-
-Next, go to: https://openai.com/blog/openai-api and create an account and get an API key. Here are the steps:
-
-- Visit the OpenAI website at https://openai.com/ and sign in to your account. If you don't have an account, you'll need to create one first.
-- Once logged in you’ll need to click the option that brings you to the open AI API homepage (not the chatGPT homepage)
-- Once on the open AI API homepage, click in the top right corner of your screen where it says “personal” and select “view API keys”
-- Click the button that says “create new secret key” to create a new API key.
-
-Do not share you API key with others!
-
-Then, in RStudio, run:
-
-```{r}
-Sys.setenv(OPENAI_API_KEY = "<insert_your_api_key_here>")
-```
-
-This will enable an add in that you can access by clicking: Addins > GPTStudio. It has four major functions that can help you with spelling and grammar, commenting your code, and writing code. Please see the examples here: https://github.com/MichelNivard/gptstudio.
-
-For further ideas on how to use GPT: https://github.com/dsdanielpark/amazing-bard-prompts/blob/main/bard_prompts/bard_prompts_english.csv
-
 ## Updating R and R Packages {-}
 
 Close RStudio, open the plain R GUI, then run the following:
@@ -975,7 +952,7 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 <!-- end -->
 
 <!-- start data wrangling -->
-# data wrangling {-}
+# data wrangling and summaries {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png', dpi = NA)
@@ -3262,7 +3239,7 @@ cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
 * samples.txt
 * samples_trimmed.txt
 * busco_report.txt
-* /transdecoder/longest_orfs.pep
+* /transdecoder/longest_orfs.pep -> is actually "transcriptome.orfs"
 
 <!-- 1. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
 `pip install "numpy<1.24.0"`
@@ -3882,6 +3859,8 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 ## phylogeneticSignal
 
+Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species' evolutionary history. `phylochemistry` provides the `phylogeneticSignal` function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:
+
 ```{r}
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
@@ -3896,6 +3875,8 @@ phylogeneticSignal(
 ```
 
 ## independentContrasts
+
+Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to "independent contrasts" to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. `phylochemistry` provides the `independentContrasts` function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts:
 
 ```{r}
 contrasts <- independentContrasts(
@@ -3913,13 +3894,16 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, model_y))
 ``` 
 
-## ancestralTraits
+## ancestralTraits {-}
 
 Note that this is different from `buildTree`'s "ancestral_states", which estimates ancestral sequence states at phylogeny nodes. Instead, `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
 
-ancestral states: https://www.phytools.org/eqg2015/asr.html
-
-
+```{r}
+ancestralTraits(
+  traits = chemical_blooms,
+  tree = chemical_bloom_tree
+)
+```
 
 # comparative genomics {-}
 

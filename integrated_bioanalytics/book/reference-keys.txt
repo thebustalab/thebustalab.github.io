@@ -1,4 +1,4 @@
-fig:unnamed-chunk-75
+fig:unnamed-chunk-74
 part-data-analysis-in-r
 using-analyzegcmsdata
 cdf-export
@@ -12,7 +12,8 @@ newick-input
 alignment-input
 plotting-trees
 collapsetree
-phylogenetic-signal
+phylogeneticsignal
+independentcontrasts
 ancestraltraits
 loading-gff-files
 abstract

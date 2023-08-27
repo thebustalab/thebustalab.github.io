@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>phylogenetic analyses | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content='1.9 phylogenetic signal chemical_bloom_tree &lt;- buildTree(  scaffold_type = "newick",  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",  members =...'>
+<meta name="description" content="1.9 phylogeneticSignal Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is...">
 <meta name="generator" content="bookdown 0.35 with bs4_book()">
 <meta property="og:title" content="phylogenetic analyses | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content='1.9 phylogenetic signal chemical_bloom_tree &lt;- buildTree(  scaffold_type = "newick",  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",  members =...'>
+<meta property="og:description" content="1.9 phylogeneticSignal Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phylogenetic analyses | Integrated Bioanalytics">
-<meta name="twitter:description" content='1.9 phylogenetic signal chemical_bloom_tree &lt;- buildTree(  scaffold_type = "newick",  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",  members =...'>
+<meta name="twitter:description" content="1.9 phylogeneticSignal Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.6/font.css" rel="stylesheet">
@@ -58,7 +58,7 @@
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
-<li><a class="" href="data-wrangling.html">data wrangling</a></li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="models.html">models</a></li>
@@ -97,11 +97,12 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="phylogenetic-analyses" class="section level1 unnumbered">
 <h1>phylogenetic analyses<a class="anchor" aria-label="anchor" href="#phylogenetic-analyses"><i class="fas fa-link"></i></a>
 </h1>
-<div id="phylogenetic-signal" class="section level2" number="1.9">
+<div id="phylogeneticsignal" class="section level2" number="1.9">
 <h2>
-<span class="header-section-number">1.9</span> phylogenetic signal<a class="anchor" aria-label="anchor" href="#phylogenetic-signal"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9</span> phylogeneticSignal<a class="anchor" aria-label="anchor" href="#phylogeneticsignal"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<p>Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species’ evolutionary history. <code>phylochemistry</code> provides the <code>phylogeneticSignal</code> function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:</p>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_bloom_tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"http://thebustalab.github.io/data/angiosperms.newick"</span>,</span>
@@ -147,8 +148,8 @@
 <span><span class="co">## Do not save your tree as a newick or nexus file.</span></span>
 <span></span>
 <span><span class="fu">phylogeneticSignal</span><span class="op">(</span></span>
-<span>    traits <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
-<span>    tree <span class="op">=</span> <span class="va">chemical_bloom_tree</span></span>
+<span>  traits <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
+<span>  tree <span class="op">=</span> <span class="va">chemical_bloom_tree</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">##             trait trait_type n_species number_of_levels</span></span>
 <span><span class="co">## 1         Alkanes continuous        78               NA</span></span>
@@ -201,9 +202,29 @@
 <span><span class="co">## 8                                        NA   0.849</span></span>
 <span><span class="co">## 9                                        NA   0.931</span></span></code></pre></div>
 </div>
-<div id="ancestraltraits" class="section level2" number="1.10">
+<div id="independentcontrasts" class="section level2" number="1.10">
 <h2>
-<span class="header-section-number">1.10</span> ancestralTraits<a class="anchor" aria-label="anchor" href="#ancestraltraits"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.10</span> independentContrasts<a class="anchor" aria-label="anchor" href="#independentcontrasts"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">contrasts</span> <span class="op">&lt;-</span> <span class="fu">independentContrasts</span><span class="op">(</span></span>
+<span>  traits <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
+<span>  tree <span class="op">=</span> <span class="va">chemical_bloom_tree</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">buildLinearModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">contrasts</span>,</span>
+<span>  formula <span class="op">=</span> <span class="st">"Fatty_acids = Alcohols + 0"</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">model</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">input_x</span>, y <span class="op">=</span> <span class="va">input_y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">model_x</span>, <span class="va">model_y</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="ancestraltraits" class="section level2" number="1.11">
+<h2>
+<span class="header-section-number">1.11</span> ancestralTraits<a class="anchor" aria-label="anchor" href="#ancestraltraits"><i class="fas fa-link"></i></a>
 </h2>
 <p>Note that this is different from <code>buildTree</code>’s “ancestral_states”, which estimates ancestral sequence states at phylogeny nodes. Instead, <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.</p>
 <p>ancestral states: <a href="https://www.phytools.org/eqg2015/asr.html" class="uri">https://www.phytools.org/eqg2015/asr.html</a></p>
@@ -225,8 +246,9 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#phylogenetic-analyses">phylogenetic analyses</a></li>
-<li><a class="nav-link" href="#phylogenetic-signal"><span class="header-section-number">1.9</span> phylogenetic signal</a></li>
-<li><a class="nav-link" href="#ancestraltraits"><span class="header-section-number">1.10</span> ancestralTraits</a></li>
+<li><a class="nav-link" href="#phylogeneticsignal"><span class="header-section-number">1.9</span> phylogeneticSignal</a></li>
+<li><a class="nav-link" href="#independentcontrasts"><span class="header-section-number">1.10</span> independentContrasts</a></li>
+<li><a class="nav-link" href="#ancestraltraits"><span class="header-section-number">1.11</span> ancestralTraits</a></li>
 </ul>
 
       <div class="book-extra">
@@ -244,7 +266,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-22.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

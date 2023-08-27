@@ -58,7 +58,7 @@
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
 <li><a class="" href="data-visualization.html">data visualization</a></li>
-<li><a class="" href="data-wrangling.html">data wrangling</a></li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="active" href="models.html">models</a></li>
@@ -102,12 +102,12 @@
 </h2>
 <p>Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called <code>buildLinearModel</code>. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.</p>
 <p>Let’s look at an example. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:</p>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">AMP</span>, y <span class="op">=</span> <span class="va">ADP</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>It looks like there might be a relationship! Let’s build a linear model for that relationship:</p>
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">buildLinearModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>  formula <span class="op">=</span> <span class="st">"ADP = AMP"</span></span>
@@ -119,7 +119,7 @@
 <span><span class="co">##   ..$ value   : num [1:6] 0.7842 0.9142 0.0415 40.3224 15...</span></span>
 <span><span class="co">##   ..$ std_err : chr [1:6] "1.0056" "0.0757" NA NA ...</span></span>
 <span><span class="co">##   ..$ type    : chr [1:6] "coefficient" "coefficient" "st"..</span></span>
-<span><span class="co">##   ..$ p_value : chr [1:6] "0.4375" "0" NA NA ...</span></span>
+<span><span class="co">##   ..$ p_value : chr [1:6] "0.43750684" "0" NA NA ...</span></span>
 <span><span class="co">##  $ data   :'data.frame': 92 obs. of  7 variables:</span></span>
 <span><span class="co">##   ..$ input_x  : num [1:92] 13.2 13.5 14.3 13.3 12 ...</span></span>
 <span><span class="co">##   ..$ input_y  : num [1:92] 12.8 13.1 13.3 13.2 11.9 ...</span></span>
@@ -129,17 +129,24 @@
 <span><span class="co">##   ..$ model_y  : num [1:92] 12.8 13.1 13.9 13 11.8 ...</span></span>
 <span><span class="co">##   ..$ model_x  : num [1:92] 13.2 13.5 14.3 13.3 12 ...</span></span></code></pre></div>
 <p>The model consists of two thigs: metrics and data. Let’s look at the metrics:</p>
-<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span><span class="op">$</span><span class="va">metrics</span></span>
-<span><span class="co">##               variable   value std_err        type p_value</span></span>
-<span><span class="co">## 1          (Intercept)  0.7842  1.0056 coefficient  0.4375</span></span>
-<span><span class="co">## 2                  AMP  0.9142  0.0757 coefficient       0</span></span>
-<span><span class="co">## 3      median_residual  0.0415    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 4    total_sum_squares 40.3224    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 5 residual_sum_squares 15.3901    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 6            r_squared  0.6183    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">##               variable   value std_err        type</span></span>
+<span><span class="co">## 1          (Intercept)  0.7842  1.0056 coefficient</span></span>
+<span><span class="co">## 2                  AMP  0.9142  0.0757 coefficient</span></span>
+<span><span class="co">## 3      median_residual  0.0415    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 4    total_sum_squares 40.3224    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 5 residual_sum_squares 15.3901    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 6            r_squared  0.6183    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">##      p_value</span></span>
+<span><span class="co">## 1 0.43750684</span></span>
+<span><span class="co">## 2          0</span></span>
+<span><span class="co">## 3       &lt;NA&gt;</span></span>
+<span><span class="co">## 4       &lt;NA&gt;</span></span>
+<span><span class="co">## 5       &lt;NA&gt;</span></span>
+<span><span class="co">## 6       &lt;NA&gt;</span></span></code></pre></div>
 <p>It shows us the intercept (b), the variable for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second). The other thing the model contains is the data (below). This includes the input_x and y values. The raw values for ADP and AMP, the residuals (see below for details), and the x and y values generated by the model.</p>
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="co">##    input_x  input_y      ADP      AMP   residuals  model_y</span></span>
 <span><span class="co">## 1 13.15029 12.83791 12.83791 13.15029  0.03119000 12.80672</span></span>
@@ -156,32 +163,32 @@
 <span><span class="co">## 5 11.99764</span></span>
 <span><span class="co">## 6 12.95966</span></span></code></pre></div>
 <p>Let’s plot the model!</p>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">input_x</span>, y <span class="op">=</span> <span class="va">input_y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">model_x</span>, y <span class="op">=</span> <span class="va">model_y</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-144-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very good. Now let’s talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">input_x</span>, y <span class="op">=</span> <span class="va">input_y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">model_x</span>, y <span class="op">=</span> <span class="va">model_y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">input_x</span>, y <span class="op">=</span> <span class="va">input_y</span>, xend <span class="op">=</span> <span class="va">input_x</span>, yend <span class="op">=</span> <span class="va">model_y</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can calculate the sum of the squared residuals:</p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
 <span>  <span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">input_y</span> <span class="op">-</span> <span class="va">model</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">model_y</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">## [1] 15.39014</span></span></code></pre></div>
 <p>15.39! Let’s call that the “residual sum of the squares”. So. 15.39.. does that mean our model is good? I don’t know. We have to compare that number to something. Let’s compare it to a super simple model that is just defined by the mean y value of the input data.</p>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">AMP</span>, y <span class="op">=</span> <span class="va">ADP</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_hline</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ADP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-147-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>A pretty bad model, I agree. How much better is our linear model that the flat line model? Let’s create a measure of the distance between each point and the point predicted for that same x value on the model:</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
 <span>  <span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -191,13 +198,13 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">AMP</span>, y <span class="op">=</span> <span class="va">ADP</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_hline</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ADP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">AMP</span>, y <span class="op">=</span> <span class="va">ADP</span>, xend <span class="op">=</span> <span class="va">AMP</span>, yend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ADP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>40.32! Wow. Let’s call that the “total sum of the squares”, and now we can compare that to our “residual sum of the squares”:</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fl">1</span><span class="op">-</span><span class="op">(</span><span class="fl">15.39</span><span class="op">/</span><span class="fl">40.32</span><span class="op">)</span></span>
 <span><span class="co">## [1] 0.6183036</span></span></code></pre></div>
 <p>0.68! Alright. That is our R squared value. It is equal to 1 minus the ratio of the “residual sum of the squares” to the “total sum of the squares”. Now, let’s put it all together and make it pretty:</p>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">model</span><span class="op">$</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">input_x</span>, y <span class="op">=</span> <span class="va">input_y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">model_x</span>, y <span class="op">=</span> <span class="va">model_y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -217,34 +224,49 @@
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">top</span>, <span class="va">bottom</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="multivariate" class="section level2 unnumbered">
 <h2>multivariate<a class="anchor" aria-label="anchor" href="#multivariate"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model1</span> <span class="op">&lt;-</span> <span class="fu">buildLinearModel</span><span class="op">(</span><span class="va">metabolomics_data</span>, formula <span class="op">=</span> <span class="st">"ADP = AMP"</span><span class="op">)</span></span>
 <span><span class="va">model1</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="co">## $metrics</span></span>
-<span><span class="co">##               variable   value std_err        type p_value</span></span>
-<span><span class="co">## 1          (Intercept)  0.7842  1.0056 coefficient  0.4375</span></span>
-<span><span class="co">## 2                  AMP  0.9142  0.0757 coefficient       0</span></span>
-<span><span class="co">## 3      median_residual  0.0415    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 4    total_sum_squares 40.3224    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 5 residual_sum_squares 15.3901    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 6            r_squared  0.6183    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
+<span><span class="co">##               variable   value std_err        type</span></span>
+<span><span class="co">## 1          (Intercept)  0.7842  1.0056 coefficient</span></span>
+<span><span class="co">## 2                  AMP  0.9142  0.0757 coefficient</span></span>
+<span><span class="co">## 3      median_residual  0.0415    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 4    total_sum_squares 40.3224    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 5 residual_sum_squares 15.3901    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 6            r_squared  0.6183    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">##      p_value</span></span>
+<span><span class="co">## 1 0.43750684</span></span>
+<span><span class="co">## 2          0</span></span>
+<span><span class="co">## 3       &lt;NA&gt;</span></span>
+<span><span class="co">## 4       &lt;NA&gt;</span></span>
+<span><span class="co">## 5       &lt;NA&gt;</span></span>
+<span><span class="co">## 6       &lt;NA&gt;</span></span>
 <span><span class="va">model2</span> <span class="op">&lt;-</span> <span class="fu">buildLinearModel</span><span class="op">(</span><span class="va">metabolomics_data</span>, formula <span class="op">=</span> <span class="st">"ADP = AMP + IMP"</span><span class="op">)</span></span>
 <span><span class="va">model2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="co">## $metrics</span></span>
-<span><span class="co">##               variable   value std_err        type p_value</span></span>
-<span><span class="co">## 1          (Intercept)  2.0057  0.9222 coefficient  0.0323</span></span>
-<span><span class="co">## 2                  AMP  0.6201  0.0907 coefficient       0</span></span>
-<span><span class="co">## 3                  IMP  0.2303  0.0606 coefficient   3e-04</span></span>
-<span><span class="co">## 4      median_residual  0.0462    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 5    total_sum_squares 40.3224    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 6 residual_sum_squares 11.6145    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
-<span><span class="co">## 7            r_squared  0.6494    &lt;NA&gt;   statistic    &lt;NA&gt;</span></span>
+<span><span class="co">##               variable   value std_err        type</span></span>
+<span><span class="co">## 1          (Intercept)  2.0057  0.9222 coefficient</span></span>
+<span><span class="co">## 2                  AMP  0.6201  0.0907 coefficient</span></span>
+<span><span class="co">## 3                  IMP  0.2303  0.0606 coefficient</span></span>
+<span><span class="co">## 4      median_residual  0.0462    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 5    total_sum_squares 40.3224    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 6 residual_sum_squares 11.6145    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">## 7            r_squared  0.6494    &lt;NA&gt;   statistic</span></span>
+<span><span class="co">##      p_value</span></span>
+<span><span class="co">## 1 0.03232768</span></span>
+<span><span class="co">## 2          0</span></span>
+<span><span class="co">## 3 0.00026437</span></span>
+<span><span class="co">## 4       &lt;NA&gt;</span></span>
+<span><span class="co">## 5       &lt;NA&gt;</span></span>
+<span><span class="co">## 6       &lt;NA&gt;</span></span>
+<span><span class="co">## 7       &lt;NA&gt;</span></span>
 <span></span>
 <span><span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
@@ -283,7 +305,7 @@
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plot1</span><span class="op">/</span><span class="va">plot2</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-151-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="classification" class="section level2 unnumbered">
 <h2>classification<a class="anchor" aria-label="anchor" href="#classification"><i class="fas fa-link"></i></a>
@@ -296,7 +318,7 @@
 <code>workflow %&gt;% tune_grid() %&gt;% select_best() -&gt; best_parameters</code>
 <code>workflow %&gt;% finalize_workflow() %&gt;% last_fit()</code></p>
 <p>Start by making a number of forests that is the square of the number of variables and then try a few values above and below that number.</p>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Randomly split data into a traing set and a testing set</span></span>
 <span>    <span class="va">metabolomics_data_split</span> <span class="op">&lt;-</span> <span class="fu">rsample</span><span class="fu">::</span><span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">initial_split</a></span><span class="op">(</span><span class="va">metabolomics_data</span>, prop <span class="op">=</span> <span class="fl">3</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span></span>
 <span></span>
@@ -328,8 +350,8 @@
 <span>      <span class="fu">geom_tile</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"black"</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>      <span class="fu">scale_x_discrete</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">scale_y_discrete</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">18</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>    <span class="fu">select_best</span><span class="op">(</span><span class="va">tune_results</span>, metric <span class="op">=</span> <span class="st">"accuracy"</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 3</span></span>
 <span><span class="co">##    mtry trees .config               </span></span>
@@ -423,7 +445,7 @@ Clustering</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-22.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-27.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

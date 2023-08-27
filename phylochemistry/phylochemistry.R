@@ -104,7 +104,8 @@
                     "grid",
                     "patchwork",
                     "ggnewscale",
-                    "later"
+                    "later",
+                    "phytools"
                 )
 
                 if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
@@ -11289,6 +11290,34 @@
                 results <- do.call(cbind, results)
                 colnames(results) <- colnames(traits)[2:dim(traits)[2]]
                 return(results)
+            }
+
+        #### ancestralTraits
+
+            ancestralTraits <- function(traits, tree) {
+                
+                treefort <- fortify(tree)
+                for (i in 2:dim(traits)[2]) { # i=2
+                    trait <- as.numeric(unlist(traits[,i]))
+                    names(trait) <- as.character(unlist(traits[,1]))
+
+                    anc_traits <- fastAnc( tree = tree, x = trait, vars = FALSE, CI = TRUE )
+                    anc_traits <- data.frame(
+                        node = as.numeric(names(anc_traits[[1]])),
+                        anc_trait = anc_traits[[1]],
+                        anc_trait_lower = anc_traits[[2]][,1],
+                        anc_trait_upper = anc_traits[[2]][,2]
+                    )
+                    names(anc_traits) <- c(
+                        "node",
+                        paste0("anc_", colnames(traits)[i]),
+                        paste0("anc_", colnames(traits)[i], "_lower"),
+                        paste0("anc_", colnames(traits)[i], "_upper")
+                    )
+                    
+                    treefort <- left_join(treefort, anc_traits, by = "node")
+                    treefort
+                }
             }
 
 ###### Datasets
