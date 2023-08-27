@@ -11304,6 +11304,7 @@
                     anc_traits <- fastAnc( tree = tree, x = trait, vars = FALSE, CI = TRUE )
                     anc_traits <- data.frame(
                         node = as.numeric(names(anc_traits[[1]])),
+                        # trait = trait,
                         anc_trait = anc_traits[[1]],
                         anc_trait_lower = anc_traits[[2]][,1],
                         anc_trait_upper = anc_traits[[2]][,2]
