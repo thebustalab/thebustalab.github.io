@@ -11316,7 +11316,7 @@
                     )
                     
                     treefort <- left_join(treefort, anc_traits, by = "node")
-                    treefort
+                    return(treefort)
                 }
             }
 
