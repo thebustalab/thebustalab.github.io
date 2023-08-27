@@ -4638,6 +4638,8 @@ phylogeneticSignal(
 
 ## independentContrasts
 
+Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to "independent contrasts" to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. `phylochemistry` provides the `independentContrasts` function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts:
+
 
 ```r
 contrasts <- independentContrasts(
@@ -4657,13 +4659,33 @@ ggplot(model$data) +
 
 <img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
-## ancestralTraits
+## ancestralTraits {-}
 
-Note that this is different from `buildTree`'s "ancestral_states", which estimates ancestral sequence states at phylogeny nodes. Instead, `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
-
-ancestral states: https://www.phytools.org/eqg2015/asr.html
+Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`'s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
 
 
+```r
+ancestralTraits(
+  traits = chemical_blooms,
+  tree = chemical_bloom_tree
+)
+## # A tibble: 155 × 12
+##    parent  node branch.length label isTip     x     y branch
+##     <int> <dbl>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
+##  1     80     1         290.  Gink… TRUE   352.     1   207.
+##  2     81     2         267.  Pice… TRUE   352.     2   219.
+##  3     81     3         267.  Cupr… TRUE   352.     3   219.
+##  4     84     4         135.  Eryt… TRUE   352.     5   285.
+##  5     86     5          16.2 Iris… TRUE   352.     6   344.
+##  6     86     6          16.2 Iris… TRUE   352.     7   344.
+##  7     88     7          11.1 Aloe… TRUE   352.     8   347.
+##  8     88     8          11.1 Aloe… TRUE   352.     9   347.
+##  9     91     9          24.1 Alli… TRUE   352.    10   340.
+## 10     91    10          24.1 Alli… TRUE   352.    11   340.
+## # ℹ 145 more rows
+## # ℹ 4 more variables: angle <dbl>, anc_Alkanes <dbl>,
+## #   anc_Alkanes_lower <dbl>, anc_Alkanes_upper <dbl>
+```
 
 # comparative genomics {-}
 
@@ -4844,7 +4866,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4869,7 +4891,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4893,7 +4915,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4904,7 +4926,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -4957,21 +4979,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5008,7 +5030,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5346,7 +5368,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5388,7 +5410,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5477,7 +5499,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

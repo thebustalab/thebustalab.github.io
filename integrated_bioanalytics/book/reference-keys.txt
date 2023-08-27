@@ -14,7 +14,6 @@ plotting-trees
 collapsetree
 phylogeneticsignal
 independentcontrasts
-ancestraltraits
 loading-gff-files
 abstract
 title

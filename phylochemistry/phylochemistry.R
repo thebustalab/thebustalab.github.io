@@ -11316,8 +11316,8 @@
                     )
                     
                     treefort <- left_join(treefort, anc_traits, by = "node")
-                    return(treefort)
                 }
+                return(treefort)
             }
 
 ###### Datasets
