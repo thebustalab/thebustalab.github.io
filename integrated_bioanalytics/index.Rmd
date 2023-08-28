@@ -52,13 +52,14 @@ options(pillar.sigfig = 3)
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.width = 2}
 image_files <- c(
-  "https://thebustalab.github.io/integrated_bioanalytics/images/cover1.jpg",
-  "https://thebustalab.github.io/integrated_bioanalytics/images/cover2.jpg",
-  "https://thebustalab.github.io/integrated_bioanalytics/images/cover3.jpg"
+  "https://thebustalab.github.io/integrated_bioanalytics/images/cover1.png",
+  "https://thebustalab.github.io/integrated_bioanalytics/images/cover2.png",
+  "https://thebustalab.github.io/integrated_bioanalytics/images/cover3.png"
 )
 random_image <- sample(image_files, 1)
 knitr:::include_graphics(random_image, dpi = NA)
 ```
+
 Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
 
 ```{r, message = FALSE, eval = FALSE}
