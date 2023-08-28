@@ -51,9 +51,14 @@ options(pillar.sigfig = 3)
 <!-- start preface-->
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.width = 2}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/phylochemistry_logo.jpg', dpi = NA)
+image_files <- c(
+  "https://thebustalab.github.io/integrated_bioanalytics/images/cover1.jpg",
+  "https://thebustalab.github.io/integrated_bioanalytics/images/cover2.jpg",
+  "https://thebustalab.github.io/integrated_bioanalytics/images/cover3.jpg"
+)
+random_image <- sample(image_files, 1)
+knitr:::include_graphics(random_image, dpi = NA)
 ```
-
 Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
 
 ```{r, message = FALSE, eval = FALSE}
@@ -66,13 +71,36 @@ Features provided by the source script:
 
 * A GC-MS data analysis application with a MS reference library.
 * A sequence alignment analysis application for trimming alignments.
+* BLAST searches that export .fasta files of hits and store results in a .csv file.
 * Functions for dimensionality reduction, clustering, modeling, and visualization.
 
---Useful data--
+--Useful data and data structures--
 
 * More than 12 chemical data sets for running practice analyses.
 * A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick).
 * A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv).
+* Support for multiple column and row names.
+
+<!-- ## new features
+
+1. A Shiny app for GC-FID and GC-MS data analysis, including a large MS library.
+2. Open reading frame extraction from multiple fasta files.
+3. 
+4. Minor ticks for ggplot2 axes.
+5. Phylogenetic signal for discrete traits.
+6. Analyze multiple sequence alignments for sites associated with user-defined function
+7. Multiple column name, multiple row name data structures (aka "polylists").
+8. Draw annotated multiple sequence alignments.
+9. Use image analysis to automatically get the csv of a mass spectrum from a published image.
+10. Draw chemical structures in R from a csv of molecular coordinates.
+
+## wrapped features
+
+1. BLAST transcriptomes, via [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download).
+2. Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via [msa](https://bioconductor.org/packages/release/bioc/html/msa.html) and [orthologr](https://github.com/HajkD/orthologr).
+3. Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via [phangorn](https://cran.r-project.org/web/packages/phangorn/index.html).
+4. Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).
+5. Phylogenetic signal for continuous traits, via [picante](https://cran.r-project.org/web/packages/picante/index.html). -->
 
 <!-- end -->
 
@@ -206,60 +234,6 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?" You should say "yes".
 
-<!-- Run: installPhylochemistry() to automatically install the required packages." -->
-
-<!-- This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following: -->
-<!-- ```{r, message = FALSE, eval = FALSE} -->
-<!-- installPhylochemistry() -->
-<!-- ``` -->
-<!-- Sometimes when you run `installPhylochemistry()` you will get a message: -->
-
-<!--   `Update all/some/none? [a/s/n]:` -->
-
-<!--   In this case, it is generally advisable to enter `a` into the console and then press enter, indicating to R that you wish to update anything and everything that can be updated. -->
-
-<!--   Other times you may get this message: -->
-
-<!--   `Do you want to install from sources the packages which need compilation? (Yes/no/cancel)` -->
-
-<!--   You can reply `yes` if you wish, but for simplicity's sake it is okay to say `no`. I usually start with saying `no`, only reverting to `yes` if things don't work down the line. -->
-
-<!-- Once that is complete, and assuming no errors are displayed, attempt to load phylochemistry again: -->
-<!-- ```{r, message = FALSE} -->
-<!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
-<!-- ``` -->
-
-## Updating R and R Packages {-}
-
-Close RStudio, open the plain R GUI, then run the following:
-
-On Mac:
-
-```{r, eval = FALSE}
-install.packages('remotes') #assuming it is not remotes installed
-remotes::install_github('andreacirilloac/updateR')
-updateR::updateR()
-```
-
-On PC:
-
-```{r, eval = FALSE}
-install.packages("installr")
-installr::updateR()
-```
-
-## R scripts on Google Drive {-}
-
-Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:
-```{r, message = FALSE, eval = FALSE}
-openRGD("file_share_link_here")
-```
-
-When you do this, "IN_USE___" will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:
-```{r, message = FALSE, eval = FALSE}
-closeRGD("file_share_link_here")
-```
-
 <!-- end -->
 
 <!-- start data visualization -->
@@ -318,10 +292,6 @@ algae_data_small
 ## ggplot & geoms {-}
 
 Now we have a nice, small table that we can use to practice data visualization. For visualization, we're going to use `ggplot2` - a powerful set of commands for plot generation. 
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/what_is_ggplot.jpeg', dpi = NA)
-```
 
 There are three steps to setting up a ggplot:
 
@@ -794,6 +764,10 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   geom_smooth() +
   geom_point() +
   theme_void()
+```
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/what_is_ggplot.jpeg', dpi = NA)
 ```
 
 You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
@@ -3857,7 +3831,7 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 # phylogenetic analyses {-}
 
-## phylogeneticSignal
+## phylogeneticSignal {-}
 
 Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species' evolutionary history. `phylochemistry` provides the `phylogeneticSignal` function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:
 
@@ -3874,9 +3848,9 @@ phylogeneticSignal(
 )
 ```
 
-## independentContrasts
+## independentContrasts {-}
 
-Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to "independent contrasts" to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. `phylochemistry` provides the `independentContrasts` function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts:
+Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to "independent contrasts" to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. `phylochemistry` provides the `independentContrasts` function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts.
 
 ```{r}
 contrasts <- independentContrasts(
@@ -3896,7 +3870,7 @@ ggplot(model$data) +
 
 ## ancestralTraits {-}
 
-Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`'s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny.
+Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example.
 
 ```{r}
 ancestralTraits(
@@ -4464,57 +4438,6 @@ analyzeImage(
 
 <!-- end -->
 
-<!-- start phylochemistry --> 
-
-<!-- ![](https://thebustalab.github.io/images/phylochemistry_logo.jpg) -->
-
-<!-- `phylochemistry` is a set of functions for chemical, transcriptomic, and genomic analysis. These tools are provided though a combination of new computational functions and wrapped features of previously developed packages. A number of new organizational and data handling functions to streamline analyses in this interdisciplinary space are also provided. This page provides access to the latest version of `phylochemistry`.
-
-## requirements
-
-* To run `phylochemistry`, you need to have R and RStudio installed. For instructions on how to install those, please see [this page](https://thebustalab.github.io/R_For_Chemists/installation.html).
-
-## load phylochemistry
-
-Phylochemistry is not an R package, but rather a set of components that you can add to your R environment by running an R script hosted on this site. `phylochemistry` requires a number of existing R packages in order to run, but don't worry,`phylochemistry` will help you install these packages if they are not installed already. 
-
-1. Load `phylochemistry` directly into your R session by running the following command in RStudio:
-```{r, message = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-```
- \
-Sometimes running the command above generates the message "You need to install the following packages before proceeding [...] Run: installPhylochemistry() to automatically install the required packages.". This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following:\
-```{r, message = FALSE, eval = FALSE}
-installPhylochemistry()
-```
- \
-Once that is complete, then try the source() command again:
-```{r, message = FALSE, eval = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-```
-
-## new features
-
-1. A Shiny app for GC-FID and GC-MS data analysis, including a large MS library.
-2. Open reading frame extraction from multiple fasta files.
-3. BLAST searches that export .fasta files of hits and store results in a .csv file.
-4. Minor ticks for ggplot2 axes.
-5. Phylogenetic signal for discrete traits.
-6. Analyze multiple sequence alignments for sites associated with user-defined function
-7. Multiple column name, multiple row name data structures (aka "polylists").
-8. Draw annotated multiple sequence alignments.
-9. Use image analysis to automatically get the csv of a mass spectrum from a published image.
-10. Draw chemical structures in R from a csv of molecular coordinates.
-
-## wrapped features
-
-1. BLAST transcriptomes, via [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download).
-2. Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via [msa](https://bioconductor.org/packages/release/bioc/html/msa.html) and [orthologr](https://github.com/HajkD/orthologr).
-3. Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via [phangorn](https://cran.r-project.org/web/packages/phangorn/index.html).
-4. Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).
-5. Phylogenetic signal for continuous traits, via [picante](https://cran.r-project.org/web/packages/picante/index.html). -->
-
-<!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -4537,6 +4460,25 @@ ________________________________________________________________________________
 
 <!-- start R FAQ -->
 # r faq {-}
+
+## Updating R and R Packages {-}
+
+Close RStudio, open the plain R GUI, then run the following:
+
+On Mac:
+
+```{r, eval = FALSE}
+install.packages('remotes') #assuming it is not remotes installed
+remotes::install_github('andreacirilloac/updateR')
+updateR::updateR()
+```
+
+On PC:
+
+```{r, eval = FALSE}
+install.packages("installr")
+installr::updateR()
+```
 
 ## filtering {-}
 

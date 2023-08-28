@@ -189,45 +189,6 @@ If the library load correctly - then you are set to go! If not, try updating you
 <code class="sourceCode R"><span><span class="va">bustalab</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></span></code></pre></div>
 <p>The first time you try this, it will very likely say: “You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?” You should say “yes”.</p>
-<!-- Run: installPhylochemistry() to automatically install the required packages." -->
-<!-- This means that some of the prerequisite packages that phylochemistry needs are not installed. If this happens, run the following: -->
-<!-- ```{r, message = FALSE, eval = FALSE} -->
-<!-- installPhylochemistry() -->
-<!-- ``` -->
-<!-- Sometimes when you run `installPhylochemistry()` you will get a message: -->
-<!--   `Update all/some/none? [a/s/n]:` -->
-<!--   In this case, it is generally advisable to enter `a` into the console and then press enter, indicating to R that you wish to update anything and everything that can be updated. -->
-<!--   Other times you may get this message: -->
-<!--   `Do you want to install from sources the packages which need compilation? (Yes/no/cancel)` -->
-<!--   You can reply `yes` if you wish, but for simplicity's sake it is okay to say `no`. I usually start with saying `no`, only reverting to `yes` if things don't work down the line. -->
-<!-- Once that is complete, and assuming no errors are displayed, attempt to load phylochemistry again: -->
-<!-- ```{r, message = FALSE} -->
-<!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
-<!-- ``` -->
-</div>
-<div id="updating-r-and-r-packages" class="section level2 unnumbered">
-<h2>Updating R and R Packages<a class="anchor" aria-label="anchor" href="#updating-r-and-r-packages"><i class="fas fa-link"></i></a>
-</h2>
-<p>Close RStudio, open the plain R GUI, then run the following:</p>
-<p>On Mac:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'remotes'</span><span class="op">)</span> <span class="co">#assuming it is not remotes installed</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'andreacirilloac/updateR'</span><span class="op">)</span></span>
-<span><span class="fu">updateR</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>On PC:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"installr"</span><span class="op">)</span></span>
-<span><span class="fu">installr</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div id="r-scripts-on-google-drive" class="section level2 unnumbered">
-<h2>R scripts on Google Drive<a class="anchor" aria-label="anchor" href="#r-scripts-on-google-drive"><i class="fas fa-link"></i></a>
-</h2>
-<p>Sometimes we want to save our R scripts on Google Drive. If you have an R script on Google Drive and want to open it in RStudio, get the share link for the file and use the following command:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">openRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></span></code></pre></div>
-<p>When you do this, “IN_USE___” will appear in front of the file name in Google Drive, so that others will know that you are using it. When you are done using the file, you can save and close it using:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">closeRGD</span><span class="op">(</span><span class="st">"file_share_link_here"</span><span class="op">)</span></span></code></pre></div>
 <!-- end -->
 <!-- start data visualization -->
 </div>
@@ -253,8 +214,6 @@ If the library load correctly - then you are set to go! If not, try updating you
 <li><a class="nav-link" href="#verification">verification</a></li>
 <li><a class="nav-link" href="#tex">TeX</a></li>
 <li><a class="nav-link" href="#phylochemistry">phylochemistry</a></li>
-<li><a class="nav-link" href="#updating-r-and-r-packages">Updating R and R Packages</a></li>
-<li><a class="nav-link" href="#r-scripts-on-google-drive">R scripts on Google Drive</a></li>
 </ul>
 
       <div class="book-extra">
@@ -272,7 +231,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-27.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-28.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
