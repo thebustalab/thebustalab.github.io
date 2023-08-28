@@ -7137,8 +7137,8 @@
                                 )
 
                             # Find the k nearest neighbors in the chunks and render them
-                                n_nearest_neighbors <- 8
-                                if(input$model == "gpt-3.5-turbo-16k") { n_nearest_neighbors <- 20 }
+                                n_nearest_neighbors <- 6
+                                if(input$model == "gpt-3.5-turbo-16k") { n_nearest_neighbors <- 16 }
 
                                 nn <- get.knnx( 
                                     as.matrix(chunks[(n_id_columns+1):dim(chunks)[2]]),
