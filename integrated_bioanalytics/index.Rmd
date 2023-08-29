@@ -3874,10 +3874,21 @@ ggplot(model$data) +
 Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example.
 
 ```{r}
-ancestralTraits(
+anc_traits_tree <- ancestralTraits(
   traits = chemical_blooms,
   tree = chemical_bloom_tree
 )
+as.data.frame(anc_traits_tree)
+```
+
+
+```{r}
+ggtree(anc_traits_tree) +
+  geom_ancestral_pie(data = anc_traits_tree, cols = c(19,22), pie_size = 0.05) +
+  geom_tiplab(offset = 20, align = TRUE) +
+  scale_x_continuous(limits = c(0,450)) +
+  theme_void()
+
 ```
 
 # comparative genomics {-}
