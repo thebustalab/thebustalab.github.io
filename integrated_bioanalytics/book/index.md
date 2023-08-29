@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-08-28"
+date: "2023-08-29"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4626,35 +4626,45 @@ ggplot(model$data) +
 
 ## ancestralTraits {-}
 
-Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example.
+Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Note that the ancestral state of each trait is provided in a column called `anc_*` and the upper and lower 95% confidence limits for that trait are provided in anc_*_lower and anc_*_upper.
 
 
 ```r
-ancestralTraits(
+anc_traits_tree <- ancestralTraits(
   traits = chemical_blooms,
   tree = chemical_bloom_tree
 )
-## # A tibble: 155 × 36
-##    parent  node branch.length label isTip     x     y branch
-##     <int> <dbl>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
-##  1     80     1         290.  Gink… TRUE   352.     1   207.
-##  2     81     2         267.  Pice… TRUE   352.     2   219.
-##  3     81     3         267.  Cupr… TRUE   352.     3   219.
-##  4     84     4         135.  Eryt… TRUE   352.     5   285.
-##  5     86     5          16.2 Iris… TRUE   352.     6   344.
-##  6     86     6          16.2 Iris… TRUE   352.     7   344.
-##  7     88     7          11.1 Aloe… TRUE   352.     8   347.
-##  8     88     8          11.1 Aloe… TRUE   352.     9   347.
-##  9     91     9          24.1 Alli… TRUE   352.    10   340.
-## 10     91    10          24.1 Alli… TRUE   352.    11   340.
-## # ℹ 145 more rows
+head(anc_traits_tree)
+## # A tibble: 6 × 36
+##   parent  node branch.length label  isTip     x     y branch
+##    <int> <dbl>         <dbl> <chr>  <lgl> <dbl> <dbl>  <dbl>
+## 1     80     1         290.  Ginkg… TRUE   352.     1   207.
+## 2     81     2         267.  Picea… TRUE   352.     2   219.
+## 3     81     3         267.  Cupre… TRUE   352.     3   219.
+## 4     84     4         135.  Eryth… TRUE   352.     5   285.
+## 5     86     5          16.2 Iris_… TRUE   352.     6   344.
+## 6     86     6          16.2 Iris_… TRUE   352.     7   344.
 ## # ℹ 28 more variables: angle <dbl>, anc_Alkanes <dbl>,
 ## #   anc_Alkanes_lower <dbl>, anc_Alkanes_upper <dbl>,
 ## #   anc_Sec_Alcohols <dbl>, anc_Sec_Alcohols_lower <dbl>,
 ## #   anc_Sec_Alcohols_upper <dbl>, anc_Others <dbl>,
 ## #   anc_Others_lower <dbl>, anc_Others_upper <dbl>,
-## #   anc_Fatty_acids <dbl>, anc_Fatty_acids_lower <dbl>, …
+## #   anc_Fatty_acids <dbl>, anc_Fatty_acids_lower <dbl>,
+## #   anc_Fatty_acids_upper <dbl>, anc_Alcohols <dbl>, …
 ```
+
+In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node.
+
+
+```r
+ggtree(anc_traits_tree) +
+  geom_ancestral_pie(data = anc_traits_tree, cols = c(19,22), pie_size = 0.1) +
+  geom_tiplab(offset = 20, align = TRUE) +
+  scale_x_continuous(limits = c(0,650)) +
+  theme_void()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -4835,7 +4845,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4860,7 +4870,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4884,7 +4894,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4895,7 +4905,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -4948,21 +4958,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -4999,7 +5009,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5304,7 +5314,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5346,7 +5356,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5435,7 +5445,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

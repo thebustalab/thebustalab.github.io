@@ -224,32 +224,37 @@
 <div id="ancestraltraits" class="section level2 unnumbered">
 <h2>ancestralTraits<a class="anchor" aria-label="anchor" href="#ancestraltraits"><i class="fas fa-link"></i></a>
 </h2>
-<p>Ancestral trait reconstruction is a method to infer the characteristics (or “traits”) of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or “reconstruct” the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. <code>phylochemistry</code> provides the function <code>ancestralTraits</code> to perform these operations. Note that <code>ancestralTraits</code> is different from <code>buildTree</code>s “ancestral_states”. “ancestral_states” estimates ancestral sequence states at phylogeny nodes, while <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example.</p>
+<p>Ancestral trait reconstruction is a method to infer the characteristics (or “traits”) of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or “reconstruct” the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. <code>phylochemistry</code> provides the function <code>ancestralTraits</code> to perform these operations. Note that <code>ancestralTraits</code> is different from <code>buildTree</code>s “ancestral_states”. “ancestral_states” estimates ancestral sequence states at phylogeny nodes, while <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Note that the ancestral state of each trait is provided in a column called <code>anc_*</code> and the upper and lower 95% confidence limits for that trait are provided in anc_<em><em>lower and anc</em></em>_upper.</p>
 <div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">ancestralTraits</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">anc_traits_tree</span> <span class="op">&lt;-</span> <span class="fu">ancestralTraits</span><span class="op">(</span></span>
 <span>  traits <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
 <span>  tree <span class="op">=</span> <span class="va">chemical_bloom_tree</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 155 × 36</span></span>
-<span><span class="co">##    parent  node branch.length label isTip     x     y branch</span></span>
-<span><span class="co">##     &lt;int&gt; &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span><span class="co">##  1     80     1         290.  Gink… TRUE   352.     1   207.</span></span>
-<span><span class="co">##  2     81     2         267.  Pice… TRUE   352.     2   219.</span></span>
-<span><span class="co">##  3     81     3         267.  Cupr… TRUE   352.     3   219.</span></span>
-<span><span class="co">##  4     84     4         135.  Eryt… TRUE   352.     5   285.</span></span>
-<span><span class="co">##  5     86     5          16.2 Iris… TRUE   352.     6   344.</span></span>
-<span><span class="co">##  6     86     6          16.2 Iris… TRUE   352.     7   344.</span></span>
-<span><span class="co">##  7     88     7          11.1 Aloe… TRUE   352.     8   347.</span></span>
-<span><span class="co">##  8     88     8          11.1 Aloe… TRUE   352.     9   347.</span></span>
-<span><span class="co">##  9     91     9          24.1 Alli… TRUE   352.    10   340.</span></span>
-<span><span class="co">## 10     91    10          24.1 Alli… TRUE   352.    11   340.</span></span>
-<span><span class="co">## # ℹ 145 more rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">anc_traits_tree</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 36</span></span>
+<span><span class="co">##   parent  node branch.length label  isTip     x     y branch</span></span>
+<span><span class="co">##    &lt;int&gt; &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;  &lt;lgl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">## 1     80     1         290.  Ginkg… TRUE   352.     1   207.</span></span>
+<span><span class="co">## 2     81     2         267.  Picea… TRUE   352.     2   219.</span></span>
+<span><span class="co">## 3     81     3         267.  Cupre… TRUE   352.     3   219.</span></span>
+<span><span class="co">## 4     84     4         135.  Eryth… TRUE   352.     5   285.</span></span>
+<span><span class="co">## 5     86     5          16.2 Iris_… TRUE   352.     6   344.</span></span>
+<span><span class="co">## 6     86     6          16.2 Iris_… TRUE   352.     7   344.</span></span>
 <span><span class="co">## # ℹ 28 more variables: angle &lt;dbl&gt;, anc_Alkanes &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   anc_Alkanes_lower &lt;dbl&gt;, anc_Alkanes_upper &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   anc_Sec_Alcohols &lt;dbl&gt;, anc_Sec_Alcohols_lower &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   anc_Sec_Alcohols_upper &lt;dbl&gt;, anc_Others &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   anc_Others_lower &lt;dbl&gt;, anc_Others_upper &lt;dbl&gt;,</span></span>
-<span><span class="co">## #   anc_Fatty_acids &lt;dbl&gt;, anc_Fatty_acids_lower &lt;dbl&gt;, …</span></span></code></pre></div>
+<span><span class="co">## #   anc_Fatty_acids &lt;dbl&gt;, anc_Fatty_acids_lower &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   anc_Fatty_acids_upper &lt;dbl&gt;, anc_Alcohols &lt;dbl&gt;, …</span></span></code></pre></div>
+<p>In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: <code>geom_ancestral_pie</code>. Here is an example. Note that <code>cols</code> is a vector of column numbers that correspond to the traits of interest. <code>pie_size</code> is the size of the pie chart that will be plotted at each node.</p>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">anc_traits_tree</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_ancestral_pie</span><span class="op">(</span>data <span class="op">=</span> <span class="va">anc_traits_tree</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">19</span>,<span class="fl">22</span><span class="op">)</span>, pie_size <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span>offset <span class="op">=</span> <span class="fl">20</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">650</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
   <div class="chapter-nav">
@@ -288,7 +293,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-28.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-29.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

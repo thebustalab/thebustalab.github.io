@@ -3883,11 +3883,11 @@ head(anc_traits_tree)
 
 In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node.
 
-```{r}
+```{r, fig.height = 10}
 ggtree(anc_traits_tree) +
-  geom_ancestral_pie(data = anc_traits_tree, cols = c(19,22), pie_size = 0.05) +
+  geom_ancestral_pie(data = anc_traits_tree, cols = c(19,22), pie_size = 0.1) +
   geom_tiplab(offset = 20, align = TRUE) +
-  scale_x_continuous(limits = c(0,450)) +
+  scale_x_continuous(limits = c(0,650)) +
   theme_void()
 
 ```
