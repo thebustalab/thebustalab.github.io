@@ -115,7 +115,11 @@ Features provided by the source script:
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/chemometrics.jpeg', dpi = NA)
 ```
 
-In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether it’s 10 data points or 10,000. In this chapter, we will explore, critique, and practice methods of handling and visualizing the data generated in large analytical projects. We'll also look at how to answer common quesions we may have about our data: "Which of my samples are most closely related?", "Which analytes are driving differences among my samples?", "Do my samples fall into definable clusters?", "Are any of my variables related?", and "Are any of these distributions different?".
+In bioanalytical science, we separate, identify, and quantify matter - be it DNA, RNA, proteins, small molecules, or even atoms. To connect our data with the world around us and answer scientific questions, multiple chemical entities must be separated, quantified, and identified. As our ability to collect analytical data expands, so must our ability to effectively analyze that data - whether its 10 data points or 10,000.
+
+This book first covers data analysis in R. We will first look at tools for hypothesis generation, including: (i) encoding variables in visual representations of data and (ii) summarizing and providing overviews of large data set. We will then turn to evaluating hypothesese with data by looking at statistical tests and models. Finally, we will look at how to communicate our results in a clear and effective way. These techniques will also allow us to answer common quesions we may have about our data: "Which of my samples are most closely related?", "Which analytes are driving differences among my samples?", "Do my samples fall into definable clusters?", "Are any of my variables related?", and "Are any of these distributions different?".
+
+Let's get started!
 
 <!-- end -->
 
@@ -300,7 +304,7 @@ There are three steps to setting up a ggplot:
 
 We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
-```{r, message = FALSE}
+```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small)
 ```
 
@@ -308,7 +312,7 @@ ggplot(data = algae_data_small)
 
 This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
 
-```{r, message = FALSE}
+```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
@@ -316,28 +320,28 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 
 Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Let's try it:
 
-```{r, message = FALSE}
+```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
-```{r, message = FALSE}
+```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime))
 ```
 
 In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data(as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
-```{r, message = FALSE}
+```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
-```{r, message = FALSE}
+```{r, message = FALSE, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
@@ -346,7 +350,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
-```{r}
+```{r, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_violin() +
   geom_point(aes(color = harvesting_regime), size = 5)
@@ -354,13 +358,13 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
-```{r, fig.height = 5}
+```{r, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_violin(aes(fill = algae_strain)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-```{r}
+```{r, out.width = '50%'}
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
