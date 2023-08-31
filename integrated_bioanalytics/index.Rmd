@@ -3844,11 +3844,13 @@ chemical_bloom_tree <- buildTree(
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
   members = unique(chemical_blooms$label)
 )
-chemical_bloom_tree
+tree <- chemical_bloom_tree
 
-chemical_blooms
+traits <- chemical_blooms
 
 all(chemical_bloom_tree$tip.label %in% chemical_blooms$label)
+
+
 ```
 
 ## phylogeneticSignal {-}
@@ -3874,7 +3876,7 @@ contrasts <- independentContrasts(
 
 buildLinearModel(
   data = contrasts,
-  formula = "Fatty_acids = Alcohols + 0"
+  formula = "Fatty_acids = Alkanes + 0"
 ) -> model
 
 ggplot(model$data) +
@@ -3902,7 +3904,6 @@ ggtree(anc_traits_tree) +
   geom_tiplab(offset = 20, align = TRUE) +
   scale_x_continuous(limits = c(0,650)) +
   theme_void()
-
 ```
 
 # comparative genomics {-}

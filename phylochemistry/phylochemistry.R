@@ -11246,55 +11246,29 @@
                                             evolutionary_transitions_in_randomization = max(null_model),
                                             p_value = p_value
                                         )
-
                             }
 
                             if (class(trait) %in% c("numeric", "integer")) {
 
-                                ### For continuous traits
-
-                                    # for (trait in 1:length(cont_traits)) {
-
-                                    #     # Pull out one variable into a new dataframe
-                                    #         var <- as.matrix(pdata_continuous[,colnames(pdata_continuous) == cont_traits[trait]])
-                                    #         colnames(var) <- cont_traits[trait]
-                                    #         rownames(var) <- pdata_continuous$Species
-                                    #         var <- na.omit(var)
-
-                                    #     # Drop tips not in data, data not in tree
-                                    #         matches <- name.check(nepenthes_tree,var)
-                                    #         matches
-                                    #         nepenthes_tree_2 <- ape::drop.tip(phy = nepenthes_tree, tip = matches$tree_not_data)
-                                    #         name.check(nepenthes_tree_2,var)
-                                    #         var <- var[nepenthes_tree_2$tip.label,]
-
-                                    #     # Root the tree and resolve multichotomies
-                                    #         # nepenthes_tree_3 <- root(nepenthes_tree_2, "N._pervillei_matK")
-                                    #         nepenthes_tree_3 <- nepenthes_tree_2
-                                    #         nepenthes_tree_4 <- multi2di(nepenthes_tree_3)
-
-                                        # Determine phylogenetic signal
-                                            results[[(i-1)]] <- data.frame(
-                                                trait = colnames(traits)[i],
-                                                trait_type = "continuous",
-                                                n_species = length(tree$tip.label),
-                                                number_of_levels = NA,
-                                                evolutionary_transitions_observed = NA,
-                                                median_evolutionary_transitions_in_randomization = NA,
-                                                minimum_evolutionary_transitions_in_randomization = NA,
-                                                evolutionary_transitions_in_randomization = NA,
-                                                p_value = as.numeric(picante::phylosignal(trait, tree)[4])
-                                            )
+                                # Determine phylogenetic signal for continuous traits
+                                    results[[(i-1)]] <- data.frame(
+                                        trait = colnames(traits)[i],
+                                        trait_type = "continuous",
+                                        n_species = length(tree$tip.label),
+                                        number_of_levels = NA,
+                                        evolutionary_transitions_observed = NA,
+                                        median_evolutionary_transitions_in_randomization = NA,
+                                        minimum_evolutionary_transitions_in_randomization = NA,
+                                        evolutionary_transitions_in_randomization = NA,
+                                        p_value = as.numeric(picante::phylosignal(trait, tree)[4])
+                                    )
                             }
-
                         }
 
                     ## Return results
-
                         results <- do.call(rbind, results)
                         results
                         return(results)
-
                 }
 
         #### independentContrasts
@@ -11357,7 +11331,7 @@
 
         #### geom_ancestral_pie
 
-            geom_ancestral_pie <- function(data, cols, pie_size, ...) {
+            geom_ancestral_pie <- function(data, cols, pie_size, pie_border_size = 1, ...) {
      
                 ## Data wrangling 
                     data <- as.data.frame(data)
@@ -11376,7 +11350,7 @@
                         geom_col(
                         data = ldf_split[[i]],
                         aes(y = value, x = 1, fill = name),
-                        color = "black", size = 1
+                        color = "black", size = pie_border_size
                         ) +
                         scale_fill_manual(values = discrete_palette, guide = "none") +
                         coord_polar(theta = "y") + theme_void()
