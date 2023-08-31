@@ -11124,23 +11124,24 @@
 
             treeTraitMatch <- function( traits, tree ) {
 
-                traits <- as.data.frame(traits)
-                traits[,1] <- as.character(traits[,1])
+                ## Make data frame and first column characters
+                    traits <- as.data.frame(traits)
+                    traits[,1] <- as.character(traits[,1])
 
-                species_dropped_from_traits <- traits[,1][!traits[,1] %in% tree$tip.label]
-                if (length(species_dropped_from_traits) > 0) {
-                  traits <- traits[!traits[,1] %in% tree$tip.label,]
-                  warning(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
-                }
+                ## Drop tips and rows as necessary
+                    species_dropped_from_traits <- traits[,1][!traits[,1] %in% tree$tip.label]
+                    if (length(species_dropped_from_traits) > 0) {
+                      traits <- traits[!traits[,1] %in% tree$tip.label,]
+                      warning(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
+                    }
 
-                species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% traits[,1]]
-                if (length(species_dropped_from_tree > 0)) {
-                  tree <- drop.tip(tree, !tree$tip.label %in% traits[,1])
-                  warning(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
-                }
+                    species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% traits[,1]]
+                    if (length(species_dropped_from_tree) > 0) {
+                      tree <- drop.tip(tree, !tree$tip.label %in% traits[,1])
+                      warning(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
+                    }
 
                 ## Reorder traits to match the order of the input
-                    
                     traits <- traits[match(tree$tip.label, traits[,1]),]
 
                 return(list(tree = tree, traits = traits))
@@ -11183,11 +11184,7 @@
 
                                     ## Check that the variable is indeed categorical by comparing the length of the levels vector to the length of the trait vector
                                                     
-                                        if (length(levels) == length(trait)) {
-                                        
-                                            warn("Are you sure this variable is categorical?")
-
-                                        }
+                                        if (length(levels) == length(trait)) { warn("Are you sure this variable is categorical?") }
 
                                     ## Make the transition matrix
                                         
@@ -11309,18 +11306,19 @@
                     traits <- match$traits
                     tree <- match$tree
 
-                results <- list()
-                for (i in 2:(dim(traits)[2])) {
+                ## Calculate independent contrasts for every variable and return
+                    results <- list()
+                    for (i in 2:(dim(traits)[2])) {
 
-                    results[[i]] <- unname(pic(
-                        x = as.numeric(as.data.frame(traits)[,i]),
-                        phy = tree
-                    ))
+                        results[[i]] <- unname(pic(
+                            x = as.numeric(as.data.frame(traits)[,i]),
+                            phy = tree
+                        ))
 
-                }
-                results <- do.call(cbind, results)
-                colnames(results) <- colnames(traits)[2:dim(traits)[2]]
-                return(results)
+                    }
+                    results <- do.call(cbind, results)
+                    colnames(results) <- colnames(traits)[2:dim(traits)[2]]
+                    return(results)
             }
 
         #### ancestralTraits
