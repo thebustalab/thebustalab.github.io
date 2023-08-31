@@ -11120,6 +11120,32 @@
 
     ##### Phylogenetic statistical testing
 
+        #### treeTraitMatch
+
+            treeTraitMatch <- function( traits, tree ) {
+
+                traits <- as.data.frame(traits)
+                traits[,1] <- as.character(traits[,1])
+
+                species_dropped_from_traits <- traits[,1][!traits[,1] %in% tree$tip.label]
+                if (length(species_dropped_from_traits) > 0) {
+                  traits <- traits[!traits[,1] %in% tree$tip.label,]
+                  warning(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
+                }
+
+                species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% traits[,1]]
+                if (length(species_dropped_from_tree > 0)) {
+                  tree <- drop.tip(tree, !tree$tip.label %in% traits[,1])
+                  warning(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
+                }
+
+                ## Reorder traits to match the order of the input
+                    
+                    traits <- traits[match(tree$tip.label, traits[,1]),]
+
+                return(list(tree = tree, traits = traits))
+            }
+
         #### phylogeneticSignal
 
             #' Compute phylogenetic signal for continuous and discrete traits
@@ -11134,13 +11160,12 @@
 
                 phylogeneticSignal <- function( traits, tree, replicates = 999, cost = NULL ) {
 
+                    ## Make tree and traits compatible
+                        match <- treeTraitMatch( traits = traits, tree = tree )
+                        traits <- match$traits
+                        tree <- match$tree
+
                     results <- list()
-                    traits <- as.data.frame(traits)
-
-                    ## Reorder traits to match the order of the input
-
-                        traits <- traits[match(tree$tip.label, traits[,1]),]
-
                     ## Loop over columns
                     
                         for (i in 2:dim(traits)[2]) {
@@ -11278,6 +11303,12 @@
         #### independentContrasts
 
             independentContrasts <- function(traits, tree) {
+
+                ## Make tree and traits compatible
+                    match <- treeTraitMatch( traits = traits, tree = tree )
+                    traits <- match$traits
+                    tree <- match$tree
+
                 results <- list()
                 for (i in 2:(dim(traits)[2])) {
 
@@ -11295,6 +11326,11 @@
         #### ancestralTraits
 
             ancestralTraits <- function(traits, tree) {
+
+                ## Make tree and traits compatible
+                    match <- treeTraitMatch( traits = traits, tree = tree )
+                    traits <- match$traits
+                    tree <- match$tree
                 
                 treefort <- fortify(tree)
                 for (i in 2:dim(traits)[2]) { # i=2
@@ -11323,35 +11359,35 @@
 
         #### geom_ancestral_pie
 
-        geom_ancestral_pie <- function(data, cols, pie_size, ...) {
- 
-            ## Data wrangling 
-                data <- as.data.frame(data)
-                if (!"node" %in% colnames(data)) { stop("data should have a column 'node'...") }
-                type <- value <- NULL
-                if (!"color" %in% colnames(data)) { color <- NA }
-                data %>% select(node, cols) %>% pivot_longer(cols = -1) %>% 
-                filter(value != "NA") -> ldf
-                # if(any(is.na(ldf$node))) { stop("There are NA values in the node column after gathering.") }
-                ldf_split <- split(ldf, ldf$node)
-            
-            ## Make pies and apply colors   
-                pie_list <- list()
-                for (i in 1:length(ldf_split)) { #i=10
-                pie_list[[i]] <- ggplot() +
-                    geom_col(
-                    data = ldf_split[[i]],
-                    aes(y = value, x = 1, fill = name),
-                    color = "black", size = 1
-                    ) +
-                    scale_fill_manual(values = discrete_palette, guide = "none") +
-                    coord_polar(theta = "y") + theme_void()
-                }
-                names(pie_list) <- names(ldf_split)
+            geom_ancestral_pie <- function(data, cols, pie_size, ...) {
+     
+                ## Data wrangling 
+                    data <- as.data.frame(data)
+                    if (!"node" %in% colnames(data)) { stop("data should have a column 'node'...") }
+                    type <- value <- NULL
+                    if (!"color" %in% colnames(data)) { color <- NA }
+                    data %>% select(node, cols) %>% pivot_longer(cols = -1) %>% 
+                    filter(value != "NA") -> ldf
+                    # if(any(is.na(ldf$node))) { stop("There are NA values in the node column after gathering.") }
+                    ldf_split <- split(ldf, ldf$node)
+                
+                ## Make pies and apply colors   
+                    pie_list <- list()
+                    for (i in 1:length(ldf_split)) { #i=10
+                    pie_list[[i]] <- ggplot() +
+                        geom_col(
+                        data = ldf_split[[i]],
+                        aes(y = value, x = 1, fill = name),
+                        color = "black", size = 1
+                        ) +
+                        scale_fill_manual(values = discrete_palette, guide = "none") +
+                        coord_polar(theta = "y") + theme_void()
+                    }
+                    names(pie_list) <- names(ldf_split)
 
-                return(geom_inset(
-                pie_list, width = pie_size, height = pie_size, ...
-                ))
+                    return(geom_inset(
+                    pie_list, width = pie_size, height = pie_size, ...
+                    ))
             }
 
 ###### Datasets
