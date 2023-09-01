@@ -282,9 +282,9 @@
 </h3>
 <ol style="list-style-type: decimal">
 <li><p>You will have <code>algae_data</code> stored in an object called <code>algae_data</code> as soon as you run <code>source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")</code>. For this question, filter the data so that only entries are shown for which the <code>chemical_species</code> is “FAs” (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?</p></li>
-<li><p>Now filter the dataset so that only entries for the <code>algae_strain</code> “Tsv1” are shown. What are the dimensions of the resulting dataset?</p></li>
-<li><p>Now filter the dataset so that only entries with an abundance greater than 250 are shown. Note that <code>&gt;</code> can be used in the filter command instead of <code>==</code>, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?</p></li>
-<li><p>Make a ggplot that has <code>algae_strain</code> on the x axis and <code>abundance</code> on the y axis. Remember about <code>aes()</code>. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points. Which algae strain has the most abundant compound out of all the compounds in the dataset?</p></li>
+<li><p>Now filter the original dataset (<code>algae_data</code>) so that only entries for the <code>algae_strain</code> “Tsv1” are shown. What are the dimensions of the resulting dataset?</p></li>
+<li><p>Now filter the original dataset (<code>algae_data</code>) so that only entries with an abundance greater than 250 are shown. Note that <code>&gt;</code> can be used in the filter command instead of <code>==</code>, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?</p></li>
+<li><p>Use the original dataset (<code>algae_data</code>) to make a ggplot that has <code>algae_strain</code> on the x axis and <code>abundance</code> on the y axis. Remember about <code>aes()</code>. Use points (<code>geom_point()</code>) to represent each compound. You don’t need to color the points. Which algae strain has the most abundant compound out of all the compounds in the dataset?</p></li>
 <li><p>Make a ggplot that has <code>abundance</code> on the x axis and <code>chemical_species</code> on the y axis. Use points to represent each compound. You don’t need to color the points. Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)</p></li>
 <li><p>I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot’s data argument:</p></li>
 </ol>
@@ -705,7 +705,7 @@ Figure 1.1: Vapor pressure as a function of boiling point. A scatter plot with t
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-08-30.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
