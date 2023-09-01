@@ -456,6 +456,7 @@ geom_point()
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
 ```{r, include = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ggplot(
   data = filter(
     algae_data, 

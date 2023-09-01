@@ -1944,6 +1944,7 @@
                                     blast_module_directory_path,
                                     blast_mode = c("nnblastn", "ntblastp", "pnblastp"), 
                                     e_value_cutoff = 1,
+                                    word_size,
                                     queries_in_output = TRUE,
                                     monolist_out_path
                                 ) {
@@ -2062,6 +2063,8 @@
                                                         paste(transcriptomes[transcriptome], ".out", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt '6 sallacc'",
                                                         sep = ""
                                                     )
@@ -2081,6 +2084,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_length", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt '6 length'",
                                                         sep = ""
                                                     )
@@ -2100,6 +2105,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt '6 pident'",
                                                         sep = ""
                                                     )
