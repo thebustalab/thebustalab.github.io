@@ -419,7 +419,7 @@ filter(algae_data, algae_strain == "Tsv1")
 
 ```{r, include = FALSE}
 filter(algae_data, abundance > 250)
-# 71 x 5
+# 71 x 5 
 ```
 
 4. Use the original dataset (`algae_data`) to make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axis. Remember about `aes()`. Use points (`geom_point()`) to represent each compound. You don't need to color the points. Which algae strain has the most abundant compound out of all the compounds in the dataset?
