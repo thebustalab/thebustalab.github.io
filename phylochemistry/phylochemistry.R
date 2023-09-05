@@ -321,18 +321,13 @@
                                                         as.character(unlist(polylist[c(1:(center_row-1), (center_row+1):dim(polylist)[1]), center_column]))[1:(center_row-1)],
                                                         as.character(vertical_monolist$URI_URI_URI)
                                                     )
-                    horizontal_monolist <- tidyr::gather(horizontal_monolist, URI_URI_URI, table_value_unit, (center_row):dim(horizontal_monolist)[2])
+                    horizontal_monolist <- pivot_longer(horizontal_monolist, cols = center_row:ncol(horizontal_monolist), names_to = "URI_URI_URI", values_to = "table_value_unit")
+
                     colnames(horizontal_monolist)[colnames(horizontal_monolist) == "table_value_unit"] <- table_value_unit
 
                 # Bind the two monolists, drop the URI column
                     polylist <- cbind(horizontal_monolist,vertical_monolist[match(horizontal_monolist$URI_URI_URI, vertical_monolist[,colnames(vertical_monolist) == "URI_URI_URI"]),])
                     polylist <- polylist[,colnames(polylist) != "URI_URI_URI"]
-
-                # Add Genus_species column if not present
-                    # if ( any(colnames(polylist) == "Genus_species") == FALSE) {
-                    #     print("Adding Genus_species column")
-                    #     polylist$Genus_species <- paste(polylist$Genus, polylist$species, sep="_")
-                    # }
 
                 # Convert to numeric
                     for ( i in 1:dim(polylist)[2] ) {
@@ -11143,9 +11138,14 @@
 
     ##### Phylogenetic statistical testing
 
-        #### treeTraitMatch
+        #### harmonizeTreeTraits
 
-            treeTraitMatch <- function( traits, tree ) {
+            #' Harmonizes species in a set of traits (wide or long) and a tree
+            #'
+            #' @param traits A data frame in which the first column contains the names of the species
+            #' @param tree A phylo object containing the tree
+
+            harmonizeTreeTraits <- function( traits, tree ) {
 
                 ## Make data frame and first column characters
                     traits <- as.data.frame(traits)
@@ -11153,19 +11153,19 @@
 
                 ## Drop tips and rows as necessary
                     species_dropped_from_traits <- traits[,1][!traits[,1] %in% tree$tip.label]
-                    if (!is.null(species_dropped_from_traits)) {
-                      traits <- traits[!traits[,1] %in% tree$tip.label,]
-                      warning(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
+                    if (length(species_dropped_from_traits) > 0) {
+                      traits <- traits[traits[,1] %in% tree$tip.label,]
+                      message(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
                     }
 
                     species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% traits[,1]]
-                    if (!is.null(species_dropped_from_tree)) {
-                      tree <- drop.tip(tree, !tree$tip.label %in% traits[,1])
-                      warning(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
+                    if (length(species_dropped_from_tree) > 0) {
+                      tree <- drop.tip(tree, tree$tip.label[!tree$tip.label %in% traits[,1]])
+                      message(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
                     }
 
                 ## Reorder traits to match the order of the input
-                    traits <- traits[match(tree$tip.label, traits[,1]),]
+                    traits[,1] <- factor(traits[,1], levels = tree$tip.label)
 
                 return(list(tree = tree, traits = traits))
             }
@@ -11185,7 +11185,7 @@
                 phylogeneticSignal <- function( traits, tree, replicates = 999, cost = NULL ) {
 
                     ## Make tree and traits compatible
-                        match <- treeTraitMatch( traits = traits, tree = tree )
+                        match <- harmonizeTreeTraits( traits = traits, tree = tree )
                         traits <- match$traits
                         tree <- match$tree
 
@@ -11299,7 +11299,7 @@
             independentContrasts <- function(traits, tree) {
 
                 ## Make tree and traits compatible
-                    match <- treeTraitMatch( traits = traits, tree = tree )
+                    match <- harmonizeTreeTraits( traits = traits, tree = tree )
                     traits <- match$traits
                     tree <- match$tree
 
@@ -11320,36 +11320,42 @@
 
         #### ancestralTraits
 
-            ancestralTraits <- function(traits, tree) {
-
+            ancestralTraits <- function(
+                traits,
+                tree
+            ) {
                 ## Make tree and traits compatible
-                    match <- treeTraitMatch( traits = traits, tree = tree )
-                    traits <- match$traits
+                    match <- harmonizeTreeTraits(
+                        traits = traits,
+                        tree = tree
+                    )
                     tree <- match$tree
                 
-                treefort <- fortify(tree)
-                for (i in 2:dim(traits)[2]) { # i=2
-                    trait <- as.numeric(unlist(traits[,i]))
-                    names(trait) <- as.character(unlist(traits[,1]))
+                ## Fortify tree and add traits to it
+                    treefort <- fortify(tree)
+                    long_traits <- pivot_longer(traits, cols = -1, names_to = "trait", values_to = "value")
+                    treefort_1 <- right_join(treefort, long_traits, by = c("label" = colnames(long_traits)[1]))
+                
+                ## Loop over traits and get ancestral states
+                    anc_traits <- list()
+                    for (i in 2:dim(match$traits)[2]) { # i=2
+                        trait <- as.numeric(unlist(match$traits[,i]))
+                        names(trait) <- as.character(unlist(match$traits[,1]))
 
-                    anc_traits <- fastAnc( tree = tree, x = trait, vars = FALSE, CI = TRUE )
-                    anc_traits <- data.frame(
-                        node = as.numeric(names(anc_traits[[1]])),
-                        # trait = trait,
-                        anc_trait = anc_traits[[1]],
-                        anc_trait_lower = anc_traits[[2]][,1],
-                        anc_trait_upper = anc_traits[[2]][,2]
-                    )
-                    names(anc_traits) <- c(
-                        "node",
-                        paste0("anc_", colnames(traits)[i]),
-                        paste0("anc_", colnames(traits)[i], "_lower"),
-                        paste0("anc_", colnames(traits)[i], "_upper")
-                    )
-                    
-                    treefort <- left_join(treefort, anc_traits, by = "node")
-                }
-                return(treefort)
+                        fastAnc_output <- fastAnc( tree = tree, x = trait, vars = FALSE, CI = TRUE )
+                        anc_traits[[i]] <- data.frame(
+                            node = as.numeric(names(fastAnc_output[[1]])),
+                            trait = colnames(match$traits)[i],
+                            value = fastAnc_output[[1]]
+                        )
+                    }
+                    anc_traits <- do.call(rbind, anc_traits)
+                    treefort_2 <- right_join(treefort, anc_traits, by = "node")
+
+                ## Put it all together (including analyte metadata!) and return
+                    treefort_3 <- rbind(treefort_1, treefort_2)
+                
+                    return(treefort_3)
             }
 
         #### geom_ancestral_pie
@@ -11363,7 +11369,7 @@
                 pie_border_size = 1,
                 ...
             ) {
-     
+
                 ## Data wrangling 
                     data <- as.data.frame(data)
                     if (!"node" %in% colnames(data)) { stop("data should have a column 'node'...") }
@@ -11373,7 +11379,7 @@
                     filter(value != "NA") -> ldf
                     # if(any(is.na(ldf$node))) { stop("There are NA values in the node column after gathering.") }
                     ldf_split <- split(ldf, ldf$node)
-                
+
                 ## Make pies and apply colors   
                     pie_list <- list()
                     for (i in 1:length(ldf_split)) { #i=10
