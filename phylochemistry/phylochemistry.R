@@ -11153,13 +11153,13 @@
 
                 ## Drop tips and rows as necessary
                     species_dropped_from_traits <- traits[,1][!traits[,1] %in% tree$tip.label]
-                    if (length(species_dropped_from_traits) > 0) {
+                    if (!is.null(species_dropped_from_traits)) {
                       traits <- traits[!traits[,1] %in% tree$tip.label,]
                       warning(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
                     }
 
                     species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% traits[,1]]
-                    if (length(species_dropped_from_tree) > 0) {
+                    if (!is.null(species_dropped_from_tree)) {
                       tree <- drop.tip(tree, !tree$tip.label %in% traits[,1])
                       warning(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
                     }
