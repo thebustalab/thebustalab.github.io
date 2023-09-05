@@ -1213,13 +1213,13 @@
                             orphans <- as.character(dplyr::filter(compatibility, is_species_in_tree == FALSE & is_genus_in_tree == FALSE)$Genus_species)
                             members <- members[!(members %in% orphans)]
                             if ( length(orphans) > 0 ) {
-                                cat("The following species belong to a genus not found in the newick scaffold and were removed: ")
+                                message("The following species belong to a genus not found in the newick scaffold and were removed: ")
                                 for ( orphan in 1:length(orphans) ) {
-                                    cat("\n")
-                                    cat(orphans[orphan])
+                                    message("\n")
+                                    message(orphans[orphan])
                                 }
-                                cat("\n")
-                                cat("\n")
+                                message("\n")
+                                message("\n")
                             }
 
                         ## Check compatibility again
@@ -1235,9 +1235,9 @@
                                 available_foster_species <- potential_foster_species[!potential_foster_species %in% unique(members)] # potential_foster_species not already in the quantities
                                 if ( length(available_foster_species) == 0) {
                                     members <- members[!members %in% adoptees[i]]
-                                    cat(paste("There aren't enough fosters to include the following species in the tree so it was removed:", adoptees[i], "\n", sep = " "))
+                                    message(paste("There aren't enough fosters to include the following species in the tree so it was removed:", adoptees[i], "\n", sep = " "))
                                 } else {
-                                    cat(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
+                                    message(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
                                     newick$tip.label[newick$tip.label == as.character(available_foster_species[1])] <- as.character(adoptees[i])
                                 }
                             }
@@ -1251,7 +1251,7 @@
                         members <- factor(members, levels = rev(ordered_tip_labels))
 
                     ## Return tree
-                        cat("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n")
+                        message("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n")
                         return ( newick )
                 }
 
@@ -11383,7 +11383,11 @@
                             aes(y = value, x = 1, fill = name),
                             color = "black", size = pie_border_size, alpha = pie_alpha
                         ) +
-                        scale_fill_manual(values = pie_fill_colors, guide = "none") +
+                        scale_fill_manual(
+                            values = pie_fill_colors,
+                            guide = "none",
+                            na.value = "white"
+                        ) +
                         coord_polar(theta = "y") + theme_void()
                     }
                     names(pie_list) <- names(ldf_split)
