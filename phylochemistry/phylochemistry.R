@@ -2126,6 +2126,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt '6 evalue'",
                                                         sep = ""
                                                     )
@@ -2145,6 +2147,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt '6 bitscore'",
                                                         sep = ""
                                                     )
@@ -2169,6 +2173,8 @@
                                                         paste(transcriptomes[transcriptome], ".out", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt \"6 sallacc\"",
                                                         sep = ""
                                                     )
@@ -2188,6 +2194,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_length", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt \"6 length\"",
                                                         sep = ""
                                                     )
@@ -2207,6 +2215,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_pident", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt \"6 pident\"",
                                                         sep = ""
                                                     )
@@ -2226,6 +2236,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_evalue", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt \"6 evalue\"",
                                                         sep = ""
                                                     )
@@ -2245,6 +2257,8 @@
                                                         paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""),
                                                         " -evalue ",
                                                         e_value_cutoff,
+                                                        " -word_size ",
+                                                        word_size,
                                                         " -outfmt \"6 bitscore\"",
                                                         sep = ""
                                                     )
@@ -2341,6 +2355,7 @@
                                                                     e_value = readMonolist(paste(transcriptomes[transcriptome], ".out_evalue", sep = ""))[,1],
                                                                     bitscore = readMonolist(paste(transcriptomes[transcriptome], ".out_bitscore", sep = ""))[,1],
                                                                     subset_all = TRUE,
+                                                                    word_size = word_size,
                                                                     query = query_seqs@ranges@NAMES[query_seq],
                                                                     query_length = query_seqs@ranges@width[query_seq],
                                                                     query_longestORF = extractORFs(paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
@@ -2371,6 +2386,7 @@
                                             e_value = 0,
                                             bitscore = 1000,
                                             subset_all = TRUE,
+                                            word_size = word_size,
                                             query = query_seqs@ranges@NAMES[query_seq],
                                             query_length = query_seqs@ranges@width[query_seq],
                                             query_longestORF = extractORFs(paste(query_in_path, "_", query_seqs@ranges@NAMES[query_seq], ".fa", sep = ""))$orf_length[1]
@@ -11338,7 +11354,15 @@
 
         #### geom_ancestral_pie
 
-            geom_ancestral_pie <- function(data, cols, pie_size, pie_border_size = 1, ...) {
+            geom_ancestral_pie <- function(
+                data,
+                cols,
+                pie_size,
+                pie_alpha,
+                pie_fill_colors = discrete_palette,
+                pie_border_size = 1,
+                ...
+            ) {
      
                 ## Data wrangling 
                     data <- as.data.frame(data)
@@ -11355,17 +11379,17 @@
                     for (i in 1:length(ldf_split)) { #i=10
                     pie_list[[i]] <- ggplot() +
                         geom_col(
-                        data = ldf_split[[i]],
-                        aes(y = value, x = 1, fill = name),
-                        color = "black", size = pie_border_size
+                            data = ldf_split[[i]],
+                            aes(y = value, x = 1, fill = name),
+                            color = "black", size = pie_border_size, alpha = pie_alpha
                         ) +
-                        scale_fill_manual(values = discrete_palette, guide = "none") +
+                        scale_fill_manual(values = pie_fill_colors, guide = "none") +
                         coord_polar(theta = "y") + theme_void()
                     }
                     names(pie_list) <- names(ldf_split)
 
                     return(geom_inset(
-                    pie_list, width = pie_size, height = pie_size, ...
+                        pie_list, width = pie_size, height = pie_size, ...
                     ))
             }
 
