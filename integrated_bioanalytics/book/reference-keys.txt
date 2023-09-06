@@ -2,13 +2,6 @@ fig:unnamed-chunk-68
 part-data-analysis-in-r
 using-analyzegcmsdata
 cdf-export
-alignsequences
-analyzealignment
-buildtree
-newick-input
-alignment-input
-plotting-trees
-collapsetree
 loading-gff-files
 abstract
 title

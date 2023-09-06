@@ -4222,7 +4222,7 @@ predictDomains(
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" width="100%" style="display: block; margin: auto;" />
 
-## alignSequences
+## alignSequences {-}
 
 There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_directory_path.
 
@@ -4253,17 +4253,17 @@ alignSequences(
 )
 ```
 
-## analyzeAlignment
+## analyzeAlignment {-}
 
 
 
 # phylogenies {-}
 
-## buildTree
+## buildTree {-}
 
 This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum liklihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let's look at some examples:
 
-### newick input
+### newick input {-}
 
 Let's use the Busta lab's plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.
 
@@ -4326,7 +4326,7 @@ plot(tree)
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
-### alignment input
+### alignment input {-}
 
 Arguments in this case are:
 
@@ -4351,7 +4351,7 @@ buildTree(
 )
 ```
 
-## plotting trees
+## plotting trees {-}
 
 There are several approaches to plotting trees. A simple one is using the base `plot` function:
 
@@ -4463,7 +4463,7 @@ ggtree(test_tree_big_fortified_w_data) +
 
 <img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
-## collapseTree
+## collapseTree {-}
 
 Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the `collapseTree` function. It takes two arguments: an un-fortified tree (`tree`), and a two-column data frame (`associations`). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let's look at the tree from the previous section at the family level:
 
@@ -4481,6 +4481,87 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+
+## trees and traits {-}
+
+
+```r
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
+## Scaffold newick tip Iris_lazica substituted with Iris_sp
+## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
+## Scaffold newick tip Allium_textile substituted with Allium_sp
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
+## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
+## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
+## Scaffold newick tip Agave_striata substituted with Agave_cerulata
+## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
+## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
+## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
+## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
+## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
+## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
+## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
+## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
+## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
+## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
+## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
+## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
+## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
+## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
+## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
+## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
+## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
+## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
+## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
+## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
+## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
+## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
+## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
+## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
+## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
+## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
+## Scaffold newick tip Rubus_repens substituted with Rubus_sp
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+data <- left_join(fortify(chemical_bloom_tree), chemical_blooms)
+## Joining with `by = join_by(label)`
+
+tree_plot <- ggtree(data) +
+  geom_tiplab(
+    align = TRUE, hjust = 1, offset = 350,
+    geom = "label", label.size = 0, size = 3
+  ) +
+  scale_x_continuous(limits = c(0,750))
+
+trait_plot <- ggplot(
+    data = pivot_longer(
+      filter(data, isTip == TRUE),
+      cols = 10:18, names_to = "compound", values_to = "abundance"
+    ),
+    aes(x = compound, y = label, size = abundance)
+  ) +
+  geom_point() +
+  scale_y_discrete(name = "") +
+  theme(
+    axis.text.y = element_blank(),
+    plot.margin = unit(c(1,1,1,-1.5), "cm")
+  )
+
+plot_grid(
+  tree_plot,
+  trait_plot,
+  nrow = 1, align = "h", axis = "tb"
+)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4616,7 +4697,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## ancestralTraits {-}
 
@@ -4658,7 +4739,7 @@ ggtree(anc_traits_tree_wide) +
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -4839,7 +4920,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4864,7 +4945,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4888,7 +4969,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4899,7 +4980,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -4952,21 +5033,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5003,7 +5084,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5308,7 +5389,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5350,7 +5431,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5439,7 +5520,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

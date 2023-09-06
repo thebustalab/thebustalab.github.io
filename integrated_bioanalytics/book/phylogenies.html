@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>phylogenies | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="1.5 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
+<meta name="description" content="buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or...">
 <meta name="generator" content="bookdown 0.35 with bs4_book()">
 <meta property="og:title" content="phylogenies | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="1.5 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
+<meta property="og:description" content="buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phylogenies | Integrated Bioanalytics">
-<meta name="twitter:description" content="1.5 buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining...">
+<meta name="twitter:description" content="buildTree This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.6/font.css" rel="stylesheet">
@@ -99,14 +99,12 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="phylogenies" class="section level1 unnumbered">
 <h1>phylogenies<a class="anchor" aria-label="anchor" href="#phylogenies"><i class="fas fa-link"></i></a>
 </h1>
-<div id="buildtree" class="section level2" number="1.5">
-<h2>
-<span class="header-section-number">1.5</span> buildTree<a class="anchor" aria-label="anchor" href="#buildtree"><i class="fas fa-link"></i></a>
+<div id="buildtree" class="section level2 unnumbered">
+<h2>buildTree<a class="anchor" aria-label="anchor" href="#buildtree"><i class="fas fa-link"></i></a>
 </h2>
 <p>This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum liklihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let’s look at some examples:</p>
-<div id="newick-input" class="section level3" number="1.5.1">
-<h3>
-<span class="header-section-number">1.5.1</span> newick input<a class="anchor" aria-label="anchor" href="#newick-input"><i class="fas fa-link"></i></a>
+<div id="newick-input" class="section level3 unnumbered">
+<h3>newick input<a class="anchor" aria-label="anchor" href="#newick-input"><i class="fas fa-link"></i></a>
 </h3>
 <p>Let’s use the Busta lab’s plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.</p>
 <div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
@@ -159,9 +157,8 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that <code>buildTree</code> informs us: “Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta”. This means that <em>Arabidopsis neglecta</em> was grafted onto the tip originally occupied by <em>Arabidopsis thaliana</em>. This behaviour is useful when operating on a large phylogenetic scale (i.e. where <em>exact</em> phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology <em>is</em> critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let’s look at how to do that:</p>
 </div>
-<div id="alignment-input" class="section level3" number="1.5.2">
-<h3>
-<span class="header-section-number">1.5.2</span> alignment input<a class="anchor" aria-label="anchor" href="#alignment-input"><i class="fas fa-link"></i></a>
+<div id="alignment-input" class="section level3 unnumbered">
+<h3>alignment input<a class="anchor" aria-label="anchor" href="#alignment-input"><i class="fas fa-link"></i></a>
 </h3>
 <p>Arguments in this case are:</p>
 <ul>
@@ -185,9 +182,8 @@
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div id="plotting-trees" class="section level2" number="1.6">
-<h2>
-<span class="header-section-number">1.6</span> plotting trees<a class="anchor" aria-label="anchor" href="#plotting-trees"><i class="fas fa-link"></i></a>
+<div id="plotting-trees" class="section level2 unnumbered">
+<h2>plotting trees<a class="anchor" aria-label="anchor" href="#plotting-trees"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are several approaches to plotting trees. A simple one is using the base <code>plot</code> function:</p>
 <div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
@@ -277,9 +273,8 @@
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="collapsetree" class="section level2" number="1.7">
-<h2>
-<span class="header-section-number">1.7</span> collapseTree<a class="anchor" aria-label="anchor" href="#collapsetree"><i class="fas fa-link"></i></a>
+<div id="collapsetree" class="section level2 unnumbered">
+<h2>collapseTree<a class="anchor" aria-label="anchor" href="#collapsetree"><i class="fas fa-link"></i></a>
 </h2>
 <p>Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the <code>collapseTree</code> function. It takes two arguments: an un-fortified tree (<code>tree</code>), and a two-column data frame (<code>associations</code>). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let’s look at the tree from the previous section at the family level:</p>
 <div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
@@ -293,6 +288,85 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">test_tree_big_families</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">300</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="trees-and-traits" class="section level2 unnumbered">
+<h2>trees and traits<a class="anchor" aria-label="anchor" href="#trees-and-traits"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">chemical_bloom_tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
+<span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
+<span>  scaffold_in_path <span class="op">=</span> <span class="st">"http://thebustalab.github.io/data/angiosperms.newick"</span>,</span>
+<span>  members <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">chemical_blooms</span><span class="op">$</span><span class="va">label</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto</span></span>
+<span><span class="co">## Scaffold newick tip Iris_lazica substituted with Iris_sp</span></span>
+<span><span class="co">## Scaffold newick tip Iris_lacustris substituted with Iris_germanica</span></span>
+<span><span class="co">## Scaffold newick tip Allium_textile substituted with Allium_sp</span></span>
+<span><span class="co">## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum</span></span>
+<span><span class="co">## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans</span></span>
+<span><span class="co">## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp</span></span>
+<span><span class="co">## Scaffold newick tip Agave_striata substituted with Agave_cerulata</span></span>
+<span><span class="co">## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha</span></span>
+<span><span class="co">## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata</span></span>
+<span><span class="co">## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum</span></span>
+<span><span class="co">## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum</span></span>
+<span><span class="co">## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni</span></span>
+<span><span class="co">## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp</span></span>
+<span><span class="co">## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta</span></span>
+<span><span class="co">## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii</span></span>
+<span><span class="co">## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor</span></span>
+<span><span class="co">## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima</span></span>
+<span><span class="co">## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata</span></span>
+<span><span class="co">## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp</span></span>
+<span><span class="co">## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis</span></span>
+<span><span class="co">## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata</span></span>
+<span><span class="co">## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor</span></span>
+<span><span class="co">## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens</span></span>
+<span><span class="co">## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata</span></span>
+<span><span class="co">## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp</span></span>
+<span><span class="co">## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis</span></span>
+<span><span class="co">## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi</span></span>
+<span><span class="co">## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata</span></span>
+<span><span class="co">## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae</span></span>
+<span><span class="co">## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora</span></span>
+<span><span class="co">## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis</span></span>
+<span><span class="co">## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera</span></span>
+<span><span class="co">## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii</span></span>
+<span><span class="co">## Scaffold newick tip Rubus_repens substituted with Rubus_sp</span></span>
+<span><span class="co">## Pro tip: most tree read/write functions reset node numbers.</span></span>
+<span><span class="co">## Fortify your tree and save it as a csv file to preserve node numbering.</span></span>
+<span><span class="co">## Do not save your tree as a newick or nexus file.</span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/fortify.html">fortify</a></span><span class="op">(</span><span class="va">chemical_bloom_tree</span><span class="op">)</span>, <span class="va">chemical_blooms</span><span class="op">)</span></span>
+<span><span class="co">## Joining with `by = join_by(label)`</span></span>
+<span></span>
+<span><span class="va">tree_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span></span>
+<span>    align <span class="op">=</span> <span class="cn">TRUE</span>, hjust <span class="op">=</span> <span class="fl">1</span>, offset <span class="op">=</span> <span class="fl">350</span>,</span>
+<span>    geom <span class="op">=</span> <span class="st">"label"</span>, label.size <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">3</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">750</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">trait_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">isTip</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>      cols <span class="op">=</span> <span class="fl">10</span><span class="op">:</span><span class="fl">18</span>, names_to <span class="op">=</span> <span class="st">"compound"</span>, values_to <span class="op">=</span> <span class="st">"abundance"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">compound</span>, y <span class="op">=</span> <span class="va">label</span>, size <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_discrete</span><span class="op">(</span>name <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
+<span>    axis.text.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    plot.margin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="op">-</span><span class="fl">1.5</span><span class="op">)</span>, <span class="st">"cm"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plot_grid</span><span class="op">(</span></span>
+<span>  <span class="va">tree_plot</span>,</span>
+<span>  <span class="va">trait_plot</span>,</span>
+<span>  nrow <span class="op">=</span> <span class="fl">1</span>, align <span class="op">=</span> <span class="st">"h"</span>, axis <span class="op">=</span> <span class="st">"tb"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
   <div class="chapter-nav">
@@ -312,13 +386,14 @@
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#phylogenies">phylogenies</a></li>
 <li>
-<a class="nav-link" href="#buildtree"><span class="header-section-number">1.5</span> buildTree</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#newick-input"><span class="header-section-number">1.5.1</span> newick input</a></li>
-<li><a class="nav-link" href="#alignment-input"><span class="header-section-number">1.5.2</span> alignment input</a></li>
+<a class="nav-link" href="#buildtree">buildTree</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#newick-input">newick input</a></li>
+<li><a class="nav-link" href="#alignment-input">alignment input</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#plotting-trees"><span class="header-section-number">1.6</span> plotting trees</a></li>
-<li><a class="nav-link" href="#collapsetree"><span class="header-section-number">1.7</span> collapseTree</a></li>
+<li><a class="nav-link" href="#plotting-trees">plotting trees</a></li>
+<li><a class="nav-link" href="#collapsetree">collapseTree</a></li>
+<li><a class="nav-link" href="#trees-and-traits">trees and traits</a></li>
 </ul>
 
       <div class="book-extra">
