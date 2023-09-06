@@ -57,7 +57,9 @@
 <li class="book-part">DATA ANALYSIS IN R</li>
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
-<li><a class="" href="data-visualization.html">data visualization</a></li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
 <li><a class="active" href="clustering.html">clustering</a></li>
@@ -191,14 +193,14 @@
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very nice!</p>
 </div>
-<div id="further-reading-4" class="section level3 unnumbered">
-<h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-4"><i class="fas fa-link"></i></a>
+<div id="further-reading-5" class="section level3 unnumbered">
+<h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-5"><i class="fas fa-link"></i></a>
 </h3>
 <p>For more information on plotting annotated trees, see: <a href="https://yulab-smu.top/treedata-book/chapter10.html" class="uri">https://yulab-smu.top/treedata-book/chapter10.html</a>.</p>
 <p>For more on clustering, see: <a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/</a>.</p>
 </div>
-<div id="exercises-2" class="section level3 unnumbered">
-<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-2"><i class="fas fa-link"></i></a>
+<div id="exercises-4" class="section level3 unnumbered">
+<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-4"><i class="fas fa-link"></i></a>
 </h3>
 <p>For this set of exercises, please use <code>runMatrixAnalysis()</code> to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: <code>algae_data</code> (which algae strains are most similar to each other?), <code>alaska_lake_data</code> (which lakes are most similar to each other?). and <code>solvents</code> (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don’t use the whole periodic table, rather, use <code>periodic_table_subset</code>. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code. For each of these, create (i) a tree diagram that shows how the “samples” in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as “additional_analyte_info”.</p>
 <p>For this assignment, you may again find the <code><a href="https://rdrr.io/r/base/colnames.html">colnames()</a></code> function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:</p>
@@ -391,16 +393,16 @@
 <span><span class="va">plot_1</span> <span class="op">+</span> <span class="va">plot_2</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-127-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="further-reading-5" class="section level3 unnumbered">
-<h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-5"><i class="fas fa-link"></i></a>
+<div id="further-reading-6" class="section level3 unnumbered">
+<h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-6"><i class="fas fa-link"></i></a>
 </h3>
 <p><a href="http://www.sthda.com/english/wiki/wiki.php?id_contents=7940" class="uri">http://www.sthda.com/english/wiki/wiki.php?id_contents=7940</a></p>
 <p><a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/</a></p>
 <p><a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png</a></p>
 <p><a href="https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/" class="uri">https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/</a></p>
 </div>
-<div id="exercises-3" class="section level3 unnumbered">
-<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-3"><i class="fas fa-link"></i></a>
+<div id="exercises-5" class="section level3 unnumbered">
+<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-5"><i class="fas fa-link"></i></a>
 </h3>
 <p>For this set of exercises, please use the dataset <code>hawaii_aquifers</code>, available after you run the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command. Do the following:</p>
 <ol style="list-style-type: decimal">
@@ -518,16 +520,16 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <li>
 <a class="nav-link" href="#heirarchical-clustering">heirarchical clustering</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#theory-1">theory</a></li>
-<li><a class="nav-link" href="#further-reading-4">further reading</a></li>
-<li><a class="nav-link" href="#exercises-2">exercises</a></li>
+<li><a class="nav-link" href="#further-reading-5">further reading</a></li>
+<li><a class="nav-link" href="#exercises-4">exercises</a></li>
 </ul>
 </li>
 <li>
 <a class="nav-link" href="#k-means-and-dbscan">k-means and dbscan</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#theory-2">theory</a></li>
 <li><a class="nav-link" href="#summarize-by-cluster">summarize by cluster</a></li>
-<li><a class="nav-link" href="#further-reading-5">further reading</a></li>
-<li><a class="nav-link" href="#exercises-3">exercises</a></li>
+<li><a class="nav-link" href="#further-reading-6">further reading</a></li>
+<li><a class="nav-link" href="#exercises-5">exercises</a></li>
 </ul>
 </li>
 </ul>
@@ -547,7 +549,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-06.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

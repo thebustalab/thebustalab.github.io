@@ -243,7 +243,7 @@ The first time you try this, it will very likely say: "You need to install the f
 
 <!-- start data visualization -->
 
-# data visualization {-}
+# data visualization I {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg', dpi = NA)
@@ -389,7 +389,7 @@ You can compilie this document into a pdf. We can also run R chunks right inside
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 
-## exercises I {-}
+## exercises {-}
 
 In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
@@ -624,7 +624,7 @@ ggplot(
 
 When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
 
-## {-}
+# data visualization II {-}
 
 ## more geoms {-}
 
@@ -651,36 +651,6 @@ ggplot(
 ```
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
-
-```{r}
-i2 <- iris %>%
-  mutate(Species2 = rep(c("A","B"), 75))
-p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
-  geom_point()
-
-p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")+
-  geom_ysidedensity(aes(x=stat(density), yfill = Species2), position = "stack") +
-  theme_bw() + 
-  facet_grid(Species~Species2, space = "free", scales = "free") +
-  labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
-  ggside(collapse = "all") +
-  scale_xfill_manual(values = c("darkred","darkgreen","darkblue")) +
-  scale_yfill_manual(values = c("black","gold"))
-```
-
-There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
-
-You can also combine geoms to create more detailed representations of distributions:
-
-```{r}
-mpg %>% filter(cyl %in% c(4,6,8)) %>%
-  ggplot(aes(x = factor(cyl), y = hwy, fill = factor(cyl))) +
-  ggdist::stat_halfeye(
-    adjust = 0.5, justification = -0.2, .width = 0, point_colour = NA
-  ) +
-  geom_boxplot(width = 0.12, outlier.color = NA, alpha = 0.5) +
-  ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
-```
 
 ## facets {-}
 
@@ -715,9 +685,6 @@ ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) +
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_wrap(chemical_species~.)
 ```
-
-<!-- HERE INTRODUCE COWPLOT!! -->
-
 
 ## scales {-}
 
@@ -833,6 +800,56 @@ plot3 <-  ggplot(
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
+## exercises {-}
+
+In this set of exercises we're going to practice making more plots using the dataset `solvents`. Well, you don't have to use `solvents`, you could use something else if you want, but `solvents` is a fun one to explore. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
+
+As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio as an R Markdown document. You will compile that file as a pdf and submit it on Canvas. If you have any questions please let me know.
+
+Some pointers:
+
+- If your code goes off the page, don't be afraid to wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.
+
+- Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
+
+1. Create a plot that has x and y axes that are continuous variables. Add to this plot `facet_grid`, and specify that the facets should be based on a categorical variable (ideally a categorical variable with a small number of total categories). Now make two versions of that plot, one that uses the `scales = "free"` feature of `facet_grid` and a second the other does not (i.e. one should use `facet_grid(<things>)`, while the other uses `facet_grid(<things>, scales = "free")`). Write a single caption that describes *both* plots, highlighting the advantages provided by each plot over the other. For additional tips on writing captions, please see the "Writing" chapter in this book.
+
+2. Using a continuous variable on one axis and a discrete (categorical) variable on the other, create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences between these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
+
+3. Make a plot that has four aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the four mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape). You may need to use some google searches to help you. Queries along the lines of "how to modify point color in ggplot" should direct you to a useful resource.
+
+4. Make a duplicate of the plot you created in the previous question and modify its theme.
+
+5. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted. Note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized.
+
+6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem.
+
+## {-}
+
+## further reading {-}
+
+There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+
+For additional explanations of ggplot2: [ggplot2-book](https://ggplot2-book.org/).
+
+Check out some of the incredible geoms that are easy to access using R and ggplot2: [R Graph Gallery](https://r-graph-gallery.com/). Use these to make your figures attractive and easy to interpret!
+
+For a challenge, try implementing these awesome color scales: [Famous R Color Palettes](https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/). Note that some of these are optimized for colorblind individuals and that other are optimized for continuous hue gradients, etc.
+
+For a list of data visualization sins: [Friends Don't Let Friends](https://github.com/cxli233/FriendsDontLetFriends). Some interesting things in here!
+
+For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/). A digital text that covers similar topics is here: [Look At Data] (https://socviz.co/lookatdata.html).
+
+Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards) and [Data Vis Inspiration](https://www.dataviz-inspiration.com/).
+
+Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer) and [Paletteer](https://github.com/EmilHvitfeldt/paletteer).
+
+<!-- end -->
+
+<!-- start data visualization III -->
+
+# data visualization III {-}
+
 ## 3D scatter plots {-}
 
 `phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
@@ -887,47 +904,41 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-## data vis exercises II {-}
+## Marginal summaries {-}
 
-In this set of exercises we're going to practice making more plots using the dataset `solvents`. Well, you don't have to use `solvents`, you could use something else if you want, but `solvents` is a fun one to explore. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
+```{r}
+i2 <- iris %>%
+  mutate(Species2 = rep(c("A","B"), 75))
+p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
+  geom_point()
 
-As before, for these exercises, you will write your code and answers to any questions in the Script Editor window of your RStudio as an R Markdown document. You will compile that file as a pdf and submit it on Canvas. If you have any questions please let me know.
+p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")+
+  geom_ysidedensity(aes(x=stat(density), yfill = Species2), position = "stack") +
+  theme_bw() + 
+  facet_grid(Species~Species2, space = "free", scales = "free") +
+  labs(title = "FacetGrid", subtitle = "Collapsing All Side Panels") +
+  ggside(collapse = "all") +
+  scale_xfill_manual(values = c("darkred","darkgreen","darkblue")) +
+  scale_yfill_manual(values = c("black","gold"))
+```
 
-Some pointers:
+## Representing distributions {-}
 
-- If your code goes off the page, don't be afraid to wrap it across multiple lines, as shown in some of the examples in the previous set of exercises.
+You can also combine geoms to create more detailed representations of distributions:
 
-- Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
-
-1. Create a plot that has x and y axes that are continuous variables. Add to this plot `facet_grid`, and specify that the facets should be based on a categorical variable (ideally a categorical variable with a small number of total categories). Now make two versions of that plot, one that uses the `scales = "free"` feature of `facet_grid` and a second the other does not (i.e. one should use `facet_grid(<things>)`, while the other uses `facet_grid(<things>, scales = "free")`). Write a single caption that describes *both* plots, highlighting the advantages provided by each plot over the other. For additional tips on writing captions, please see the "Writing" chapter in this book.
-
-2. Using a continuous variable on one axis and a discrete (categorical) variable on the other, create two plots that are identical except that one uses `geom_point()`, while the other uses `geom_jitter()`. Write a single caption that describes *both* plots. The caption should highlight the differences bewteen these two plots and it should describe case(s) in which you think it would be appropriate to use `geom_jitter()` over `geom_point()`.
-
-3. Make a plot that has four aesthetic mappings (x and y mappings count). Use the `scales_*` family of commands to modify some aspect of each scale create by the four mappings. Hint: some scales are somewhat tricky to modify (alpha, linetype, ...), and some scales are easier to modify (x, y, color, fill, shape). You may need to use some google searches to help you. Queries along the lines of "how to modify point color in ggplot" should direct you to a useful resource.
-
-4. Make a plot and manually modify at least three aspects of its theme (i.e. do not use one of the build in complete themes such as `theme_classic()`, rather, manually modify components of the theme using `theme()`). This means that inside your `theme()` command, there should be three arguments separated by commas.
-
-5. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted. Note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized. *Defend* your ideas with argument!
-
-6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem.
+```{r}
+mpg %>% filter(cyl %in% c(4,6,8)) %>%
+  ggplot(aes(x = factor(cyl), y = hwy, fill = factor(cyl))) +
+  ggdist::stat_halfeye(
+    adjust = 0.5, justification = -0.2, .width = 0, point_colour = NA
+  ) +
+  geom_boxplot(width = 0.12, outlier.color = NA, alpha = 0.5) +
+  ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
+```
 
 ## {-}
 
 ## further reading {-}
-
-For additional explanations of ggplot2: [ggplot2-book](https://ggplot2-book.org/).
-
-Check out some of the incredible geoms that are easy to access using R and ggplot2: [R Graph Gallery](https://r-graph-gallery.com/). Use these to make your figures attractive and easy to interpret!
-
-For a challenge, try implementing these awesome color scales: [Famous R Color Palettes](https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/). Note that some of these are optimized for colorblind individuals and that other are optimized for continuous hue gradients, etc.
-
-For a list of data visualization sins: [Friends Don't Let Friends](https://github.com/cxli233/FriendsDontLetFriends). Some interesting things in here!
-
-For more information on data visualization and graphics theory, check out the works by Edward Tufte: [Edward Tufte](https://www.edwardtufte.com/tufte/). A digital text that covers similar topics is here: [Look At Data] (https://socviz.co/lookatdata.html).
-
-Some examples of award winning data visualization: [Information Is Beautiful Awards](https://www.informationisbeautifulawards.com/showcase?award=2019&type=awards) and [Data Vis Inspiration](https://www.dataviz-inspiration.com/).
-
-Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer) and [Paletteer](https://github.com/EmilHvitfeldt/paletteer).
 
 <!-- end -->
 

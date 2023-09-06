@@ -1,4 +1,4 @@
-fig:unnamed-chunk-70
+fig:unnamed-chunk-68
 part-data-analysis-in-r
 using-analyzegcmsdata
 cdf-export
@@ -15,7 +15,7 @@ collapsetree
 loading-gff-files
 abstract
 title
-further-reading-10
+further-reading-11
 matrix-analyses
 basic-runmatrixanalysis-template
 advanced-runmatrixanalysis-template
