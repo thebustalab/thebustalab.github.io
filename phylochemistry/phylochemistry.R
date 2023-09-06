@@ -1526,6 +1526,22 @@
 
     ##### Sequence data handling
 
+        #### buildDomainLibrary
+
+            #'
+
+            buildDomainLibrary <- function(
+                alignment_in_path,
+                domain_library_out_path
+            ) {
+                system(paste0(
+                    "hmmbuild ", domain_library_out_path, " ", alignment_in_path
+                ))
+                system(paste0(
+                    "hmmpress ", domain_library_out_path
+                ))
+            }
+
         #### predictDomains
 
             #' predict PFAM domains from sequences in a fasta file
