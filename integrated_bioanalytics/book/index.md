@@ -4107,11 +4107,11 @@ ________________________________________________________________________________
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
-# blast {-}
+# similarity searching {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology.png" width="100%" style="display: block; margin: auto;" />
 
-## polyBlast
+## blast
 
 ### setup
 
@@ -4182,6 +4182,36 @@ E-values are dependent on the size of the database searched, so we use a second 
 * Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
 <!-- * bit-scores Taylor to write something? -->
+
+## hmmer {-}
+
+HMM, which stands for Hidden Markov Model, is a statistical model often used in various applications involving sequences, including speech recognition, natural language processing, and bioinformatics. In the context of bioinformatics, HMMs are frequently applied for sequence similarity searching, notably in the analysis of protein or DNA sequences. When we talk about using HMMs for sequence similarity searching, we're often referring to identifying conserved patterns or domains within biological sequences. These conserved regions can be indicative of functional or structural properties of the molecule. One of the advantages of using HMMs over traditional sequence similarity searching tools like BLAST is that HMMs can be more sensitive in detecting distant homologues. They take into account the position-specific variability within a protein family, as opposed to just looking for stretches of similar sequence.
+
+Here's a general idea of how HMMs are used for sequence similarity searching:
+
+1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once you have an alignment, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
+
+2. Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.
+
+We can implement these two steps using the `buildDomainLibrary()` function and the `predictDomains()` function. See below:
+
+
+```r
+buildDomainLibrary(
+    alignment_in_paths = c(
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa",
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_2_amin_seqs_aligned.fa"
+    ),
+    domain_library_out_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+
+predictDomains(
+    fasta_in_path = "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_3_amin_seqs.fa",
+    domain_library_in_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+```
+
+## 3D similarity
 
 # alignments {-}
 
@@ -4257,7 +4287,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4268,7 +4298,7 @@ tree <- buildTree(
   scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_neglecta", "Amborella_trichopoda")
 )
-## Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta 
+## Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
@@ -4287,7 +4317,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4334,7 +4364,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4346,72 +4376,11 @@ test_tree_big <- buildTree(
   scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = plant_species$Genus_species[abs(floor(rnorm(60)*100000))]
 )
-## The following species belong to a genus not found in the newick scaffold and were removed: 
-## Steirodiscus_schlechteri
-## Phyllagathis_marumiaetricha
-## Jungia_sordida
-## Carpacoce_heteromorpha
-## Huttonaea_woodii
-## Ferulago_macrocarpa
-## Echinospartum_lusitanicum
-## Scurrula_lepidota
-## Astronidium_sudestense
-## 
-## Scaffold newick tip Peperomia_fraseri substituted with Peperomia_kimachii 
-## Scaffold newick tip Telipogon_pulcher substituted with Telipogon_alberti 
-## Scaffold newick tip Elaeocarpus_angustifolius substituted with Elaeocarpus_miriensis 
-## Scaffold newick tip Angelica_sinensis substituted with Angelica_anomala 
-## Scaffold newick tip Senecio_pterophorus substituted with Senecio_isatideus 
-## Scaffold newick tip Macroscepis_hirsuta substituted with Macroscepis_pleistantha 
-## Scaffold newick tip Tithonia_diversifolia substituted with Tithonia_fruticosa 
-## Scaffold newick tip Spermacoce_princeae substituted with Spermacoce_latituba 
-## Scaffold newick tip Bothriocline_laxa substituted with Bothriocline_amphicoma 
-## Scaffold newick tip Siler_montanum substituted with Siler_zernyi 
-## Scaffold newick tip Teucrium_betchei substituted with Teucrium_rotundifolium 
-## Scaffold newick tip Calathea_pluriplicata substituted with Calathea_mediopicta 
-## Scaffold newick tip Phyllanthus_maderaspatensis substituted with Phyllanthus_roeperianus 
-## Scaffold newick tip Entada_abyssinica substituted with Entada_dolichorrhachis 
-## Scaffold newick tip Pimpinella_rhodantha substituted with Pimpinella_cypria 
-## Scaffold newick tip Baccharis_neglecta substituted with Baccharis_grisebachii 
-## Scaffold newick tip Mikania_micrantha substituted with Mikania_longipes 
-## Scaffold newick tip Raphionacme_flanaganii substituted with Raphionacme_hirsuta 
-## Scaffold newick tip Senecio_polyanthemoides substituted with Senecio_conferruminatus 
-## Scaffold newick tip Heracleum_austriacum substituted with Heracleum_bailletianum 
-## Scaffold newick tip Bulbophyllum_hainanense substituted with Bulbophyllum_kaniense 
-## Scaffold newick tip Madhuca_microphylla substituted with Madhuca_elmeri 
-## Scaffold newick tip Capparis_spinosa substituted with Capparis_cantoniensis 
-## Scaffold newick tip Albizia_lebbekoides substituted with Albizia_tulearensis 
-## Scaffold newick tip Cephalaria_syriaca substituted with Cephalaria_dirmilensis 
-## Scaffold newick tip Adesmia_exilis substituted with Adesmia_uspallatensis 
-## Scaffold newick tip Artemisia_biennis substituted with Artemisia_stricta 
-## Scaffold newick tip Osteospermum_ilicifolium substituted with Osteospermum_polycephalum 
-## Scaffold newick tip Atriplex_californica substituted with Atriplex_lanfrancoi 
-## Scaffold newick tip Oberonia_ensiformis substituted with Oberonia_anguina 
-## Scaffold newick tip Ceropegia_linearis_subsp._woodii substituted with Ceropegia_andamanica 
-## Scaffold newick tip Cousinia_severtzovii substituted with Cousinia_butkovii 
-## Scaffold newick tip Hoya_lanceolata substituted with Hoya_loyceandrewsiana 
-## Scaffold newick tip Cousinia_microcarpa substituted with Cousinia_trachylepis 
-## Scaffold newick tip Bossiaea_cordigera substituted with Bossiaea_oligosperma 
-## Scaffold newick tip Cayaponia_tubulosa substituted with Cayaponia_jenmanii 
-## Scaffold newick tip Pomatocalpa_kunstleri substituted with Pomatocalpa_linearipetalum 
-## Scaffold newick tip Endlicheria_verticillata substituted with Endlicheria_xerampela 
-## Scaffold newick tip Eugenia_moschata substituted with Eugenia_azurensis 
-## Scaffold newick tip Gastrolobium_punctatum substituted with Gastrolobium_spinosum 
-## Scaffold newick tip Dioscorea_mexicana substituted with Dioscorea_pennellii 
-## Scaffold newick tip Mitrella_kentii substituted with Mitrella_ledermannii 
-## Scaffold newick tip Ageratina_adenophora substituted with Ageratina_ayerscottiana 
-## Scaffold newick tip Astragalus_vogelii substituted with Astragalus_jolderensis 
-## Scaffold newick tip Eremocharis_fruticosa substituted with Eremocharis_longiramea 
-## Scaffold newick tip Spathiphyllum_floribundum substituted with Spathiphyllum_monachinoi 
-## Scaffold newick tip Balanops_vieillardii substituted with Balanops_microstachya 
-## Pro tip: most tree read/write functions reset node numbers.
-## Fortify your tree and save it as a csv file to preserve node numbering.
-## Do not save your tree as a newick or nexus file.
 
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4420,7 +4389,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4487,7 +4456,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree
 
@@ -4506,7 +4475,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4519,50 +4488,44 @@ chemical_bloom_tree <- buildTree(
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
   members = unique(chemical_blooms$label)
 )
-## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto 
-## Scaffold newick tip Iris_lazica substituted with Iris_sp 
-## Scaffold newick tip Iris_lacustris substituted with Iris_germanica 
-## Scaffold newick tip Allium_textile substituted with Allium_sp 
-## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum 
-## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans 
-## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp 
-## Scaffold newick tip Agave_striata substituted with Agave_cerulata 
-## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha 
-## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata 
-## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum 
-## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum 
-## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni 
-## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp 
-## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta 
-## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii 
-## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor 
-## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima 
-## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata 
-## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp 
-## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis 
-## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata 
-## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor 
-## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens 
-## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata 
-## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp 
-## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis 
-## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi 
-## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata 
-## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae 
-## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora 
-## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis 
-## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera 
-## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii 
-## Scaffold newick tip Rubus_repens substituted with Rubus_sp 
+## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
+## Scaffold newick tip Iris_lazica substituted with Iris_sp
+## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
+## Scaffold newick tip Allium_textile substituted with Allium_sp
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
+## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
+## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
+## Scaffold newick tip Agave_striata substituted with Agave_cerulata
+## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
+## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
+## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
+## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
+## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
+## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
+## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
+## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
+## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
+## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
+## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
+## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
+## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
+## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
+## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
+## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
+## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
+## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
+## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
+## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
+## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
+## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
+## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
+## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
+## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
+## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
+## Scaffold newick tip Rubus_repens substituted with Rubus_sp
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
-tree <- chemical_bloom_tree
-
-traits <- chemical_blooms
-
-all(chemical_bloom_tree$tip.label %in% chemical_blooms$label)
-## [1] TRUE
 ```
 
 ## phylogeneticSignal {-}
@@ -4648,7 +4611,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## ancestralTraits {-}
 
@@ -4661,36 +4624,36 @@ anc_traits_tree <- ancestralTraits(
   tree = chemical_bloom_tree
 )
 head(anc_traits_tree)
-## # A tibble: 6 × 36
+## # A tibble: 6 × 11
 ##   parent  node branch.length label  isTip     x     y branch
 ##    <int> <dbl>         <dbl> <chr>  <lgl> <dbl> <dbl>  <dbl>
-## 1     80     1         290.  Ginkg… TRUE   352.     1   207.
-## 2     81     2         267.  Picea… TRUE   352.     2   219.
-## 3     81     3         267.  Cupre… TRUE   352.     3   219.
-## 4     84     4         135.  Eryth… TRUE   352.     5   285.
-## 5     86     5          16.2 Iris_… TRUE   352.     6   344.
-## 6     86     6          16.2 Iris_… TRUE   352.     7   344.
-## # ℹ 28 more variables: angle <dbl>, anc_Alkanes <dbl>,
-## #   anc_Alkanes_lower <dbl>, anc_Alkanes_upper <dbl>,
-## #   anc_Sec_Alcohols <dbl>, anc_Sec_Alcohols_lower <dbl>,
-## #   anc_Sec_Alcohols_upper <dbl>, anc_Others <dbl>,
-## #   anc_Others_lower <dbl>, anc_Others_upper <dbl>,
-## #   anc_Fatty_acids <dbl>, anc_Fatty_acids_lower <dbl>,
-## #   anc_Fatty_acids_upper <dbl>, anc_Alcohols <dbl>, …
+## 1     80     1          290. Ginkg… TRUE   352.     1   207.
+## 2     80     1          290. Ginkg… TRUE   352.     1   207.
+## 3     80     1          290. Ginkg… TRUE   352.     1   207.
+## 4     80     1          290. Ginkg… TRUE   352.     1   207.
+## 5     80     1          290. Ginkg… TRUE   352.     1   207.
+## 6     80     1          290. Ginkg… TRUE   352.     1   207.
+## # ℹ 3 more variables: angle <dbl>, trait <chr>, value <dbl>
 ```
 
 In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node.
 
 
 ```r
-ggtree(anc_traits_tree) +
-  geom_ancestral_pie(data = anc_traits_tree, cols = c(19,22), pie_size = 0.1) +
+anc_traits_tree %>%
+  pivot_wider(names_from = "trait", values_from = "value") -> anc_traits_tree_wide
+
+ggtree(anc_traits_tree_wide) +
+  geom_ancestral_pie(
+    data = filter(anc_traits_tree_wide, isTip == FALSE), cols = c(10:18), pie_size = 0.1,
+    pie_alpha = 1
+  ) +
   geom_tiplab(offset = 20, align = TRUE) +
   scale_x_continuous(limits = c(0,650)) +
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -4871,7 +4834,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4896,7 +4859,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4920,7 +4883,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4931,7 +4894,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -4984,21 +4947,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5035,7 +4998,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5340,7 +5303,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5382,7 +5345,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5471,7 +5434,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

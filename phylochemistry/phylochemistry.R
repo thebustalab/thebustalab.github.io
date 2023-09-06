@@ -1531,12 +1531,21 @@
             #'
 
             buildDomainLibrary <- function(
-                alignment_in_path,
+                alignment_in_paths,
                 domain_library_out_path
             ) {
-                system(paste0(
-                    "hmmbuild ", domain_library_out_path, " ", alignment_in_path
-                ))
+
+                system(paste0("rm ", domain_library_out_path, "*"))
+
+                for ( i in 1:length(alignment_in_paths) ) {
+                    system(paste0(
+                        "hmmbuild temp.hmm ", alignment_in_paths[i]
+                    ), intern = TRUE)
+                    system(paste0("cat temp.hmm >> ", domain_library_out_path))
+                }
+                
+                system("rm temp.hmm")
+                
                 system(paste0(
                     "hmmpress ", domain_library_out_path
                 ))

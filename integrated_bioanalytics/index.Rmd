@@ -850,6 +850,10 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 
 # data visualization III {-}
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/datavis3.png', dpi = NA)
+```
+
 ## 3D scatter plots {-}
 
 `phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
@@ -3583,15 +3587,16 @@ ________________________________________________________________________________
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
-# blast {-}
+
+# similarity searching {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/homology.png', dpi = NA)
 ```
 
-## polyBlast
+## blast {-}
 
-### setup
+### setup {-}
 
 On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
 
@@ -3633,7 +3638,7 @@ polyBlast(
 )
 ```
 
-### interpretation
+### interpretation {-}
 
 The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
 
@@ -3659,6 +3664,37 @@ E-values are dependent on the size of the database searched, so we use a second 
 * Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
 <!-- * bit-scores Taylor to write something? -->
+
+## hmmer {-}
+
+HMM, which stands for Hidden Markov Model, is a statistical model often used in various applications involving sequences, including speech recognition, natural language processing, and bioinformatics. In the context of bioinformatics, HMMs are frequently applied for sequence similarity searching, notably in the analysis of protein or DNA sequences. When we talk about using HMMs for sequence similarity searching, we're often referring to identifying conserved patterns or domains within biological sequences. These conserved regions can be indicative of functional or structural properties of the molecule. One of the advantages of using HMMs over traditional sequence similarity searching tools like BLAST is that HMMs can be more sensitive in detecting distant homologues. They take into account the position-specific variability within a protein family, as opposed to just looking for stretches of similar sequence.
+
+Here's a general idea of how HMMs are used for sequence similarity searching:
+
+1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once you have an alignment, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
+
+2. Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.
+
+We can implement these two steps using the `buildDomainLibrary()` function and the `predictDomains()` function. See below:
+
+```{r, eval = FALSE}
+buildDomainLibrary(
+    alignment_in_paths = c(
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa",
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_2_amin_seqs_aligned.fa"
+    ),
+    domain_library_out_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+
+predictDomains(
+    fasta_in_path = "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_3_amin_seqs.fa",
+    domain_library_in_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+```
+
+## 3D similarity {-}
+
+`foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1`
 
 # alignments {-}
 
@@ -3856,13 +3892,6 @@ chemical_bloom_tree <- buildTree(
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
   members = unique(chemical_blooms$label)
 )
-tree <- chemical_bloom_tree
-
-traits <- chemical_blooms
-
-all(chemical_bloom_tree$tip.label %in% chemical_blooms$label)
-
-
 ```
 
 ## phylogeneticSignal {-}
@@ -3911,8 +3940,14 @@ head(anc_traits_tree)
 In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node.
 
 ```{r, fig.height = 10}
-ggtree(anc_traits_tree) +
-  geom_ancestral_pie(data = anc_traits_tree, cols = c(19,22), pie_size = 0.1) +
+anc_traits_tree %>%
+  pivot_wider(names_from = "trait", values_from = "value") -> anc_traits_tree_wide
+
+ggtree(anc_traits_tree_wide) +
+  geom_ancestral_pie(
+    data = filter(anc_traits_tree_wide, isTip == FALSE), cols = c(10:18), pie_size = 0.1,
+    pie_alpha = 1
+  ) +
   geom_tiplab(offset = 20, align = TRUE) +
   scale_x_continuous(limits = c(0,650)) +
   theme_void()

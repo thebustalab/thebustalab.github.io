@@ -2,9 +2,10 @@ fig:unnamed-chunk-68
 part-data-analysis-in-r
 using-analyzegcmsdata
 cdf-export
-polyblast
+blast
 setup
 interpretation
+d-similarity
 alignsequences
 analyzealignment
 buildtree
