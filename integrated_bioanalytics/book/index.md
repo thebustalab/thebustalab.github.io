@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-09-06"
+date: "2023-09-07"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4484,6 +4484,8 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 ## trees and traits {-}
 
+To plot traits alongside a tree, we can use ggtree in combination with ggplot. Here is an example. First, we make the tree:
+
 
 ```r
 chemical_bloom_tree <- buildTree(
@@ -4529,10 +4531,76 @@ chemical_bloom_tree <- buildTree(
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
+```
 
+Next we join the tree with the data:
+
+```r
 data <- left_join(fortify(chemical_bloom_tree), chemical_blooms)
 ## Joining with `by = join_by(label)`
+head(data)
+## # A tibble: 6 × 18
+##   parent  node branch.length label  isTip     x     y branch
+##    <int> <int>         <dbl> <chr>  <lgl> <dbl> <dbl>  <dbl>
+## 1     80     1         290.  Ginkg… TRUE   352.     1   207.
+## 2     81     2         267.  Picea… TRUE   352.     2   219.
+## 3     81     3         267.  Cupre… TRUE   352.     3   219.
+## 4     84     4         135.  Eryth… TRUE   352.     5   285.
+## 5     86     5          16.2 Iris_… TRUE   352.     6   344.
+## 6     86     6          16.2 Iris_… TRUE   352.     7   344.
+## # ℹ 10 more variables: angle <dbl>, Alkanes <dbl>,
+## #   Sec_Alcohols <dbl>, Others <dbl>, Fatty_acids <dbl>,
+## #   Alcohols <dbl>, Triterpenoids <dbl>, Ketones <dbl>,
+## #   Other_compounds <dbl>, Aldehydes <dbl>
+```
 
+Now we can plot the tree:
+
+```r
+tree_plot <- ggtree(data) +
+  geom_tiplab(
+    align = TRUE, hjust = 1, offset = 350,
+    geom = "label", label.size = 0, size = 3
+  ) +
+  scale_x_continuous(limits = c(0,750))
+```
+
+IMPORTANT! When we plot the traits, we need to reorder whatever is on the shared axis (in this case, the y axis) so that it matches the order of the tree. In this case, we need to reorder the species names so that they match the order of the tree. We can do this by using the `reorder` function, which takes two arguments: the thing to be reordered, and the thing to be reordered by. In this case, we want to reorder the species names by their y coordinate on the tree. We can do this by using the `y` column of the data frame that we created when we fortified the tree. We can then plot the traits:
+
+
+```r
+trait_plot <- ggplot(
+    data = pivot_longer(
+      filter(data, isTip == TRUE),
+      cols = 10:18, names_to = "compound", values_to = "abundance"
+    ),
+    aes(x = compound, y = reorder(label, y), size = abundance)
+  ) +
+  geom_point() +
+  scale_y_discrete(name = "") +
+  theme(
+    plot.margin = unit(c(1,1,1,1), "cm")
+  )
+```
+
+Finally, we can plot the two plots together using `plot_grid`. It is important to manually inspect the tree tips and the y axis text to make sure that everything lines up. We don't want to be plotting the abundance of one species on the y axis of another species. In this case, everything looks good:
+
+
+```r
+plot_grid(
+  tree_plot,
+  trait_plot,
+  nrow = 1, align = "h", axis = "tb"
+)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
+
+
+```r
 tree_plot <- ggtree(data) +
   geom_tiplab(
     align = TRUE, hjust = 1, offset = 350,
@@ -4545,7 +4613,7 @@ trait_plot <- ggplot(
       filter(data, isTip == TRUE),
       cols = 10:18, names_to = "compound", values_to = "abundance"
     ),
-    aes(x = compound, y = label, size = abundance)
+    aes(x = compound, y = reorder(label, y), size = abundance)
   ) +
   geom_point() +
   scale_y_discrete(name = "") +
@@ -4561,7 +4629,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4697,7 +4765,7 @@ ggplot(model$data) +
   geom_line(aes(x = model_x, model_y))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## ancestralTraits {-}
 
@@ -4739,7 +4807,7 @@ ggtree(anc_traits_tree_wide) +
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -4920,7 +4988,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -4945,7 +5013,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -4969,7 +5037,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4980,7 +5048,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -5033,21 +5101,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5084,7 +5152,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5389,7 +5457,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5431,7 +5499,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5520,7 +5588,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

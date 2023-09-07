@@ -3884,15 +3884,63 @@ ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300)
 
 ## trees and traits {-}
 
-```{r, fig.height = 14, fig.width = 7}
+To plot traits alongside a tree, we can use ggtree in combination with ggplot. Here is an example. First, we make the tree:
+
+```{r, fig.height = 14, fig.width = 7, messages = FALSE}
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
   members = unique(chemical_blooms$label)
 )
+```
 
+Next we join the tree with the data:
+```{r}
 data <- left_join(fortify(chemical_bloom_tree), chemical_blooms)
+head(data)
+```
 
+Now we can plot the tree:
+```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+tree_plot <- ggtree(data) +
+  geom_tiplab(
+    align = TRUE, hjust = 1, offset = 350,
+    geom = "label", label.size = 0, size = 3
+  ) +
+  scale_x_continuous(limits = c(0,750))
+```
+
+IMPORTANT! When we plot the traits, we need to reorder whatever is on the shared axis (in this case, the y axis) so that it matches the order of the tree. In this case, we need to reorder the species names so that they match the order of the tree. We can do this by using the `reorder` function, which takes two arguments: the thing to be reordered, and the thing to be reordered by. In this case, we want to reorder the species names by their y coordinate on the tree. We can do this by using the `y` column of the data frame that we created when we fortified the tree. We can then plot the traits:
+
+```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+trait_plot <- ggplot(
+    data = pivot_longer(
+      filter(data, isTip == TRUE),
+      cols = 10:18, names_to = "compound", values_to = "abundance"
+    ),
+    aes(x = compound, y = reorder(label, y), size = abundance)
+  ) +
+  geom_point() +
+  scale_y_discrete(name = "") +
+  theme(
+    plot.margin = unit(c(1,1,1,1), "cm")
+  )
+```
+
+Finally, we can plot the two plots together using `plot_grid`. It is important to manually inspect the tree tips and the y axis text to make sure that everything lines up. We don't want to be plotting the abundance of one species on the y axis of another species. In this case, everything looks good:
+
+```{r, fig.height = 14, fig.width = 7, messages = FALSE}
+plot_grid(
+  tree_plot,
+  trait_plot,
+  nrow = 1, align = "h", axis = "tb"
+)
+```
+
+
+Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
+
+```{r, fig.height = 14, fig.width = 7, messages = FALSE}
 tree_plot <- ggtree(data) +
   geom_tiplab(
     align = TRUE, hjust = 1, offset = 350,
@@ -3905,7 +3953,7 @@ trait_plot <- ggplot(
       filter(data, isTip == TRUE),
       cols = 10:18, names_to = "compound", values_to = "abundance"
     ),
-    aes(x = compound, y = label, size = abundance)
+    aes(x = compound, y = reorder(label, y), size = abundance)
   ) +
   geom_point() +
   scale_y_discrete(name = "") +

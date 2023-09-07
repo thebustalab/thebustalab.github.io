@@ -1528,7 +1528,13 @@
 
         #### buildDomainLibrary
 
+            #' Build a hmm database from a set of alignments
             #'
+            #' @param alignment_in_paths The paths to the alignments to use
+            #' @param domain_library_out_path The path to the hmm file that will be created
+            #' @examples
+            #' @export
+            #' 
 
             buildDomainLibrary <- function(
                 alignment_in_paths,
@@ -11170,27 +11176,28 @@
             #' @param traits A data frame in which the first column contains the names of the species
             #' @param tree A phylo object containing the tree
 
-            harmonizeTreeTraits <- function( traits, tree ) {
+            harmonizeTreeTraits <- function( traits, column_w_names_of_tiplabels, tree ) {
 
                 ## Make data frame and first column characters
                     traits <- as.data.frame(traits)
-                    traits[,1] <- as.character(traits[,1])
+                    traits[,colnames(traits) == column_w_names_of_tiplabels] <- as.character(traits[,colnames(traits) == column_w_names_of_tiplabels])
+                    data_tip_labels <- unique(traits[,colnames(traits) == column_w_names_of_tiplabels])
 
                 ## Drop tips and rows as necessary
-                    species_dropped_from_traits <- traits[,1][!traits[,1] %in% tree$tip.label]
+                    species_dropped_from_traits <- data_tip_labels[!data_tip_labels %in% tree$tip.label]
                     if (length(species_dropped_from_traits) > 0) {
-                      traits <- traits[traits[,1] %in% tree$tip.label,]
+                      traits <- traits[traits[,colnames(traits) == column_w_names_of_tiplabels] %in% tree$tip.label,]
                       message(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
                     }
 
-                    species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% traits[,1]]
+                    species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% data_tip_labels]
                     if (length(species_dropped_from_tree) > 0) {
-                      tree <- drop.tip(tree, tree$tip.label[!tree$tip.label %in% traits[,1]])
+                      tree <- drop.tip(tree, tree$tip.label[!tree$tip.label %in% data_tip_labels])
                       message(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
                     }
 
                 ## Reorder traits to match the order of the input
-                    traits[,1] <- factor(traits[,1], levels = tree$tip.label)
+                    traits[,colnames(traits) == column_w_names_of_tiplabels] <- factor(traits[,colnames(traits) == column_w_names_of_tiplabels], levels = tree$tip.label)
 
                 return(list(tree = tree, traits = traits))
             }
@@ -11347,6 +11354,9 @@
 
             ancestralTraits <- function(
                 traits,
+                column_w_names_of_tiplabels,
+                column_w_names_of_traits,
+                column_w_values_for_traits,
                 tree
             ) {
                 ## Make tree and traits compatible
@@ -11385,9 +11395,10 @@
 
         #### geom_ancestral_pie
 
+            #' Plots pie charts for data at any node using columns `trait` and `value`
+
             geom_ancestral_pie <- function(
                 data,
-                cols,
                 pie_size,
                 pie_alpha,
                 pie_fill_colors = discrete_palette,
