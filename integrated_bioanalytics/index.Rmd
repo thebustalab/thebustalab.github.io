@@ -4018,7 +4018,10 @@ Ancestral trait reconstruction is a method to infer the characteristics (or "tra
 
 ```{r}
 anc_traits_tree <- ancestralTraits(
-  traits = chemical_blooms,
+  traits = pivot_longer(chemical_blooms, cols = -1),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "name",
+  column_w_values_for_traits = "value",
   tree = chemical_bloom_tree
 )
 head(anc_traits_tree)
@@ -4027,13 +4030,12 @@ head(anc_traits_tree)
 In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node.
 
 ```{r, fig.height = 10}
-anc_traits_tree %>%
-  pivot_wider(names_from = "trait", values_from = "value") -> anc_traits_tree_wide
-
-ggtree(anc_traits_tree_wide) +
+ggtree(
+  distinct(anc_traits_tree, node, .keep_all = TRUE)
+) +
   geom_ancestral_pie(
-    data = filter(anc_traits_tree_wide, isTip == FALSE), cols = c(10:18), pie_size = 0.1,
-    pie_alpha = 1
+    data = filter(anc_traits_tree, isTip == FALSE),
+    pie_size = 0.1, pie_alpha = 1
   ) +
   geom_tiplab(offset = 20, align = TRUE) +
   scale_x_continuous(limits = c(0,650)) +
