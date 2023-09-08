@@ -227,10 +227,13 @@
 <div id="ancestraltraits" class="section level2 unnumbered">
 <h2>ancestralTraits<a class="anchor" aria-label="anchor" href="#ancestraltraits"><i class="fas fa-link"></i></a>
 </h2>
-<p>Ancestral trait reconstruction is a method to infer the characteristics (or “traits”) of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or “reconstruct” the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. <code>phylochemistry</code> provides the function <code>ancestralTraits</code> to perform these operations. Note that <code>ancestralTraits</code> is different from <code>buildTree</code>s “ancestral_states”. “ancestral_states” estimates ancestral sequence states at phylogeny nodes, while <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Note that the ancestral state of each trait is provided in a column called <code>anc_*</code> and the upper and lower 95% confidence limits for that trait are provided in anc_<em><em>lower and anc</em></em>_upper.</p>
+<p>Ancestral trait reconstruction is a method to infer the characteristics (or “traits”) of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or “reconstruct” the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. <code>phylochemistry</code> provides the function <code>ancestralTraits</code> to perform these operations. Note that <code>ancestralTraits</code> is different from <code>buildTree</code>s “ancestral_states”. “ancestral_states” estimates ancestral sequence states at phylogeny nodes, while <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.</p>
 <div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">anc_traits_tree</span> <span class="op">&lt;-</span> <span class="fu">ancestralTraits</span><span class="op">(</span></span>
-<span>  traits <span class="op">=</span> <span class="va">chemical_blooms</span>,</span>
+<span>  traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span>, cols <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  column_w_names_of_tiplabels <span class="op">=</span> <span class="st">"label"</span>,</span>
+<span>  column_w_names_of_traits <span class="op">=</span> <span class="st">"name"</span>,</span>
+<span>  column_w_values_for_traits <span class="op">=</span> <span class="st">"value"</span>,</span>
 <span>  tree <span class="op">=</span> <span class="va">chemical_bloom_tree</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">anc_traits_tree</span><span class="op">)</span></span>
@@ -244,15 +247,14 @@
 <span><span class="co">## 5     80     1          290. Ginkg… TRUE   352.     1   207.</span></span>
 <span><span class="co">## 6     80     1          290. Ginkg… TRUE   352.     1   207.</span></span>
 <span><span class="co">## # ℹ 3 more variables: angle &lt;dbl&gt;, trait &lt;chr&gt;, value &lt;dbl&gt;</span></span></code></pre></div>
-<p>In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: <code>geom_ancestral_pie</code>. Here is an example. Note that <code>cols</code> is a vector of column numbers that correspond to the traits of interest. <code>pie_size</code> is the size of the pie chart that will be plotted at each node.</p>
+<p>In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: <code>geom_ancestral_pie</code>. Here is an example. Note that <code>cols</code> is a vector of column numbers that correspond to the traits of interest. <code>pie_size</code> is the size of the pie chart that will be plotted at each node. <code>geom_ancestral_pie</code> relies on having columns in its input called <code>trait</code> and <code>value</code>, such as those output by <code>ancestralTraits</code>. Note that if you are passing an object to ggtree() that has duplicate node names, you will need to use the <code>distinct</code> function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.</p>
 <div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">anc_traits_tree</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"trait"</span>, values_from <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">anc_traits_tree_wide</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">anc_traits_tree_wide</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span></span>
+<span>  <span class="fu">distinct</span><span class="op">(</span><span class="va">anc_traits_tree</span>, <span class="va">node</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_ancestral_pie</span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">anc_traits_tree_wide</span>, <span class="va">isTip</span> <span class="op">==</span> <span class="cn">FALSE</span><span class="op">)</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span><span class="op">:</span><span class="fl">18</span><span class="op">)</span>, pie_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>    pie_alpha <span class="op">=</span> <span class="fl">1</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">anc_traits_tree</span>, <span class="va">isTip</span> <span class="op">==</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>    pie_size <span class="op">=</span> <span class="fl">0.1</span>, pie_alpha <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span>offset <span class="op">=</span> <span class="fl">20</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">650</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -296,7 +298,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-07.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

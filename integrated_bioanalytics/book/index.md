@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-09-07"
+date: "2023-09-08"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4769,12 +4769,15 @@ ggplot(model$data) +
 
 ## ancestralTraits {-}
 
-Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Note that the ancestral state of each trait is provided in a column called `anc_*` and the upper and lower 95% confidence limits for that trait are provided in anc_*_lower and anc_*_upper.
+Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.
 
 
 ```r
 anc_traits_tree <- ancestralTraits(
-  traits = chemical_blooms,
+  traits = pivot_longer(chemical_blooms, cols = -1),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "name",
+  column_w_values_for_traits = "value",
   tree = chemical_bloom_tree
 )
 head(anc_traits_tree)
@@ -4790,17 +4793,16 @@ head(anc_traits_tree)
 ## # ℹ 3 more variables: angle <dbl>, trait <chr>, value <dbl>
 ```
 
-In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node.
+In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node. `geom_ancestral_pie` relies on having columns in its input called `trait` and `value`, such as those output by   `ancestralTraits`. Note that if you are passing an object to ggtree() that has duplicate node names, you will need to use the `distinct` function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.
 
 
 ```r
-anc_traits_tree %>%
-  pivot_wider(names_from = "trait", values_from = "value") -> anc_traits_tree_wide
-
-ggtree(anc_traits_tree_wide) +
+ggtree(
+  distinct(anc_traits_tree, node, .keep_all = TRUE)
+) +
   geom_ancestral_pie(
-    data = filter(anc_traits_tree_wide, isTip == FALSE), cols = c(10:18), pie_size = 0.1,
-    pie_alpha = 1
+    data = filter(anc_traits_tree, isTip == FALSE),
+    pie_size = 0.1, pie_alpha = 1
   ) +
   geom_tiplab(offset = 20, align = TRUE) +
   scale_x_continuous(limits = c(0,650)) +
