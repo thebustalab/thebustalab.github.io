@@ -11419,22 +11419,18 @@
 
             geom_ancestral_pie <- function(
                 data,
-                pie_size,
-                pie_alpha,
+                pie_size = 0.1,
+                pie_alpha = 1,
                 pie_fill_colors = discrete_palette,
-                pie_border_size = 1,
+                pie_border_size = 0.1,
                 ...
             ) {
 
                 ## Data wrangling 
                     data <- as.data.frame(data)
                     if (!"node" %in% colnames(data)) { stop("data should have a column 'node'...") }
-                    type <- value <- NULL
-                    if (!"color" %in% colnames(data)) { color <- NA }
-                    data %>% select(node, cols) %>% pivot_longer(cols = -1) %>% 
-                    filter(value != "NA") -> ldf
-                    # if(any(is.na(ldf$node))) { stop("There are NA values in the node column after gathering.") }
-                    ldf_split <- split(ldf, ldf$node)
+                    data %>% select(node, trait, value) -> ldf
+                    ldf_split <- split(data, data$node)
 
                 ## Make pies and apply colors   
                     pie_list <- list()
@@ -11442,8 +11438,8 @@
                     pie_list[[i]] <- ggplot() +
                         geom_col(
                             data = ldf_split[[i]],
-                            aes(y = value, x = 1, fill = name),
-                            color = "black", size = pie_border_size, alpha = pie_alpha
+                            aes(y = value, x = 1, fill = trait),
+                            color = "black", linewidth = pie_border_size, alpha = pie_alpha
                         ) +
                         scale_fill_manual(
                             values = pie_fill_colors,
@@ -11455,7 +11451,7 @@
                     names(pie_list) <- names(ldf_split)
 
                     return(geom_inset(
-                        pie_list, width = pie_size, height = pie_size, ...
+                        pie_list, width = pie_size, height = pie_size
                     ))
             }
 
