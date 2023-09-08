@@ -11362,25 +11362,42 @@
                 ## Make tree and traits compatible
                     match <- harmonizeTreeTraits(
                         traits = traits,
+                        column_w_names_of_tiplabels = column_w_names_of_tiplabels,
                         tree = tree
                     )
-                    tree <- match$tree
-                
+                  
                 ## Fortify tree and add traits to it
-                    treefort <- fortify(tree)
-                    long_traits <- pivot_longer(traits, cols = -1, names_to = "trait", values_to = "value")
-                    treefort_1 <- right_join(treefort, long_traits, by = c("label" = colnames(long_traits)[1]))
-                
+                    treefort <- fortify(match$tree)
+                    treefort_1 <- right_join(
+                        treefort,
+                        match$traits,
+                        by = c("label" = colnames(match$traits)[colnames(match$traits) == column_w_names_of_tiplabels])
+                    )
+                    colnames(treefort_1)[colnames(treefort_1) == column_w_names_of_traits] <- "trait"
+                    colnames(treefort_1)[colnames(treefort_1) == column_w_values_for_traits] <- "value"
+    
+                ## Pivot traits wider and deal with any missing values
+                    match$traits %>%
+                        select(
+                            column_w_names_of_tiplabels,
+                            column_w_names_of_traits,
+                            column_w_values_for_traits
+                        ) -> traits_wide
+                    colnames(traits_wide) <- c("sample_unique_ID", "trait", "value")
+                    traits_wide <- pivot_wider(traits_wide, names_from = "trait", values_from = "value")
+    
+                    traits_wide[is.na(traits_wide)] <- 0
+                        
                 ## Loop over traits and get ancestral states
                     anc_traits <- list()
-                    for (i in 2:dim(match$traits)[2]) { # i=2
-                        trait <- as.numeric(unlist(match$traits[,i]))
-                        names(trait) <- as.character(unlist(match$traits[,1]))
+                    for (i in 2:dim(traits_wide)[2]) { # i=2
+                        trait <- as.numeric(unlist(traits_wide[,i]))
+                        names(trait) <- as.character(unlist(traits_wide[,1]))
 
                         fastAnc_output <- fastAnc( tree = tree, x = trait, vars = FALSE, CI = TRUE )
                         anc_traits[[i]] <- data.frame(
                             node = as.numeric(names(fastAnc_output[[1]])),
-                            trait = colnames(match$traits)[i],
+                            trait = colnames(traits_wide)[i],
                             value = fastAnc_output[[1]]
                         )
                     }
@@ -11388,8 +11405,11 @@
                     treefort_2 <- right_join(treefort, anc_traits, by = "node")
 
                 ## Put it all together (including analyte metadata!) and return
-                    treefort_3 <- rbind(treefort_1, treefort_2)
-                
+                    treefort_3 <- rbind(
+                        treefort_1[,colnames(treefort_1) %in% colnames(treefort_2)],
+                        treefort_2
+                    )
+                    
                     return(treefort_3)
             }
 
