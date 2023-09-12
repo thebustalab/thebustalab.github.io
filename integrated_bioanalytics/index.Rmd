@@ -998,7 +998,7 @@ head(select(alaska_lake_data, park, water_temp))
 
 ```
 
-## tidy data {-}
+## wide and long data {-}
 
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
 
@@ -1012,7 +1012,7 @@ While this format is very nice for filling in my hand (such as in a lab notebook
 pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
 ```
 
-Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+Brilliant! Now we have a long-style table that can be used with ggplot.
 
 ## the pipe (%>%) {-}
 
@@ -2349,7 +2349,7 @@ ggplot(metabolomics_data) +
 1-(15.39/40.32)
 ```
 
-0.68! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". Now, let's put it all together and make it pretty:
+0.68! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". Note that the R squared value represents the amount of variance in the response explained by the dependent variable. Now, let's put it all together and make it pretty:
 
 ```{r, fig.width = 8, fig.height = 5}
 top <- ggplot(model$data) +

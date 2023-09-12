@@ -11214,111 +11214,127 @@
             #' @export
             #' phylogeneticSignal
 
-                phylogeneticSignal <- function( traits, tree, replicates = 999, cost = NULL ) {
+                phylogeneticSignal <- function(
+                    traits,
+                    column_w_names_of_tiplabels,
+                    column_w_names_of_traits,
+                    column_w_values_for_traits,
+                    tree,
+                    replicates = 999,
+                    cost = NULL
+                ) {
 
                     ## Make tree and traits compatible
-                        match <- harmonizeTreeTraits( traits = traits, tree = tree )
+                        match <- harmonizeTreeTraits( 
+                            traits = traits,
+                            tree = tree,
+                            column_w_names_of_tiplabels = column_w_names_of_tiplabels
+                        )
                         traits <- match$traits
                         tree <- match$tree
 
-                    results <- list()
-                    ## Loop over columns
-                    
-                        for (i in 2:dim(traits)[2]) {
+                        results <- list()
+                        trait_list <- data.frame(unique(traits[,colnames(traits) == column_w_names_of_traits]))[,1]
+                        ## Loop over traits
 
-                            trait <- traits[,i]
-                            names(trait) <- traits[,1]
+                            for (i in 1:length(trait_list)) { #i=69
+                                
+                                this_trait <- traits[traits[,colnames(traits) == column_w_names_of_traits] == trait_list[i],]
+                                trait <- this_trait[,colnames(this_trait) == column_w_values_for_traits]
+                                names(trait) <- this_trait[,colnames(this_trait) == column_w_names_of_tiplabels]
 
-                            if (class(trait) %in% c("factor", "character")) {
+                                if (class(trait) %in% c("factor", "character")) {
 
-                                ### For discrete traits
+                                    ### For discrete traits
 
-                                    ## Get the states in which the trait may exist (levels)
+                                        ## Get the states in which the trait may exist (levels)
 
-                                        levels <- attributes(factor(trait))$levels
+                                            levels <- attributes(factor(trait))$levels
 
-                                    ## Check that the variable is indeed categorical by comparing the length of the levels vector to the length of the trait vector
-                                                    
-                                        if (length(levels) == length(trait)) { warn("Are you sure this variable is categorical?") }
+                                        ## Check that the variable is indeed categorical by comparing the length of the levels vector to the length of the trait vector
 
-                                    ## Make the transition matrix
-                                        
-                                        if (is.null(cost)) {
-                                            # By default, all transitions have a cost of 1, except transitions from a state to itself which have a cost of 0
-                                            cost1 <- 1-diag(length(levels))
-                                        
-                                        } else {
-                                            # If a custom cost matrix is provided, it should have dimensions that match the number of levels
-                                        if (length(levels) != dim(cost)[1])
-                                            
-                                            stop("Dimensions of the character state transition matrix do not agree with the number of levels")
-                                            
-                                            cost1 <- t(cost)
-                                        }
-                                        dimnames(cost1) <- list(levels, levels)
+                                            if (length(levels) == length(trait)) { warn("Are you sure this variable is categorical?") }
 
-                                    ## Make the trait numeric
-                                    
-                                        trait_as_numeric <- as.numeric(as.factor(trait))
-                                        names(trait_as_numeric) <- names(trait)
-                                    
-                                    ## Make the phyDat object and get the parsimony score for the tree with the associated observations
+                                        ## Make the transition matrix
 
-                                        # obs <- t(data.frame(trait))
-                                        obs <- phyDat( trait, type = "USER", levels = attributes(factor(trait))$levels )
-                                        # This parsimony score represents the minimum total cost of all state changes that must have occurred on the tree given the observed trait data
-                                        OBS <- parsimony( tree, obs, method = "sankoff", cost = cost1 )
+                                            if (is.null(cost)) {
+                                                # By default, all transitions have a cost of 1, except transitions from a state to itself which have a cost of 0
+                                                cost1 <- 1-diag(length(levels))
 
-                                    ## Make "replicates" number of random tree-trait associations and check their parsimony score
+                                            } else {
+                                                # If a custom cost matrix is provided, it should have dimensions that match the number of levels
+                                            if (length(levels) != dim(cost)[1])
 
-                                        null_model <- matrix(NA, replicates, 1)
-                                        for (i in 1:replicates){
+                                                stop("Dimensions of the character state transition matrix do not agree with the number of levels")
 
-                                            ## Randomize the traits and get the parsimony score for the random traits on that tree
-                                                null <- sample(as.numeric(trait_as_numeric))
-                                                attributes(null)$names <- attributes(trait_as_numeric)$names
-                                                # null <- t(data.frame(null))
-                                                null <- phyDat( null,type = "USER",levels = attributes(factor(null))$levels )
-                                                null_model[i,] <- parsimony( tree, null, method = "sankoff", cost = cost1 )
+                                                cost1 <- t(cost)
+                                            }
+                                            dimnames(cost1) <- list(levels, levels)
 
-                                        }
+                                        ## Make the trait numeric
 
-                                    ## Assess observed parsimony score in the context of the random ones
-                                        
-                                        p_value <- sum(OBS >= null_model)/(replicates + 1)
-                                        p_value
+                                            trait_as_numeric <- as.numeric(as.factor(trait))
+                                            names(trait_as_numeric) <- names(trait)
 
-                                    ## Summarize output and report it
-                                        
-                                        results[[i-1]] <- data.frame(
-                                            trait = colnames(traits)[i],
-                                            trait_type = "categorical",
+                                        ## Make the phyDat object and get the parsimony score for the tree with the associated observations
+
+                                            # obs <- t(data.frame(trait))
+                                            obs <- phyDat( trait, type = "USER", levels = attributes(factor(trait))$levels )
+                                            # This parsimony score represents the minimum total cost of all state changes that must have occurred on the tree given the observed trait data
+                                            OBS <- parsimony( tree, obs, method = "sankoff", cost = cost1 )
+
+                                        ## Make "replicates" number of random tree-trait associations and check their parsimony score
+
+                                            null_model <- matrix(NA, replicates, 1)
+                                            for (i in 1:replicates){
+
+                                                ## Randomize the traits and get the parsimony score for the random traits on that tree
+                                                    null <- sample(as.numeric(trait_as_numeric))
+                                                    attributes(null)$names <- attributes(trait_as_numeric)$names
+                                                    # null <- t(data.frame(null))
+                                                    null <- phyDat( null,type = "USER",levels = attributes(factor(null))$levels )
+                                                    null_model[i,] <- parsimony( tree, null, method = "sankoff", cost = cost1 )
+
+                                            }
+
+                                        ## Assess observed parsimony score in the context of the random ones
+
+                                            p_value <- sum(OBS >= null_model)/(replicates + 1)
+                                            p_value
+
+                                        ## Summarize output and report it
+
+                                            results[[i]] <- data.frame(
+                                                trait = trait_list[i],
+                                                trait_type = "categorical",
+                                                n_species = length(tree$tip.label),
+                                                number_of_levels = length(attributes(factor(trait))$levels), 
+                                                evolutionary_transitions_observed = OBS,
+                                                median_evolutionary_transitions_in_randomization = median(null_model),
+                                                minimum_evolutionary_transitions_in_randomization = min(null_model),
+                                                evolutionary_transitions_in_randomization = max(null_model),
+                                                p_value = p_value
+                                            )
+                                }
+
+                                if (class(trait) %in% c("numeric", "integer")) {
+
+                                    # Determine phylogenetic signal for continuous traits
+                                        results[[i]] <- data.frame(
+                                            trait = trait_list[i],
+                                            trait_type = "continuous",
                                             n_species = length(tree$tip.label),
-                                            number_of_levels = length(attributes(factor(trait))$levels), 
-                                            evolutionary_transitions_observed = OBS,
-                                            median_evolutionary_transitions_in_randomization = median(null_model),
-                                            minimum_evolutionary_transitions_in_randomization = min(null_model),
-                                            evolutionary_transitions_in_randomization = max(null_model),
-                                            p_value = p_value
+                                            number_of_levels = NA,
+                                            evolutionary_transitions_observed = NA,
+                                            median_evolutionary_transitions_in_randomization = NA,
+                                            minimum_evolutionary_transitions_in_randomization = NA,
+                                            evolutionary_transitions_in_randomization = NA,
+                                            p_value = if (sum(trait) == 0) { NA } else {
+                                                as.numeric(picante::phylosignal(trait, tree)[4])
+                                            }
                                         )
+                                }
                             }
-
-                            if (class(trait) %in% c("numeric", "integer")) {
-
-                                # Determine phylogenetic signal for continuous traits
-                                    results[[(i-1)]] <- data.frame(
-                                        trait = colnames(traits)[i],
-                                        trait_type = "continuous",
-                                        n_species = length(tree$tip.label),
-                                        number_of_levels = NA,
-                                        evolutionary_transitions_observed = NA,
-                                        median_evolutionary_transitions_in_randomization = NA,
-                                        minimum_evolutionary_transitions_in_randomization = NA,
-                                        evolutionary_transitions_in_randomization = NA,
-                                        p_value = as.numeric(picante::phylosignal(trait, tree)[4])
-                                    )
-                            }
-                        }
 
                     ## Return results
                         results <- do.call(rbind, results)
