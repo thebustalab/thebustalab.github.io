@@ -11389,6 +11389,53 @@
                     return(results)
             }
 
+        #### phyloTraitDistance
+
+            phyloTraitDistance <- function(
+                traits,
+                column_w_names_of_tiplabels,
+                column_w_values_for_traits,
+                tree,
+                mode = c("presence_absence", "quantitative")
+            ) {
+
+                distances <- as.data.frame(cophenetic.phylo(tree))
+                distances <- cbind(rownames(distances), distances)
+                distances <- pivot_longer(distances, cols = 2:dim(distances)[2])
+                colnames(distances) <- c("species_1", "species_2", "phylogenetic_distance")
+                distances <- distances[distances$phylogenetic_distance != 0,]
+
+                distances$trait_similarity <- 0
+                for (i in 1:dim(distances)[1]) { #i=1
+
+                    species_1_traits <- traits[which(traits[,colnames(traits) == column_w_names_of_tiplabels] == distances$species_1[i]),]
+                    species_2_traits <- traits[which(traits[,colnames(traits) == column_w_names_of_tiplabels] == distances$species_2[i]),]
+                    
+                    ## convert to presence absence
+                    if (mode[1] == "presence_absence") {
+                        s1pa <- species_1_traits[,which(colnames(species_1_traits) == column_w_values_for_traits)] > 0
+                        s2pa <- species_2_traits[,which(colnames(species_2_traits) == column_w_values_for_traits)] > 0
+                        overlap <- s1pa == s2pa
+                        distances$trait_similarity[i] <- round(sum(overlap == TRUE) / length(overlap), 4)          
+                    }
+                    
+                    if (mode[1] == "quantitative") {
+                        sum_of_differences <- sum(abs(
+                            species_1_traits[,which(colnames(species_1_traits) == column_w_values_for_traits)] - 
+                            species_2_traits[,which(colnames(species_2_traits) == column_w_values_for_traits)]
+                        ))
+                        sum_of_all_trait_values <- sum(abs(
+                            species_1_traits[,which(colnames(species_1_traits) == column_w_values_for_traits)] + 
+                            species_2_traits[,which(colnames(species_2_traits) == column_w_values_for_traits)]
+                        ))
+                        distances$trait_similarity[i] <- 1 - (sum_of_differences/sum_of_all_trait_values)
+                    }
+                }
+
+                return(distances)
+
+            }
+
         #### ancestralTraits
 
             ancestralTraits <- function(
