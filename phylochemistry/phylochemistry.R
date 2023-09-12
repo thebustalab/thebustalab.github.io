@@ -11224,7 +11224,7 @@
                     cost = NULL
                 ) {
 
-                    ## Make tree and traits compatible
+                    ## Make tree and traits compatible, make the traits square
                         match <- harmonizeTreeTraits( 
                             traits = traits,
                             tree = tree,
@@ -11235,13 +11235,15 @@
 
                         results <- list()
                         trait_list <- data.frame(unique(traits[,colnames(traits) == column_w_names_of_traits]))[,1]
+
+                        traits %>%
+                            pivot_wider(names_from = column_w_names_of_traits, values_from = column_w_values_for_traits, values_fill = 0) -> traits
                         ## Loop over traits
 
-                            for (i in 1:length(trait_list)) { #i=69
-                                
-                                this_trait <- traits[traits[,colnames(traits) == column_w_names_of_traits] == trait_list[i],]
-                                trait <- this_trait[,colnames(this_trait) == column_w_values_for_traits]
-                                names(trait) <- this_trait[,colnames(this_trait) == column_w_names_of_tiplabels]
+                            for (i in 1:length(trait_list)) { #i=1
+
+                                trait <- as.data.frame(traits[,colnames(traits) == trait_list[i]])[,1]
+                                names(trait) <- as.data.frame(traits[,colnames(traits) == column_w_names_of_tiplabels])[,1]
 
                                 if (class(trait) %in% c("factor", "character")) {
 
