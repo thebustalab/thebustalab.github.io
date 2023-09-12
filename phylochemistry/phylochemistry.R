@@ -11344,25 +11344,48 @@
 
         #### independentContrasts
 
-            independentContrasts <- function(traits, tree) {
+            independentContrasts <- function(
+                traits,
+                column_w_names_of_tiplabels,
+                column_w_names_of_traits,
+                column_w_values_for_traits,
+                tree
+            ) {
 
                 ## Make tree and traits compatible
-                    match <- harmonizeTreeTraits( traits = traits, tree = tree )
-                    traits <- match$traits
-                    tree <- match$tree
+                    match <- harmonizeTreeTraits(
+                        traits = traits,
+                        column_w_names_of_tiplabels = column_w_names_of_tiplabels,
+                        tree = tree
+                    )
+
+                ## Pivot wider and deal with missing values
+                    match$traits %>%
+                        select(
+                            column_w_names_of_tiplabels,
+                            column_w_names_of_traits,
+                            column_w_values_for_traits
+                        ) -> traits_wide
+                    colnames(traits_wide) <- c("sample_unique_ID", "trait", "value")
+                    traits_wide <- pivot_wider(traits_wide, names_from = "trait", values_from = "value")
+
+                    traits_wide[is.na(traits_wide)] <- 0
 
                 ## Calculate independent contrasts for every variable and return
                     results <- list()
-                    for (i in 2:(dim(traits)[2])) {
+                    for (i in 2:(dim(traits_wide)[2])) { # i=2
 
-                        results[[i]] <- unname(pic(
-                            x = as.numeric(as.data.frame(traits)[,i]),
-                            phy = tree
-                        ))
+                        results[[i-1]] <- data.frame(
+                            pic = unname(pic(
+                                x = as.numeric(as.data.frame(traits_wide)[,i]),
+                                phy = match$tree
+                            )),
+                            node = filter(fortify(match$tree), isTip == FALSE)$node,
+                            trait = colnames(traits_wide)[i]
+                        )
 
                     }
-                    results <- do.call(cbind, results)
-                    colnames(results) <- colnames(traits)[2:dim(traits)[2]]
+                    results <- do.call(rbind, results)
                     return(results)
             }
 
