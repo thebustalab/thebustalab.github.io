@@ -2461,125 +2461,127 @@
             #' alignSequences
 
             alignSequences <-   function(
-                                    monolist, 
-                                    subset, 
-                                    alignment_directory_path, 
-                                    alignment_out_path,
-                                    sequences_of_interest_directory_path,
-                                    input_sequence_type = c("nucl", "amin"), 
-                                    mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
-                                    base_fragment = NULL
-                                ){  
+                        monolist, 
+                        subset, 
+                        alignment_out_path,
+                        sequences_of_interest_directory_path,
+                        input_sequence_type = c("nucl", "amin"), 
+                        mode = c("nucl_align", "amin_align", "codon_align", "fragment_align"),
+                        base_fragment = NULL
+                    ){  
 
-                ## Check directory_paths
+                ## Check directory_paths, Get appropriate subset of the monolist
                     sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
-                    # alignment_directory_path <- OsDirectoryPathCorrect(alignment_directory_path)
-
-                ## Get appropriate subset of the monolist
                     monolist_subset <- monolist[unlist(monolist[,as.character(colnames(monolist)) == as.character(subset)]),]
 
                 ## If starting with nucleotide sequences
-                    
+
                     if ( input_sequence_type == "nucl" ) {
 
-                        ## Remove existing version of this alignment and it's files
-                            if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs.fa", sep = ""))) {
-                                file.remove(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs.fa", sep = ""))}
-                            if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_aligned.fa", sep = ""))) {
-                                file.remove(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_aligned.fa", sep = ""))}
+                        ## Remove existing version of this alignment and its files
+                            if (file.exists(alignment_out_path)) {file.remove(alignment_out_path)}
 
                         ## Import the subset's sequences, then write out *_nucl_seqs.fa
                             nucl_seqs_set <- Biostrings::DNAStringSet()
                             for (i in 1:dim(monolist_subset)[1]) {
                                 nucl_seqs_set <- c(nucl_seqs_set, Biostrings::readDNAStringSet(paste(sequences_of_interest_directory_path, as.character(monolist_subset$accession[i]), ".fa", sep = "")))
                             }
-                            Biostrings::writeXStringSet(nucl_seqs_set, filepath = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""))
 
                         ## Run plain nucleotide alignment, if requested
                             if ( mode == "nucl_align") {
                                 nucl_seqs_set_aligned <- msa::msa(nucl_seqs_set, order = c("input"))
                                 msa <- msa::msaConvert(nucl_seqs_set_aligned, type = "seqinr::alignment")
-                                n <- dim(as.data.frame(msa$seq))[1]
-                                for (i in 1:n){msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))}
-                                seqinr::write.fasta(as.list(msa$seq),as.list(msa$nam), file.out = paste(alignment_directory_path, subset, "_nucl_seqs_aligned.fa", sep = ""))
+                                for (i in 1:dim(as.data.frame(msa$seq))[1]) {
+                                    msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))
+                                }
+                                seqinr::write.fasta(
+                                    as.list(msa$seq),
+                                    as.list(msa$nam),
+                                    file.out = alignment_out_path
+                                )
                             }
 
                         ## Run codon alignment, if requested
                             if ( mode == "codon_align") {
 
-                                ## Remove existing codon alignment
-                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_codon_aligned.fa", sep = ""))) {
-                                    file.remove(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_codon_aligned.fa", sep = ""))}
-                                
-                                ## Extarct ORFs
-                                    extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
-                                
-                                ## Translate the nucleotide sequences and write out *_amin_seqs.fa
-                                    nucl_seqs_set <- Biostrings::readDNAStringSet(paste(alignment_directory_path, subset, "_nucl_seqs.fa_orfs", sep = ""))
-                                    amin_seqs_set <- Biostrings::translate(nucl_seqs_set, if.fuzzy.codon = "solve")
-                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))) {
-                                        file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))}
-                                    Biostrings::writeXStringSet(amin_seqs_set, filepath = paste(alignment_directory_path, subset, "_amin_seqs.fa", sep = ""))
+                                ## Extarct ORFs, read in ORFs, translate them, then align them
 
-                                ## Run amino acid alignment and write out *_amin_seqs.fa
+                                    Biostrings::writeXStringSet(nucl_seqs_set, filepath = paste0(alignment_out_path, "_unaligned"))
+                                    extractORFs(file = paste0(alignment_out_path, "_unaligned"), write_out_ORFs = TRUE)
+                                    if (file.exists(paste0(alignment_out_path, "_unaligned"))) {file.remove(paste0(alignment_out_path, "_unaligned"))}
+                                
+                                    amin_seqs_set <- Biostrings::translate(
+                                        Biostrings::readDNAStringSet(paste0(alignment_out_path, "_unaligned_orfs")),
+                                        if.fuzzy.codon = "solve"
+                                    )
+                                    if (file.exists(paste0(alignment_out_path, "_unaligned_orfs"))) {file.remove(paste0(alignment_out_path, "_unaligned_orfs"))}
+
                                     amin_seqs_set_aligned <- msa::msa(amin_seqs_set, order = c("input"))
                                     msa <- msa::msaConvert(amin_seqs_set_aligned, type = "seqinr::alignment")
-                                    n <- dim(as.data.frame(msa$seq))[1]
-                                    for (i in 1:n){msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))}
-                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs_aligned.fa", sep = ""))) {
-                                    file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs_aligned.fa", sep = ""))}
-                                    seqinr::write.fasta(as.list(msa$seq),as.list(msa$nam), file.out = paste(alignment_directory_path, subset, "_amin_seqs_aligned.fa", sep = ""))
+                                    for (i in 1:dim(as.data.frame(msa$seq))[1]) {
+                                        msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))
+                                    }
+                                    seqinr::write.fasta(
+                                        as.list(msa$seq),
+                                        as.list(msa$nam),
+                                        file.out = paste0(alignment_out_path, "_amin_seqs_aligned.fa")
+                                    )
 
                                 ## Run codon alignment and write to nucl_seqs_aligned.fa
                                     nucl_seqs_codon_aligned <-  orthologr::codon_aln(
-                                                                    file_aln = paste(alignment_directory_path, subset, "_amin_seqs_aligned.fa", sep = ""), 
-                                                                    file_nuc = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), 
+                                                                    file_aln = paste0(alignment_out_path, "_amin_seqs_aligned.fa"),
+                                                                    file_nuc = paste0(alignment_out_path, "_unaligned"), 
                                                                     get_aln = TRUE
                                                                 )
                                     msa <- nucl_seqs_codon_aligned
-                                    n <- dim(as.data.frame(msa$seq))[1]
-                                    for (i in 1:n){msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))}
-                                    seqinr::write.fasta(as.list(msa$seq),as.list(msa$nam), file.out = paste(alignment_directory_path, subset, "_nucl_seqs_codon_aligned.fa", sep = ""))
+                                    for (i in 1:dim(as.data.frame(msa$seq))[1]) {
+                                        msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))
+                                    }
+                                    seqinr::write.fasta(
+                                        as.list(msa$seq),
+                                        as.list(msa$nam),
+                                        file.out = alignment_out_path
+                                    )
                             }
 
                         ## Run fragment alignment, if requested
                             if ( mode == "fragment_align") {
 
                                 ## Remove existing fragment alignment
-                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_fragment_seqs_aligned.fa", sep = ""))) {
-                                    file.remove(paste(alignment_directory_path, as.character(subset), "_fragment_seqs_aligned.fa", sep = ""))}
+            #                         if (file.exists(paste(alignment_directory_path, as.character(subset), "_fragment_seqs_aligned.fa", sep = ""))) {
+            #                         file.remove(paste(alignment_directory_path, as.character(subset), "_fragment_seqs_aligned.fa", sep = ""))}
 
-                                ## Extarct ORFs
-                                    extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
-                                
-                                ## Translate the nucleotide sequences and write out *_amin_seqs.fa
-                                    nucl_seqs_set <- Biostrings::readDNAStringSet(paste(alignment_directory_path, subset, "_nucl_seqs.fa_orfs", sep = ""))
-                                    amin_seqs_set <- Biostrings::translate(nucl_seqs_set, if.fuzzy.codon = "solve")
-                                    if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))) {
-                                        file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))}
-                                    Biostrings::writeXStringSet(amin_seqs_set, filepath = paste(alignment_directory_path, subset, "_amin_seqs.fa", sep = ""))
+            #                     ## Extarct ORFs
+            #                         extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
 
-                                ## Define base fragment
-                                    base_fragment_seq <- amin_seqs_set[amin_seqs_set@ranges@NAMES == base_fragment]
-                                    fragments_seq_set <- amin_seqs_set[amin_seqs_set@ranges@NAMES != base_fragment]
-                                    current_base_fragment_seq <- base_fragment_seq
-                                
-                                ## Align each fragment on its own with the base fragment
-                                    aligned_fragments <- AAStringSet()
-                                    for ( fragment in 1:length(fragments_seq_set) ) {
-                                        fragment_pair_seq_set <- c(base_fragment_seq, fragments_seq_set[fragment])
-                                        fragment_pair_seq_set_aligned <- msa::msa(fragment_pair_seq_set, order = c("input"))
-                                        fragment_pair_seq_set_aligned <- AAStringSet(fragment_pair_seq_set_aligned)
-                                        current_base_fragment_seq <- fragment_pair_seq_set_aligned[fragment_pair_seq_set_aligned@ranges@NAMES == base_fragment]
-                                        aligned_fragments <- c(aligned_fragments, fragment_pair_seq_set_aligned[fragment_pair_seq_set_aligned@ranges@NAMES != base_fragment])
-                                    }
+            #                     ## Translate the nucleotide sequences and write out *_amin_seqs.fa
+            #                         nucl_seqs_set <- Biostrings::readDNAStringSet(paste(alignment_directory_path, subset, "_nucl_seqs.fa_orfs", sep = ""))
+            #                         amin_seqs_set <- Biostrings::translate(nucl_seqs_set, if.fuzzy.codon = "solve")
+            #                         if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))) {
+            #                             file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))}
+            #                         Biostrings::writeXStringSet(amin_seqs_set, filepath = paste(alignment_directory_path, subset, "_amin_seqs.fa", sep = ""))
 
-                                ## Perform final alignment and write it out
-                                    fragment_seq_set <- c(current_base_fragment_seq, aligned_fragments)
-                                    fragment_seq_set <- AAStringSet(gsub("-", "Z", fragment_seq_set))
-                                    fragment_seq_set_aligned <- msa::msa(fragment_seq_set, order = c("input"))
-                                    fragment_seq_set_aligned <- AAStringSet(fragment_seq_set_aligned)
-                                    writeXStringSet(fragment_seq_set_aligned, filepath = paste(alignment_directory_path, subset, "_fragment_seqs_aligned.fa", sep = ""))
+            #                     ## Define base fragment
+            #                         base_fragment_seq <- amin_seqs_set[amin_seqs_set@ranges@NAMES == base_fragment]
+            #                         fragments_seq_set <- amin_seqs_set[amin_seqs_set@ranges@NAMES != base_fragment]
+            #                         current_base_fragment_seq <- base_fragment_seq
+
+            #                     ## Align each fragment on its own with the base fragment
+            #                         aligned_fragments <- AAStringSet()
+            #                         for ( fragment in 1:length(fragments_seq_set) ) {
+            #                             fragment_pair_seq_set <- c(base_fragment_seq, fragments_seq_set[fragment])
+            #                             fragment_pair_seq_set_aligned <- msa::msa(fragment_pair_seq_set, order = c("input"))
+            #                             fragment_pair_seq_set_aligned <- AAStringSet(fragment_pair_seq_set_aligned)
+            #                             current_base_fragment_seq <- fragment_pair_seq_set_aligned[fragment_pair_seq_set_aligned@ranges@NAMES == base_fragment]
+            #                             aligned_fragments <- c(aligned_fragments, fragment_pair_seq_set_aligned[fragment_pair_seq_set_aligned@ranges@NAMES != base_fragment])
+            #                         }
+
+            #                     ## Perform final alignment and write it out
+            #                         fragment_seq_set <- c(current_base_fragment_seq, aligned_fragments)
+            #                         fragment_seq_set <- AAStringSet(gsub("-", "Z", fragment_seq_set))
+            #                         fragment_seq_set_aligned <- msa::msa(fragment_seq_set, order = c("input"))
+            #                         fragment_seq_set_aligned <- AAStringSet(fragment_seq_set_aligned)
+            #                         writeXStringSet(fragment_seq_set_aligned, filepath = paste(alignment_directory_path, subset, "_fragment_seqs_aligned.fa", sep = ""))
                             }
 
                         ## Run amin alignment, if requested
@@ -2588,10 +2590,10 @@
                                 ## Remove existing amin alignment
                                     if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_amin_aligned.fa", sep = ""))) {
                                     file.remove(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_amin_aligned.fa", sep = ""))}
-                                
+
                                 ## Extarct ORFs
                                     extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
-                                
+
                                 ## Translate the nucleotide sequences and write out *_amin_seqs.fa
                                     nucl_seqs_set <- Biostrings::readDNAStringSet(paste(alignment_directory_path, subset, "_nucl_seqs.fa_orfs", sep = ""))
                                     amin_seqs_set <- Biostrings::translate(nucl_seqs_set, if.fuzzy.codon = "solve")
@@ -2617,24 +2619,38 @@
                         if ( mode == "amin_align" ) {
 
                             ## Remove existing version of this alignment and it's files
-                                if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))) {
-                                    file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs.fa", sep = ""))}
-                                if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs_aligned.fa", sep = ""))) {
-                                    file.remove(paste(alignment_directory_path, as.character(subset), "_", "amin_seqs_aligned.fa", sep = ""))}
+                                # if (file.exists(paste0(alignment_out_path, "_unaligned"))) {
+                                #     file.remove(paste0(alignment_out_path, "_unaligned")) }    
+                                if (file.exists(alignment_out_path)) {
+                                    file.remove(alignment_out_path)}
 
                             ## Import the subset's sequences, then write out *_amin_seqs.fa
                                 amin_seqs_set <- Biostrings::AAStringSet()
                                 for (i in 1:dim(monolist_subset)[1]) {
-                                    amin_seqs_set <- c(amin_seqs_set, Biostrings::readAAStringSet(paste(sequences_of_interest_directory_path, as.character(monolist_subset$accession[i]), ".fa", sep = "")))
+                                    amin_seqs_set <- c(
+                                        amin_seqs_set,
+                                        Biostrings::readAAStringSet(
+                                            paste0(
+                                                sequences_of_interest_directory_path,
+                                                as.character(monolist_subset$accession[i]),
+                                                ".fa"
+                                            )
+                                        )
+                                    )
                                 }
-                                Biostrings::writeXStringSet(amin_seqs_set, filepath = paste(alignment_directory_path, subset, "_amin_seqs.fa", sep = ""))
+                                # Biostrings::writeXStringSet(amin_seqs_set, filepath = paste0(alignment_out_path, "_unaligned"))
 
                             ## Run the alignment
                                 amin_seqs_set_aligned <- msa::msa(amin_seqs_set, order = c("input"))
                                 msa <- msa::msaConvert(amin_seqs_set_aligned, type = "seqinr::alignment")
-                                n <- dim(as.data.frame(msa$seq))[1]
-                                for (i in 1:n){msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))}
-                                seqinr::write.fasta(as.list(msa$seq),as.list(msa$nam), file.out = paste(alignment_directory_path, subset, "_amin_seqs_aligned.fa", sep = ""))
+                                for (i in 1:dim(as.data.frame(msa$seq))[1]) {
+                                    msa$seq[i] <- substr(msa$seq[i],0,nchar(msa$seq[1]))
+                                }
+                                seqinr::write.fasta(
+                                    as.list(msa$seq),
+                                    as.list(msa$nam),
+                                    file.out = alignment_out_path
+                                )
                         }
                     }
             }
