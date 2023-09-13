@@ -2473,7 +2473,7 @@
 
                 ## Check directory_paths
                     sequences_of_interest_directory_path <- OsDirectoryPathCorrect(sequences_of_interest_directory_path)
-                    alignment_directory_path <- OsDirectoryPathCorrect(alignment_directory_path)
+                    # alignment_directory_path <- OsDirectoryPathCorrect(alignment_directory_path)
 
                 ## Get appropriate subset of the monolist
                     monolist_subset <- monolist[unlist(monolist[,as.character(colnames(monolist)) == as.character(subset)]),]
@@ -10054,6 +10054,7 @@
                                     coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
                                     clustering <- as_tibble(coords)
                                     clustering$sample_unique_ID <- rownames(coords)
+                                    # colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
                                 }
 
                                 if( analysis == "pca_ord" ) {
@@ -10061,6 +10062,7 @@
                                     clustering <- as_tibble(coords)
                                     clustering$analyte <- rownames(coords)
                                     clustering <- select(clustering, analyte, Dim.1, Dim.2)
+                                    # colnames(clustering) <- c("analyte", "Dim_1", "Dim_2")
                                     return(clustering)
                                     stop("Returning ordination plot coordinates.")
                                 }
@@ -11202,7 +11204,7 @@
                 return(list(tree = tree, traits = traits))
             }
 
-        #### phylogeneticSignal
+        #### *phylogeneticSignal
 
             #' Compute phylogenetic signal for continuous and discrete traits
             #'
@@ -11438,7 +11440,7 @@
 
             }
 
-        #### ancestralTraits
+        #### *ancestralTraits
 
             ancestralTraits <- function(
                 traits,
