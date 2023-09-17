@@ -9654,7 +9654,14 @@
                                             columns_w_additional_analyte_info = NULL,
                                             columns_w_sample_ID_info = NULL,
                                             transpose = FALSE,
-                                            distance_method = c("euclidean", "coeff_unlike"),
+                                            distance_method = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "coeff_unlike"),
+                                            agglomeration_method = c(
+                                                "ward.D2", "ward.D", "single", "complete",
+                                                "average", # (= UPGMA)
+                                                "mcquitty", # (= WPGMA)
+                                                "median", # (= WPGMC)
+                                                "centroid", # (= UPGMC)
+                                            ),
                                             unknown_sample_ID_info = NULL,
                                             scale_variance = TRUE,
                                             na_replacement = c("mean", "none", "zero", "drop"),
@@ -9833,7 +9840,7 @@
                             matrix <- as.data.frame(data_wide[,match(analyte_columns, colnames(data_wide))])
                             rownames(matrix) <- data_wide$sample_unique_ID
 
-                        # Replace NAs with colmeans
+                        # Handle NAs
 
                             if( na_replacement[1] == "none") {
                             }
@@ -9951,16 +9958,11 @@
 
                             }
 
-                        ## Scale data, unless not requested
+                        # Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
                                 
                                 scaled_matrix <- scale(matrix)
-
-                                # for (column in 1:length(matrix)) {
-                                #     scaled_matrix <- matrix
-                                #     scaled_matrix[,column] <- normalize(scaled_matrix[,column], new_min = -1, na_zero = TRUE)
-                                # }
 
                                 if( any(is.na(scaled_matrix)) ) {
                                     cat("Some analytes have zero variance and will be assigned a value of zero in the scaled matrix.")
@@ -9973,28 +9975,24 @@
                                 scaled_matrix <- matrix
                             }
 
-                        ## Get distance matrix
+                    # Generate distance matrix
 
-                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+                        if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
 
-                                if( distance_method[1] == "euclidean") {
-                                    dist_matrix <- stats::dist(scaled_matrix, method = "euclidean")
-                                } else {
-                                    stop("Please specify distance method")
-                                }
+                            # if( distance_method[1] == "euclidean") {
+                                dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
+                            # } else {
+                                # stop("Please specify distance method")
+                            # }
 
-                                if( analysis == "dist") {
-                                    return(dist_matrix)
-                                    stop()
-                                }
-
+                            if( analysis == "dist") {
+                                return(dist_matrix)
+                                stop()
                             }
 
-                            if( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
-                            
-                                scaled_matrix <- matrix
-                            
-                            }
+                        }
+
+                        if( analysis %in% c("mca", "mca_ord", "mca_dim") ) { scaled_matrix <- matrix }
 
                     # Run the matrix analysis selected
 
@@ -10107,7 +10105,7 @@
                             ## HCLUST, HCLUST_PHYLO ##
 
                                 if( analysis == "hclust" ) {
-                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
+                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix, method = agglomeration_method[1]))
                                     clustering <- ggtree::fortify(phylo)
                                     clustering$sample_unique_ID <- clustering$label
                                 }
