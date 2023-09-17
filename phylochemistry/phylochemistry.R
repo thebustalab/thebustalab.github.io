@@ -9687,6 +9687,7 @@
                                     "columns_w_sample_ID_info",
                                     "transpose",
                                     "distance_method",
+                                    "agglomeration_method",
                                     "unknown_sample_ID_info",
                                     "scale_variance",
                                     "kmeans",
