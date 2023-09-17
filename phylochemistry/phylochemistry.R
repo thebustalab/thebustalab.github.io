@@ -9660,7 +9660,7 @@
                                                 "average", # (= UPGMA)
                                                 "mcquitty", # (= WPGMA)
                                                 "median", # (= WPGMC)
-                                                "centroid", # (= UPGMC)
+                                                "centroid" # (= UPGMC)
                                             ),
                                             unknown_sample_ID_info = NULL,
                                             scale_variance = TRUE,
