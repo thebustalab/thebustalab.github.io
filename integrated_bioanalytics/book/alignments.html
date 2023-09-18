@@ -103,17 +103,17 @@
 <div id="alignsequences" class="section level2 unnumbered">
 <h2>alignSequences<a class="anchor" aria-label="anchor" href="#alignsequences"><i class="fas fa-link"></i></a>
 </h2>
-<p>There are, of course, many tools for aligning sequences. <code>alignSequences()</code>, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_directory_path.</p>
+<p>There are, of course, many tools for aligning sequences. <code>alignSequences()</code>, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_out_path.</p>
 <ul>
 <li><p>“monolist”: a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the “sequences_of_interest_directory_path”.</p></li>
 <li><p>“subset”: The monolist .csv also needs to contain at least one “subset_*” column. The most simple implementation of this is a column called “subset_all” which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.</p></li>
-<li><p>“alignment_directory_path”: a path to a directory that should contain the output alignment.</p></li>
+<li><p>“alignment_out_path”: a path to a directory that should contain the output alignment.</p></li>
 <li><p>“sequences_of_interest_directory_path”: a path to a directory that contains one fasta file for each of the accessions in the monolist.</p></li>
 <li><p>“input_sequence_type”: options are “nucl” or “amin” specifying what type of sequence is to be aligned.</p></li>
 <li><p>“mode”: options are “nucl_align”, a basic nucleotide alignment, “amin_align”, a basic amino acid alignment, “codon_align”, a codon alignment, and “fragment_align”, which will align all the sequences to a base fragment.</p></li>
 <li><p>“base_fragment”: a path to a fasta file containing the base fragment to which the subjects should be aligned.</p></li>
 </ul>
-<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">alignSequences</span><span class="op">(</span></span>
 <span>  monolist <span class="op">=</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="st">"/path_to/a_csv_file_that_will_list_all_blast_hits.csv"</span><span class="op">)</span>, </span>
 <span>  subset <span class="op">=</span> <span class="st">"subset_all"</span>, </span>
@@ -164,7 +164,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-18.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

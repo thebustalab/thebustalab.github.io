@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-09-08"
+date: "2023-09-18"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1114,7 +1114,7 @@ head(select(alaska_lake_data, park, water_temp))
 ## 6 BELA        6.46
 ```
 
-## tidy data {-}
+## wide and long data {-}
 
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
 
@@ -1158,7 +1158,7 @@ pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values
 ## # ℹ 60 more rows
 ```
 
-Brilliant! Now we have a tidy, long-style table that can be used with ggplot.
+Brilliant! Now we have a long-style table that can be used with ggplot.
 
 ## the pipe (%>%) {-}
 
@@ -1515,7 +1515,7 @@ The percent columns for each park add to 100%, so, for example, Devil Mountain L
 
 ## exercises {-}
 
-Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?* Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
+Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?*  Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
 In this set of exercises we are going to use the periodic table. After you run source() you can load that data set using `periodic_table`. Please use that dataset to run analyses and answer the following questions/prompts. Compile the answers in an R Markdown document, compile it as a pdf, and upload it to the Canvas assignment. Please let me know if you have any questions. Good luck, and have fun!
 
@@ -1551,7 +1551,7 @@ Some pointers:
 
 
 
-7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. Impress me!
+7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book.
 
 ## further reading {-}
 
@@ -1879,15 +1879,16 @@ Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw
 ```r
 set.seed(235)
 runMatrixAnalysis(
-  data = hops_components,
+  data = metabolomics_data,
   analysis = "pca",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
   columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
   na_replacement = "mean"
 ) -> pca_data
+## Replacing NAs in your data with mean
 pca_data$technique <- "pca_data"
 colnames(pca_data) <- gsub("\\.", "_", colnames(pca_data))
 pca_data$Dim_1 <- as.numeric(scale(pca_data$Dim_1))
@@ -1895,30 +1896,32 @@ pca_data$Dim_2 <- as.numeric(scale(pca_data$Dim_2))
 
 
 runMatrixAnalysis(
-  data = hops_components,
+  data = metabolomics_data,
   analysis = "umap",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
   columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
   na_replacement = "mean"
 ) -> umap_data
+## Replacing NAs in your data with mean
 umap_data$technique <- "umap_data"
 umap_data$Dim_1 <- as.numeric(scale(umap_data$Dim_1))
 umap_data$Dim_2 <- as.numeric(scale(umap_data$Dim_2))
 
 
 runMatrixAnalysis(
-  data = hops_components,
+  data = metabolomics_data,
   analysis = "tsne",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(hops_components)[c(5:12)],
+  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
   columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(hops_components)[c(1:4)],
+  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
   na_replacement = "mean"
 ) -> tsne_data
+## Replacing NAs in your data with mean
 tsne_data$technique <- "tsne_data"
 tsne_data$Dim_1 <- as.numeric(scale(tsne_data$Dim_1))
 tsne_data$Dim_2 <- as.numeric(scale(tsne_data$Dim_2))
@@ -1927,12 +1930,12 @@ tsne_data$Dim_2 <- as.numeric(scale(tsne_data$Dim_2))
 data <- rbind(pca_data, umap_data, tsne_data)
 
 p1 <- ggplot(data) +
-  geom_point(aes(x = Dim_1, y = Dim_2, fill = hop_origin), shape = 21, size= 4) +
+  geom_point(aes(x = Dim_1, y = Dim_2, fill = patient_status), shape = 21, size= 4) +
   facet_grid(technique~., scales = "free") +
   scale_fill_brewer(palette = "Set1")
 
 p2 <- ggplot(data) +
-  geom_point(aes(x = Dim_1, y = Dim_2, fill = hop_brewing_usage), shape = 21, size= 4) +
+  geom_point(aes(x = Dim_1, y = Dim_2, fill = patient_status), shape = 21, size= 4) +
   facet_grid(technique~., scales = "free") +
   scale_fill_brewer(palette = "Set1")
 
@@ -2567,7 +2570,7 @@ ggplot(metabolomics_data) +
 ## [1] 0.6183036
 ```
 
-0.68! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". Now, let's put it all together and make it pretty:
+0.68! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". Note that the R squared value represents the amount of variance in the response explained by the dependent variable. Now, let's put it all together and make it pretty:
 
 
 ```r
@@ -2693,69 +2696,63 @@ Start by making a number of forests that is the square of the number of variable
 
 
 ```r
-## Randomly split data into a traing set and a testing set
-    metabolomics_data_split <- rsample::initial_split(metabolomics_data, prop = 3/4)
 
-## Create a workflow that has a recipe and a model
-  workflow() %>%
-    add_recipe(
-      recipe( patient_status ~ ., data = metabolomics_data ) %>%
-      step_normalize(all_numeric()) %>% step_impute_knn(all_predictors())
-    ) %>%
-    add_model(
-      rand_forest() %>% # specify that the model is a random forest
-      set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
-      set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
-      set_mode("classification") # choose either the continuous regression or binary classification mode
-    ) -> workflow
+data = metabolomics_data
 
-## Tune the model on the training set
-  tune_results <- tune_grid(
-    workflow,
-    resamples = vfold_cv(training(metabolomics_data_split)), #CV object
-    grid = expand.grid(mtry = c(2, 3, 4, 5, 6, 7, 8, 9), trees = seq(50,800,50)), # grid of values to try
-    metrics = metric_set(accuracy, roc_auc) # metrics we care about
-  )
+classificationModel <- function(data) {
 
-# Check model parameters if you want
-  collect_metrics(tune_results) %>%
-    filter(.metric == "accuracy") %>%
-    ggplot(aes(x = factor(mtry), y = factor(trees), fill = mean)) +
-      geom_tile(color = "black", size = 1) + scale_fill_viridis() + theme_classic() +
-      scale_x_discrete(expand = c(0,0)) + scale_y_discrete(expand = c(0,0)) +
-      theme(text = element_text(size = 18))
+  ## Randomly split data into a traing set and a testing set
+      data_split <- rsample::initial_split(data, prop = 3/4)
+
+  ## Create a workflow that has a recipe and a model
+    workflow() %>%
+      add_recipe(
+        recipe( patient_status ~ ., data = data ) %>%
+        step_normalize(all_numeric()) %>% step_impute_knn(all_predictors())
+      ) %>%
+      add_model(
+        rand_forest() %>% # specify that the model is a random forest
+        set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
+        set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
+        set_mode("classification") # choose either the continuous regression or binary classification mode
+      ) -> workflow
+
+  ## Tune the model on the training set
+    tune_results <- tune_grid(
+      workflow,
+      resamples = vfold_cv(training(data_split)), #CV object
+      grid = expand.grid(mtry = c(2, 3, 4, 5, 6, 7, 8, 9), trees = seq(50,800,50)), # grid of values to try
+      metrics = metric_set(accuracy, roc_auc) # metrics we care about
+    )
+
+  # Check model parameters if you want
+    output <- list()
+    output$metrics <- collect_metrics(tune_results)
+    select_best(tune_results, metric = "accuracy")
+
+  ## Apply the best parameters to the workflow and evaluate performance on test data
+    workflow %>%
+      finalize_workflow( select_best(tune_results, metric = "accuracy") ) %>% # Select best parameters
+      last_fit(data_split) -> wf_fit # Fit the test data
+    collect_metrics(wf_fit) # Check on the metrics if you want
+    test_predictions <- collect_predictions(wf_fit) # Collect predictions
+    table(test_predictions$.pred_class == test_predictions$patient_status) # number right and wrong
+    conf_mat(test_predictions, truth = patient_status, estimate = .pred_class) # confusion matrix
+
+  return(output)
+
+}
+
+output <- classificationModel(metabolomics_data)
+output$metrics %>%
+  filter(.metric == "accuracy") %>%
+  ggplot(aes(x = factor(mtry), y = factor(trees), fill = mean)) +
+    geom_tile(color = "black", size = 1) + scale_fill_viridis() + theme_classic() +
+    scale_x_discrete(expand = c(0,0)) + scale_y_discrete(expand = c(0,0)) +
+    theme(text = element_text(size = 18))
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
-
-```r
-    select_best(tune_results, metric = "accuracy")
-## # A tibble: 1 × 3
-##    mtry trees .config               
-##   <dbl> <dbl> <chr>                 
-## 1     7   100 Preprocessor1_Model014
-
-## Apply the best parameters to the workflow and evaluate performance on test data
-  workflow %>%
-    finalize_workflow( select_best(tune_results, metric = "accuracy") ) %>% # Select best parameters
-    last_fit(metabolomics_data_split) -> wf_fit # Fit the test data
-  collect_metrics(wf_fit) # Check on the metrics if you want
-## # A tibble: 2 × 4
-##   .metric  .estimator .estimate .config             
-##   <chr>    <chr>          <dbl> <chr>               
-## 1 accuracy binary         0.875 Preprocessor1_Model1
-## 2 roc_auc  binary         0.958 Preprocessor1_Model1
-  test_predictions <- collect_predictions(wf_fit) # Collect predictions
-  table(test_predictions$.pred_class == test_predictions$patient_status) # number right and wrong
-## 
-## FALSE  TRUE 
-##     3    21
-  conf_mat(test_predictions, truth = patient_status, estimate = .pred_class) # confusion matrix
-##                 Truth
-## Prediction       healthy kidney_disease
-##   healthy             10              1
-##   kidney_disease       2             11
-```
 
 ## exercises {-}
 
@@ -4224,13 +4221,13 @@ predictDomains(
 
 ## alignSequences {-}
 
-There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_directory_path.
+There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_out_path.
 
 * "monolist": a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the "sequences_of_interest_directory_path".
 
 * "subset": The monolist .csv also needs to contain at least one "subset_*" column. The most simple implementation of this is a column called "subset_all" which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.
 
-* "alignment_directory_path": a path to a directory that should contain the output alignment.
+* "alignment_out_path": a path to a directory that should contain the output alignment.
 
 * "sequences_of_interest_directory_path": a path to a directory that contains one fasta file for each of the accessions in the monolist.
 

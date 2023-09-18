@@ -181,8 +181,8 @@
 <span><span class="co">## 5 BELA        6.46</span></span>
 <span><span class="co">## 6 BELA        6.46</span></span></code></pre></div>
 </div>
-<div id="tidy-data" class="section level2 unnumbered">
-<h2>tidy data<a class="anchor" aria-label="anchor" href="#tidy-data"><i class="fas fa-link"></i></a>
+<div id="wide-and-long-data" class="section level2 unnumbered">
+<h2>wide and long data<a class="anchor" aria-label="anchor" href="#wide-and-long-data"><i class="fas fa-link"></i></a>
 </h2>
 <p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
@@ -218,7 +218,7 @@
 <span><span class="co">##  9 Hexadecanoic acid Buckleya_distichoph…                1.6</span></span>
 <span><span class="co">## 10 Hexadecanoic acid Nuytsia_floribunda                  3.8</span></span>
 <span><span class="co">## # ℹ 60 more rows</span></span></code></pre></div>
-<p>Brilliant! Now we have a tidy, long-style table that can be used with ggplot.</p>
+<p>Brilliant! Now we have a long-style table that can be used with ggplot.</p>
 </div>
 <div id="the-pipe" class="section level2 unnumbered">
 <h2>the pipe (%&gt;%)<a class="anchor" aria-label="anchor" href="#the-pipe"><i class="fas fa-link"></i></a>
@@ -527,7 +527,7 @@
 <li><p>Now filter the original dataset so that only elements with atomic number less than 37 are considered. The elements in this dataset belong to the first four periods. What is the average abundance of each of these four <em>periods</em> in seawater? i.e. what is the average abundance of all elements from period 1? period 2? etc. Which period is the most abundant? In this context what does “CHON” mean? (not the rock band, though they are also excellent, especially that song that features GoYama)</p></li>
 <li><p>Now filter the original dataset so that only elements with atomic number less than 103 are considered. Filter it further so that elements from group number 18 are excluded. Using this twice-filtered dataset, compute the average, minimum, and maximum values for electronegativiy for each <code>group_number</code>. Use <code>geom_point()</code> and <code>geom_errorbar()</code> to illustrate the average, minimum, and maximum values for each group number.</p></li>
 <li><p>Filter the dataset so that only elements with atomic number less than 85 are considered. Group these by <code>color</code>. Now filter out those that have <code>color == "colorless"</code>. Of the remaining elements, which has the widest range of specific heats? Use <code>geom_point()</code> and <code>geom_errorbar()</code> to illustrate the mean and standard deviation of each color’s specific heats.</p></li>
-<li><p>You have learned many things in this course so far. <code>read_csv()</code>, <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, <code>ggplot()</code>, and now <code>group_by()</code>, <code>summarize()</code>, <code>mutate()</code>, <code>arrange()</code>, and <code>slice()</code>. Using <strong>all</strong> these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. Impress me!</p></li>
+<li><p>You have learned many things in this course so far. <code>read_csv()</code>, <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, <code>ggplot()</code>, and now <code>group_by()</code>, <code>summarize()</code>, <code>mutate()</code>, <code>arrange()</code>, and <code>slice()</code>. Using <strong>all</strong> these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book.</p></li>
 </ol>
 </div>
 <div id="further-reading-2" class="section level2 unnumbered">
@@ -556,7 +556,7 @@
 <li><a class="nav-link" href="#data-wrangling-and-summaries">data wrangling and summaries</a></li>
 <li><a class="nav-link" href="#data-import">data import</a></li>
 <li><a class="nav-link" href="#subsetting">subsetting</a></li>
-<li><a class="nav-link" href="#tidy-data">tidy data</a></li>
+<li><a class="nav-link" href="#wide-and-long-data">wide and long data</a></li>
 <li><a class="nav-link" href="#the-pipe">the pipe (%&gt;%)</a></li>
 <li><a class="nav-link" href="#summary-statistics">summary statistics</a></li>
 <li><a class="nav-link" href="#ordering">ordering</a></li>
@@ -580,7 +580,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-18.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
