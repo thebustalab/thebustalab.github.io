@@ -11186,6 +11186,192 @@
 
     ##### Phylogenetic statistical testing
 
+        #### runPhylogeneticAnalyses
+
+            runPhylogeneticAnalyses <- function(
+                traits,
+                column_w_names_of_tiplabels,
+                column_w_names_of_traits,
+                column_w_values_for_traits,
+                tree,
+                replicates = 999,
+                cost = NULL
+            ) {
+
+                ## Preprocessing and TRAITS WIDE - Make tree and traits compatible
+
+                    ## Make data frame and first column characters
+                        traits <- as.data.frame(traits)
+                        traits[,colnames(traits) == column_w_names_of_tiplabels] <- as.character(traits[,colnames(traits) == column_w_names_of_tiplabels])
+                        data_tip_labels <- unique(traits[,colnames(traits) == column_w_names_of_tiplabels])
+
+                    ## Drop tips and rows as necessary
+                        species_dropped_from_traits <- data_tip_labels[!data_tip_labels %in% tree$tip.label]
+                        if (length(species_dropped_from_traits) > 0) {
+                          traits <- traits[traits[,colnames(traits) == column_w_names_of_tiplabels] %in% tree$tip.label,]
+                          message(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
+                        }
+
+                        species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% data_tip_labels]
+                        if (length(species_dropped_from_tree) > 0) {
+                          tree <- drop.tip(tree, tree$tip.label[!tree$tip.label %in% data_tip_labels])
+                          message(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
+                        }
+
+                    ## Reorder traits to match the order of the input
+                        traits[,colnames(traits) == column_w_names_of_tiplabels] <- factor(traits[,colnames(traits) == column_w_names_of_tiplabels], levels = tree$tip.label)
+
+                    ## Fortify tree and add traits to it
+                        treefort <- fortify(tree)
+                        treefort_1 <- right_join(
+                            treefort,
+                            traits,
+                            by = c("label" = colnames(traits)[colnames(traits) == column_w_names_of_tiplabels])
+                        )
+                        colnames(treefort_1)[colnames(treefort_1) == column_w_names_of_traits] <- "trait"
+                        colnames(treefort_1)[colnames(treefort_1) == column_w_values_for_traits] <- "value"
+
+                    ## Pivot traits wider and deal with any missing values
+                        traits %>%
+                            select(
+                                column_w_names_of_tiplabels,
+                                column_w_names_of_traits,
+                                column_w_values_for_traits
+                            ) -> traits_wide
+                        colnames(traits_wide) <- c("sample_unique_ID", "trait", "value")
+                        traits_wide <- pivot_wider(traits_wide, names_from = "trait", values_from = "value")
+
+                        traits_wide[is.na(traits_wide)] <- 0
+
+                ## ANCESTRAL STATES - Loop over traits and get ancestral states
+                    anc_traits <- list()
+                    for (i in 2:dim(traits_wide)[2]) { # i=2
+                        trait <- as.numeric(unlist(traits_wide[,i]))
+                        names(trait) <- as.character(unlist(traits_wide[,1]))
+
+                        fastAnc_output <- fastAnc( tree = tree, x = trait, vars = FALSE, CI = TRUE )
+                        anc_traits[[i]] <- data.frame(
+                            node = as.numeric(names(fastAnc_output[[1]])),
+                            trait = colnames(traits_wide)[i],
+                            value = fastAnc_output[[1]]
+                        )
+                    }
+                    anc_traits <- do.call(rbind, anc_traits)
+                    treefort_2 <- right_join(treefort, anc_traits, by = "node")
+
+                    ## Put it all together (including analyte metadata!) and return
+                        treefort_3 <- rbind(
+                            treefort_1[,colnames(treefort_1) %in% colnames(treefort_2)],
+                            treefort_2
+                        )
+
+                ## PHYLOGENETIC SIGNAL
+
+                    results <- list()
+                    for (i in 2:dim(traits_wide)[2]) { #i=2
+
+                        trait <- as.data.frame(traits_wide[,i])[,1]
+                        names(trait) <- as.data.frame(traits_wide[,1])[,1]
+
+                        if (class(trait) %in% c("factor", "character")) {
+
+                            ### For discrete traits
+
+                                ## Get the states in which the trait may exist (levels)
+                                ## Check that the variable is indeed categorical by comparing the length of the levels vector to the length of the trait vector
+                                    levels <- attributes(factor(trait))$levels
+                                    if (length(levels) == length(trait)) { warn("Are you sure this variable is categorical?") }
+
+                                ## Make the transition matrix
+                                    if (is.null(cost)) {
+                                        # By default, all transitions have a cost of 1, except transitions from a state to itself which have a cost of 0
+                                        cost1 <- 1-diag(length(levels))
+                                    } else {
+                                        # If a custom cost matrix is provided, it should have dimensions that match the number of levels
+                                    if (length(levels) != dim(cost)[1])
+                                        stop("Dimensions of the character state transition matrix do not agree with the number of levels")
+                                        cost1 <- t(cost)
+                                    }
+                                    dimnames(cost1) <- list(levels, levels)
+
+                                ## Make the trait numeric
+                                    trait_as_numeric <- as.numeric(as.factor(trait))
+                                    names(trait_as_numeric) <- names(trait)
+
+                                ## Make the phyDat object and get the parsimony score for the tree with the associated observations
+                                    # obs <- t(data.frame(trait))
+                                    obs <- phyDat( trait, type = "USER", levels = attributes(factor(trait))$levels )
+                                    # This parsimony score represents the minimum total cost of all state changes that must have occurred on the tree given the observed trait data
+                                    OBS <- parsimony( tree, obs, method = "sankoff", cost = cost1 )
+
+                                ## Make "replicates" number of random tree-trait associations and check their parsimony score
+                                    null_model <- matrix(NA, replicates, 1)
+                                    for (i in 1:replicates){
+                                        ## Randomize the traits and get the parsimony score for the random traits on that tree
+                                            null <- sample(as.numeric(trait_as_numeric))
+                                            attributes(null)$names <- attributes(trait_as_numeric)$names
+                                            # null <- t(data.frame(null))
+                                            null <- phyDat( null,type = "USER",levels = attributes(factor(null))$levels )
+                                            null_model[i,] <- parsimony( tree, null, method = "sankoff", cost = cost1 )
+                                    }
+
+                                ## Assess observed parsimony score in the context of the random ones
+                                    p_value <- sum(OBS >= null_model)/(replicates + 1)
+
+                                ## Summarize output and report it
+
+                                    results[[i-1]] <- data.frame(
+                                        trait = colnames(traits_wide)[i],
+                                        trait_type = "categorical",
+                                        # n_species = length(tree$tip.label),
+                                        # number_of_levels = length(attributes(factor(trait))$levels), 
+                                        # evolutionary_transitions_observed = OBS,
+                                        # median_evolutionary_transitions_in_randomization = median(null_model),
+                                        # minimum_evolutionary_transitions_in_randomization = min(null_model),
+                                        # evolutionary_transitions_in_randomization = max(null_model),
+                                        phylogenetic_signal_p_value = p_value
+                                    )
+                        }
+
+                        if (class(trait) %in% c("numeric", "integer")) {
+
+                            # Determine phylogenetic signal for continuous traits
+                                results[[i-1]] <- data.frame(
+                                    trait = colnames(traits_wide)[i],
+                                    trait_type = "continuous",
+                                    # n_species = length(tree$tip.label),
+                                    # number_of_levels = NA,
+                                    # evolutionary_transitions_observed = NA,
+                                    # median_evolutionary_transitions_in_randomization = NA,
+                                    # minimum_evolutionary_transitions_in_randomization = NA,
+                                    # evolutionary_transitions_in_randomization = NA,
+                                    phylogenetic_signal_p_value = if (sum(trait) == 0) { NA } else {
+                                        as.numeric(picante::phylosignal(trait, tree)[4])
+                                    }
+                                )
+                        }
+                    }
+
+                    ## Return results
+                        results <- do.call(rbind, results)
+                        treefort_3 <- left_join(treefort_3, results)
+
+                ## INDEPENDENT CONTRASTS
+                    results <- list()
+                    for (i in 2:(dim(traits_wide)[2])) { # i=2
+                        results[[i-1]] <- data.frame(
+                            pic = unname(pic(
+                                x = as.numeric(as.data.frame(traits_wide)[,i]),
+                                phy = match$tree
+                            )),
+                            node = filter(fortify(match$tree), isTip == FALSE)$node,
+                            trait = colnames(traits_wide)[i]
+                        )
+                    }
+                    results <- do.call(rbind, results)
+                    return(left_join(treefort_3, results, by = c("node", "trait")))
+            }
+
         #### harmonizeTreeTraits
 
             #' Harmonizes species in a set of traits (wide or long) and a tree
