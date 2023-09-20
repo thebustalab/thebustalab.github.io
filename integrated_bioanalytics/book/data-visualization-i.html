@@ -195,6 +195,15 @@
 <span><span class="co">## 17         2 Tsv11        Light             FAs             </span></span>
 <span><span class="co">## 18         3 Tsv11        Light             FAs             </span></span>
 <span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
+<p>Here are a variety of ways to filter:</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt; 18)</code> ## less than 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18)</code> ## less than or equal to 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt; 18)</code> ## greater than 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt;= 18)</code> ## greater than or equal to 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18)</code> ## equals than 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; != 18)</code> ## not equal to 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; %in% c(18, 19, 20)</code> ## equal to 18 or 19 or 20</p>
 </div>
 <div id="ggplot-geoms" class="section level2 unnumbered">
 <h2>ggplot &amp; geoms<a class="anchor" aria-label="anchor" href="#ggplot-geoms"><i class="fas fa-link"></i></a>
@@ -383,7 +392,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-18.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-20.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

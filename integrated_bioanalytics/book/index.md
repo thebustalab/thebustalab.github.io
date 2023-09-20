@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-09-18"
+date: "2023-09-20"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -352,6 +352,24 @@ algae_data_small
 ## 18         3 Tsv11        Light             FAs             
 ## # ℹ 1 more variable: abundance <dbl>
 ```
+
+Here are a variety of ways to filter:
+
+`filter(<data>, <variable> < 18)` ## less than 18
+
+`filter(<data>, <variable> <= 18)` ## less than or equal to 18
+
+`filter(<data>, <variable> > 18)` ## greater than 18
+
+`filter(<data>, <variable> >= 18)` ## greater than or equal to 18
+
+`filter(<data>, <variable> == 18)` ## equals than 18
+
+`filter(<data>, <variable> != 18)` ## not equal to 18
+
+`filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
+
+`filter(<data>, <variable> %in% c(18, 19, 20)` ## equal to 18 or 19 or 20
 
 ## ggplot & geoms {-}
 
@@ -5425,24 +5443,6 @@ On PC:
 install.packages("installr")
 installr::updateR()
 ```
-
-## filtering {-}
-
-`filter(<data>, <variable> < 18)` ## less than 18
-
-`filter(<data>, <variable> <= 18)` ## less than or equal to 18
-
-`filter(<data>, <variable> > 18)` ## greater than 18
-
-`filter(<data>, <variable> >= 18)` ## greater than or equal to 18
-
-`filter(<data>, <variable> == 18)` ## equals than 18
-
-`filter(<data>, <variable> != 18)` ## not equal to 18
-
-`filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
-
-`filter(<data>, <variable> %in% c(18, 19, 20)` ## equal to 18 or 19 or 20
 
 ## ordering {-}
 
