@@ -10152,7 +10152,7 @@
                                         findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "kmeans")
                                     }
 
-                                    cat("Using", n_clusters, "as a value for cluster_number.\n")
+                                    message("Using", n_clusters, "as a value for cluster_number.\n")
                                     clustering <- as_tibble(data.frame(
                                         sample_unique_ID = colnames(as.matrix(dist_matrix)),
                                         cluster = stats::kmeans(x = matrix, centers = as.numeric(n_clusters), nstart = 25, iter.max = 1000)$cluster
