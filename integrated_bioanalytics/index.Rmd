@@ -4003,6 +4003,25 @@ plot_grid(
 
 # phylogenetic analyses {-}
 
+We use a wrapper function to run phylogenetic comparative analyses. It 
+
+```{r}
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+
+runPhylogeneticAnalyses(
+    traits = pivot_longer(chemical_blooms, ncol = 2:10, names_to = "trait", values_to = "value"),
+    column_w_names_of_tiplabels = "label",
+    column_w_names_of_traits = ,
+    column_w_values_for_traits = ,
+    tree = chemical_bloom_tree,
+)
+```
+
+
 For all the below, there are some structural requirements: (i) the tree needs to be a phylo object (ii) the traits need to be a data.frame in which each row is a species and each column is a variable, and (iii) the first column in the data.frame needs to be the names of the species and they must exactly match the tip labels of the tree (though they don't have to be in the same order), for example:
 
 ```{r}

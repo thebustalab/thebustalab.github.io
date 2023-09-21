@@ -11362,9 +11362,9 @@
                         results[[i-1]] <- data.frame(
                             pic = unname(pic(
                                 x = as.numeric(as.data.frame(traits_wide)[,i]),
-                                phy = match$tree
+                                phy = tree
                             )),
-                            node = filter(fortify(match$tree), isTip == FALSE)$node,
+                            node = filter(fortify(tree), isTip == FALSE)$node,
                             trait = colnames(traits_wide)[i]
                         )
                     }
