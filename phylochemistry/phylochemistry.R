@@ -9984,8 +9984,8 @@
                                     method.c = agglomeration_method[1],
                                     monitor = FALSE
                                 )
-                                print(bclust$value)
-                                plot(bclust)
+                                # print(bclust$value)
+                                # plot(bclust)
                                 phylo <- ape::as.phylo(bclust$hclust)
                                 if( analysis == "hclust_phylo" ) {
                                     return(phylo)
