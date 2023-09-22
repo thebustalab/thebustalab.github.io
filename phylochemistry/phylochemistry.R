@@ -1213,8 +1213,6 @@
                                     message("\n")
                                     message(orphans[orphan])
                                 }
-                                message("\n")
-                                message("\n")
                             }
 
                         ## Check compatibility again
@@ -9669,48 +9667,48 @@
                                             ...
                                         ) {
 
+                    # Check that argument names are spelled correctly
+
+                        passed_args <- names(c(as.list(environment()), list(...)))
+
+                        if (!all(passed_args %in%
+                            c(
+                                "data",
+                                "analysis",
+                                "parameters",
+                                "column_w_names_of_multiple_analytes",
+                                "column_w_values_for_multiple_analytes",
+                                "columns_w_values_for_single_analyte",
+                                "columns_w_additional_analyte_info",
+                                "columns_w_sample_ID_info",
+                                "transpose",
+                                "distance_method",
+                                "agglomeration_method",
+                                "unknown_sample_ID_info",
+                                "scale_variance",
+                                "kmeans",
+                                "na_replacement",
+                                "output_format",
+                                "..."
+                            ))
+                        ) {stop("One of your argument names is misspelled, please double check spelling.")}
+
+                    # Check that column names are spelled correctly
+
+                        if( any(
+                            !c(
+                                column_w_names_of_multiple_analytes,
+                                column_w_values_for_multiple_analytes,
+                                columns_w_values_for_single_analyte,
+                                columns_w_additional_analyte_info,
+                                columns_w_sample_ID_info
+                            ) %in% colnames(data)
+                            ) == TRUE
+                        ) {
+                            stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
+                        }
+
                     # Pre-process data
-
-                        # Check that argument names are spelled correctly
-
-                            passed_args <- names(c(as.list(environment()), list(...)))
-
-                            if (!all(passed_args %in%
-                                c(
-                                    "data",
-                                    "analysis",
-                                    "parameters",
-                                    "column_w_names_of_multiple_analytes",
-                                    "column_w_values_for_multiple_analytes",
-                                    "columns_w_values_for_single_analyte",
-                                    "columns_w_additional_analyte_info",
-                                    "columns_w_sample_ID_info",
-                                    "transpose",
-                                    "distance_method",
-                                    "agglomeration_method",
-                                    "unknown_sample_ID_info",
-                                    "scale_variance",
-                                    "kmeans",
-                                    "na_replacement",
-                                    "output_format",
-                                    "..."
-                                ))
-                            ) {stop("One of your argument names is misspelled, please double check spelling.")}
-
-                        # Check that column names are spelled correctly
-
-                            if( any(
-                                !c(
-                                    column_w_names_of_multiple_analytes,
-                                    column_w_values_for_multiple_analytes,
-                                    columns_w_values_for_single_analyte,
-                                    columns_w_additional_analyte_info,
-                                    columns_w_sample_ID_info
-                                ) %in% colnames(data)
-                                ) == TRUE
-                            ) {
-                                stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
-                            }
 
                         # Add analyte_unique_ID_column if necessary
 
@@ -9959,6 +9957,8 @@
 
                             }
 
+                    # Run the matrix analysis selected
+
                         # Scale data, unless not requested
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
@@ -9976,26 +9976,53 @@
                                 scaled_matrix <- matrix
                             }
 
-                    # Generate distance matrix
+                        ## HCLUST, HCLUST_PHYLO ##
 
-                        if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+                            if( analysis == "hclust" | analysis == "hclust_phylo" ) {
+                                bclust <- Bclust(
+                                    scaled_matrix, method.d = distance_method[1],
+                                    method.c = agglomeration_method[1],
+                                    monitor = FALSE
+                                )
+                                print(bclust$value)
+                                plot(bclust)
+                                phylo <- ape::as.phylo(bclust$hclust)
+                                if( analysis == "hclust_phylo" ) {
+                                    return(phylo)
+                                    stop("Returning hclust_phylo.")
+                                }
+                                clustering <- ggtree::fortify(phylo)
+                                clustering$sample_unique_ID <- clustering$label
+                                clustering$bootstrap <- NA
 
-                            # if( distance_method[1] == "euclidean") {
-                                dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
-                            # } else {
-                                # stop("Please specify distance method")
-                            # }
+                                ## Add bootstrap values starting from the furthest node to the highest node
+                                    bs_vals <- data.frame(
+                                        xval = clustering$x[clustering$isTip != TRUE],
+                                        bs_val = NA
+                                    )
+                                    for (i in 1:length(bclust$value)) { # i=1
+                                        bs_vals$bs_val[
+                                            order(bs_vals$xval, decreasing = TRUE)[i]
+                                        ] <- bclust$values[i]
+                                    }
 
-                            if( analysis == "dist") {
-                                return(dist_matrix)
-                                stop()
+                                clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
                             }
 
-                        }
+                        # Generate distance matrix
 
-                        if( analysis %in% c("mca", "mca_ord", "mca_dim") ) { scaled_matrix <- matrix }
+                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
 
-                    # Run the matrix analysis selected
+                                dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
+                                
+                                if( analysis == "dist") {
+                                    return(dist_matrix)
+                                    stop()
+                                }
+
+                            }
+
+                            if( analysis %in% c("mca", "mca_ord", "mca_dim") ) { scaled_matrix <- matrix }
 
                         ## Dimensionality reduction
 
@@ -10102,20 +10129,6 @@
                                 }
 
                             }
-
-                            ## HCLUST, HCLUST_PHYLO ##
-
-                                if( analysis == "hclust" ) {
-                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix, method = agglomeration_method[1]))
-                                    clustering <- ggtree::fortify(phylo)
-                                    clustering$sample_unique_ID <- clustering$label
-                                }
-
-                                if( analysis == "hclust_phylo" ) {                        
-                                    phylo <- ape::as.phylo(stats::hclust(dist_matrix))
-                                    return(phylo)
-                                    stop("Returning hclust_phylo.")
-                                }
 
                             ## DBSCAN
 

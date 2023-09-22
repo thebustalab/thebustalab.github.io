@@ -4005,7 +4005,7 @@ plot_grid(
 
 We use a wrapper function to run phylogenetic comparative analyses. It 
 
-```{r}
+```{r, messages = FALSE}
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
@@ -4013,11 +4013,11 @@ chemical_bloom_tree <- buildTree(
 )
 
 runPhylogeneticAnalyses(
-    traits = pivot_longer(chemical_blooms, ncol = 2:10, names_to = "trait", values_to = "value"),
+    traits = pivot_longer(chemical_blooms[,1:4], cols = c(3:4), names_to = "trait", values_to = "value"),
     column_w_names_of_tiplabels = "label",
-    column_w_names_of_traits = ,
-    column_w_values_for_traits = ,
-    tree = chemical_bloom_tree,
+    column_w_names_of_traits = "trait",
+    column_w_values_for_traits = "value",
+    tree = chemical_bloom_tree
 )
 ```
 
