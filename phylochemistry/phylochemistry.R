@@ -11343,7 +11343,10 @@
                                         # median_evolutionary_transitions_in_randomization = median(null_model),
                                         # minimum_evolutionary_transitions_in_randomization = min(null_model),
                                         # evolutionary_transitions_in_randomization = max(null_model),
-                                        phylogenetic_signal_p_value = p_value
+                                        phylogenetic_signal_k_value = NA,
+                                        phylogenetic_signal_k_p_value = p_value,
+                                        phylogenetic_signal_lambda_value = NA,
+                                        phylogenetic_signal_lambda_p_value = NA
                                     )
                         }
 
@@ -11359,9 +11362,14 @@
                                     # median_evolutionary_transitions_in_randomization = NA,
                                     # minimum_evolutionary_transitions_in_randomization = NA,
                                     # evolutionary_transitions_in_randomization = NA,
-                                    phylogenetic_signal_p_value = if (sum(trait) == 0) { NA } else {
+                                    phylogenetic_signal_k_value = if (sum(trait) == 0) { NA } else {
+                                                as.numeric(picante::phylosignal(trait, tree)[1])
+                                            },
+                                    phylogenetic_signal_k_p_value = if (sum(trait) == 0) { NA } else {
                                         as.numeric(picante::phylosignal(trait, tree)[4])
-                                    }
+                                    },
+                                    phylogenetic_signal_lambda_value = round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$lambda, 4),
+                                    phylogenetic_signal_lambda_p_value = round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$P, 4)
                                 )
                         }
                     }
@@ -11532,7 +11540,10 @@
                                                 median_evolutionary_transitions_in_randomization = median(null_model),
                                                 minimum_evolutionary_transitions_in_randomization = min(null_model),
                                                 evolutionary_transitions_in_randomization = max(null_model),
-                                                p_value = p_value
+                                                phylogenetic_signal_k_value = NA,
+                                                phylogenetic_signal_k_p_value = p_value,
+                                                phylogenetic_signal_lambda_value = NA,
+                                                phylogenetic_signal_lambda_p_value = NA
                                             )
                                 }
 
@@ -11548,9 +11559,14 @@
                                             median_evolutionary_transitions_in_randomization = NA,
                                             minimum_evolutionary_transitions_in_randomization = NA,
                                             evolutionary_transitions_in_randomization = NA,
-                                            p_value = if (sum(trait) == 0) { NA } else {
+                                            phylogenetic_signal_k_value = if (sum(trait) == 0) { NA } else {
+                                                as.numeric(picante::phylosignal(trait, tree)[1])
+                                            },
+                                            phylogenetic_signal_k_p_value = if (sum(trait) == 0) { NA } else {
                                                 as.numeric(picante::phylosignal(trait, tree)[4])
-                                            }
+                                            },
+                                            phylogenetic_signal_lambda_value = round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$lambda, 4),
+                                            phylogenetic_signal_lambda_p_value = round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$P, 4)
                                         )
                                 }
                             }

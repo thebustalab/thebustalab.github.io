@@ -2959,6 +2959,8 @@ For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnag
 
 Ten common statistical mistakes and their solutions: [Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript](https://elifesciences.org/articles/48175)
 
+How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue)
+
 ## exercises {-}
 
 Using the `hawaii_aquifers` data set, please complete the following:
@@ -2970,7 +2972,6 @@ Using the `hawaii_aquifers` data set, please complete the following:
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
-
 
 <!-- end -->
 
