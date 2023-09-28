@@ -9662,7 +9662,7 @@
                                                 "centroid" # (= UPGMC)
                                             ),
                                             unknown_sample_ID_info = NULL,
-                                            scale_variance = TRUE,
+                                            scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
                                             na_replacement = c("mean", "none", "zero", "drop"),
                                             output_format = c("wide", "long"),
                                             ...
@@ -9961,6 +9961,10 @@
                     # Run the matrix analysis selected
 
                         # Scale data, unless not requested
+
+                            if ( is.null(scale_variance) ) {
+                                if (analysis != "hclust") {scale_variance <- TRUE} else {scale_variance <- FALSE}
+                            }
 
                             if( scale_variance == TRUE & !analysis %in% c("mca", "mca_ord", "mca_dim")) {
                                 

@@ -1951,7 +1951,7 @@ alaska_lake_data_pca <- runMatrixAnalysis(
 alaska_lake_data_pca_clusters <- runMatrixAnalysis(
   data = alaska_lake_data_pca,
   analysis = c("dbscan"),
-  parameters = c(4, 0.45),
+  # parameters = c(4, 0.45),
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
