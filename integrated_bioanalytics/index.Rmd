@@ -1951,7 +1951,7 @@ alaska_lake_data_pca <- runMatrixAnalysis(
 alaska_lake_data_pca_clusters <- runMatrixAnalysis(
   data = alaska_lake_data_pca,
   analysis = c("dbscan"),
-  # parameters = c(4, 0.45),
+  parameters = c(4, 0.45),
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
@@ -4039,7 +4039,10 @@ Phylogenetic signal is a measure of the degree to which related species share si
 
 ```{r}
 phylogeneticSignal(
-  traits = chemical_blooms,
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
   tree = chemical_bloom_tree
 )
 ```
@@ -4050,18 +4053,21 @@ Phylogenetic independent contrasts are a method for analyzing the relationship b
 
 ```{r}
 contrasts <- independentContrasts(
-  traits = chemical_blooms,
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
   tree = chemical_bloom_tree
 )
 
-buildLinearModel(
-  data = contrasts,
-  formula = "Fatty_acids = Alkanes + 0"
-) -> model
-
-ggplot(model$data) +
-  geom_point(aes(x = input_x, y = input_y)) +
-  geom_line(aes(x = model_x, model_y))
+# buildLinearModel(
+#   data = contrasts,
+#   formula = "Fatty_acids = Alkanes + 0"
+# ) -> model
+# 
+# ggplot(model$data) +
+#   geom_point(aes(x = input_x, y = input_y)) +
+#   geom_line(aes(x = model_x, model_y))
 ``` 
 
 ## ancestralTraits {-}

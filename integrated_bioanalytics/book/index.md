@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-09-20"
+date: "2023-09-28"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3417,6 +3417,8 @@ For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnag
 
 Ten common statistical mistakes and their solutions: [Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript](https://elifesciences.org/articles/48175)
 
+How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue)
+
 ## exercises {-}
 
 Using the `hawaii_aquifers` data set, please complete the following:
@@ -3428,7 +3430,6 @@ Using the `hawaii_aquifers` data set, please complete the following:
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
-
 
 <!-- end -->
 
@@ -4648,6 +4649,85 @@ plot_grid(
 
 # phylogenetic analyses {-}
 
+We use a wrapper function to run phylogenetic comparative analyses. It 
+
+
+```r
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
+## Scaffold newick tip Iris_lazica substituted with Iris_sp
+## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
+## Scaffold newick tip Allium_textile substituted with Allium_sp
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
+## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
+## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
+## Scaffold newick tip Agave_striata substituted with Agave_cerulata
+## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
+## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
+## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
+## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
+## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
+## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
+## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
+## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
+## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
+## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
+## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
+## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
+## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
+## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
+## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
+## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
+## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
+## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
+## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
+## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
+## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
+## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
+## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
+## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
+## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
+## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
+## Scaffold newick tip Rubus_repens substituted with Rubus_sp
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+runPhylogeneticAnalyses(
+    traits = pivot_longer(chemical_blooms[,1:4], cols = c(3:4), names_to = "trait", values_to = "value"),
+    column_w_names_of_tiplabels = "label",
+    column_w_names_of_traits = "trait",
+    column_w_values_for_traits = "value",
+    tree = chemical_bloom_tree
+)
+## Joining with `by = join_by(trait)`
+## # A tibble: 310 × 17
+##    parent  node branch.length label isTip     x     y branch
+##     <int> <dbl>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
+##  1     80     1         290.  Gink… TRUE   352.     1   207.
+##  2     80     1         290.  Gink… TRUE   352.     1   207.
+##  3     81     2         267.  Pice… TRUE   352.     2   219.
+##  4     81     2         267.  Pice… TRUE   352.     2   219.
+##  5     81     3         267.  Cupr… TRUE   352.     3   219.
+##  6     81     3         267.  Cupr… TRUE   352.     3   219.
+##  7     84     4         135.  Eryt… TRUE   352.     5   285.
+##  8     84     4         135.  Eryt… TRUE   352.     5   285.
+##  9     86     5          16.2 Iris… TRUE   352.     6   344.
+## 10     86     5          16.2 Iris… TRUE   352.     6   344.
+## # ℹ 300 more rows
+## # ℹ 9 more variables: angle <dbl>, trait <chr>,
+## #   value <dbl>, trait_type <chr>,
+## #   phylogenetic_signal_k_value <dbl>,
+## #   phylogenetic_signal_k_p_value <dbl>,
+## #   phylogenetic_signal_lambda_value <dbl>,
+## #   phylogenetic_signal_lambda_p_value <dbl>, pic <dbl>
+```
+
+
 For all the below, there are some structural requirements: (i) the tree needs to be a phylo object (ii) the traits need to be a data.frame in which each row is a species and each column is a variable, and (iii) the first column in the data.frame needs to be the names of the species and they must exactly match the tip labels of the tree (though they don't have to be in the same order), for example:
 
 
@@ -4704,7 +4784,10 @@ Phylogenetic signal is a measure of the degree to which related species share si
 
 ```r
 phylogeneticSignal(
-  traits = chemical_blooms,
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
   tree = chemical_bloom_tree
 )
 ##             trait trait_type n_species number_of_levels
@@ -4747,16 +4830,46 @@ phylogeneticSignal(
 ## 7                                                NA
 ## 8                                                NA
 ## 9                                                NA
-##   evolutionary_transitions_in_randomization p_value
-## 1                                        NA   0.160
-## 2                                        NA   0.001
-## 3                                        NA   0.731
-## 4                                        NA   0.261
-## 5                                        NA   0.327
-## 6                                        NA   0.001
-## 7                                        NA   0.043
-## 8                                        NA   0.849
-## 9                                        NA   0.931
+##   evolutionary_transitions_in_randomization
+## 1                                        NA
+## 2                                        NA
+## 3                                        NA
+## 4                                        NA
+## 5                                        NA
+## 6                                        NA
+## 7                                        NA
+## 8                                        NA
+## 9                                        NA
+##   phylogenetic_signal_k_value phylogenetic_signal_k_p_value
+## 1                 0.066016688                         0.167
+## 2                 2.045611108                         0.001
+## 3                 0.029719595                         0.711
+## 4                 0.069056092                         0.292
+## 5                 0.053761730                         0.354
+## 6                 0.566806846                         0.001
+## 7                 0.239488396                         0.030
+## 8                 0.018420367                         0.868
+## 9                 0.008613879                         0.928
+##   phylogenetic_signal_lambda_value
+## 1                           0.0001
+## 2                           0.9999
+## 3                           0.0001
+## 4                           0.0001
+## 5                           0.0001
+## 6                           0.9999
+## 7                           0.7874
+## 8                           0.0001
+## 9                           0.0001
+##   phylogenetic_signal_lambda_p_value
+## 1                              1.000
+## 2                              0.000
+## 3                              1.000
+## 4                              1.000
+## 5                              1.000
+## 6                              0.000
+## 7                              0.045
+## 8                              1.000
+## 9                              1.000
 ```
 
 ## independentContrasts {-}
@@ -4766,21 +4879,22 @@ Phylogenetic independent contrasts are a method for analyzing the relationship b
 
 ```r
 contrasts <- independentContrasts(
-  traits = chemical_blooms,
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
   tree = chemical_bloom_tree
 )
 
-buildLinearModel(
-  data = contrasts,
-  formula = "Fatty_acids = Alkanes + 0"
-) -> model
-
-ggplot(model$data) +
-  geom_point(aes(x = input_x, y = input_y)) +
-  geom_line(aes(x = model_x, model_y))
+# buildLinearModel(
+#   data = contrasts,
+#   formula = "Fatty_acids = Alkanes + 0"
+# ) -> model
+# 
+# ggplot(model$data) +
+#   geom_point(aes(x = input_x, y = input_y)) +
+#   geom_line(aes(x = model_x, model_y))
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## ancestralTraits {-}
 
@@ -4824,7 +4938,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5005,7 +5119,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -5030,7 +5144,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -5054,7 +5168,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -5065,7 +5179,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -5118,21 +5232,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5169,7 +5283,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5456,7 +5570,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5498,7 +5612,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5587,7 +5701,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
