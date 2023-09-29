@@ -9662,6 +9662,7 @@
                                                 "centroid" # (= UPGMC)
                                             ),
                                             unknown_sample_ID_info = NULL,
+                                            components_to_return = 2,
                                             scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
                                             na_replacement = c("mean", "none", "zero", "drop"),
                                             output_format = c("wide", "long"),
@@ -10065,7 +10066,7 @@
 
                                 if( analysis == "mca" ) {
                                     cat("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
-                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:2)]
+                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:components_to_return)]
                                     clustering <- as_tibble(coords)
                                     clustering$sample_unique_ID <- rownames(coords)
                                     colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
@@ -10074,7 +10075,7 @@
 
                                 if( analysis == "mca_ord" ) {
                                     cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
-                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$eta2[,c(1,2)]
+                                    coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$eta2[,c(1,components_to_return)]
                                     clustering <- as_tibble(coords)
                                     clustering$analyte <- rownames(coords)
                                     colnames(clustering) <- c("Dim_1", "Dim_2", "analyte")
@@ -10098,14 +10099,14 @@
                             ## PCA, PCA_ORD, PCA_DIM ## 
 
                                 if( analysis == "pca" ) {
-                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:2)]
+                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$ind$coord[,c(1:components_to_return)]
                                     clustering <- as_tibble(coords)
                                     clustering$sample_unique_ID <- rownames(coords)
                                     # colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
                                 }
 
                                 if( analysis == "pca_ord" ) {
-                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,2)]
+                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,components_to_return)]
                                     clustering <- as_tibble(coords)
                                     clustering$analyte <- rownames(coords)
                                     clustering <- select(clustering, analyte, Dim.1, Dim.2)

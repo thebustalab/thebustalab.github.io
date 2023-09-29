@@ -4835,6 +4835,7 @@ runMatrixAnalysis(
       "centroid" # (= UPGMC)
   ),
   unknown_sample_ID_info = NULL,
+  components_to_return = 2,
   scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
   na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
   output_format = c("wide", "long"), # default = "wide", this chooses whether to output a wide or long format
