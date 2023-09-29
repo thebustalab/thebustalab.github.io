@@ -10107,10 +10107,10 @@
                                 }
 
                                 if( analysis == "pca_ord" ) {
-                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1,components_to_return)]
+                                    coords <- FactoMineR::PCA(scaled_matrix, graph = FALSE, scale.unit = FALSE)$var$coord[,c(1:components_to_return)]
                                     clustering <- as_tibble(coords)
                                     clustering$analyte <- rownames(coords)
-                                    clustering <- select(clustering, analyte, Dim.1, Dim.2)
+                                    clustering <- select(clustering, analyte, c(paste0("Dim.", seq(1,components_to_return,1))))
                                     # colnames(clustering) <- c("analyte", "Dim_1", "Dim_2")
                                     return(clustering)
                                     stop("Returning ordination plot coordinates.")
