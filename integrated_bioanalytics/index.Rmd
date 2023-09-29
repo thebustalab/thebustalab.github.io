@@ -4811,7 +4811,7 @@ runMatrixAnalysis(
 ```{r, eval = FALSE}
 
 runMatrixAnalysis(
-  data,
+  data, # data to use for analysis
   analysis = c(
       "pca", "pca_ord", "pca_dim", # PCA
       "mca", "mca_ord", "mca_dim", # MCA (PCA on categorical data)
@@ -4825,9 +4825,14 @@ runMatrixAnalysis(
   columns_w_values_for_single_analyte = NULL,
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = NULL,
-  transpose = FALSE,
-  distance_method = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "coeff_unlike"),
-  agglomeration_method = c(
+  transpose = FALSE, # default = FALSE, this chooses whether to transpose the data
+  distance_method = c( # the distance metric to use in computing a distance matrix
+    "euclidean", "maximum",
+    "manhattan", "canberra",
+    "binary", "minkowski",
+    "coeff_unlike"
+  ),
+  agglomeration_method = c( # the clustering method to use in heirarchical clustering
       "ward.D2", "ward.D", "single", "complete",
       "average", # (= UPGMA)
       "mcquitty", # (= WPGMA)
@@ -4835,7 +4840,7 @@ runMatrixAnalysis(
       "centroid" # (= UPGMC)
   ),
   unknown_sample_ID_info = NULL,
-  components_to_return = 2,
+  components_to_return = 2, # how many principal components to return
   scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
   na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
   output_format = c("wide", "long"), # default = "wide", this chooses whether to output a wide or long format
