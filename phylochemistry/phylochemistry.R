@@ -9687,6 +9687,7 @@
                                 "distance_method",
                                 "agglomeration_method",
                                 "unknown_sample_ID_info",
+                                "components_to_return",
                                 "scale_variance",
                                 "kmeans",
                                 "na_replacement",

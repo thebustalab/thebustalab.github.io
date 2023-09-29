@@ -2532,8 +2532,6 @@ runMatrixAnalysis(
   columns_w_values_for_single_analyte = NULL,
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "none",
   na_replacement = "drop"
 ) %>%
 filter(Dim.1 > 0.9) %>%
@@ -2549,8 +2547,6 @@ runMatrixAnalysis(
   columns_w_values_for_single_analyte = NULL,
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "none",
   na_replacement = "drop"
 ) %>%
 filter(Dim.1 < -0.9) %>%
@@ -2566,8 +2562,6 @@ out <- runMatrixAnalysis(
   columns_w_values_for_single_analyte = NULL,
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = c("cultivar", "treatment"),
-  transpose = FALSE,
-  kmeans = "none",
   na_replacement = "drop"
 )
 
