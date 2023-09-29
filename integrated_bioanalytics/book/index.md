@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-09-28"
+date: "2023-09-29"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -5737,16 +5737,33 @@ runMatrixAnalysis(
 ```r
 
 runMatrixAnalysis(
-  data = NULL, # the data set to work on
-  analysis = c("hclust", "pca", "pca_ord", "pca_dim"), # the analysis to conduct
-  column_w_names_of_multiple_analytes = NULL, # a column with names of multiple analytes
-  column_w_values_for_multiple_analytes = NULL, # a column with quantities measured for multiple analytes
-  columns_w_values_for_single_analyte = NULL, # a column with quantities measured for a single analyte
-  columns_w_additional_analyte_info = NULL, # a column with character or numeric information about analytes that was not "measured" as part of the experiment.
-  columns_w_sample_ID_info = NULL, # a column with information about the sample (i.e. contents from the test tube's label)
+  data,
+  analysis = c(
+      "pca", "pca_ord", "pca_dim", # PCA
+      "mca", "mca_ord", "mca_dim", # MCA (PCA on categorical data)
+      "mds", "mds_ord", "mds_dim", # MDS
+      "tsne", "dbscan", "kmeans", # Clustering
+      "hclust", "hclust_phylo" # Hierarchical clustering
+  ),
+  parameters = NULL,
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = NULL,
   transpose = FALSE,
-  kmeans = c("none", "auto", "elbow", "1", "2", "3", "etc."),
-  na_replacement = c("none", "mean", "zero", "drop")
+  distance_method = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "coeff_unlike"),
+  agglomeration_method = c(
+      "ward.D2", "ward.D", "single", "complete",
+      "average", # (= UPGMA)
+      "mcquitty", # (= WPGMA)
+      "median", # (= WPGMC)
+      "centroid" # (= UPGMC)
+  ),
+  unknown_sample_ID_info = NULL,
+  scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
+  na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
+  output_format = c("wide", "long"), # default = "wide", this chooses whether to output a wide or long format
 )
 ```
 
