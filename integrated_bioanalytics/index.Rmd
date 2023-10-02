@@ -1733,7 +1733,7 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 # clustering {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png', dpi = NA)
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
 ```
 
 ## heirarchical clustering {-}
