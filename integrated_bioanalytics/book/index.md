@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-10-01"
+date: "2023-10-02"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -110,7 +110,7 @@ Let's get started!
 
 # installation {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png" width="100%" style="display: block; margin: auto;" />
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/installation.png" width="100%" style="display: block; margin: auto;" />
 
 ## R {-}
 
@@ -1977,7 +1977,7 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 <!-- start clustering -->
 # clustering {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/art_tree.png" width="100%" style="display: block; margin: auto;" />
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;" />
 
 ## heirarchical clustering {-}
 
