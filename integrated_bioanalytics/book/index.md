@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-09-29"
+date: "2023-10-01"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -2329,23 +2329,23 @@ https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
 ### exercises {-}
 
-For this set of exercises, please use the dataset `hawaii_aquifers`, available after you run the `source()` command. Do the following:
+For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
 
 1. Run a PCA analysis on the data set and plot the results. 
 
-2.  Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
+2. Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
 
 3. Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
 
 4. Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.
 
-5. Create a plot with four subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.
+5. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.
 
 6. Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
 
 7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
 
-8. Create a plot with four subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.
+8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.
 
 
 <!-- 
@@ -2434,376 +2434,6 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 <!-- end -->
 
-<!-- start models -->
-
-# models {-}
-
-## univariate {-}
-
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildLinearModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.
-
-Let's look at an example. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:
-
-
-```r
-ggplot(metabolomics_data) +
-  geom_point(aes(x = AMP, y = ADP))
-```
-
-<img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
-
-It looks like there might be a relationship! Let's build a linear model for that relationship:
-
-
-```r
-model <- buildLinearModel(
-  data = metabolomics_data,
-  formula = "ADP = AMP"
-)
-str(model, strict.width = "cut")
-## List of 2
-##  $ metrics:'data.frame':	6 obs. of  5 variables:
-##   ..$ variable: chr [1:6] "(Intercept)" "AMP" "median_res"..
-##   ..$ value   : num [1:6] 0.7842 0.9142 0.0415 40.3224 15...
-##   ..$ std_err : chr [1:6] "1.0056" "0.0757" NA NA ...
-##   ..$ type    : chr [1:6] "coefficient" "coefficient" "st"..
-##   ..$ p_value : chr [1:6] "0.43750684" "0" NA NA ...
-##  $ data   :'data.frame':	92 obs. of  7 variables:
-##   ..$ input_x  : num [1:92] 13.2 13.5 14.3 13.3 12 ...
-##   ..$ input_y  : num [1:92] 12.8 13.1 13.3 13.2 11.9 ...
-##   ..$ ADP      : num [1:92] 12.8 13.1 13.3 13.2 11.9 ...
-##   ..$ AMP      : num [1:92] 13.2 13.5 14.3 13.3 12 ...
-##   ..$ residuals: num [1:92] 0.0312 -0.0217 -0.6014 0.2458 ..
-##   ..$ model_y  : num [1:92] 12.8 13.1 13.9 13 11.8 ...
-##   ..$ model_x  : num [1:92] 13.2 13.5 14.3 13.3 12 ...
-```
-The model consists of two thigs: metrics and data. Let's look at the metrics:
-
-
-```r
-model$metrics
-##               variable   value std_err        type
-## 1          (Intercept)  0.7842  1.0056 coefficient
-## 2                  AMP  0.9142  0.0757 coefficient
-## 3      median_residual  0.0415    <NA>   statistic
-## 4    total_sum_squares 40.3224    <NA>   statistic
-## 5 residual_sum_squares 15.3901    <NA>   statistic
-## 6            r_squared  0.6183    <NA>   statistic
-##      p_value
-## 1 0.43750684
-## 2          0
-## 3       <NA>
-## 4       <NA>
-## 5       <NA>
-## 6       <NA>
-```
-
-It shows us the intercept (b), the variable for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second). The other thing the model contains is the data (below). This includes the input_x and y values. The raw values for ADP and AMP, the residuals (see below for details), and the x and y values generated by the model.
-
-
-```r
-head(model$data)
-##    input_x  input_y      ADP      AMP   residuals  model_y
-## 1 13.15029 12.83791 12.83791 13.15029  0.03119000 12.80672
-## 2 13.48362 13.08980 13.08980 13.48362 -0.02165141 13.11146
-## 3 14.32515 13.27943 13.27943 14.32515 -0.60138528 13.88082
-## 4 13.31191 13.20029 13.20029 13.31191  0.24581244 12.95448
-## 5 11.99764 11.93350 11.93350 11.99764  0.18057517 11.75293
-## 6 12.95966 12.83649 12.83649 12.95966  0.20405638 12.63243
-##    model_x
-## 1 13.15029
-## 2 13.48362
-## 3 14.32515
-## 4 13.31191
-## 5 11.99764
-## 6 12.95966
-```
-
-Let's plot the model!
-
-
-```r
-ggplot(model$data) +
-  geom_point(aes(x = input_x, y = input_y)) +
-  geom_line(aes(x = model_x, y = model_y))
-```
-
-<img src="index_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" />
-
-Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
-
-
-```r
-ggplot(model$data) +
-  geom_point(aes(x = input_x, y = input_y)) +
-  geom_line(aes(x = model_x, y = model_y)) +
-  geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
-```
-
-<img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;" />
-
-We can calculate the sum of the squared residuals:
-
-
-```r
-sum(
-  (model$data$input_y - model$data$model_y)^2
-, na.rm = TRUE)
-## [1] 15.39014
-```
-
-15.39! Let's call that the "residual sum of the squares". So. 15.39.. does that mean our model is good? I don't know. We have to compare that number to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
-
-
-```r
-ggplot(metabolomics_data) +
-  geom_point(aes(x = AMP, y = ADP)) +
-  geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
-```
-
-<img src="index_files/figure-html/unnamed-chunk-144-1.png" width="100%" style="display: block; margin: auto;" />
-
-A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
-
-
-```r
-sum(
-  (metabolomics_data$ADP - mean(metabolomics_data$ADP, na.rm = TRUE))^2
-, na.rm = TRUE)
-## [1] 40.32239
-
-ggplot(metabolomics_data) +
-  geom_point(aes(x = AMP, y = ADP)) +
-  geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE))) +
-  geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
-```
-
-<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
-
-40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
-
-
-```r
-1-(15.39/40.32)
-## [1] 0.6183036
-```
-
-0.68! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". Note that the R squared value represents the amount of variance in the response explained by the dependent variable. Now, let's put it all together and make it pretty:
-
-
-```r
-top <- ggplot(model$data) +
-  geom_point(aes(x = input_x, y = input_y)) +
-  geom_line(aes(x = model_x, y = model_y)) +
-  annotate(geom = "table",
-    x = 11.4,
-    y = 16,
-    label = list(model$metrics)
-  ) +
-  coord_cartesian(ylim = c(10,16)) +
-  theme_bw()
-
-bottom <- ggplot(model$data) +
-  geom_col(
-    aes(x = input_x, y = residuals),
-    width = 0.03, color = "black", position = "dodge", alpha = 0.5
-  ) +
-  theme_bw()
-
-cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
-```
-
-<img src="index_files/figure-html/unnamed-chunk-147-1.png" width="100%" style="display: block; margin: auto;" />
-
-## multivariate {-}
-
-
-```r
-
-model1 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP")
-model1[1]
-## $metrics
-##               variable   value std_err        type
-## 1          (Intercept)  0.7842  1.0056 coefficient
-## 2                  AMP  0.9142  0.0757 coefficient
-## 3      median_residual  0.0415    <NA>   statistic
-## 4    total_sum_squares 40.3224    <NA>   statistic
-## 5 residual_sum_squares 15.3901    <NA>   statistic
-## 6            r_squared  0.6183    <NA>   statistic
-##      p_value
-## 1 0.43750684
-## 2          0
-## 3       <NA>
-## 4       <NA>
-## 5       <NA>
-## 6       <NA>
-model2 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP + IMP")
-model2[1]
-## $metrics
-##               variable   value std_err        type
-## 1          (Intercept)  2.0057  0.9222 coefficient
-## 2                  AMP  0.6201  0.0907 coefficient
-## 3                  IMP  0.2303  0.0606 coefficient
-## 4      median_residual  0.0462    <NA>   statistic
-## 5    total_sum_squares 40.3224    <NA>   statistic
-## 6 residual_sum_squares 11.6145    <NA>   statistic
-## 7            r_squared  0.6494    <NA>   statistic
-##      p_value
-## 1 0.03232768
-## 2          0
-## 3 0.00026437
-## 4       <NA>
-## 5       <NA>
-## 6       <NA>
-## 7       <NA>
-
-plot1 <- ggplot() + 
-  geom_point(
-    data = metabolomics_data, 
-    aes(x = (AMP*0.9142) + 0.7842, y = ADP),
-    fill = "gold", shape = 21, color = "black", size = 4
-  ) +
-  geom_segment(
-    aes(x = 10, y = 10, xend = 15, yend = 15),
-    color = "black"
-  ) +
-  annotate(
-    geom = "table",
-    x = 10,
-    y = 15,
-    label = list(model1$metrics)
-  ) +
-  theme_bw()
-
-plot2 <- ggplot() + 
-  geom_point(
-    data = metabolomics_data, 
-    aes(x = (AMP*0.6201) + (IMP*0.2303) + 2.0057, y = ADP), 
-    fill = "maroon", shape = 21, color = "black", size = 4
-  ) +
-  annotate(
-    geom = "table",
-    x = 10,
-    y = 15,
-    label = list(model2$metrics)
-  ) +
-  geom_segment(
-    aes(x = 10, y = 10, xend = 15, yend = 15),
-    color = "black"
-  ) +
-  theme_bw()
-
-plot1/plot2
-```
-
-<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
-
-## classification {-}
-
-We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
-1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
-2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
-
-Now we will make a classification model using random forests. The overall idea is to make a workflow, which consists of a recipe (the data) and a model (random forest and associated parameters), then tune the model and add the best parameters to the workflow, and finally evaluate the model with the test data. That model can then be used on further data for classification. Here is the general idea in schematic form:
-
-`workflow %>% add_recipe() %>% add_model() -> workflow`
-`workflow %>% tune_grid() %>% select_best() -> best_parameters`
-`workflow %>% finalize_workflow() %>% last_fit()`
-
-Start by making a number of forests that is the square of the number of variables and then try a few values above and below that number.
-
-
-```r
-
-data = metabolomics_data
-
-classificationModel <- function(data) {
-
-  ## Randomly split data into a traing set and a testing set
-      data_split <- rsample::initial_split(data, prop = 3/4)
-
-  ## Create a workflow that has a recipe and a model
-    workflow() %>%
-      add_recipe(
-        recipe( patient_status ~ ., data = data ) %>%
-        step_normalize(all_numeric()) %>% step_impute_knn(all_predictors())
-      ) %>%
-      add_model(
-        rand_forest() %>% # specify that the model is a random forest
-        set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
-        set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
-        set_mode("classification") # choose either the continuous regression or binary classification mode
-      ) -> workflow
-
-  ## Tune the model on the training set
-    tune_results <- tune_grid(
-      workflow,
-      resamples = vfold_cv(training(data_split)), #CV object
-      grid = expand.grid(mtry = c(2, 3, 4, 5, 6, 7, 8, 9), trees = seq(50,800,50)), # grid of values to try
-      metrics = metric_set(accuracy, roc_auc) # metrics we care about
-    )
-
-  # Check model parameters if you want
-    output <- list()
-    output$metrics <- collect_metrics(tune_results)
-    select_best(tune_results, metric = "accuracy")
-
-  ## Apply the best parameters to the workflow and evaluate performance on test data
-    workflow %>%
-      finalize_workflow( select_best(tune_results, metric = "accuracy") ) %>% # Select best parameters
-      last_fit(data_split) -> wf_fit # Fit the test data
-    collect_metrics(wf_fit) # Check on the metrics if you want
-    test_predictions <- collect_predictions(wf_fit) # Collect predictions
-    table(test_predictions$.pred_class == test_predictions$patient_status) # number right and wrong
-    conf_mat(test_predictions, truth = patient_status, estimate = .pred_class) # confusion matrix
-
-  return(output)
-
-}
-
-output <- classificationModel(metabolomics_data)
-output$metrics %>%
-  filter(.metric == "accuracy") %>%
-  ggplot(aes(x = factor(mtry), y = factor(trees), fill = mean)) +
-    geom_tile(color = "black", size = 1) + scale_fill_viridis() + theme_classic() +
-    scale_x_discrete(expand = c(0,0)) + scale_y_discrete(expand = c(0,0)) +
-    theme(text = element_text(size = 18))
-```
-
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
-
-## exercises {-}
-
-To practice creating linear models, try the following:
-
-1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca_ord" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
-
-2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildLinearModel`, create and plot two linear models, one that regresses each of those analytes against dimension 1. Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
-
-3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildLinearModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated. Enhance the plots by including in them a visual represetation of the residuals.
-
-
-
-
-## further reading {-}
-
-https://github.com/easystats/performance
-
-Here is more information on common machine learning tasks:
-https://pythonprogramminglanguage.com/machine-learning-tasks/
-
-Some major tasks include:
-  Classification
-  Regression
-  Clustering
-
-Classification with random forests:
-1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
-2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
-3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
-
-<!-- end -->
-
 <!-- start comparing means -->
 
 # comparing means {-}
@@ -2866,7 +2496,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2948,7 +2578,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2961,7 +2591,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-143-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -3050,7 +2680,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -3064,7 +2694,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3174,7 +2804,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-155-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3244,7 +2874,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3259,7 +2889,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3405,7 +3035,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -3421,15 +3051,328 @@ How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](
 
 ## exercises {-}
 
-Using the `hawaii_aquifers` data set, please complete the following:
+Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please complete the following:
 
 1. Choose one analyte and filter the data so only the rows for that analyte are shown.
 
-2. Choose two of the aquifers. Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
+2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
 
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
+
+<!-- end -->
+
+<!-- start models -->
+
+# models {-}
+
+## univariate {-}
+
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildLinearModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we give it a formula in the form of Y = M x X + B, however, the B term and the M are implicit, so all we need to tell it is Y = X.
+
+Let's look at an example. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:
+
+
+```r
+ggplot(metabolomics_data) +
+  geom_point(aes(x = AMP, y = ADP))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
+
+It looks like there might be a relationship! Let's build a linear model for that relationship:
+
+
+```r
+model <- buildLinearModel(
+  data = metabolomics_data,
+  formula = "ADP = AMP"
+)
+str(model, strict.width = "cut")
+## List of 2
+##  $ metrics:'data.frame':	6 obs. of  5 variables:
+##   ..$ variable: chr [1:6] "(Intercept)" "AMP" "median_res"..
+##   ..$ value   : num [1:6] 0.7842 0.9142 0.0415 40.3224 15...
+##   ..$ std_err : chr [1:6] "1.0056" "0.0757" NA NA ...
+##   ..$ type    : chr [1:6] "coefficient" "coefficient" "st"..
+##   ..$ p_value : chr [1:6] "0.43750684" "0" NA NA ...
+##  $ data   :'data.frame':	92 obs. of  7 variables:
+##   ..$ input_x  : num [1:92] 13.2 13.5 14.3 13.3 12 ...
+##   ..$ input_y  : num [1:92] 12.8 13.1 13.3 13.2 11.9 ...
+##   ..$ ADP      : num [1:92] 12.8 13.1 13.3 13.2 11.9 ...
+##   ..$ AMP      : num [1:92] 13.2 13.5 14.3 13.3 12 ...
+##   ..$ residuals: num [1:92] 0.0312 -0.0217 -0.6014 0.2458 ..
+##   ..$ model_y  : num [1:92] 12.8 13.1 13.9 13 11.8 ...
+##   ..$ model_x  : num [1:92] 13.2 13.5 14.3 13.3 12 ...
+```
+The model consists of two thigs: metrics and data. Let's look at the metrics:
+
+
+```r
+model$metrics
+##               variable   value std_err        type
+## 1          (Intercept)  0.7842  1.0056 coefficient
+## 2                  AMP  0.9142  0.0757 coefficient
+## 3      median_residual  0.0415    <NA>   statistic
+## 4    total_sum_squares 40.3224    <NA>   statistic
+## 5 residual_sum_squares 15.3901    <NA>   statistic
+## 6            r_squared  0.6183    <NA>   statistic
+##      p_value
+## 1 0.43750684
+## 2          0
+## 3       <NA>
+## 4       <NA>
+## 5       <NA>
+## 6       <NA>
+```
+
+It shows us the intercept (b), the variable for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second). The other thing the model contains is the data (below). This includes the input_x and y values. The raw values for ADP and AMP, the residuals (see below for details), and the x and y values generated by the model.
+
+
+```r
+head(model$data)
+##    input_x  input_y      ADP      AMP   residuals  model_y
+## 1 13.15029 12.83791 12.83791 13.15029  0.03119000 12.80672
+## 2 13.48362 13.08980 13.08980 13.48362 -0.02165141 13.11146
+## 3 14.32515 13.27943 13.27943 14.32515 -0.60138528 13.88082
+## 4 13.31191 13.20029 13.20029 13.31191  0.24581244 12.95448
+## 5 11.99764 11.93350 11.93350 11.99764  0.18057517 11.75293
+## 6 12.95966 12.83649 12.83649 12.95966  0.20405638 12.63243
+##    model_x
+## 1 13.15029
+## 2 13.48362
+## 3 14.32515
+## 4 13.31191
+## 5 11.99764
+## 6 12.95966
+```
+
+Let's plot the model!
+
+
+```r
+ggplot(model$data) +
+  geom_point(aes(x = input_x, y = input_y)) +
+  geom_line(aes(x = model_x, y = model_y))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
+
+Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
+
+
+```r
+ggplot(model$data) +
+  geom_point(aes(x = input_x, y = input_y)) +
+  geom_line(aes(x = model_x, y = model_y)) +
+  geom_segment(aes(x = input_x, y = input_y, xend = input_x, yend = model_y))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
+
+We can calculate the sum of the squared residuals:
+
+
+```r
+sum(
+  (model$data$input_y - model$data$model_y)^2
+, na.rm = TRUE)
+## [1] 15.39014
+```
+
+15.39! Let's call that the "residual sum of the squares". So. 15.39.. does that mean our model is good? I don't know. We have to compare that number to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
+
+
+```r
+ggplot(metabolomics_data) +
+  geom_point(aes(x = AMP, y = ADP)) +
+  geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE)))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+
+A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
+
+
+```r
+sum(
+  (metabolomics_data$ADP - mean(metabolomics_data$ADP, na.rm = TRUE))^2
+, na.rm = TRUE)
+## [1] 40.32239
+
+ggplot(metabolomics_data) +
+  geom_point(aes(x = AMP, y = ADP)) +
+  geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE))) +
+  geom_segment(aes(x = AMP, y = ADP, xend = AMP, yend = mean(ADP, na.rm = TRUE)))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+
+40.32! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
+
+
+```r
+1-(15.39/40.32)
+## [1] 0.6183036
+```
+
+0.68! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
+- The amount of variance in the response explained by the dependent variable.
+- How Now, let's put it all together and make it pretty:
+
+
+```r
+top <- ggplot(model$data) +
+  geom_point(aes(x = input_x, y = input_y)) +
+  geom_line(aes(x = model_x, y = model_y)) +
+  annotate(geom = "table",
+    x = 11.4,
+    y = 16,
+    label = list(model$metrics)
+  ) +
+  coord_cartesian(ylim = c(10,16)) +
+  theme_bw()
+
+bottom <- ggplot(model$data) +
+  geom_col(
+    aes(x = input_x, y = residuals),
+    width = 0.03, color = "black", position = "dodge", alpha = 0.5
+  ) +
+  theme_bw()
+
+cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;" />
+
+## multivariate {-}
+
+
+```r
+
+model1 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP")
+model1[1]
+## $metrics
+##               variable   value std_err        type
+## 1          (Intercept)  0.7842  1.0056 coefficient
+## 2                  AMP  0.9142  0.0757 coefficient
+## 3      median_residual  0.0415    <NA>   statistic
+## 4    total_sum_squares 40.3224    <NA>   statistic
+## 5 residual_sum_squares 15.3901    <NA>   statistic
+## 6            r_squared  0.6183    <NA>   statistic
+##      p_value
+## 1 0.43750684
+## 2          0
+## 3       <NA>
+## 4       <NA>
+## 5       <NA>
+## 6       <NA>
+model2 <- buildLinearModel(metabolomics_data, formula = "ADP = AMP + IMP")
+model2[1]
+## $metrics
+##               variable   value std_err        type
+## 1          (Intercept)  2.0057  0.9222 coefficient
+## 2                  AMP  0.6201  0.0907 coefficient
+## 3                  IMP  0.2303  0.0606 coefficient
+## 4      median_residual  0.0462    <NA>   statistic
+## 5    total_sum_squares 40.3224    <NA>   statistic
+## 6 residual_sum_squares 11.6145    <NA>   statistic
+## 7            r_squared  0.6494    <NA>   statistic
+##      p_value
+## 1 0.03232768
+## 2          0
+## 3 0.00026437
+## 4       <NA>
+## 5       <NA>
+## 6       <NA>
+## 7       <NA>
+
+plot1 <- ggplot() + 
+  geom_point(
+    data = metabolomics_data, 
+    aes(x = (AMP*0.9142) + 0.7842, y = ADP),
+    fill = "gold", shape = 21, color = "black", size = 4
+  ) +
+  geom_segment(
+    aes(x = 10, y = 10, xend = 15, yend = 15),
+    color = "black"
+  ) +
+  annotate(
+    geom = "table",
+    x = 10,
+    y = 15,
+    label = list(model1$metrics)
+  ) +
+  theme_bw()
+
+plot2 <- ggplot() + 
+  geom_point(
+    data = metabolomics_data, 
+    aes(x = (AMP*0.6201) + (IMP*0.2303) + 2.0057, y = ADP), 
+    fill = "maroon", shape = 21, color = "black", size = 4
+  ) +
+  annotate(
+    geom = "table",
+    x = 10,
+    y = 15,
+    label = list(model2$metrics)
+  ) +
+  geom_segment(
+    aes(x = 10, y = 10, xend = 15, yend = 15),
+    color = "black"
+  ) +
+  theme_bw()
+
+plot1/plot2
+```
+
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
+
+## classification {-}
+
+We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
+1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
+2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
+
+Now we will make a classification model using random forests. The overall idea is to make a workflow, which consists of a recipe (the data) and a model (random forest and associated parameters), then tune the model and add the best parameters to the workflow, and finally evaluate the model with the test data. That model can then be used on further data for classification. Here is the general idea in schematic form:
+
+`workflow %>% add_recipe() %>% add_model() -> workflow`
+`workflow %>% tune_grid() %>% select_best() -> best_parameters`
+`workflow %>% finalize_workflow() %>% last_fit()`
+
+Start by making a number of forests that is the square of the number of variables and then try a few values above and below that number.
+
+
+## exercises {-}
+
+To practice creating linear models, try the following:
+
+1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca_ord" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
+
+2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildLinearModel`, create and plot two linear models, one that regresses each of those analytes against dimension 1. Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
+
+3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildLinearModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated. Enhance the plots by including in them a visual represetation of the residuals.
+
+
+
+
+## further reading {-}
+
+https://github.com/easystats/performance
+
+Here is more information on common machine learning tasks:
+https://pythonprogramminglanguage.com/machine-learning-tasks/
+
+Some major tasks include:
+  Classification
+  Regression
+  Clustering
+
+Classification with random forests:
+1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
+3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 <!-- end -->
 
@@ -3502,7 +3445,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-184-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -3514,7 +3457,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-184-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -3530,7 +3473,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -3561,15 +3504,13 @@ ________________________________________________________________________________
 
 <!-- start mass spectrometric analysis -->
 
-# mass spectrometric analysis {-}
+# loading analyzeGCMSdata {-}
 
-## loading analyzeGCMSdata (basic) {-}
-
-`phylochemistry` provides a simple application for integrating and analyzing GC-MS data. With it, you can analyze .CDF files, which contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. Instructions for this are provided at the end of this chapter. To run the application, use the following guidelines:
+This page explains how to load a simple application for integrating and analyzing GC-MS data. With the app, you can analyze .CDF files. CDF files contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. To run the application, use the following guidelines:
 
 1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
-2. In RStudio, run the source command to load `gcms` (note: if you are loading the `phylochemistry` source, you can skip this step):
+2. In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the `analyzeGCMSdata` function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work.
 
 
 ```r
@@ -3577,7 +3518,7 @@ source("https://thebustalab.github.io/phylochemistry/gcms.R")
 ```
  \
 
-3. In RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. 
+3. In R or RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. Do not run the command on the CDF file itself, that will not work. For example, if my CDF file is called "sorghum_bicolor.CDF", and is inside the folder called `gc_data`, then I would run the following:
  \
 
 If you are on a Mac, *use single forward slashes*. For example:
@@ -3587,16 +3528,18 @@ analyzeGCMSdata("/Volumes/My_Drive/gc_data")
 ```
  \
 
-If you are on a PC, *use double back slashes*. For example:
+If you are on a PC, you may need to use double back slashes. For example:
 
 ```r
 analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
 
-The first time you open your datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).
+The first time you open your CDF datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).
 
-## using analyzeGCMSdata
+# using analyzeGCMSdata {-}
+
+## basic usage of analyteGCMSdata {-}
 
 As a reference, below are the key commands used to operate the integration app. This is the information that is covered in the overview video.
 
@@ -3620,7 +3563,7 @@ To control the mass spectrum window:
 * shift+4 = search current spectrum in panel 1 against library of mass spectra (only available if you load via `phylochemistry`).
 * shift+5 = save the current spectrum in panel 1 as a csv file (only available if you load via `phylochemistry`). 
 
-## using analyzeGCMSdata (advanced) {-}
+## advanced usage of analyzeGCMSdata {-}
 
 You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. For example:
 
@@ -3636,7 +3579,7 @@ At this point, note that you have a new set of files in your data-containing fol
 
 <!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
 
-## CDF export
+# CDF export {-}
 
 1. On the GC-MS computer, open Enhanced Data Analysis
 2. File > Export Data To .AIA Format, Create New Directory (“OK”) > Desktop (create a folder with a name you will remember)
@@ -3646,7 +3589,6 @@ At this point, note that you have a new set of files in your data-containing fol
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
 
 <!-- end -->
-
 
 <!-- # (PART) SEQUENCE DATA {-}
 
@@ -4308,7 +4250,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4338,7 +4280,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4385,7 +4327,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4401,7 +4343,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4410,7 +4352,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4477,7 +4419,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4496,7 +4438,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4610,7 +4552,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4645,7 +4587,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4938,7 +4880,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -4979,7 +4921,7 @@ Available options for `model` include "gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "g
 
 Temperature goes from 0 to 2 and adds randomness to the answer. 
 
-You have to provide your openAI api key.
+You have to provide your OpenAI API key.
 
 # analyzeLiterature {-}
 
@@ -5119,7 +5061,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -5144,7 +5086,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -5168,7 +5110,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -5179,7 +5121,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -5232,21 +5174,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5283,7 +5225,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5570,7 +5512,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5612,7 +5554,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5701,7 +5643,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
@@ -5737,7 +5679,7 @@ runMatrixAnalysis(
 ```r
 
 runMatrixAnalysis(
-  data,
+  data, # data to use for analysis
   analysis = c(
       "pca", "pca_ord", "pca_dim", # PCA
       "mca", "mca_ord", "mca_dim", # MCA (PCA on categorical data)
@@ -5751,9 +5693,14 @@ runMatrixAnalysis(
   columns_w_values_for_single_analyte = NULL,
   columns_w_additional_analyte_info = NULL,
   columns_w_sample_ID_info = NULL,
-  transpose = FALSE,
-  distance_method = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "coeff_unlike"),
-  agglomeration_method = c(
+  transpose = FALSE, # default = FALSE, this chooses whether to transpose the data
+  distance_method = c( # the distance metric to use in computing a distance matrix
+    "euclidean", "maximum",
+    "manhattan", "canberra",
+    "binary", "minkowski",
+    "coeff_unlike"
+  ),
+  agglomeration_method = c( # the clustering method to use in heirarchical clustering
       "ward.D2", "ward.D", "single", "complete",
       "average", # (= UPGMA)
       "mcquitty", # (= WPGMA)
@@ -5761,6 +5708,7 @@ runMatrixAnalysis(
       "centroid" # (= UPGMC)
   ),
   unknown_sample_ID_info = NULL,
+  components_to_return = 2, # how many principal components to return
   scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
   na_replacement = c("mean", "none", "zero", "drop"), # default = "mean", this chooses what to do with missing values
   output_format = c("wide", "long"), # default = "wide", this chooses whether to output a wide or long format

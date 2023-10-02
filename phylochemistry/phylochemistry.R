@@ -7476,7 +7476,6 @@
                 return(paste(unlist(full_pdf_text), collapse = ""))
             }
 
-
     ##### Networks
 
         #### extractModules

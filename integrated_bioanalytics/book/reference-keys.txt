@@ -1,7 +1,5 @@
 fig:unnamed-chunk-68
 part-data-analysis-in-r
-using-analyzegcmsdata
-cdf-export
 loading-gff-files
 abstract
 title

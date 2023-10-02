@@ -63,11 +63,13 @@
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
 <li><a class="active" href="clustering.html">clustering</a></li>
-<li><a class="" href="models.html">models</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="models.html">models</a></li>
 <li><a class="" href="special-topics.html">special topics</a></li>
 <li class="book-part">GC-MS DATA</li>
-<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
 <li class="book-part">TRANSCRIPTOME ANALYSIS</li>
 <li><a class="" href="transcriptome-assembly.html">transcriptome assembly</a></li>
 <li class="book-part">EVOLUTIONARY ANALYSIS</li>
@@ -404,16 +406,16 @@
 <div id="exercises-5" class="section level3 unnumbered">
 <h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-5"><i class="fas fa-link"></i></a>
 </h3>
-<p>For this set of exercises, please use the dataset <code>hawaii_aquifers</code>, available after you run the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command. Do the following:</p>
+<p>For this set of exercises, please use the dataset <code>hawaii_aquifers</code> or <code>tequila_chemistry</code>, available after you run the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command. Do the following:</p>
 <ol style="list-style-type: decimal">
 <li><p>Run a PCA analysis on the data set and plot the results.</p></li>
 <li><p>Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your “variables of interest”).</p></li>
 <li><p>Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.</p></li>
 <li><p>Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.</p></li>
-<li><p>Create a plot with four subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.</p></li>
+<li><p>Create a plot with three subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.</p></li>
 <li><p>Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.</p></li>
 <li><p>Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.</p></li>
-<li><p>Create a plot with four subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.</p></li>
+<li><p>Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.</p></li>
 </ol>
 <!-- 
 
@@ -497,13 +499,13 @@ Maybe something like this:
 
 {r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
- --><!-- end --><!-- start models -->
+ --><!-- end --><!-- start comparing means -->
 </div>
 </div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="dimensionality-reduction.html">dimensionality reduction</a></div>
-<div class="next"><a href="models.html">models</a></div>
+<div class="next"><a href="comparing-means.html">comparing means</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -549,7 +551,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-10-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

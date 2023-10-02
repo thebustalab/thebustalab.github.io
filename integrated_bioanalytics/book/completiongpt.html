@@ -63,11 +63,13 @@
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
-<li><a class="" href="models.html">models</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="models.html">models</a></li>
 <li><a class="" href="special-topics.html">special topics</a></li>
 <li class="book-part">GC-MS DATA</li>
-<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
 <li class="book-part">TRANSCRIPTOME ANALYSIS</li>
 <li><a class="" href="transcriptome-assembly.html">transcriptome assembly</a></li>
 <li class="book-part">EVOLUTIONARY ANALYSIS</li>
@@ -100,7 +102,7 @@
 <h1>completionGPT<a class="anchor" aria-label="anchor" href="#completiongpt"><i class="fas fa-link"></i></a>
 </h1>
 <p>You can run completions using:</p>
-<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">completionGPT</span><span class="op">(</span></span>
 <span>  system_prompt <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  query <span class="op">=</span> <span class="st">""</span>,</span>
@@ -112,7 +114,7 @@
 <p>The <code>query</code> is the question you want to ask. For example, you might say: <code>query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.</code></p>
 <p>Available options for <code>model</code> include “gpt-4”, “gpt-4-0613”, “gpt-3.5-turbo”, “gpt-3.5-turbo-0613”, “gpt-3.5-turbo-16k”, “gpt-3.5-turbo-16k-0613”, “text-davinci-003”, “text-davinci-002”, “text-curie-001”, “text-babbage-001”, “text-ada-001”. Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.</p>
 <p>Temperature goes from 0 to 2 and adds randomness to the answer.</p>
-<p>You have to provide your openAI api key.</p>
+<p>You have to provide your OpenAI API key.</p>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="comparative-genomics.html">comparative genomics</a></div>
@@ -145,7 +147,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-10-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
