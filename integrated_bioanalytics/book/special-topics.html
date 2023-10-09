@@ -109,7 +109,7 @@
 <h3>plotting boundaries<a class="anchor" aria-label="anchor" href="#plotting-boundaries"><i class="fas fa-link"></i></a>
 </h3>
 <p>There is a simple way to plot maps with ggplot. The map data comes with <code>ggplot2</code>! Let’s have a look. See below some of the data sets included. Options included with ggplot are: <code>world</code>, <code>world2</code>, <code>usa</code>, <code>state</code> (US), <code>county</code> (US), <code>nz</code>, <code>italy</code>, and <code>france</code>. <code>geom_polygon()</code> is useful for plotting these, at (at least to me) seems more intuitive than <code>geom_map()</code>.</p>
-<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">map_data</span><span class="op">(</span><span class="st">"world"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##        long      lat group order region subregion</span></span>
 <span><span class="co">## 1 -69.89912 12.45200     1     1  Aruba      &lt;NA&gt;</span></span>
@@ -118,7 +118,7 @@
 <span><span class="co">## 4 -70.00415 12.50049     1     4  Aruba      &lt;NA&gt;</span></span>
 <span><span class="co">## 5 -70.06612 12.54697     1     5  Aruba      &lt;NA&gt;</span></span>
 <span><span class="co">## 6 -70.05088 12.59707     1     6  Aruba      &lt;NA&gt;</span></span></code></pre></div>
-<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">map_data</span><span class="op">(</span><span class="st">"state"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##        long      lat group order  region subregion</span></span>
 <span><span class="co">## 1 -87.46201 30.38968     1     1 alabama      &lt;NA&gt;</span></span>
@@ -127,7 +127,7 @@
 <span><span class="co">## 4 -87.53076 30.33239     1     4 alabama      &lt;NA&gt;</span></span>
 <span><span class="co">## 5 -87.57087 30.32665     1     5 alabama      &lt;NA&gt;</span></span>
 <span><span class="co">## 6 -87.58806 30.32665     1     6 alabama      &lt;NA&gt;</span></span></code></pre></div>
-<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">map_data</span><span class="op">(</span><span class="st">"county"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##        long      lat group order  region subregion</span></span>
 <span><span class="co">## 1 -86.50517 32.34920     1     1 alabama   autauga</span></span>
@@ -136,7 +136,7 @@
 <span><span class="co">## 4 -86.55673 32.37785     1     4 alabama   autauga</span></span>
 <span><span class="co">## 5 -86.57966 32.38357     1     5 alabama   autauga</span></span>
 <span><span class="co">## 6 -86.59111 32.37785     1     6 alabama   autauga</span></span></code></pre></div>
-<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">map_data</span><span class="op">(</span><span class="st">"france"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">##       long      lat group order region subregion</span></span>
 <span><span class="co">## 1 2.557093 51.09752     1     1   Nord      &lt;NA&gt;</span></span>
@@ -146,21 +146,21 @@
 <span><span class="co">## 5 2.625894 50.94116     1     5   Nord      &lt;NA&gt;</span></span>
 <span><span class="co">## 6 2.597699 50.91967     1     6   Nord      &lt;NA&gt;</span></span></code></pre></div>
 <p>Cool! We can see that lat, lon, group, order, region, and subregion are included. That makes plotting easy. Note that <code>coord_map()</code> can help preserve aspect ratios:</p>
-<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu">map_data</span><span class="op">(</span><span class="st">"world"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">group</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_map</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that we can use <code>coord_map()</code> to do some pretty cool things!</p>
-<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu">map_data</span><span class="op">(</span><span class="st">"world"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">group</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_map</span><span class="op">(</span>projection <span class="op">=</span> <span class="st">"albers"</span>, lat0 <span class="op">=</span> <span class="fl">39</span>, lat1 <span class="op">=</span> <span class="fl">45</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-184-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can use filtering to produce maps of specific regions.</p>
-<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_polygon</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu">map_data</span><span class="op">(</span><span class="st">"county"</span><span class="op">)</span>, <span class="va">region</span> <span class="op">==</span> <span class="st">"minnesota"</span><span class="op">)</span>,</span>
@@ -169,7 +169,7 @@
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_map</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="further-reading-9" class="section level3 unnumbered">
 <h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
@@ -239,7 +239,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-10-04.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-10-09.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
