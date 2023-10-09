@@ -2636,7 +2636,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 # models {-}
 
-## univariate {-}
+## linear regression {-}
 
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the preduction (predictor variables).
 
@@ -2799,56 +2799,61 @@ bottom <- ggplot(predictions_from_basic_linear_model) +
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ```
 
-## multivariate {-}
+Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
 
 ```{r, fig.width = 9, fig.height = 9}
 
+basic_regression_model <- buildModel(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  predictor_variables = "ADP",
+  outcome_variable = "AMP"
+)
+
 multiple_regression_model <- buildModel(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  predictor_variables = colnames(metabolomics_data)[1:30],
+  outcome_variable = "AMP"
+)
+
+ggplot() +
+  geom_point(
     data = metabolomics_data,
-    model_type = "linear_regression",
-    predictor_variables = colnames(metabolomics_data)[3:50],
-    outcome_variable = "AMP"
-)
-
-ADP_values <- metabolomics_data$ADP
-
-AMP_values_predicted_from_ADP_values <- predictWithModel(
-    data = metabolomics_data,
-    model_type = "linear_regression",
-    model = multiple_regression_model$model
-)
-
-predictions_from_multiple_linear_model <- data.frame(
-    x = ADP_values,
-    y = AMP_values_predicted_from_ADP_values
-)
-
-plot2 <- ggplot() +
-    geom_line(
-        data = predictions_from_multiple_linear_model,
-        aes(x = x, y = y), color = "red"
-    ) +
-    geom_point(
-        data = predictions_from_multiple_linear_model,
-        aes(x = x, y = y), color = "red"
-    ) +
-    geom_point(
-        data = metabolomics_data,
-        aes(x = ADP, y = AMP), color = "blue"
-    )
-
-    plot1 / plot2
-
-head(multiple_regression_model$metrics)
+    aes(x = ADP, y = AMP), fill = "gold", shape = 21, color = "black"
+  ) +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = mean(metabolomics_data$AMP)
+  ), color = "grey") +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = predictWithModel(
+      data = metabolomics_data,
+      model_type = "linear_regression",
+      model = basic_regression_model$model
+    )),
+    color = "maroon", size = 1
+  ) +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = predictWithModel(
+      data = metabolomics_data,
+      model_type = "linear_regression",
+      model = multiple_regression_model$model
+    )),
+    color = "black", size = 1, alpha = 0.6
+  ) +
+  theme_bw()
 ```
 
-## classification {-}
+## random forests {-}
 
-We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
+We will use random forests, a type of machine learning model, to make regression and classification models. Start by watching these videos:
 1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
 2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
 
-```{r]}
+```{r}
 random_forest_model <- buildModel(
     data = metabolomics_data,
     model_type = "random_forest_regression",
@@ -2859,41 +2864,25 @@ random_forest_model <- buildModel(
     optimization_parameters = list(mtry = seq(5,6,1), trees = seq(100,200,50))
 )
 
-ADP_values <- metabolomics_data$ADP
-
-AMP_values_predicted_from_ADP_values <- predictWithModel(
+ggplot() +
+  geom_point(
     data = metabolomics_data,
-    model_type = "random_forest_regression",
-    model = random_forest_model$model
-)
-
-predictions_from_random_forest_model <- data.frame(
-    x = ADP_values,
-    y = AMP_values_predicted_from_ADP_values
-)
-
-plot3 <- ggplot() +
-    geom_line(
-        data = predictions_from_random_forest_model,
-        aes(x = x, y = y), color = "red"
-    ) +
-    geom_point(
-        data = predictions_from_random_forest_model,
-        aes(x = x, y = y), color = "red"
-    ) +
-    geom_point(
-        data = metabolomics_data,
-        aes(x = ADP, y = AMP), color = "blue"
-    )
-
-plot1 / plot2 / plot3
-
-
-basic_regression_model$metrics[1,]
-multiple_regression_model$metrics[1,]
-random_forest_model$rmse
-
-
+    aes(x = ADP, y = AMP), fill = "gold", shape = 21, color = "black"
+  ) +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = mean(metabolomics_data$AMP)
+  ), color = "grey") +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = predictWithModel(
+      data = metabolomics_data,
+      model_type = "random_forest_regression",
+      model = random_forest_model$model
+    )),
+    color = "maroon", size = 1
+  ) +
+  theme_bw()
 ```
 
 ## exercises {-}

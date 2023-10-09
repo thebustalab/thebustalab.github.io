@@ -3,7 +3,7 @@ part-data-analysis-in-r
 loading-gff-files
 abstract
 title
-further-reading-10
+further-reading-11
 matrix-analyses
 basic-runmatrixanalysis-template
 advanced-runmatrixanalysis-template

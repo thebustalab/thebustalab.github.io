@@ -65,6 +65,7 @@
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
 <li><a class="" href="models.html">models</a></li>
+<li><a class="" href="special-topics.html">special topics</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
 <li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
@@ -391,7 +392,7 @@ https://www.molecularecologist.com/2017/03/29/whats-n50/
 sh $MERQURY/best_k.sh <genome_size>
 
 
-Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: --><div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: --><div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># reads &lt;- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")</span></span>
 <span></span>
 <span><span class="co"># # post &lt;- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")</span></span>
@@ -504,34 +505,6 @@ Let's look at some examples. For these example, we will use some fasta files sto
   </div>
 
 </div></div>
-</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
-for (let popover of popovers) {
-  const div = document.createElement('div');
-  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
-  div.innerHTML = popover.getAttribute('data-content');
-
-  var has_math = div.querySelector("span.math");
-  if (has_math) {
-    document.body.appendChild(div);
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
-    MathJax.Hub.Queue(function() {
-      popover.setAttribute('data-content', div.innerHTML);
-      document.body.removeChild(div);
-    })
-  }
-}
-</script>
+</footer>
 </body>
 </html>

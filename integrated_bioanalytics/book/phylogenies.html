@@ -65,6 +65,7 @@
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
 <li><a class="" href="models.html">models</a></li>
+<li><a class="" href="special-topics.html">special topics</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
 <li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
@@ -108,7 +109,7 @@
 <h3>newick input<a class="anchor" aria-label="anchor" href="#newick-input"><i class="fas fa-link"></i></a>
 </h3>
 <p>Let’s use the Busta lab’s plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.</p>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/plant_phylogeny.newick"</span>,</span>
@@ -130,9 +131,9 @@
 <span><span class="co">## Rooted; includes branch lengths.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tree</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn’t in our scaffold? For example, what if we want to build a phylogeny that includes <em>Arabidopsis neglecta</em>? We can include that name in our list of members:</p>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/plant_phylogeny.newick"</span>,</span>
@@ -155,7 +156,7 @@
 <span><span class="co">## Rooted; includes branch lengths.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tree</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that <code>buildTree</code> informs us: “Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta”. This means that <em>Arabidopsis neglecta</em> was grafted onto the tip originally occupied by <em>Arabidopsis thaliana</em>. This behaviour is useful when operating on a large phylogenetic scale (i.e. where <em>exact</em> phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology <em>is</em> critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let’s look at how to do that:</p>
 </div>
 <div id="alignment-input" class="section level3 unnumbered">
@@ -171,7 +172,7 @@
 <li>“ancestral_states”: TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?</li>
 <li>“root”: NULL, or the name of an accession that should form the root of the tree.</li>
 </ul>
-<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"amin_alignment"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_alignments/all_amin_seqs.fa"</span>,</span>
@@ -187,7 +188,7 @@
 <h2>plotting trees<a class="anchor" aria-label="anchor" href="#plotting-trees"><i class="fas fa-link"></i></a>
 </h2>
 <p>There are several approaches to plotting trees. A simple one is using the base <code>plot</code> function:</p>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_tree_small</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"https://thebustalab.github.io/data/plant_phylogeny.newick"</span>,</span>
@@ -198,9 +199,9 @@
 <span><span class="co">## Do not save your tree as a newick or nexus file.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">test_tree_small</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Though this can get messy when there are lots of tip labels:</p>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">122</span><span class="op">)</span></span>
 <span><span class="va">test_tree_big</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
@@ -209,13 +210,13 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>One solution is to use <code>ggtree</code>, which by default doesn’t show tip labels. <code>plot</code> can do that too, but <code>ggtree</code> does a bunch of other useful things, so I recommend that:</p>
-<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>Another convenient fucntion is ggplot’s <code>fortify</code>. This will convert your <code>phylo</code> object into a data frame:</p>
+<p>One solution is to use <code>ggtree</code>, which by default doesn’t show tip labels. <code>plot</code> can do that too, but <code>ggtree</code> does a bunch of other useful things, so I recommend that:</p>
 <div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>Another convenient fucntion is ggplot’s <code>fortify</code>. This will convert your <code>phylo</code> object into a data frame:</p>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_tree_big_fortified</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/fortify.html">fortify</a></span><span class="op">(</span><span class="va">test_tree_big</span><span class="op">)</span></span>
 <span><span class="va">test_tree_big_fortified</span></span>
 <span><span class="co">## # A tibble: 101 × 9</span></span>
@@ -234,7 +235,7 @@
 <span><span class="co">## # ℹ 91 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: angle &lt;dbl&gt;</span></span></code></pre></div>
 <p><code>ggtree</code> can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:</p>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co">## Note that "plant_species" comes with the phylochemistry source.</span></span>
 <span></span>
@@ -272,13 +273,13 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>    legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.75</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="collapsetree" class="section level2 unnumbered">
 <h2>collapseTree<a class="anchor" aria-label="anchor" href="#collapsetree"><i class="fas fa-link"></i></a>
 </h2>
 <p>Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the <code>collapseTree</code> function. It takes two arguments: an un-fortified tree (<code>tree</code>), and a two-column data frame (<code>associations</code>). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let’s look at the tree from the previous section at the family level:</p>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">collapseTree</span><span class="op">(</span></span>
 <span>  tree <span class="op">=</span> <span class="va">test_tree_big</span>,</span>
 <span>  associations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
@@ -288,13 +289,13 @@
 <span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">test_tree_big_families</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">test_tree_big_families</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">coord_cartesian</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">300</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="trees-and-traits" class="section level2 unnumbered">
 <h2>trees and traits<a class="anchor" aria-label="anchor" href="#trees-and-traits"><i class="fas fa-link"></i></a>
 </h2>
 <p>To plot traits alongside a tree, we can use ggtree in combination with ggplot. Here is an example. First, we make the tree:</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_bloom_tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"http://thebustalab.github.io/data/angiosperms.newick"</span>,</span>
@@ -339,7 +340,7 @@
 <span><span class="co">## Fortify your tree and save it as a csv file to preserve node numbering.</span></span>
 <span><span class="co">## Do not save your tree as a newick or nexus file.</span></span></code></pre></div>
 <p>Next we join the tree with the data:</p>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/fortify.html">fortify</a></span><span class="op">(</span><span class="va">chemical_bloom_tree</span><span class="op">)</span>, <span class="va">chemical_blooms</span><span class="op">)</span></span>
 <span><span class="co">## Joining with `by = join_by(label)`</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
@@ -357,7 +358,7 @@
 <span><span class="co">## #   Alcohols &lt;dbl&gt;, Triterpenoids &lt;dbl&gt;, Ketones &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Other_compounds &lt;dbl&gt;, Aldehydes &lt;dbl&gt;</span></span></code></pre></div>
 <p>Now we can plot the tree:</p>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tree_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span></span>
 <span>    align <span class="op">=</span> <span class="cn">TRUE</span>, hjust <span class="op">=</span> <span class="fl">1</span>, offset <span class="op">=</span> <span class="fl">350</span>,</span>
@@ -365,7 +366,7 @@
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">750</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>IMPORTANT! When we plot the traits, we need to reorder whatever is on the shared axis (in this case, the y axis) so that it matches the order of the tree. In this case, we need to reorder the species names so that they match the order of the tree. We can do this by using the <code>reorder</code> function, which takes two arguments: the thing to be reordered, and the thing to be reordered by. In this case, we want to reorder the species names by their y coordinate on the tree. We can do this by using the <code>y</code> column of the data frame that we created when we fortified the tree. We can then plot the traits:</p>
-<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trait_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span></span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">isTip</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
@@ -379,15 +380,15 @@
 <span>    plot.margin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html">unit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, <span class="st">"cm"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Finally, we can plot the two plots together using <code>plot_grid</code>. It is important to manually inspect the tree tips and the y axis text to make sure that everything lines up. We don’t want to be plotting the abundance of one species on the y axis of another species. In this case, everything looks good:</p>
-<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span></span>
 <span>  <span class="va">tree_plot</span>,</span>
 <span>  <span class="va">trait_plot</span>,</span>
 <span>  nrow <span class="op">=</span> <span class="fl">1</span>, align <span class="op">=</span> <span class="st">"h"</span>, axis <span class="op">=</span> <span class="st">"tb"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:</p>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tree_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span></span>
 <span>    align <span class="op">=</span> <span class="cn">TRUE</span>, hjust <span class="op">=</span> <span class="fl">1</span>, offset <span class="op">=</span> <span class="fl">350</span>,</span>
@@ -414,7 +415,7 @@
 <span>  <span class="va">trait_plot</span>,</span>
 <span>  nrow <span class="op">=</span> <span class="fl">1</span>, align <span class="op">=</span> <span class="st">"h"</span>, axis <span class="op">=</span> <span class="st">"tb"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
   <div class="chapter-nav">
@@ -467,34 +468,6 @@
   </div>
 
 </div></div>
-</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
-for (let popover of popovers) {
-  const div = document.createElement('div');
-  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
-  div.innerHTML = popover.getAttribute('data-content');
-
-  var has_math = div.querySelector("span.math");
-  if (has_math) {
-    document.body.appendChild(div);
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
-    MathJax.Hub.Queue(function() {
-      popover.setAttribute('data-content', div.innerHTML);
-      document.body.removeChild(div);
-    })
-  }
-}
-</script>
+</footer>
 </body>
 </html>

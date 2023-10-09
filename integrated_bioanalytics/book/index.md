@@ -3067,7 +3067,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 # models {-}
 
-## univariate {-}
+## linear regression {-}
 
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the preduction (predictor variables).
 
@@ -3332,80 +3332,68 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 
 <img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
-## multivariate {-}
+Cool! Now let's try a multiple regression model. This is the same as a linear regression model, but with more than one predictor variable. Let's try it with the first 30 metabolites in our data set:
+
 
 
 ```r
 
+basic_regression_model <- buildModel(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  predictor_variables = "ADP",
+  outcome_variable = "AMP"
+)
+
 multiple_regression_model <- buildModel(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  predictor_variables = colnames(metabolomics_data)[1:30],
+  outcome_variable = "AMP"
+)
+
+ggplot() +
+  geom_point(
     data = metabolomics_data,
-    model_type = "linear_regression",
-    predictor_variables = colnames(metabolomics_data)[3:50],
-    outcome_variable = "AMP"
-)
-
-ADP_values <- metabolomics_data$ADP
-
-AMP_values_predicted_from_ADP_values <- predictWithModel(
-    data = metabolomics_data,
-    model_type = "linear_regression",
-    model = multiple_regression_model$model
-)
-
-predictions_from_multiple_linear_model <- data.frame(
-    x = ADP_values,
-    y = AMP_values_predicted_from_ADP_values
-)
-
-plot2 <- ggplot() +
-    geom_line(
-        data = predictions_from_multiple_linear_model,
-        aes(x = x, y = y), color = "red"
-    ) +
-    geom_point(
-        data = predictions_from_multiple_linear_model,
-        aes(x = x, y = y), color = "red"
-    ) +
-    geom_point(
-        data = metabolomics_data,
-        aes(x = ADP, y = AMP), color = "blue"
-    )
-
-    plot1 / plot2
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
+    aes(x = ADP, y = AMP), fill = "gold", shape = 21, color = "black"
+  ) +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = mean(metabolomics_data$AMP)
+  ), color = "grey") +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = predictWithModel(
+      data = metabolomics_data,
+      model_type = "linear_regression",
+      model = basic_regression_model$model
+    )),
+    color = "maroon", size = 1
+  ) +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = predictWithModel(
+      data = metabolomics_data,
+      model_type = "linear_regression",
+      model = multiple_regression_model$model
+    )),
+    color = "black", size = 1, alpha = 0.6
+  ) +
+  theme_bw()
 ## Don't know how to automatically pick scale for object of
 ## type <impute>. Defaulting to continuous.
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
-```r
-
-head(multiple_regression_model$metrics)
-##               variable   value std_err        type
-## 1            r_squared  0.8716      NA   statistic
-## 2    total_sum_squares 38.6346      NA   statistic
-## 3 residual_sum_squares  4.9605      NA   statistic
-## 4          (Intercept)  7.5995 20.0559 coefficient
-## 5             Pyruvate  0.1880  0.3149 coefficient
-## 6      MethylSuccinate -0.8486  0.3767 coefficient
-##      p_value p_value_adj
-## 1         NA          NA
-## 2         NA          NA
-## 3         NA          NA
-## 4 0.70657037           1
-## 5 0.55361280           1
-## 6 0.02929848           1
-```
-
-## classification {-}
+## random forests {-}
 
 We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
 1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
 2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
 
-```{r]}
+
+```r
 random_forest_model <- buildModel(
     data = metabolomics_data,
     model_type = "random_forest_regression",
@@ -3444,13 +3432,25 @@ plot3 <- ggplot() +
     )
 
 plot1 / plot2 / plot3
+## Don't know how to automatically pick scale for object of
+## type <impute>. Defaulting to continuous.
+## Don't know how to automatically pick scale for object of
+## type <impute>. Defaulting to continuous.
+```
+
+<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
+
+```r
 
 
 basic_regression_model$metrics[1,]
+##    variable  value std_err      type p_value p_value_adj
+## 1 r_squared 0.4774      NA statistic      NA          NA
 multiple_regression_model$metrics[1,]
+##    variable  value std_err      type p_value p_value_adj
+## 1 r_squared 0.8119      NA statistic      NA          NA
 random_forest_model$rmse
-
-
+## [1] 0.3283893
 ```
 
 ## exercises {-}
@@ -3556,7 +3556,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -3568,7 +3568,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -3584,7 +3584,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -4361,7 +4361,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4391,7 +4391,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4438,7 +4438,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4454,7 +4454,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4463,7 +4463,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4530,7 +4530,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4549,7 +4549,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4663,7 +4663,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4698,7 +4698,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4991,7 +4991,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5172,7 +5172,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -5197,7 +5197,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -5221,7 +5221,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -5232,7 +5232,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -5285,21 +5285,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5336,7 +5336,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5623,7 +5623,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5665,7 +5665,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5754,7 +5754,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
