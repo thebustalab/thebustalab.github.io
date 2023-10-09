@@ -10954,6 +10954,164 @@
                     return(out)
                 }
 
+        #### buildModel
+
+            buildModel <- function(
+                data,
+                model_type = c("linear_regression", "logistic_regression", "random_forest"),
+                predictor_variables = NULL,
+                outcome_variable = NULL,
+                train_test_ratio = 0.9,
+                fold_cross_validation = 10,
+                optimization_parameters = list(mtry = seq(5,6,1), trees = seq(100,200,50))
+            ) {
+
+                ## Prepare the data
+
+                    ## Correct the formula and the data, start the output
+                        data <- as.data.frame(data)
+                        if( any(is.na(data)) ) { stop("There are missing data in your data set, please deal with that before proceeding.") }
+                        formula <- paste0("`", outcome_variable, "` ~ `", paste(predictor_variables, collapse = "` + `"), "`")
+                        output <- list()
+                        output$model_type <- model_type
+
+                ## Modeling
+
+                    rmse_list <- list()
+                    for (i in 1:(fold_cross_validation+1)) {
+
+                        ## Split data, except for in last round, in which case use everything for training
+                            if (i != (fold_cross_validation+1)) {
+                                data_split <- rsample::initial_split(data, prop = train_test_ratio)
+                                training_data <- as.data.frame(training(data_split))
+                                testing_data <- as.data.frame(testing(data_split))
+                            } else {
+                                training_data <- data
+                            }
+
+                        ## Check that number of predictors is less than number of variables in the training data
+                            if (dim(training_data)[2] < length(predictor_variables)) {
+                                stop("There are fewer observations in the training data than predictor variables.")
+                            }
+
+                        ## Model building
+                            if (model_type == "linear_regression") {
+
+                                ## Run the fit and start the output
+                                    fit <- lm(
+                                        data = training_data,
+                                        formula = formula,
+                                        x = TRUE, y = TRUE, model = TRUE, qr = TRUE
+                                    )
+                                    output$model <- fit
+
+                                    input_y <- fit$y[order(as.numeric(names(fit$y)))]
+                                    # model_y <- fit$fitted.values
+                                    total_sum_squares <- sum((input_y - mean(input_y, na.rm = TRUE))^2, na.rm = TRUE)
+                                    residual_sum_squares <- sum((summary(fit)$residuals)^2, na.rm = TRUE)
+
+                                    metrics <- rbind(
+                                        data.frame(
+                                            variable = c("r_squared", "total_sum_squares", "residual_sum_squares"),
+                                            value = c(summary(fit)$r.squared, total_sum_squares, residual_sum_squares),
+                                            std_err = NA,
+                                            type = "statistic",
+                                            p_value = NA,
+                                            p_value_adj = NA
+                                        ),
+                                        data.frame(
+                                            variable = names(coefficients(fit)),
+                                            value = as.numeric(coefficients(fit)),
+                                            std_err = round(as.numeric(summary(fit)$coefficients[,2]), 4),
+                                            type = "coefficient",
+                                            p_value = round(summary(fit)$coefficients[,4], 8),
+                                            p_value_adj = p.adjust(round(summary(fit)$coefficients[,4], 8))
+                                        )
+                                    )
+                                    metrics$value <- round(as.numeric(metrics$value), 4)
+                                    rownames(metrics) <- NULL
+                                    output$metrics <- metrics
+                            }
+
+                            if (model_type == "random_forest_regression") {
+
+                                ## Create a workflow that has a recipe and a model
+                                    workflow() %>%
+                                        add_recipe(
+                                            recipe( as.formula(formula), data = training_data ) # %>%
+                                            # step_normalize(all_numeric()) # %>% step_impute_knn(all_predictors())
+                                        ) %>%
+                                        add_model(
+                                            rand_forest() %>% # specify that the model is a random forest
+                                            set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
+                                            set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
+                                            set_mode("regression") # choose either the continuous regression or binary classification mode
+                                        ) -> workflow
+
+                                ## Tune the model on the training set
+                                    tune_results <- tune_grid(
+                                        workflow,
+                                        resamples = vfold_cv(training_data, v = fold_cross_validation), #CV object
+                                        grid = expand.grid(mtry = optimization_parameters$mtry, trees = optimization_parameters$trees), # grid of values to try
+                                        metrics = metric_set(rmse) # metrics we care about
+                                    )
+
+                                # Check model parameters if you want
+                                    output <- list()
+                                    output$metrics <- collect_metrics(tune_results)
+                                    colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
+                                    # select_best(tune_results, metric = "rmse")
+
+                                ## Apply the best parameters to the workflow to creat the output model
+                                    output$model <- fit(
+                                        finalize_workflow(workflow, select_best(tune_results, metric = "rmse")),
+                                        training_data
+                                    )
+                            }
+
+                        ## Evaluate model's predictive capability using the test set
+                            if (i != (fold_cross_validation+1)) {
+                                predictions <- predictWithModel(
+                                    data = testing_data,
+                                    model_type = model_type,
+                                    model = output$model
+                                )
+                                answers <- testing_data[,colnames(testing_data) == outcome_variable]
+                                rmse_list[[i]] <- sqrt(mean((predictions - answers)^2))
+                            }
+                    }
+
+                ## Return a model trained on all the input data
+                    output$rmse <- mean(unlist(rmse_list))
+                    output$fold_cross_validation <- fold_cross_validation
+                    return(output)
+            }
+
+        #### predictWithModel
+
+            predictWithModel <- function(
+                data,
+                model_type = c("linear_regression", "logistic_regression", "random_forest"),
+                model
+            ) {
+
+                ## Check to see that required data are provided
+
+                ## Predictions
+
+                    if (model_type == "linear_regression") {
+                        output <- stats::predict(model, data)
+                    }
+
+                    if (model_type == "random_forest_regression") {
+                        output <- stats::predict(model, new_data = data)
+                    }
+
+                ## Return
+                    return(unlist(output))
+
+            }
+
         #### mode
 
             #' mode
