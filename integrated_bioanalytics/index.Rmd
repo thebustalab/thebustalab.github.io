@@ -2636,6 +2636,10 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 # models {-}
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
+```
+
 ## linear regression {-}
 
 Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the preduction (predictor variables).

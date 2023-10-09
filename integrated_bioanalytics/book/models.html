@@ -101,6 +101,7 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="models" class="section level1 unnumbered">
 <h1>models<a class="anchor" aria-label="anchor" href="#models"><i class="fas fa-link"></i></a>
 </h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;"></div>
 <div id="linear-regression" class="section level2 unnumbered">
 <h2>linear regression<a class="anchor" aria-label="anchor" href="#linear-regression"><i class="fas fa-link"></i></a>
 </h2>
@@ -118,7 +119,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>It looks like there might be a relationship! Let’s build a linear model for that relationship:</p>
 <div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">basic_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
@@ -224,7 +225,7 @@
 <span><span class="va">plot1</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very good. Now let’s talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.</p>
 <div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">)</span> <span class="op">+</span></span>
@@ -233,7 +234,7 @@
 <span>  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_measured</span>, xend <span class="op">=</span> <span class="va">ADP_values</span>, yend <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can calculate the sum of the squared residuals:</p>
 <div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
@@ -247,7 +248,7 @@
 <span>  <span class="fu">geom_hline</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">AMP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>A pretty bad model, I agree. How much better is our linear model that the flat line model? Let’s create a measure of the distance between each point and the point predicted for that same x value on the model:</p>
 <div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
@@ -256,7 +257,7 @@
 <span>  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span>, xend <span class="op">=</span> <span class="va">ADP</span>, yend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ADP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
@@ -305,8 +306,8 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>Cool! Now let’s try a multiple regression model. This is the same as a linear regression model, but with more than one predictor variable. Let’s try it with the first 30 metabolites in our data set:</p>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>Cool! Now let’s try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + … + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let’s try it with the first 30 metabolites in our data set:</p>
 <div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">basic_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel</span><span class="op">(</span></span>
@@ -353,12 +354,12 @@ Now, let’s put it all together and make it pretty:</p>
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="random-forests" class="section level2 unnumbered">
 <h2>random forests<a class="anchor" aria-label="anchor" href="#random-forests"><i class="fas fa-link"></i></a>
 </h2>
-<p>We will use random forests, a type of machine learning model, to make classification models. Start by watching these videos:
+<p>We will use random forests, a type of machine learning model, to make regression and classification models. Start by watching these videos:
 1. Decision trees: <a href="https://www.youtube.com/watch?v=_L39rN6gz7Y" class="uri">https://www.youtube.com/watch?v=_L39rN6gz7Y</a>
 2. Random forests: <a href="https://www.youtube.com/watch?v=J4Wdy0Wc_xQ" class="uri">https://www.youtube.com/watch?v=J4Wdy0Wc_xQ</a></p>
 <div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
@@ -372,50 +373,28 @@ Now, let’s put it all together and make it pretty:</p>
 <span>    optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>mtry <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">1</span><span class="op">)</span>, trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">200</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ADP_values</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span></span>
-<span></span>
-<span><span class="va">AMP_values_predicted_from_ADP_values</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
-<span>    model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
-<span>    model <span class="op">=</span> <span class="va">random_forest_model</span><span class="op">$</span><span class="va">model</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">predictions_from_random_forest_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="va">ADP_values</span>,</span>
-<span>    y <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">plot3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu">geom_line</span><span class="op">(</span></span>
-<span>        data <span class="op">=</span> <span class="va">predictions_from_random_forest_model</span>,</span>
-<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span></span>
-<span>    <span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
-<span>        data <span class="op">=</span> <span class="va">predictions_from_random_forest_model</span>,</span>
-<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span></span>
-<span>    <span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
-<span>        data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
-<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span></span>
-<span>    <span class="op">)</span></span>
-<span></span>
-<span><span class="va">plot1</span> <span class="op">/</span> <span class="va">plot2</span> <span class="op">/</span> <span class="va">plot3</span></span>
-<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
-<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"gold"</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">AMP</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>, color <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>      data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>      model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
+<span>      model <span class="op">=</span> <span class="va">random_forest_model</span><span class="op">$</span><span class="va">model</span></span>
+<span>    <span class="op">)</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"maroon"</span>, size <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span></span>
-<span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">metrics</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
-<span><span class="co">##    variable  value std_err      type p_value p_value_adj</span></span>
-<span><span class="co">## 1 r_squared 0.4774      NA statistic      NA          NA</span></span>
-<span><span class="va">multiple_regression_model</span><span class="op">$</span><span class="va">metrics</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
-<span><span class="co">##    variable  value std_err      type p_value p_value_adj</span></span>
-<span><span class="co">## 1 r_squared 0.8119      NA statistic      NA          NA</span></span>
-<span><span class="va">random_forest_model</span><span class="op">$</span><span class="va">rmse</span></span>
-<span><span class="co">## [1] 0.3283893</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="exercises-7" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
