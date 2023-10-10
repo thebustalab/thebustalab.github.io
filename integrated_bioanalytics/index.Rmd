@@ -2636,13 +2636,15 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 # models {-}
 
+
+<!-- explain cross validation and rmse in some sort of metrics section -->
+
+
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
-## linear regression {-}
-
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the preduction (predictor variables).
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the prediction (predictor variables).
 
 Before we begin, we need to talk about handling missing data. If we have missing data in our data set, oen way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
 
@@ -2652,7 +2654,9 @@ metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, me
 any(is.na(metabolomics_data))
 ```
 
-Let's look at an example of model building. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset (this is the same as trying to predict the abundance of ADP from AMP):
+## linear regression models {-}
+
+First, we will use least squares regression to make predictions based on some inputs. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset (this is the same as trying to predict the abundance of ADP from AMP):
 
 ```{r}
 ggplot(metabolomics_data) +
@@ -2817,7 +2821,7 @@ basic_regression_model <- buildModel(
 multiple_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = colnames(metabolomics_data)[1:30],
+  predictor_variables = colnames(metabolomics_data)[3:33],
   outcome_variable = "AMP"
 )
 
@@ -2851,17 +2855,15 @@ ggplot() +
   theme_bw()
 ```
 
-## random forests {-}
+## random forest models {-}
 
-We will use random forests, a type of machine learning model, to make regression and classification models. Start by watching these videos:
-1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
-2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
+We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numberical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above.
 
 ```{r}
 random_forest_model <- buildModel(
     data = metabolomics_data,
     model_type = "random_forest_regression",
-    predictor_variables = colnames(metabolomics_data)[1:30],
+    predictor_variables = colnames(metabolomics_data)[3:33],
     outcome_variable = "AMP",
     train_test_ratio = 0.8,
     fold_cross_validation = 3,
@@ -2887,6 +2889,28 @@ ggplot() +
     color = "maroon", size = 1
   ) +
   theme_bw()
+```
+
+In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
+
+```{r}
+unknown <- metabolomics_data[35:40,]
+
+rfc <- buildModel(
+  data = metabolomics_data[c(1:34, 41:93),],
+  model_type = "random_forest_classification",
+  predictor_variables = colnames(metabolomics_data)[3:126],
+  outcome_variable = "patient_status",
+  train_test_ratio = 0.8,
+  fold_cross_validation = 3,
+  optimization_parameters = list(mtry = seq(30), trees = seq(4,5,1))
+)
+
+predictWithModel(
+  data = unknown,
+  model_type = "random_forest_classification",
+  model = rfc$model
+)
 ```
 
 ## exercises {-}

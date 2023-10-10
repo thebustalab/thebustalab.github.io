@@ -10977,7 +10977,7 @@
 
                 ## Modeling
 
-                    rmse_list <- list()
+                    accuracy_list <- list()
                     for (i in 1:(fold_cross_validation+1)) {
 
                         ## Split data, except for in last round, in which case use everything for training
@@ -11069,6 +11069,42 @@
                                     )
                             }
 
+                            if (model_type == "random_forest_classification") {
+
+                                ## Create a workflow that has a recipe and a model
+                                    workflow() %>%
+                                        add_recipe(
+                                            recipe( as.formula(formula), data = training_data ) # %>%
+                                            # step_normalize(all_numeric()) # %>% step_impute_knn(all_predictors())
+                                        ) %>%
+                                        add_model(
+                                            rand_forest() %>% # specify that the model is a random forest
+                                            set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
+                                            set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
+                                            set_mode("classification") # choose either the continuous regression or binary classification mode
+                                        ) -> workflow
+
+                                ## Tune the model on the training set
+                                    tune_results <- tune_grid(
+                                        workflow,
+                                        resamples = vfold_cv(training_data, v = fold_cross_validation), #CV object
+                                        grid = expand.grid(mtry = optimization_parameters$mtry, trees = optimization_parameters$trees), # grid of values to try
+                                        metrics = metric_set(accuracy) # metrics we care about
+                                    )
+
+                                # Check model parameters if you want
+                                    output <- list()
+                                    output$metrics <- collect_metrics(tune_results)
+                                    colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
+                                    # select_best(tune_results, metric = "rmse")
+
+                                ## Apply the best parameters to the workflow to creat the output model
+                                    output$model <- fit(
+                                        finalize_workflow(workflow, select_best(tune_results, metric = "accuracy")),
+                                        training_data
+                                    )
+                            }
+
                         ## Evaluate model's predictive capability using the test set
                             if (i != (fold_cross_validation+1)) {
                                 predictions <- predictWithModel(
@@ -11077,12 +11113,17 @@
                                     model = output$model
                                 )
                                 answers <- testing_data[,colnames(testing_data) == outcome_variable]
-                                rmse_list[[i]] <- sqrt(mean((predictions - answers)^2))
+                                if (model_type %in% c("linear_regression", "random_forest_regression")) {
+                                    accuracy_list[[i]] <- sqrt(mean((predictions - answers)^2))
+                                }
+                                if (model_type %in% c("random_forest_classification")) {
+                                    accuracy_list[[i]] <- round(sum(predictions == answers) / length(predictions == answers)*100, 1)
+                                }
                             }
                     }
 
                 ## Return a model trained on all the input data
-                    output$rmse <- mean(unlist(rmse_list))
+                    output$accuracy_list <- mean(unlist(accuracy_list))
                     output$fold_cross_validation <- fold_cross_validation
                     return(output)
             }
@@ -11091,7 +11132,7 @@
 
             predictWithModel <- function(
                 data,
-                model_type = c("linear_regression", "logistic_regression", "random_forest"),
+                model_type = c("linear_regression", "random_forest_regression", "random_forest_classification", "logistic_regression"),
                 model
             ) {
 
@@ -11104,6 +11145,10 @@
                     }
 
                     if (model_type == "random_forest_regression") {
+                        output <- stats::predict(model, new_data = data)
+                    }
+
+                    if (model_type == "random_forest_classification") {
                         output <- stats::predict(model, new_data = data)
                     }
 
