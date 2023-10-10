@@ -10962,8 +10962,8 @@
                 predictor_variables = NULL,
                 outcome_variable = NULL,
                 train_test_ratio = 0.9,
-                fold_cross_validation = 10,
-                optimization_parameters = list(mtry = seq(5,6,1), trees = seq(100,200,50))
+                fold_cross_validation = 3,
+                optimization_parameters = list(mtry = seq(10,20,5), trees = seq(100,200,50))
             ) {
 
                 ## Prepare the data
