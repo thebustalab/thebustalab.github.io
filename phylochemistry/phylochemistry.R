@@ -10970,7 +10970,7 @@
 
                     ## Correct the formula and the data, start the output
                         data <- as.data.frame(data)
-                        if( any(is.na(data)) ) { stop("There are missing data in your data set, please deal with that before proceeding.") }
+                        if( any(is.na(data)) ) { stop("Yo - there are missing data in your data set, please deal with that before proceeding.") }
                         formula <- paste0("`", outcome_variable, "` ~ `", paste(predictor_variables, collapse = "` + `"), "`")
                         output <- list()
                         output$model_type <- model_type
@@ -10991,7 +10991,7 @@
 
                         ## Check that number of predictors is less than number of variables in the training data
                             if (dim(training_data)[2] < length(predictor_variables)) {
-                                stop("There are fewer observations in the training data than predictor variables.")
+                                stop("Heyyyyy, there are fewer observations in the training data than predictor variables. You should change the number of predictor variables or make more observations.")
                             }
 
                         ## Model building
