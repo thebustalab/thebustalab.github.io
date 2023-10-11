@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-10-09"
+date: "2023-10-10"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3067,11 +3067,13 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 # models {-}
 
+
+<!-- explain cross validation and rmse in some sort of metrics section -->
+
+
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;" />
 
-## linear regression {-}
-
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the preduction (predictor variables).
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the prediction (predictor variables).
 
 Before we begin, we need to talk about handling missing data. If we have missing data in our data set, oen way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
 
@@ -3084,7 +3086,9 @@ any(is.na(metabolomics_data))
 ## [1] FALSE
 ```
 
-Let's look at an example of model building. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset (this is the same as trying to predict the abundance of ADP from AMP):
+## linear regression models {-}
+
+First, we will use least squares regression to make predictions based on some inputs. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset (this is the same as trying to predict the abundance of ADP from AMP):
 
 
 ```r
@@ -3349,7 +3353,7 @@ basic_regression_model <- buildModel(
 multiple_regression_model <- buildModel(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = colnames(metabolomics_data)[1:30],
+  predictor_variables = colnames(metabolomics_data)[3:33],
   outcome_variable = "AMP"
 )
 
@@ -3387,22 +3391,23 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
 
-## random forests {-}
+## random forest models {-}
 
-We will use random forests, a type of machine learning model, to make regression and classification models. Start by watching these videos:
-1. Decision trees: https://www.youtube.com/watch?v=_L39rN6gz7Y
-2. Random forests: https://www.youtube.com/watch?v=J4Wdy0Wc_xQ
+We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numberical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above. However, random forests have a few advantages:
+
+- Random forests are more robust to outliers than linear regression.
+- Random forests can handle both categorical and numerical data.
+
+Let's have a look!
 
 
 ```r
 random_forest_model <- buildModel(
     data = metabolomics_data,
     model_type = "random_forest_regression",
-    predictor_variables = colnames(metabolomics_data)[1:30],
+    predictor_variables = colnames(metabolomics_data)[3:33],
     outcome_variable = "AMP",
-    train_test_ratio = 0.8,
-    fold_cross_validation = 3,
-    optimization_parameters = list(mtry = seq(5,6,1), trees = seq(100,200,50))
+    optimization_parameters = list(mtry = seq(10,20,5), trees = seq(100,200,50))
 )
 
 ggplot() +
@@ -3430,6 +3435,36 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;" />
 
+In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
+
+
+```r
+unknown <- metabolomics_data[35:40,]
+
+rfc <- buildModel(
+  data = metabolomics_data[c(1:34, 41:93),],
+  model_type = "random_forest_classification",
+  predictor_variables = colnames(metabolomics_data)[3:126],
+  outcome_variable = "patient_status",
+  train_test_ratio = 0.8,
+  fold_cross_validation = 3,
+  optimization_parameters = list(mtry = seq(30), trees = seq(4,5,1))
+)
+
+predictions <- predictWithModel(
+  data = unknown,
+  model_type = "random_forest_classification",
+  model = rfc$model
+)
+
+head(predictions)
+##   .pred_class1   .pred_class2   .pred_class3   .pred_class4 
+##        healthy        healthy        healthy kidney_disease 
+##   .pred_class5   .pred_class6 
+## kidney_disease kidney_disease 
+## Levels: healthy kidney_disease
+```
+
 ## exercises {-}
 
 To practice creating models, try the following:
@@ -3440,7 +3475,7 @@ To practice creating models, try the following:
 
 3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
 
-4. (algae bloom question)
+4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` data set and diagnose each patient in `metabolomics_unknown`.
 
 
 
@@ -3533,7 +3568,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -3545,7 +3580,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -3561,7 +3596,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -4338,7 +4373,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4368,7 +4403,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4415,7 +4450,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4431,7 +4466,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4440,7 +4475,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4507,7 +4542,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4526,7 +4561,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4640,7 +4675,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4675,7 +4710,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -4968,7 +5003,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5149,7 +5184,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## inset figures {-}
 
@@ -5174,7 +5209,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### image insets {-}
 
@@ -5198,7 +5233,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -5209,7 +5244,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## composite figures {-}
 
@@ -5262,21 +5297,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## exporting graphics {-}
 
@@ -5313,7 +5348,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5600,7 +5635,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5642,7 +5677,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5731,7 +5766,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-256-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

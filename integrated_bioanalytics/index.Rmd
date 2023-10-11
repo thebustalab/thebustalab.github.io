@@ -2909,11 +2909,13 @@ rfc <- buildModel(
   optimization_parameters = list(mtry = seq(30), trees = seq(4,5,1))
 )
 
-predictWithModel(
+predictions <- predictWithModel(
   data = unknown,
   model_type = "random_forest_classification",
   model = rfc$model
 )
+
+head(predictions)
 ```
 
 ## exercises {-}
