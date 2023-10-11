@@ -2857,7 +2857,12 @@ ggplot() +
 
 ## random forest models {-}
 
-We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numberical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above.
+We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numberical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above. However, random forests have a few advantages:
+
+- Random forests are more robust to outliers than linear regression.
+- Random forests can handle both categorical and numerical data.
+
+Let's have a look!
 
 ```{r}
 random_forest_model <- buildModel(
@@ -2865,9 +2870,7 @@ random_forest_model <- buildModel(
     model_type = "random_forest_regression",
     predictor_variables = colnames(metabolomics_data)[3:33],
     outcome_variable = "AMP",
-    train_test_ratio = 0.8,
-    fold_cross_validation = 3,
-    optimization_parameters = list(mtry = seq(5,6,1), trees = seq(100,200,50))
+    optimization_parameters = list(mtry = seq(10,20,5), trees = seq(100,200,50))
 )
 
 ggplot() +
@@ -2923,7 +2926,7 @@ To practice creating models, try the following:
 
 3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
 
-4. (algae bloom question)
+4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` data set and diagnose each patient in `metabolomics_unknown`.
 
 
 ```{r, echo = FALSE, eval = FALSE}

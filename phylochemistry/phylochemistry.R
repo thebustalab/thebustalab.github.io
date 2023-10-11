@@ -12012,6 +12012,7 @@
                     c("hops_components", "https://thebustalab.github.io/phylochemistry/sample_data/hops_components.csv"),
                     c("tequila_chemistry", "https://thebustalab.github.io/phylochemistry/sample_data/tequila_chemistry.csv"),
                     c("chemical_blooms", "https://thebustalab.github.io/phylochemistry/sample_data/chemical_blooms.csv")
+                    c("metabolomics_unknown", "https://thebustalab.github.io/phylochemistry/sample_data/metabolomics_unknown.csv")
                 ))
 
                 pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
