@@ -1969,7 +1969,7 @@
                                     blast_module_directory_path,
                                     blast_mode = c("nnblastn", "ntblastp", "pnblastp"), 
                                     e_value_cutoff = 1,
-                                    word_size,
+                                    word_size = 4,
                                     queries_in_output = TRUE,
                                     monolist_out_path
                                 ) {
@@ -2056,7 +2056,7 @@
                             monolist <- data.frame()
                             cat("\n\n")
                             
-                            for ( query_seq in 1:length(query_seqs) ) {
+                            for ( query_seq in 1:length(query_seqs) ) { # query_seq = 1
 
                                 ## Write individual files for each member of the query
                                     
@@ -2068,7 +2068,7 @@
 
                                 ## Loop over the transcriptomes, run the blast on each, add hits to monolist
                                     
-                                    for (transcriptome in 1:length(transcriptomes)) {
+                                    for (transcriptome in 1:length(transcriptomes)) { # transcriptome = 1
 
                                         ## Run BLASTs on unix system
 
@@ -11445,6 +11445,7 @@
 
                     ## Fortify tree and add traits to it
                         treefort <- fortify(tree)
+                        traits <- traits[,colnames(traits) %in% c(column_w_names_of_tiplabels, column_w_names_of_traits, column_w_values_for_traits)]
                         treefort_1 <- right_join(
                             treefort,
                             traits,
@@ -11571,13 +11572,17 @@
                                     # minimum_evolutionary_transitions_in_randomization = NA,
                                     # evolutionary_transitions_in_randomization = NA,
                                     phylogenetic_signal_k_value = if (sum(trait) == 0) { NA } else {
-                                                as.numeric(picante::phylosignal(trait, tree)[1])
-                                            },
+                                        as.numeric(picante::phylosignal(trait, tree)[1])
+                                    },
                                     phylogenetic_signal_k_p_value = if (sum(trait) == 0) { NA } else {
                                         as.numeric(picante::phylosignal(trait, tree)[4])
                                     },
-                                    phylogenetic_signal_lambda_value = round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$lambda, 4),
-                                    phylogenetic_signal_lambda_p_value = round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$P, 4)
+                                    phylogenetic_signal_lambda_value = if (sum(trait) == 0) { NA } else {
+                                        round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$lambda, 4)
+                                    },
+                                    phylogenetic_signal_lambda_p_value = if (sum(trait) == 0) { NA } else {
+                                        round(phytools::phylosig(tree, trait, method = "lambda", test = TRUE)$P, 4)
+                                    }
                                 )
                         }
                     }
