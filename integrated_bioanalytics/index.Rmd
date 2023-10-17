@@ -3024,6 +3024,27 @@ Classification with random forests:
 
 <!-- end -->
 
+# midterm {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg', dpi = NA)
+```
+
+Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
+
+1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke (3 pts). Within that wood type's smoke, which compound class is the most abundant (3 pts) and what is the single most abundant compound (3 pts)? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis (3x 2 pts) to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot (3x 1 pt). Write a detailed figure caption for your figure (`labs(caption = "Figure 1...")`) (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
+
+2. Considering all the species together, regardless of wood type, what are the ten most abundant compounds in wood smoke? Communicate this via a plot that shows averages and standard deviations (9 pts). Run a statistical analysis to determine whether there are significant differences among the abundances of these compounds (7 pts). Show the output of the statistical analyses in your plot (2 pts). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
+
+3. Create a summarized wood smoke data set that contains the sum abundance of each compound class for each species. Conduct a PCA analysis of your summarized data set. Make a figure with three subpanels: a plot of where each species is located in a space defined by the first two principal components (a classical "pca" plot) (6 pts), a plot with ordination information on the compound class level (as opposed to on the single compound level) (6 pts), and a scree plot (6 pts). In your detailed figure caption, answer: How much of the overall variance in the data set is contained within the first two dimensions? (2 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
+
+4. Using your PCA analysis from question 3, select four compound classes, two that are negatively correlated with each other along dimension 1 and two that are positively correlated with each other along dimension 2. Create a plot that shows the abundances of these four compound classes in each wood species (16 pts). In your figure caption, explain: are these abundances consistent with your understanding of PCA and ordination? Why or why not? (4 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
+
+5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3 (5 pts), (ii) a kmeans-based clustering of your PCA analysis output from question 3 (5 pts), and (iii) a hierarchical clustering analysis of the raw data (5 pts). For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not? (5 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
+
+6. Suppose that you are work in a forensics lab. A suspect has been apprehended as part of a murder case. The suspect’s coat smells strongly of wood smoke, and it is known that a bonfire was burning at the scene of the crime. The fire chief reported that red oak was the type of wood the victim was burning at the scene of their murder, but the suspect claims that the smell in the suspect’s coat is from a different bonfire – one that was burning at a party the suspect claims they were attending at the time of the murder. The fire chief investigated the place where the party took place and found a large supply of paper birch firewood. Use the ‘unknown_smoke.csv’ data and your analysis skills to provide a recommendation to the prosecutor in this case.
+
+
 <!-- start map dataspecial topics -->
 
 # special topics {-}

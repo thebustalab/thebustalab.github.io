@@ -1,4 +1,4 @@
-wood_type,species,abundance,compound_class,compound_mg_g
+wood_type,species,abundance_mg_g,compound_class,compound
 hardwood,red_maple,0,n_alkanes,n_heptadecane
 hardwood,northern_red_oak,0,n_alkanes,n_heptadecane
 hardwood,paper_birch,0.052,n_alkanes,n_heptadecane
