@@ -6320,7 +6320,7 @@
             #'
             #' Used to import one or more mass spectra and collect the data in a dataframe.
             #' The names of the files containing the mass spectra must have the following format: "var2~var3-var4.csv", with var1 being the file's position in the directory
-            #' @param dir The directory containing the mass spectral (.csv) files of interest
+            #' @param dir The directory containing the mass spectral (.csv) files of interest and nothing else
             #' @export
             #' @examples
             #' readSpectra()
@@ -6337,11 +6337,11 @@
                 ## Read in all data
                     for (i in 1:length(dir())) {
                         temp <- readMonolist(dir()[i])
-                        if (source == "phylochemistry" ) {
+                        if (source[1] == "phylochemistry" ) {
                             mz <- as.numeric(as.character(temp$mz))
                             abu <- 100*as.numeric(as.character(temp$abu))/(max(as.numeric(as.character(temp$abu))))
                         }
-                        if (source == "agilent") {
+                        if (source[1] == "agilent") {
                             temp <- temp[3:dim(temp)[1],1:2]
                             mz <- as.numeric(as.character(temp[,1]))
                             abu <- 100*as.numeric(as.character(temp[,2]))/(max(as.numeric(as.character(temp[,2]))))    
@@ -10255,6 +10255,8 @@
                                         names_to = "analyte_name", 
                                         values_to = "value"
                                     )
+                                    # left_join(data[,match(columns_w_additional_analyte_info, colnames(data))]
+
                                 }
 
                                 return( clustering )
@@ -10958,7 +10960,7 @@
 
             buildModel <- function(
                 data,
-                model_type = c("linear_regression", "logistic_regression", "random_forest"),
+                model_type = c("linear_regression", "logistic_regression", "random_forest_classification"),
                 predictor_variables = NULL,
                 outcome_variable = NULL,
                 train_test_ratio = 0.9,
@@ -10978,7 +10980,7 @@
                 ## Modeling
 
                     accuracy_list <- list()
-                    for (i in 1:(fold_cross_validation+1)) {
+                    for (i in 1:(fold_cross_validation+1)) { # i=1
 
                         ## Split data, except for in last round, in which case use everything for training
                             if (i != (fold_cross_validation+1)) {
@@ -10989,9 +10991,12 @@
                                 training_data <- data
                             }
 
-                        ## Check that number of predictors is less than number of variables in the training data
+                        ## Various checkes
                             if (dim(training_data)[2] < length(predictor_variables)) {
                                 stop("Heyyyyy, there are fewer observations in the training data than predictor variables. You should change the number of predictor variables or make more observations.")
+                            }
+                            if (!is.numeric(data[,colnames(data) == outcome_variable]) & !model_type %in% c("random_forest_classification")) {
+                                stop("Uh oh! You cannot predict the value of a categorical variable with a regression model. Choose a classification model instead.")
                             }
 
                         ## Model building
