@@ -4292,42 +4292,55 @@ When conducting a project of this type, it is very common for there to be mismat
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/scope.jpeg', dpi = NA)
 ```
 
-## order {-}
+## order and content {-}
 
 The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript: the orders of presentation and preparation do not have to be the same (see the images below)! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/writing_order.png', dpi = NA)
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/writing_order2.png', dpi = NA)
 ```
+
+Here is a guide for documenting analysis in a format that is polished and comprehensible. Note that each section is written for a specific and slightly unique audience. Utilizing R Markdown, the document created will convey findings and narrate the research process. In crafting your R Markdown document, ensure that code remains concealed in the final presentation by including echo = FALSE within chunk headers. This action hides the R code blocks in the output, yet permits their execution for generating figures and results.
+
+TITLE: Craft a title that’s both clear and descriptive. It should be accessible to specialists in the field as well as the wider scientific audience, avoiding overly technical language that might limit its broader appeal.
+
+ABSTRACT: Summarize the study in the abstract, providing detail that will be informative to experts and also comprehensible to those outside the field. It should briefly outline the study’s aims, methods, key results, and conclusions, offering a snapshot of the entire project.
+
+INTRODUCTION: In the introduction, present the context and significance of the research in a way that's understandable to researchers and those not as versed in the subject. Clearly enumerate the multiple research questions that the you aim to answer, highlighting the research's relevance and framing the inquiry.
+
+METHODS: Describe where the dataset was sourced, any data processing steps taken, and provide a detailed description of the analysis procedures utilized in RStudio. This section should be detailed enough to allow for replication and validation, yet clearly written to be accessible to non-experts. The explanation of the methods should help readers understand how the research questions were addressed.
+
+RESULTS AND DISCUSSION WITH FIGURES AND CAPTIONS: Integrate your findings with clear, illustrative figures and captions within this section, ensuring they can be understood independently of the text for visual learners. The written portion should concisely interpret the results in light of the research questions, discussing the significance of the findings in a way that appeals to both those interested in the analytical nuances and those seeking to understand the overall implications.
+
+CONCLUSION: Summarize the primary insights and their relevance, keeping this section succinct and to the point. It should crystallize the main findings and their contribution to the field, suited for readers who seek a quick synopsis without delving into the full text.
+
+REFERENCES: Include at least five references to substantiate your research, ensuring they are pertinent and formatted to facilitate easy follow-up for interested readers. The references should be organized to serve both as a trail for fellow researchers and a resource for those who are less experienced in the academic discourse.
 
 ## scientific questions {-}
 
-Scientific questions are the driving force behind empirical research and data analysis. They serve as a compass, guiding the direction of inquiry and determining the analytical methods that will be employed to extract meaningful insights from data. Descriptive questions aim to characterize phenomena or populations simply by summarizing data, often through measures such as averages, frequencies, or distributions. For instance, querying the number of white pines in an area would necessitate a count and possibly the development of a density map. Correlative questions delve into the relationships between variables, seeking to understand if, and how, one variable might predict or change with another. This typically involves regression modeling to quantify the strength and direction of associations, like exploring how changes in seasons might affect a spider’s reproduction rate. Comparative questions, on the other hand, are concerned with differences or similarities between groups or conditions. These might involve the use of statistical tests to compare means, or more complex techniques such as clustering to classify entities into groups based on their characteristics, such as comparing the biodiversity of different water bodies. The formulation of these questions is critical, as they implicitly define what data should be collected, how it should be analyzed, and ultimately how the results can be interpreted in the context of broader scientific knowledge or environmental management.
+Scientific questions are pivotal in plant chemistry research, especially when examining the quantification of compounds in various plants, tissues, or environments. They orient the scope of inquiry and dictate the choice of analytical methods to draw pertinent conclusions from data.
 
-**DESCRIPTIVE questions (often addressed with summary statistics):**
+DESCRIPTIVE questions might catalog the variety or concentration of phytochemicals present in a given species, often employing summary statistics to encapsulate the data:
 
-- How many white pines are in the Duluth area?
+- What is the average concentration of alkaloids found in the leaves of nightshade plants in temperate zones?
 
-- What is the wolf pack’s distribution range?
+- How do the levels of flavonoids vary among different tissues of the grapevine?
 
-- How frequently do blizzards occurr?
+- What is the frequency distribution of terpene profiles in pine populations across different altitudes?
 
+CORRELATIVE questions investigate the relationships between environmental factors and chemical expression in plants, typically utilizing regression modeling:
 
-**CORRELATIVE questions (often addressed with regression modeling):**
+- Does the level of UV radiation correlate with the production of protective anthocyanins in vineyard grape varieties?
 
-- What is the relationship between leaf color and soil nitrogen content in oak seedlings?
+- How is the accumulation of heavy metals in fern tissues related to soil pollution levels?
 
-- How does a spider’s reproduction rate change with a change in season?
+COMPARATIVE questions explore variations or consistencies across groups or conditions, often answered through statistical comparisons or pattern recognition methods like clustering:
 
+- Which are more similar in their secondary metabolite profiles, medicinal herbs grown in greenhouse conditions or in the wild?
 
-**COMPARATIVE questions (often addressed with dimensional reduction, clustering, and/or comparisons of means):**
+- What distinguishes the phenolic compound content in shade-grown coffee plants versus those grown in direct sunlight?
 
-- Of the rivers and streams along the North Shore, when are most similar in terms of their chemistry?
-
-- What factors drive differences in chemistry between Lake Superior and inland lakes?
-
-- Is there a difference in diversity of cyanobacteria that live in the St. Louis estuary and the Twin Ports Harbor area?
-
+- Is there a significant difference in essential oil compositions between lavender plants cultivated in different soil types?
 
 <!-- Unclear: How should social networking sites address the harm they cause?
 Clear: What action should social networking sites like MySpace and Facebook take to protect users’ personal information and privacy?
