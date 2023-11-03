@@ -3729,7 +3729,7 @@ To control the mass spectrum window:
 
 ## advanced usage of analyzeGCMSdata {-}
 
-You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. For example:
+You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. Here's an example:
 
 
 ```r
