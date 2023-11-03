@@ -184,10 +184,13 @@
 
             if ( any(summarize(data, size = n())$size < 3) ) {
                 stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
-            } else {
-                rstatix::shapiro_test(data = data, ...)
-            }
+            } 
 
+            if ( any(summarize(data, size = n())$size < 3) ) {
+                stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
+            }
+            rstatix::shapiro_test(data = data, ...)
+            
         }
 
     ## Rename some stats functions so they use camelCase
@@ -2446,7 +2449,6 @@
             #'
             #' @param monolist Monolist of the sequences to be aligned. First column should be "accession"
             #' @param subset TRUE/FALSE column in monolist that specifies which sequences should be included in the alignment
-            #' @param alignment_directory_path Path to where the alignment should be written
             #' @param alignment_out_path Path to the file to which the alignment should be written
             #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
             #' @param input_sequence_type One of "nucl" or "amin"

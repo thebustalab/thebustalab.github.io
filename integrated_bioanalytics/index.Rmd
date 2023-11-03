@@ -958,6 +958,27 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
+## Venn digrams {-}
+
+```{r}
+df <- data.frame(
+  fly = sample(c(TRUE, FALSE), 50, replace = TRUE),
+  cool = sample(c(TRUE, FALSE), 50, replace = TRUE),
+  groovy = sample(c(TRUE, FALSE), 50, replace = TRUE),
+  plant_name = paste("Plant", seq(1, 50))
+)
+
+vennAnalysis(df[,1:3]) %>%
+  ggplot() +
+    geom_circle(
+      aes(x0 = x, y0 = y, r = r, fill = category),
+      alpha = 0.4
+    ) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_void()
+```
+
+
 ## {-}
 
 ## further reading {-}
@@ -1338,7 +1359,7 @@ Be sure to check out the Tidy Data Tutor: https://tidydatatutor.com/vis.html. An
 
 <!-- start dimensionality reduction -->
 
-# dimensionality reduction {-}
+# dimensional reduction {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png', dpi = NA)
@@ -4281,6 +4302,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 ## scientific questions {-}
 
+Scientific questions are the driving force behind empirical research and data analysis. They serve as a compass, guiding the direction of inquiry and determining the analytical methods that will be employed to extract meaningful insights from data. Descriptive questions aim to characterize phenomena or populations simply by summarizing data, often through measures such as averages, frequencies, or distributions. For instance, querying the number of white pines in an area would necessitate a count and possibly the development of a density map. Correlative questions delve into the relationships between variables, seeking to understand if, and how, one variable might predict or change with another. This typically involves regression modeling to quantify the strength and direction of associations, like exploring how changes in seasons might affect a spider’s reproduction rate. Comparative questions, on the other hand, are concerned with differences or similarities between groups or conditions. These might involve the use of statistical tests to compare means, or more complex techniques such as clustering to classify entities into groups based on their characteristics, such as comparing the biodiversity of different water bodies. The formulation of these questions is critical, as they implicitly define what data should be collected, how it should be analyzed, and ultimately how the results can be interpreted in the context of broader scientific knowledge or environmental management.
+
 **DESCRIPTIVE questions (often addressed with summary statistics):**
 
 - How many white pines are in the Duluth area?
@@ -4297,7 +4320,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 - How does a spider’s reproduction rate change with a change in season?
 
 
-**COMPARATIVE questions (often addressed with dimensionality reduction, clustering, and/or comparisons of means):**
+**COMPARATIVE questions (often addressed with dimensional reduction, clustering, and/or comparisons of means):**
 
 - Of the rivers and streams along the North Shore, when are most similar in terms of their chemistry?
 
