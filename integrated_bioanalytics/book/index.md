@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-11-03"
+date: "2023-11-06"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -5210,11 +5210,26 @@ Appropriately Complex:  What main environmental, behavioral, and genetic factors
 
 # figures & captions {-}
 
-A high quality figure is one in which, for example, axes tick labels do not overlap but also fill the space available to them, colors are used, raw data is plotted (if possible), axes labels are customized, an appropriate theme is chosen, and geoms are chosen carefully. The plots should be visually attractive and professional.
+One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures:
+
+General Appearance:
+
+Create plots that are clean, professional, and easy to view from a distance. Ensure axes tick labels are clear, non-overlapping, and utilize the available space efficiently for enhanced readability and precision. Use an appealing (and color blind-friendly) color palette to differentiate data points or categories. Tailor axes labels to be descriptive, and select an appropriate theme that complements the data and maintains professionalism.
+
+
+Representing Data:
+
+Appropriate Geoms and Annotations: Choose geoms that best represent the data and help the viewer evaluate the hypothesis or make the desired comparison. Include raw data points where possible for detailed data distribution understanding. Consider apply statistical transformations like smoothing lines or histograms where appropriate to provide deeper insights into the data. Consider using facets for visualizing multiple categories or groups, allowing for easier comparison while maintaining a consistent scale and layout. Adhere to specific standards or conventions relevant to your field, including the representation of data, error bars, or statistical significance markers.
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
 
-## zoomed figures {-}
+Here are some tips for figures, beyond the creation of individual plots:
+
+## figures {-}
+
+### insets {-}
+
+#### zoomed insets
 
 Zoom in on certain plot regions
 
@@ -5242,9 +5257,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
 
 <img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
-## inset figures {-}
-
-### plot insets {-}
+#### plot insets
 
 
 ```r
@@ -5267,7 +5280,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
 
 <img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
-### image insets {-}
+#### image insets
 
 
 ```r
@@ -5302,7 +5315,7 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
-## composite figures {-}
+### composite figures {-}
 
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
 
@@ -5369,7 +5382,7 @@ plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 
 <img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
-## exporting graphics {-}
+### exporting graphics {-}
 
 To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
@@ -5378,6 +5391,17 @@ To export graphics from R, consider the code below. The <path_to_file_you_want_t
 plot <- ggplot(data, aes(x = x, y = y)) + geom_point()
 
 png(filename = <path_to_file_you_want_to_create>, width = 8, height = 8, res = 600, units = "in")
+
+plot
+
+dev.off()
+```
+
+
+```r
+plot <- ggplot(data, aes(x = x, y = y)) + geom_point()
+
+pdf(filename = <path_to_file_you_want_to_create>, width = 8, height = 8)
 
 plot
 
@@ -5404,7 +5428,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5691,7 +5715,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5733,7 +5757,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5822,7 +5846,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

@@ -1,6 +1,9 @@
 fig:unnamed-chunk-68
 part-data-analysis-in-r
 loading-gff-files
+zoomed-insets
+plot-insets
+image-insets
 abstract
 title
 further-reading-11
