@@ -6948,8 +6948,8 @@
                     character_choices <- c(scientist_prompt, phytochemist_prompt, entrepreneur_prompt, pirate_prompt, hobbit_prompt)
                     names(character_choices) <- c("Scientist", "Phytochemist", "Entrepreneur", "Pirate", "Hobbit")
                 
-                    model_choices <- c("gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4")
-                    names(model_choices) <- c("gpt-3.5-turbo (fast)", "gpt-3.5-turbo-16k (longer answers)", "gpt-4 (smart)")
+                    model_choices <- c("gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4", "gpt-4-1106-preview")
+                    names(model_choices) <- c("gpt-3.5-turbo (fast)", "gpt-3.5-turbo-16k (longer answers)", "gpt-4 (smart)", "gpt-4-1106-preview")
 
                 ui <- fluidPage(
                     
@@ -7218,6 +7218,7 @@
                             # Find the k nearest neighbors in the chunks and render them
                                 n_nearest_neighbors <- 6
                                 if(input$model == "gpt-3.5-turbo-16k") { n_nearest_neighbors <- 16 }
+                                if(input$model == "gpt-4-1106-preview") { n_nearest_neighbors <- 100 }
 
                                 nn <- get.knnx( 
                                     as.matrix(chunks[(n_id_columns+1):dim(chunks)[2]]),

@@ -979,6 +979,99 @@ vennAnalysis(df[,1:3]) %>%
 ```
 
 
+## ternary plots
+
+```{r}
+library(ggplot2)
+library(ggtern)
+alaska_lake_data %>%
+  pivot_wider(names_from = "element", values_from = "mg_per_L") %>%
+  ggtern(aes(
+    x = Ca,
+    y = S,
+    z = Na,
+    color = park,
+    size = pH
+    )) +
+  geom_point() 
+```
+
+## map data {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
+```
+
+### plotting boundaries {-}
+
+There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
+
+```{r}
+head(map_data("world"))
+```
+```{r}
+head(map_data("state"))
+```
+
+```{r}
+head(map_data("county"))
+```
+
+```{r}
+head(map_data("france"))
+```
+
+Cool! We can see that lat, lon, group, order, region, and subregion are included. That makes plotting easy. Note that `coord_map()` can help preserve aspect ratios:
+
+```{r, fig.height = 8, fig.width = 10}
+ggplot(map_data("world")) +
+  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
+  theme_void() +
+  coord_map()
+```
+
+Note that we can use `coord_map()` to do some pretty cool things!
+
+```{r, fig.height = 8, fig.width = 10}
+ggplot(map_data("world")) +
+  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
+  theme_void() +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+```
+
+We can use filtering to produce maps of specific regions.
+
+```{r, fig.height = 8, fig.width = 10}
+ggplot() +
+  geom_polygon(
+    data = filter(map_data("county"), region == "minnesota"),
+    aes(x = long, y = lat, group = subregion, fill = subregion),
+    color = "black"
+  ) +
+  theme_void() +
+  coord_map()
+```
+
+### further reading {-}
+
+For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
+
+For more advanced map plotting: [R Spatial](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+
+For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c03)
+
+<!-- ## exercises {-} -->
+
+<!-- Using the `hawaii_aquifers` data set, please complete the following:
+
+1. Choose one analyte and filter the data so only the rows for that analyte are shown.
+
+2. Choose two of the aquifers. Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
+
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
+
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
+
 ## {-}
 
 ## further reading {-}
@@ -1187,8 +1280,8 @@ ggplot() +
   ) +
   labs(
     y = "Borough", 
-    x = "Trunk diameter",
-    caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
+    x = "Trunk diameter"
+    # caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
   ) +
   facet_grid(spc_latin~.) +
   guides(fill = "none") +
@@ -3064,86 +3157,6 @@ Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`),
 5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3 (5 pts), (ii) a kmeans-based clustering of your PCA analysis output from question 3 (5 pts), and (iii) a hierarchical clustering analysis of the raw data (5 pts). For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not? (5 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
 6. Suppose that you are work in a forensics lab. A suspect has been apprehended as part of a murder case. The suspect’s coat smells strongly of wood smoke, and it is known that a bonfire was burning at the scene of the crime. The fire chief reported that red oak was the type of wood the victim was burning at the scene of their murder, but the suspect claims that the smell in the suspect’s coat is from a different bonfire – one that was burning at a party the suspect claims they were attending at the time of the murder. The fire chief investigated the place where the party took place and found a large supply of paper birch firewood. You extracted a segment of the suspects coat and analyzed it with LC-MS and GC-MS to obtain ‘unknown_smoke.csv’. Use that data and your analysis skills to provide a recommendation to the prosecutor in this case.
-
-
-<!-- start map dataspecial topics -->
-
-# special topics {-}
-
-## map data {-}
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
-```
-
-### plotting boundaries {-}
-
-There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
-
-```{r}
-head(map_data("world"))
-```
-```{r}
-head(map_data("state"))
-```
-
-```{r}
-head(map_data("county"))
-```
-
-```{r}
-head(map_data("france"))
-```
-
-Cool! We can see that lat, lon, group, order, region, and subregion are included. That makes plotting easy. Note that `coord_map()` can help preserve aspect ratios:
-
-```{r, fig.height = 8, fig.width = 10}
-ggplot(map_data("world")) +
-  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
-  theme_void() +
-  coord_map()
-```
-
-Note that we can use `coord_map()` to do some pretty cool things!
-
-```{r, fig.height = 8, fig.width = 10}
-ggplot(map_data("world")) +
-  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
-  theme_void() +
-  coord_map(projection = "albers", lat0 = 39, lat1 = 45)
-```
-
-We can use filtering to produce maps of specific regions.
-
-```{r, fig.height = 8, fig.width = 10}
-ggplot() +
-  geom_polygon(
-    data = filter(map_data("county"), region == "minnesota"),
-    aes(x = long, y = lat, group = subregion, fill = subregion),
-    color = "black"
-  ) +
-  theme_void() +
-  coord_map()
-```
-
-### further reading {-}
-
-For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
-
-For more advanced map plotting: [R Spatial](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
-
-<!-- ## exercises {-} -->
-
-<!-- Using the `hawaii_aquifers` data set, please complete the following:
-
-1. Choose one analyte and filter the data so only the rows for that analyte are shown.
-
-2. Choose two of the aquifers. Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
-
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
-
-4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
-
 
 <!-- end -->
 
