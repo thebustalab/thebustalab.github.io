@@ -9863,11 +9863,11 @@
                             }
 
                             if( na_replacement[1] == "drop" ) {
-                                cat("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
+                                message("Dropping any variables in your dataset that have NA as a value.\nVariables dropped:\n")
                                 if (length(names(which(apply(is.na(matrix), 2, any)))) > 0) {
-                                    cat(names(which(apply(is.na(matrix), 2, any))))    
+                                    message(names(which(apply(is.na(matrix), 2, any))))    
                                 } else {
-                                    cat("none")
+                                    message("none")
                                 }
                                 cat("\n")
                                 matrix <- matrix[,!apply(is.na(matrix), 2, any)]
@@ -9876,7 +9876,7 @@
 
                                 if( any(is.na(matrix)) ) {
                                     
-                                    cat(paste0("Replacing NAs in your data with ", na_replacement[1]), "\n")
+                                    message(paste0("Replacing NAs in your data with ", na_replacement[1]), "\n")
 
                                         for( column in 1:dim(matrix)[2]) {
                                             
@@ -9988,7 +9988,7 @@
                                 scaled_matrix <- scale(matrix)
 
                                 if( any(is.na(scaled_matrix)) ) {
-                                    cat("Some analytes have zero variance and will be assigned a value of zero in the scaled matrix.")
+                                    message("Some analytes have zero variance and will be assigned a value of zero in the scaled matrix.")
                                     scaled_matrix[is.na(scaled_matrix)] <- 0
                                 }
 
@@ -10081,16 +10081,16 @@
                             ## MCA, MCA_ORD, MCA_DIM ##
 
                                 if( analysis == "mca" ) {
-                                    cat("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
+                                    message("Running Multiple Correspondence Analysis, extracting sample coordinates...\n")
                                     coords <- FactoMineR::MCA(matrix, graph = FALSE)$ind$coord[,c(1:components_to_return)]
                                     clustering <- as_tibble(coords)
                                     clustering$sample_unique_ID <- rownames(coords)
                                     colnames(clustering) <- c("Dim_1", "Dim_2", "sample_unique_ID")
-                                    cat("Done!\n")
+                                    message("Done!\n")
                                 }
 
                                 if( analysis == "mca_ord" ) {
-                                    cat("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
+                                    message("Running Multiple Correspondence Analysis, extracting ordination plot...\n")
                                     coords <- FactoMineR::MCA(matrix, graph = FALSE)$var$eta2[,c(1,components_to_return)]
                                     clustering <- as_tibble(coords)
                                     clustering$analyte <- rownames(coords)
@@ -10101,7 +10101,7 @@
                                 }
 
                                 if( analysis == "mca_dim" ) {
-                                    cat("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
+                                    message("Running Multiple Correspondence Analysis, extracting dimensional contributions...\n")
                                     coords <- FactoMineR::MCA(matrix, graph = FALSE)$eig[,2]
                                     clustering <- tibble::enframe(coords, name = NULL)
                                     clustering$principal_component <- names(coords)
@@ -10165,8 +10165,8 @@
                                         findClusterParameters(dist_matrix = dist_matrix, matrix = matrix, analysis = "dbscan")
                                     }
 
-                                    cat("Using", cluster_k, "as a value for k.\n")
-                                    cat("Using", cluster_threshold, "as a value for threshold.\n")
+                                    message("Using", cluster_k, "as a value for k.\n")
+                                    message("Using", cluster_threshold, "as a value for threshold.\n")
                                     clustering <- as_tibble(data.frame(
                                         sample_unique_ID = colnames(as.matrix(dist_matrix)),
                                         cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = as.numeric(cluster_threshold), MinPts = as.numeric(cluster_k), scale = FALSE, method = "dist")[[1]])
