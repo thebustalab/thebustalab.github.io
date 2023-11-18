@@ -1912,9 +1912,9 @@ Cool! Though that plot could use some tweaking... let's try:
 ```{r, fig.height = 4, fig.width = 5}
 AK_lakes_clustered %>%
 ggtree() +
-    geom_tiplab(aes(label = lake), offset = 1, align = TRUE) +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,10)) +
+    scale_x_continuous(limits = c(0,375)) +
     scale_fill_brewer(palette = "Set1") +
     # theme_classic() +
     theme(
@@ -4219,7 +4219,7 @@ ________________________________________________________________________________
 
 <!-- start language models -->
 
-# completionGPT {-}
+# completions {-}
 
 You can run completions using:
 
@@ -4243,6 +4243,43 @@ Temperature goes from 0 to 2 and adds randomness to the answer.
 
 You have to provide your OpenAI API key.
 
+# prompting strategies {-}
+
+
+This content provides a comprehensive guide on how to effectively use AI, particularly language models like ChatGPT, through structured prompting. Key aspects include:
+
+Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona.
+
+Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request.
+
+Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings.
+
+Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation.
+
+Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses.
+
+Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning.
+
+Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities.
+
+Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.
+
+Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.
+
+Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
+
+## structured prompting
+
+## few shot learning
+
+## prompt engineering
+
+## chain of thought
+
+## gpt chains
+
+## fine tuning
+
 # analyzeLiterature {-}
 
 If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
@@ -4251,7 +4288,7 @@ If you have access to the bustalab server, you can run the command `analyzeLiter
 
 - Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
 
-- High-Complexity question: Can you describe the transcriptional regulation of lipid transfer proteins in plants?
+- High-Complexity question: Can you describe what is known about the transcriptional regulation of lipid transfer proteins in plants?
 
 - Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
 
@@ -4460,11 +4497,10 @@ ggplot() +
 ```
 
 ```{r}
-
-ggplot() +
-  annotate("grob", x = 1, y = 3, vp.width = 0.5,
-           label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
-  theme_bw(12)
+# ggplot() +
+#   annotate("grob", x = 1, y = 3, vp.width = 0.5,
+#            label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
+#   theme_bw(12)
 ```
 
 ### composite figures {-}

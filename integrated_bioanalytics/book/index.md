@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-11-06"
+date: "2023-11-18"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1060,6 +1060,176 @@ vennAnalysis(df[,1:3]) %>%
 <img src="index_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" />
 
 
+## ternary plots
+
+
+```r
+library(ggplot2)
+library(ggtern)
+## Registered S3 methods overwritten by 'ggtern':
+##   method           from   
+##   grid.draw.ggplot ggplot2
+##   plot.ggplot      ggplot2
+##   print.ggplot     ggplot2
+## --
+## Remember to cite, run citation(package = 'ggtern') for further info.
+## --
+## 
+## Attaching package: 'ggtern'
+## The following objects are masked from 'package:ggtree':
+## 
+##     aes, ggplot, ggsave
+## The following object is masked from 'package:ggpp':
+## 
+##     annotate
+## The following object is masked from 'package:rstatix':
+## 
+##     mahalanobis_distance
+## The following objects are masked from 'package:ggplot2':
+## 
+##     aes, annotate, ggplot, ggplot_build,
+##     ggplot_gtable, ggplotGrob, ggsave, layer_data,
+##     theme_bw, theme_classic, theme_dark, theme_gray,
+##     theme_light, theme_linedraw, theme_minimal,
+##     theme_void
+## The following objects are masked from 'package:gridExtra':
+## 
+##     arrangeGrob, grid.arrange
+alaska_lake_data %>%
+  pivot_wider(names_from = "element", values_from = "mg_per_L") %>%
+  ggtern(aes(
+    x = Ca,
+    y = S,
+    z = Na,
+    color = park,
+    size = pH
+    )) +
+  geom_point() 
+```
+
+<img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
+
+## map data {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" />
+
+### plotting boundaries {-}
+
+There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
+
+
+```r
+head(map_data("world"))
+##        long      lat group order region subregion
+## 1 -69.89912 12.45200     1     1  Aruba      <NA>
+## 2 -69.89571 12.42300     1     2  Aruba      <NA>
+## 3 -69.94219 12.43853     1     3  Aruba      <NA>
+## 4 -70.00415 12.50049     1     4  Aruba      <NA>
+## 5 -70.06612 12.54697     1     5  Aruba      <NA>
+## 6 -70.05088 12.59707     1     6  Aruba      <NA>
+```
+
+```r
+head(map_data("state"))
+##        long      lat group order  region subregion
+## 1 -87.46201 30.38968     1     1 alabama      <NA>
+## 2 -87.48493 30.37249     1     2 alabama      <NA>
+## 3 -87.52503 30.37249     1     3 alabama      <NA>
+## 4 -87.53076 30.33239     1     4 alabama      <NA>
+## 5 -87.57087 30.32665     1     5 alabama      <NA>
+## 6 -87.58806 30.32665     1     6 alabama      <NA>
+```
+
+
+```r
+head(map_data("county"))
+##        long      lat group order  region subregion
+## 1 -86.50517 32.34920     1     1 alabama   autauga
+## 2 -86.53382 32.35493     1     2 alabama   autauga
+## 3 -86.54527 32.36639     1     3 alabama   autauga
+## 4 -86.55673 32.37785     1     4 alabama   autauga
+## 5 -86.57966 32.38357     1     5 alabama   autauga
+## 6 -86.59111 32.37785     1     6 alabama   autauga
+```
+
+
+```r
+head(map_data("france"))
+##       long      lat group order region subregion
+## 1 2.557093 51.09752     1     1   Nord      <NA>
+## 2 2.579995 51.00298     1     2   Nord      <NA>
+## 3 2.609101 50.98545     1     3   Nord      <NA>
+## 4 2.630782 50.95073     1     4   Nord      <NA>
+## 5 2.625894 50.94116     1     5   Nord      <NA>
+## 6 2.597699 50.91967     1     6   Nord      <NA>
+```
+
+Cool! We can see that lat, lon, group, order, region, and subregion are included. That makes plotting easy. Note that `coord_map()` can help preserve aspect ratios:
+
+
+```r
+ggplot(map_data("world")) +
+  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
+  theme_void() +
+  coord_map()
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+```
+
+<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
+
+Note that we can use `coord_map()` to do some pretty cool things!
+
+
+```r
+ggplot(map_data("world")) +
+  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
+  theme_void() +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45)
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+```
+
+<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
+
+We can use filtering to produce maps of specific regions.
+
+
+```r
+ggplot() +
+  geom_polygon(
+    data = filter(map_data("county"), region == "minnesota"),
+    aes(x = long, y = lat, group = subregion, fill = subregion),
+    color = "black"
+  ) +
+  theme_void() +
+  coord_map()
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+```
+
+<img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" />
+
+### further reading {-}
+
+For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
+
+For more advanced map plotting: [R Spatial](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+
+For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c03)
+
+<!-- ## exercises {-} -->
+
+<!-- Using the `hawaii_aquifers` data set, please complete the following:
+
+1. Choose one analyte and filter the data so only the rows for that analyte are shown.
+
+2. Choose two of the aquifers. Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
+
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
+
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
+
 ## {-}
 
 ## further reading {-}
@@ -1210,7 +1380,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-80-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-89-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1221,7 +1391,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-90-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1364,7 +1534,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-97-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1414,7 +1584,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-90-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-99-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1433,8 +1603,8 @@ ggplot() +
   ) +
   labs(
     y = "Borough", 
-    x = "Trunk diameter",
-    caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
+    x = "Trunk diameter"
+    # caption = str_wrap("Figure 1: Diameters of trees in New York City. Points correspond to average diameters of each tree species in each borough. Horizontal lines indicate the standard deviation of tree diameters. Points are colored according to tree species.", width = 80)
   ) +
   facet_grid(spc_latin~.) +
   guides(fill = "none") +
@@ -1446,7 +1616,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-91-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-100-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1687,7 +1857,7 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-107-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
@@ -1751,7 +1921,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -1801,7 +1971,7 @@ ggplot() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-119-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
@@ -1814,7 +1984,7 @@ AK_lakes_pca_ord %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### principal components {-}
 
@@ -1852,7 +2022,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
@@ -1983,7 +2153,7 @@ p2 <- ggplot(data) +
 p1 + p2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -2093,7 +2263,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2101,9 +2271,9 @@ Cool! Though that plot could use some tweaking... let's try:
 ```r
 AK_lakes_clustered %>%
 ggtree() +
-    geom_tiplab(aes(label = lake), offset = 1, align = TRUE) +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
     geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,10)) +
+    scale_x_continuous(limits = c(0,375)) +
     scale_fill_brewer(palette = "Set1") +
     # theme_classic() +
     theme(
@@ -2111,7 +2281,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
@@ -2204,9 +2374,11 @@ ggplot() +
   theme_classic() +
   coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
   scale_fill_manual(values = discrete_palette) 
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-126-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
 
 There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
@@ -2254,9 +2426,11 @@ ggplot() +
   theme_classic() +
   coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
   scale_fill_manual(values = discrete_palette) 
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-128-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### summarize by cluster {-}
 
@@ -2336,7 +2510,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-129-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
  
 ### further reading {-}
 
@@ -2518,7 +2692,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2600,7 +2774,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-143-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2613,7 +2787,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-144-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2702,7 +2876,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2716,7 +2890,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -2826,7 +3000,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -2896,7 +3070,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -2911,7 +3085,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-160-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3057,7 +3231,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -3120,7 +3294,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build a linear model for that relationship:
 
@@ -3247,7 +3421,7 @@ plot1
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -3261,7 +3435,7 @@ ggplot(predictions_from_basic_linear_model) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -3284,7 +3458,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -3298,7 +3472,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
 
 ```r
 
@@ -3343,6 +3517,8 @@ top <- ggplot() +
     ) +
     coord_cartesian(ylim = c(10,16)) +
     theme_bw()
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
 
 bottom <- ggplot(predictions_from_basic_linear_model) +
   geom_col(
@@ -3358,7 +3534,7 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
 
@@ -3411,7 +3587,7 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## random forest models {-}
 
@@ -3455,7 +3631,7 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -3538,125 +3714,6 @@ Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`),
 5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3 (5 pts), (ii) a kmeans-based clustering of your PCA analysis output from question 3 (5 pts), and (iii) a hierarchical clustering analysis of the raw data (5 pts). For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not? (5 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
 6. Suppose that you are work in a forensics lab. A suspect has been apprehended as part of a murder case. The suspect’s coat smells strongly of wood smoke, and it is known that a bonfire was burning at the scene of the crime. The fire chief reported that red oak was the type of wood the victim was burning at the scene of their murder, but the suspect claims that the smell in the suspect’s coat is from a different bonfire – one that was burning at a party the suspect claims they were attending at the time of the murder. The fire chief investigated the place where the party took place and found a large supply of paper birch firewood. You extracted a segment of the suspects coat and analyzed it with LC-MS and GC-MS to obtain ‘unknown_smoke.csv’. Use that data and your analysis skills to provide a recommendation to the prosecutor in this case.
-
-
-<!-- start map dataspecial topics -->
-
-# special topics {-}
-
-## map data {-}
-
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" />
-
-### plotting boundaries {-}
-
-There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
-
-
-```r
-head(map_data("world"))
-##        long      lat group order region subregion
-## 1 -69.89912 12.45200     1     1  Aruba      <NA>
-## 2 -69.89571 12.42300     1     2  Aruba      <NA>
-## 3 -69.94219 12.43853     1     3  Aruba      <NA>
-## 4 -70.00415 12.50049     1     4  Aruba      <NA>
-## 5 -70.06612 12.54697     1     5  Aruba      <NA>
-## 6 -70.05088 12.59707     1     6  Aruba      <NA>
-```
-
-```r
-head(map_data("state"))
-##        long      lat group order  region subregion
-## 1 -87.46201 30.38968     1     1 alabama      <NA>
-## 2 -87.48493 30.37249     1     2 alabama      <NA>
-## 3 -87.52503 30.37249     1     3 alabama      <NA>
-## 4 -87.53076 30.33239     1     4 alabama      <NA>
-## 5 -87.57087 30.32665     1     5 alabama      <NA>
-## 6 -87.58806 30.32665     1     6 alabama      <NA>
-```
-
-
-```r
-head(map_data("county"))
-##        long      lat group order  region subregion
-## 1 -86.50517 32.34920     1     1 alabama   autauga
-## 2 -86.53382 32.35493     1     2 alabama   autauga
-## 3 -86.54527 32.36639     1     3 alabama   autauga
-## 4 -86.55673 32.37785     1     4 alabama   autauga
-## 5 -86.57966 32.38357     1     5 alabama   autauga
-## 6 -86.59111 32.37785     1     6 alabama   autauga
-```
-
-
-```r
-head(map_data("france"))
-##       long      lat group order region subregion
-## 1 2.557093 51.09752     1     1   Nord      <NA>
-## 2 2.579995 51.00298     1     2   Nord      <NA>
-## 3 2.609101 50.98545     1     3   Nord      <NA>
-## 4 2.630782 50.95073     1     4   Nord      <NA>
-## 5 2.625894 50.94116     1     5   Nord      <NA>
-## 6 2.597699 50.91967     1     6   Nord      <NA>
-```
-
-Cool! We can see that lat, lon, group, order, region, and subregion are included. That makes plotting easy. Note that `coord_map()` can help preserve aspect ratios:
-
-
-```r
-ggplot(map_data("world")) +
-  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
-  theme_void() +
-  coord_map()
-```
-
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
-
-Note that we can use `coord_map()` to do some pretty cool things!
-
-
-```r
-ggplot(map_data("world")) +
-  geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
-  theme_void() +
-  coord_map(projection = "albers", lat0 = 39, lat1 = 45)
-```
-
-<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
-
-We can use filtering to produce maps of specific regions.
-
-
-```r
-ggplot() +
-  geom_polygon(
-    data = filter(map_data("county"), region == "minnesota"),
-    aes(x = long, y = lat, group = subregion, fill = subregion),
-    color = "black"
-  ) +
-  theme_void() +
-  coord_map()
-```
-
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
-
-### further reading {-}
-
-For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
-
-For more advanced map plotting: [R Spatial](https://r-spatial.org/r/2018/10/25/ggplot2-sf.html)
-
-<!-- ## exercises {-} -->
-
-<!-- Using the `hawaii_aquifers` data set, please complete the following:
-
-1. Choose one analyte and filter the data so only the rows for that analyte are shown.
-
-2. Choose two of the aquifers. Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
-
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
-
-4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
-
 
 <!-- end -->
 
@@ -4414,7 +4471,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4444,7 +4501,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4491,7 +4548,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4507,7 +4564,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4516,7 +4573,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4583,7 +4640,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4602,7 +4659,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4716,7 +4773,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4751,7 +4808,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5042,9 +5099,163 @@ ggtree(
   geom_tiplab(offset = 20, align = TRUE) +
   scale_x_continuous(limits = c(0,650)) +
   theme_void()
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5062,7 +5273,7 @@ ________________________________________________________________________________
 
 <!-- start language models -->
 
-# completionGPT {-}
+# completions {-}
 
 You can run completions using:
 
@@ -5087,6 +5298,43 @@ Temperature goes from 0 to 2 and adds randomness to the answer.
 
 You have to provide your OpenAI API key.
 
+# prompting strategies {-}
+
+
+This content provides a comprehensive guide on how to effectively use AI, particularly language models like ChatGPT, through structured prompting. Key aspects include:
+
+Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona.
+
+Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request.
+
+Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings.
+
+Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation.
+
+Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses.
+
+Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning.
+
+Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities.
+
+Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.
+
+Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.
+
+Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
+
+## structured prompting
+
+## few shot learning
+
+## prompt engineering
+
+## chain of thought
+
+## gpt chains
+
+## fine tuning
+
 # analyzeLiterature {-}
 
 If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
@@ -5095,7 +5343,7 @@ If you have access to the bustalab server, you can run the command `analyzeLiter
 
 - Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
 
-- High-Complexity question: Can you describe the transcriptional regulation of lipid transfer proteins in plants?
+- High-Complexity question: Can you describe what is known about the transcriptional regulation of lipid transfer proteins in plants?
 
 - Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
 
@@ -5246,6 +5494,8 @@ data.tb <-
                        labs(x = NULL, y = NULL) +
                        theme_bw(8) +
                        scale_colour_discrete(guide = "none")))
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
 
 ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_plot(data = data.tb, aes(x, y, label = plot)) +
@@ -5255,7 +5505,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -5278,7 +5528,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -5302,18 +5552,15 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
-
-ggplot() +
-  annotate("grob", x = 1, y = 3, vp.width = 0.5,
-           label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
-  theme_bw(12)
+# ggplot() +
+#   annotate("grob", x = 1, y = 3, vp.width = 0.5,
+#            label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
+#   theme_bw(12)
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### composite figures {-}
 
@@ -5366,21 +5613,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -5428,7 +5675,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5715,7 +5962,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5757,7 +6004,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -5846,7 +6093,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
