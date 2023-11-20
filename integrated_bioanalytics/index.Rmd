@@ -4280,6 +4280,8 @@ Sharing and Collaboration: Sharing structured prompts allows others to learn and
 
 ## fine tuning
 
+## retrieval-augemented generation
+
 # analyzeLiterature {-}
 
 If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
