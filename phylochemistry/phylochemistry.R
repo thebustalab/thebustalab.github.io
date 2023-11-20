@@ -7549,7 +7549,7 @@
                     # }
 
                 ## Fortify the network object into a dataframe, modify it with new colnames and additional information, crack into a list of edges and nodes
-                    combined_network_frame <- ggnetwork::ggnetwork(network_object, arrow.gap = 0, layout = "kamadakawai")
+                    combined_network_frame <- ggnetwork::ggnetwork(network_object, arrow.gap = 0, layout = "kamadakawai", stringsAsFactors = TRUE)
                     # combined_network_frame <- ggnetwork::ggnetwork(network_object, arrow.gap = 0)
                     combined_network_frame$type <- "edge"
                     colnames(combined_network_frame)[colnames(combined_network_frame) == "vertex.names"] <- "start_node"
