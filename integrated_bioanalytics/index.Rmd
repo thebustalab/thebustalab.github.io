@@ -3776,6 +3776,8 @@ polyBlast(
 
 ### interpretation {-}
 
+bitscore v evalue - with very low evalue (< 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!
+
 The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
 
 The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
@@ -4280,7 +4282,11 @@ Sharing and Collaboration: Sharing structured prompts allows others to learn and
 
 ## fine tuning
 
+## structured response
+
 ## retrieval-augemented generation
+
+
 
 # analyzeLiterature {-}
 
@@ -4505,6 +4511,20 @@ ggplot() +
 #   theme_bw(12)
 ```
 
+
+```{r}
+bloom_example_pics <- ggplot(data = data.frame(x = c(0,1), y = c(0.5,0.5))) +
+  geom_point(aes(x = x, y = y), color = "white") +
+  theme_void() +
+  annotation_custom(
+      rasterGrob(
+          readPNG(
+              "https://thebustalab.github.io/integrated_bioanalytics/images/homology.png"
+          ), interpolate=TRUE
+      ), xmin=0, xmax=1, ymin=0, ymax=1
+  )
+
+```
 ### composite figures {-}
 
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:

@@ -106,6 +106,7 @@
                     "ggnewscale",
                     "later",
                     "shipunov",
+                    "parallel",
                     "phytools"
                 )
 
@@ -2743,7 +2744,7 @@
                                     label = "Maximum Gap Percent",
                                     min = 0,
                                     max = 100,
-                                    value = 50
+                                    value = 100
                                 ),
 
                                 sliderInput(
@@ -2751,7 +2752,7 @@
                                     label = "Minimum Conservation Percent",
                                     min = 0,
                                     max = 100,
-                                    value = 50
+                                    value = 0
                                 ),
 
                                 "Here is a NJ representation of the original alignment:",
@@ -8499,10 +8500,26 @@
             #' vennAnalysis()
 
             vennAnalysis <- function(data) {
-                plot(euler(data, shape = "circle"), quantities = TRUE)
-                venn_circle_data <- plot(eulerr::euler(data, shape = "circle"), quantities = TRUE)$data$ellipses[,1:3]
-                colnames(venn_circle_data) <- c("x", "y", "r")
-                venn_circle_data$category <- rownames(venn_circle_data)
+                # str(plot(euler(data, shape = "circle"), quantities = TRUE))
+                # plot(euler(data, shape = "circle"), quantities = TRUE)$data$centers
+                venn_output <- eulerr::euler(data, shape = "circle")
+                ellipses <- cbind(
+                    data.frame(category = rownames(venn_output$ellipses)),
+                    venn_output$ellipses[,c(1:3)]
+                )
+                colnames(ellipses) <- c("category", "x", "y", "r")
+                
+                overlaps <- plot(venn_output, quantities = TRUE)$data$centers[,c(1,2)]
+                overlaps <- overlaps[(dim(venn_output$ellipses)[1]+1):(dim(overlaps)[1]),c(1,2)]
+                overlaps <- cbind(
+                    data.frame(category = rownames(overlaps)),
+                    overlaps,
+                    data.frame(r = NA)
+                )
+                venn_circle_data <- cbind(
+                    rbind(ellipses, overlaps),
+                    data.frame(count = venn_output$original.values)
+                )
                 return(venn_circle_data)
             }
 
@@ -9668,7 +9685,7 @@
                                             columns_w_additional_analyte_info = NULL,
                                             columns_w_sample_ID_info = NULL,
                                             transpose = FALSE,
-                                            distance_method = c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "coeff_unlike"),
+                                            distance_method = c("euclidean", "manhattan", "gower"),
                                             agglomeration_method = c(
                                                 "ward.D2", "ward.D", "single", "complete",
                                                 "average", # (= UPGMA)
@@ -9806,7 +9823,7 @@
                                 analyte_columns <- c(columns_w_values_for_single_analyte, analyte_columns)
                             }
 
-                        # Check to see if analyte columns are numeric
+                        # Check to see if analyte columns are numeric and compatible with analysis
 
                             which_analyte_columns <- which(colnames(data_wide) %in% analyte_columns)
                             are_they_numeric <- list()
@@ -9814,26 +9831,26 @@
                               are_they_numeric <- c(are_they_numeric, is.numeric(data_wide[[i]]))
                             }
 
-                        # Should selected analysis proceed?
+                            # Should selected analysis proceed?
 
-                            if ( all(unlist(are_they_numeric)) ) {
-                                if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
-                                    # cat("Analytes are all numeric and compatible with the analysis selected.\n")
-                                }
-                                if ( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
-                                    stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
-                                }
-                            }
-
-                            if ( !all(unlist(are_they_numeric)) ) {
-                                if (analysis %in% c("mca", "mca_ord", "mca_dim")) {
-                                    # cat("Analytes are all categorical and compatible with the analysis selected.\n")
-                                }
-                                if ( analysis %in% c("pca", "pca_dim", "pca_ord", "hclust", "hclust_phylo") ) {
-                                    stop("Analytes are all categorical, but the analysis selected is for numeric variables. Please choose a different analysis method.\n")
+                                if ( all(unlist(are_they_numeric)) ) {
+                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord") ) {
+                                        # cat("Analytes are all numeric and compatible with the analysis selected.\n")
+                                    }
+                                    if ( analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+                                        stop("Analytes are all numeric, but the analysis selected is for categorical variables. Please choose a different analysis method.\n")
+                                    }
                                 }
 
-                            }
+                                if ( !all(unlist(are_they_numeric)) ) {
+                                    if (analysis %in% c("mca", "mca_ord", "mca_dim")) {
+                                        # cat("Analytes are all categorical and compatible with the analysis selected.\n")
+                                    }
+                                    if ( analysis %in% c("pca", "pca_dim", "pca_ord") ) {
+                                        stop("Analytes are all categorical, but the analysis selected is for numeric variables. Please choose a different analysis method.\n")
+                                    }
+
+                                }
 
                         # Add sample_unique_ID_column if necessary, or just change column name of existing sample_unique_ID column
 
@@ -10000,15 +10017,47 @@
 
                         ## HCLUST, HCLUST_PHYLO ##
 
+                            # if( analysis == "hclust" | analysis == "hclust_phylo" ) {
+                            #     bclust <- Bclust(
+                            #         scaled_matrix, method.d = distance_method[1],
+                            #         method.c = agglomeration_method[1],
+                            #         monitor = FALSE
+                            #     )
+                            #     # print(bclust$value)
+                            #     # plot(bclust)
+                            #     phylo <- ape::as.phylo(bclust$hclust)
+                            #     if( analysis == "hclust_phylo" ) {
+                            #         return(phylo)
+                            #         stop("Returning hclust_phylo.")
+                            #     }
+                            #     clustering <- ggtree::fortify(phylo)
+                            #     clustering$sample_unique_ID <- clustering$label
+                            #     clustering$bootstrap <- NA
+
+                            #     ## Add bootstrap values starting from the furthest node to the highest node
+                            #         bs_vals <- data.frame(
+                            #             xval = clustering$x[clustering$isTip != TRUE],
+                            #             bs_val = NA
+                            #         )
+                            #         for (i in 1:length(bclust$value)) { # i=1
+                            #             bs_vals$bs_val[
+                            #                 order(bs_vals$xval, decreasing = TRUE)[i]
+                            #             ] <- bclust$values[i]
+                            #         }
+
+                            #     clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
+                            # }
+
                             if( analysis == "hclust" | analysis == "hclust_phylo" ) {
-                                bclust <- Bclust(
-                                    scaled_matrix, method.d = distance_method[1],
-                                    method.c = agglomeration_method[1],
-                                    monitor = FALSE
-                                )
-                                # print(bclust$value)
-                                # plot(bclust)
-                                phylo <- ape::as.phylo(bclust$hclust)
+                                # bclust <- Bclust(
+                                #     scaled_matrix, method.d = distance_method[1],
+                                #     method.c = agglomeration_method[1],
+                                #     monitor = FALSE
+                                # )
+                                scaled_matrix <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
+                                createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
+                                b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
+                                phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
                                 if( analysis == "hclust_phylo" ) {
                                     return(phylo)
                                     stop("Returning hclust_phylo.")
@@ -10022,10 +10071,10 @@
                                         xval = clustering$x[clustering$isTip != TRUE],
                                         bs_val = NA
                                     )
-                                    for (i in 1:length(bclust$value)) { # i=1
+                                    for (i in 1:length(b)) { # i=1
                                         bs_vals$bs_val[
                                             order(bs_vals$xval, decreasing = TRUE)[i]
-                                        ] <- bclust$values[i]
+                                        ] <- b[i]
                                     }
 
                                 clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
@@ -11436,7 +11485,7 @@
                 column_w_names_of_tiplabels,
                 column_w_names_of_traits,
                 column_w_values_for_traits,
-                tree,
+                tree, ## tree should be in phylo format
                 replicates = 999,
                 cost = NULL
             ) {
