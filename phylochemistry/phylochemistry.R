@@ -10017,37 +10017,6 @@
 
                         ## HCLUST, HCLUST_PHYLO ##
 
-                            # if( analysis == "hclust" | analysis == "hclust_phylo" ) {
-                            #     bclust <- Bclust(
-                            #         scaled_matrix, method.d = distance_method[1],
-                            #         method.c = agglomeration_method[1],
-                            #         monitor = FALSE
-                            #     )
-                            #     # print(bclust$value)
-                            #     # plot(bclust)
-                            #     phylo <- ape::as.phylo(bclust$hclust)
-                            #     if( analysis == "hclust_phylo" ) {
-                            #         return(phylo)
-                            #         stop("Returning hclust_phylo.")
-                            #     }
-                            #     clustering <- ggtree::fortify(phylo)
-                            #     clustering$sample_unique_ID <- clustering$label
-                            #     clustering$bootstrap <- NA
-
-                            #     ## Add bootstrap values starting from the furthest node to the highest node
-                            #         bs_vals <- data.frame(
-                            #             xval = clustering$x[clustering$isTip != TRUE],
-                            #             bs_val = NA
-                            #         )
-                            #         for (i in 1:length(bclust$value)) { # i=1
-                            #             bs_vals$bs_val[
-                            #                 order(bs_vals$xval, decreasing = TRUE)[i]
-                            #             ] <- bclust$values[i]
-                            #         }
-
-                            #     clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
-                            # }
-
                             if( analysis == "hclust" | analysis == "hclust_phylo" ) {
                                 bclust <- Bclust(
                                     scaled_matrix, method.d = distance_method[1],
@@ -10057,10 +10026,6 @@
                                 # print(bclust$value)
                                 # plot(bclust)
                                 phylo <- ape::as.phylo(bclust$hclust)
-                                # scaled_matrix <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
-                                # createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
-                                # b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
-                                # phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
                                 if( analysis == "hclust_phylo" ) {
                                     return(phylo)
                                     stop("Returning hclust_phylo.")
@@ -10074,14 +10039,41 @@
                                         xval = clustering$x[clustering$isTip != TRUE],
                                         bs_val = NA
                                     )
-                                    for (i in 1:length(b)) { # i=1
+                                    for (i in 1:length(bclust$value)) { # i=1
                                         bs_vals$bs_val[
                                             order(bs_vals$xval, decreasing = TRUE)[i]
-                                        ] <- b[i]
+                                        ] <- bclust$values[i]
                                     }
 
                                 clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
                             }
+
+                            # if( analysis == "hclust" | analysis == "hclust_phylo" ) {
+                            #     scaled_matrix <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
+                            #     createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
+                            #     b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
+                            #     phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
+                            #     if( analysis == "hclust_phylo" ) {
+                            #         return(phylo)
+                            #         stop("Returning hclust_phylo.")
+                            #     }
+                            #     clustering <- ggtree::fortify(phylo)
+                            #     clustering$sample_unique_ID <- clustering$label
+                            #     clustering$bootstrap <- NA
+
+                            #     ## Add bootstrap values starting from the furthest node to the highest node
+                            #         bs_vals <- data.frame(
+                            #             xval = clustering$x[clustering$isTip != TRUE],
+                            #             bs_val = NA
+                            #         )
+                            #         for (i in 1:length(b)) { # i=1
+                            #             bs_vals$bs_val[
+                            #                 order(bs_vals$xval, decreasing = TRUE)[i]
+                            #             ] <- b[i]
+                            #         }
+
+                            #     clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
+                            # }
 
                         # Generate distance matrix
 
@@ -12209,4 +12201,4 @@
 
     #####################
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
