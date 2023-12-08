@@ -10049,15 +10049,18 @@
                             # }
 
                             if( analysis == "hclust" | analysis == "hclust_phylo" ) {
-                                # bclust <- Bclust(
-                                #     scaled_matrix, method.d = distance_method[1],
-                                #     method.c = agglomeration_method[1],
-                                #     monitor = FALSE
-                                # )
-                                scaled_matrix <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
-                                createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
-                                b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
-                                phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
+                                bclust <- Bclust(
+                                    scaled_matrix, method.d = distance_method[1],
+                                    method.c = agglomeration_method[1],
+                                    monitor = FALSE
+                                )
+                                # print(bclust$value)
+                                # plot(bclust)
+                                phylo <- ape::as.phylo(bclust$hclust)
+                                # scaled_matrix <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
+                                # createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
+                                # b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
+                                # phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
                                 if( analysis == "hclust_phylo" ) {
                                     return(phylo)
                                     stop("Returning hclust_phylo.")
