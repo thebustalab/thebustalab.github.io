@@ -12131,4 +12131,75 @@
             "darkorange4", "brown"
         )
 
+    ####################################################
+    #### all of this is from github sgibb/bootstrap ####
+    ####################################################
+
+    bootstrap <- function(x, fun, n=1000L, mc.cores=getOption("mc.cores", 2L)) {
+        
+        fun <- match.fun(fun)
+
+        origin <- .clust(x, fun=fun)
+
+        v <- mclapply(seq_len(n), function(y, origin, size, fun, nco) {
+            current <- .clust(.resample(x, size=size), fun=fun)
+            return(.calculateMatches(origin, current, nco))
+        }, mc.cores=mc.cores, origin=origin, size=ncol(x), fun=fun, nco=ncol(origin))
+
+        return(colSums(do.call(rbind, v))/n)
+        
+    }
+
+    as.binary.matrix.hclust <- function(x) {
+      nr <- as.integer(nrow(x$merge))
+
+      m <- matrix(0L, nrow=nr, ncol=nr+1L)
+
+      for (i in seq_len(nr)) {
+        left <- x$merge[i, 1L]
+
+        if (left < 0L) {
+          ## negative values correspond to observations
+          m[i, -left] <- 1L
+        } else {
+          ## positive values correspond to childcluster
+          m[i, ] <- m[left, ]
+        }
+
+        right <- x$merge[i, 2L]
+
+        if (right < 0L) {
+          ## negative values correspond to observations
+          m[i, -right] <- 1L
+        } else {
+          ## positive values correspond to childcluster
+          m[i, ] <- m[i,] | m[right, ]
+        }
+      }
+
+      return(m)
+    }
+
+    .clust <- function(x, fun) {
+        hc <- fun(x)
+        return(as.binary.matrix.hclust(hc))
+    }
+
+    .calculateMatches <- function(origin, current, nc=ncol(origin)) {
+        ## both 1
+        one <- tcrossprod(origin, current)
+        ## both 0
+        zero <- tcrossprod(1-origin, 1-current)
+
+        ## calc matches
+        return(rowSums(one + zero == nc))
+    }
+
+    .resample <- function(x, size=ncol(x)) {
+        sel <- sample.int(ncol(x), size=size, replace=TRUE)
+        return(x[, sel])
+    }
+
+    #####################
+
 message("phylochemistry loaded!!")
