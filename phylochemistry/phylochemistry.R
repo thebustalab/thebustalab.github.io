@@ -12135,7 +12135,11 @@
     #### all of this is from github sgibb/bootstrap ####
     ####################################################
 
-    bootstrap <- function(x, fun, n=1000L, mc.cores=getOption("mc.cores", 2L)) {
+    bootstrap <- function(
+        x, fun, n=1000L,
+        # mc.cores=getOption("mc.cores", 2L), # This works for mac but not PC
+        mc.cores=1
+    ) {
         
         fun <- match.fun(fun)
 
