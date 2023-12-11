@@ -7497,13 +7497,14 @@
 
             searchPubMed <- function(
                 search_terms, 
-                pubmed_api_key
+                pubmed_api_key,
+                sort = c("date", "relevance")
             ) {
 
                 retmax_per_term = 20
                 pm_entries <- character()
                 for( i in 1:length(search_terms) ) { # i=1
-                    search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = "date")
+                    search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
                     query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
                     pm_entries <- c(pm_entries, XML::xmlToList(XML::xmlParse(query_output)))
                     Sys.sleep(4)
