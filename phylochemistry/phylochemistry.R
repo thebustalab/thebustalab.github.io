@@ -7493,6 +7493,54 @@
                 return(paste(unlist(full_pdf_text), collapse = ""))
             }
 
+        #### searchPubMed
+
+            searchPubMed <- function(
+                search_terms, 
+                pubmed_api_key
+            ) {
+
+                retmax_per_term = 20
+                pm_entries <- character()
+                for( i in 1:length(search_terms) ) { # i=1
+                    search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = "date")
+                    query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
+                    pm_entries <- c(pm_entries, XML::xmlToList(XML::xmlParse(query_output)))
+                    Sys.sleep(4)
+                }
+                pm_entries <- pm_entries[!duplicated(pm_entries)]
+
+                pm_results <- list()
+                for (i in 1:length(pm_entries)) { # i=1
+                    
+                    if (length(pm_entries[[i]]) == 1) { next }
+                    if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
+                    
+                    options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
+                    for (option in options) { # option = 4
+                        if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
+                            doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
+                            break
+                        } else {next}
+                    }
+                    
+                    pm_results[[i]] <- data.frame(
+                        entry_number <- i,
+                        date = lubridate::as_date(paste(
+                            pm_entries[[i]]$MedlineCitation$DateRevised$Year,
+                            pm_entries[[i]]$MedlineCitation$DateRevised$Month,
+                            pm_entries[[i]]$MedlineCitation$DateRevised$Day,
+                            sep = "-"
+                        )),
+                        journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
+                        title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
+                        doi = doi,
+                        abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
+                    )
+                }
+                return(do.call(rbind, pm_results))
+            }
+
     ##### Networks
 
         #### extractModules
