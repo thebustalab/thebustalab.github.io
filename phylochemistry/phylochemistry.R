@@ -7498,10 +7498,10 @@
             searchPubMed <- function(
                 search_terms, 
                 pubmed_api_key,
-                sort = c("date", "relevance")
+                sort = c("date", "relevance"),
+                retmax_per_term = 20
             ) {
 
-                retmax_per_term = 20
                 pm_entries <- character()
                 for( i in 1:length(search_terms) ) { # i=1
                     search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
