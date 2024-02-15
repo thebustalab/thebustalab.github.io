@@ -1060,6 +1060,7 @@
 
                     ## Make ml tree
                         if ( ml == TRUE ) {
+                            if (any(duplicated(nucl_seqs_aligned))) { stop("There are identical sequences in your alignment, maximum liklihood will not work properly.") }
                             ## Test all available nucl models, use the best one to optimize for ml
                                 if ( model_test == TRUE ) {
                                     cat(paste("Testing 24 maximum liklihood models... \n"))
@@ -1124,6 +1125,7 @@
 
                     ## Make ml tree
                         if ( ml == TRUE ) {
+                            if (any(duplicated(amin_seqs_aligned))) { stop("There are identical sequences in your alignment, maximum liklihood will not work properly.") }
                             if ( model_test == TRUE ) {
                                 ## Test all available amino acid models and extract the best one
                                     cat(paste("Testing 24 maximum liklihood models... \n"))
@@ -11033,12 +11035,12 @@
 
             buildModel <- function(
                 data,
-                model_type = c("linear_regression", "logistic_regression", "random_forest_classification"),
+                model_type = c("linear_regression", "random_forest_regression", "random_forest_classification", "logistic_regression"),
                 predictor_variables = NULL,
                 outcome_variable = NULL,
                 train_test_ratio = 0.9,
                 fold_cross_validation = 3,
-                optimization_parameters = list(mtry = seq(10,20,5), trees = seq(100,200,50))
+                optimization_parameters = list(n_vars_at_split = seq(10,20,5), n_trees = seq(100,200,50))
             ) {
 
                 ## Prepare the data
@@ -11052,7 +11054,7 @@
 
                 ## Modeling
 
-                    accuracy_list <- list()
+                    percent_accuracy <- list()
                     for (i in 1:(fold_cross_validation+1)) { # i=1
 
                         ## Split data, except for in last round, in which case use everything for training
@@ -11130,7 +11132,7 @@
                                     tune_results <- tune_grid(
                                         workflow,
                                         resamples = vfold_cv(training_data, v = fold_cross_validation), #CV object
-                                        grid = expand.grid(mtry = optimization_parameters$mtry, trees = optimization_parameters$trees), # grid of values to try
+                                        grid = expand.grid(mtry = optimization_parameters$n_vars_at_split, trees = optimization_parameters$n_trees), # grid of values to try
                                         metrics = metric_set(rmse) # metrics we care about
                                     )
 
@@ -11166,7 +11168,7 @@
                                     tune_results <- tune_grid(
                                         workflow,
                                         resamples = vfold_cv(training_data, v = fold_cross_validation), #CV object
-                                        grid = expand.grid(mtry = optimization_parameters$mtry, trees = optimization_parameters$trees), # grid of values to try
+                                        grid = expand.grid(mtry = optimization_parameters$n_vars_at_split, trees = optimization_parameters$n_trees), # grid of values to try
                                         metrics = metric_set(accuracy) # metrics we care about
                                     )
 
@@ -11192,16 +11194,16 @@
                                 )
                                 answers <- testing_data[,colnames(testing_data) == outcome_variable]
                                 if (model_type %in% c("linear_regression", "random_forest_regression")) {
-                                    accuracy_list[[i]] <- sqrt(mean((predictions - answers)^2))
+                                    percent_accuracy[[i]] <- sqrt(mean((predictions - answers)^2))
                                 }
                                 if (model_type %in% c("random_forest_classification")) {
-                                    accuracy_list[[i]] <- round(sum(predictions == answers) / length(predictions == answers)*100, 1)
+                                    percent_accuracy[[i]] <- round(sum(predictions == answers) / length(predictions == answers)*100, 1)
                                 }
                             }
                     }
 
                 ## Return a model trained on all the input data
-                    output$accuracy_list <- mean(unlist(accuracy_list))
+                    output$percent_accuracy <- mean(unlist(percent_accuracy))
                     output$fold_cross_validation <- fold_cross_validation
                     return(output)
             }

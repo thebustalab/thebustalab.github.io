@@ -2758,7 +2758,10 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the prediction (predictor variables).
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:
+
+- predictor_variables: the variables (sometimes called "features") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
+- outcome_variable: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
 
 Before we begin, we need to talk about handling missing data. If we have missing data in our data set, oen way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
 
@@ -2971,12 +2974,37 @@ ggplot() +
 
 ## random forest models {-}
 
-We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numberical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above. However, random forests have a few advantages:
+We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numerical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above. However, random forests have a few advantages:
 
 - Random forests are more robust to outliers than linear regression.
 - Random forests can handle both categorical and numerical data.
 
-Let's have a look!
+When we build a random forest model, it cannot be evaluated with an R squared value like a linear regression model. Instead, we often divide the model into two subsets:
+
+- The Training Set: This is the data on which the model is trained. It learns to associate the predictor variables with the outcome variable based on this dataset.
+- Test Set: This data is kept separate from the training process. It is used to evaluate the model's performance, simulating how the model would perform on unseen data.
+
+However, when we use a train/test split, three problems arise that we must be aware of:
+
+- Bias: A model with high bias oversimplifies the relationship between predictor variables and the outcome variable. It means the model is not capturing the essential patterns in the data, leading to systematic errors in predictions, regardless of how much you train it. One example could be that the model is built using only a subset of the available predictor variables and that it is missing out on important predictors that affect the outcome.
+- Variance: A model with high variance pays too much attention to the training data, including the noise or random fluctuations in the predictor variables. This overcomplication can cause the model to react too much to minor variations, leading to errors when predicting new data because it's too tailored to the specific details (including noise) of the training set.
+- Overfitting occurs when a model learns the training data too well, capturing the noise or random fluctuations as if they were significant patterns. This happens when the variance is too high, often because the model is considering too many variables at each stage of its operation, in other words, the models capability to model nuances might be too great for the amount of training data available. As a result, while it may perform exceptionally well on the training set (low bias), it performs poorly on the test set or any new data (high variance).
+
+Based on the above, we can see that a key to effective machine learning modeling, including Random Forests, is to balance bias and variance to minimize overall error. This involves tuning available model parameters to ensure the model is complex enough to capture the true relationships between predictor variables and the outcome variable without becoming so complex that it models the random noise in the training set.
+
+Alright, with the terms out of the way, we can focus on building random forest models using the `buildModel()` function (see below). We need to specify data, a model type, predictor and outcome variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `mtry` and `trees`. Here is more information on those parameters:
+
+n_vars_at_split (often called "mtry" in other implementations)
+- Definition: The mtry parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree.
+- Purpose: The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the best trade-off between bias and variance, leading to more generalized predictions.
+- Effect: A smaller value of mtry increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.
+
+n_trees (often referred to as "num.trees" or "n_estimators" in other implementations)
+- Definition: This parameter defines the number of trees that will be grown in the Random Forest. Essentially, it's the size of the forest.
+- Purpose: The idea is to build a large number of individual decision trees that operate as an ensemble. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions.
+- Effect: Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
+
+We often define both mtry and `buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees:
 
 ```{r}
 random_forest_model <- buildModel(
@@ -2984,9 +3012,41 @@ random_forest_model <- buildModel(
     model_type = "random_forest_regression",
     predictor_variables = colnames(metabolomics_data)[3:33],
     outcome_variable = "AMP",
-    optimization_parameters = list(mtry = seq(10,20,5), trees = seq(100,200,50))
+    optimization_parameters = list(n_vars_at_split = seq(10,20,5), n_trees = seq(100,200,50))
 )
+random_forest_model
+```
 
+The above code builds our random forest model. It's output provides both the model itself and key components indicating hte performance and configuration of the model. Here's a breakdown of each part of the output:
+
+`$metrics` provides detailed results of model performance across different combinations of the Random Forest parameters mtry (the number of variables randomly sampled as candidates at each split) and trees (the number of trees in the forest). For each combination, it shows:
+- mtry and trees: The specific values used in that model configuration.
+- .metric: The performance metric used, here it's accuracy, which measures how often the model correctly predicts the patient status.
+- .estimator: Indicates the type of averaging used for the metric, here it's binary for binary classification tasks.
+- mean: The average accuracy across the cross-validation folds.
+- fold_cross_validation: Indicates the number of folds used in cross-validation, here it's 3 for all models.
+- std_err: The standard error of the mean accuracy, providing an idea of the variability in model performance.
+- .config: A unique identifier for each model configuration tested.
+
+`$model` shows the configuration of the Random Forest model that was trained, including:
+- Preprocessor: Specifies any preprocessing steps applied to the data before modeling. Here, it indicates that no preprocessing steps (0 Recipe Steps) were applied.
+- Model: Describes the Random Forest model (rand_forest()) used, including its settings like the number of trees, sample size, number of variables, mtry, target node size, variable importance mode, split rule, and the out-of-bag (OOB) prediction error.
+
+`$rmse_or_percent_accuracy` shows the overall percent accuracy of the model, which is the best accuracy achieved on the test set across the tested configurations. For regression models, it shows RMSE while for classification models, it shows percent accuracy on the test set.
+
+`$fold_cross_validation` reiterates the number of folds used in cross-validation.
+
+We can thus inspect the performance of the model based on the specific parameters used during configuration:
+
+```{r}
+random_forest_model$metrics %>%
+    ggplot(aes(x = mtry, y = trees, fill = mean)) +
+    geom_tile()
+```
+
+We can easily use the model to make predictions by using the `predictWithModel()` function:
+
+```{r}
 ggplot() +
   geom_point(
     data = metabolomics_data,
@@ -3020,7 +3080,7 @@ rfc <- buildModel(
   outcome_variable = "patient_status",
   train_test_ratio = 0.8,
   fold_cross_validation = 3,
-  optimization_parameters = list(mtry = seq(30), trees = seq(4,5,1))
+  optimization_parameters = list(n_vars_at_split = seq(30), n_trees = seq(4,5,1))
 )
 
 predictions <- predictWithModel(
