@@ -57,6 +57,7 @@
 
                     # "imager",
                     "shiny",
+                    "png",
                     "DT",
                     "RColorBrewer",
                     "data.table",
@@ -11216,7 +11217,11 @@
                 input_variables = NULL,
                 output_variable = NULL,
                 fold_cross_validation = 10,
-                optimization_parameters = list(n_vars_tried_at_split = seq(10,20,5), n_trees = seq(100,200,50))
+                optimization_parameters = list(
+                    n_vars_tried_at_split = seq(10,20,5),
+                    n_trees = seq(100,200,50),
+                    min_leaf_size = 1
+                )
             ) {
 
                 ## Prepare the data
@@ -11285,7 +11290,7 @@
                                 ) %>%
                                 add_model(
                                     rand_forest() %>% # specify that the model is a random forest
-                                    set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
+                                    set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
                                     set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
                                     set_mode("regression") # choose either the continuous regression or binary classification mode
                                 ) -> workflow
@@ -11294,7 +11299,11 @@
                             tune_results <- tune_grid(
                                 workflow,
                                 resamples = vfold_cv(data, v = fold_cross_validation), #CV object
-                                grid = expand.grid(mtry = optimization_parameters$n_vars_tried_at_split, trees = optimization_parameters$n_trees), # grid of values to try
+                                grid = expand.grid(
+                                    mtry = optimization_parameters$n_vars_tried_at_split,
+                                    trees = optimization_parameters$n_trees,
+                                    min_n = optimization_parameters$min_leaf_size
+                                ), # grid of values to try
                                 metrics = metric_set(rmse) # metrics we care about
                             )
 
@@ -11319,7 +11328,7 @@
                                 ) %>%
                                 add_model(
                                     rand_forest() %>% # specify that the model is a random forest
-                                    set_args(mtry = tune(), trees = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
+                                    set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
                                     set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
                                     set_mode("classification") # choose either the continuous regression or binary classification mode
                                 ) -> workflow
@@ -11328,7 +11337,11 @@
                             tune_results <- tune_grid(
                                 workflow,
                                 resamples = vfold_cv(data, v = fold_cross_validation), #CV object
-                                grid = expand.grid(mtry = optimization_parameters$n_vars_tried_at_split, trees = optimization_parameters$n_trees), # grid of values to try
+                                grid = expand.grid(
+                                    mtry = optimization_parameters$n_vars_tried_at_split,
+                                    trees = optimization_parameters$n_trees,
+                                    min_n = optimization_parameters$min_leaf_size
+                                ), # grid of values to try
                                 metrics = metric_set(accuracy) # metrics we care about
                             )
 

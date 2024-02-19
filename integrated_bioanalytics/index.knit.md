@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-02-13"
+date: "2024-02-16"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3269,12 +3269,19 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;" />
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of models: inferential and predictive.
 
-- predictor_variables: the variables (sometimes called "features") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
-- outcome_variable: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
+- Inferential models aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
-Before we begin, we need to talk about handling missing data. If we have missing data in our data set, oen way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
+- Predictive models are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don't really care how the model works as long as it is accurate.
+
+In this course, we will build both types of models using a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:
+
+- input_variables: the input variables (sometimes called "features" or "predictors") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
+
+- output_variable: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
+
+For model building, we also need to talk about handling missing data. If we have missing data in our data set, we need to  one way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
 
 
 ```r
@@ -3285,9 +3292,11 @@ any(is.na(metabolomics_data))
 ## [1] FALSE
 ```
 
-## linear regression models {-}
+## inferential models {-}
 
-First, we will use least squares regression to make predictions based on some inputs. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset (this is the same as trying to predict the abundance of ADP from AMP):
+### single linear regression {-}
+
+We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use `buildModel`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:
 
 
 ```r
@@ -3299,52 +3308,20 @@ ggplot(metabolomics_data) +
 
 <img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
-It looks like there might be a relationship! Let's build a linear model for that relationship:
+It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
 
 
 ```r
-basic_regression_model <- buildModel(
+basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = "ADP",
-  outcome_variable = "AMP"
+  input_variables = "ADP",
+  output_variable = "AMP"
 )
-basic_regression_model
-## $model_type
-## [1] "linear_regression"
-## 
-## $model
-## 
-## Call:
-## lm(formula = formula, data = training_data, model = TRUE, x = TRUE, 
-##     y = TRUE, qr = TRUE)
-## 
-## Coefficients:
-## (Intercept)          ADP  
-##      4.5021       0.6763  
-## 
-## 
-## $metrics
-##               variable   value std_err        type  p_value
-## 1            r_squared  0.4774      NA   statistic       NA
-## 2    total_sum_squares 38.6346      NA   statistic       NA
-## 3 residual_sum_squares 20.1904      NA   statistic       NA
-## 4          (Intercept)  4.5021  0.9593 coefficient 9.46e-06
-## 5                  ADP  0.6763  0.0742 coefficient 0.00e+00
-##   p_value_adj
-## 1          NA
-## 2          NA
-## 3          NA
-## 4    9.46e-06
-## 5    0.00e+00
-## 
-## $accuracy_list
-## [1] 0.6418728
-## 
-## $fold_cross_validation
-## [1] 3
+names(basic_regression_model)
+## [1] "model_type" "model"      "metrics"
 ```
-The output of `buildModel` consists of two thigs: the model, and the metrics. Let's look at the model:
+The output of `buildModel` consists of three things: the model_type, the model itself, and the metric describing certain aspects of the model and/or its performance. Let's look at the model:
 
 
 ```r
@@ -3378,7 +3355,7 @@ basic_regression_model$metrics
 ## 5    0.00e+00
 ```
 
-It shows us the r-squared, the total and residual sum of squared, the intercept (b in y = m*x + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
+It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = m*x + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
 
 We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for ADP and AMP. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of ADP for each value of AMP in our data set. We can do that like this:
 
@@ -3394,7 +3371,7 @@ head(AMP_values_predicted_from_ADP_values)
 ## 13.18473 13.35509 13.48334 13.42981 12.57305 13.18377
 ```
 
-So, predictWithModel is using the model to predict AMP values from ADP. However, note that we have the measured AMP values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
+So, `predictWithModel` is using the model to predict AMP values from ADP. However, note that we have the measured AMP values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
 
 
 ```r
@@ -3539,23 +3516,25 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 
 <img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
+### multiple linear regression {-}
+
 Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
 
 
 ```r
 
-basic_regression_model <- buildModel(
+basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = "ADP",
-  outcome_variable = "AMP"
+  input_variables = "ADP",
+  output_variable = "AMP"
 )
 
-multiple_regression_model <- buildModel(
+multiple_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = colnames(metabolomics_data)[3:33],
-  outcome_variable = "AMP"
+  input_variables = colnames(metabolomics_data)[3:33],
+  output_variable = "AMP"
 )
 
 ggplot() +
@@ -3592,138 +3571,2062 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
-## random forest models {-}
+## predictive models {-}
 
-We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numerical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above. However, random forests have a few advantages:
+In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model's mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.
 
-- Random forests are more robust to outliers than linear regression.
-- Random forests can handle both categorical and numerical data.
+Interestingly, increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is 'overfitted' which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.
 
-When we build a random forest model, it cannot be evaluated with an R squared value like a linear regression model. Instead, we often divide the model into two subsets:
+To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.
 
-- The Training Set: This is the data on which the model is trained. It learns to associate the predictor variables with the outcome variable based on this dataset.
-- Test Set: This data is kept separate from the training process. It is used to evaluate the model's performance, simulating how the model would perform on unseen data.
+We can use the training/testing approach described above to build many different types of models. Here, we will look at random forests.
 
-However, when we use a train/test split, three problems arise that we must be aware of:
+### random forests {-}
 
-- Bias: A model with high bias oversimplifies the relationship between predictor variables and the outcome variable. It means the model is not capturing the essential patterns in the data, leading to systematic errors in predictions, regardless of how much you train it. One example could be that the model is built using only a subset of the available predictor variables and that it is missing out on important predictors that affect the outcome.
-- Variance: A model with high variance pays too much attention to the training data, including the noise or random fluctuations in the predictor variables. This overcomplication can cause the model to react too much to minor variations, leading to errors when predicting new data because it's too tailored to the specific details (including noise) of the training set.
-- Overfitting occurs when a model learns the training data too well, capturing the noise or random fluctuations as if they were significant patterns. This happens when the variance is too high, often because the model is considering too many variables at each stage of its operation, in other words, the models capability to model nuances might be too great for the amount of training data available. As a result, while it may perform exceptionally well on the training set (low bias), it performs poorly on the test set or any new data (high variance).
+Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a 'classification' task) and for predicting numerical variables (a 'regression' task). Each tree in the forest is constructed using a random subset of the training data and features, ensuring diversity in the decision-making process, and allowing for varying degrees of complexity. The forest's final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).
 
-Based on the above, we can see that a key to effective machine learning modeling, including Random Forests, is to balance bias and variance to minimize overall error. This involves tuning available model parameters to ensure the model is complex enough to capture the true relationships between predictor variables and the outcome variable without becoming so complex that it models the random noise in the training set.
+We can use the `buildModel()` function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `n_vars_tried_at_split` and `n_trees`. Here is more information on those parameters:
 
-Alright, with the terms out of the way, we can focus on building random forest models using the `buildModel()` function (see below). We need to specify data, a model type, predictor and outcome variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `mtry` and `trees`. Here is more information on those parameters:
+- n_vars_at_split (often called "mtry" in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of n_vars_at_split increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.
+
+- n_trees (often referred to as "num.trees" or "n_estimators" in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
+
+`buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees, then pick the combination with the highest predictive accuracy:
+
+
+```r
+random_forest_model <- buildModel2(
+    data = metabolomics_data,
+    model_type = "random_forest_regression",
+    input_variables = colnames(metabolomics_data)[3:33],
+    output_variable = "AMP",
+    optimization_parameters = list(n_vars_tried_at_split = seq(1,30,3), n_trees = seq(1,100,10))
+)
+
+names(random_forest_model)
+## [1] "metrics" "model"
+```
+
+The above code builds our random forest model. It's output provides both the model itself and key components indicating the performance and configuration of the model. Here's a breakdown of each part of the output:
+
+`$model_type` tells us what type of model this is.
+
+`$model` shows the configuration of the best random forest model that was created.
+
+`$metrics` provides detailed results of model performance across different combinations of the random forest parameters n_vars_tried_at_split (the number of variables randomly sampled as candidates at each split) and n_trees (the number of trees in the forest). For each combination, it shows:
+- n_vars_tried_at_split and n_trees: The specific values used in that model configuration.
+- .metric: The performance metric used, here it's accuracy, which measures how often the model correctly predicts the patient status.
+- .estimator: Indicates the type of averaging used for the metric, here it's binary for binary classification tasks.
+- mean: The average accuracy across the cross-validation folds.
+- fold_cross_validation: Indicates the number of folds used in cross-validation, here it's 3 for all models.
+- std_err: The standard error of the mean accuracy, providing an idea of the variability in model performance.
+- .config: A unique identifier for each model configuration tested.
+
+We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.
+
+
+```r
+random_forest_model$metrics %>%
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    scale_fill_viridis(direction = -1) +
+    geom_tile() +
+    theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
-n_vars_at_split (often called "mtry" in other implementations)
-- Definition: The mtry parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree.
-- Purpose: The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the best trade-off between bias and variance, leading to more generalized predictions.
-- Effect: A smaller value of mtry increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.
+We can easily use the model to make predictions by using the `predictWithModel()` function:
 
-n_trees (often referred to as "num.trees" or "n_estimators" in other implementations)
-- Definition: This parameter defines the number of trees that will be grown in the Random Forest. Essentially, it's the size of the forest.
-- Purpose: The idea is to build a large number of individual decision trees that operate as an ensemble. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions.
-- Effect: Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
 
-We often define both mtry and `buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees:
+```r
+ggplot() +
+  geom_point(
+    data = metabolomics_data,
+    aes(x = ADP, y = AMP), fill = "gold", shape = 21, color = "black"
+  ) +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = mean(metabolomics_data$AMP)
+  ), color = "grey") +
+  geom_line(aes(
+    x = metabolomics_data$ADP,
+    y = predictWithModel(
+      data = metabolomics_data,
+      model_type = "random_forest_regression",
+      model = random_forest_model$model
+    )),
+    color = "maroon", size = 1
+  ) +
+  theme_bw()
+## Don't know how to automatically pick scale for object of
+## type <impute>. Defaulting to continuous.
+```
 
+<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
 
+In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
 
+```r
+set.seed(123)
+unknown <- metabolomics_data[35:40,]
 
+rfc <- buildModel2(
+  data = metabolomics_data[c(1:34, 41:93),],
+  model_type = "random_forest_classification",
+  input_variables = colnames(metabolomics_data)[3:126],
+  output_variable = "patient_status",
+  optimization_parameters = list(n_vars_tried_at_split = seq(25,30,1), n_trees = seq(4,5,1))
+)
+rfc$metrics %>% arrange(desc(mean))
+## # A tibble: 12 × 8
+##    n_vars_tried_at_split n_trees .metric  .estimator  mean
+##                    <dbl>   <dbl> <chr>    <chr>      <dbl>
+##  1                    29       4 accuracy binary     0.907
+##  2                    26       5 accuracy binary     0.896
+##  3                    28       5 accuracy binary     0.885
+##  4                    25       5 accuracy binary     0.883
+##  5                    27       5 accuracy binary     0.882
+##  6                    25       4 accuracy binary     0.874
+##  7                    26       4 accuracy binary     0.872
+##  8                    30       5 accuracy binary     0.871
+##  9                    30       4 accuracy binary     0.862
+## 10                    27       4 accuracy binary     0.860
+## 11                    29       5 accuracy binary     0.849
+## 12                    28       4 accuracy binary     0.778
+## # ℹ 3 more variables: fold_cross_validation <int>,
+## #   std_err <dbl>, .config <chr>
+```
 
+Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:
 
 
+```r
+predictions <- predictWithModel(
+  data = unknown,
+  model_type = "random_forest_classification",
+  model = rfc$model
+)
 
+data.frame(
+  real_status = metabolomics_data[35:40,]$patient_status,
+  predicted_status = predictions
+)
+##                 real_status predicted_status
+## .pred_class1        healthy          healthy
+## .pred_class2        healthy          healthy
+## .pred_class3        healthy          healthy
+## .pred_class4 kidney_disease   kidney_disease
+## .pred_class5 kidney_disease   kidney_disease
+## .pred_class6 kidney_disease   kidney_disease
+```
 
+## exercises {-}
 
+To practice creating models, try the following:
 
+1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca_ord" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
 
+2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim.1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
 
+3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
 
+4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` data set and diagnose each patient in `metabolomics_unknown`.
 
 
 
 
+## further reading {-}
 
+https://github.com/easystats/performance
 
+Here is more information on common machine learning tasks:
+https://pythonprogramminglanguage.com/machine-learning-tasks/
 
+Some major tasks include:
+  Classification
+  Regression
+  Clustering
 
+Classification with random forests:
+1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
+3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
+<!-- end -->
 
+# midterm {-}
 
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg" width="100%" style="display: block; margin: auto;" />
 
+Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
 
+1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke (3 pts). Within that wood type's smoke, which compound class is the most abundant (3 pts) and what is the single most abundant compound (3 pts)? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis (3x 2 pts) to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot (3x 1 pt). Write a detailed figure caption for your figure (`labs(caption = "Figure 1...")`) (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
+2. Considering all the species together, regardless of wood type, what are the ten most abundant compounds in wood smoke? Communicate this via a plot that shows averages and standard deviations (9 pts). Run a statistical analysis to determine whether there are significant differences among the abundances of these compounds (7 pts). Show the output of the statistical analyses in your plot (2 pts). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
+3. Create a summarized wood smoke data set that contains the sum abundance of each compound class for each species. Conduct a PCA analysis of your summarized data set. Make a figure with three subpanels: a plot of where each species is located in a space defined by the first two principal components (a classical "pca" plot) (6 pts), a plot with ordination information on the compound class level (as opposed to on the single compound level) (6 pts), and a scree plot (6 pts). In your detailed figure caption, answer: How much of the overall variance in the data set is contained within the first two dimensions? (2 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
+4. Using your PCA analysis from question 3, select four compound classes, two that are negatively correlated with each other along dimension 1 and two that are positively correlated with each other along dimension 2. Create a plot that shows the abundances of these four compound classes in each wood species (16 pts). In your figure caption, explain: are these abundances consistent with your understanding of PCA and ordination? Why or why not? (4 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
+5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3 (5 pts), (ii) a kmeans-based clustering of your PCA analysis output from question 3 (5 pts), and (iii) a hierarchical clustering analysis of the raw data (5 pts). For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not? (5 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
+6. Suppose that you are work in a forensics lab. A suspect has been apprehended as part of a murder case. The suspect’s coat smells strongly of wood smoke, and it is known that a bonfire was burning at the scene of the crime. The fire chief reported that red oak was the type of wood the victim was burning at the scene of their murder, but the suspect claims that the smell in the suspect’s coat is from a different bonfire – one that was burning at a party the suspect claims they were attending at the time of the murder. The fire chief investigated the place where the party took place and found a large supply of paper birch firewood. You extracted a segment of the suspects coat and analyzed it with LC-MS and GC-MS to obtain ‘unknown_smoke.csv’. Use that data and your analysis skills to provide a recommendation to the prosecutor in this case.
 
+<!-- end -->
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
+# (PART) GC-MS DATA {-}
 
+<!-- start mass spectrometric analysis -->
 
+# loading analyzeGCMSdata {-}
 
+This page explains how to load a simple application for integrating and analyzing GC-MS data. With the app, you can analyze .CDF files. CDF files contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. To run the application, use the following guidelines:
 
+1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
 
+2. In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the `analyzeGCMSdata` function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work.
 
 
+```r
+source("https://thebustalab.github.io/phylochemistry/gcms.R")
+```
+ \
 
+3. In R or RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. Do not run the command on the CDF file itself, that will not work. For example, if my CDF file is called "sorghum_bicolor.CDF", and is inside the folder called `gc_data`, then I would run the following:
+ \
 
+If you are on a Mac, *use single forward slashes*. For example:
 
+```r
+analyzeGCMSdata("/Volumes/My_Drive/gc_data")
+```
+ \
 
+If you are on a PC, you may need to use double back slashes. For example:
 
+```r
+analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
+```
+ \
 
+The first time you open your CDF datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).
 
+# using analyzeGCMSdata {-}
 
+## basic usage of analyteGCMSdata {-}
 
+As a reference, below are the key commands used to operate the integration app. This is the information that is covered in the overview video.
 
+To control the chromatogram window:
 
+* shift + q = update
+* shift + a = add selected peak
+* shift + r = remove selected peak
+* shift + g = add global peak
+<!-- * shift + f = forward
+* shift + d = backward
+* shift + c = zoom in
+* shift + v = zoom out -->
+* shift + z = save table
 
+To control the mass spectrum window:
 
+* shift+1 = extract mass spectra from highlighted chromatogram region, plot average mass spectrum in panel 1.
+* shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.
+* shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.
+* shift+4 = search current spectrum in panel 1 against library of mass spectra (only available if you load via `phylochemistry`).
+* shift+5 = save the current spectrum in panel 1 as a csv file (only available if you load via `phylochemistry`). 
 
+## advanced usage of analyzeGCMSdata {-}
 
+You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. Here's an example:
 
 
+```r
+analyzeGCMSdata("/Volumes/My_Drive/gc_data", ions = c("0", "218"))
+```
+ \
 
+Will return an interface that shows chromatograms for the total ion count and for ion 218.
 
+At this point, note that you have a new set of files in your data-containing folder. There will be one `*.CDF.csv` file for each CDF file you have in the folder. This contains a matrix of all the mass measurements in your entire sample - the abundance of each m/z value during each scan. There is also a `chromatograms.csv` file. This is a list of all the chromatograms (total ion + whatever single ions were specified). These can be useful for creating plots of chromatograms via ggplot.
 
+<!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
 
+# CDF export {-}
 
+1. On the GC-MS computer, open Enhanced Data Analysis
+2. File > Export Data To .AIA Format, Create New Directory (“OK”) > Desktop (create a folder with a name you will remember)
+3. Select all the datafiles you wish to analyze and process them, saving the output into the folder you just created
+4. Copy the .D files for the samples you wish to analyze to the same folder
+5. Move this folder to your personal computer
+6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
 
+<!-- end -->
 
+<!-- # (PART) SEQUENCE DATA {-}
 
+# data acquisition {-}
 
+Updating MinKNOW on GridIon
 
+`sudo apt update`
+`sudo apt install ont-gridion-release`
+`sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub`
 
+# data transfer {-}
 
+Once you've completed a sequencing run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
 
+1. Identify which files are of interest/where they are in the system. Useful commands:
 
+Display all currently mounted filesystems (& their usage, storage space, mounting point):
 
+`df -h`
 
+Also:
 
+`lsblk -f`
 
+Display more data pertaining to the identification of disks. Can also change partitioning of hard disks:
 
+`sudo fdisk -l` 
 
+-Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
 
+2. Mounting
 
+-Use command:
+`sudo mount </dev/sd_> </file_path>`
+-Replace `</sd_>` with actual hard drive label and `/file_path` with the pathway for the location in which you want to mount the drive.
+-Make sure the location (`</file_path>`) is preexisting location. Use the `mkdir` command to make a new directory if necessary.
 
+3. Copy data
 
+-Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
 
+4. Additional Information
 
+bootable USB: https://rufus.ie/en/#
 
 
+# nanopore read assessment {-}
 
+With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
 
 
+```r
+qc_data <- fastxQC(
+    paths_to_fastxs = c(
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example2.fastq"
+    ),
+    type = "fasta",
+    mode = "slow",
+    max_n_seqs = 1000
+)
 
+head(qc_data)
 
+qc_data %>%
+  mutate(category = case_when(
+    length > mean(qc_data$length)*5 ~ "chromosome",
+    length <= mean(qc_data$length)*5 ~ "leftover_bit"
+  )) %>%
+  ggplot() +
+    geom_treemap(aes(area = length, fill = category), color = "black", size = 1) +
+    scale_fill_manual(values = c("gold", "maroon"))
+```
 
+-->
 
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
+# (PART) TRANSCRIPTOME ANALYSIS {-}
 
+<!-- start transcriptomic analyses -->
 
+# transcriptome assembly {-}
 
+For nonmodel species transcriptome analysis, `transXpress` is recommended. We often use a modified version of `transXpress` we call `transXpressLite`. It uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpressLite` for it to run properly.
+
+1. Download the transXpressLite code into the directory in which you wish to perform the assembly:
+
+`git clone https://github.com/thebustalab/transXpressLite.git`
+
+2. Rename the downloaded folder to make it unique. Perhaps:
+
+`mv transXpressLite transXpressLite-kfed`
+
+2. Move into that directory and set up and activate the main transXpress environment:
+
+`cd transXpressLite-kfed`
+`conda create --name transxpress`
+`conda activate transxpress`
+
+3. Create a tab-separated file called *samples.txt* with the following contents. Important! Remember that there must be an empty line on the end of the samples.tex file.
+`
+cond_A    cond_A_rep1    A_rep1_left.fq    A_rep1_right.fq
+cond_A    cond_A_rep2    A_rep2_left.fq    A_rep2_right.fq
+cond_B    cond_B_rep1    B_rep1_left.fq    B_rep1_right.fq
+cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
+`
+
+4. Start `transXpressLite`:
+
+`./transXpress.sh`
+
+5. Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
+
+* all the sample name folders (ex. "fed_epi_hi_rep1")
+* samples.txt
+* samples_trimmed.txt
+* busco_report.txt
+* /transdecoder/longest_orfs.pep -> is actually "transcriptome.orfs"
+
+<!-- 1. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
+`pip install "numpy<1.24.0"`
+ -->
+<!-- 2. You also need to add targetp to the PATH variable in the transexpress environment:
+`export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
+ -->
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+<!-- # (PART) PROTEOME ANALYSIS {-} -->
+
+<!-- start proteome analyses -->
+
+<!-- ## structure similarity
+
+`conda create --name foldseek`
+`conda activate foldseek`
+`conda install -c conda-forge -c bioconda foldseek`
+ -->
+
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+<!-- # (PART) GENOME ANALYSIS {-} -->
+
+<!-- start genomic analyses -->
+
+<!-- # setup {-}
+
+* Get docker.
+
+https://hub.docker.com/
+
+* Connecting to remote host:
+
+Make sure the remote host has openSSH installed:
+
+`sudo apt install openssh-server`
+
+On the client computer (usually your laptop or something), first create the key:
+
+`ssh-keygen -t rsa`
+
+Then copy that key to the host (usually the computer you want to connect remotely to):
+
+`ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address`
+
+Done! Log in with `ssh {username}@host.address`
+
+* Initializing a conda environment:
+
+`conda create --name <name> python=3.6`
+`conda activate <name>`
+`conda install -c bioconda flye`
+`conda install -c bioconda abyss`
+
+# genome assembly {-}
+
+To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.
+
+## assembly
+
+
+### equipment
+
+Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may differ. To run a genome assembly, start by determining what computing resources are available. Some helpful commands when investigating these resources on Linux machines:
+
+* Assessing RAM (It is recommended to assign about 75% of available RAM to the assembly process):
+
+`grep MeMTotal /proc/meminfo`
+
+* Assessing CPU resources (note that "threads per CPU" can denote the availability of hyperthreading):
+
+`lscpu`
+
+* Assessing disk/storage space (Make sure you are running your assembly on a disk with lots of open space. Ideally > 2TB):
+
+`df -h`
+
+### assembly software
+
+#### abyss
+
+`abyss-pe k=111 name=SS1 B=10G in='SS1_1.fa SS1_2.fa'`
+
+A rough indicator is, for 2x150bp reads and 40x coverage, the right k value is often around 70 to 90. For 2x250bp reads and 40x coverage, the right value might be around 110 to 140.
+
+A good value for B depends on a number of factors, but primarily on the genome being assembled. A general guideline is: P. glauca (~20Gbp): B=500G; H. sapiens (~3.1Gbp): B=50G; C. elegans (~101Mbp): B=2G. Using more is fine though, 
+
+#### canu
+
+`docker pull staphb/canu-racon`
+
+For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
+
+`cat *.fastq > all_reads.fastq`
+
+Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
+
+
+```r
+sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4
+```
+
+Notes on Canu options:
+
+Defaults:
+
+* minReadLength=1000
+* minOverlapLength=500bp
+* correctedErrorRate=0.114
+* stopOnLowCoverage <integer=10>
+
+Essentially only speed optimization:
+
+* For over 30X coverage:
+* Nanopore flip-flop R9.4 or R10.3: try: `corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105`
+* For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
+correctedErrorRate=0.12
+* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
+
+#### flye
+
+`docker pull staphb/flye`
+
+### kmer-based metrics
+
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data found in the .histogram files (i.e. in correction/0-mercounts/x.histogram, trimming/0-mercounts/x.histogram, unitigging/0-mercounts/x.histogram) and process them with `canuHistogramToKmerTable()`, as shown below. You can upload the output to : http://qb.cshl.edu/genomescope/genomescope2.0/. This will give you approximate genome size, ploidy, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
+
+```r
+canuHistogramToKmerTable(
+  file_in_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram",
+  file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
+)
+```
+
+Also check on this tutorial:
+
+[genomics tutorial](https://ucdavis-bioinformatics-training.github.io/2020-Genome_Assembly_Workshop/kmers/kmers)
+
+#### merqury
+
+`docker pull quay.io/chai/merqury`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
+
+References:
+https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
+Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
+
+## evaluating contigs
+
+Can these be merged into a single wrapper that can be run after each step in assembly/polishing/scaffolding etc?
+
+### BUSCO
+
+- Real BUSCO input will be /home/bust0037/data1/comparative_genomics/Kfedtschenkoi_382_v1.0.fa
+- Note BUSCO uses current working directory for input and output
+
+`docker pull ezlabgva/busco:v5.3.2_cv1`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
+`
+
+### quast
+
+Quast provides a score called ALE: alignment liklihood estimate.
+
+`docker pull longas/quast`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/:/tmp/work/quast_results longas/quast:latest quast.py -h`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/ben_test/_ben_genomes/:/tmp/work/quast_results longas/quast:latest quast.py --fragmented /tmp/work/quast_results/ben_pre_n_frust.contigs.fasta --nanopore /tmp/work/quast_results/all_pass_reads.fastq --space-efficient --memory-efficient --fast`
+
+## polishing contigs
+
+### medaka
+
+Pull the docker image:
+
+`docker pull ontresearch/medaka`
+
+Run medaka:
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/medaka/ ontresearch/medaka:latest medaka_consensus -i medaka/all_reads.fastq -d medaka/k_fed.contigs.fasta -b 50`
+
+Good documentation here: https://labs.epi2me.io/notebooks/Introduction_to_how_ONT's_medaka_works.html
+
+Medaka will:
+* Map all your raw reads. Look for feedback like: `[M::worker_pipeline::2924.325*0.25] mapped 75823 sequences`.
+* Do something else, updates in the form of: `21.7% Done (88.2/406.1 Mbases) in 6815.1s`.
+
+## methylation with remora
+
+can we call methylation status on our Kalanchoe genomes? -> yes, we can use Remora -> watch for new guppy release, MinKNOW integration -> currently in bonito
+
+```
+bonito basecaller dna_r10.4_e8.1_sup@v3.4 /data/reads --modified-bases 5mC --reference ref.mmi > basecalls_with_mods.bam
+bonito basecaller dna_r10.4_e8.1_sup@v3.4 --reference consensus.fasta --modified-bases 5mC
+```
+
+## scaffolding assembly
+
+### RagTag
+
+INSTALL PYTHON (or upgrade python) <- can this be done using docker?
+
+INSTALL BIOCONDA
+1. install miniconda:
+  curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  sh ...
+  
+## annotation
+
+### augustus
+
+see: https://hub.docker.com/r/pegi3s/autoaugustus/
+
+```
+docker pull pegi3s/autoaugustus
+```
+
+```
+sudo docker run --rm -v $(pwd):$(pwd) pegi3s/autoaugustus augustus --species=help
+sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species=tomato /augustus/consensus.fasta > consensus-preductions.gff --progress=TRUE
+```
+
+## final assessment
+
+https://www.molecularecologist.com/2017/03/29/whats-n50/
+
+### mosdepth
+
+`sudo docker pull quay.io/biocontainers/mosdepth:0.2.4--he527e40_0`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -h`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd gfanz/mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth --quantize 0:1:4:100:200: --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+2. set up channels
+
+  /home/bust0037/miniconda3/bin/conda config --add channels defaults
+  /home/bust0037/miniconda3/bin/conda config --add channels bioconda
+  /home/bust0037/miniconda3/bin/conda config --add channels conda-forge
+
+3. install packages
+
+  /home/bust0037/miniconda3/bin/conda install sibeliaz
+  /home/bust0037/miniconda3/bin/conda install -c bioconda ragtag
+
+4. run your stuff
+
+  /home/bust0037/miniconda3/bin/conda run sibeliaz -n k_fed.contigs.scaffolded.fasta KlaxifloraFTBG2000359A_699_v3.0.fa
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  ragtag.py
+
+
+  /home/bust0037/meryl-1.3/bin/meryl
+  /home/bust0037/merqury-1.3/merqury.sh
+
+sh $MERQURY/best_k.sh <genome_size>
+
+
+Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: -->
+
+
+```r
+# reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
+
+# # post <- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")
+# n_chroms <- 18
+
+# pb <- progress::progress_bar$new(total = n_chroms)
+
+# out <- list()
+
+# for (i in 1:n_chroms) {
+
+#   pb$tick()
+
+#   dat <- strsplit(substr(as.character(post[i]), 1, 50000000), "")[[1]]
+  
+#   b <- rle(dat)
+
+#   # Create a data frame
+#   dt <- data.frame(number = b$values, lengths = b$lengths, scaff = i)
+#   # Get the end
+#   dt$end <- cumsum(dt$lengths)
+#   # Get the start
+#   dt$start <- dt$end - dt$lengths + 1
+
+#   # Select columns
+#   dt <- dt[, c("number", "start", "end", "scaff")]
+#   # Sort rows
+#   dt <- dt[order(dt$number), ]
+
+#   dt %>%
+#     filter(number == "N") -> N_dat
+
+#   out[[i]] <- N_dat
+
+# }
+
+# out <- do.call(rbind, out)
+
+
+# chroms <- data.frame(
+#   lengths = post@ranges@width[1:n_chroms],
+#   scaff = seq(1,n_chroms,1)
+# )
+
+# ggplot() +
+#   statebins:::geom_rrect(data = chroms, aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
+#   geom_rect(data = out, aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
+#   facet_grid(scaff~.) +
+#   scale_fill_viridis(end = 0.8) +
+#   theme_classic()
+
+# ggplot() +
+#   geom_rect(data = filter(chroms, scaff == 1 | scaff == 2), aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
+#   geom_rect(data = filter(out, scaff == 1 | scaff == 2), aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
+#   facet_grid(scaff~.) +
+#   scale_y_continuous(limits = c(-2,2)) +
+#   scale_fill_viridis(end = 0.8) +
+#   theme_classic() +
+#   coord_polar()
+```
+<!-- # annotation {-} -->
+
+<!-- docker pull nanozoo/braker2 -->
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) EVOLUTIONARY ANALYSIS {-}
+
+<!-- start evolutionary analyses -->
+
+# similarity searching {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology.png" width="100%" style="display: block; margin: auto;" />
+
+## blast {-}
+
+### setup {-}
+
+On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
+
+Let's check out `polyBlast()` by looking at an example. For this example, we need to set up a few things:
+
+* "named_subjects_list": A named list of sequence collections (often transcriptomes) to search (one fasta for each collection, often one collection for each species or accession).
+* "query_in_path": One or more queries, all listed in a single fasta file.
+* "sequences_of_interest_directory_path": The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+* "blast_module_directory_path": The path to the folder of BLAST+ executable.
+* "blast_mode": The format is XYblastZ where X is subject type (the transcriptome or proteome, use "n" for nucleotide, "p" for amino acids). Y is whether the subjects should be translated ("t" for translate, "n" for no translation, if you choose "t" your subjects will not be searched for ORFs, every three base pairs are just translated verbatim). Z is the format of the query/queries ("n" for nucleotide, "p" for amino acids). Allowed formats: nnblastn, ntblastp, pnblastp.
+* "e_value_cutoff": Hits with a e-value below this cutoff will not be returned. Default = 1.
+* "queries_in_outout": TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.
+* "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
+
+Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
+
+
+```r
+the_transcriptomes <- c(
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_benthamiana.fa"
+)
+
+names(the_transcriptomes) <- c(
+  "Nicotiana_glauca",
+  "Nicotiana_tabacum",
+  "Nicotiana_benthamiana"
+)
+
+polyBlast(
+  named_subjects_list = the_transcriptomes,
+  query_in_path = "/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa",
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  blast_module_directory_path = "/path_to/the_blast_module/",
+  blast_mode = c("nnblastn", "ntblastp", "pnblastp", "dc-megablast"), 
+  e_value_cutoff = 1,
+  queries_in_output = TRUE,
+  monolist_out_path = "/path_to/a_csv_file_that_will_list_all_blast_hits.csv"
+)
+```
+
+### interpretation {-}
+
+bitscore v evalue - with very low evalue (< 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!
+
+The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
+
+The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
+
+* E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+* 10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+* 10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
+* 10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+* E-value > 1 Proteins are most likely not related
+* E-value > 10 Hits are most likely junk unless the query sequence is very short.
+
+reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
+
+reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
+
+E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
+
+* Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
+
+* Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
+
+<!-- * bit-scores Taylor to write something? -->
+
+## hmmer {-}
+
+HMM, which stands for Hidden Markov Model, is a statistical model often used in various applications involving sequences, including speech recognition, natural language processing, and bioinformatics. In the context of bioinformatics, HMMs are frequently applied for sequence similarity searching, notably in the analysis of protein or DNA sequences. When we talk about using HMMs for sequence similarity searching, we're often referring to identifying conserved patterns or domains within biological sequences. These conserved regions can be indicative of functional or structural properties of the molecule. One of the advantages of using HMMs over traditional sequence similarity searching tools like BLAST is that HMMs can be more sensitive in detecting distant homologues. They take into account the position-specific variability within a protein family, as opposed to just looking for stretches of similar sequence.
+
+Here's a general idea of how HMMs are used for sequence similarity searching:
+
+1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once you have an alignment, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
+
+2. Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.
+
+We can implement these two steps using the `buildDomainLibrary()` function and the `predictDomains()` function. See below:
+
+
+```r
+buildDomainLibrary(
+    alignment_in_paths = c(
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa",
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_2_amin_seqs_aligned.fa"
+    ),
+    domain_library_out_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+
+predictDomains(
+    fasta_in_path = "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_3_amin_seqs.fa",
+    domain_library_in_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+```
+
+## 3D similarity {-}
+
+`foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1`
+
+# alignments {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" width="100%" style="display: block; margin: auto;" />
+
+## alignSequences {-}
+
+There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_out_path.
+
+* "monolist": a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the "sequences_of_interest_directory_path".
+
+* "subset": The monolist .csv also needs to contain at least one "subset_*" column. The most simple implementation of this is a column called "subset_all" which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.
+
+* "alignment_out_path": a path to a directory that should contain the output alignment.
+
+* "sequences_of_interest_directory_path": a path to a directory that contains one fasta file for each of the accessions in the monolist.
+
+* "input_sequence_type": options are "nucl" or "amin" specifying what type of sequence is to be aligned.
+
+* "mode": options are "nucl_align", a basic nucleotide alignment, "amin_align", a basic amino acid alignment, "codon_align", a codon alignment, and "fragment_align", which will align all the sequences to a base fragment.
+
+* "base_fragment": a path to a fasta file containing the base fragment to which the subjects should be aligned.
+
+
+```r
+alignSequences(
+  monolist = readMonolist("/path_to/a_csv_file_that_will_list_all_blast_hits.csv"), 
+  subset = "subset_all", 
+  alignment_directory_path = "/path_to/a_folder_for_alignments/", 
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  input_sequence_type = "amin", 
+  mode = "amin_alignment",
+  base_fragment = NULL
+)
+```
+
+## analyzeAlignment {-}
+
+
+
+# phylogenies {-}
+
+## buildTree {-}
+
+This function is a swiss army knife for tree building. It takes as input alignments or existing phylogenies from which to derive a phylogeny of interest, it can use neighbor-joining or maximum liklihood methods (with model optimization), it can run bootstrap replicates, and it can calculate ancestral sequence states. To illustrate, let's look at some examples:
+
+### newick input {-}
+
+Let's use the Busta lab's plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.
+
+
+```r
+tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold = "https://thebustalab.github.io/data/plant_phylogeny.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_thaliana", "Amborella_trichopoda")
+)
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+tree
+## 
+## Phylogenetic tree with 5 tips and 4 internal nodes.
+## 
+## Tip labels:
+##   Amborella_trichopoda, Zea_mays, Sorghum_bicolor, Setaria_viridis, Arabidopsis_thaliana
+## Node labels:
+##   , , , 
+## 
+## Rooted; includes branch lengths.
+
+plot(tree)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+
+Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
+
+
+```r
+tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_neglecta", "Amborella_trichopoda")
+)
+## Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+tree
+## 
+## Phylogenetic tree with 5 tips and 4 internal nodes.
+## 
+## Tip labels:
+##   Amborella_trichopoda, Zea_mays, Sorghum_bicolor, Setaria_viridis, Arabidopsis_neglecta
+## Node labels:
+##   , , , 
+## 
+## Rooted; includes branch lengths.
+
+plot(tree)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+
+Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
+
+### alignment input {-}
+
+Arguments in this case are:
+
+* "scaffold_type": "amin_alignment" or "nucl_alignment" for amino acids or nucleotides.
+* "scaffold_in_path": path to the fasta file that contains the alignment from which you want to build a tree.
+* "ml": Logical, TRUE if you want to use maximum liklihood, FALSE if not, in which case neighbor joining will ne used.
+* "model_test": if you say TRUE to "ml", should buildTree test different maximum liklihood models and then use the "best" one? 
+* "bootstrap": TRUE or FALSE, whether you want bootstrap values on the nodes.
+* "ancestral_states": TRUE or FALSE, should buildTree() compute the ancestral sequence at each node?
+* "root": NULL, or the name of an accession that should form the root of the tree.
+
+
+```r
+buildTree(
+  scaffold_type = "amin_alignment",
+  scaffold_in_path = "/path_to/a_folder_for_alignments/all_amin_seqs.fa",
+  ml = FALSE, 
+  model_test = FALSE,
+  bootstrap = FALSE,
+  ancestral_states = FALSE,
+  root = NULL
+)
+```
+
+## plotting trees {-}
+
+There are several approaches to plotting trees. A simple one is using the base `plot` function:
+
+
+```r
+test_tree_small <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
+  members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
+)
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+plot(test_tree_small)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+
+Though this can get messy when there are lots of tip labels:
+
+
+```r
+set.seed(122)
+test_tree_big <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
+  members = plant_species$Genus_species[abs(floor(rnorm(60)*100000))]
+)
+
+plot(test_tree_big)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+
+One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
+
+
+```r
+ggtree(test_tree_big)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+
+Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
+
+
+```r
+test_tree_big_fortified <- fortify(test_tree_big)
+test_tree_big_fortified
+## # A tibble: 101 × 9
+##    parent  node branch.length label isTip     x     y branch
+##     <int> <int>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
+##  1     54     1          83.0 Wolf… TRUE   188.     1   147.
+##  2     54     2          83.0 Spat… TRUE   188.     2   147.
+##  3     55     3         138.  Dios… TRUE   188.     3   120.
+##  4     58     4          42.7 Bulb… TRUE   188.     5   167.
+##  5     58     5          42.7 Ober… TRUE   188.     6   167.
+##  6     59     6          32.0 Poma… TRUE   188.     7   172.
+##  7     59     7          32.0 Teli… TRUE   188.     8   172.
+##  8     56     8         135.  Cala… TRUE   188.     4   121.
+##  9     61     9         147.  Pepe… TRUE   188.     9   115.
+## 10     62    10         121.  Endl… TRUE   188.    10   128.
+## # ℹ 91 more rows
+## # ℹ 1 more variable: angle <dbl>
+```
+`ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:
+
+
+```r
+
+## Note that "plant_species" comes with the phylochemistry source.
+
+test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, plant_species, by = c("label" = "Genus_species"))
+
+test_tree_big_fortified_w_data
+## # A tibble: 101 × 14
+##    parent  node branch.length label isTip     x     y branch
+##     <int> <int>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
+##  1     54     1          83.0 Wolf… TRUE   188.     1   147.
+##  2     54     2          83.0 Spat… TRUE   188.     2   147.
+##  3     55     3         138.  Dios… TRUE   188.     3   120.
+##  4     58     4          42.7 Bulb… TRUE   188.     5   167.
+##  5     58     5          42.7 Ober… TRUE   188.     6   167.
+##  6     59     6          32.0 Poma… TRUE   188.     7   172.
+##  7     59     7          32.0 Teli… TRUE   188.     8   172.
+##  8     56     8         135.  Cala… TRUE   188.     4   121.
+##  9     61     9         147.  Pepe… TRUE   188.     9   115.
+## 10     62    10         121.  Endl… TRUE   188.    10   128.
+## # ℹ 91 more rows
+## # ℹ 6 more variables: angle <dbl>, Phylum <chr>,
+## #   Order <chr>, Family <chr>, Genus <chr>, species <chr>
+
+ggtree(test_tree_big_fortified_w_data) + 
+  geom_point(
+    data = filter(test_tree_big_fortified_w_data, isTip == TRUE),
+    aes(x = x, y = y, fill = Order), size = 3, shape = 21, color = "black") +
+  geom_text(
+    data = filter(test_tree_big_fortified_w_data, isTip == TRUE),
+    aes(x = x, y = y, label = y), size = 2, color = "white") +
+  geom_tiplab(aes(label = label), offset = 10, size = 2) +
+  theme_void() +
+  scale_fill_manual(values = discrete_palette) +
+  coord_cartesian(xlim = c(0,280)) +
+  theme(
+    legend.position = c(0.15, 0.75)
+  )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+
+## collapseTree {-}
+
+Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the `collapseTree` function. It takes two arguments: an un-fortified tree (`tree`), and a two-column data frame (`associations`). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let's look at the tree from the previous section at the family level:
+
+
+```r
+collapseTree(
+  tree = test_tree_big,
+  associations = data.frame(
+    tip.label = test_tree_big$tip.label,
+    family = plant_species$Family[match(test_tree_big$tip.label, plant_species$Genus_species)]
+  )
+) -> test_tree_big_families
+
+ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+
+## trees and traits {-}
+
+To plot traits alongside a tree, we can use ggtree in combination with ggplot. Here is an example. First, we make the tree:
+
+
+```r
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
+## Scaffold newick tip Iris_lazica substituted with Iris_sp
+## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
+## Scaffold newick tip Allium_textile substituted with Allium_sp
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
+## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
+## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
+## Scaffold newick tip Agave_striata substituted with Agave_cerulata
+## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
+## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
+## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
+## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
+## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
+## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
+## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
+## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
+## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
+## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
+## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
+## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
+## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
+## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
+## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
+## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
+## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
+## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
+## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
+## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
+## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
+## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
+## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
+## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
+## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
+## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
+## Scaffold newick tip Rubus_repens substituted with Rubus_sp
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+```
+
+Next we join the tree with the data:
+
+```r
+data <- left_join(fortify(chemical_bloom_tree), chemical_blooms)
+## Joining with `by = join_by(label)`
+head(data)
+## # A tibble: 6 × 18
+##   parent  node branch.length label  isTip     x     y branch
+##    <int> <int>         <dbl> <chr>  <lgl> <dbl> <dbl>  <dbl>
+## 1     80     1         290.  Ginkg… TRUE   352.     1   207.
+## 2     81     2         267.  Picea… TRUE   352.     2   219.
+## 3     81     3         267.  Cupre… TRUE   352.     3   219.
+## 4     84     4         135.  Eryth… TRUE   352.     5   285.
+## 5     86     5          16.2 Iris_… TRUE   352.     6   344.
+## 6     86     6          16.2 Iris_… TRUE   352.     7   344.
+## # ℹ 10 more variables: angle <dbl>, Alkanes <dbl>,
+## #   Sec_Alcohols <dbl>, Others <dbl>, Fatty_acids <dbl>,
+## #   Alcohols <dbl>, Triterpenoids <dbl>, Ketones <dbl>,
+## #   Other_compounds <dbl>, Aldehydes <dbl>
+```
+
+Now we can plot the tree:
+
+```r
+tree_plot <- ggtree(data) +
+  geom_tiplab(
+    align = TRUE, hjust = 1, offset = 350,
+    geom = "label", label.size = 0, size = 3
+  ) +
+  scale_x_continuous(limits = c(0,750))
+```
+
+IMPORTANT! When we plot the traits, we need to reorder whatever is on the shared axis (in this case, the y axis) so that it matches the order of the tree. In this case, we need to reorder the species names so that they match the order of the tree. We can do this by using the `reorder` function, which takes two arguments: the thing to be reordered, and the thing to be reordered by. In this case, we want to reorder the species names by their y coordinate on the tree. We can do this by using the `y` column of the data frame that we created when we fortified the tree. We can then plot the traits:
+
+
+```r
+trait_plot <- ggplot(
+    data = pivot_longer(
+      filter(data, isTip == TRUE),
+      cols = 10:18, names_to = "compound", values_to = "abundance"
+    ),
+    aes(x = compound, y = reorder(label, y), size = abundance)
+  ) +
+  geom_point() +
+  scale_y_discrete(name = "") +
+  theme(
+    plot.margin = unit(c(1,1,1,1), "cm")
+  )
+```
+
+Finally, we can plot the two plots together using `plot_grid`. It is important to manually inspect the tree tips and the y axis text to make sure that everything lines up. We don't want to be plotting the abundance of one species on the y axis of another species. In this case, everything looks good:
+
+
+```r
+plot_grid(
+  tree_plot,
+  trait_plot,
+  nrow = 1, align = "h", axis = "tb"
+)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
+
+
+```r
+tree_plot <- ggtree(data) +
+  geom_tiplab(
+    align = TRUE, hjust = 1, offset = 350,
+    geom = "label", label.size = 0, size = 3
+  ) +
+  scale_x_continuous(limits = c(0,750))
+
+trait_plot <- ggplot(
+    data = pivot_longer(
+      filter(data, isTip == TRUE),
+      cols = 10:18, names_to = "compound", values_to = "abundance"
+    ),
+    aes(x = compound, y = reorder(label, y), size = abundance)
+  ) +
+  geom_point() +
+  scale_y_discrete(name = "") +
+  theme(
+    axis.text.y = element_blank(),
+    plot.margin = unit(c(1,1,1,-1.5), "cm")
+  )
+
+plot_grid(
+  tree_plot,
+  trait_plot,
+  nrow = 1, align = "h", axis = "tb"
+)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+
+# phylogenetic analyses {-}
+
+We use a wrapper function to run phylogenetic comparative analyses. It 
+
+
+```r
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
+## Scaffold newick tip Iris_lazica substituted with Iris_sp
+## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
+## Scaffold newick tip Allium_textile substituted with Allium_sp
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
+## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
+## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
+## Scaffold newick tip Agave_striata substituted with Agave_cerulata
+## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
+## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
+## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
+## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
+## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
+## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
+## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
+## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
+## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
+## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
+## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
+## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
+## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
+## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
+## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
+## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
+## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
+## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
+## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
+## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
+## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
+## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
+## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
+## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
+## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
+## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
+## Scaffold newick tip Rubus_repens substituted with Rubus_sp
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+
+runPhylogeneticAnalyses(
+    traits = pivot_longer(chemical_blooms[,1:4], cols = c(3:4), names_to = "trait", values_to = "value"),
+    column_w_names_of_tiplabels = "label",
+    column_w_names_of_traits = "trait",
+    column_w_values_for_traits = "value",
+    tree = chemical_bloom_tree
+)
+## Joining with `by = join_by(trait)`
+## # A tibble: 310 × 17
+##    parent  node branch.length label isTip     x     y branch
+##     <int> <dbl>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
+##  1     80     1         290.  Gink… TRUE   352.     1   207.
+##  2     80     1         290.  Gink… TRUE   352.     1   207.
+##  3     81     2         267.  Pice… TRUE   352.     2   219.
+##  4     81     2         267.  Pice… TRUE   352.     2   219.
+##  5     81     3         267.  Cupr… TRUE   352.     3   219.
+##  6     81     3         267.  Cupr… TRUE   352.     3   219.
+##  7     84     4         135.  Eryt… TRUE   352.     5   285.
+##  8     84     4         135.  Eryt… TRUE   352.     5   285.
+##  9     86     5          16.2 Iris… TRUE   352.     6   344.
+## 10     86     5          16.2 Iris… TRUE   352.     6   344.
+## # ℹ 300 more rows
+## # ℹ 9 more variables: angle <dbl>, trait <chr>,
+## #   value <dbl>, trait_type <chr>,
+## #   phylogenetic_signal_k_value <dbl>,
+## #   phylogenetic_signal_k_p_value <dbl>,
+## #   phylogenetic_signal_lambda_value <dbl>,
+## #   phylogenetic_signal_lambda_p_value <dbl>, pic <dbl>
+```
+
+
+For all the below, there are some structural requirements: (i) the tree needs to be a phylo object (ii) the traits need to be a data.frame in which each row is a species and each column is a variable, and (iii) the first column in the data.frame needs to be the names of the species and they must exactly match the tip labels of the tree (though they don't have to be in the same order), for example:
+
+
+```r
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
+## Scaffold newick tip Iris_lazica substituted with Iris_sp
+## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
+## Scaffold newick tip Allium_textile substituted with Allium_sp
+## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
+## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
+## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
+## Scaffold newick tip Agave_striata substituted with Agave_cerulata
+## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
+## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
+## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
+## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
+## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
+## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
+## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
+## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
+## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
+## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
+## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
+## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
+## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
+## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
+## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
+## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
+## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
+## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
+## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
+## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
+## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
+## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
+## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
+## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
+## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
+## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
+## Scaffold newick tip Rubus_repens substituted with Rubus_sp
+## Pro tip: most tree read/write functions reset node numbers.
+## Fortify your tree and save it as a csv file to preserve node numbering.
+## Do not save your tree as a newick or nexus file.
+```
+
+## phylogeneticSignal {-}
+
+Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species' evolutionary history. `phylochemistry` provides the `phylogeneticSignal` function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:
+
+
+```r
+phylogeneticSignal(
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
+  tree = chemical_bloom_tree
+)
+##             trait trait_type n_species number_of_levels
+## 1         Alkanes continuous        78               NA
+## 2    Sec_Alcohols continuous        78               NA
+## 3          Others continuous        78               NA
+## 4     Fatty_acids continuous        78               NA
+## 5        Alcohols continuous        78               NA
+## 6   Triterpenoids continuous        78               NA
+## 7         Ketones continuous        78               NA
+## 8 Other_compounds continuous        78               NA
+## 9       Aldehydes continuous        78               NA
+##   evolutionary_transitions_observed
+## 1                                NA
+## 2                                NA
+## 3                                NA
+## 4                                NA
+## 5                                NA
+## 6                                NA
+## 7                                NA
+## 8                                NA
+## 9                                NA
+##   median_evolutionary_transitions_in_randomization
+## 1                                               NA
+## 2                                               NA
+## 3                                               NA
+## 4                                               NA
+## 5                                               NA
+## 6                                               NA
+## 7                                               NA
+## 8                                               NA
+## 9                                               NA
+##   minimum_evolutionary_transitions_in_randomization
+## 1                                                NA
+## 2                                                NA
+## 3                                                NA
+## 4                                                NA
+## 5                                                NA
+## 6                                                NA
+## 7                                                NA
+## 8                                                NA
+## 9                                                NA
+##   evolutionary_transitions_in_randomization
+## 1                                        NA
+## 2                                        NA
+## 3                                        NA
+## 4                                        NA
+## 5                                        NA
+## 6                                        NA
+## 7                                        NA
+## 8                                        NA
+## 9                                        NA
+##   phylogenetic_signal_k_value phylogenetic_signal_k_p_value
+## 1                 0.066016688                         0.167
+## 2                 2.045611108                         0.001
+## 3                 0.029719595                         0.711
+## 4                 0.069056092                         0.292
+## 5                 0.053761730                         0.354
+## 6                 0.566806846                         0.001
+## 7                 0.239488396                         0.030
+## 8                 0.018420367                         0.868
+## 9                 0.008613879                         0.928
+##   phylogenetic_signal_lambda_value
+## 1                           0.0001
+## 2                           0.9999
+## 3                           0.0001
+## 4                           0.0001
+## 5                           0.0001
+## 6                           0.9999
+## 7                           0.7874
+## 8                           0.0001
+## 9                           0.0001
+##   phylogenetic_signal_lambda_p_value
+## 1                              1.000
+## 2                              0.000
+## 3                              1.000
+## 4                              1.000
+## 5                              1.000
+## 6                              0.000
+## 7                              0.045
+## 8                              1.000
+## 9                              1.000
+```
+
+## independentContrasts {-}
+
+Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to "independent contrasts" to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. `phylochemistry` provides the `independentContrasts` function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts.
+
+
+```r
+contrasts <- independentContrasts(
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
+  tree = chemical_bloom_tree
+)
+
+# buildLinearModel(
+#   data = contrasts,
+#   formula = "Fatty_acids = Alkanes + 0"
+# ) -> model
+# 
+# ggplot(model$data) +
+#   geom_point(aes(x = input_x, y = input_y)) +
+#   geom_line(aes(x = model_x, model_y))
+```
+
+## ancestralTraits {-}
+
+Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.
+
+
+```r
+anc_traits_tree <- ancestralTraits(
+  traits = pivot_longer(chemical_blooms, cols = -1),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "name",
+  column_w_values_for_traits = "value",
+  tree = chemical_bloom_tree
+)
+head(anc_traits_tree)
+## # A tibble: 6 × 11
+##   parent  node branch.length label  isTip     x     y branch
+##    <int> <dbl>         <dbl> <chr>  <lgl> <dbl> <dbl>  <dbl>
+## 1     80     1          290. Ginkg… TRUE   352.     1   207.
+## 2     80     1          290. Ginkg… TRUE   352.     1   207.
+## 3     80     1          290. Ginkg… TRUE   352.     1   207.
+## 4     80     1          290. Ginkg… TRUE   352.     1   207.
+## 5     80     1          290. Ginkg… TRUE   352.     1   207.
+## 6     80     1          290. Ginkg… TRUE   352.     1   207.
+## # ℹ 3 more variables: angle <dbl>, trait <chr>, value <dbl>
+```
+
+In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node. `geom_ancestral_pie` relies on having columns in its input called `trait` and `value`, such as those output by   `ancestralTraits`. Note that if you are passing an object to ggtree() that has duplicate node names, you will need to use the `distinct` function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.
+
+
+```r
+ggtree(
+  distinct(anc_traits_tree, node, .keep_all = TRUE)
+) +
+  geom_ancestral_pie(
+    data = filter(anc_traits_tree, isTip == FALSE),
+    pie_size = 0.1, pie_alpha = 1
+  ) +
+  geom_tiplab(offset = 20, align = TRUE) +
+  scale_x_continuous(limits = c(0,650)) +
+  theme_void()
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+```
+
+<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+
+# comparative genomics {-}
+
+GENESPACE: syntenic pan-genome annotations for eukaryotes
+
+
+## loading GFF files
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) LANGUAGE MODELS {-}
+
+<!-- start language models -->
+
+# completions {-}
+
+You can run completions using:
+
+
+```r
+completionGPT(
+  system_prompt = "",
+  query = "",
+  model = "",
+  temperature = 0,
+  openai_api_key = ""
+)
+```
+
+The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`.
+
+The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.`
+
+Available options for `model` include "gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.
+
+Temperature goes from 0 to 2 and adds randomness to the answer. 
+
+You have to provide your OpenAI API key.
+
+# prompting strategies {-}
+
+
+This content provides a comprehensive guide on how to effectively use AI, particularly language models like ChatGPT, through structured prompting. Key aspects include:
+
+Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona.
+
+Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request.
+
+Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings.
+
+Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation.
+
+Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses.
+
+Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning.
+
+Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities.
+
+Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.
+
+Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.
+
+Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
+
+## structured prompting
+
+## few shot learning
+
+## prompt engineering
+
+## chain of thought
+
+## gpt chains
+
+## fine tuning
+
+## structured response
+
+## retrieval-augemented generation
+
+
+
+# analyzeLiterature {-}
+
+If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
+
+- Simple question: What are wax blooms?
+
+- Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
+
+- High-Complexity question: Can you describe what is known about the transcriptional regulation of lipid transfer proteins in plants?
+
+- Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
+
+ "In earlier studies, different other compounds including β-amyrin were overproduced through using strong constitutive promoters [12], enhancers [13] and transcription factors [14]. The β-amyrin is the triterpenoids belongs to oleanane group [15], which harbors anti-hyperglycemic, anti-inflammatory, hypolipidemic effects along with several other pharmacological activities [16,17]. The β-amyrin synthase (βAS) is responsible to synthesize the β-amyrin from 2,3-oxidosqualene[18]. This 2,3-oxidosqualene is synthesized from squalene through squalene epoxidase (SQE), encoded by the ERG1 gene in S. cerevisiae [19]. Squalene is synthesized from farnesyl-pyrophosphate through the
+action of squalene synthase (SQS) (ERG9 gene); and this farnesyl-pyrophosphate (FPP) is synthesized by farnesyl diphosphate synthase (FPPS) (ERG20 gene), from isopentenyl pyrophosphate (IPP), a precursor supplied by mevalonate (MVA) pathway (Fig. 1). The 3-Hydroxy-3-Methyl glutaryl-CoA reductase (HMG1) [20,21] and squalene
+monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway in yeast. For the biosynthesis of triterpenoids, SQS and SQE are important enzymes [23] and were previously overexpressed for
+the overproduction of triterpenoids [14,24]."
+
+- Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms? 
+
+<!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+# (PART) SCIENTIFIC WRITING {-}
+
+<!-- start WRITING -->
+
+# overview {-}
+
+For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results:
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/project_overview.png" width="100%" style="display: block; margin: auto;" />
+
+1. **Find a data set: Large!** >10ish variables, >5ish categories
++ Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
++ Relevant to your research or interests (ideally).
++ Requires approval from Dr. Busta.
+
+
+2. **Ask at least three scientific questions.**
++ These should drive your data analyses.
++ Requires approval from Dr. Busta.
+
+3. **Analyze your data using what you learned in class.**
++ Refer to our book.
++ Ask Dr. Busta for assistance.
+
+4. **Create a written overview of your analysis**. A mini-manuscript in R Markdown:
++ *Content* similar to the articles we looked at in class, though shorter.
++ *Layout* similar to this example ([pdf](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.pdf), [rmd](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.Rmd)).
+
+## scope {-}
+
+When conducting a project of this type, it is very common for there to be mismatches in the scope of how the project was conducted and how the written report is presented (see image below). We often spend LOTS of time exploring our data and running into dead ends, conclusions that are mundane, or questions we can't answer. When we write a report on the project, we often focus the report of a specific discovery we made during our vast avenues of exploration, rather than boring the reader with all the mundane details.
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/scope.jpeg" width="100%" style="display: block; margin: auto;" />
+
+## order and content {-}
+
+The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript: the orders of presentation and preparation do not have to be the same (see the images below)! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/writing_order2.png" width="100%" style="display: block; margin: auto;" />
+
+Here is a guide for documenting analysis in a format that is polished and comprehensible. Note that each section is written for a specific and slightly unique audience. Utilizing R Markdown, the document created will convey findings and narrate the research process. In crafting your R Markdown document, ensure that code remains concealed in the final presentation by including echo = FALSE within chunk headers. This action hides the R code blocks in the output, yet permits their execution for generating figures and results.
+
+TITLE: Craft a title that’s both clear and descriptive. It should be accessible to specialists in the field as well as the wider scientific audience, avoiding overly technical language that might limit its broader appeal.
+
+ABSTRACT: Summarize the study in the abstract, providing detail that will be informative to experts and also comprehensible to those outside the field. It should briefly outline the study’s aims, methods, key results, and conclusions, offering a snapshot of the entire project.
+
+INTRODUCTION: In the introduction, present the context and significance of the research in a way that's understandable to researchers and those not as versed in the subject. Clearly enumerate the multiple research questions that the you aim to answer, highlighting the research's relevance and framing the inquiry.
+
+METHODS: Describe where the dataset was sourced, any data processing steps taken, and provide a detailed description of the analysis procedures utilized in RStudio. This section should be detailed enough to allow for replication and validation, yet clearly written to be accessible to non-experts. The explanation of the methods should help readers understand how the research questions were addressed.
+
+RESULTS AND DISCUSSION WITH FIGURES AND CAPTIONS: Integrate your findings with clear, illustrative figures and captions within this section, ensuring they can be understood independently of the text for visual learners. The written portion should concisely interpret the results in light of the research questions, discussing the significance of the findings in a way that appeals to both those interested in the analytical nuances and those seeking to understand the overall implications.
+
+CONCLUSION: Summarize the primary insights and their relevance, keeping this section succinct and to the point. It should crystallize the main findings and their contribution to the field, suited for readers who seek a quick synopsis without delving into the full text.
+
+REFERENCES: Include at least five references to substantiate your research, ensuring they are pertinent and formatted to facilitate easy follow-up for interested readers. The references should be organized to serve both as a trail for fellow researchers and a resource for those who are less experienced in the academic discourse.
+
+## scientific questions {-}
+
+Scientific questions are pivotal in plant chemistry research, especially when examining the quantification of compounds in various plants, tissues, or environments. They orient the scope of inquiry and dictate the choice of analytical methods to draw pertinent conclusions from data.
+
+DESCRIPTIVE questions might catalog the variety or concentration of phytochemicals present in a given species, often employing summary statistics to encapsulate the data:
+
+- What is the average concentration of alkaloids found in the leaves of nightshade plants in temperate zones?
+
+- How do the levels of flavonoids vary among different tissues of the grapevine?
+
+- What is the frequency distribution of terpene profiles in pine populations across different altitudes?
+
+CORRELATIVE questions investigate the relationships between environmental factors and chemical expression in plants, typically utilizing regression modeling:
+
+- Does the level of UV radiation correlate with the production of protective anthocyanins in vineyard grape varieties?
+
+- How is the accumulation of heavy metals in fern tissues related to soil pollution levels?
+
+COMPARATIVE questions explore variations or consistencies across groups or conditions, often answered through statistical comparisons or pattern recognition methods like clustering:
+
+- Which are more similar in their secondary metabolite profiles, medicinal herbs grown in greenhouse conditions or in the wild?
+
+- What distinguishes the phenolic compound content in shade-grown coffee plants versus those grown in direct sunlight?
+
+- Is there a significant difference in essential oil compositions between lavender plants cultivated in different soil types?
+
+<!-- Unclear: How should social networking sites address the harm they cause?
+Clear: What action should social networking sites like MySpace and Facebook take to protect users’ personal information and privacy?
+
+The unclear version of this question doesn’t specify which social networking sites or suggest what kind of harm the sites might be causing. It also assumes that this “harm” is proven and/or accepted. The clearer version specifies sites (MySpace and Facebook), the type of potential harm (privacy issues), and who may be experiencing that harm (users). A strong research question should never leave room for ambiguity or interpretation.
+
+Unfocused: What is the effect on the environment from global warming?
+Focused: What is the most significant effect of glacial melting on the lives of penguins in Antarctica?
+
+The unfocused research question is so broad that it couldn’t be adequately answered in a book-length piece, let alone a standard college-level paper. The focused version narrows down to a specific effect of global warming (glacial melting), a specific place (Antarctica), and a specific animal that is affected (penguins). It also requires the writer to take a stance on which effect has the greatest impact on the affected animal. When in doubt, make a research question as narrow and focused as possible.
+
+
+Too simple: How are doctors addressing diabetes in the U.S.?
+Appropriately Complex:  What main environmental, behavioral, and genetic factors predict whether Americans will develop diabetes, and how can these commonalities be used to aid the medical community in prevention of the disease? -->
+
+
+# figures & captions {-}
+
+One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures:
+
+General Appearance:
+
+Create plots that are clean, professional, and easy to view from a distance. Ensure axes tick labels are clear, non-overlapping, and utilize the available space efficiently for enhanced readability and precision. Use an appealing (and color blind-friendly) color palette to differentiate data points or categories. Tailor axes labels to be descriptive, and select an appropriate theme that complements the data and maintains professionalism.
+
+
+Representing Data:
+
+Appropriate Geoms and Annotations: Choose geoms that best represent the data and help the viewer evaluate the hypothesis or make the desired comparison. Include raw data points where possible for detailed data distribution understanding. Consider apply statistical transformations like smoothing lines or histograms where appropriate to provide deeper insights into the data. Consider using facets for visualizing multiple categories or groups, allowing for easier comparison while maintaining a consistent scale and layout. Adhere to specific standards or conventions relevant to your field, including the representation of data, error bars, or statistical significance markers.
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
+
+Here are some tips for figures, beyond the creation of individual plots:
+
+## figures {-}
+
+### insets {-}
+
+#### zoomed insets
+
+Zoom in on certain plot regions
+
+
+```r
+p <- ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point() 
+
+data.tb <- 
+  tibble(x = 7, y = 44, 
+         plot = list(p + 
+                       coord_cartesian(xlim = c(4.9, 6.2), 
+                                       ylim = c(13, 21)) +
+                       labs(x = NULL, y = NULL) +
+                       theme_bw(8) +
+                       scale_colour_discrete(guide = "none")))
+## Coordinate system already present. Adding new coordinate
+## system, which will replace the existing one.
+
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_plot(data = data.tb, aes(x, y, label = plot)) +
+  annotate(geom = "rect", 
+           xmin = 4.9, xmax = 6.2, ymin = 13, ymax = 21,
+           linetype = "dotted", fill = NA, colour = "black") +
+  geom_point() 
+```
+
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+
+#### plot insets
+
+
+```r
+p <- ggplot(mpg, aes(factor(cyl), hwy, fill = factor(cyl))) +
+  stat_summary(geom = "col", fun = mean, width = 2/3) +
+  labs(x = "Number of cylinders", y = NULL, title = "Means") +
+  scale_fill_discrete(guide = "none")
+
+data.tb <- tibble(x = 7, y = 44, 
+                  plot = list(p +
+                                theme_bw(8)))
+
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_plot(data = data.tb, aes(x, y, label = plot)) +
+  geom_point() +
+  labs(x = "Engine displacement (l)", y = "Fuel use efficiency (MPG)",
+       colour = "Engine cylinders\n(number)") +
+  theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+
+#### image insets
+
+
+```r
+Isoquercitin_synthase <- magick::image_read("https://thebustalab.github.io/integrated_bioanalytics/images/homology.png")
+grobs.tb <- tibble(x = c(0, 10, 20, 40), y = c(4, 5, 6, 9),
+                   width = c(0.05, 0.05, 0.01, 1),
+                   height =  c(0.05, 0.05, 0.01, 0.3),
+                   grob = list(grid::circleGrob(), 
+                               grid::rectGrob(), 
+                               grid::textGrob("I am a Grob"),
+                               grid::rasterGrob(image = Isoquercitin_synthase)))
+
+ggplot() +
+  geom_grob(data = grobs.tb, 
+            aes(x, y, label = grob, vp.width = width, vp.height = height),
+            hjust = 0.7, vjust = 0.55) +
+  scale_y_continuous(expand = expansion(mult = 0.3, add = 0)) +
+  scale_x_continuous(expand = expansion(mult = 0.2, add = 0)) +
+  theme_bw(12)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+```r
+# ggplot() +
+#   annotate("grob", x = 1, y = 3, vp.width = 0.5,
+#            label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
+#   theme_bw(12)
+```
 
 
 
