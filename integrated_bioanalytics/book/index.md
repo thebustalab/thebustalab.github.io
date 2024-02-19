@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2023-11-18"
+date: "2024-02-19"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3269,9 +3269,19 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;" />
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we tell it what variable it should try to predict (outcome variable) and what other variables it should use as inputs for the prediction (predictor variables).
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of models: inferential and predictive.
 
-Before we begin, we need to talk about handling missing data. If we have missing data in our data set, oen way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
+- Inferential models aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
+
+- Predictive models are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don't really care how the model works as long as it is accurate.
+
+In this course, we will build both types of models using a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:
+
+- input_variables: the input variables (sometimes called "features" or "predictors") the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.
+
+- output_variable: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).
+
+For model building, we also need to talk about handling missing data. If we have missing data in our data set, we need to  one way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
 
 
 ```r
@@ -3282,9 +3292,11 @@ any(is.na(metabolomics_data))
 ## [1] FALSE
 ```
 
-## linear regression models {-}
+## inferential models {-}
 
-First, we will use least squares regression to make predictions based on some inputs. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset (this is the same as trying to predict the abundance of ADP from AMP):
+### single linear regression {-}
+
+We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use `buildModel`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:
 
 
 ```r
@@ -3296,52 +3308,20 @@ ggplot(metabolomics_data) +
 
 <img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
-It looks like there might be a relationship! Let's build a linear model for that relationship:
+It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
 
 
 ```r
-basic_regression_model <- buildModel(
+basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = "ADP",
-  outcome_variable = "AMP"
+  input_variables = "ADP",
+  output_variable = "AMP"
 )
-basic_regression_model
-## $model_type
-## [1] "linear_regression"
-## 
-## $model
-## 
-## Call:
-## lm(formula = formula, data = training_data, model = TRUE, x = TRUE, 
-##     y = TRUE, qr = TRUE)
-## 
-## Coefficients:
-## (Intercept)          ADP  
-##      4.5021       0.6763  
-## 
-## 
-## $metrics
-##               variable   value std_err        type  p_value
-## 1            r_squared  0.4774      NA   statistic       NA
-## 2    total_sum_squares 38.6346      NA   statistic       NA
-## 3 residual_sum_squares 20.1904      NA   statistic       NA
-## 4          (Intercept)  4.5021  0.9593 coefficient 9.46e-06
-## 5                  ADP  0.6763  0.0742 coefficient 0.00e+00
-##   p_value_adj
-## 1          NA
-## 2          NA
-## 3          NA
-## 4    9.46e-06
-## 5    0.00e+00
-## 
-## $accuracy_list
-## [1] 0.6418728
-## 
-## $fold_cross_validation
-## [1] 3
+names(basic_regression_model)
+## [1] "model_type" "model"      "metrics"
 ```
-The output of `buildModel` consists of two thigs: the model, and the metrics. Let's look at the model:
+The output of `buildModel` consists of three things: the model_type, the model itself, and the metric describing certain aspects of the model and/or its performance. Let's look at the model:
 
 
 ```r
@@ -3375,7 +3355,7 @@ basic_regression_model$metrics
 ## 5    0.00e+00
 ```
 
-It shows us the r-squared, the total and residual sum of squared, the intercept (b in y = m*x + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
+It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = m*x + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
 
 We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for ADP and AMP. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of ADP for each value of AMP in our data set. We can do that like this:
 
@@ -3391,7 +3371,7 @@ head(AMP_values_predicted_from_ADP_values)
 ## 13.18473 13.35509 13.48334 13.42981 12.57305 13.18377
 ```
 
-So, predictWithModel is using the model to predict AMP values from ADP. However, note that we have the measured AMP values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
+So, `predictWithModel` is using the model to predict AMP values from ADP. However, note that we have the measured AMP values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
 
 
 ```r
@@ -3536,23 +3516,25 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 
 <img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
+### multiple linear regression {-}
+
 Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
 
 
 ```r
 
-basic_regression_model <- buildModel(
+basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = "ADP",
-  outcome_variable = "AMP"
+  input_variables = "ADP",
+  output_variable = "AMP"
 )
 
-multiple_regression_model <- buildModel(
+multiple_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  predictor_variables = colnames(metabolomics_data)[3:33],
-  outcome_variable = "AMP"
+  input_variables = colnames(metabolomics_data)[3:33],
+  output_variable = "AMP"
 )
 
 ggplot() +
@@ -3589,25 +3571,94 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
-## random forest models {-}
+## predictive models {-}
 
-We can also use random forests, a type of machine learning model, to make regression models. Random forests are a collection of decision trees that have been optimized to make predictions. We can use them to predict numberical outcome variables from a set of predictor variables (i.e. regression), just like we did with linear regression above. However, random forests have a few advantages:
+In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model's mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.
 
-- Random forests are more robust to outliers than linear regression.
-- Random forests can handle both categorical and numerical data.
+Interestingly, increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is 'overfitted' which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.
 
-Let's have a look!
+To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.
+
+We can use the training/testing approach described above to build many different types of models. Here, we will look at random forests.
+
+### random forests {-}
+
+Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a 'classification' task) and for predicting numerical variables (a 'regression' task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree's output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest's final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).
+
+We can use the `buildModel()` function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `n_vars_tried_at_split`, `n_trees`, and `min_n_leaves`. Here is more information on those parameters:
+
+- n_vars_at_split (often called "mtry" in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of n_vars_at_split increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.
+
+- n_trees (often referred to as "num.trees" or "n_estimators" in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
+
+- min_n_leaves (often referred to as "min_n" in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. By carefully tuning this parameter, you can strike a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
+
+`buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees, then pick the combination with the highest predictive accuracy. In this function:
+
+- `data` specifies the dataset to be used for model training, here metabolomics_data.
+- `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
+- `input_variables` selects the features or predictors for the model, here using columns 3 to 33 from metabolomics_data as predictors.
+- `output_variable` is the target variable for prediction, in this case, "AMP".
+
+The optimization_parameters argument takes a list to define the grid of parameters for optimization, including n_vars_tried_at_split, n_trees, and min_leaf_size. The seq() function generates sequences of numbers and is used here to create ranges for each parameter:
+
+- `n_vars_tried_at_split` = seq(1,24,3) generates a sequence for the number of variables tried at each split, starting at 1, ending at 24, in steps of 3 (e.g., 1, 4, 7, ..., 24).
+- `n_trees` = seq(1,40,2) creates a sequence for the number of trees in the forest, from 1 to 40 in steps of 2.
+- `min_leaf_size` = seq(1,3,1) defines the minimal size of leaf nodes, ranging from 1 to 3 in steps of 1.
+
+This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest's performance. This approach allows for a systematic exploration of how different configurations affect the model's ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.
 
 
 ```r
-random_forest_model <- buildModel(
+random_forest_model <- buildModel2(
     data = metabolomics_data,
     model_type = "random_forest_regression",
-    predictor_variables = colnames(metabolomics_data)[3:33],
-    outcome_variable = "AMP",
-    optimization_parameters = list(mtry = seq(10,20,5), trees = seq(100,200,50))
+    input_variables = colnames(metabolomics_data)[3:33],
+    output_variable = "AMP",
+    optimization_parameters = list(
+      n_vars_tried_at_split = seq(1,24,3),
+      n_trees = seq(1,40,2),
+      min_leaf_size = seq(1,3,1)
+    )
 )
 
+names(random_forest_model)
+## [1] "metrics" "model"
+```
+
+The above code builds our random forest model. It's output provides both the model itself and key components indicating the performance and configuration of the model. Here's a breakdown of each part of the output:
+
+`$model_type` tells us what type of model this is.
+
+`$model` shows the configuration of the best random forest model that was created.
+
+`$metrics` provides detailed results of model performance across different combinations of the random forest parameters n_vars_tried_at_split (the number of variables randomly sampled as candidates at each split) and n_trees (the number of trees in the forest). For each combination, it shows:
+- n_vars_tried_at_split and n_trees: The specific values used in that model configuration.
+- .metric: The performance metric used, here it's accuracy, which measures how often the model correctly predicts the patient status.
+- .estimator: Indicates the type of averaging used for the metric, here it's binary for binary classification tasks.
+- mean: The average accuracy across the cross-validation folds.
+- fold_cross_validation: Indicates the number of folds used in cross-validation, here it's 3 for all models.
+- std_err: The standard error of the mean accuracy, providing an idea of the variability in model performance.
+- .config: A unique identifier for each model configuration tested.
+
+We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.
+
+
+```r
+random_forest_model$metrics %>%
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_n) +
+    scale_fill_viridis(direction = -1) +
+    geom_tile() +
+    theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
+
+We can easily use the model to make predictions by using the `predictWithModel()` function:
+
+
+```r
 ggplot() +
   geom_point(
     data = metabolomics_data,
@@ -3631,36 +3682,79 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
 
 ```r
+set.seed(123)
 unknown <- metabolomics_data[35:40,]
 
-rfc <- buildModel(
+rfc <- buildModel2(
   data = metabolomics_data[c(1:34, 41:93),],
   model_type = "random_forest_classification",
-  predictor_variables = colnames(metabolomics_data)[3:126],
-  outcome_variable = "patient_status",
-  train_test_ratio = 0.8,
-  fold_cross_validation = 3,
-  optimization_parameters = list(mtry = seq(30), trees = seq(4,5,1))
+  input_variables = colnames(metabolomics_data)[3:126],
+  output_variable = "patient_status",
+  optimization_parameters = list(
+    n_vars_tried_at_split = seq(5,50,5),
+    n_trees = seq(10,100,10),
+    min_leaf_size = seq(1,3,1)
+  )
 )
+rfc$metrics %>% arrange(desc(mean))
+## # A tibble: 300 × 9
+##    n_vars_tried_at_split n_trees min_n .metric  .estimator
+##                    <dbl>   <dbl> <dbl> <chr>    <chr>     
+##  1                    40      10     1 accuracy binary    
+##  2                    40      60     3 accuracy binary    
+##  3                    50      50     2 accuracy binary    
+##  4                    40      20     2 accuracy binary    
+##  5                    30     100     1 accuracy binary    
+##  6                    35      50     2 accuracy binary    
+##  7                     5      70     2 accuracy binary    
+##  8                    15      20     3 accuracy binary    
+##  9                    50     100     3 accuracy binary    
+## 10                    25      10     1 accuracy binary    
+## # ℹ 290 more rows
+## # ℹ 4 more variables: mean <dbl>,
+## #   fold_cross_validation <int>, std_err <dbl>,
+## #   .config <chr>
+```
 
+Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:
+
+
+```r
+rfc$metrics %>%
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_n) +
+    scale_fill_viridis(direction = -1) +
+    geom_tile() +
+    theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+```r
 predictions <- predictWithModel(
   data = unknown,
   model_type = "random_forest_classification",
   model = rfc$model
 )
 
-head(predictions)
-##   .pred_class1   .pred_class2   .pred_class3   .pred_class4 
-##        healthy        healthy        healthy kidney_disease 
-##   .pred_class5   .pred_class6 
-## kidney_disease kidney_disease 
-## Levels: healthy kidney_disease
+data.frame(
+  real_status = metabolomics_data[35:40,]$patient_status,
+  predicted_status = predictions
+)
+##                 real_status predicted_status
+## .pred_class1        healthy          healthy
+## .pred_class2        healthy          healthy
+## .pred_class3        healthy          healthy
+## .pred_class4 kidney_disease   kidney_disease
+## .pred_class5 kidney_disease   kidney_disease
+## .pred_class6 kidney_disease   kidney_disease
 ```
 
 ## exercises {-}
@@ -4340,6 +4434,8 @@ polyBlast(
 
 ### interpretation {-}
 
+bitscore v evalue - with very low evalue (< 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!
+
 The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
 
 The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
@@ -4471,7 +4567,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4501,7 +4597,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4548,7 +4644,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4564,7 +4660,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4573,7 +4669,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4640,7 +4736,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4659,7 +4755,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4773,7 +4869,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4808,7 +4904,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5255,7 +5351,7 @@ ggtree(
 ## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5334,6 +5430,12 @@ Sharing and Collaboration: Sharing structured prompts allows others to learn and
 ## gpt chains
 
 ## fine tuning
+
+## structured response
+
+## retrieval-augemented generation
+
+
 
 # analyzeLiterature {-}
 
@@ -5505,7 +5607,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -5528,7 +5630,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -5552,7 +5654,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -5562,6 +5664,21 @@ ggplot() +
 #   theme_bw(12)
 ```
 
+
+
+```r
+# bloom_example_pics <- ggplot(data = data.frame(x = c(0,1), y = c(0.5,0.5))) +
+#   geom_point(aes(x = x, y = y), color = "white") +
+#   theme_void() +
+#   annotation_custom(
+#       rasterGrob(
+#           png::readPNG(
+#               "https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png"
+#           ), interpolate=TRUE
+#       ), xmin=0, xmax=1, ymin=0, ymax=1
+#   )
+
+```
 ### composite figures {-}
 
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
@@ -5613,21 +5730,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -5675,7 +5792,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5962,7 +6079,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6004,7 +6121,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6093,7 +6210,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
