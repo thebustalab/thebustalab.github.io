@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-02-16"
+date: "2024-02-19"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3583,15 +3583,30 @@ We can use the training/testing approach described above to build many different
 
 ### random forests {-}
 
-Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a 'classification' task) and for predicting numerical variables (a 'regression' task). Each tree in the forest is constructed using a random subset of the training data and features, ensuring diversity in the decision-making process, and allowing for varying degrees of complexity. The forest's final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).
+Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a 'classification' task) and for predicting numerical variables (a 'regression' task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree's output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest's final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).
 
-We can use the `buildModel()` function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `n_vars_tried_at_split` and `n_trees`. Here is more information on those parameters:
+We can use the `buildModel()` function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: `n_vars_tried_at_split`, `n_trees`, and `min_n_leaves`. Here is more information on those parameters:
 
 - n_vars_at_split (often called "mtry" in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of n_vars_at_split increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.
 
 - n_trees (often referred to as "num.trees" or "n_estimators" in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model's performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.
 
-`buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees, then pick the combination with the highest predictive accuracy:
+- min_n_leaves (often referred to as "min_n" in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. By carefully tuning this parameter, you can strike a balance between the model's ability to capture the underlying patterns in the data and its generalization to unseen data.
+
+`buildModel()` is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees, then pick the combination with the highest predictive accuracy. In this function:
+
+- `data` specifies the dataset to be used for model training, here metabolomics_data.
+- `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
+- `input_variables` selects the features or predictors for the model, here using columns 3 to 33 from metabolomics_data as predictors.
+- `output_variable` is the target variable for prediction, in this case, "AMP".
+
+The optimization_parameters argument takes a list to define the grid of parameters for optimization, including n_vars_tried_at_split, n_trees, and min_leaf_size. The seq() function generates sequences of numbers and is used here to create ranges for each parameter:
+
+- `n_vars_tried_at_split` = seq(1,24,3) generates a sequence for the number of variables tried at each split, starting at 1, ending at 24, in steps of 3 (e.g., 1, 4, 7, ..., 24).
+- `n_trees` = seq(1,40,2) creates a sequence for the number of trees in the forest, from 1 to 40 in steps of 2.
+- `min_leaf_size` = seq(1,3,1) defines the minimal size of leaf nodes, ranging from 1 to 3 in steps of 1.
+
+This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest's performance. This approach allows for a systematic exploration of how different configurations affect the model's ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.
 
 
 ```r
@@ -3600,7 +3615,11 @@ random_forest_model <- buildModel2(
     model_type = "random_forest_regression",
     input_variables = colnames(metabolomics_data)[3:33],
     output_variable = "AMP",
-    optimization_parameters = list(n_vars_tried_at_split = seq(1,30,3), n_trees = seq(1,100,10))
+    optimization_parameters = list(
+      n_vars_tried_at_split = seq(1,24,3),
+      n_trees = seq(1,40,2),
+      min_leaf_size = seq(1,3,1)
+    )
 )
 
 names(random_forest_model)
@@ -3628,6 +3647,7 @@ We can thus inspect the performance of the model based on the specific parameter
 ```r
 random_forest_model$metrics %>%
     ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_n) +
     scale_fill_viridis(direction = -1) +
     geom_tile() +
     theme_bw()
@@ -3676,29 +3696,45 @@ rfc <- buildModel2(
   model_type = "random_forest_classification",
   input_variables = colnames(metabolomics_data)[3:126],
   output_variable = "patient_status",
-  optimization_parameters = list(n_vars_tried_at_split = seq(25,30,1), n_trees = seq(4,5,1))
+  optimization_parameters = list(
+    n_vars_tried_at_split = seq(5,50,5),
+    n_trees = seq(10,100,10),
+    min_leaf_size = seq(1,3,1)
+  )
 )
 rfc$metrics %>% arrange(desc(mean))
-## # A tibble: 12 × 8
-##    n_vars_tried_at_split n_trees .metric  .estimator  mean
-##                    <dbl>   <dbl> <chr>    <chr>      <dbl>
-##  1                    29       4 accuracy binary     0.907
-##  2                    26       5 accuracy binary     0.896
-##  3                    28       5 accuracy binary     0.885
-##  4                    25       5 accuracy binary     0.883
-##  5                    27       5 accuracy binary     0.882
-##  6                    25       4 accuracy binary     0.874
-##  7                    26       4 accuracy binary     0.872
-##  8                    30       5 accuracy binary     0.871
-##  9                    30       4 accuracy binary     0.862
-## 10                    27       4 accuracy binary     0.860
-## 11                    29       5 accuracy binary     0.849
-## 12                    28       4 accuracy binary     0.778
-## # ℹ 3 more variables: fold_cross_validation <int>,
-## #   std_err <dbl>, .config <chr>
+## # A tibble: 300 × 9
+##    n_vars_tried_at_split n_trees min_n .metric  .estimator
+##                    <dbl>   <dbl> <dbl> <chr>    <chr>     
+##  1                    40      10     1 accuracy binary    
+##  2                    40      60     3 accuracy binary    
+##  3                    50      50     2 accuracy binary    
+##  4                    40      20     2 accuracy binary    
+##  5                    30     100     1 accuracy binary    
+##  6                    35      50     2 accuracy binary    
+##  7                     5      70     2 accuracy binary    
+##  8                    15      20     3 accuracy binary    
+##  9                    50     100     3 accuracy binary    
+## 10                    25      10     1 accuracy binary    
+## # ℹ 290 more rows
+## # ℹ 4 more variables: mean <dbl>,
+## #   fold_cross_validation <int>, std_err <dbl>,
+## #   .config <chr>
 ```
 
 Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:
+
+
+```r
+rfc$metrics %>%
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_n) +
+    scale_fill_viridis(direction = -1) +
+    geom_tile() +
+    theme_bw()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -4531,7 +4567,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4561,7 +4597,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4608,7 +4644,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4624,7 +4660,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4633,7 +4669,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4700,7 +4736,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4719,7 +4755,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4833,7 +4869,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4868,7 +4904,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5315,7 +5351,7 @@ ggtree(
 ## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5571,7 +5607,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -5594,7 +5630,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -5618,7 +5654,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ```r

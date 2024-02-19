@@ -4617,7 +4617,7 @@ bloom_example_pics <- ggplot(data = data.frame(x = c(0,1), y = c(0.5,0.5))) +
   annotation_custom(
       rasterGrob(
           png::readPNG(
-              "https://thebustalab.github.io/integrated_bioanalytics/images/homology.png"
+              "https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png"
           ), interpolate=TRUE
       ), xmin=0, xmax=1, ymin=0, ymax=1
   )
