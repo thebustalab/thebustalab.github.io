@@ -8532,10 +8532,12 @@
                     overlaps,
                     data.frame(r = NA)
                 )
-                venn_circle_data <- cbind(
-                    rbind(ellipses, overlaps),
-                    data.frame(count = venn_output$original.values)
-                )
+                venn_circle_data <- rbind(ellipses, overlaps)
+                original_values <- as.data.frame(venn_output$original.values)
+                original_values$category <- rownames(original_values)
+                colnames(original_values)[1] <- "value"
+                venn_circle_data$count <- original_values$value[match(venn_circle_data$category, original_values$category)]
+
                 return(venn_circle_data)
             }
 
