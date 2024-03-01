@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-02-19"
+date: "2024-02-29"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -1041,10 +1041,10 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
 
 ```r
 df <- data.frame(
-  fly = sample(c(TRUE, FALSE), 50, replace = TRUE),
-  cool = sample(c(TRUE, FALSE), 50, replace = TRUE),
-  groovy = sample(c(TRUE, FALSE), 50, replace = TRUE),
-  plant_name = paste("Plant", seq(1, 50))
+  plant1 = sample(c(TRUE, FALSE), 24, replace = TRUE),
+  plant2 = sample(c(TRUE, FALSE), 24, replace = TRUE),
+  plant3 = sample(c(TRUE, FALSE), 24, replace = TRUE),
+  attribute_name = sample(letters, 24, replace = FALSE)
 )
 
 vennAnalysis(df[,1:3]) %>%
