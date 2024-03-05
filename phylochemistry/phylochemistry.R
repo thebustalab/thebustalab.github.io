@@ -8357,12 +8357,20 @@
                             }
 
                             if (atom_color_column != "default") {
-                                plot <- plot + geom_point(
-                                    data = filter(plot_data, molecule_component == "atom"),
-                                    aes_string(x = "x", y = "y", fill = atom_color_column),
-                                    shape = 21, size = 4
-                                ) +
-                                scale_fill_viridis(na.value = "#440154FF")
+                                if (length(unique(filter(plot_data, molecule_component == "atom") %>% select(atom_color_column))) == 1) {
+                                    plot <- plot + geom_point(
+                                        data = filter(plot_data, molecule_component == "atom"),
+                                        aes_string(x = "x", y = "y"), fill = "#440154FF",
+                                        shape = 21, size = 4
+                                    )
+                                } else {
+                                    plot <- plot + geom_point(
+                                        data = filter(plot_data, molecule_component == "atom"),
+                                        aes_string(x = "x", y = "y", fill = atom_color_column),
+                                        shape = 21, size = 4
+                                    ) +
+                                    scale_fill_viridis(na.value = "#440154FF")
+                                }
                             }
 
                         ## Add atom number labels
