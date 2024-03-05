@@ -8286,38 +8286,68 @@
 
                             if (bond_color_column != "default") {
 
-                                ## Add achiral single bonds
-                                    plot <- plot + geom_link(
-                                        data = filter(plot_data, 
-                                            molecule_component == "bond" &  bond_type == "single" & bond_direction == "flat"
-                                        ),
-                                        aes_string(
-                                            x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
-                                            color = bond_color_column
-                                        ), size = 2
-                                    )
-
-                                ## Add down chiral single bonds
-                                    plot <- plot + geom_link(
-                                        data = filter(plot_data, 
-                                            molecule_component == "bond" & bond_type == "single" & bond_direction == "down"
-                                        ),
-                                        aes_string(
-                                            x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
-                                            size = "stat(index)", color = bond_color_column
+                                if (dim(unique(filter(plot_data, molecule_component == "bond") %>% select(bond_color_column)))[1] == 1 ) {
+                                    ## Add achiral single bonds
+                                        plot <- plot + geom_link(
+                                            data = filter(plot_data, 
+                                                molecule_component == "bond" &  bond_type == "single" & bond_direction == "flat"
+                                            ),
+                                            aes_string(
+                                                x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y"
+                                            ), size = 2, color = "#440154FF"
                                         )
-                                    )
-                                
-                                ## Add up chiral single bonds
-                                    plot <- plot + geom_link(
-                                        data = filter(plot_data, 
-                                            molecule_component == "bond" & bond_type == "single" & bond_direction == "up"
-                                        ),
-                                        aes_string(
-                                            x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
-                                            size = "stat(index)", color = bond_color_column
+                                    ## Add down chiral single bonds
+                                        plot <- plot + geom_link(
+                                            data = filter(plot_data, 
+                                                molecule_component == "bond" & bond_type == "single" & bond_direction == "down"
+                                            ),
+                                            aes_string(
+                                                x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
+                                                size = "stat(index)"
+                                            ), color = "#440154FF"
                                         )
-                                    )
+                                    ## Add up chiral single bonds
+                                        plot <- plot + geom_link(
+                                            data = filter(plot_data, 
+                                                molecule_component == "bond" & bond_type == "single" & bond_direction == "up"
+                                            ),
+                                            aes_string(
+                                                x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
+                                                size = "stat(index)"
+                                            ), color = "#440154FF"
+                                        )
+                                } else {
+                                    ## Add achiral single bonds
+                                        plot <- plot + geom_link(
+                                            data = filter(plot_data, 
+                                                molecule_component == "bond" &  bond_type == "single" & bond_direction == "flat"
+                                            ),
+                                            aes_string(
+                                                x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
+                                                color = bond_color_column
+                                            ), size = 2
+                                        )
+                                    ## Add down chiral single bonds
+                                        plot <- plot + geom_link(
+                                            data = filter(plot_data, 
+                                                molecule_component == "bond" & bond_type == "single" & bond_direction == "down"
+                                            ),
+                                            aes_string(
+                                                x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
+                                                size = "stat(index)", color = bond_color_column
+                                            )
+                                        )
+                                    ## Add up chiral single bonds
+                                        plot <- plot + geom_link(
+                                            data = filter(plot_data, 
+                                                molecule_component == "bond" & bond_type == "single" & bond_direction == "up"
+                                            ),
+                                            aes_string(
+                                                x = "bond_start_x", y = "bond_start_y", xend = "bond_end_x", yend = "bond_end_y",
+                                                size = "stat(index)", color = bond_color_column
+                                            )
+                                        )
+                                }
 
                                 ## Add nearly horizontal double bonds
                                     plot <- plot + geom_segment(
@@ -8357,7 +8387,7 @@
                             }
 
                             if (atom_color_column != "default") {
-                                if (length(unique(filter(plot_data, molecule_component == "atom") %>% select(atom_color_column))) == 1) {
+                                if (dim(unique(filter(plot_data, molecule_component == "atom") %>% select(atom_color_column)))[1] == 1) {
                                     plot <- plot + geom_point(
                                         data = filter(plot_data, molecule_component == "atom"),
                                         aes_string(x = "x", y = "y"), fill = "#440154FF",
