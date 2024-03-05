@@ -8129,7 +8129,9 @@
                                     csv_in_path = NULL, 
                                     data = NULL, 
                                     atom_color_column = "default",
-                                    bond_color_column = "default"
+                                    bond_color_column = "default",
+                                    molecule_name = TRUE,
+                                    atom_numbers = TRUE
                                 ) {
 
                 ## Check input data / path
@@ -8364,27 +8366,36 @@
                             }
 
                         ## Add atom number labels
-                          
-                            plot <- plot + geom_text(
-                                data = filter(plot_data, molecule_component == "atom", atom_number %in% c(10, 50, 71)),
-                                aes(x = x, y = y, label = atom_number),
-                                size = 2, color = "black"
-                            ) +
 
-                            geom_text(
-                                data = filter(plot_data, molecule_component == "atom", !atom_number %in% c(10, 50, 71)),
-                                aes(x = x, y = y, label = atom_number),
-                                size = 2, color = "white"
-                            ) +
+                            if (atom_numbers) {
+                          
+                                plot <- plot + geom_text(
+                                    data = filter(plot_data, molecule_component == "atom", atom_number %in% c(10, 50, 71)),
+                                    aes(x = x, y = y, label = atom_number),
+                                    size = 2, color = "black"
+                                ) +
+
+                                geom_text(
+                                    data = filter(plot_data, molecule_component == "atom", !atom_number %in% c(10, 50, 71)),
+                                    aes(x = x, y = y, label = atom_number),
+                                    size = 2, color = "white"
+                                )
+
+                            }
 
                         ## Add molecule name as label
-                            geom_text(
-                                data = drop_na(unique(select(plot_data, molecule_name))),
-                                aes(x = 1, y = 13, label = molecule_name),
-                                size = 4, color = "black", hjust = 0
-                            ) +
+                            if (molecule_name) {
+
+                                plot <- plot + geom_text(
+                                    data = drop_na(unique(select(plot_data, molecule_name))),
+                                    aes(x = 1, y = 13, label = molecule_name),
+                                    size = 4, color = "black", hjust = 0
+                                )
+
+                            }
 
                         ## Scales and theme
+                            plot <- plot + 
                             scale_size_continuous(range = c(0,4)) +
                             scale_x_continuous(breaks = seq(0,20,1)) +
                             scale_color_viridis(na.value = "#440154FF") +
