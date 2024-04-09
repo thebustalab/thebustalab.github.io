@@ -200,10 +200,10 @@
         leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
         tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
         wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
-        anovaTest <- function( data, ... ) {rstatix::anova_test( data = data, ... )}
+        anovaTest <- function( data, ... ) {rstatix::anova_test( data = ungroup(data), ... )}
         tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
-        kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = data, ... )}
-        dunnTest <- function( data, ... ) {rstatix::dunn_test( data = data, ... )}
+        kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = ungroup(data), ... )}
+        dunnTest <- function( data, ... ) {rstatix::dunn_test( data = ungroup(data), ... )}
         pairwiseWilcoxTest <- function( data, ... ) {rstatix::pairwise_wilcox_test( data = data, ... )}
         pairwiseTTest <- function( data, ... ) {rstatix::pairwise_t_test( data = data, ... )}
         # tukeyHSD <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
@@ -9719,6 +9719,68 @@
             
             }
 
+        #### bootstrap
+
+            #' Runs bootstrapping on categorical data; from github sgibb/bootstrap
+            #'
+            #' @param x
+            #' @param fun
+            #' @param n
+            #' bootstrap  
+
+            bootstrap <- function(x, fun, n = 1000L, mc.cores = getOption("mc.cores", 2L)) {
+                # Match the function if given as a character string
+                fun <- match.fun(fun)
+
+                # Internal function to convert hclust object to binary matrix
+                as.binary.matrix.hclust <- function(x) {
+                    nr <- as.integer(nrow(x$merge))
+                    m <- matrix(0L, nrow = nr, ncol = nr + 1L)
+                    for (i in seq_len(nr)) {
+                      left <- x$merge[i, 1L]
+                      if (left < 0L) {
+                        m[i, -left] <- 1L
+                      } else {
+                        m[i, ] <- m[left, ]
+                      }
+                      right <- x$merge[i, 2L]
+                      if (right < 0L) {
+                        m[i, -right] <- 1L
+                      } else {
+                        m[i, ] <- m[i, ] | m[right, ]
+                      }
+                    }
+                    return(m)
+                }
+
+                # Internal function to perform clustering
+                .clust <- function(x, fun) {
+                    hc <- fun(x)
+                    return(as.binary.matrix.hclust(hc))
+                }
+
+                # Internal function to calculate matches
+                .calculateMatches <- function(origin, current, nc = ncol(origin)) {
+                    one <- tcrossprod(origin, current)
+                    zero <- tcrossprod(1 - origin, 1 - current)
+                    return(rowSums(one + zero == nc))
+                }
+
+                # Internal function for resampling
+                .resample <- function(x, size = ncol(x)) {
+                    sel <- sample.int(ncol(x), size = size, replace = TRUE)
+                    return(x[, sel])
+                }
+
+                origin <- .clust(x, fun = fun)
+
+                v <- parallel::mclapply(seq_len(n), function(y) .calculateMatches(origin, .clust(.resample(x, size = ncol(x)), fun = fun), ncol(origin)), mc.cores = mc.cores)
+
+                return(colSums(do.call(rbind, v)) / n)
+            }
+
+            
+
         #### runMatrixAnalysis
 
             #' Runs a matrix analysis (clustering, kmeans, pca).
@@ -9743,7 +9805,7 @@
                                                 "mca", "mca_ord", "mca_dim",
                                                 "mds", "mds_ord", "mds_dim",
                                                 "tsne", "dbscan", "kmeans",
-                                                "hclust", "hclust_phylo"
+                                                "hclust", "hclust_phylo", "dist"
                                             ),
                                             parameters = NULL,
                                             column_w_names_of_multiple_analytes = NULL,
@@ -10085,14 +10147,27 @@
                         ## HCLUST, HCLUST_PHYLO ##
 
                             if( analysis == "hclust" | analysis == "hclust_phylo" ) {
-                                bclust <- Bclust(
-                                    scaled_matrix, method.d = distance_method[1],
-                                    method.c = agglomeration_method[1],
-                                    monitor = FALSE
-                                )
-                                # print(bclust$value)
-                                # plot(bclust)
-                                phylo <- ape::as.phylo(bclust$hclust)
+                                
+                                ## BClust approach to bootstrapped hclust
+                                    bclust <- Bclust(
+                                        scaled_matrix, method.d = distance_method[1],
+                                        method.c = agglomeration_method[1],
+                                        monitor = FALSE
+                                    )
+                                    # print(bclust$value)
+                                    # plot(bclust)
+                                    phylo <- ape::as.phylo(bclust$hclust)
+
+
+                                ## "bootstrap" approach
+                                    temp <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
+                                    rownames(temp) <- rownames(scaled_matrix)
+                                    scaled_matrix <- temp
+                                    createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
+                                    b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
+                                    phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
+
+
                                 if( analysis == "hclust_phylo" ) {
                                     return(phylo)
                                     stop("Returning hclust_phylo.")
@@ -10102,15 +10177,17 @@
                                 clustering$bootstrap <- NA
 
                                 ## Add bootstrap values starting from the furthest node to the highest node
-                                    bs_vals <- data.frame(
-                                        xval = clustering$x[clustering$isTip != TRUE],
-                                        bs_val = NA
-                                    )
-                                    for (i in 1:length(bclust$value)) { # i=1
-                                        bs_vals$bs_val[
-                                            order(bs_vals$xval, decreasing = TRUE)[i]
-                                        ] <- bclust$values[i]
-                                    }
+                                    # bs_vals <- data.frame(
+                                    #     xval = clustering$x[clustering$isTip != TRUE],
+                                    #     bs_val = NA
+                                    # )
+                                    # for (i in 1:length(bclust$value)) { # i=1
+                                    #     bs_vals$bs_val[
+                                    #         order(bs_vals$xval, decreasing = TRUE)[i]
+                                    #     ] <- bclust$values[i]
+                                    # }
+                                    bs_vals <- data.frame( xval = clustering$x[clustering$isTip != TRUE], bs_val = NA )
+                                    for (i in 1:length(b)) { bs_vals$bs_val[order(bs_vals$xval, decreasing = TRUE)[i]] <- b[i] }
 
                                 clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
                             }
@@ -11407,12 +11484,14 @@
                                 finalize_workflow(workflow, select_best(tune_results, metric = "accuracy")),
                                 data
                             )
+
+                        names(output$metrics)[1] <- "n_vars_tried_at_split"
+                        names(output$metrics)[2] <- "n_trees"
+                        colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
                     }
 
                 ## Return a model trained on all the input data
-                    names(output$metrics)[1] <- "n_vars_tried_at_split"
-                    names(output$metrics)[2] <- "n_trees"
-                    colnames(output$metrics)[colnames(output$metrics) == "n"] <- "fold_cross_validation"
+                    
                     return(output)
             }
 

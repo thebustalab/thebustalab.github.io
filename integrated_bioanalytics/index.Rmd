@@ -772,7 +772,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   )
 ```
 
-Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
+Last, here is an example of combining `scale_*` and `theme_*` with previous commands to really get a plot looking sharp.
 
 ```{r, fig.height = 4, fig.cap = "Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725."}
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
