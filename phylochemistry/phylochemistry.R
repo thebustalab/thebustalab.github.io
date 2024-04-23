@@ -9872,6 +9872,11 @@
                             stop("There is a mismatch in the column names delivered to the command and the column names in your data. Please double check the spelling of your column names you gave to the command.")
                         }
 
+                        if (all(c(
+                            is.null(column_w_values_for_multiple_analytes),
+                            is.null(columns_w_values_for_single_analyte)
+                        ))) { stop("You need to specify at least one column with values for analytes.")}
+
                     # Pre-process data
 
                         # Add analyte_unique_ID_column if necessary
@@ -10183,13 +10188,17 @@
 
                             if (analysis == "hclust_cat") {
 
-                              ## "bootstrap" approach
+                                ## "bootstrap" approach
                                     temp <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
                                     rownames(temp) <- rownames(scaled_matrix)
                                     scaled_matrix <- temp
                                     createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
                                     b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
                                     phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
+
+                                    clustering <- ggtree::fortify(phylo)
+                                    clustering$sample_unique_ID <- clustering$label
+                                    clustering$bootstrap <- NA
 
                                 ## Add bootstrap values starting from the furthest node to the highest node
                                     bs_vals <- data.frame( xval = clustering$x[clustering$isTip != TRUE], bs_val = NA )
