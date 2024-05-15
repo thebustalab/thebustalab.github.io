@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-02-29"
+date: "2024-05-15"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -227,7 +227,7 @@ In addition to the tidyverse, there are a variety of other packages we will need
 
 First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
 
-```r
+``` r
 bustalab <- TRUE
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
@@ -801,7 +801,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 
 <img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
 
-Last, here is an example of combining `scale_*` and `theme*` with previous commands to really get a plot looking sharp.
+Last, here is an example of combining `scale_*` and `theme_*` with previous commands to really get a plot looking sharp.
 
 
 ```r
@@ -3833,6 +3833,9 @@ This page explains how to load a simple application for integrating and analyzin
 ```r
 source("https://thebustalab.github.io/phylochemistry/gcms.R")
 ```
+
+If the command was run successfully you should see something like:
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/success.png" width="100%" style="display: block; margin: auto;" />
  \
 
 3. In R or RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. Do not run the command on the CDF file itself, that will not work. For example, if my CDF file is called "sorghum_bicolor.CDF", and is inside the folder called `gc_data`, then I would run the following:
@@ -3840,14 +3843,14 @@ source("https://thebustalab.github.io/phylochemistry/gcms.R")
 
 If you are on a Mac, *use single forward slashes*. For example:
 
-```r
+``` r
 analyzeGCMSdata("/Volumes/My_Drive/gc_data")
 ```
  \
 
 If you are on a PC, you may need to use double back slashes. For example:
 
-```r
+``` r
 analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
@@ -3885,7 +3888,7 @@ To control the mass spectrum window:
 You can ask `analyzeGCMSdata` to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying "0" corresponds to the total ion chromatogram and must be included as the first item in the list. Here's an example:
 
 
-```r
+``` r
 analyzeGCMSdata("/Volumes/My_Drive/gc_data", ions = c("0", "218"))
 ```
  \
@@ -3958,7 +3961,7 @@ bootable USB: https://rufus.ie/en/#
 With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
 
 
-```r
+``` r
 qc_data <- fastxQC(
     paths_to_fastxs = c(
         "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",
@@ -4136,7 +4139,7 @@ For assembly on the BustaLab storage box, navigate to the directory that contain
 Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
 
 
-```r
+``` r
 sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4
 ```
 
@@ -4166,7 +4169,7 @@ correctedErrorRate=0.12
 Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data found in the .histogram files (i.e. in correction/0-mercounts/x.histogram, trimming/0-mercounts/x.histogram, unitigging/0-mercounts/x.histogram) and process them with `canuHistogramToKmerTable()`, as shown below. You can upload the output to : http://qb.cshl.edu/genomescope/genomescope2.0/. This will give you approximate genome size, ploidy, heterozygosity, repeat content, and read error rate. All good stuff to know!
 
 
-```r
+``` r
 canuHistogramToKmerTable(
   file_in_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram",
   file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
@@ -4311,7 +4314,7 @@ sh $MERQURY/best_k.sh <genome_size>
 Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: -->
 
 
-```r
+``` r
 # reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
 
 # # post <- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")
@@ -4409,7 +4412,7 @@ Let's check out `polyBlast()` by looking at an example. For this example, we nee
 Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
 
 
-```r
+``` r
 the_transcriptomes <- c(
   "/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa",
   "/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa",
@@ -4476,7 +4479,7 @@ Here's a general idea of how HMMs are used for sequence similarity searching:
 We can implement these two steps using the `buildDomainLibrary()` function and the `predictDomains()` function. See below:
 
 
-```r
+``` r
 buildDomainLibrary(
     alignment_in_paths = c(
         "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa",
@@ -4518,7 +4521,7 @@ There are, of course, many tools for aligning sequences. `alignSequences()`, the
 * "base_fragment": a path to a fasta file containing the base fragment to which the subjects should be aligned.
 
 
-```r
+``` r
 alignSequences(
   monolist = readMonolist("/path_to/a_csv_file_that_will_list_all_blast_hits.csv"), 
   subset = "subset_all", 
@@ -4545,7 +4548,7 @@ This function is a swiss army knife for tree building. It takes as input alignme
 Let's use the Busta lab's plant phylogeny [derived from Qian et al., 2016] to build a phylogeny with five species in it.
 
 
-```r
+``` r
 tree <- buildTree(
   scaffold_type = "newick",
   scaffold = "https://thebustalab.github.io/data/plant_phylogeny.newick",
@@ -4554,6 +4557,9 @@ tree <- buildTree(
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
+```
+
+``` r
 
 tree
 ## 
@@ -4565,16 +4571,19 @@ tree
 ##   , , , 
 ## 
 ## Rooted; includes branch lengths.
+```
+
+``` r
 
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
 
-```r
+``` r
 tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
@@ -4584,6 +4593,9 @@ tree <- buildTree(
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
+```
+
+``` r
 
 tree
 ## 
@@ -4595,11 +4607,14 @@ tree
 ##   , , , 
 ## 
 ## Rooted; includes branch lengths.
+```
+
+``` r
 
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4616,7 +4631,7 @@ Arguments in this case are:
 * "root": NULL, or the name of an accession that should form the root of the tree.
 
 
-```r
+``` r
 buildTree(
   scaffold_type = "amin_alignment",
   scaffold_in_path = "/path_to/a_folder_for_alignments/all_amin_seqs.fa",
@@ -4633,7 +4648,7 @@ buildTree(
 There are several approaches to plotting trees. A simple one is using the base `plot` function:
 
 
-```r
+``` r
 test_tree_small <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
@@ -4642,16 +4657,19 @@ test_tree_small <- buildTree(
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
+```
+
+``` r
 
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
 
-```r
+``` r
 set.seed(122)
 test_tree_big <- buildTree(
   scaffold_type = "newick",
@@ -4662,24 +4680,26 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
 
-```r
+``` r
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
 
-```r
+``` r
 test_tree_big_fortified <- fortify(test_tree_big)
 test_tree_big_fortified
-## # A tibble: 101 × 9
+## # A tbl_tree abstraction: 101 × 9
+## # which can be converted to treedata or phylo 
+## # via as.treedata or as.phylo
 ##    parent  node branch.length label isTip     x     y branch
 ##     <int> <int>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
 ##  1     54     1          83.0 Wolf… TRUE   188.     1   147.
@@ -4698,14 +4718,16 @@ test_tree_big_fortified
 `ggtree` can still plot this dataframe, and it allows metadata to be stored in a human readable format by using mutating joins (explained below). This metadata can be plotted with standard ggplot geoms, and these dataframes can also conveniently be saved as .csv files:
 
 
-```r
+``` r
 
 ## Note that "plant_species" comes with the phylochemistry source.
 
 test_tree_big_fortified_w_data <- left_join(test_tree_big_fortified, plant_species, by = c("label" = "Genus_species"))
 
 test_tree_big_fortified_w_data
-## # A tibble: 101 × 14
+## # A tbl_tree abstraction: 101 × 14
+## # which can be converted to treedata or phylo 
+## # via as.treedata or as.phylo
 ##    parent  node branch.length label isTip     x     y branch
 ##     <int> <int>         <dbl> <chr> <lgl> <dbl> <dbl>  <dbl>
 ##  1     54     1          83.0 Wolf… TRUE   188.     1   147.
@@ -4721,6 +4743,9 @@ test_tree_big_fortified_w_data
 ## # ℹ 91 more rows
 ## # ℹ 6 more variables: angle <dbl>, Phylum <chr>,
 ## #   Order <chr>, Family <chr>, Genus <chr>, species <chr>
+```
+
+``` r
 
 ggtree(test_tree_big_fortified_w_data) + 
   geom_point(
@@ -4738,14 +4763,14 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
 Sometimes we want to view a tree at a higher level of taxonomical organization, or some other higher level. This can be done easily using the `collapseTree` function. It takes two arguments: an un-fortified tree (`tree`), and a two-column data frame (`associations`). In the first column of the data frame are all the tip labels of the tree, and in the second column are the higher level of organization to which each tip belongs. The function will prune the tree so that only one member of the higher level of organization is included in the output. For example, let's look at the tree from the previous section at the family level:
 
 
-```r
+``` r
 collapseTree(
   tree = test_tree_big,
   associations = data.frame(
@@ -4757,14 +4782,14 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
 To plot traits alongside a tree, we can use ggtree in combination with ggplot. Here is an example. First, we make the tree:
 
 
-```r
+``` r
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
@@ -4812,9 +4837,12 @@ chemical_bloom_tree <- buildTree(
 
 Next we join the tree with the data:
 
-```r
+``` r
 data <- left_join(fortify(chemical_bloom_tree), chemical_blooms)
 ## Joining with `by = join_by(label)`
+```
+
+``` r
 head(data)
 ## # A tibble: 6 × 18
 ##   parent  node branch.length label  isTip     x     y branch
@@ -4833,7 +4861,7 @@ head(data)
 
 Now we can plot the tree:
 
-```r
+``` r
 tree_plot <- ggtree(data) +
   geom_tiplab(
     align = TRUE, hjust = 1, offset = 350,
@@ -4845,7 +4873,7 @@ tree_plot <- ggtree(data) +
 IMPORTANT! When we plot the traits, we need to reorder whatever is on the shared axis (in this case, the y axis) so that it matches the order of the tree. In this case, we need to reorder the species names so that they match the order of the tree. We can do this by using the `reorder` function, which takes two arguments: the thing to be reordered, and the thing to be reordered by. In this case, we want to reorder the species names by their y coordinate on the tree. We can do this by using the `y` column of the data frame that we created when we fortified the tree. We can then plot the traits:
 
 
-```r
+``` r
 trait_plot <- ggplot(
     data = pivot_longer(
       filter(data, isTip == TRUE),
@@ -4863,7 +4891,7 @@ trait_plot <- ggplot(
 Finally, we can plot the two plots together using `plot_grid`. It is important to manually inspect the tree tips and the y axis text to make sure that everything lines up. We don't want to be plotting the abundance of one species on the y axis of another species. In this case, everything looks good:
 
 
-```r
+``` r
 plot_grid(
   tree_plot,
   trait_plot,
@@ -4871,13 +4899,13 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
 
 
-```r
+``` r
 tree_plot <- ggtree(data) +
   geom_tiplab(
     align = TRUE, hjust = 1, offset = 350,
@@ -4906,14 +4934,14 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
 We use a wrapper function to run phylogenetic comparative analyses. It 
 
 
-```r
+``` r
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
@@ -4957,6 +4985,9 @@ chemical_bloom_tree <- buildTree(
 ## Pro tip: most tree read/write functions reset node numbers.
 ## Fortify your tree and save it as a csv file to preserve node numbering.
 ## Do not save your tree as a newick or nexus file.
+```
+
+``` r
 
 runPhylogeneticAnalyses(
     traits = pivot_longer(chemical_blooms[,1:4], cols = c(3:4), names_to = "trait", values_to = "value"),
@@ -4992,7 +5023,7 @@ runPhylogeneticAnalyses(
 For all the below, there are some structural requirements: (i) the tree needs to be a phylo object (ii) the traits need to be a data.frame in which each row is a species and each column is a variable, and (iii) the first column in the data.frame needs to be the names of the species and they must exactly match the tip labels of the tree (though they don't have to be in the same order), for example:
 
 
-```r
+``` r
 chemical_bloom_tree <- buildTree(
   scaffold_type = "newick",
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
@@ -5043,7 +5074,7 @@ chemical_bloom_tree <- buildTree(
 Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species' evolutionary history. `phylochemistry` provides the `phylogeneticSignal` function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:
 
 
-```r
+``` r
 phylogeneticSignal(
   traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
   column_w_names_of_tiplabels = "label",
@@ -5138,7 +5169,7 @@ phylogeneticSignal(
 Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to "independent contrasts" to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. `phylochemistry` provides the `independentContrasts` function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts.
 
 
-```r
+``` r
 contrasts <- independentContrasts(
   traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
   column_w_names_of_tiplabels = "label",
@@ -5162,7 +5193,7 @@ contrasts <- independentContrasts(
 Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.
 
 
-```r
+``` r
 anc_traits_tree <- ancestralTraits(
   traits = pivot_longer(chemical_blooms, cols = -1),
   column_w_names_of_tiplabels = "label",
@@ -5186,7 +5217,7 @@ head(anc_traits_tree)
 In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node. `geom_ancestral_pie` relies on having columns in its input called `trait` and `value`, such as those output by   `ancestralTraits`. Note that if you are passing an object to ggtree() that has duplicate node names, you will need to use the `distinct` function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.
 
 
-```r
+``` r
 ggtree(
   distinct(anc_traits_tree, node, .keep_all = TRUE)
 ) +
@@ -5197,163 +5228,9 @@ ggtree(
   geom_tiplab(offset = 20, align = TRUE) +
   scale_x_continuous(limits = c(0,650)) +
   theme_void()
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5376,7 +5253,7 @@ ________________________________________________________________________________
 You can run completions using:
 
 
-```r
+``` r
 completionGPT(
   system_prompt = "",
   query = "",
@@ -5586,7 +5463,7 @@ Here are some tips for figures, beyond the creation of individual plots:
 Zoom in on certain plot regions
 
 
-```r
+``` r
 p <- ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 
@@ -5598,8 +5475,6 @@ data.tb <-
                        labs(x = NULL, y = NULL) +
                        theme_bw(8) +
                        scale_colour_discrete(guide = "none")))
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
 
 ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_plot(data = data.tb, aes(x, y, label = plot)) +
@@ -5609,12 +5484,12 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
 
-```r
+``` r
 p <- ggplot(mpg, aes(factor(cyl), hwy, fill = factor(cyl))) +
   stat_summary(geom = "col", fun = mean, width = 2/3) +
   labs(x = "Number of cylinders", y = NULL, title = "Means") +
@@ -5632,12 +5507,12 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
 
-```r
+``` r
 Isoquercitin_synthase <- magick::image_read("https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png")
 grobs.tb <- tibble(x = c(0, 10, 20, 40), y = c(4, 5, 6, 9),
                    width = c(0.05, 0.05, 0.01, 1),
@@ -5656,10 +5531,10 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 
-```r
+``` r
 # ggplot() +
 #   annotate("grob", x = 1, y = 3, vp.width = 0.5,
 #            label = grid::rasterGrob(image = Isoquercitin_synthase, width = 1)) +
@@ -5668,7 +5543,7 @@ ggplot() +
 
 
 
-```r
+``` r
 # bloom_example_pics <- ggplot(data = data.frame(x = c(0,1), y = c(0.5,0.5))) +
 #   geom_point(aes(x = x, y = y), color = "white") +
 #   theme_void() +
@@ -5686,7 +5561,7 @@ ggplot() +
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
 
 
-```r
+``` r
 color_palette <- RColorBrewer::brewer.pal(11, "Paired")
 names(color_palette) <- unique(alaska_lake_data$element)
 
@@ -5728,32 +5603,32 @@ plot2 <- ggplot(
 Now, add them together to lay them out. Let's look at various ways to lay this out:
 
 
-```r
+``` r
 plot_grid(plot1, plot2)
-```
-
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
-
-
-```r
-plot_grid(plot1, plot2, ncol = 1)
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 
-```r
-plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
+``` r
+plot_grid(plot1, plot2, ncol = 1)
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+``` r
+plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
 To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
 
-```r
+``` r
 plot <- ggplot(data, aes(x = x, y = y)) + geom_point()
 
 png(filename = <path_to_file_you_want_to_create>, width = 8, height = 8, res = 600, units = "in")
@@ -5764,7 +5639,7 @@ dev.off()
 ```
 
 
-```r
+``` r
 plot <- ggplot(data, aes(x = x, y = y)) + geom_point()
 
 pdf(filename = <path_to_file_you_want_to_create>, width = 8, height = 8)
@@ -5788,13 +5663,13 @@ dev.off()
 An example:
 
 
-```r
+``` r
 (plot1 + plot2 + labs(caption = str_wrap("Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.", 90))) + plot_annotation(tag_levels = 'A') + 
   plot_layout(widths = c(1.1, 3), guides = 'collect') &
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6007,7 +5882,7 @@ ________________________________________________________________________________
 For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
 
 
-```r
+``` r
 analyzeImage(
   share_link = "https://drive.google.com/file/d/1rvfh9_DqEWlpaegGwfLZLdjjYEDlM0ZL/view?usp=sharing",
   monolist_out_path = "/Users/bust0037/Desktop/output.csv"
@@ -6017,7 +5892,7 @@ analyzeImage(
 # images of mass spectra {-}
 
 
-```r
+``` r
 # analyzeMassSpectralImages()
 ```
  -->
@@ -6055,7 +5930,7 @@ Close RStudio, open the plain R GUI, then run the following:
 On Mac:
 
 
-```r
+``` r
 install.packages('remotes') #assuming it is not remotes installed
 remotes::install_github('andreacirilloac/updateR')
 updateR::updateR()
@@ -6064,7 +5939,7 @@ updateR::updateR()
 On PC:
 
 
-```r
+``` r
 install.packages("installr")
 installr::updateR()
 ```
@@ -6076,17 +5951,17 @@ A list of numeric element has an inherent order to it: -inf -> +inf. A list of c
 However, there are cases where we will want a list of character elements to have some order other than A -> Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -> Z. For example, in the plot below, the y axis is not, perhaps, in the "correct" order:
 
 
-```r
+``` r
 ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
 
-```r
+``` r
 periodic_table$group_number <- factor(
   periodic_table$group_number,
   levels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "lanthanides", "actinides")
@@ -6118,12 +5993,12 @@ periodic_table
 Notice that now when we look at the type of data that is contained in the column `group_number` it says "<fct>". This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?
 
 
-```r
+``` r
 ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6133,7 +6008,7 @@ VICTORY!
 How to select specific columns:
 
 
-```r
+``` r
 alaska_lake_data %>%
   select(water_temp, pH)
 ## # A tibble: 220 × 2
@@ -6154,7 +6029,7 @@ alaska_lake_data %>%
 
 How to remove certain columns:
 
-```r
+``` r
 alaska_lake_data %>%
   select(!water_temp)
 ## # A tibble: 220 × 6
@@ -6178,7 +6053,7 @@ alaska_lake_data %>%
 Suppose we want to create a specific color palette for each pack in `alaska_lake_data`. There are three unique parks:
 
 
-```r
+``` r
 unique(alaska_lake_data$park)
 ## [1] "BELA" "GAAR" "NOAT"
 ```
@@ -6186,7 +6061,7 @@ unique(alaska_lake_data$park)
 First we define the colors we want:
 
 
-```r
+``` r
 custom_colors_for_lakes <- c("#1a9850", "#ffffbf", "#d73027")
 custom_colors_for_lakes
 ## [1] "#1a9850" "#ffffbf" "#d73027"
@@ -6195,7 +6070,7 @@ custom_colors_for_lakes
 Then we name that vector according to which park we want to be which color:
 
 
-```r
+``` r
 names(custom_colors_for_lakes) <- c("GAAR", "NOAT", "BELA")
 custom_colors_for_lakes
 ##      GAAR      NOAT      BELA 
@@ -6205,14 +6080,14 @@ custom_colors_for_lakes
 Now we feed that object to the `values` argument of scale_color_manual (or scale_fill_manual, if you want fill):
 
 
-```r
+``` r
 ggplot(alaska_lake_data) + 
   geom_point(aes(x = pH, y = water_temp, fill = park), size = 5, shape = 21, color = "black") +
   scale_fill_manual(values = custom_colors_for_lakes) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
@@ -6224,7 +6099,7 @@ ggplot(alaska_lake_data) +
 ### basic `runMatrixAnalysis()` template
 
 
-```r
+``` r
 
 runMatrixAnalysis(
                 
@@ -6245,7 +6120,7 @@ runMatrixAnalysis(
 ### advanced `runMatrixAnalysis()` template
 
 
-```r
+``` r
 
 runMatrixAnalysis(
   data, # data to use for analysis

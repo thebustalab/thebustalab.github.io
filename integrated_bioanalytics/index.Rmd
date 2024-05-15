@@ -3281,6 +3281,11 @@ This page explains how to load a simple application for integrating and analyzin
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/gcms.R")
 ```
+
+If the command was run successfully you should see something like:
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/success.png', dpi = NA)
+```
  \
 
 3. In R or RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. Do not run the command on the CDF file itself, that will not work. For example, if my CDF file is called "sorghum_bicolor.CDF", and is inside the folder called `gc_data`, then I would run the following:
