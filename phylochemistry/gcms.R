@@ -7,7 +7,7 @@
     Bioconductor_packages <- c(
         "xcms"
     )
-    CRAN_packages <- c("data.table", "dplyr", "shiny", "shinyjs", "rhandsontable", "ggplot2", "readr", "DT", "tidyr")
+    CRAN_packages <- c("BiocManager", "data.table", "dplyr", "shiny", "shinyjs", "rhandsontable", "ggplot2", "readr", "DT", "tidyr")
     packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
 
     ## Determine if anything needs to be installed
