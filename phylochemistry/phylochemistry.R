@@ -6666,13 +6666,13 @@
 
             completionGPT <- function(system_prompt, query, model, temperature, openai_api_key) {
     
-                model_options <- c("gpt-4", "gpt-4-0613", "gpt-4-1106-preview", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001")
+                model_options <- c("gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-4-0613", "gpt-4-1106-preview", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001")
                 
                 if( !model %in% model_options) {
                     stop(paste0("The model you specified is not available. Please choose from one of: ", paste(model_options, collapse = ", ")))
                 }
                 
-                if (model %in% c("gpt-4", "gpt-4-0613", "gpt-4-1106-preview", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613")) {
+                if (model %in% c("gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-4-0613", "gpt-4-1106-preview", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613")) {
                     
                     endpoint_url <- "https://api.openai.com/v1/chat/completions"
                     
