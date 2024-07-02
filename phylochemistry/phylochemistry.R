@@ -10475,8 +10475,8 @@
                                         names_to = "analyte_name", 
                                         values_to = "value"
                                     )
-                                    # left_join(data[,match(columns_w_additional_analyte_info, colnames(data))]
-
+                                    analyte_annotation_frame <- unique(select(ungroup(data), all_of(c(column_w_names_of_multiple_analytes, columns_w_additional_analyte_info))))
+                                    clustering <- left_join(clustering, analyte_annotation_frame, by = c("analyte_name" = column_w_names_of_multiple_analytes))
                                 }
 
                                 return( clustering )
