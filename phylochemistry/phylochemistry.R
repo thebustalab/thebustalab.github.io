@@ -7553,17 +7553,18 @@
                     edgelist[,2] <- as.character(edgelist[,2])
 
                 ## If edgelist has more than two columns, assume that 3rd column is edge weights and build matrix from adjacency matrix
-                    # if (dim(edgelist)[2] > 2) {
-                    #     adjacency_matrix <- as.matrix(as.data.frame(tidyr::pivot_wider(edgelist, names_from = 1, values_from = 3)))
-                    #     rownames(adjacency_matrix) <- adjacency_matrix[,1]
-                    #     adjacency_matrix <- adjacency_matrix[,-1]
-                    #     network_object <- network::network(adjacency_matrix, matrix.type = "adjacency")
-                    # }
+                    if (dim(edgelist)[2] > 2) {
+                        adjacency_matrix <- as.matrix(as.data.frame(tidyr::pivot_wider(edgelist, names_from = 1, values_from = 3)))
+                        rownames(adjacency_matrix) <- adjacency_matrix[,1]
+                        adjacency_matrix <- adjacency_matrix[,-1]
+                        network_object <- network::network(adjacency_matrix, matrix.type = "adjacency")
+                        cat("If you get a network building error you might have missing edges from filtering the dataset before network building. Just filter afterword instead.")
+                    }
 
                 ## Just build a network with the edgelist
-                    # if (dim(edgelist)[2] == 2) {
+                    if (dim(edgelist)[2] == 2) {
                         network_object <- network::network(edgelist, matrix.type = "edgelist", ignore.eval = FALSE)
-                    # }
+                    }
 
                 ## Fortify the network object into a dataframe, modify it with new colnames and additional information, crack into a list of edges and nodes
                     combined_network_frame <- ggnetwork::ggnetwork(network_object, arrow.gap = 0, layout = "kamadakawai", stringsAsFactors = TRUE)
