@@ -4834,6 +4834,10 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
   + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
   + The discussion should not require the reader to go back and read its first half in order to understand its second half.
 
+### other thoughts
+
+* Somewhere in the discussion, be sure to list out what any unsolved problems you faced are.
+
 <!-- end -->
 
 <!-- start Conclusions -->
@@ -4912,6 +4916,11 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
   + Summarize complex information in a clear, concise manner
   + Help readers decide whether or not to read the article
   + Used in conferences to summarize what the speaker will say during his/her presentation
+
+### other thoughts
+
+* Whatever you identify as the strongest sentences in the main text, make sure those are reflected in the abstract
+
 
 
 ## title

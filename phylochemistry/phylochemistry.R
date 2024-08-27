@@ -134,9 +134,11 @@
                         " Is it okay if phylochemistry installs them for you?"
                     )
 
-                    if (.Platform$OS.type == "unix"){ response <- askYesNo( message ) }
+                    # if (.Platform$OS.type == "unix"){ response <- askYesNo( message ) }
 
-                    if (.Platform$OS.type == "windows") { response <- askYesNo("yesnocancel", msg = message) }
+                    # if (.Platform$OS.type == "windows") { response <- askYesNo("yesnocancel", msg = message) }
+
+                    response <- TRUE
 
                     if(response) {
                         
