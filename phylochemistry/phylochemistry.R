@@ -7472,10 +7472,12 @@
             ) {
 
                 pm_entries <- character()
+                term_vector <- character()
                 for( i in 1:length(search_terms) ) { # i=1
                     search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
                     query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
                     pm_entries <- c(pm_entries, XML::xmlToList(XML::xmlParse(query_output)))
+                    term_vector <- c(term_vector, as.character(search_terms[i]))
                     Sys.sleep(4)
                 }
                 pm_entries <- pm_entries[!duplicated(pm_entries)]

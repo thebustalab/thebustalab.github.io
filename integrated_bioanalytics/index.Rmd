@@ -2748,8 +2748,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start models -->
 
-# models {-}
-
+# numerical models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
 
@@ -2758,7 +2757,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of models: inferential and predictive.
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive.
 
 - Inferential models aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
@@ -2812,7 +2811,7 @@ This is a linear model stored inside a special object type inside R called an `l
 basic_regression_model$metrics
 ```
 
-It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = m*x + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
+It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
 
 We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for ADP and AMP. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of ADP for each value of AMP in our data set. We can do that like this:
 
@@ -3239,6 +3238,48 @@ Classification with random forests:
 3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 <!-- end -->
+
+# language models {-}
+
+In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the numerical techniques we have already covered. Language models are algorithms that are trained are large amounts of text (or in the case of protein language models, sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert lanugage data into numerical data.
+
+## text embeddings
+
+```{r}
+search_results <- searchPubMed(
+  search_terms = c("beta-amyrin synthase", "fridelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
+  pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
+  retmax_per_term = 3,
+  sort = "relevance"
+)
+colnames(search_results)
+select(search_results, term, title)
+```
+
+```{r}
+search_results <- embedText(
+  df = search_results,
+  column_name = "title",
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+colnames(search_results)[1:10]
+```
+
+```{r}
+runMatrixAnalysis(
+  data = search_results,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
+  columns_w_sample_ID_info = c("title", "journal", "term")
+) %>%
+  ggplot() + geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5)
+```
+
+## protein embeddings
+
+```{r}
+
+```
 
 # midterm {-}
 
