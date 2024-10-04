@@ -3241,9 +3241,19 @@ Classification with random forests:
 
 # language models {-}
 
-In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the numerical techniques we have already covered. Language models are algorithms that are trained are large amounts of text (or in the case of protein language models, sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert lanugage data into numerical data.
+In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data.
 
-## text embeddings
+## embedding models
+
+An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
+
+A basic form of an embedding model is a neural network called an autoencoder. Autoencoders  consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
+
+### text embeddings
+
+Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
+
+First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at  https://pubmed.ncbi.nlm.nih.gov/. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
 
 ```{r}
 search_results <- searchPubMed(
@@ -3256,6 +3266,12 @@ colnames(search_results)
 select(search_results, term, title)
 ```
 
+From the output here, you can see that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
+
+Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at https://huggingface.co and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.
+
+To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', available through the Hugging Face API at https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at https://huggingface.co, where you will find detailed documentation and additional resources.
+
 ```{r}
 search_results <- embedText(
   df = search_results,
@@ -3264,6 +3280,15 @@ search_results <- embedText(
 )
 colnames(search_results)[1:10]
 ```
+
+The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.
+
+```{r}
+search_results <- left_join(search_results, earch_results_embedded, by = "title")
+search_results[1:3, 1:10]
+```
+
+To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes. This visualization helps us identify patterns and clusters among the publication titles based on their textual content.
 
 ```{r}
 runMatrixAnalysis(

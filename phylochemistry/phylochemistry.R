@@ -6812,7 +6812,7 @@
 
         #### analyzeTerms
 
-            analyzeTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term) {
+            extractTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term) {
 
                 # Prepare text_vector to analyze
                     text_vector <- list()
@@ -7464,30 +7464,29 @@
 
         #### searchPubMed
 
-            searchPubMed <- function(
-                search_terms, 
-                pubmed_api_key,
-                sort = c("date", "relevance"),
-                retmax_per_term = 20
-            ) {
-
+            searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
+    
                 pm_entries <- character()
                 term_vector <- character()
+                
                 for( i in 1:length(search_terms) ) { # i=1
                     search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
                     query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
-                    pm_entries <- c(pm_entries, XML::xmlToList(XML::xmlParse(query_output)))
-                    term_vector <- c(term_vector, as.character(search_terms[i]))
+                    current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
+                    pm_entries <- c(pm_entries, current_pm_entries)
+                    term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
                     Sys.sleep(4)
                 }
-                pm_entries <- pm_entries[!duplicated(pm_entries)]
-
+                unique_indices <- !duplicated(pm_entries)
+                pm_entries <- pm_entries[unique_indices]
+                term_vector <- term_vector[unique_indices]
+                  
                 pm_results <- list()
                 for (i in 1:length(pm_entries)) { # i=1
-                    
+                  
                     if (length(pm_entries[[i]]) == 1) { next }
                     if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
-                    
+
                     options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
                     for (option in options) { # option = 4
                         if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
@@ -7495,14 +7494,15 @@
                             break
                         } else {next}
                     }
-                    
+                  
                     pm_results[[i]] <- data.frame(
-                        entry_number <- i,
+                        entry_number = as.numeric(i),
+                        term = term_vector[[i]],
                         date = lubridate::as_date(paste(
                             pm_entries[[i]]$MedlineCitation$DateRevised$Year,
                             pm_entries[[i]]$MedlineCitation$DateRevised$Month,
                             pm_entries[[i]]$MedlineCitation$DateRevised$Day,
-                            sep = "-"
+                        sep = "-"
                         )),
                         journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
                         title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
@@ -7510,8 +7510,57 @@
                         abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
                     )
                 }
-                return(do.call(rbind, pm_results))
+                return(as_tibble(do.call(rbind, pm_results)))
             }
+
+            # searchPubMed <- function(
+            #     search_terms, 
+            #     pubmed_api_key,
+            #     sort = c("date", "relevance"),
+            #     retmax_per_term = 20
+            # ) {
+
+            #     pm_entries <- character()
+            #     term_vector <- character()
+            #     for( i in 1:length(search_terms) ) { # i=1
+            #         search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
+            #         query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
+            #         pm_entries <- c(pm_entries, XML::xmlToList(XML::xmlParse(query_output)))
+            #         term_vector <- c(term_vector, as.character(search_terms[i]))
+            #         Sys.sleep(4)
+            #     }
+            #     pm_entries <- pm_entries[!duplicated(pm_entries)]
+
+            #     pm_results <- list()
+            #     for (i in 1:length(pm_entries)) { # i=1
+                    
+            #         if (length(pm_entries[[i]]) == 1) { next }
+            #         if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
+                    
+            #         options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
+            #         for (option in options) { # option = 4
+            #             if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
+            #                 doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
+            #                 break
+            #             } else {next}
+            #         }
+                    
+            #         pm_results[[i]] <- data.frame(
+            #             entry_number <- i,
+            #             date = lubridate::as_date(paste(
+            #                 pm_entries[[i]]$MedlineCitation$DateRevised$Year,
+            #                 pm_entries[[i]]$MedlineCitation$DateRevised$Month,
+            #                 pm_entries[[i]]$MedlineCitation$DateRevised$Day,
+            #                 sep = "-"
+            #             )),
+            #             journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
+            #             title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
+            #             doi = doi,
+            #             abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
+            #         )
+            #     }
+            #     return(do.call(rbind, pm_results))
+            # }
 
     ##### Networks
 
