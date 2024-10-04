@@ -6662,7 +6662,7 @@
 
             }
 
-    ##### Text data handling
+    ##### Language models and text data handling
 
         #### completionGPT
 
@@ -7561,6 +7561,33 @@
             #     }
             #     return(do.call(rbind, pm_results))
             # }
+
+        #### embedText
+
+            embedText <- function(df, column_name, hf_api_key) {
+
+                ## Prep input
+                embeddings_list <- list()
+                df <- as_tibble(df)
+                text_vector <- unlist(df[,which(colnames(df) == column_name)])
+              
+                ## Run HF embeddings, process and return output
+                for (i in 1:length(text_vector)) { # i=1
+                    response <- POST(
+                        url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
+                        add_headers(Authorization = paste0("Bearer ", hf_api_key)),
+                        body = toJSON(list(inputs = text_vector[i])),
+                        encode = "json"
+                    )
+                    if (response$status_code == 429) {stop("Warning: you have (probably) exceeded your HuggingFace rate limit.")}
+                    embeddings_list[[i]] <- as.numeric(as.character(jsonlite::fromJSON(httr::content(response, as = "text", encoding = "UTF-8"))))
+                }
+
+                embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
+                colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+                df <- bind_cols(df, embeddings_df)
+                return(df)
+            }
 
     ##### Networks
 
