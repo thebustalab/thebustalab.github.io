@@ -34,10 +34,6 @@
                     BiocManager::install(Bioconductor_packages[Bioconductor_packages %in% packages_needed], dependencies = TRUE)
                 }
 
-                if (length(Github_packages[Github_packages %in% packages_needed]) > 0) {
-                    remotes::install_github(Github_packages[Github_packages %in% packages_needed], dependencies = TRUE)
-                }
-
             } else {
                 stop("Cannot load phylochemistry without the required packages. Exiting.")
             }
