@@ -62,9 +62,11 @@
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li><a class="" href="clustering.html">clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
 <li><a class="active" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
 <li><a class="" href="midterm.html">midterm</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
@@ -90,6 +92,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html"><span class="header-section-number">2</span> datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
 </ul>
@@ -505,10 +508,9 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## .pred_class5 kidney_disease   kidney_disease</span></span>
 <span><span class="co">## .pred_class6 kidney_disease   kidney_disease</span></span></code></pre></div>
 </div>
-</div>
-<div id="exercises-7" class="section level2 unnumbered">
-<h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
-</h2>
+<div id="exercises-7" class="section level3 unnumbered">
+<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
+</h3>
 <p>To practice creating models, try the following:</p>
 <ol style="list-style-type: decimal">
 <li><p>Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run “pca_ord” contains the Dimension 1 coordinate “Dim.1” for each sample, as well as the abundance of each analyte in that sample.</p></li>
@@ -516,6 +518,7 @@ Now, let’s put it all together and make it pretty:</p>
 <li><p>Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using <code>buildModel</code> and <code>predictWithModel</code> create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.</p></li>
 <li><p>Have a look at the dataset <code>metabolomics_unknown</code>. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the <code>metabolomics_data</code> data set and diagnose each patient in <code>metabolomics_unknown</code>.</p></li>
 </ol>
+</div>
 </div>
 <div id="further-reading-9" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
@@ -533,164 +536,10 @@ Clustering</p>
 3. <a href="https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173" class="uri">https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173</a></p>
 <!-- end -->
 </div>
-<div id="language-models" class="section level2 unnumbered">
-<h2>language models<a class="anchor" aria-label="anchor" href="#language-models"><i class="fas fa-link"></i></a>
-</h2>
-<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" width="100%" style="display: block; margin: auto;"></div>
-<p>In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.</p>
-<p>A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.</p>
-<div id="text-embeddings" class="section level3" number="1.1.1">
-<h3>
-<span class="header-section-number">1.1.1</span> text embeddings<a class="anchor" aria-label="anchor" href="#text-embeddings"><i class="fas fa-link"></i></a>
-</h3>
-<p>Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.</p>
-<p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">searchPubMed</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">search_terms</span>, <span class="va">pubmed_api_key</span>, <span class="va">sort</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"date"</span>, <span class="st">"relevance"</span><span class="op">)</span>, <span class="va">retmax_per_term</span> <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    </span>
-<span>  <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="kw">for</span><span class="op">(</span> <span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">)</span> <span class="op">)</span> <span class="op">{</span> <span class="co"># i=1</span></span>
-<span>      <span class="va">search_output</span> <span class="op">&lt;-</span> <span class="fu">rentrez</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/entrez_search.html">entrez_search</a></span><span class="op">(</span>db <span class="op">=</span> <span class="st">"pubmed"</span>, term <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, retmax <span class="op">=</span> <span class="va">retmax_per_term</span>, use_history <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="va">sort</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span>      <span class="va">query_output</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html">try</a></span><span class="op">(</span><span class="fu">rentrez</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/entrez_fetch.html">entrez_fetch</a></span><span class="op">(</span>db <span class="op">=</span> <span class="st">"pubmed"</span>, web_history <span class="op">=</span> <span class="va">search_output</span><span class="op">$</span><span class="va">web_history</span>, rettype <span class="op">=</span> <span class="st">"xml"</span>, retmax <span class="op">=</span> <span class="va">retmax_per_term</span>, api_key <span class="op">=</span> <span class="va">pubmed_api_key</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="va">current_pm_entries</span> <span class="op">&lt;-</span> <span class="fu">XML</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/XML/man/xmlToList.html">xmlToList</a></span><span class="op">(</span><span class="fu">XML</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/XML/man/xmlTreeParse.html">xmlParse</a></span><span class="op">(</span><span class="va">query_output</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">pm_entries</span>, <span class="va">current_pm_entries</span><span class="op">)</span></span>
-<span>      <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">term_vector</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">current_pm_entries</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html">Sys.sleep</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="va">unique_indices</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">)</span></span>
-<span>  <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="va">pm_entries</span><span class="op">[</span><span class="va">unique_indices</span><span class="op">]</span></span>
-<span>  <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="va">term_vector</span><span class="op">[</span><span class="va">unique_indices</span><span class="op">]</span></span>
-<span>    </span>
-<span>  <span class="va">pm_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="co"># i=1</span></span>
-<span>    </span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span> <span class="kw">next</span> <span class="op">}</span></span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">ELocationID</span><span class="op">$</span><span class="va">text</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="kw">next</span> <span class="op">}</span></span>
-<span></span>
-<span>      <span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">)</span> <span class="op">==</span> <span class="st">"ELocationID"</span><span class="op">)</span></span>
-<span>      <span class="kw">for</span> <span class="op">(</span><span class="va">option</span> <span class="kw">in</span> <span class="va">options</span><span class="op">)</span> <span class="op">{</span> <span class="co"># option = 4</span></span>
-<span>          <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"10\\."</span>, <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">[[</span><span class="va">option</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">text</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>              <span class="va">doi</span> <span class="op">&lt;&lt;-</span> <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">[[</span><span class="va">option</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">text</span></span>
-<span>              <span class="kw">break</span></span>
-<span>          <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span><span class="kw">next</span><span class="op">}</span></span>
-<span>      <span class="op">}</span></span>
-<span>    </span>
-<span>      <span class="va">pm_results</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
-<span>          entry_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span>,</span>
-<span>          term <span class="op">=</span> <span class="va">term_vector</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>          date <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html">as_date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span></span>
-<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Year</span>,</span>
-<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Month</span>,</span>
-<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Day</span>,</span>
-<span>          sep <span class="op">=</span> <span class="st">"-"</span></span>
-<span>          <span class="op">)</span><span class="op">)</span>,</span>
-<span>          journal <span class="op">=</span> <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">Journal</span><span class="op">$</span><span class="va">Title</span>,</span>
-<span>          title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">ArticleTitle</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
-<span>          doi <span class="op">=</span> <span class="va">doi</span>,</span>
-<span>          abstract <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">Abstract</span><span class="op">$</span><span class="va">AbstractText</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span>      <span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu">as_tibble</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">pm_results</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
-<span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"beta-amyrin synthase"</span>, <span class="st">"friedelin synthase"</span>, <span class="st">"sorghum bicolor"</span>, <span class="st">"cuticular wax biosynthesis"</span><span class="op">)</span>,</span>
-<span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
-<span>  retmax_per_term <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  sort <span class="op">=</span> <span class="st">"relevance"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span></span>
-<span><span class="co">## [1] "entry_number" "term"         "date"        </span></span>
-<span><span class="co">## [4] "journal"      "title"        "doi"         </span></span>
-<span><span class="co">## [7] "abstract"</span></span></code></pre></div>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">select</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">term</span>, <span class="va">title</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 12 × 2</span></span>
-<span><span class="co">##    term                       title                         </span></span>
-<span><span class="co">##    &lt;chr&gt;                      &lt;chr&gt;                         </span></span>
-<span><span class="co">##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…</span></span>
-<span><span class="co">##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…</span></span>
-<span><span class="co">##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…</span></span>
-<span><span class="co">##  4 friedelin synthase         Friedelin in Maytenus ilicifo…</span></span>
-<span><span class="co">##  5 friedelin synthase         Friedelin Synthase from Mayte…</span></span>
-<span><span class="co">##  6 friedelin synthase         Functional characterization o…</span></span>
-<span><span class="co">##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    </span></span>
-<span><span class="co">##  8 sorghum bicolor            Molecular Breeding of Sorghum…</span></span>
-<span><span class="co">##  9 sorghum bicolor            Structure and genetic regulat…</span></span>
-<span><span class="co">## 10 cuticular wax biosynthesis Regulatory mechanisms underly…</span></span>
-<span><span class="co">## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…</span></span>
-<span><span class="co">## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…</span></span></code></pre></div>
-<p>From the output here, you can see that we’ve retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.</p>
-<p>Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at <a href="https://huggingface.co" class="uri">https://huggingface.co</a> and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.</p>
-<p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, available through the Hugging Face API at <a href="https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5" class="uri">https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5</a>. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at <a href="https://huggingface.co" class="uri">https://huggingface.co</a>, where you will find detailed documentation and additional resources.</p>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/jsonlite">jsonlite</a></span><span class="op">)</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'jsonlite'</span></span>
-<span><span class="co">## The following object is masked from 'package:purrr':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     flatten</span></span>
-<span><span class="co">## The following object is masked from 'package:shiny':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     validate</span></span></code></pre></div>
-<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
-<span>  df <span class="op">=</span> <span class="va">search_results</span>,</span>
-<span>  column_name <span class="op">=</span> <span class="st">"title"</span>,</span>
-<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">search_results_embedded</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">## # A tibble: 3 × 10</span></span>
-<span><span class="co">##   entry_number term  date       journal title doi   abstract</span></span>
-<span><span class="co">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
-<span><span class="co">## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
-<span><span class="co">## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
-<span><span class="co">## 3            3 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…</span></span>
-<span><span class="co">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
-<span><span class="co">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
-<p>The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.</p>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">search_results_embedded</span>, by <span class="op">=</span> <span class="st">"title"</span><span class="op">)</span></span>
-<span><span class="va">search_results</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">## # A tibble: 3 × 10</span></span>
-<span><span class="co">##   entry_number.x term.x     date.x     journal.x title doi.x</span></span>
-<span><span class="co">##            &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;</span></span>
-<span><span class="co">## 1              1 beta-amyr… 2019-11-20 FEBS ope… β-Am… 10.1…</span></span>
-<span><span class="co">## 2              2 beta-amyr… 2024-04-03 Acta pha… Gins… 10.1…</span></span>
-<span><span class="co">## 3              3 beta-amyr… 2019-12-10 Organic … β-Am… 10.1…</span></span>
-<span><span class="co">## # ℹ 4 more variables: abstract.x &lt;chr&gt;,</span></span>
-<span><span class="co">## #   entry_number.y &lt;dbl&gt;, term.y &lt;chr&gt;, date.y &lt;date&gt;</span></span></code></pre></div>
-<p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">search_results_embedded</span>,</span>
-<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"title"</span>, <span class="st">"journal"</span>, <span class="st">"term"</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu">geom_label_repel</span><span class="op">(</span></span>
-<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="va">title</span>, width <span class="op">=</span> <span class="fl">35</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      size <span class="op">=</span> <span class="fl">2</span>, min.segment.length <span class="op">=</span> <span class="fl">0.5</span>, force <span class="op">=</span> <span class="fl">250</span></span>
-<span>    <span class="op">)</span> <span class="op">+</span>  </span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;"></div>
-</div>
-<div id="protein-embeddings" class="section level3" number="1.1.2">
-<h3>
-<span class="header-section-number">1.1.2</span> protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
-</h3>
-</div>
-</div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="comparing-means.html">comparing means</a></div>
-<div class="next"><a href="midterm.html">midterm</a></div>
+<div class="next"><a href="language-models.html">language models</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -711,16 +560,12 @@ Clustering</p>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#predictive-models">predictive models</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#random-forests">random forests</a></li></ul>
-</li>
+<a class="nav-link" href="#predictive-models">predictive models</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#random-forests">random forests</a></li>
 <li><a class="nav-link" href="#exercises-7">exercises</a></li>
-<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
-<li>
-<a class="nav-link" href="#language-models">language models</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#text-embeddings"><span class="header-section-number">1.1.1</span> text embeddings</a></li>
-<li><a class="nav-link" href="#protein-embeddings"><span class="header-section-number">1.1.2</span> protein embeddings</a></li>
 </ul>
 </li>
+<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -738,7 +583,7 @@ Clustering</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-04.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-08.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

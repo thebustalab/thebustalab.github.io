@@ -1844,15 +1844,12 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 <!-- end -->
 
 <!-- start clustering -->
-# clustering {-}
+
+# heirarchical clustering {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
 ```
-
-## heirarchical clustering {-}
-
-### theory {-}
 
 "Which of my samples are most closely related?"
 
@@ -1925,13 +1922,13 @@ ggtree() +
 
 Very nice!
 
-### further reading {-}
+## further reading {-}
  
 For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
 
 For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
 
-### exercises {-}
+## exercises {-}
 
 For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
@@ -1945,11 +1942,11 @@ colnames(solvents)[1:3]
 colnames(solvents)[c(1,5,7)]
 ```
 
-## k-means and dbscan {-}
+# flat clustering {-}
 
 "Do my samples fall into definable clusters?"
 
-### theory {-}
+## kmeans {-}
 
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
@@ -2004,6 +2001,8 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
+## dbscan {-}
+
 There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
 ```{r, message = FALSE}
@@ -2047,7 +2046,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-### summarize by cluster {-}
+## summarize by cluster {-}
 
 One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
 
@@ -2121,7 +2120,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
  
-### further reading {-}
+## further reading {-}
 
 http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
 
@@ -2132,7 +2131,7 @@ https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-
 https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
 
-### exercises {-}
+## exercises {-}
 
 For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
 
@@ -3133,7 +3132,25 @@ data.frame(
 )
 ```
 
-### exercises {-}
+## further reading {-}
+
+https://github.com/easystats/performance
+
+Here is more information on common machine learning tasks:
+https://pythonprogramminglanguage.com/machine-learning-tasks/
+
+Some major tasks include:
+  Classification
+  Regression
+  Clustering
+
+Classification with random forests:
+1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
+3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
+
+
+## exercises {-}
 
 To practice creating models, try the following:
 
@@ -3220,22 +3237,6 @@ model$metrics
 
 ```
 
-## further reading {-}
-
-https://github.com/easystats/performance
-
-Here is more information on common machine learning tasks:
-https://pythonprogramminglanguage.com/machine-learning-tasks/
-
-Some major tasks include:
-  Classification
-  Regression
-  Clustering
-
-Classification with random forests:
-1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
-2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
-3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 <!-- end -->
 
@@ -3338,7 +3339,7 @@ search_results[1:3, 1:10]
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
-```{r, fig.width = 10, fig.height = 8}
+```{r, fig.width = 8, fig.height = 6}
 runMatrixAnalysis(
   data = search_results_embedded,
   analysis = "pca",
@@ -3359,7 +3360,7 @@ runMatrixAnalysis(
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
-```{r, cache = TRUE}
+```{r, fig.width = 8, fig.height = 6, cache = TRUE}
 n <- 30
 
 odor <- data.frame(
@@ -3398,6 +3399,33 @@ ggplot(pca_out) +
 ```
 
 ## protein embeddings {-}
+
+<!-- Protein Language Models: -->
+<!--     The goal in these models is to train them so that the embeddings they create capture important biological features of proteins. -->
+<!--     The attention mechanism in transformer models allows capturing both local and global information in a protein sequence: -->
+<!--         Local Information: Might include interactions between neighboring amino acids. -->
+<!--         Global Information: Could encompass long-range relationships between distant parts of the sequence. -->
+<!--     While embedding models can be simple autoencoders, many embedding models, especially in protein language modeling, use transformers with attention mechanisms to capture complex patterns in the data. -->
+
+<!-- Attention Mechanism: -->
+<!--     The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element. -->
+<!--     It generates attention scores to weigh how much attention one amino acid should give to another. -->
+<!--     The attention mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. -->
+
+<!-- Why Attention is Beneficial: -->
+<!--     Long-Range Dependencies: Captures interactions between distant amino acids. -->
+<!--     Structural Complexity: Weighs relationships between amino acids to account for protein folding and interactions. -->
+<!--     Handling Variable Sequence Lengths: Adjusts focus across sequences of varying lengths. -->
+<!--     Multi-Dimensional Relationships: Multi-head attention allows capturing different kinds of relationships, like hydrophobic interactions or secondary structures. -->
+<!--     Contextualized Embeddings: Embeddings reflect the broader sequence environment, not just local motifs. -->
+
+<!-- Additional Mechanisms in Protein Language Models: -->
+<!--     Positional Encoding: Adds position information to the sequence so that the model can differentiate between identical amino acids at different positions. -->
+<!--     Masked Language Modeling (MLM): Trains the model to predict masked amino acids, learning patterns in the sequence. -->
+<!--     Multiscale Representations: Allows capturing both fine-grained and coarse-grained structural information. -->
+<!--     Evolutionary Information: Incorporates multiple sequence alignments (MSAs) to learn from conserved regions. -->
+<!--     Residual Connections: Helps information flow through the network and stabilizes training by allowing the model to retain original input data as it processes through layers. -->
+<!--     Normalization and Regularization: Techniques like layer normalization and dropout are used to stabilize training and prevent overfitting. -->
 
 Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
 
@@ -3438,9 +3466,106 @@ runMatrixAnalysis(
 
 1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
 
+Time Series Analysis of Research Trends: Modify the search terms to retrieve publications over a period of several years. Embed the titles and visualize the changes in clustering over time using PCA. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges.
+
+```{r}
+searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
+
+  pm_entries <- character()
+  term_vector <- character()
+
+  for (i in 1:length(search_terms)) { 
+      search_output <- rentrez::entrez_search(
+        db = "pubmed", term = as.character(search_terms[i]), 
+        retmax = retmax_per_term, use_history = TRUE, sort = sort[1]
+      )
+      
+      # Initialize variables for retry mechanism
+      success <- FALSE
+      attempts <- 0
+      max_attempts <- 3  # Maximum number of retry attempts
+      
+      while (!success && attempts < max_attempts) {
+          attempts <- attempts + 1
+          
+          # Attempt to fetch data
+          query_output <- try(rentrez::entrez_fetch(
+            db = "pubmed", web_history = search_output$web_history, 
+            rettype = "xml", retmax = retmax_per_term, 
+            api_key = pubmed_api_key, timeout = 60), silent = TRUE)
+          
+          # Check if the attempt was successful
+          if (inherits(query_output, "try-error")) {
+              message("Error encountered. Attempt ", attempts, " of ", max_attempts, ". Retrying in 5 seconds...")
+              Sys.sleep(5)  # Wait before retrying
+          } else {
+              # Parse and store the entries if successful
+              current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
+              pm_entries <- c(pm_entries, current_pm_entries)
+              term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
+              success <- TRUE
+          }
+      }
+      
+      if (!success) {
+          message("Failed to fetch data for term: ", as.character(search_terms[i]), " after ", max_attempts, " attempts.")
+      }
+      
+      Sys.sleep(4)  # Wait between different search terms to respect API rate limits
+  }
+
+  unique_indices <- !duplicated(pm_entries)
+  pm_entries <- pm_entries[unique_indices]
+  term_vector <- term_vector[unique_indices]
+
+  pm_results <- list()
+  for (i in 1:length(pm_entries)) { # i=1
+
+      if (length(pm_entries[[i]]) == 1) { next }
+      if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
+
+      options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
+      for (option in options) { # option = 4
+          if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
+              doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
+              break
+          } else {next}
+      }
+
+      pm_results[[i]] <- data.frame(
+          entry_number = as.numeric(i),
+          term = term_vector[[i]],
+          date = lubridate::as_date(paste(
+              pm_entries[[i]]$MedlineCitation$DateRevised$Year,
+              pm_entries[[i]]$MedlineCitation$DateRevised$Month,
+              pm_entries[[i]]$MedlineCitation$DateRevised$Day,
+          sep = "-"
+          )),
+          journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
+          title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
+          doi = doi,
+          abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
+      )
+  }
+  return(as_tibble(do.call(rbind, pm_results)))
+}
+
+search_results_ex <- searchPubMed(
+  search_terms = c("oxidosqualene cyclase", "chemotaxonomy", "protein engineering"),
+  pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
+  retmax_per_term = 50,
+  sort = "date"
+)
+
+search_results_ex
+```
+
+Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data.
+
+
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
 
-```{r, echo = FALSE, eval = FALSE, cache = TRUE}
+```{r, echo = FALSE, eval = FALSE, cache = TRUE, fig.width = 8, fig.height = 6}
 hops_embedded <- embedText(
   hops_components,
   column_name = 'hop_aroma',
@@ -3451,7 +3576,7 @@ runMatrixAnalysis(
   data = hops_embedded,
   analysis = "pca",
   columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
-  columns_w_sample_ID_info = c('hop_variety', 'hop_origin', 'hop_brewing_usage')
+  columns_w_sample_ID_info = c('hop_variety', 'hop_origin', 'hop_brewing_usage', 'hop_aroma')
 ) -> hops_embedded_pca
 
 hops_embedded_pca$color <- rgb(
@@ -3462,7 +3587,7 @@ hops_embedded_pca$color <- rgb(
 
 ggplot(hops_embedded_pca) +
   geom_label_repel(
-    aes(x = Dim.1, y = Dim.2, label = hop_variety),
+    aes(x = Dim.1, y = Dim.2, label = hop_aroma),
     size = 2, min.segment.length = 0.5, force = 25
   ) +  
   geom_point(aes(x = Dim.1, y = Dim.2), fill = hops_embedded_pca$color, shape = 21, size = 5, alpha = 0.7) +

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-07"
+date: "2024-10-08"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -2168,13 +2168,10 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 <!-- end -->
 
 <!-- start clustering -->
-# clustering {-}
+
+# heirarchical clustering {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;" />
-
-## heirarchical clustering {-}
-
-### theory {-}
 
 "Which of my samples are most closely related?"
 
@@ -2285,13 +2282,13 @@ ggtree() +
 
 Very nice!
 
-### further reading {-}
+## further reading {-}
  
 For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
 
 For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
 
-### exercises {-}
+## exercises {-}
 
 For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
 
@@ -2316,11 +2313,11 @@ colnames(solvents)[c(1,5,7)]
 ## [3] "solubility_in_water"
 ```
 
-## k-means and dbscan {-}
+# flat clustering {-}
 
 "Do my samples fall into definable clusters?"
 
-### theory {-}
+## kmeans {-}
 
 One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
@@ -2380,6 +2377,8 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
 
+## dbscan {-}
+
 There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
 
@@ -2432,7 +2431,7 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
 
-### summarize by cluster {-}
+## summarize by cluster {-}
 
 One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
 
@@ -2512,7 +2511,7 @@ plot_1 + plot_2
 
 <img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
  
-### further reading {-}
+## further reading {-}
 
 http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
 
@@ -2523,7 +2522,7 @@ https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-
 https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
 
-### exercises {-}
+## exercises {-}
 
 For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
 
@@ -3261,7 +3260,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start models -->
 
-# models {-}
+# numerical models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
 
@@ -3773,7 +3772,7 @@ To practice creating models, try the following:
 
 
 
-### further reading {-}
+## further reading {-}
 
 https://github.com/easystats/performance
 
@@ -3792,7 +3791,7 @@ Classification with random forests:
 
 <!-- end -->
 
-## language models {-}
+# language models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
 
@@ -3800,7 +3799,7 @@ In the last chapter, we looked at models that use numerical data to understand t
 
 A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
 
-### text embeddings {-}
+## text embeddings {-}
 
 Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
 
@@ -3993,16 +3992,6 @@ ggplot(pca_out) +
 
 <img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
-### exercises {-}
-
-1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
-
-2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensionality reduction (pca, if you like) to determine if any clear clusters are present.
-
-
-
-### further reading {-}
-
 ## protein embeddings {-}
 
 Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
@@ -4038,11 +4027,17 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
-### exercises {-}
+## further reading {-}
 
-### further reading {-}
+## exercises {-}
+
+1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
+
+2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
+
+
 
 # midterm {-}
 
