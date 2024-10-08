@@ -7590,6 +7590,31 @@
                 return(df)
             }
 
+        #### embedAminoAcids
+
+            embedAminoAcids <- function(amino_acid_stringset, biolm_api_key) {
+  
+                embeddings <- list()
+                for( i in 1:length(amino_acid_stringset)) { #i=1
+
+                    # Make the POST request
+                    response <- POST(
+                        url = "https://biolm.ai/api/v2/esm2-8m/encode/",
+                        add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
+                        body = toJSON(list(
+                        items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
+                        ), auto_unbox = TRUE), encode = "json"
+                    )
+                    embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+
+                }
+                embeddings <- as.data.frame(do.call(rbind, embeddings))
+                colnames(embeddings) <- paste0("embedding_", seq(1:dim(embeddings)[2]))
+                embeddings <- cbind(amino_acid_stringset@ranges@NAMES, embeddings)
+                colnames(embeddings)[1] <- "name"
+                return(embeddings)
+            }
+
     ##### Networks
 
         #### extractModules
@@ -12491,6 +12516,8 @@
                     gdata::mv("temp_obj", as.character(sample_datasets[i,1]))
                     pb$tick()
                 }
+
+                p450s <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/p450s.fasta")
 
             ## Busta lab specific datasets
 

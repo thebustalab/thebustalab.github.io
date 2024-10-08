@@ -3133,7 +3133,7 @@ data.frame(
 )
 ```
 
-## exercises {-}
+### exercises {-}
 
 To practice creating models, try the following:
 
@@ -3220,7 +3220,7 @@ model$metrics
 
 ```
 
-## further reading {-}
+### further reading {-}
 
 https://github.com/easystats/performance
 
@@ -3242,12 +3242,12 @@ Classification with random forests:
 ## language models {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png', dpi = NA)
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg', dpi = NA)
 ```
 
 In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
 
-A basic form of an embedding model is a neural network called an autoencoder. Autoencoders  consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
+A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
 
 ### text embeddings {-}
 
@@ -3255,7 +3255,7 @@ Here, we will create text embeddings using publication data from PubMed. Text em
 
 First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
 
-```{r}
+```{r, cache = TRUE}
 searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
 
   pm_entries <- character()
@@ -3320,8 +3320,7 @@ Next, we use the embedText function to create embeddings for the titles of the e
 
 To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', available through the Hugging Face API at https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at https://huggingface.co, where you will find detailed documentation and additional resources.
 
-```{r}
-library(jsonlite)
+```{r, cache = TRUE}
 search_results_embedded <- embedText(
   df = search_results,
   column_name = "title",
@@ -3349,7 +3348,7 @@ runMatrixAnalysis(
   ggplot() +
     geom_label_repel(
       aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
-      size = 2, min.segment.length = 0.5, force = 250
+      size = 2, min.segment.length = 0.5, force = 50
     ) +  
     geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5, alpha = 0.7) +
     scale_fill_brewer(palette = "Set1") +
@@ -3360,7 +3359,7 @@ runMatrixAnalysis(
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
-```{r}
+```{r, cache = TRUE}
 n <- 30
 
 odor <- data.frame(
@@ -3391,20 +3390,69 @@ ggplot(pca_out) +
     aes(x = Dim.1, y = Dim.2, label = str_wrap(odor, width = 35)),
     size = 2, min.segment.length = 0.5, force = 25
   ) +  
-  geom_point(aes(x = Dim.1, y = Dim.2), fill = pca_out$color, shape = 21, size = 5, alpha = 0.7) +
+  geom_point(aes(x = Dim.1, y = Dim.2), fill = pca_out$color, shape = 21, size = 3, alpha = 0.7) +
+  # scale_x_continuous(expand = c(1,0)) +
+  # scale_y_continuous(expand = c(1,0)) +
   theme_minimal()
 
 ```
 
-## exercises
+### exercises {-}
 
+1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
 
+2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensionality reduction (pca, if you like) to determine if any clear clusters are present.
 
-### protein embeddings {-}
+```{r, echo = FALSE, eval = FALSE, cache = TRUE}
+hops_embedded <- embedText(
+  hops_components,
+  column_name = 'hop_aroma',
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+
+runMatrixAnalysis(
+  data = hops_embedded,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
+  columns_w_sample_ID_info = c('hop_variety', 'hop_origin', 'hop_brewing_usage')
+) -> hops_embedded_pca
+
+hops_embedded_pca$color <- rgb(
+  scales::rescale(hops_embedded_pca$Dim.1, to = c(0, 1)),
+  0,
+  scales::rescale(hops_embedded_pca$Dim.2, to = c(0, 1))
+)
+
+ggplot(hops_embedded_pca) +
+  geom_label_repel(
+    aes(x = Dim.1, y = Dim.2, label = hop_variety),
+    size = 2, min.segment.length = 0.5, force = 25
+  ) +  
+  geom_point(aes(x = Dim.1, y = Dim.2), fill = hops_embedded_pca$color, shape = 21, size = 5, alpha = 0.7) +
+  theme_minimal()
+```
+
+### further reading {-}
+
+## protein embeddings {-}
+
+Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
+
+Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.
+
+Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.
+
+By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.
+
+In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.
 
 ```{r}
 
 ```
+
+### exercises {-}
+
+### further reading {-}
 
 # midterm {-}
 

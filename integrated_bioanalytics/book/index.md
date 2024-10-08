@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-04"
+date: "2024-10-07"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3261,7 +3261,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start models -->
 
-# numerical models {-}
+# models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
 
@@ -3758,7 +3758,7 @@ data.frame(
 ## .pred_class6 kidney_disease   kidney_disease
 ```
 
-## exercises {-}
+### exercises {-}
 
 To practice creating models, try the following:
 
@@ -3773,7 +3773,7 @@ To practice creating models, try the following:
 
 
 
-## further reading {-}
+### further reading {-}
 
 https://github.com/easystats/performance
 
@@ -3794,13 +3794,13 @@ Classification with random forests:
 
 ## language models {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" width="100%" style="display: block; margin: auto;" />
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
 
 In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
 
-A basic form of an embedding model is a neural network called an autoencoder. Autoencoders  consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
+A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
 
-### text embeddings
+### text embeddings {-}
 
 Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
 
@@ -3809,10 +3809,10 @@ First, we use the searchPubMed function to extract relevant publications from Pu
 
 ``` r
 searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
-    
+
   pm_entries <- character()
   term_vector <- character()
-  
+
   for( i in 1:length(search_terms) ) { # i=1
       search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
       query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
@@ -3824,10 +3824,10 @@ searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevan
   unique_indices <- !duplicated(pm_entries)
   pm_entries <- pm_entries[unique_indices]
   term_vector <- term_vector[unique_indices]
-    
+
   pm_results <- list()
   for (i in 1:length(pm_entries)) { # i=1
-    
+
       if (length(pm_entries[[i]]) == 1) { next }
       if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
 
@@ -3838,7 +3838,7 @@ searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevan
               break
           } else {next}
       }
-    
+
       pm_results[[i]] <- data.frame(
           entry_number = as.numeric(i),
           term = term_vector[[i]],
@@ -3876,12 +3876,12 @@ select(search_results, term, title)
 ##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…
 ##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…
 ##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
-##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
-##  5 friedelin synthase         Friedelin Synthase from Mayte…
-##  6 friedelin synthase         Functional characterization o…
+##  4 friedelin synthase         Friedelin Synthase from Mayte…
+##  5 friedelin synthase         Friedelin in Maytenus ilicifo…
+##  6 friedelin synthase         The Methionine 549 and Leucin…
 ##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  8 sorghum bicolor            Molecular Breeding of Sorghum…
-##  9 sorghum bicolor            Structure and genetic regulat…
+##  9 sorghum bicolor            Proton-Coupled Electron Trans…
 ## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
 ## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
 ## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…
@@ -3893,18 +3893,6 @@ Next, we use the embedText function to create embeddings for the titles of the e
 
 To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', available through the Hugging Face API at https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at https://huggingface.co, where you will find detailed documentation and additional resources.
 
-
-``` r
-library(jsonlite)
-## 
-## Attaching package: 'jsonlite'
-## The following object is masked from 'package:purrr':
-## 
-##     flatten
-## The following object is masked from 'package:shiny':
-## 
-##     validate
-```
 
 ``` r
 search_results_embedded <- embedText(
@@ -3952,7 +3940,7 @@ runMatrixAnalysis(
   ggplot() +
     geom_label_repel(
       aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
-      size = 2, min.segment.length = 0.5, force = 250
+      size = 2, min.segment.length = 0.5, force = 50
     ) +  
     geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5, alpha = 0.7) +
     scale_fill_brewer(palette = "Set1") +
@@ -3963,7 +3951,68 @@ runMatrixAnalysis(
 
 <img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
 
-### protein embeddings
+We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
+
+
+``` r
+n <- 30
+
+odor <- data.frame(
+  sample = seq(1,n,1),
+  odor = dropNA(unique(beer_components$analyte_odor))[sample(1:96, n)]
+)
+
+out <- embedText(
+  odor, column_name = "odor",
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+
+runMatrixAnalysis(
+  data = out,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
+  columns_w_sample_ID_info = c("sample", "odor")
+) -> pca_out
+
+pca_out$color <- rgb(
+  scales::rescale(pca_out$Dim.1, to = c(0, 1)),
+  0,
+  scales::rescale(pca_out$Dim.2, to = c(0, 1))
+)
+
+ggplot(pca_out) +
+  geom_label_repel(
+    aes(x = Dim.1, y = Dim.2, label = str_wrap(odor, width = 35)),
+    size = 2, min.segment.length = 0.5, force = 25
+  ) +  
+  geom_point(aes(x = Dim.1, y = Dim.2), fill = pca_out$color, shape = 21, size = 3, alpha = 0.7) +
+  # scale_x_continuous(expand = c(1,0)) +
+  # scale_y_continuous(expand = c(1,0)) +
+  theme_minimal()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
+
+### exercises
+
+1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
+
+2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensionality reduction (pca, if you like) to determine if any clear clusters are present.
+
+
+
+## protein embeddings {-}
+
+Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
+
+Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.
+
+Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.
+
+By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.
+
+In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.
+
 
 
 
@@ -4752,7 +4801,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4788,7 +4837,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4838,7 +4887,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4854,7 +4903,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4863,7 +4912,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4937,7 +4986,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4956,7 +5005,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5073,7 +5122,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5108,7 +5157,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5404,7 +5453,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5658,7 +5707,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -5681,7 +5730,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -5705,7 +5754,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -5781,21 +5830,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-256-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -5843,7 +5892,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6103,6 +6152,68 @@ ________________________________________________________________________________
 
 <!-- end -->
 
+# datasets
+
+## alaska_lake_data
+
+The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition and environmental conditions of these unique ecosystems. Researchers took water samples from several lakes, measuring key environmental parameters like water temperature and pH, along with analyzing the abundance of different chemical elements, such as carbon, nitrogen, and phosphorus. By comparing the concentrations of both bound and free elements, the study aimed to understand the health of these aquatic environments and the impact of natural and anthropogenic factors on the water chemistry. The dataset will be used to inform conservation strategies for maintaining the ecological balance in these sensitive regions.
+- lake (Categorical): The name of the lake from which the water sample was collected. This refers to the sample.
+- park (Categorical): The park or national park code where the lake is located. This is part of the sample identification.
+water_temp (Continuous): The water temperature (in degrees Celsius) of the sample at the time of collection. This is an analyte describing an environmental condition of the sample.
+- pH (Continuous): The pH value of the water, representing its acidity or alkalinity. This is an analyte providing an environmental characteristic of the sample.
+- element (Categorical): The chemical element being measured in the water (e.g., C for carbon, N for nitrogen). This is an analyte.
+- mg_per_L (Continuous): The concentration (in milligrams per liter) of the corresponding analyte from the element column, indicating the abundance of each analyte in the water sample.
+- element_type (Categorical): Describes whether the element is in a "bound" or "free" state, providing context for the form of the analyte.
+
+## algae_data
+
+This dataset was generated as part of a study investigating the biochemical composition of different algae strains under varying harvesting conditions. The goal of the research was to examine how different algae strains and harvesting regimes affect the abundance of various chemical species, particularly fatty acids and amino acids, which have potential applications in biofuel production and nutritional supplements. Replicates were performed to ensure consistency, and a wide range of chemical species was measured to provide insights into the algae's metabolic profile and its response to environmental or harvesting changes.
+
+- replicate (Categorical): The replicate number of the sample for the experiment, indicating which iteration of the algae sample was analyzed.
+- algae_strain (Categorical): The specific strain of algae used in the experiment (e.g., "Tsv1"). This refers to the strain from which each sample was collected.
+- harvesting_regime (Categorical): The method or condition under which the algae sample was harvested (e.g., "Heavy" regime).
+- chemical_species (Categorical): The type of chemical species or analyte measured in the algae sample, including various fatty acids (FAs) and amino acids (Aas).
+- abundance (Continuous): The measured abundance of the chemical species or analyte in the algae sample, expressed in a continuous quantitative form (e.g., mg/L or similar units).
+
+## beer_components
+
+This dataset captures the volatile compounds released from different ingredients like barley and corn, likely as part of a study on food aroma profiles. Researchers measured the abundance of specific analytes (such as 2-Methylpropanal) and classified them by chemical group (e.g., Aldehydes). The goal is to assess how different ingredients contribute to the overall aroma by linking each analyte to sensory descriptors, which include odor characteristics such as "Green," "Pungent," and "Malty." The dataset could be useful in food science research.
+
+- ingredient (Categorical): The ingredient from which the analytes were measured (e.g., "barley," "corn"). This refers to the ingredient from which the sample was collected.
+- replicate (Categorical): The replicate number of the sample for the experiment, indicating the repetition of the measurement for consistency.
+- analyte (Categorical): The specific volatile compound or chemical measured in the ingredient (e.g., "2-Methylpropanal").
+- analyte_class (Categorical): The chemical classification of the analyte (e.g., "Aldehyde").
+- abundance (Continuous): The concentration of the analyte measured in the sample, likely in a quantitative unit such as mg/L.
+- analyte_odor (Categorical): A sensory descriptor for the odors associated with the analyte, listed as a combination of descriptors (e.g., "Green; Pungent; Burnt; Malty; Toasted").
+
+## hawaii_aquifers
+
+This dataset represents water quality measurements from various wells within an aquifer system, collected as part of a study on groundwater composition. Researchers measured the abundance of different dissolved elements and compounds, such as silica (SiO2) and chloride (Cl), from different wells in an aquifer. The dataset could be used to assess the chemical profile of groundwater and monitor any changes in water quality over time. Note the absence of geospatial data (latitude and longitude) for certain samples, and note that some samples come from the same well and aquifer but have different latitude and longitude coordinates.
+
+- aquifer_code (Categorical): The code assigned to identify the aquifer system (e.g., "aquifer_1") that the sample came from.
+- well_name (Categorical): The name of the well from which the water sample was collected (e.g., "Alewa_Heights_Spring").
+- longitude (Continuous): The longitudinal coordinates of the well location from which the sample was take.
+- latitude (Continuous): The latitudinal coordinates of the well location from which the sample was take.
+- analyte (Categorical): The specific dissolved compound or element measured in the water sample (e.g., "SiO2," "Cl").
+- abundance (Continuous): The concentration of the analyte in the water sample, expressed in a quantitative unit (mg/L).
+
+## hops_components
+
+This dataset contains detailed information on various hop varieties used in brewing, including their country of origin, brewing usage (aroma or bittering), and the chemical composition of their essential oils and acids. The dataset serves as a resource for brewers to select hop varieties based on their aroma profiles and chemical content, such as alpha acids and essential oils like humulene and myrcene, which influence the bitterness, flavor, and aroma of beer. The goal of this dataset is to help optimize the hop selection process in brewing for specific flavor profiles and brewing techniques like dry hopping or bittering.
+
+- hop_variety (Categorical): The specific variety of hop used (e.g., "Cascade," "Chinook").
+- hop_origin (Categorical): The country of origin for the hop variety (e.g., "USA," "England").
+- hop_brewing_usage (Categorical): The primary use of the hop in brewing, either for aroma or bittering, or techniques like dry hopping.
+- hop_aroma (Categorical): The sensory description of the hop's aroma profile, which can include terms like "floral," "citrus," or "spicy."
+- total_oil (Continuous): The total essential oil content of the hop, typically measured in milliliters per 100 grams.
+- alpha_acids (Continuous): The percentage of alpha acids in the hop, which contribute to the bitterness of the beer.
+- beta_acids (Continuous): The percentage of beta acids in the hop, which also contribute to the bitterness but degrade more slowly over time.
+- humulene (Continuous): A compound contributing to the hop's woody, earthy aroma.
+- myrcene (Continuous): A compound that contributes to the hop's citrus and floral aroma.
+- humulone (Continuous): Another compound found in hop oils, related to bitterness and aroma.
+- caryophyllene (Continuous): A compound contributing to spicy, peppery aromas.
+- farnesene (Continuous): A compound contributing to green, woody, or fruity aromas.
+
 <!-- start R FAQ -->
 # r faq {-}
 
@@ -6139,7 +6250,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6181,7 +6292,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-269-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6270,7 +6381,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-273-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-275-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

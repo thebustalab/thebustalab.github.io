@@ -1,8 +1,7 @@
 fig:unnamed-chunk-68
 part-data-analysis-in-r
 ternary-plots
-text-embeddings
-protein-embeddings
+exercises-8
 loading-gff-files
 structured-prompting
 few-shot-learning
@@ -20,6 +19,12 @@ abstract
 other-thoughts-1
 title
 further-reading-11
+datasets
+alaska_lake_data
+algae_data
+beer_components
+hawaii_aquifers
+hops_components
 matrix-analyses
 basic-runmatrixanalysis-template
 advanced-runmatrixanalysis-template
