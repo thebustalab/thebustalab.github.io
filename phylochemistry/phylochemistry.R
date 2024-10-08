@@ -116,7 +116,8 @@
                     Bioconductor_packages,
                     "ggtree",
                     "ggtreeExtra",
-                    "Biostrings"
+                    "Biostrings",
+                    "GenomeInfoDb"
                 )
 
                 Github_packages <- c(
