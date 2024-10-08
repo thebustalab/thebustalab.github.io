@@ -1,6 +1,10 @@
 fig:unnamed-chunk-68
-part-data-analysis-in-r
+part-getting-started
+part-data-visualization
 ternary-plots
+part-statistical-methods
+part-modeling
+part-midterm
 loading-gff-files
 structured-prompting
 few-shot-learning

@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>comparative genomics | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="GENESPACE: syntenic pan-genome annotations for eukaryotes  1.2 loading GFF files">
+<meta name="description" content="GENESPACE: syntenic pan-genome annotations for eukaryotes  5.1 loading GFF files">
 <meta name="generator" content="bookdown 0.39 with bs4_book()">
 <meta property="og:title" content="comparative genomics | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="GENESPACE: syntenic pan-genome annotations for eukaryotes  1.2 loading GFF files">
+<meta property="og:description" content="GENESPACE: syntenic pan-genome annotations for eukaryotes  5.1 loading GFF files">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="comparative genomics | Integrated Bioanalytics">
-<meta name="twitter:description" content="GENESPACE: syntenic pan-genome annotations for eukaryotes  1.2 loading GFF files">
+<meta name="twitter:description" content="GENESPACE: syntenic pan-genome annotations for eukaryotes  5.1 loading GFF files">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
@@ -54,19 +54,23 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">WELCOME</a></li>
-<li class="book-part">DATA ANALYSIS IN R</li>
+<li class="book-part">GETTING STARTED</li>
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELING</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
 <li><a class="" href="midterm.html">midterm</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
@@ -92,7 +96,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
-<li><a class="" href="datasets.html"><span class="header-section-number">2</span> datasets</a></li>
+<li><a class="" href="datasets.html"><span class="header-section-number">6</span> datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
 </ul>
@@ -106,9 +110,9 @@
 <h1>comparative genomics<a class="anchor" aria-label="anchor" href="#comparative-genomics"><i class="fas fa-link"></i></a>
 </h1>
 <p>GENESPACE: syntenic pan-genome annotations for eukaryotes</p>
-<div id="loading-gff-files" class="section level2" number="1.2">
+<div id="loading-gff-files" class="section level2" number="5.1">
 <h2>
-<span class="header-section-number">1.2</span> loading GFF files<a class="anchor" aria-label="anchor" href="#loading-gff-files"><i class="fas fa-link"></i></a>
+<span class="header-section-number">5.1</span> loading GFF files<a class="anchor" aria-label="anchor" href="#loading-gff-files"><i class="fas fa-link"></i></a>
 </h2>
 <!-- end -->
 <hr>
@@ -135,7 +139,7 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#comparative-genomics">comparative genomics</a></li>
-<li><a class="nav-link" href="#loading-gff-files"><span class="header-section-number">1.2</span> loading GFF files</a></li>
+<li><a class="nav-link" href="#loading-gff-files"><span class="header-section-number">5.1</span> loading GFF files</a></li>
 </ul>
 
       <div class="book-extra">

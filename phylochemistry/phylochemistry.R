@@ -22,7 +22,6 @@
                     "DESeq2",
                     "msa",
                     "rtracklayer",
-                    "Biostrings",
                     "GenomicRanges",
                     "GenomicFeatures",
                     "Rsamtools",
@@ -116,7 +115,8 @@
                 Bioconductor_packages <- c(
                     Bioconductor_packages,
                     "ggtree",
-                    "ggtreeExtra"
+                    "ggtreeExtra",
+                    "Biostrings"
                 )
 
                 Github_packages <- c(

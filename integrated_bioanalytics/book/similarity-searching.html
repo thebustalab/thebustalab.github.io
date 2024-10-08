@@ -54,19 +54,23 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">WELCOME</a></li>
-<li class="book-part">DATA ANALYSIS IN R</li>
+<li class="book-part">GETTING STARTED</li>
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELING</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
 <li><a class="" href="midterm.html">midterm</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
@@ -92,7 +96,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
-<li><a class="" href="datasets.html"><span class="header-section-number">2</span> datasets</a></li>
+<li><a class="" href="datasets.html"><span class="header-section-number">6</span> datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
 </ul>
@@ -125,7 +129,7 @@
 <li>“monolist_out_path”: The path to where we want a summary file of the BLAST hits to be written.</li>
 </ul>
 <p>Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits (“monolist_out”, which is written to “monolist_out_path”), and the hits themselves, written as individual files to “sequences_of_interest_directory_path”. These two things can be used in downstream analyses, such as alignments. The function does not return an object.</p>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">the_transcriptomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa"</span>,</span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa"</span>,</span>
@@ -186,7 +190,7 @@
 <li><p>Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.</p></li>
 </ol>
 <p>We can implement these two steps using the <code>buildDomainLibrary()</code> function and the <code>predictDomains()</code> function. See below:</p>
-<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">buildDomainLibrary</span><span class="op">(</span></span>
 <span>    alignment_in_paths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa"</span>,</span>

@@ -54,19 +54,23 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">WELCOME</a></li>
-<li class="book-part">DATA ANALYSIS IN R</li>
+<li class="book-part">GETTING STARTED</li>
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELING</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
 <li><a class="" href="midterm.html">midterm</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="active" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
@@ -92,7 +96,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
-<li><a class="" href="datasets.html"><span class="header-section-number">2</span> datasets</a></li>
+<li><a class="" href="datasets.html"><span class="header-section-number">6</span> datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
 </ul>
@@ -110,7 +114,7 @@
 <li><p>Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn’t matter what the name of that folder is, but it must not contain special characters (including a space <code></code> in the name). For example, if my CDF file is called “sorghum_bicolor.CDF”, then I might create a folder called <code>gc_data</code> on my hard drive, and place the “sorghum_bicolor.CDF” file in that folder.</p></li>
 <li><p>In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the <code>analyzeGCMSdata</code> function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work.</p></li>
 </ol>
-<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/gcms.R"</span><span class="op">)</span></span></code></pre></div>
 <p>If the command was run successfully you should see something like:
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/success.png" width="100%" style="display: block; margin: auto;"><br></p>
@@ -119,11 +123,11 @@
 </li>
 </ol>
 <p>If you are on a Mac, <em>use single forward slashes</em>. For example:</p>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>If you are on a PC, you may need to use double back slashes. For example:</p>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"C:\\Users\\My_Profile\\gc_data"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>The first time you open your CDF datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).</p>

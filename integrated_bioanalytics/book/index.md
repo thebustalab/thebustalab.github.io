@@ -51,21 +51,21 @@ Integrated Bioanalytics documents methods for analyzing chemical and sequence da
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-Features provided by the source script:
+<!-- Features provided by the source script: -->
 
---Analysis and visualization tools--
+<!-- --Analysis and visualization tools-- -->
 
-* A GC-MS data analysis application with a MS reference library.
-* A sequence alignment analysis application for trimming alignments.
-* BLAST searches that export .fasta files of hits and store results in a .csv file.
-* Functions for dimensionality reduction, clustering, modeling, and visualization.
+<!-- * A GC-MS data analysis application with a MS reference library. -->
+<!-- * A sequence alignment analysis application for trimming alignments. -->
+<!-- * BLAST searches that export .fasta files of hits and store results in a .csv file. -->
+<!-- * Functions for dimensionality reduction, clustering, modeling, and visualization. -->
 
---Useful data and data structures--
+<!-- --Useful data and data structures-- -->
 
-* More than 12 chemical data sets for running practice analyses.
-* A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick).
-* A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv).
-* Support for multiple column and row names.
+<!-- * More than 12 chemical data sets for running practice analyses. -->
+<!-- * A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick). -->
+<!-- * A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv). -->
+<!-- * Support for multiple column and row names. -->
 
 <!-- ## new features
 
@@ -90,9 +90,9 @@ Features provided by the source script:
 
 <!-- end -->
 
-# (PART) DATA ANALYSIS IN R
-
 <!-- start overview -->
+
+# (PART) GETTING STARTED 
 
 # overview {-}
 
@@ -237,6 +237,10 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- end -->
 
 <!-- start data visualization -->
+
+
+# (PART) DATA VISUALIZATION
+
 
 # data visualization I {-}
 
@@ -1237,6 +1241,9 @@ For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c
 <!-- end -->
 
 <!-- start data wrangling -->
+
+# (PART) STATISTICAL METHODS
+
 # data wrangling and summaries {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" width="100%" style="display: block; margin: auto;" />
@@ -2169,150 +2176,6 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 
 <!-- start clustering -->
 
-# heirarchical clustering {-}
-
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;" />
-
-"Which of my samples are most closely related?"
-
-So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
-
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;" />
-
-Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
-
-
-```r
-dist <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = c("dist"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park")
-)
-## Replacing NAs in your data with mean
-
-as.matrix(dist)[1:3,1:3]
-##                          Devil_Mountain_Lake_BELA
-## Devil_Mountain_Lake_BELA                 0.000000
-## Imuruk_Lake_BELA                         3.672034
-## Kuzitrin_Lake_BELA                       1.663147
-##                          Imuruk_Lake_BELA
-## Devil_Mountain_Lake_BELA         3.672034
-## Imuruk_Lake_BELA                 0.000000
-## Kuzitrin_Lake_BELA               3.062381
-##                          Kuzitrin_Lake_BELA
-## Devil_Mountain_Lake_BELA           1.663147
-## Imuruk_Lake_BELA                   3.062381
-## Kuzitrin_Lake_BELA                 0.000000
-```
-
-There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
-
-
-```r
-AK_lakes_clustered <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = "hclust",
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park"),
-    na_replacement = "mean"
-)
-## Replacing NAs in your data with mean
-AK_lakes_clustered
-## # A tibble: 39 × 26
-##    sample_unique_ID   lake  park  parent  node branch.length
-##    <chr>              <chr> <chr>  <int> <int>         <dbl>
-##  1 Devil_Mountain_La… Devi… BELA      33     1          8.12
-##  2 Imuruk_Lake_BELA   Imur… BELA      32     2          4.81
-##  3 Kuzitrin_Lake_BELA Kuzi… BELA      37     3          3.01
-##  4 Lava_Lake_BELA     Lava… BELA      38     4          2.97
-##  5 North_Killeak_Lak… Nort… BELA      21     5        254.  
-##  6 White_Fish_Lake_B… Whit… BELA      22     6         80.9 
-##  7 Iniakuk_Lake_GAAR  Inia… GAAR      29     7          3.60
-##  8 Kurupa_Lake_GAAR   Kuru… GAAR      31     8          8.57
-##  9 Lake_Matcharak_GA… Lake… GAAR      29     9          3.60
-## 10 Lake_Selby_GAAR    Lake… GAAR      30    10          4.80
-## # ℹ 29 more rows
-## # ℹ 20 more variables: label <chr>, isTip <lgl>, x <dbl>,
-## #   y <dbl>, branch <dbl>, angle <dbl>, bootstrap <dbl>,
-## #   water_temp <dbl>, pH <dbl>, C <dbl>, N <dbl>, P <dbl>,
-## #   Cl <dbl>, S <dbl>, F <dbl>, Br <dbl>, Na <dbl>,
-## #   K <dbl>, Ca <dbl>, Mg <dbl>
-```
-
-It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
-
-Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
-
-
-```r
-library(ggtree)
-AK_lakes_clustered %>%
-ggtree() +
-  geom_tiplab() +
-  geom_tippoint() +
-  theme_classic()
-```
-
-<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
-
-Cool! Though that plot could use some tweaking... let's try:
-
-
-```r
-AK_lakes_clustered %>%
-ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
-    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,375)) +
-    scale_fill_brewer(palette = "Set1") +
-    # theme_classic() +
-    theme(
-      legend.position = c(0.2,0.8)
-    )
-```
-
-<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
-
-Very nice!
-
-## further reading {-}
- 
-For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
-
-For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
-
-## exercises {-}
-
-For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
-
-For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
-
-
-```r
-colnames(solvents)
-##  [1] "solvent"             "formula"            
-##  [3] "boiling_point"       "melting_point"      
-##  [5] "density"             "miscible_with_water"
-##  [7] "solubility_in_water" "relative_polarity"  
-##  [9] "vapor_pressure"      "CAS_number"         
-## [11] "formula_weight"      "refractive_index"   
-## [13] "specific_gravity"    "category"
-
-colnames(solvents)[1:3]
-## [1] "solvent"       "formula"       "boiling_point"
-
-colnames(solvents)[c(1,5,7)]
-## [1] "solvent"             "density"            
-## [3] "solubility_in_water"
-```
-
 # flat clustering {-}
 
 "Do my samples fall into definable clusters?"
@@ -2329,7 +2192,7 @@ Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on t
 
 
 
-```r
+``` r
 alaska_lake_data_pca <- runMatrixAnalysis(
     data = alaska_lake_data,
     analysis = c("pca"),
@@ -2339,7 +2202,6 @@ alaska_lake_data_pca <- runMatrixAnalysis(
     columns_w_additional_analyte_info = "element_type",
     columns_w_sample_ID_info = c("lake", "park")
 )
-## Replacing NAs in your data with mean
 
 alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     data = alaska_lake_data_pca,
@@ -2357,7 +2219,7 @@ alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska
 We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
 
-```r
+``` r
 alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
 ggplot() +
   geom_point(
@@ -2371,18 +2233,16 @@ ggplot() +
   theme_classic() +
   coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
   scale_fill_manual(values = discrete_palette) 
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-128-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
 There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
 
-```r
+``` r
 alaska_lake_data_pca <- runMatrixAnalysis(
     data = alaska_lake_data,
     analysis = c("pca"),
@@ -2392,7 +2252,6 @@ alaska_lake_data_pca <- runMatrixAnalysis(
     columns_w_additional_analyte_info = "element_type",
     columns_w_sample_ID_info = c("lake", "park")
 ) 
-## Replacing NAs in your data with mean
 
 alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     data = alaska_lake_data_pca,
@@ -2403,15 +2262,13 @@ alaska_lake_data_pca_clusters <- runMatrixAnalysis(
     columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
     columns_w_sample_ID_info = "sample_unique_ID"
 )
-## Using 4 as a value for k.
-## Using 0.45 as a value for threshold.
 
 alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
 ```
 We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs you need to feed it data without NAs:
 
 
-```r
+``` r
 alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
 ggplot() +
   geom_point(
@@ -2425,18 +2282,16 @@ ggplot() +
   theme_classic() +
   coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
   scale_fill_manual(values = discrete_palette) 
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-137-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
 One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
 
 
-```r
+``` r
 alaska_lake_data_pca <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca"),
@@ -2446,7 +2301,6 @@ alaska_lake_data_pca <- runMatrixAnalysis(
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
 )
-## Replacing NAs in your data with mean
 
 alaska_lake_data_pca_clusters <- runMatrixAnalysis(
   data = alaska_lake_data_pca,
@@ -2458,8 +2312,6 @@ alaska_lake_data_pca_clusters <- runMatrixAnalysis(
   columns_w_sample_ID_info = "sample_unique_ID",
   columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
 ) 
-## Using 4 as a value for k.
-## Using 0.45 as a value for threshold.
 
 alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
 
@@ -2509,7 +2361,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
  
 ## further reading {-}
 
@@ -2630,6 +2482,159 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <!-- end -->
 
 <!-- start comparing means -->
+
+
+# heirarchical clustering {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;" />
+
+"Which of my samples are most closely related?"
+
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;" />
+
+Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
+
+
+``` r
+dist <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("dist"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+## Replacing NAs in your data with mean
+```
+
+``` r
+
+as.matrix(dist)[1:3,1:3]
+##                          Devil_Mountain_Lake_BELA
+## Devil_Mountain_Lake_BELA                 0.000000
+## Imuruk_Lake_BELA                         3.672034
+## Kuzitrin_Lake_BELA                       1.663147
+##                          Imuruk_Lake_BELA
+## Devil_Mountain_Lake_BELA         3.672034
+## Imuruk_Lake_BELA                 0.000000
+## Kuzitrin_Lake_BELA               3.062381
+##                          Kuzitrin_Lake_BELA
+## Devil_Mountain_Lake_BELA           1.663147
+## Imuruk_Lake_BELA                   3.062381
+## Kuzitrin_Lake_BELA                 0.000000
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
+
+
+``` r
+AK_lakes_clustered <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = "hclust",
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park"),
+    na_replacement = "mean"
+)
+AK_lakes_clustered
+## # A tibble: 39 × 26
+##    sample_unique_ID   lake  park  parent  node branch.length
+##    <chr>              <chr> <chr>  <int> <int>         <dbl>
+##  1 Devil_Mountain_La… Devi… BELA      33     1          8.12
+##  2 Imuruk_Lake_BELA   Imur… BELA      32     2          4.81
+##  3 Kuzitrin_Lake_BELA Kuzi… BELA      37     3          3.01
+##  4 Lava_Lake_BELA     Lava… BELA      38     4          2.97
+##  5 North_Killeak_Lak… Nort… BELA      21     5        254.  
+##  6 White_Fish_Lake_B… Whit… BELA      22     6         80.9 
+##  7 Iniakuk_Lake_GAAR  Inia… GAAR      29     7          3.60
+##  8 Kurupa_Lake_GAAR   Kuru… GAAR      31     8          8.57
+##  9 Lake_Matcharak_GA… Lake… GAAR      29     9          3.60
+## 10 Lake_Selby_GAAR    Lake… GAAR      30    10          4.80
+## # ℹ 29 more rows
+## # ℹ 20 more variables: label <chr>, isTip <lgl>, x <dbl>,
+## #   y <dbl>, branch <dbl>, angle <dbl>, bootstrap <dbl>,
+## #   water_temp <dbl>, pH <dbl>, C <dbl>, N <dbl>, P <dbl>,
+## #   Cl <dbl>, S <dbl>, F <dbl>, Br <dbl>, Na <dbl>,
+## #   K <dbl>, Ca <dbl>, Mg <dbl>
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+
+``` r
+library(ggtree)
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-144-1.png" width="100%" style="display: block; margin: auto;" />
+
+Cool! Though that plot could use some tweaking... let's try:
+
+
+``` r
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,375)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.2,0.8)
+    )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
+
+Very nice!
+
+## further reading {-}
+ 
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
+
+For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
+
+## exercises {-}
+
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
+
+For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
+
+
+``` r
+colnames(solvents)
+##  [1] "solvent"             "formula"            
+##  [3] "boiling_point"       "melting_point"      
+##  [5] "density"             "miscible_with_water"
+##  [7] "solubility_in_water" "relative_polarity"  
+##  [9] "vapor_pressure"      "CAS_number"         
+## [11] "formula_weight"      "refractive_index"   
+## [13] "specific_gravity"    "category"
+```
+
+``` r
+
+colnames(solvents)[1:3]
+## [1] "solvent"       "formula"       "boiling_point"
+```
+
+``` r
+
+colnames(solvents)[c(1,5,7)]
+## [1] "solvent"             "density"            
+## [3] "solubility_in_water"
+```
 
 # comparing means {-}
 
@@ -3260,6 +3265,9 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start models -->
 
+
+# (PART) MODELING
+
 # numerical models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
@@ -3757,21 +3765,6 @@ data.frame(
 ## .pred_class6 kidney_disease   kidney_disease
 ```
 
-### exercises {-}
-
-To practice creating models, try the following:
-
-1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca_ord" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
-
-2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim.1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
-
-3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
-
-4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` data set and diagnose each patient in `metabolomics_unknown`.
-
-
-
-
 ## further reading {-}
 
 https://github.com/easystats/performance
@@ -3788,6 +3781,23 @@ Classification with random forests:
 1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
 2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
 3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
+
+
+## exercises {-}
+
+To practice creating models, try the following:
+
+1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca_ord" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
+
+2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim.1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
+
+3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
+
+4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` data set and diagnose each patient in `metabolomics_unknown`.
+
+
+
+
 
 <!-- end -->
 
@@ -3807,60 +3817,21 @@ First, we use the searchPubMed function to extract relevant publications from Pu
 
 
 ``` r
-searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
-
-  pm_entries <- character()
-  term_vector <- character()
-
-  for( i in 1:length(search_terms) ) { # i=1
-      search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
-      query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
-      current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
-      pm_entries <- c(pm_entries, current_pm_entries)
-      term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
-      Sys.sleep(4)
-  }
-  unique_indices <- !duplicated(pm_entries)
-  pm_entries <- pm_entries[unique_indices]
-  term_vector <- term_vector[unique_indices]
-
-  pm_results <- list()
-  for (i in 1:length(pm_entries)) { # i=1
-
-      if (length(pm_entries[[i]]) == 1) { next }
-      if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
-
-      options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
-      for (option in options) { # option = 4
-          if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
-              doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
-              break
-          } else {next}
-      }
-
-      pm_results[[i]] <- data.frame(
-          entry_number = as.numeric(i),
-          term = term_vector[[i]],
-          date = lubridate::as_date(paste(
-              pm_entries[[i]]$MedlineCitation$DateRevised$Year,
-              pm_entries[[i]]$MedlineCitation$DateRevised$Month,
-              pm_entries[[i]]$MedlineCitation$DateRevised$Day,
-          sep = "-"
-          )),
-          journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
-          title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
-          doi = doi,
-          abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
-      )
-  }
-  return(as_tibble(do.call(rbind, pm_results)))
-}
 search_results <- searchPubMed(
   search_terms = c("beta-amyrin synthase", "friedelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
   pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
   retmax_per_term = 3,
   sort = "relevance"
 )
+## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
+## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
+## Error encountered. Attempt 2 of 3. Retrying in 5 seconds...
+## Error encountered. Attempt 3 of 3. Retrying in 5 seconds...
+## Failed to fetch data for term: friedelin synthase after 3 attempts.
+## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
+```
+
+``` r
 colnames(search_results)
 ## [1] "entry_number" "term"         "date"        
 ## [4] "journal"      "title"        "doi"         
@@ -3869,21 +3840,18 @@ colnames(search_results)
 
 ``` r
 select(search_results, term, title)
-## # A tibble: 12 × 2
-##    term                       title                         
-##    <chr>                      <chr>                         
-##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…
-##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…
-##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
-##  4 friedelin synthase         Friedelin Synthase from Mayte…
-##  5 friedelin synthase         Friedelin in Maytenus ilicifo…
-##  6 friedelin synthase         The Methionine 549 and Leucin…
-##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    
-##  8 sorghum bicolor            Molecular Breeding of Sorghum…
-##  9 sorghum bicolor            Proton-Coupled Electron Trans…
-## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
-## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
-## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…
+## # A tibble: 9 × 2
+##   term                       title                          
+##   <chr>                      <chr>                          
+## 1 beta-amyrin synthase       β-Amyrin synthase from Conyza …
+## 2 beta-amyrin synthase       Ginsenosides in Panax genus an…
+## 3 beta-amyrin synthase       β-Amyrin biosynthesis: catalyt…
+## 4 sorghum bicolor            Sorghum (Sorghum bicolor).     
+## 5 sorghum bicolor            Molecular Breeding of Sorghum …
+## 6 sorghum bicolor            Proton-Coupled Electron Transf…
+## 7 cuticular wax biosynthesis Regulatory mechanisms underlyi…
+## 8 cuticular wax biosynthesis Update on Cuticular Wax Biosyn…
+## 9 cuticular wax biosynthesis Advances in Biosynthesis, Regu…
 ```
 
 From the output here, you can see that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
@@ -3972,6 +3940,10 @@ runMatrixAnalysis(
   columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
   columns_w_sample_ID_info = c("sample", "odor")
 ) -> pca_out
+## Replacing NAs in your data with mean
+```
+
+``` r
 
 pca_out$color <- rgb(
   scales::rescale(pca_out$Dim.1, to = c(0, 1)),
@@ -3993,6 +3965,33 @@ ggplot(pca_out) +
 <img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## protein embeddings {-}
+
+<!-- Protein Language Models: -->
+<!--     The goal in these models is to train them so that the embeddings they create capture important biological features of proteins. -->
+<!--     The attention mechanism in transformer models allows capturing both local and global information in a protein sequence: -->
+<!--         Local Information: Might include interactions between neighboring amino acids. -->
+<!--         Global Information: Could encompass long-range relationships between distant parts of the sequence. -->
+<!--     While embedding models can be simple autoencoders, many embedding models, especially in protein language modeling, use transformers with attention mechanisms to capture complex patterns in the data. -->
+
+<!-- Attention Mechanism: -->
+<!--     The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element. -->
+<!--     It generates attention scores to weigh how much attention one amino acid should give to another. -->
+<!--     The attention mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. -->
+
+<!-- Why Attention is Beneficial: -->
+<!--     Long-Range Dependencies: Captures interactions between distant amino acids. -->
+<!--     Structural Complexity: Weighs relationships between amino acids to account for protein folding and interactions. -->
+<!--     Handling Variable Sequence Lengths: Adjusts focus across sequences of varying lengths. -->
+<!--     Multi-Dimensional Relationships: Multi-head attention allows capturing different kinds of relationships, like hydrophobic interactions or secondary structures. -->
+<!--     Contextualized Embeddings: Embeddings reflect the broader sequence environment, not just local motifs. -->
+
+<!-- Additional Mechanisms in Protein Language Models: -->
+<!--     Positional Encoding: Adds position information to the sequence so that the model can differentiate between identical amino acids at different positions. -->
+<!--     Masked Language Modeling (MLM): Trains the model to predict masked amino acids, learning patterns in the sequence. -->
+<!--     Multiscale Representations: Allows capturing both fine-grained and coarse-grained structural information. -->
+<!--     Evolutionary Information: Incorporates multiple sequence alignments (MSAs) to learn from conserved regions. -->
+<!--     Residual Connections: Helps information flow through the network and stabilizes training by allowing the model to retain original input data as it processes through layers. -->
+<!--     Normalization and Regularization: Techniques like layer normalization and dropout are used to stabilize training and prevent overfitting. -->
 
 Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
 
@@ -4033,11 +4032,68 @@ runMatrixAnalysis(
 
 ## exercises {-}
 
-1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
+1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set `sort` = "date"). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges.
+
+
+``` r
+search_results_ex <- searchPubMed(
+  search_terms = c("oxidosqualene cyclase", "chemotaxonomy", "protein engineering"),
+  pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
+  retmax_per_term = 50,
+  sort = "date"
+)
+
+search_results_ex_embed <- embedText(
+  search_results_ex, column_name = "abstract",
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+
+runMatrixAnalysis(
+  data = search_results_ex_embed,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
+  columns_w_sample_ID_info = c("title", "journal", "term", "date")
+) -> search_results_ex_embed_pca
+
+search_results_ex_embed_pca$date <- as.Date(search_results_ex_embed_pca$date)
+search_results_ex_embed_pca %>%
+  ggplot() +
+    geom_label_repel(
+      aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
+      size = 2, min.segment.length = 0.5, force = 50
+    ) +  
+    geom_point(aes(x = Dim.1, y = Dim.2, fill = date, shape = term), size = 5, alpha = 0.7) +
+    scale_shape_manual(values = c(21, 22, 23)) +
+    scale_fill_viridis() +
+    scale_x_continuous(expand = c(0,1)) +
+    scale_y_continuous(expand = c(0,5)) +
+    theme_minimal()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+
+search_results_ex_embed_pca %>%
+    ggplot() +
+      geom_point(aes(x = Dim.1, y = date, fill = date, shape = term), size = 5, alpha = 0.7) +
+    scale_shape_manual(values = c(21, 22, 23)) +
+    scale_fill_viridis() +
+    scale_x_continuous(expand = c(0,1)) +
+    scale_y_continuous(expand = c(0.1,0)) +
+    theme_minimal()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-205-2.png" width="100%" style="display: block; margin: auto;" />
+
+<!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
 
 
+
+
+# (PART) MIDTERM
 
 # midterm {-}
 
@@ -4063,9 +4119,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
+
 # (PART) GC-MS DATA {-}
 
 <!-- start mass spectrometric analysis -->
+
 
 # loading analyzeGCMSdata {-}
 
@@ -4236,6 +4294,7 @@ qc_data %>%
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
+
 
 # (PART) TRANSCRIPTOME ANALYSIS {-}
 
@@ -4630,6 +4689,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
+
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
@@ -4824,7 +4884,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4860,7 +4920,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4910,7 +4970,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4926,7 +4986,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4935,7 +4995,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5009,7 +5069,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5028,7 +5088,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5145,7 +5205,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5180,7 +5240,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5476,7 +5536,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5730,7 +5790,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -5753,7 +5813,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -5777,7 +5837,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -5853,21 +5913,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-256-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-256-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -5915,7 +5975,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6273,7 +6333,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6315,7 +6375,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-269-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6404,7 +6464,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-275-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

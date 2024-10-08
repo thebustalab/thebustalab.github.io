@@ -54,19 +54,23 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">WELCOME</a></li>
-<li class="book-part">DATA ANALYSIS IN R</li>
+<li class="book-part">GETTING STARTED</li>
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELING</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="active" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
 <li><a class="" href="midterm.html">midterm</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
@@ -92,7 +96,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
-<li><a class="" href="datasets.html"><span class="header-section-number">2</span> datasets</a></li>
+<li><a class="" href="datasets.html"><span class="header-section-number">6</span> datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
 </ul>
@@ -113,86 +117,42 @@
 </h2>
 <p>Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.</p>
 <p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">searchPubMed</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">search_terms</span>, <span class="va">pubmed_api_key</span>, <span class="va">sort</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"date"</span>, <span class="st">"relevance"</span><span class="op">)</span>, <span class="va">retmax_per_term</span> <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">{</span></span>
-<span></span>
-<span>  <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="kw">for</span><span class="op">(</span> <span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">)</span> <span class="op">)</span> <span class="op">{</span> <span class="co"># i=1</span></span>
-<span>      <span class="va">search_output</span> <span class="op">&lt;-</span> <span class="fu">rentrez</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/entrez_search.html">entrez_search</a></span><span class="op">(</span>db <span class="op">=</span> <span class="st">"pubmed"</span>, term <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, retmax <span class="op">=</span> <span class="va">retmax_per_term</span>, use_history <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="va">sort</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span>      <span class="va">query_output</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html">try</a></span><span class="op">(</span><span class="fu">rentrez</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/entrez_fetch.html">entrez_fetch</a></span><span class="op">(</span>db <span class="op">=</span> <span class="st">"pubmed"</span>, web_history <span class="op">=</span> <span class="va">search_output</span><span class="op">$</span><span class="va">web_history</span>, rettype <span class="op">=</span> <span class="st">"xml"</span>, retmax <span class="op">=</span> <span class="va">retmax_per_term</span>, api_key <span class="op">=</span> <span class="va">pubmed_api_key</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="va">current_pm_entries</span> <span class="op">&lt;-</span> <span class="fu">XML</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/XML/man/xmlToList.html">xmlToList</a></span><span class="op">(</span><span class="fu">XML</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/XML/man/xmlTreeParse.html">xmlParse</a></span><span class="op">(</span><span class="va">query_output</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">pm_entries</span>, <span class="va">current_pm_entries</span><span class="op">)</span></span>
-<span>      <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">term_vector</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">current_pm_entries</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html">Sys.sleep</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="va">unique_indices</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">)</span></span>
-<span>  <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="va">pm_entries</span><span class="op">[</span><span class="va">unique_indices</span><span class="op">]</span></span>
-<span>  <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="va">term_vector</span><span class="op">[</span><span class="va">unique_indices</span><span class="op">]</span></span>
-<span></span>
-<span>  <span class="va">pm_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="co"># i=1</span></span>
-<span></span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span> <span class="kw">next</span> <span class="op">}</span></span>
-<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">ELocationID</span><span class="op">$</span><span class="va">text</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="kw">next</span> <span class="op">}</span></span>
-<span></span>
-<span>      <span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">)</span> <span class="op">==</span> <span class="st">"ELocationID"</span><span class="op">)</span></span>
-<span>      <span class="kw">for</span> <span class="op">(</span><span class="va">option</span> <span class="kw">in</span> <span class="va">options</span><span class="op">)</span> <span class="op">{</span> <span class="co"># option = 4</span></span>
-<span>          <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"10\\."</span>, <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">[[</span><span class="va">option</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">text</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>              <span class="va">doi</span> <span class="op">&lt;&lt;-</span> <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">[[</span><span class="va">option</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">text</span></span>
-<span>              <span class="kw">break</span></span>
-<span>          <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span><span class="kw">next</span><span class="op">}</span></span>
-<span>      <span class="op">}</span></span>
-<span></span>
-<span>      <span class="va">pm_results</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
-<span>          entry_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span>,</span>
-<span>          term <span class="op">=</span> <span class="va">term_vector</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>          date <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html">as_date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span></span>
-<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Year</span>,</span>
-<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Month</span>,</span>
-<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Day</span>,</span>
-<span>          sep <span class="op">=</span> <span class="st">"-"</span></span>
-<span>          <span class="op">)</span><span class="op">)</span>,</span>
-<span>          journal <span class="op">=</span> <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">Journal</span><span class="op">$</span><span class="va">Title</span>,</span>
-<span>          title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">ArticleTitle</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
-<span>          doi <span class="op">=</span> <span class="va">doi</span>,</span>
-<span>          abstract <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">Abstract</span><span class="op">$</span><span class="va">AbstractText</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span>      <span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu">as_tibble</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">pm_results</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
 <span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"beta-amyrin synthase"</span>, <span class="st">"friedelin synthase"</span>, <span class="st">"sorghum bicolor"</span>, <span class="st">"cuticular wax biosynthesis"</span><span class="op">)</span>,</span>
 <span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
 <span>  retmax_per_term <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  sort <span class="op">=</span> <span class="st">"relevance"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span></span>
+<span><span class="co">## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...</span></span>
+<span><span class="co">## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...</span></span>
+<span><span class="co">## Error encountered. Attempt 2 of 3. Retrying in 5 seconds...</span></span>
+<span><span class="co">## Error encountered. Attempt 3 of 3. Retrying in 5 seconds...</span></span>
+<span><span class="co">## Failed to fetch data for term: friedelin synthase after 3 attempts.</span></span>
+<span><span class="co">## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...</span></span></code></pre></div>
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span></span>
 <span><span class="co">## [1] "entry_number" "term"         "date"        </span></span>
 <span><span class="co">## [4] "journal"      "title"        "doi"         </span></span>
 <span><span class="co">## [7] "abstract"</span></span></code></pre></div>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">select</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">term</span>, <span class="va">title</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 12 × 2</span></span>
-<span><span class="co">##    term                       title                         </span></span>
-<span><span class="co">##    &lt;chr&gt;                      &lt;chr&gt;                         </span></span>
-<span><span class="co">##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…</span></span>
-<span><span class="co">##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…</span></span>
-<span><span class="co">##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…</span></span>
-<span><span class="co">##  4 friedelin synthase         Friedelin Synthase from Mayte…</span></span>
-<span><span class="co">##  5 friedelin synthase         Friedelin in Maytenus ilicifo…</span></span>
-<span><span class="co">##  6 friedelin synthase         The Methionine 549 and Leucin…</span></span>
-<span><span class="co">##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    </span></span>
-<span><span class="co">##  8 sorghum bicolor            Molecular Breeding of Sorghum…</span></span>
-<span><span class="co">##  9 sorghum bicolor            Proton-Coupled Electron Trans…</span></span>
-<span><span class="co">## 10 cuticular wax biosynthesis Regulatory mechanisms underly…</span></span>
-<span><span class="co">## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…</span></span>
-<span><span class="co">## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…</span></span></code></pre></div>
+<span><span class="co">## # A tibble: 9 × 2</span></span>
+<span><span class="co">##   term                       title                          </span></span>
+<span><span class="co">##   &lt;chr&gt;                      &lt;chr&gt;                          </span></span>
+<span><span class="co">## 1 beta-amyrin synthase       β-Amyrin synthase from Conyza …</span></span>
+<span><span class="co">## 2 beta-amyrin synthase       Ginsenosides in Panax genus an…</span></span>
+<span><span class="co">## 3 beta-amyrin synthase       β-Amyrin biosynthesis: catalyt…</span></span>
+<span><span class="co">## 4 sorghum bicolor            Sorghum (Sorghum bicolor).     </span></span>
+<span><span class="co">## 5 sorghum bicolor            Molecular Breeding of Sorghum …</span></span>
+<span><span class="co">## 6 sorghum bicolor            Proton-Coupled Electron Transf…</span></span>
+<span><span class="co">## 7 cuticular wax biosynthesis Regulatory mechanisms underlyi…</span></span>
+<span><span class="co">## 8 cuticular wax biosynthesis Update on Cuticular Wax Biosyn…</span></span>
+<span><span class="co">## 9 cuticular wax biosynthesis Advances in Biosynthesis, Regu…</span></span></code></pre></div>
 <p>From the output here, you can see that we’ve retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.</p>
 <p>Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at <a href="https://huggingface.co" class="uri">https://huggingface.co</a> and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.</p>
 <p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, available through the Hugging Face API at <a href="https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5" class="uri">https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5</a>. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at <a href="https://huggingface.co" class="uri">https://huggingface.co</a>, where you will find detailed documentation and additional resources.</p>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">search_results</span>,</span>
 <span>  column_name <span class="op">=</span> <span class="st">"title"</span>,</span>
@@ -208,7 +168,7 @@
 <span><span class="co">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.</p>
-<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">search_results_embedded</span>, by <span class="op">=</span> <span class="st">"title"</span><span class="op">)</span></span>
 <span><span class="va">search_results</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
 <span><span class="co">## # A tibble: 3 × 10</span></span>
@@ -220,7 +180,7 @@
 <span><span class="co">## # ℹ 4 more variables: abstract.x &lt;chr&gt;,</span></span>
 <span><span class="co">## #   entry_number.y &lt;dbl&gt;, term.y &lt;chr&gt;, date.y &lt;date&gt;</span></span></code></pre></div>
 <p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">search_results_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -239,7 +199,7 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span></span>
 <span></span>
 <span><span class="va">odor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
@@ -258,7 +218,9 @@
 <span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sample"</span>, <span class="st">"odor"</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">pca_out</span></span>
-<span></span>
+<span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">pca_out</span><span class="op">$</span><span class="va">color</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span><span class="op">(</span></span>
 <span>  <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/rescale.html">rescale</a></span><span class="op">(</span><span class="va">pca_out</span><span class="op">$</span><span class="va">Dim.1</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fl">0</span>,</span>
@@ -279,12 +241,35 @@
 <div id="protein-embeddings" class="section level2 unnumbered">
 <h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
 </h2>
+<!-- Protein Language Models: -->
+<!--     The goal in these models is to train them so that the embeddings they create capture important biological features of proteins. -->
+<!--     The attention mechanism in transformer models allows capturing both local and global information in a protein sequence: -->
+<!--         Local Information: Might include interactions between neighboring amino acids. -->
+<!--         Global Information: Could encompass long-range relationships between distant parts of the sequence. -->
+<!--     While embedding models can be simple autoencoders, many embedding models, especially in protein language modeling, use transformers with attention mechanisms to capture complex patterns in the data. -->
+<!-- Attention Mechanism: -->
+<!--     The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element. -->
+<!--     It generates attention scores to weigh how much attention one amino acid should give to another. -->
+<!--     The attention mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. -->
+<!-- Why Attention is Beneficial: -->
+<!--     Long-Range Dependencies: Captures interactions between distant amino acids. -->
+<!--     Structural Complexity: Weighs relationships between amino acids to account for protein folding and interactions. -->
+<!--     Handling Variable Sequence Lengths: Adjusts focus across sequences of varying lengths. -->
+<!--     Multi-Dimensional Relationships: Multi-head attention allows capturing different kinds of relationships, like hydrophobic interactions or secondary structures. -->
+<!--     Contextualized Embeddings: Embeddings reflect the broader sequence environment, not just local motifs. -->
+<!-- Additional Mechanisms in Protein Language Models: -->
+<!--     Positional Encoding: Adds position information to the sequence so that the model can differentiate between identical amino acids at different positions. -->
+<!--     Masked Language Modeling (MLM): Trains the model to predict masked amino acids, learning patterns in the sequence. -->
+<!--     Multiscale Representations: Allows capturing both fine-grained and coarse-grained structural information. -->
+<!--     Evolutionary Information: Incorporates multiple sequence alignments (MSAs) to learn from conserved regions. -->
+<!--     Residual Connections: Helps information flow through the network and stabilizes training by allowing the model to retain original input data as it processes through layers. -->
+<!--     Normalization and Regularization: Techniques like layer normalization and dropout are used to stabilize training and prevent overfitting. -->
 <p>Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.</p>
 <p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
 <p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
 <p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.</p>
 <p>In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.</p>
-<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">embedded_p450s</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
 <span>  amino_acid_stringset <span class="op">=</span> <span class="va">p450s</span>,</span>
 <span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt"</span><span class="op">)</span></span>
@@ -314,8 +299,56 @@
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-8"><i class="fas fa-link"></i></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li><p>Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.</p></li>
-<li><p>Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.</p></li>
+<li>Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set <code>sort</code> = “date”). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges.</li>
+</ol>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results_ex</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
+<span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"oxidosqualene cyclase"</span>, <span class="st">"chemotaxonomy"</span>, <span class="st">"protein engineering"</span><span class="op">)</span>,</span>
+<span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  retmax_per_term <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  sort <span class="op">=</span> <span class="st">"date"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">search_results_ex_embed</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
+<span>  <span class="va">search_results_ex</span>, column_name <span class="op">=</span> <span class="st">"abstract"</span>,</span>
+<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">search_results_ex_embed</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"title"</span>, <span class="st">"journal"</span>, <span class="st">"term"</span>, <span class="st">"date"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">search_results_ex_embed_pca</span></span>
+<span></span>
+<span><span class="va">search_results_ex_embed_pca</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">search_results_ex_embed_pca</span><span class="op">$</span><span class="va">date</span><span class="op">)</span></span>
+<span><span class="va">search_results_ex_embed_pca</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_label_repel</span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="va">title</span>, width <span class="op">=</span> <span class="fl">35</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      size <span class="op">=</span> <span class="fl">2</span>, min.segment.length <span class="op">=</span> <span class="fl">0.5</span>, force <span class="op">=</span> <span class="fl">50</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span>  </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">date</span>, shape <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_shape_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">21</span>, <span class="fl">22</span>, <span class="fl">23</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">search_results_ex_embed_pca</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">date</span>, fill <span class="op">=</span> <span class="va">date</span>, shape <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_shape_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">21</span>, <span class="fl">22</span>, <span class="fl">23</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-205-2.png" width="100%" style="display: block; margin: auto;"></div>
+<!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
+<ol start="2" style="list-style-type: decimal">
+<li>Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.</li>
 </ol>
 </div>
 </div>

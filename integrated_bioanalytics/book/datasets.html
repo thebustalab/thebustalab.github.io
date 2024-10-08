@@ -4,16 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Chapter 2 datasets | Integrated Bioanalytics</title>
+<title>Chapter 6 datasets | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="2.1 alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical...">
+<meta name="description" content="6.1 alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical...">
 <meta name="generator" content="bookdown 0.39 with bs4_book()">
-<meta property="og:title" content="Chapter 2 datasets | Integrated Bioanalytics">
+<meta property="og:title" content="Chapter 6 datasets | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="2.1 alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical...">
+<meta property="og:description" content="6.1 alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical...">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chapter 2 datasets | Integrated Bioanalytics">
-<meta name="twitter:description" content="2.1 alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical...">
+<meta name="twitter:title" content="Chapter 6 datasets | Integrated Bioanalytics">
+<meta name="twitter:description" content="6.1 alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
@@ -54,19 +54,23 @@
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html">WELCOME</a></li>
-<li class="book-part">DATA ANALYSIS IN R</li>
+<li class="book-part">GETTING STARTED</li>
 <li><a class="" href="overview.html">overview</a></li>
 <li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
 <li><a class="" href="data-visualization-i.html">data visualization I</a></li>
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELING</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
 <li><a class="" href="midterm.html">midterm</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
@@ -92,7 +96,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
-<li><a class="active" href="datasets.html"><span class="header-section-number">2</span> datasets</a></li>
+<li><a class="active" href="datasets.html"><span class="header-section-number">6</span> datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
 </ul>
@@ -102,13 +106,13 @@
         </div>
       </nav>
 </div>
-  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="datasets" class="section level1" number="2">
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="datasets" class="section level1" number="6">
 <h1>
-<span class="header-section-number">2</span> datasets<a class="anchor" aria-label="anchor" href="#datasets"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6</span> datasets<a class="anchor" aria-label="anchor" href="#datasets"><i class="fas fa-link"></i></a>
 </h1>
-<div id="alaska_lake_data" class="section level2" number="2.1">
+<div id="alaska_lake_data" class="section level2" number="6.1">
 <h2>
-<span class="header-section-number">2.1</span> alaska_lake_data<a class="anchor" aria-label="anchor" href="#alaska_lake_data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.1</span> alaska_lake_data<a class="anchor" aria-label="anchor" href="#alaska_lake_data"><i class="fas fa-link"></i></a>
 </h2>
 <p>The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition and environmental conditions of these unique ecosystems. Researchers took water samples from several lakes, measuring key environmental parameters like water temperature and pH, along with analyzing the abundance of different chemical elements, such as carbon, nitrogen, and phosphorus. By comparing the concentrations of both bound and free elements, the study aimed to understand the health of these aquatic environments and the impact of natural and anthropogenic factors on the water chemistry. The dataset will be used to inform conservation strategies for maintaining the ecological balance in these sensitive regions.
 - lake (Categorical): The name of the lake from which the water sample was collected. This refers to the sample.
@@ -119,9 +123,9 @@ water_temp (Continuous): The water temperature (in degrees Celsius) of the sampl
 - mg_per_L (Continuous): The concentration (in milligrams per liter) of the corresponding analyte from the element column, indicating the abundance of each analyte in the water sample.
 - element_type (Categorical): Describes whether the element is in a “bound” or “free” state, providing context for the form of the analyte.</p>
 </div>
-<div id="algae_data" class="section level2" number="2.2">
+<div id="algae_data" class="section level2" number="6.2">
 <h2>
-<span class="header-section-number">2.2</span> algae_data<a class="anchor" aria-label="anchor" href="#algae_data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.2</span> algae_data<a class="anchor" aria-label="anchor" href="#algae_data"><i class="fas fa-link"></i></a>
 </h2>
 <p>This dataset was generated as part of a study investigating the biochemical composition of different algae strains under varying harvesting conditions. The goal of the research was to examine how different algae strains and harvesting regimes affect the abundance of various chemical species, particularly fatty acids and amino acids, which have potential applications in biofuel production and nutritional supplements. Replicates were performed to ensure consistency, and a wide range of chemical species was measured to provide insights into the algae’s metabolic profile and its response to environmental or harvesting changes.</p>
 <ul>
@@ -132,9 +136,9 @@ water_temp (Continuous): The water temperature (in degrees Celsius) of the sampl
 <li>abundance (Continuous): The measured abundance of the chemical species or analyte in the algae sample, expressed in a continuous quantitative form (e.g., mg/L or similar units).</li>
 </ul>
 </div>
-<div id="beer_components" class="section level2" number="2.3">
+<div id="beer_components" class="section level2" number="6.3">
 <h2>
-<span class="header-section-number">2.3</span> beer_components<a class="anchor" aria-label="anchor" href="#beer_components"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.3</span> beer_components<a class="anchor" aria-label="anchor" href="#beer_components"><i class="fas fa-link"></i></a>
 </h2>
 <p>This dataset captures the volatile compounds released from different ingredients like barley and corn, likely as part of a study on food aroma profiles. Researchers measured the abundance of specific analytes (such as 2-Methylpropanal) and classified them by chemical group (e.g., Aldehydes). The goal is to assess how different ingredients contribute to the overall aroma by linking each analyte to sensory descriptors, which include odor characteristics such as “Green,” “Pungent,” and “Malty.” The dataset could be useful in food science research.</p>
 <ul>
@@ -146,9 +150,9 @@ water_temp (Continuous): The water temperature (in degrees Celsius) of the sampl
 <li>analyte_odor (Categorical): A sensory descriptor for the odors associated with the analyte, listed as a combination of descriptors (e.g., “Green; Pungent; Burnt; Malty; Toasted”).</li>
 </ul>
 </div>
-<div id="hawaii_aquifers" class="section level2" number="2.4">
+<div id="hawaii_aquifers" class="section level2" number="6.4">
 <h2>
-<span class="header-section-number">2.4</span> hawaii_aquifers<a class="anchor" aria-label="anchor" href="#hawaii_aquifers"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.4</span> hawaii_aquifers<a class="anchor" aria-label="anchor" href="#hawaii_aquifers"><i class="fas fa-link"></i></a>
 </h2>
 <p>This dataset represents water quality measurements from various wells within an aquifer system, collected as part of a study on groundwater composition. Researchers measured the abundance of different dissolved elements and compounds, such as silica (SiO2) and chloride (Cl), from different wells in an aquifer. The dataset could be used to assess the chemical profile of groundwater and monitor any changes in water quality over time. Note the absence of geospatial data (latitude and longitude) for certain samples, and note that some samples come from the same well and aquifer but have different latitude and longitude coordinates.</p>
 <ul>
@@ -160,9 +164,9 @@ water_temp (Continuous): The water temperature (in degrees Celsius) of the sampl
 <li>abundance (Continuous): The concentration of the analyte in the water sample, expressed in a quantitative unit (mg/L).</li>
 </ul>
 </div>
-<div id="hops_components" class="section level2" number="2.5">
+<div id="hops_components" class="section level2" number="6.5">
 <h2>
-<span class="header-section-number">2.5</span> hops_components<a class="anchor" aria-label="anchor" href="#hops_components"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.5</span> hops_components<a class="anchor" aria-label="anchor" href="#hops_components"><i class="fas fa-link"></i></a>
 </h2>
 <p>This dataset contains detailed information on various hop varieties used in brewing, including their country of origin, brewing usage (aroma or bittering), and the chemical composition of their essential oils and acids. The dataset serves as a resource for brewers to select hop varieties based on their aroma profiles and chemical content, such as alpha acids and essential oils like humulene and myrcene, which influence the bitterness, flavor, and aroma of beer. The goal of this dataset is to help optimize the hop selection process in brewing for specific flavor profiles and brewing techniques like dry hopping or bittering.</p>
 <ul>
@@ -197,12 +201,12 @@ water_temp (Continuous): The water temperature (in degrees Celsius) of the sampl
 <hr>
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#datasets"><span class="header-section-number">2</span> datasets</a></li>
-<li><a class="nav-link" href="#alaska_lake_data"><span class="header-section-number">2.1</span> alaska_lake_data</a></li>
-<li><a class="nav-link" href="#algae_data"><span class="header-section-number">2.2</span> algae_data</a></li>
-<li><a class="nav-link" href="#beer_components"><span class="header-section-number">2.3</span> beer_components</a></li>
-<li><a class="nav-link" href="#hawaii_aquifers"><span class="header-section-number">2.4</span> hawaii_aquifers</a></li>
-<li><a class="nav-link" href="#hops_components"><span class="header-section-number">2.5</span> hops_components</a></li>
+<li><a class="nav-link" href="#datasets"><span class="header-section-number">6</span> datasets</a></li>
+<li><a class="nav-link" href="#alaska_lake_data"><span class="header-section-number">6.1</span> alaska_lake_data</a></li>
+<li><a class="nav-link" href="#algae_data"><span class="header-section-number">6.2</span> algae_data</a></li>
+<li><a class="nav-link" href="#beer_components"><span class="header-section-number">6.3</span> beer_components</a></li>
+<li><a class="nav-link" href="#hawaii_aquifers"><span class="header-section-number">6.4</span> hawaii_aquifers</a></li>
+<li><a class="nav-link" href="#hops_components"><span class="header-section-number">6.5</span> hops_components</a></li>
 </ul>
 
       <div class="book-extra">

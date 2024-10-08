@@ -66,21 +66,21 @@ Integrated Bioanalytics documents methods for analyzing chemical and sequence da
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
-Features provided by the source script:
+<!-- Features provided by the source script: -->
 
---Analysis and visualization tools--
+<!-- --Analysis and visualization tools-- -->
 
-* A GC-MS data analysis application with a MS reference library.
-* A sequence alignment analysis application for trimming alignments.
-* BLAST searches that export .fasta files of hits and store results in a .csv file.
-* Functions for dimensionality reduction, clustering, modeling, and visualization.
+<!-- * A GC-MS data analysis application with a MS reference library. -->
+<!-- * A sequence alignment analysis application for trimming alignments. -->
+<!-- * BLAST searches that export .fasta files of hits and store results in a .csv file. -->
+<!-- * Functions for dimensionality reduction, clustering, modeling, and visualization. -->
 
---Useful data and data structures--
+<!-- --Useful data and data structures-- -->
 
-* More than 12 chemical data sets for running practice analyses.
-* A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick).
-* A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv).
-* Support for multiple column and row names.
+<!-- * More than 12 chemical data sets for running practice analyses. -->
+<!-- * A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick). -->
+<!-- * A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv). -->
+<!-- * Support for multiple column and row names. -->
 
 <!-- ## new features
 
@@ -105,9 +105,9 @@ Features provided by the source script:
 
 <!-- end -->
 
-# (PART) DATA ANALYSIS IN R
-
 <!-- start overview -->
+
+# (PART) GETTING STARTED 
 
 # overview {-}
 
@@ -242,6 +242,10 @@ The first time you try this, it will very likely say: "You need to install the f
 <!-- end -->
 
 <!-- start data visualization -->
+
+
+# (PART) DATA VISUALIZATION
+
 
 # data visualization I {-}
 
@@ -1079,6 +1083,9 @@ For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c
 <!-- end -->
 
 <!-- start data wrangling -->
+
+# (PART) STATISTICAL METHODS
+
 # data wrangling and summaries {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
@@ -1845,103 +1852,6 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 
 <!-- start clustering -->
 
-# heirarchical clustering {-}
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
-```
-
-"Which of my samples are most closely related?"
-
-So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
-```
-
-Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
-
-```{r}
-dist <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = c("dist"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park")
-)
-
-as.matrix(dist)[1:3,1:3]
-```
-
-There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
-
-```{r, message = FALSE}
-AK_lakes_clustered <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = "hclust",
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park"),
-    na_replacement = "mean"
-)
-AK_lakes_clustered
-```
-
-It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
-
-Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
-
-```{r, message = FALSE}
-library(ggtree)
-AK_lakes_clustered %>%
-ggtree() +
-  geom_tiplab() +
-  geom_tippoint() +
-  theme_classic()
-```
-
-Cool! Though that plot could use some tweaking... let's try:
-
-```{r, fig.height = 4, fig.width = 5}
-AK_lakes_clustered %>%
-ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
-    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,375)) +
-    scale_fill_brewer(palette = "Set1") +
-    # theme_classic() +
-    theme(
-      legend.position = c(0.2,0.8)
-    )
-    
-```
-
-Very nice!
-
-## further reading {-}
- 
-For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
-
-For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
-
-## exercises {-}
-
-For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
-
-For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
-
-```{r}
-colnames(solvents)
-
-colnames(solvents)[1:3]
-
-colnames(solvents)[c(1,5,7)]
-```
-
 # flat clustering {-}
 
 "Do my samples fall into definable clusters?"
@@ -2394,6 +2304,104 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 <!-- start comparing means -->
 
+
+# heirarchical clustering {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
+```
+
+"Which of my samples are most closely related?"
+
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
+```
+
+Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
+
+```{r}
+dist <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("dist"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+as.matrix(dist)[1:3,1:3]
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
+
+```{r, message = FALSE}
+AK_lakes_clustered <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = "hclust",
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
+    columns_w_sample_ID_info = c("lake", "park"),
+    na_replacement = "mean"
+)
+AK_lakes_clustered
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+```{r, message = FALSE}
+library(ggtree)
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic()
+```
+
+Cool! Though that plot could use some tweaking... let's try:
+
+```{r, fig.height = 4, fig.width = 5}
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,375)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.2,0.8)
+    )
+    
+```
+
+Very nice!
+
+## further reading {-}
+ 
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
+
+For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
+
+## exercises {-}
+
+For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
+
+For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
+
+```{r}
+colnames(solvents)
+
+colnames(solvents)[1:3]
+
+colnames(solvents)[c(1,5,7)]
+```
+
 # comparing means {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
@@ -2746,6 +2754,9 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <!-- end -->
 
 <!-- start models -->
+
+
+# (PART) MODELING
 
 # numerical models {-}
 
@@ -3257,54 +3268,6 @@ Here, we will create text embeddings using publication data from PubMed. Text em
 First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
 
 ```{r, cache = TRUE}
-searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
-
-  pm_entries <- character()
-  term_vector <- character()
-
-  for( i in 1:length(search_terms) ) { # i=1
-      search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
-      query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
-      current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
-      pm_entries <- c(pm_entries, current_pm_entries)
-      term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
-      Sys.sleep(4)
-  }
-  unique_indices <- !duplicated(pm_entries)
-  pm_entries <- pm_entries[unique_indices]
-  term_vector <- term_vector[unique_indices]
-
-  pm_results <- list()
-  for (i in 1:length(pm_entries)) { # i=1
-
-      if (length(pm_entries[[i]]) == 1) { next }
-      if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
-
-      options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
-      for (option in options) { # option = 4
-          if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
-              doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
-              break
-          } else {next}
-      }
-
-      pm_results[[i]] <- data.frame(
-          entry_number = as.numeric(i),
-          term = term_vector[[i]],
-          date = lubridate::as_date(paste(
-              pm_entries[[i]]$MedlineCitation$DateRevised$Year,
-              pm_entries[[i]]$MedlineCitation$DateRevised$Month,
-              pm_entries[[i]]$MedlineCitation$DateRevised$Day,
-          sep = "-"
-          )),
-          journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
-          title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
-          doi = doi,
-          abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
-      )
-  }
-  return(as_tibble(do.call(rbind, pm_results)))
-}
 search_results <- searchPubMed(
   search_terms = c("beta-amyrin synthase", "friedelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
   pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
@@ -3464,92 +3427,9 @@ runMatrixAnalysis(
 
 ## exercises {-}
 
-1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
+1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set `sort` = "date"). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges.
 
-Time Series Analysis of Research Trends: Modify the search terms to retrieve publications over a period of several years. Embed the titles and visualize the changes in clustering over time using PCA. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges.
-
-```{r}
-searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
-
-  pm_entries <- character()
-  term_vector <- character()
-
-  for (i in 1:length(search_terms)) { 
-      search_output <- rentrez::entrez_search(
-        db = "pubmed", term = as.character(search_terms[i]), 
-        retmax = retmax_per_term, use_history = TRUE, sort = sort[1]
-      )
-      
-      # Initialize variables for retry mechanism
-      success <- FALSE
-      attempts <- 0
-      max_attempts <- 3  # Maximum number of retry attempts
-      
-      while (!success && attempts < max_attempts) {
-          attempts <- attempts + 1
-          
-          # Attempt to fetch data
-          query_output <- try(rentrez::entrez_fetch(
-            db = "pubmed", web_history = search_output$web_history, 
-            rettype = "xml", retmax = retmax_per_term, 
-            api_key = pubmed_api_key, timeout = 60), silent = TRUE)
-          
-          # Check if the attempt was successful
-          if (inherits(query_output, "try-error")) {
-              message("Error encountered. Attempt ", attempts, " of ", max_attempts, ". Retrying in 5 seconds...")
-              Sys.sleep(5)  # Wait before retrying
-          } else {
-              # Parse and store the entries if successful
-              current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
-              pm_entries <- c(pm_entries, current_pm_entries)
-              term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
-              success <- TRUE
-          }
-      }
-      
-      if (!success) {
-          message("Failed to fetch data for term: ", as.character(search_terms[i]), " after ", max_attempts, " attempts.")
-      }
-      
-      Sys.sleep(4)  # Wait between different search terms to respect API rate limits
-  }
-
-  unique_indices <- !duplicated(pm_entries)
-  pm_entries <- pm_entries[unique_indices]
-  term_vector <- term_vector[unique_indices]
-
-  pm_results <- list()
-  for (i in 1:length(pm_entries)) { # i=1
-
-      if (length(pm_entries[[i]]) == 1) { next }
-      if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
-
-      options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
-      for (option in options) { # option = 4
-          if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
-              doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
-              break
-          } else {next}
-      }
-
-      pm_results[[i]] <- data.frame(
-          entry_number = as.numeric(i),
-          term = term_vector[[i]],
-          date = lubridate::as_date(paste(
-              pm_entries[[i]]$MedlineCitation$DateRevised$Year,
-              pm_entries[[i]]$MedlineCitation$DateRevised$Month,
-              pm_entries[[i]]$MedlineCitation$DateRevised$Day,
-          sep = "-"
-          )),
-          journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
-          title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
-          doi = doi,
-          abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
-      )
-  }
-  return(as_tibble(do.call(rbind, pm_results)))
-}
-
+```{r, cache = TRUE, fig.width = 8, fig.height = 6}
 search_results_ex <- searchPubMed(
   search_terms = c("oxidosqualene cyclase", "chemotaxonomy", "protein engineering"),
   pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
@@ -3557,11 +3437,43 @@ search_results_ex <- searchPubMed(
   sort = "date"
 )
 
-search_results_ex
+search_results_ex_embed <- embedText(
+  search_results_ex, column_name = "abstract",
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+
+runMatrixAnalysis(
+  data = search_results_ex_embed,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
+  columns_w_sample_ID_info = c("title", "journal", "term", "date")
+) -> search_results_ex_embed_pca
+
+search_results_ex_embed_pca$date <- as.Date(search_results_ex_embed_pca$date)
+search_results_ex_embed_pca %>%
+  ggplot() +
+    geom_label_repel(
+      aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
+      size = 2, min.segment.length = 0.5, force = 50
+    ) +  
+    geom_point(aes(x = Dim.1, y = Dim.2, fill = date, shape = term), size = 5, alpha = 0.7) +
+    scale_shape_manual(values = c(21, 22, 23)) +
+    scale_fill_viridis() +
+    scale_x_continuous(expand = c(0,1)) +
+    scale_y_continuous(expand = c(0,5)) +
+    theme_minimal()
+
+search_results_ex_embed_pca %>%
+    ggplot() +
+      geom_point(aes(x = Dim.1, y = date, fill = date, shape = term), size = 5, alpha = 0.7) +
+    scale_shape_manual(values = c(21, 22, 23)) +
+    scale_fill_viridis() +
+    scale_x_continuous(expand = c(0,1)) +
+    scale_y_continuous(expand = c(0.1,0)) +
+    theme_minimal()
 ```
 
-Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data.
-
+<!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
 
@@ -3579,12 +3491,9 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = c('hop_variety', 'hop_origin', 'hop_brewing_usage', 'hop_aroma')
 ) -> hops_embedded_pca
 
-hops_embedded_pca$color <- rgb(
-  scales::rescale(hops_embedded_pca$Dim.1, to = c(0, 1)),
-  0,
-  scales::rescale(hops_embedded_pca$Dim.2, to = c(0, 1))
-)
-
+hops_embedded_pca$color <- "grey"
+hops_embedded_pca$color[grep("picy", hops_embedded_pca$hop_aroma)] <- "maroon"
+hops_embedded_pca$color[grep("itrus", hops_embedded_pca$hop_aroma)] <- "gold"
 ggplot(hops_embedded_pca) +
   geom_label_repel(
     aes(x = Dim.1, y = Dim.2, label = hop_aroma),
@@ -3593,6 +3502,9 @@ ggplot(hops_embedded_pca) +
   geom_point(aes(x = Dim.1, y = Dim.2), fill = hops_embedded_pca$color, shape = 21, size = 5, alpha = 0.7) +
   theme_minimal()
 ```
+
+
+# (PART) MIDTERM
 
 # midterm {-}
 
@@ -3620,9 +3532,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
+
 # (PART) GC-MS DATA {-}
 
 <!-- start mass spectrometric analysis -->
+
 
 # loading analyzeGCMSdata {-}
 
@@ -3790,6 +3704,7 @@ qc_data %>%
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
+
 
 # (PART) TRANSCRIPTOME ANALYSIS {-}
 
@@ -4180,6 +4095,7 @@ Let's look at some examples. For these example, we will use some fasta files sto
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
+
 
 # (PART) EVOLUTIONARY ANALYSIS {-}
 
