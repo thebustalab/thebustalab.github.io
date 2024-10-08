@@ -4032,7 +4032,7 @@ runMatrixAnalysis(
 
 ## exercises {-}
 
-1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set `sort` = "date"). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges.
+1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set `sort` = "date"). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges. Below is an example to help you:
 
 
 ``` r
@@ -4055,25 +4055,6 @@ runMatrixAnalysis(
   columns_w_sample_ID_info = c("title", "journal", "term", "date")
 ) -> search_results_ex_embed_pca
 
-search_results_ex_embed_pca$date <- as.Date(search_results_ex_embed_pca$date)
-search_results_ex_embed_pca %>%
-  ggplot() +
-    geom_label_repel(
-      aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
-      size = 2, min.segment.length = 0.5, force = 50
-    ) +  
-    geom_point(aes(x = Dim.1, y = Dim.2, fill = date, shape = term), size = 5, alpha = 0.7) +
-    scale_shape_manual(values = c(21, 22, 23)) +
-    scale_fill_viridis() +
-    scale_x_continuous(expand = c(0,1)) +
-    scale_y_continuous(expand = c(0,5)) +
-    theme_minimal()
-```
-
-<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
-
-``` r
-
 search_results_ex_embed_pca %>%
     ggplot() +
       geom_point(aes(x = Dim.1, y = date, fill = date, shape = term), size = 5, alpha = 0.7) +
@@ -4084,7 +4065,7 @@ search_results_ex_embed_pca %>%
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-205-2.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 
