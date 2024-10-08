@@ -3922,7 +3922,7 @@ We can also use embeddings to examine data that are not full sentences but rathe
 
 
 ``` r
-n <- 30
+n <- 31
 
 odor <- data.frame(
   sample = seq(1,n,1),
@@ -3940,10 +3940,6 @@ runMatrixAnalysis(
   columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
   columns_w_sample_ID_info = c("sample", "odor")
 ) -> pca_out
-## Replacing NAs in your data with mean
-```
-
-``` r
 
 pca_out$color <- rgb(
   scales::rescale(pca_out$Dim.1, to = c(0, 1)),

@@ -3324,7 +3324,7 @@ runMatrixAnalysis(
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
 ```{r, fig.width = 8, fig.height = 6, cache = TRUE}
-n <- 30
+n <- 31
 
 odor <- data.frame(
   sample = seq(1,n,1),
