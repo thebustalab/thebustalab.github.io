@@ -123,7 +123,7 @@
 <li>“monolist_out_path”: The path to where we want a summary file of the BLAST hits to be written.</li>
 </ul>
 <p>Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits (“monolist_out”, which is written to “monolist_out_path”), and the hits themselves, written as individual files to “sequences_of_interest_directory_path”. These two things can be used in downstream analyses, such as alignments. The function does not return an object.</p>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">the_transcriptomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa"</span>,</span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa"</span>,</span>
@@ -184,7 +184,7 @@
 <li><p>Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.</p></li>
 </ol>
 <p>We can implement these two steps using the <code>buildDomainLibrary()</code> function and the <code>predictDomains()</code> function. See below:</p>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">buildDomainLibrary</span><span class="op">(</span></span>
 <span>    alignment_in_paths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa"</span>,</span>

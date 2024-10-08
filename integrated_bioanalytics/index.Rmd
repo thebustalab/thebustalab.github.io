@@ -2748,7 +2748,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start models -->
 
-# models {-}
+# numerical models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
 
@@ -3220,7 +3220,7 @@ model$metrics
 
 ```
 
-### further reading {-}
+## further reading {-}
 
 https://github.com/easystats/performance
 
@@ -3239,7 +3239,7 @@ Classification with random forests:
 
 <!-- end -->
 
-## language models {-}
+# language models {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg', dpi = NA)
@@ -3249,7 +3249,7 @@ In the last chapter, we looked at models that use numerical data to understand t
 
 A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
 
-### text embeddings {-}
+## text embeddings {-}
 
 Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
 
@@ -3397,43 +3397,6 @@ ggplot(pca_out) +
 
 ```
 
-### exercises {-}
-
-1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
-
-2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensionality reduction (pca, if you like) to determine if any clear clusters are present.
-
-```{r, echo = FALSE, eval = FALSE, cache = TRUE}
-hops_embedded <- embedText(
-  hops_components,
-  column_name = 'hop_aroma',
-  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
-)
-
-runMatrixAnalysis(
-  data = hops_embedded,
-  analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
-  columns_w_sample_ID_info = c('hop_variety', 'hop_origin', 'hop_brewing_usage')
-) -> hops_embedded_pca
-
-hops_embedded_pca$color <- rgb(
-  scales::rescale(hops_embedded_pca$Dim.1, to = c(0, 1)),
-  0,
-  scales::rescale(hops_embedded_pca$Dim.2, to = c(0, 1))
-)
-
-ggplot(hops_embedded_pca) +
-  geom_label_repel(
-    aes(x = Dim.1, y = Dim.2, label = hop_variety),
-    size = 2, min.segment.length = 0.5, force = 25
-  ) +  
-  geom_point(aes(x = Dim.1, y = Dim.2), fill = hops_embedded_pca$color, shape = 21, size = 5, alpha = 0.7) +
-  theme_minimal()
-```
-
-### further reading {-}
-
 ## protein embeddings {-}
 
 Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.
@@ -3469,9 +3432,42 @@ runMatrixAnalysis(
 
 ```
 
-### exercises {-}
+## further reading {-}
 
-### further reading {-}
+## exercises {-}
+
+1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
+
+2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
+
+```{r, echo = FALSE, eval = FALSE, cache = TRUE}
+hops_embedded <- embedText(
+  hops_components,
+  column_name = 'hop_aroma',
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+
+runMatrixAnalysis(
+  data = hops_embedded,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
+  columns_w_sample_ID_info = c('hop_variety', 'hop_origin', 'hop_brewing_usage')
+) -> hops_embedded_pca
+
+hops_embedded_pca$color <- rgb(
+  scales::rescale(hops_embedded_pca$Dim.1, to = c(0, 1)),
+  0,
+  scales::rescale(hops_embedded_pca$Dim.2, to = c(0, 1))
+)
+
+ggplot(hops_embedded_pca) +
+  geom_label_repel(
+    aes(x = Dim.1, y = Dim.2, label = hop_variety),
+    size = 2, min.segment.length = 0.5, force = 25
+  ) +  
+  geom_point(aes(x = Dim.1, y = Dim.2), fill = hops_embedded_pca$color, shape = 21, size = 5, alpha = 0.7) +
+  theme_minimal()
+```
 
 # midterm {-}
 

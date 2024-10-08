@@ -3993,13 +3993,15 @@ ggplot(pca_out) +
 
 <img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
-### exercises
+### exercises {-}
 
 1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.
 
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensionality reduction (pca, if you like) to determine if any clear clusters are present.
 
 
+
+### further reading {-}
 
 ## protein embeddings {-}
 
@@ -4014,7 +4016,33 @@ By adding a mechanism called an "attention mechanism" to an autoencoder, we can 
 In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.
 
 
+``` r
+embedded_p450s <- embedAminoAcids(
+  amino_acid_stringset = p450s,
+  biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt")
+)
+embedded_p450s$product <- tolower(gsub(".*_", "", embedded_p450s$name))
+embedded_p450s <- select(embedded_p450s, name, product, everything())
 
+runMatrixAnalysis(
+  data = embedded_p450s,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(embedded_p450s)[3:dim(embedded_p450s)[2]],
+  columns_w_sample_ID_info = c("name", "product")
+) %>%
+  ggplot() +
+    geom_jitter(
+      aes(x = Dim.1, y = Dim.2, fill = product),
+      shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
+    ) +
+    theme_minimal()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+
+### exercises {-}
+
+### further reading {-}
 
 # midterm {-}
 
