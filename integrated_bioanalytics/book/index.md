@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-05-15"
+date: "2024-10-04"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3261,15 +3261,14 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start models -->
 
-# models {-}
-
+# numerical models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
 
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;" />
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of models: inferential and predictive.
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive.
 
 - Inferential models aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
@@ -3355,7 +3354,7 @@ basic_regression_model$metrics
 ## 5    0.00e+00
 ```
 
-It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = m*x + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
+It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
 
 We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for ADP and AMP. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of ADP for each value of AMP in our data set. We can do that like this:
 
@@ -3793,6 +3792,181 @@ Classification with random forests:
 
 <!-- end -->
 
+## language models {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" width="100%" style="display: block; margin: auto;" />
+
+In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
+
+A basic form of an embedding model is a neural network called an autoencoder. Autoencoders  consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
+
+### text embeddings
+
+Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
+
+First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
+
+
+``` r
+searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
+    
+  pm_entries <- character()
+  term_vector <- character()
+  
+  for( i in 1:length(search_terms) ) { # i=1
+      search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
+      query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
+      current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
+      pm_entries <- c(pm_entries, current_pm_entries)
+      term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
+      Sys.sleep(4)
+  }
+  unique_indices <- !duplicated(pm_entries)
+  pm_entries <- pm_entries[unique_indices]
+  term_vector <- term_vector[unique_indices]
+    
+  pm_results <- list()
+  for (i in 1:length(pm_entries)) { # i=1
+    
+      if (length(pm_entries[[i]]) == 1) { next }
+      if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
+
+      options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
+      for (option in options) { # option = 4
+          if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
+              doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
+              break
+          } else {next}
+      }
+    
+      pm_results[[i]] <- data.frame(
+          entry_number = as.numeric(i),
+          term = term_vector[[i]],
+          date = lubridate::as_date(paste(
+              pm_entries[[i]]$MedlineCitation$DateRevised$Year,
+              pm_entries[[i]]$MedlineCitation$DateRevised$Month,
+              pm_entries[[i]]$MedlineCitation$DateRevised$Day,
+          sep = "-"
+          )),
+          journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
+          title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
+          doi = doi,
+          abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
+      )
+  }
+  return(as_tibble(do.call(rbind, pm_results)))
+}
+search_results <- searchPubMed(
+  search_terms = c("beta-amyrin synthase", "friedelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
+  pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
+  retmax_per_term = 3,
+  sort = "relevance"
+)
+colnames(search_results)
+## [1] "entry_number" "term"         "date"        
+## [4] "journal"      "title"        "doi"         
+## [7] "abstract"
+```
+
+``` r
+select(search_results, term, title)
+## # A tibble: 12 × 2
+##    term                       title                         
+##    <chr>                      <chr>                         
+##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…
+##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…
+##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
+##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
+##  5 friedelin synthase         Friedelin Synthase from Mayte…
+##  6 friedelin synthase         Functional characterization o…
+##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    
+##  8 sorghum bicolor            Molecular Breeding of Sorghum…
+##  9 sorghum bicolor            Structure and genetic regulat…
+## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
+## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
+## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…
+```
+
+From the output here, you can see that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
+
+Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at https://huggingface.co and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.
+
+To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', available through the Hugging Face API at https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at https://huggingface.co, where you will find detailed documentation and additional resources.
+
+
+``` r
+library(jsonlite)
+## 
+## Attaching package: 'jsonlite'
+## The following object is masked from 'package:purrr':
+## 
+##     flatten
+## The following object is masked from 'package:shiny':
+## 
+##     validate
+```
+
+``` r
+search_results_embedded <- embedText(
+  df = search_results,
+  column_name = "title",
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+search_results_embedded[1:3,1:10]
+## # A tibble: 3 × 10
+##   entry_number term  date       journal title doi   abstract
+##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
+## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
+## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
+## 3            3 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…
+## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
+## #   embedding_3 <dbl>
+```
+
+The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.
+
+
+``` r
+search_results <- left_join(search_results, search_results_embedded, by = "title")
+search_results[1:3, 1:10]
+## # A tibble: 3 × 10
+##   entry_number.x term.x     date.x     journal.x title doi.x
+##            <dbl> <chr>      <date>     <chr>     <chr> <chr>
+## 1              1 beta-amyr… 2019-11-20 FEBS ope… β-Am… 10.1…
+## 2              2 beta-amyr… 2024-04-03 Acta pha… Gins… 10.1…
+## 3              3 beta-amyr… 2019-12-10 Organic … β-Am… 10.1…
+## # ℹ 4 more variables: abstract.x <chr>,
+## #   entry_number.y <dbl>, term.y <chr>, date.y <date>
+```
+
+To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
+
+
+``` r
+runMatrixAnalysis(
+  data = search_results_embedded,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
+  columns_w_sample_ID_info = c("title", "journal", "term")
+) %>%
+  ggplot() +
+    geom_label_repel(
+      aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
+      size = 2, min.segment.length = 0.5, force = 250
+    ) +  
+    geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5, alpha = 0.7) +
+    scale_fill_brewer(palette = "Set1") +
+    scale_x_continuous(expand = c(0,1)) +
+    scale_y_continuous(expand = c(0,5)) +
+    theme_minimal()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+
+### protein embeddings
+
+
+
 # midterm {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg" width="100%" style="display: block; margin: auto;" />
@@ -3830,7 +4004,7 @@ This page explains how to load a simple application for integrating and analyzin
 2. In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the `analyzeGCMSdata` function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work.
 
 
-```r
+``` r
 source("https://thebustalab.github.io/phylochemistry/gcms.R")
 ```
 
@@ -4578,7 +4752,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-220-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4614,7 +4788,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4664,7 +4838,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4680,7 +4854,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-218-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4689,7 +4863,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-219-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-225-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4763,7 +4937,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-221-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4782,7 +4956,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-222-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4899,7 +5073,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4934,7 +5108,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5230,7 +5404,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5484,7 +5658,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -5507,7 +5681,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -5531,7 +5705,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -5607,21 +5781,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -5669,7 +5843,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -5771,6 +5945,10 @@ Is there an efficient way to write a results and discussion section in the forma
   + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
   + The discussion should not require the reader to go back and read its first half in order to understand its second half.
 
+### other thoughts
+
+* Somewhere in the discussion, be sure to list out what any unsolved problems you faced are.
+
 <!-- end -->
 
 <!-- start Conclusions -->
@@ -5845,6 +6023,11 @@ Is there an efficient way to write a results and discussion section in the forma
   + Summarize complex information in a clear, concise manner
   + Help readers decide whether or not to read the article
   + Used in conferences to summarize what the speaker will say during his/her presentation
+
+### other thoughts
+
+* Whatever you identify as the strongest sentences in the main text, make sure those are reflected in the abstract
+
 
 
 ## title
@@ -5956,7 +6139,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -5998,7 +6181,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6087,7 +6270,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-273-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

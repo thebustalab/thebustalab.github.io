@@ -1,6 +1,8 @@
 fig:unnamed-chunk-68
 part-data-analysis-in-r
 ternary-plots
+text-embeddings
+protein-embeddings
 loading-gff-files
 structured-prompting
 few-shot-learning
@@ -13,7 +15,9 @@ retrieval-augemented-generation
 zoomed-insets
 plot-insets
 image-insets
+other-thoughts
 abstract
+other-thoughts-1
 title
 further-reading-11
 matrix-analyses

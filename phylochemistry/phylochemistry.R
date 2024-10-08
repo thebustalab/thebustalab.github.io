@@ -47,6 +47,7 @@
                     "gridExtra",
                     "ape",
                     "multcompView",
+                    "jsonlite",
                     
                     ## ML packages
                         "recipes",

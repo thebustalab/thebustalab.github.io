@@ -64,7 +64,7 @@
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="clustering.html">clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
-<li><a class="" href="models.html">models</a></li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="midterm.html">midterm</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="active" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
@@ -107,7 +107,7 @@
 <li><p>Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn’t matter what the name of that folder is, but it must not contain special characters (including a space <code></code> in the name). For example, if my CDF file is called “sorghum_bicolor.CDF”, then I might create a folder called <code>gc_data</code> on my hard drive, and place the “sorghum_bicolor.CDF” file in that folder.</p></li>
 <li><p>In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the <code>analyzeGCMSdata</code> function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work.</p></li>
 </ol>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/gcms.R"</span><span class="op">)</span></span></code></pre></div>
 <p>If the command was run successfully you should see something like:
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/success.png" width="100%" style="display: block; margin: auto;"><br></p>
@@ -116,11 +116,11 @@
 </li>
 </ol>
 <p>If you are on a Mac, <em>use single forward slashes</em>. For example:</p>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>If you are on a PC, you may need to use double back slashes. For example:</p>
-<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"C:\\Users\\My_Profile\\gc_data"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>The first time you open your CDF datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).</p>
@@ -156,7 +156,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-05-15.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-04.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

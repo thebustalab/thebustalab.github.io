@@ -2748,7 +2748,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- start models -->
 
-# numerical models {-}
+# models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
 
@@ -3239,25 +3239,73 @@ Classification with random forests:
 
 <!-- end -->
 
-# language models {-}
+## language models {-}
 
-In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data.
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png', dpi = NA)
+```
 
-## embedding models
-
-An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
+In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
 
 A basic form of an embedding model is a neural network called an autoencoder. Autoencoders  consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
 
-### text embeddings
+### text embeddings {-}
 
 Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.
 
-First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at  https://pubmed.ncbi.nlm.nih.gov/. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
+First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website.  An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at https://pubmed.ncbi.nlm.nih.gov/. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using "beta-amyrin synthase," "friedelin synthase," "Sorghum bicolor," and "cuticular wax biosynthesis." I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:
 
 ```{r}
+searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
+
+  pm_entries <- character()
+  term_vector <- character()
+
+  for( i in 1:length(search_terms) ) { # i=1
+      search_output <- rentrez::entrez_search(db = "pubmed", term = as.character(search_terms[i]), retmax = retmax_per_term, use_history = TRUE, sort = sort[1])
+      query_output <- try(rentrez::entrez_fetch(db = "pubmed", web_history = search_output$web_history, rettype = "xml", retmax = retmax_per_term, api_key = pubmed_api_key))
+      current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
+      pm_entries <- c(pm_entries, current_pm_entries)
+      term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
+      Sys.sleep(4)
+  }
+  unique_indices <- !duplicated(pm_entries)
+  pm_entries <- pm_entries[unique_indices]
+  term_vector <- term_vector[unique_indices]
+
+  pm_results <- list()
+  for (i in 1:length(pm_entries)) { # i=1
+
+      if (length(pm_entries[[i]]) == 1) { next }
+      if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
+
+      options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
+      for (option in options) { # option = 4
+          if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
+              doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
+              break
+          } else {next}
+      }
+
+      pm_results[[i]] <- data.frame(
+          entry_number = as.numeric(i),
+          term = term_vector[[i]],
+          date = lubridate::as_date(paste(
+              pm_entries[[i]]$MedlineCitation$DateRevised$Year,
+              pm_entries[[i]]$MedlineCitation$DateRevised$Month,
+              pm_entries[[i]]$MedlineCitation$DateRevised$Day,
+          sep = "-"
+          )),
+          journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
+          title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
+          doi = doi,
+          abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
+      )
+  }
+  return(as_tibble(do.call(rbind, pm_results)))
+}
 search_results <- searchPubMed(
-  search_terms = c("beta-amyrin synthase", "fridelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
+  search_terms = c("beta-amyrin synthase", "friedelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
   pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
   retmax_per_term = 3,
   sort = "relevance"
@@ -3273,34 +3321,86 @@ Next, we use the embedText function to create embeddings for the titles of the e
 To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called 'BAAI/bge-small-en-v1.5', available through the Hugging Face API at https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at https://huggingface.co, where you will find detailed documentation and additional resources.
 
 ```{r}
-search_results <- embedText(
+library(jsonlite)
+search_results_embedded <- embedText(
   df = search_results,
   column_name = "title",
   hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
 )
-colnames(search_results)[1:10]
+search_results_embedded[1:3,1:10]
 ```
 
 The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.
 
 ```{r}
-search_results <- left_join(search_results, earch_results_embedded, by = "title")
+search_results <- left_join(search_results, search_results_embedded, by = "title")
 search_results[1:3, 1:10]
 ```
 
-To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes. This visualization helps us identify patterns and clusters among the publication titles based on their textual content.
+To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
-```{r}
+```{r, fig.width = 10, fig.height = 8}
 runMatrixAnalysis(
-  data = search_results,
+  data = search_results_embedded,
   analysis = "pca",
   columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
   columns_w_sample_ID_info = c("title", "journal", "term")
 ) %>%
-  ggplot() + geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5)
+  ggplot() +
+    geom_label_repel(
+      aes(x = Dim.1, y = Dim.2, label = str_wrap(title, width = 35)),
+      size = 2, min.segment.length = 0.5, force = 250
+    ) +  
+    geom_point(aes(x = Dim.1, y = Dim.2, fill = term), shape = 21, size = 5, alpha = 0.7) +
+    scale_fill_brewer(palette = "Set1") +
+    scale_x_continuous(expand = c(0,1)) +
+    scale_y_continuous(expand = c(0,5)) +
+    theme_minimal()
 ```
 
-## protein embeddings
+We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
+
+```{r}
+n <- 30
+
+odor <- data.frame(
+  sample = seq(1,n,1),
+  odor = dropNA(unique(beer_components$analyte_odor))[sample(1:96, n)]
+)
+
+out <- embedText(
+  odor, column_name = "odor",
+  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+)
+
+runMatrixAnalysis(
+  data = out,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
+  columns_w_sample_ID_info = c("sample", "odor")
+) -> pca_out
+
+pca_out$color <- rgb(
+  scales::rescale(pca_out$Dim.1, to = c(0, 1)),
+  0,
+  scales::rescale(pca_out$Dim.2, to = c(0, 1))
+)
+
+ggplot(pca_out) +
+  geom_label_repel(
+    aes(x = Dim.1, y = Dim.2, label = str_wrap(odor, width = 35)),
+    size = 2, min.segment.length = 0.5, force = 25
+  ) +  
+  geom_point(aes(x = Dim.1, y = Dim.2), fill = pca_out$color, shape = 21, size = 5, alpha = 0.7) +
+  theme_minimal()
+
+```
+
+## exercises
+
+
+
+### protein embeddings {-}
 
 ```{r}
 
@@ -5059,6 +5159,68 @@ ________________________________________________________________________________
 [ColorBrewer2](https://colorbrewer2.org/)
 
 <!-- end -->
+
+# datasets
+
+## alaska_lake_data
+
+The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition and environmental conditions of these unique ecosystems. Researchers took water samples from several lakes, measuring key environmental parameters like water temperature and pH, along with analyzing the abundance of different chemical elements, such as carbon, nitrogen, and phosphorus. By comparing the concentrations of both bound and free elements, the study aimed to understand the health of these aquatic environments and the impact of natural and anthropogenic factors on the water chemistry. The dataset will be used to inform conservation strategies for maintaining the ecological balance in these sensitive regions.
+- lake (Categorical): The name of the lake from which the water sample was collected. This refers to the sample.
+- park (Categorical): The park or national park code where the lake is located. This is part of the sample identification.
+water_temp (Continuous): The water temperature (in degrees Celsius) of the sample at the time of collection. This is an analyte describing an environmental condition of the sample.
+- pH (Continuous): The pH value of the water, representing its acidity or alkalinity. This is an analyte providing an environmental characteristic of the sample.
+- element (Categorical): The chemical element being measured in the water (e.g., C for carbon, N for nitrogen). This is an analyte.
+- mg_per_L (Continuous): The concentration (in milligrams per liter) of the corresponding analyte from the element column, indicating the abundance of each analyte in the water sample.
+- element_type (Categorical): Describes whether the element is in a "bound" or "free" state, providing context for the form of the analyte.
+
+## algae_data
+
+This dataset was generated as part of a study investigating the biochemical composition of different algae strains under varying harvesting conditions. The goal of the research was to examine how different algae strains and harvesting regimes affect the abundance of various chemical species, particularly fatty acids and amino acids, which have potential applications in biofuel production and nutritional supplements. Replicates were performed to ensure consistency, and a wide range of chemical species was measured to provide insights into the algae's metabolic profile and its response to environmental or harvesting changes.
+
+- replicate (Categorical): The replicate number of the sample for the experiment, indicating which iteration of the algae sample was analyzed.
+- algae_strain (Categorical): The specific strain of algae used in the experiment (e.g., "Tsv1"). This refers to the strain from which each sample was collected.
+- harvesting_regime (Categorical): The method or condition under which the algae sample was harvested (e.g., "Heavy" regime).
+- chemical_species (Categorical): The type of chemical species or analyte measured in the algae sample, including various fatty acids (FAs) and amino acids (Aas).
+- abundance (Continuous): The measured abundance of the chemical species or analyte in the algae sample, expressed in a continuous quantitative form (e.g., mg/L or similar units).
+
+## beer_components
+
+This dataset captures the volatile compounds released from different ingredients like barley and corn, likely as part of a study on food aroma profiles. Researchers measured the abundance of specific analytes (such as 2-Methylpropanal) and classified them by chemical group (e.g., Aldehydes). The goal is to assess how different ingredients contribute to the overall aroma by linking each analyte to sensory descriptors, which include odor characteristics such as "Green," "Pungent," and "Malty." The dataset could be useful in food science research.
+
+- ingredient (Categorical): The ingredient from which the analytes were measured (e.g., "barley," "corn"). This refers to the ingredient from which the sample was collected.
+- replicate (Categorical): The replicate number of the sample for the experiment, indicating the repetition of the measurement for consistency.
+- analyte (Categorical): The specific volatile compound or chemical measured in the ingredient (e.g., "2-Methylpropanal").
+- analyte_class (Categorical): The chemical classification of the analyte (e.g., "Aldehyde").
+- abundance (Continuous): The concentration of the analyte measured in the sample, likely in a quantitative unit such as mg/L.
+- analyte_odor (Categorical): A sensory descriptor for the odors associated with the analyte, listed as a combination of descriptors (e.g., "Green; Pungent; Burnt; Malty; Toasted").
+
+## hawaii_aquifers
+
+This dataset represents water quality measurements from various wells within an aquifer system, collected as part of a study on groundwater composition. Researchers measured the abundance of different dissolved elements and compounds, such as silica (SiO2) and chloride (Cl), from different wells in an aquifer. The dataset could be used to assess the chemical profile of groundwater and monitor any changes in water quality over time. Note the absence of geospatial data (latitude and longitude) for certain samples, and note that some samples come from the same well and aquifer but have different latitude and longitude coordinates.
+
+- aquifer_code (Categorical): The code assigned to identify the aquifer system (e.g., "aquifer_1") that the sample came from.
+- well_name (Categorical): The name of the well from which the water sample was collected (e.g., "Alewa_Heights_Spring").
+- longitude (Continuous): The longitudinal coordinates of the well location from which the sample was take.
+- latitude (Continuous): The latitudinal coordinates of the well location from which the sample was take.
+- analyte (Categorical): The specific dissolved compound or element measured in the water sample (e.g., "SiO2," "Cl").
+- abundance (Continuous): The concentration of the analyte in the water sample, expressed in a quantitative unit (mg/L).
+
+## hops_components
+
+This dataset contains detailed information on various hop varieties used in brewing, including their country of origin, brewing usage (aroma or bittering), and the chemical composition of their essential oils and acids. The dataset serves as a resource for brewers to select hop varieties based on their aroma profiles and chemical content, such as alpha acids and essential oils like humulene and myrcene, which influence the bitterness, flavor, and aroma of beer. The goal of this dataset is to help optimize the hop selection process in brewing for specific flavor profiles and brewing techniques like dry hopping or bittering.
+
+- hop_variety (Categorical): The specific variety of hop used (e.g., "Cascade," "Chinook").
+- hop_origin (Categorical): The country of origin for the hop variety (e.g., "USA," "England").
+- hop_brewing_usage (Categorical): The primary use of the hop in brewing, either for aroma or bittering, or techniques like dry hopping.
+- hop_aroma (Categorical): The sensory description of the hop's aroma profile, which can include terms like "floral," "citrus," or "spicy."
+- total_oil (Continuous): The total essential oil content of the hop, typically measured in milliliters per 100 grams.
+- alpha_acids (Continuous): The percentage of alpha acids in the hop, which contribute to the bitterness of the beer.
+- beta_acids (Continuous): The percentage of beta acids in the hop, which also contribute to the bitterness but degrade more slowly over time.
+- humulene (Continuous): A compound contributing to the hop's woody, earthy aroma.
+- myrcene (Continuous): A compound that contributes to the hop's citrus and floral aroma.
+- humulone (Continuous): Another compound found in hop oils, related to bitterness and aroma.
+- caryophyllene (Continuous): A compound contributing to spicy, peppery aromas.
+- farnesene (Continuous): A compound contributing to green, woody, or fruity aromas.
 
 <!-- start R FAQ -->
 # r faq {-}
