@@ -12559,8 +12559,8 @@
                     c("hops_components", "https://thebustalab.github.io/phylochemistry/sample_data/hops_components.csv"),
                     c("tequila_chemistry", "https://thebustalab.github.io/phylochemistry/sample_data/tequila_chemistry.csv"),
                     c("chemical_blooms", "https://thebustalab.github.io/phylochemistry/sample_data/chemical_blooms.csv"),
-                    c("metabolomics_unknown", "https://thebustalab.github.io/phylochemistry/sample_data/metabolomics_unknown.csv")
-                    c("wine_quality", "https://thebustalab.github.io/phylochemistry/sample_data/wine_quality.csv")
+                    c("metabolomics_unknown", "https://thebustalab.github.io/phylochemistry/sample_data/metabolomics_unknown.csv"),
+                    c("wine_quality", "https://thebustalab.github.io/phylochemistry/sample_data/wine_quality.csv"),
                     c("lake_superior_shoreline", "https://thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
                 ))
 
