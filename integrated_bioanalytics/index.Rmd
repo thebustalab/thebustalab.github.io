@@ -876,7 +876,9 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/datavis3.png', dpi = NA)
 ```
 
-## 3D scatter plots {-}
+## advanced plots {-}
+
+### 3D scatter plots {-}
 
 `phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
 
@@ -930,7 +932,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-## Marginal summaries {-}
+### marginal summaries {-}
 
 ```{r}
 i2 <- iris %>%
@@ -948,7 +950,7 @@ p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-## Representing distributions {-}
+### representing distributions {-}
 
 You can also combine geoms to create more detailed representations of distributions:
 
@@ -962,7 +964,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-## Venn digrams {-}
+### venn digrams {-}
 
 ```{r}
 df <- data.frame(
@@ -983,7 +985,7 @@ vennAnalysis(df[,1:3]) %>%
 ```
 
 
-## ternary plots
+### ternary plots {-}
 
 ```{r}
 library(ggplot2)
@@ -1000,11 +1002,8 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-## map data {-}
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
-```
+## map data {-}
 
 ### plotting boundaries {-}
 
@@ -1056,7 +1055,130 @@ ggplot() +
   coord_map()
 ```
 
-### further reading {-}
+### maps with plots {-}
+
+Please note that the Great Lakes are in map_data()!
+
+```{r}
+filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
+    ggplot() +
+      geom_path(aes(x = long, y = lat)) +
+      coord_map() +
+      theme_minimal()
+```
+
+We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
+
+```{r}
+# Step 1: Filter and prepare your data for Lake Superior (though yes, that includes Michigan and Huron)
+lake_superior <- map_data("lakes") %>%
+  filter(region == "Great Lakes", subregion == "Superior") %>%
+  arrange(order)
+
+# Step 2: Calculate distances between consecutive points
+lake_superior <- lake_superior %>%
+  mutate(lag_long = lag(long),
+         lag_lat = lag(lat),
+         dist_to_prev = geosphere::distHaversine(cbind(long, lat), cbind(lag_long, lag_lat))) # distHaversine calculates distances
+
+# Step 3: Define a threshold (e.g., 50 km) and create the "distance_group"
+threshold <- 50000  # 50 km
+lake_superior <- lake_superior %>%
+  mutate(distance_group = cumsum(ifelse(dist_to_prev > threshold | is.na(dist_to_prev), 1, 0)))
+
+# Step 4: Plot the map with `distance_group`
+ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
+  geom_path() +
+  coord_map() +
+  theme_minimal()
+```
+
+Now we could add some data. We could do something simple like plot total abundances as the size of a point:
+
+```{r, fig.width = 8, fig.height = 4}
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Science/Websites/pfas_data_private.csv")
+lake_superior_PFAS %>%
+  group_by(site, lon, lat) %>%
+  summarize(total = sum(abundance)) -> lake_superior_PFAS_summarized
+
+ggplot() +
+  geom_path(
+    data = filter(lake_superior, lat > 46, long < -84),
+    aes(x = long, y = lat, group = distance_group)
+  ) +
+  geom_point(
+    data =  lake_superior_PFAS_summarized,
+    aes(x = lon, y = lat, size = total),
+    color = "black"
+  ) +
+  coord_map() +
+  theme_cowplot()
+```
+
+Or we could do something more sophisticated like add pie charts at each point:
+
+
+```{r, fig.width = 8, fig.height = 4}
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Science/Websites/pfas_data_private.csv")
+
+grouped_by_site <- filter(lake_superior_PFAS, component == "PFBA")
+site_less_than_90lon <- filter(grouped_by_site, lon <= -90)
+site_more_than_90lon <- filter(grouped_by_site, lon >= -90)
+
+unique_sites <- unique(lake_superior_PFAS$site)
+dataframe_of_pies <- list()
+for (i in 1:length(unique_sites)) { #i=1
+  this_site <- filter(lake_superior_PFAS, site == unique_sites[i])
+  this_site %>%
+    ggplot()+
+    geom_col(aes(x = 1, y = abundance, fill = class_name), color = "black") +
+    coord_polar(theta = "y") +
+    theme_void() +
+    scale_fill_brewer(palette = "Set1", guide = "none") -> this_sites_pie
+  dataframe_of_pies[[i]] <- tibble(x = this_site$lon[1], y = this_site$lat[1], plot = list(this_sites_pie))
+}
+dataframe_of_pies <- do.call(rbind, dataframe_of_pies)
+
+ggplot() +
+  geom_path(
+    data = filter(lake_superior, lat > 46, long < -84),
+    aes(x = long, y = lat, group = distance_group)
+  ) +
+  geom_point(
+    data =  lake_superior_PFAS,
+    aes(x = lon, y = lat),
+    color = "black"
+  ) +
+  geom_plot(
+    data = dataframe_of_pies, aes(x = x, y = y, label = plot),
+    vp.width = 1/20, hjust = 0.5, vjust = 0.5, alpha = 0.5
+  ) +
+  geom_label_repel(data = site_less_than_90lon, aes(x = lon, y = lat, label = site), size = 2.5,min.segment.length = 0.01) +
+  geom_label(data = site_more_than_90lon, aes(x = lon, y = lat, label = site), size = 2.5) +
+  coord_map() +
+  theme_cowplot()
+```
+
+You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
+
+```{r, fig.width = 8, fig.height = 4}
+shore <- readMonolist("/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
+
+wide_view <- ggplot(shore) +
+    geom_point(aes(y = lat, x = lon), size = 0.01) +
+    coord_map() +
+    theme_minimal()
+
+zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
+    geom_point(aes(y = lat, x = lon), size = 0.01) +
+    coord_map() +
+    theme_minimal()
+    
+plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
+```
+
+
+## further reading {-}
 
 For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
 
@@ -5213,7 +5335,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
   + Include important keywords
 
 
-## further reading
+## further reading {-}
 
 * [Titles Guide](https://libguides.usc.edu/writingguide/title)
 
