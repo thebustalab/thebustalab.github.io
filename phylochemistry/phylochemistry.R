@@ -1549,6 +1549,27 @@
 
     ##### Sequence data handling
 
+        #### searchNCBI
+
+            searchNCBI <- function(search_term, retmax = 5) {
+
+                # Search, message if no results
+                    search_results <- rentrez::entrez_search(db = "protein", term = search_term, retmax = retmax)
+                    if (length(search_results$ids) == 0) {
+                        message("No proteins found for the search term.")
+                        return(NULL)
+                    }
+
+                # Write results to temp file then read in as stringset
+                    temp_fasta <- tempfile(fileext = ".fasta")
+                    write(
+                        entrez_fetch(db = "protein", id = search_results$ids, rettype = "fasta"),
+                        file = temp_fasta
+                    )
+                        return(readAAStringSet(temp_fasta))
+            }
+
+
         #### buildDomainLibrary
 
             #' Build a hmm database from a set of alignments
