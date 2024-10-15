@@ -25,7 +25,6 @@
                     "GenomicRanges",
                     "GenomicFeatures",
                     "Rsamtools",
-                    "httr",
                     "shinythemes",
                     "FNN",
                     "rentrez"
@@ -56,6 +55,7 @@
                         "yardstick",
 
                     # "imager",
+                    "httr",
                     "shiny",
                     "png",
                     "DT",
@@ -6703,7 +6703,7 @@
                     
                     response <- content(httr::POST(
                         url = endpoint_url, 
-                        add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                        httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                         content_type_json(), encode = "json",
                         body = list(
                             model = model, temperature = temperature,
@@ -6728,7 +6728,7 @@
                     
                     response <- content(httr::POST(
                         url = endpoint_url, 
-                        add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                        httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                         content_type_json(), encode = "json",
                         body = list(
                             model = model, temperature = temperature,
@@ -7223,7 +7223,7 @@
                                 embedding_df <- t(data.frame(
                                     as.numeric(content(POST(
                                         url = "https://api.openai.com/v1/embeddings", 
-                                        add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                                        httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                                         content_type_json(), encode = "json",
                                         body = list(
                                             model = "text-embedding-ada-002",
@@ -7285,7 +7285,7 @@
                             # Ask GPT a question
                                 GPT_response <<- POST(
                                     url = "https://api.openai.com/v1/chat/completions", 
-                                    add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                                    httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                                     content_type_json(), encode = "json",
                                     body = list(
                                         model = input$model, temperature = GPT_temperature,
@@ -7376,7 +7376,7 @@
                     embedding_df[[i]] <- t(data.frame(
                         as.numeric(content(POST(
                             url = "https://api.openai.com/v1/embeddings", 
-                            add_headers( Authorization = paste("Bearer", openai_api_key) ),
+                            httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                             content_type_json(), encode = "json",
                             body = list(
                                 model = "text-embedding-ada-002",
@@ -7630,7 +7630,7 @@
                 for (i in 1:length(text_vector)) { # i=1
                     response <- httr::POST(
                         url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
-                        add_headers(Authorization = paste0("Bearer ", hf_api_key)),
+                        httr::add_headers(Authorization = paste0("Bearer ", hf_api_key)),
                         body = toJSON(list(inputs = text_vector[i])),
                         encode = "json"
                     )
@@ -7654,7 +7654,7 @@
                     # Make the POST request
                     response <- httr::POST(
                         url = "https://biolm.ai/api/v2/esm2-8m/encode/",
-                        add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
+                        httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
                         body = toJSON(list(
                         items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
                         ), auto_unbox = TRUE), encode = "json"
