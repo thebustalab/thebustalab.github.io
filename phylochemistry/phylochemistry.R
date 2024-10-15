@@ -9919,8 +9919,6 @@
                 return(colSums(do.call(rbind, v)) / n)
             }
 
-            
-
         #### runMatrixAnalysis
 
             #' Runs a matrix analysis (clustering, kmeans, pca).
@@ -12550,7 +12548,7 @@
                     pb$tick()
                 }
 
-                p450s <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/p450s.fasta")
+                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/p450s.fasta")
 
             ## Busta lab specific datasets
 

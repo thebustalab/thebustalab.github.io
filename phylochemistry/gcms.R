@@ -863,7 +863,7 @@
                                             
                                             system(paste0("head -1"," ",CDF_directory_path,"/",sample_name_MS," > ",CDF_directory_path,"/temp_MS.csv"))
                                             system(paste0("sed -n ",MS_ret_start_line,",",MS_ret_end_line,"p ",sample_name_MS," >> ",CDF_directory_path,"/temp_MS.csv"))    
-                                            framedDataFile <- readMonolist(paste0(CDF_directory_path, "/temp_MS.csv"))
+                                            framedDataFile <- readMonolist(paste0(CDF_directory_path, "/temp_MS.csv"))  
                                         
                                         }
 

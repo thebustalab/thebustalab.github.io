@@ -2565,7 +2565,7 @@ K_data %>%
   leveneTest(abundance ~ aquifer_code)
 ```
 
-Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the variances are certainly different from one another (Levene test p = 0.002).
+Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p < 0.05), and the variances are certainly different from one another (Levene test p > 0.05).
 
 Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
 
@@ -2578,7 +2578,7 @@ K_data %>%
   anovaTest(abundance ~ aquifer_code)
 ```
 
-A p-value of 7.7e-11! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+A pretty small p-value! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
 
 ```{r}
 K_data %>%
@@ -2617,7 +2617,7 @@ K_data %>%
   kruskalTest(abundance ~ aquifer_code)
 ```
 
-A p-value of 3.9e-9! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
+A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
 
 ```{r}
 K_data %>%
@@ -2745,9 +2745,9 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 1. Choose one analyte and filter the data so only the rows for that analyte are shown.
 
-2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
+2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (ANOVA/Tukey HSD tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
 
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
 
@@ -2767,11 +2767,11 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/models.png', dpi = NA)
 ```
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive.
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses.
 
-- Inferential models aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
+- Inferential uses aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
-- Predictive models are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don't really care how the model works as long as it is accurate.
+- Predictive uses are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don't really care how the model works as long as it is accurate.
 
 In this course, we will build both types of models using a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:
 
@@ -2783,11 +2783,11 @@ For model building, we also need to talk about handling missing data. If we have
 
 ```{r}
 any(is.na(metabolomics_data))
-metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, mean(x, na.rm = TRUE)))
+metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))
 any(is.na(metabolomics_data))
 ```
 
-## inferential models {-}
+## inferential model use {-}
 
 ### single linear regression {-}
 
@@ -2899,13 +2899,13 @@ sum(
 , na.rm = TRUE)
 ```
 
-38.63! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
+Cool. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
 ```{r}
 1-(20.1904/38.63)
 ```
 
-0.47! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
+Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
 - The amount of variance in the response explained by the dependent variable.
 - How much better the line of best fit describes the data than the flat line.
 Now, let's put it all together and make it pretty:
@@ -2992,7 +2992,7 @@ ggplot() +
   theme_bw()
 ```
 
-## predictive models {-}
+## predictive model use {-}
 
 In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model's mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.
 
@@ -3068,7 +3068,7 @@ We can thus inspect the performance of the model based on the specific parameter
 
 ```{r}
 random_forest_model$metrics %>%
-    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    ggplot(aes(x = mtry, y = trees, fill = mean)) +
     facet_grid(.~min_n) +
     scale_fill_viridis(direction = -1) +
     geom_tile() +
@@ -3145,20 +3145,14 @@ data.frame(
 
 ## further reading {-}
 
-https://github.com/easystats/performance
+- [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
 
-Here is more information on common machine learning tasks:
-https://pythonprogramminglanguage.com/machine-learning-tasks/
-
-Some major tasks include:
-  Classification
-  Regression
-  Clustering
+- [common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). Machine learning involves using algorithms to learn from data, with key tasks including classification, regression, and clustering. Classification categorizes data, such as recognizing images of animals, regression predicts continuous values like sales forecasts, and clustering groups data based on similarities without prior labels.
 
 Classification with random forests:
-1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
-2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
-3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
+- http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+- https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
+- https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 
 ## exercises {-}
@@ -3257,9 +3251,17 @@ model$metrics
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg', dpi = NA)
 ```
 
-In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
+In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text or protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
 
 A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
+
+## pre-reading {-}
+
+Please read over the following:
+
+- [Text Embeddings: Comprehensive Guide](https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5). In her comprehensive article, "Text Embeddings: Comprehensive Guide", Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI’s embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.
+
+- [ESM3: Simulating 500 million years of evolution with a language model](https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution). The 2024 blog article "ESM3: Simulating 500 million years of evolution with a language model" by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural variants. The article highlights the model's potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. It also stresses the importance of responsible development and transparency, with the model and code being made openly available to accelerate scientific progress.
 
 ## text embeddings {-}
 
@@ -3424,6 +3426,12 @@ runMatrixAnalysis(
 ```
 
 ## further reading {-}
+
+- [creating knowledge graphs with LLMs](https://bratanic-tomaz.medium.com/constructing-knowledge-graphs-from-text-using-openai-functions-096a6d010c17). This blog post explains how to create knowledge graphs from text using OpenAI functions combined with LangChain and Neo4j. It highlights how large language models (LLMs) have made information extraction more accessible, providing step-by-step instructions for setting up a pipeline to extract structured information and construct a graph from unstructured data.
+
+- [creating RAG systems with LLMs](https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f). This article provides a technical overview of implementing complex Retrieval Augmented Generation (RAG) systems, focusing on key concepts like chunking, query augmentation, document hierarchies, and knowledge graphs. It highlights the challenges in data retrieval, multi-hop reasoning, and query planning, while also discussing opportunities to improve RAG infrastructure for more accurate and efficient information extraction.
+
+- [using protein embeddings in biochemical research](https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3). This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.
 
 ## exercises {-}
 
