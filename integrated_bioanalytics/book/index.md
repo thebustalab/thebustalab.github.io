@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-08"
+date: "2024-10-15"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -914,7 +914,9 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/datavis3.png" width="100%" style="display: block; margin: auto;" />
 
-## 3D scatter plots {-}
+## advanced plots {-}
+
+### 3D scatter plots {-}
 
 `phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
 
@@ -1002,7 +1004,7 @@ ggplot() +
 
 <img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" />
 
-## Marginal summaries {-}
+### marginal summaries {-}
 
 
 ```r
@@ -1023,7 +1025,7 @@ p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")
 
 <img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
 
-## Representing distributions {-}
+### representing distributions {-}
 
 You can also combine geoms to create more detailed representations of distributions:
 
@@ -1040,7 +1042,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
 
 <img src="index_files/figure-html/unnamed-chunk-74-1.png" width="100%" style="display: block; margin: auto;" />
 
-## Venn digrams {-}
+### venn digrams {-}
 
 
 ```r
@@ -1064,7 +1066,7 @@ vennAnalysis(df[,1:3]) %>%
 <img src="index_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" />
 
 
-## ternary plots
+### ternary plots {-}
 
 
 ```r
@@ -1113,16 +1115,15 @@ alaska_lake_data %>%
 
 <img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
 
-## map data {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" />
+## map data {-}
 
 ### plotting boundaries {-}
 
 There is a simple way to plot maps with ggplot. The map data comes with `ggplot2`! Let's have a look. See below some of the data sets included. Options included with ggplot are: `world`, `world2`, `usa`, `state` (US), `county` (US), `nz`, `italy`, and `france`. `geom_polygon()` is useful for plotting these, at (at least to me) seems more intuitive than `geom_map()`.
 
 
-```r
+``` r
 head(map_data("world"))
 ##        long      lat group order region subregion
 ## 1 -69.89912 12.45200     1     1  Aruba      <NA>
@@ -1133,7 +1134,7 @@ head(map_data("world"))
 ## 6 -70.05088 12.59707     1     6  Aruba      <NA>
 ```
 
-```r
+``` r
 head(map_data("state"))
 ##        long      lat group order  region subregion
 ## 1 -87.46201 30.38968     1     1 alabama      <NA>
@@ -1145,7 +1146,7 @@ head(map_data("state"))
 ```
 
 
-```r
+``` r
 head(map_data("county"))
 ##        long      lat group order  region subregion
 ## 1 -86.50517 32.34920     1     1 alabama   autauga
@@ -1157,7 +1158,7 @@ head(map_data("county"))
 ```
 
 
-```r
+``` r
 head(map_data("france"))
 ##       long      lat group order region subregion
 ## 1 2.557093 51.09752     1     1   Nord      <NA>
@@ -1171,35 +1172,31 @@ head(map_data("france"))
 Cool! We can see that lat, lon, group, order, region, and subregion are included. That makes plotting easy. Note that `coord_map()` can help preserve aspect ratios:
 
 
-```r
+``` r
 ggplot(map_data("world")) +
   geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
   theme_void() +
   coord_map()
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
 
-```r
+``` r
 ggplot(map_data("world")) +
   geom_point(aes(x = long, y = lat, color = group), size = 0.5) +
   theme_void() +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
 
-```r
+``` r
 ggplot() +
   geom_polygon(
     data = filter(map_data("county"), region == "minnesota"),
@@ -1208,13 +1205,149 @@ ggplot() +
   ) +
   theme_void() +
   coord_map()
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
+```
+
+<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
+
+### maps with plots {-}
+
+Please note that the Great Lakes are in map_data()!
+
+
+``` r
+filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
+    ggplot() +
+      geom_path(aes(x = long, y = lat)) +
+      coord_map() +
+      theme_minimal()
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" />
 
-### further reading {-}
+We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
+
+
+``` r
+# Step 1: Filter and prepare your data for Lake Superior (though yes, that includes Michigan and Huron)
+lake_superior <- map_data("lakes") %>%
+  filter(region == "Great Lakes", subregion == "Superior") %>%
+  arrange(order)
+
+# Step 2: Calculate distances between consecutive points
+lake_superior <- lake_superior %>%
+  mutate(lag_long = lag(long),
+         lag_lat = lag(lat),
+         dist_to_prev = geosphere::distHaversine(cbind(long, lat), cbind(lag_long, lag_lat))) # distHaversine calculates distances
+
+# Step 3: Define a threshold (e.g., 50 km) and create the "distance_group"
+threshold <- 50000  # 50 km
+lake_superior <- lake_superior %>%
+  mutate(distance_group = cumsum(ifelse(dist_to_prev > threshold | is.na(dist_to_prev), 1, 0)))
+
+# Step 4: Plot the map with `distance_group`
+ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
+  geom_path() +
+  coord_map() +
+  theme_minimal()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-85-1.png" width="100%" style="display: block; margin: auto;" />
+
+Now we could add some data. We could do something simple like plot total abundances as the size of a point:
+
+
+``` r
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Science/Websites/pfas_data_private.csv")
+lake_superior_PFAS %>%
+  group_by(site, lon, lat) %>%
+  summarize(total = sum(abundance)) -> lake_superior_PFAS_summarized
+
+ggplot() +
+  geom_path(
+    data = filter(lake_superior, lat > 46, long < -84),
+    aes(x = long, y = lat, group = distance_group)
+  ) +
+  geom_point(
+    data =  lake_superior_PFAS_summarized,
+    aes(x = lon, y = lat, size = total),
+    color = "black"
+  ) +
+  coord_map() +
+  theme_cowplot()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-86-1.png" width="100%" style="display: block; margin: auto;" />
+
+Or we could do something more sophisticated like add pie charts at each point:
+
+
+
+``` r
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Science/Websites/pfas_data_private.csv")
+
+grouped_by_site <- filter(lake_superior_PFAS, component == "PFBA")
+site_less_than_90lon <- filter(grouped_by_site, lon <= -90)
+site_more_than_90lon <- filter(grouped_by_site, lon >= -90)
+
+unique_sites <- unique(lake_superior_PFAS$site)
+dataframe_of_pies <- list()
+for (i in 1:length(unique_sites)) { #i=1
+  this_site <- filter(lake_superior_PFAS, site == unique_sites[i])
+  this_site %>%
+    ggplot()+
+    geom_col(aes(x = 1, y = abundance, fill = class_name), color = "black") +
+    coord_polar(theta = "y") +
+    theme_void() +
+    scale_fill_brewer(palette = "Set1", guide = "none") -> this_sites_pie
+  dataframe_of_pies[[i]] <- tibble(x = this_site$lon[1], y = this_site$lat[1], plot = list(this_sites_pie))
+}
+dataframe_of_pies <- do.call(rbind, dataframe_of_pies)
+
+ggplot() +
+  geom_path(
+    data = filter(lake_superior, lat > 46, long < -84),
+    aes(x = long, y = lat, group = distance_group)
+  ) +
+  geom_point(
+    data =  lake_superior_PFAS,
+    aes(x = lon, y = lat),
+    color = "black"
+  ) +
+  geom_plot(
+    data = dataframe_of_pies, aes(x = x, y = y, label = plot),
+    vp.width = 1/20, hjust = 0.5, vjust = 0.5, alpha = 0.5
+  ) +
+  geom_label_repel(data = site_less_than_90lon, aes(x = lon, y = lat, label = site), size = 2.5,min.segment.length = 0.01) +
+  geom_label(data = site_more_than_90lon, aes(x = lon, y = lat, label = site), size = 2.5) +
+  coord_map() +
+  theme_cowplot()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="100%" style="display: block; margin: auto;" />
+
+You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
+
+
+``` r
+shore <- readMonolist("/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
+
+wide_view <- ggplot(shore) +
+    geom_point(aes(y = lat, x = lon), size = 0.01) +
+    coord_map() +
+    theme_minimal()
+
+zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
+    geom_point(aes(y = lat, x = lon), size = 0.01) +
+    coord_map() +
+    theme_minimal()
+    
+plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+## further reading {-}
 
 For more on plotting maps in R: [datavizplyr](https://datavizpyr.com/how-to-make-us-state-and-county-level-maps-in-r/)
 
@@ -1273,7 +1406,7 @@ With these paths, we can read in data using the `read_csv` command. We'll run `r
 So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:
 
 
-```r
+``` r
 # To look at a single column (the third column)
 head(alaska_lake_data[,3])
 ## # A tibble: 6 × 1
@@ -1285,6 +1418,9 @@ head(alaska_lake_data[,3])
 ## 4       6.46
 ## 5       6.46
 ## 6       6.46
+```
+
+``` r
 
 # To look at select columns:
 head(alaska_lake_data[,2:5])
@@ -1297,6 +1433,9 @@ head(alaska_lake_data[,2:5])
 ## 4 BELA        6.46  7.69 Cl     
 ## 5 BELA        6.46  7.69 S      
 ## 6 BELA        6.46  7.69 F
+```
+
+``` r
 
 # To look at a single row (the second row)
 head(alaska_lake_data[2,])
@@ -1304,6 +1443,9 @@ head(alaska_lake_data[2,])
 ##   lake  park  water_temp    pH element mg_per_L element_type
 ##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
 ## 1 Devi… BELA        6.46  7.69 N          0.028 bound
+```
+
+``` r
 
 # To look at select rows:
 head(alaska_lake_data[2:5,])
@@ -1314,10 +1456,16 @@ head(alaska_lake_data[2:5,])
 ## 2 Devi… BELA        6.46  7.69 P          0     bound       
 ## 3 Devi… BELA        6.46  7.69 Cl        10.4   free        
 ## 4 Devi… BELA        6.46  7.69 S          0.62  free
+```
+
+``` r
 
 # To look at just a single column, by name
 head(alaska_lake_data$pH)
 ## [1] 7.69 7.69 7.69 7.69 7.69 7.69
+```
+
+``` r
 
 # To look at select columns by name
 head(select(alaska_lake_data, park, water_temp))
@@ -1337,7 +1485,7 @@ head(select(alaska_lake_data, park, water_temp))
 When we make data tables by hand, it's often easy to make a **wide-style table** like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.
 
 
-```r
+``` r
 head(fadb_sample)
 ## # A tibble: 6 × 11
 ##   fatty_acid      Agonandra_brasiliensis Agonandra_silvatica
@@ -1358,7 +1506,7 @@ head(fadb_sample)
 While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other `tidyverse` functions very well. We need to convert it into a **long-style table**. This is done using `pivot_longer()`. You can think of this function as transforming both your data's column names (or some of the column names) and your data matrix's values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (`data = fadb_sample`), we need to tell it what columns we want to transform (`cols = 2:11`), what we want the new variable that contains column names to be called (`names_to = "plant_species"`) and what we want the new variable that contains matrix values to be called (`values_to = "relative_abundance"`). All together now:
 
 
-```r
+``` r
 pivot_longer(data = fadb_sample, cols = 2:11, names_to = "plant_species", values_to = "relative_abundance")
 ## # A tibble: 70 × 3
 ##    fatty_acid        plant_species        relative_abundance
@@ -1383,22 +1531,22 @@ Brilliant! Now we have a long-style table that can be used with ggplot.
 We have seen how to create new objects using `<-`, and we have been filtering and plotting data using, for example:
 
 
-```r
+``` r
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-89-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
 
-```r
+``` r
 alaska_lake_data %>%
   filter(park == "BELA") %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-90-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1411,7 +1559,7 @@ The pipe will become more important as our analyses become more sophisticated, w
 So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the `ny_trees` dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):
 
 
-```r
+``` r
 head(ny_trees)
 ## # A tibble: 6 × 14
 ##   tree_height tree_diameter address        tree_loc pit_type
@@ -1433,13 +1581,16 @@ More than 300,000 observations of 14 variables! That's 4.2M data points! Now, wh
 Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with `mean()` and standard deviation can be calculated with `sd()`. We will use the function `summarize()` to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:
 
 
-```r
+``` r
 ny_trees %>%
   summarize(mean_height = mean(tree_height))
 ## # A tibble: 1 × 1
 ##   mean_height
 ##         <dbl>
 ## 1        72.6
+```
+
+``` r
 
 ny_trees %>%
   summarize(stdev_height = sd(tree_height))
@@ -1452,7 +1603,7 @@ ny_trees %>%
 Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use `group_by()`. Note that in ny_trees, species are indicated in the column called `spc_latin`. Once the data is grouped, we can use `summarize()` to compute statistics.
 
 
-```r
+``` r
 ny_trees %>%
   group_by(spc_latin) %>%
   summarize(mean_height = mean(tree_height))
@@ -1476,7 +1627,7 @@ ny_trees %>%
 Bam. Mean height of each tree species. We can also count the number of observations using `n()`:
 
 
-```r
+``` r
 ny_trees %>%
   group_by(spc_latin) %>%
   summarize(number_of_individuals = n())
@@ -1500,7 +1651,7 @@ ny_trees %>%
 Cool! `summarize()` is more powerful though, we can do many summary statistics at once:
 
 
-```r
+``` r
 ny_trees %>%
   group_by(spc_latin) %>%
   summarize(
@@ -1528,7 +1679,7 @@ ny_trees_by_spc_summ
 Now we can use this data in plotting. For this, we will use a new geom, `geom_pointrange`, which takes `x` and `y` aesthetics, as usual, but also requires two additional y-ish aesthetics `ymin` and `ymax` (or `xmin` and `xmax` if you want them to vary along x). Also, note that in the aesthetic mappings for `xmin` and `xmax`, we can use a mathematical expression: `mean-stdev` and `mean+stdev`, respectivey. In our case, these are `mean_height - stdev_height` and `mean_height + stdev_height`. Let's see it in action:
 
 
-```r
+``` r
 ny_trees_by_spc_summ %>%
 ggplot() +
   geom_pointrange(
@@ -1541,12 +1692,12 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-97-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-101-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
 
-```r
+``` r
 ny_trees %>%
   group_by(spc_latin, boroname) %>%
   summarize(
@@ -1574,7 +1725,7 @@ ny_trees_by_spc_boro_summ
 Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let's map boroname to x and facet over tree species, which used to be on x. We'll also manually modify the theme element `strip.text.y` to get the species names in a readable position.
 
 
-```r
+``` r
 ny_trees_by_spc_boro_summ %>%
 ggplot() +
   geom_pointrange(
@@ -1591,12 +1742,12 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-99-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-103-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
 
-```r
+``` r
 ny_trees_by_spc_boro_summ %>%
 ggplot() +
   geom_pointrange(
@@ -1623,7 +1774,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-100-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1632,7 +1783,7 @@ ggplot() +
 We can also sort or order a data frame based on a specific column with the command `arrange()`. Let's have a quick look. Suppose we wanted to know which lake was the coldest:
 
 
-```r
+``` r
 arrange(alaska_lake_data, water_temp)
 ## # A tibble: 220 × 7
 ##    lake             park  water_temp    pH element mg_per_L
@@ -1654,7 +1805,7 @@ arrange(alaska_lake_data, water_temp)
 Or suppose we wanted to know which was the warmest?
 
 
-```r
+``` r
 arrange(alaska_lake_data, desc(water_temp))
 ## # A tibble: 220 × 7
 ##    lake      park  water_temp    pH element mg_per_L
@@ -1676,7 +1827,7 @@ arrange(alaska_lake_data, desc(water_temp))
 `arrange()` will work on grouped data, which is particularly useful in combination with `slice()`, which can show us the first n elements in each group:
 
 
-```r
+``` r
 alaska_lake_data %>%
   group_by(park) %>%
   arrange(water_temp) %>%
@@ -1697,7 +1848,7 @@ It looks like the coldest lakes in the three parks are Devil Mountain Lake, Wild
 One last thing before our exercises... there is another command called `mutate()`. It is like summarize it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn't make the data set smaller, in fact it makes it bigger, by creating a new row for the new variables defined inside `mutate()`. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park's total dissolved sulfur does each lake have?
 
 
-```r
+``` r
 alaska_lake_data %>%
   filter(element == "S") %>%
   group_by(park) %>%
@@ -1788,7 +1939,7 @@ In the previous chapters, we looked at how to explore our data sets by visualizi
 Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
 
 
-```r
+``` r
 alaska_lake_data
 ## # A tibble: 220 × 7
 ##    lake              park  water_temp    pH element mg_per_L
@@ -1827,7 +1978,7 @@ In the example above, the three dimensional space can be reduced to a two dimens
 We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case you wish to do further processing.
 
 
-```r
+``` r
 AK_lakes_pca <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca"),
@@ -1838,7 +1989,6 @@ AK_lakes_pca <- runMatrixAnalysis(
   columns_w_sample_ID_info = c("lake", "park"),
   scale_variance = TRUE
 )
-## Replacing NAs in your data with mean
 head(AK_lakes_pca)
 ## # A tibble: 6 × 18
 ##   sample_unique_ID      lake  park   Dim.1  Dim.2 water_temp
@@ -1857,14 +2007,14 @@ head(AK_lakes_pca)
 Let's plot the 2D projection of the Alaska lakes data:
 
 
-```r
+``` r
 ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
   geom_label_repel(aes(label = lake), alpha = 0.5) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-116-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
@@ -1876,7 +2026,6 @@ Let's look at how to access the information about which analytes are major contr
 
 
 ```
-## Replacing NAs in your data with mean
 ## # A tibble: 6 × 3
 ##   analyte      Dim.1   Dim.2
 ##   <chr>        <dbl>   <dbl>
@@ -1891,7 +2040,7 @@ Let's look at how to access the information about which analytes are major contr
 We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
 
 
-```r
+``` r
 AK_lakes_pca_ord <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca_ord"),
@@ -1901,7 +2050,6 @@ AK_lakes_pca_ord <- runMatrixAnalysis(
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
 )
-## Replacing NAs in your data with mean
 head(AK_lakes_pca_ord)
 ## # A tibble: 6 × 3
 ##   analyte      Dim.1   Dim.2
@@ -1912,6 +2060,9 @@ head(AK_lakes_pca_ord)
 ## 4 N          0.00435  0.714 
 ## 5 P          0.473   -0.0796
 ## 6 Cl         0.953    0.0148
+```
+
+``` r
 
 ggplot(AK_lakes_pca_ord) +
   geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
@@ -1928,7 +2079,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-118-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -1939,7 +2090,7 @@ Great! Here is how to read the ordination plot:
 With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a "biplot":
 
 
-```r
+``` r
 AK_lakes_pca <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca"),
@@ -1951,6 +2102,9 @@ AK_lakes_pca <- runMatrixAnalysis(
   scale_variance = TRUE
 )
 ## Replacing NAs in your data with mean
+```
+
+``` r
 
 AK_lakes_pca_ord <- runMatrixAnalysis(
   data = alaska_lake_data,
@@ -1962,6 +2116,9 @@ AK_lakes_pca_ord <- runMatrixAnalysis(
   columns_w_sample_ID_info = c("lake", "park")
 )
 ## Replacing NAs in your data with mean
+```
+
+``` r
 
 ggplot() +
   geom_point(
@@ -1978,12 +2135,12 @@ ggplot() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-119-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
 
-```r
+``` r
 AK_lakes_pca_ord %>%
   ggplot(aes(x = Dim.1, y = analyte)) +
     geom_point(aes(fill = analyte), shape = 22, size = 3) +
@@ -1991,14 +2148,14 @@ AK_lakes_pca_ord %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### principal components {-}
 
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
 
-```r
+``` r
 AK_lakes_pca_dim <- runMatrixAnalysis(
   data = alaska_lake_data,
   analysis = c("pca_dim"),
@@ -2008,7 +2165,6 @@ AK_lakes_pca_dim <- runMatrixAnalysis(
   columns_w_additional_analyte_info = "element_type",
   columns_w_sample_ID_info = c("lake", "park")
 )
-## Replacing NAs in your data with mean
 head(AK_lakes_pca_dim)
 ## # A tibble: 6 × 2
 ##   principal_component percent_variance_explained
@@ -2019,6 +2175,9 @@ head(AK_lakes_pca_dim)
 ## 4                   4                       7.88
 ## 5                   5                       4.68
 ## 6                   6                       3.33
+```
+
+``` r
 
 ggplot(
   data = AK_lakes_pca_dim, 
@@ -2029,7 +2188,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
@@ -2038,7 +2197,7 @@ Cool! We can see that the first principal component retains nearly 50% of the va
 In this set of exercises, as you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
 
-```r
+``` r
 colnames(periodic_table_subset)[10:20]
 ##  [1] "electronegativity_pauling"         
 ##  [2] "first_ionization_poten_eV"         
@@ -2051,6 +2210,9 @@ colnames(periodic_table_subset)[10:20]
 ##  [9] "atomic_volume_cm3_per_mol"         
 ## [10] "electrical_conductivity_mho_per_cm"
 ## [11] "specific_heat_J_per_g_K"
+```
+
+``` r
 colnames(periodic_table_subset)[c(18:20, 23:25)]
 ## [1] "atomic_volume_cm3_per_mol"         
 ## [2] "electrical_conductivity_mho_per_cm"
@@ -2094,7 +2256,7 @@ Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw
 ## tsne and umap {-}
 
 
-```r
+``` r
 set.seed(235)
 runMatrixAnalysis(
   data = metabolomics_data,
@@ -2107,6 +2269,9 @@ runMatrixAnalysis(
   na_replacement = "mean"
 ) -> pca_data
 ## Replacing NAs in your data with mean
+```
+
+``` r
 pca_data$technique <- "pca_data"
 colnames(pca_data) <- gsub("\\.", "_", colnames(pca_data))
 pca_data$Dim_1 <- as.numeric(scale(pca_data$Dim_1))
@@ -2124,6 +2289,9 @@ runMatrixAnalysis(
   na_replacement = "mean"
 ) -> umap_data
 ## Replacing NAs in your data with mean
+```
+
+``` r
 umap_data$technique <- "umap_data"
 umap_data$Dim_1 <- as.numeric(scale(umap_data$Dim_1))
 umap_data$Dim_2 <- as.numeric(scale(umap_data$Dim_2))
@@ -2140,6 +2308,9 @@ runMatrixAnalysis(
   na_replacement = "mean"
 ) -> tsne_data
 ## Replacing NAs in your data with mean
+```
+
+``` r
 tsne_data$technique <- "tsne_data"
 tsne_data$Dim_1 <- as.numeric(scale(tsne_data$Dim_1))
 tsne_data$Dim_2 <- as.numeric(scale(tsne_data$Dim_2))
@@ -2160,7 +2331,7 @@ p2 <- ggplot(data) +
 p1 + p2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-129-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### further reading {-}
 
@@ -2235,7 +2406,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-128-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-132-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
@@ -2284,7 +2455,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-134-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
@@ -2361,7 +2532,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
  
 ## further reading {-}
 
@@ -2577,7 +2748,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-144-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2595,7 +2766,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-145-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
@@ -2647,7 +2818,7 @@ Often, we want to know if our study subjects contain different amounts of certai
 I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose that you are an analytical chemist on Hawaii that is studying the chemistry of the island's aquifers. you have the data set `hawaii_aquifers`. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
 
 
-```r
+``` r
 hawaii_aquifers
 ## # A tibble: 954 × 6
 ##    aquifer_code well_name         longitude latitude analyte
@@ -2664,6 +2835,9 @@ hawaii_aquifers
 ## 10 aquifer_1    Beretania_High_S…        NA       NA SiO2   
 ## # ℹ 944 more rows
 ## # ℹ 1 more variable: abundance <dbl>
+```
+
+``` r
 unique(hawaii_aquifers$aquifer_code)
 ##  [1] "aquifer_1"  "aquifer_2"  "aquifer_3"  "aquifer_4" 
 ##  [5] "aquifer_5"  "aquifer_6"  "aquifer_7"  "aquifer_8" 
@@ -2672,7 +2846,7 @@ unique(hawaii_aquifers$aquifer_code)
 Importantly, there are many wells that draw on each aquifer, as shown in the graph below.
 
 
-```r
+``` r
 hawaii_aquifers %>%
   select(aquifer_code, well_name) %>%
   group_by(aquifer_code) %>%
@@ -2692,11 +2866,14 @@ aquifers_summarized
 ##  8 aquifer_7          9
 ##  9 aquifer_8          3
 ## 10 aquifer_9         30
+```
+
+``` r
 
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2728,7 +2905,7 @@ When we are comparing means, we need to first determine what kind of statistical
 We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
 
 
-```r
+``` r
 K_data <- hawaii_aquifers %>%
   filter(analyte == "K")
   K_data
@@ -2752,7 +2929,7 @@ K_data <- hawaii_aquifers %>%
 To work with two means, let's just look at aquifers 1 and 6:
 
 
-```r
+``` r
 K_data_1_6 <- K_data %>%
     filter(aquifer_code %in% c("aquifer_1", "aquifer_6"))
 
@@ -2772,18 +2949,21 @@ K_data_1_6
 ## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      
 ## # ℹ 14 more rows
 ## # ℹ 1 more variable: abundance <dbl>
+```
+
+``` r
 
 ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_boxplot() +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
 
-```r
+``` r
 K_data_1_6 %>%
   ggplot(aes(x = abundance)) + 
     geom_histogram(bins = 30) +
@@ -2791,12 +2971,12 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
 
-```r
+``` r
 K_data_1_6 %>%
   group_by(aquifer_code) %>% 
   shapiroTest(abundance)
@@ -2810,7 +2990,7 @@ K_data_1_6 %>%
 Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the variances about the two means? Are they similar? For this we need a Levene test. With that test, we are not looking within each group, but rather across groups - this means we do NOT need to `group_by(aquifer_code)` and should specify a `y ~ x` formula instead:
 
 
-```r
+``` r
 K_data_1_6 %>%
   leveneTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 4
@@ -2826,7 +3006,7 @@ The p-value from this test is 0.596! This means that their variances are not sig
 Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
 
 
-```r
+``` r
 K_data_1_6 %>%
   tTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 8
@@ -2838,7 +3018,7 @@ K_data_1_6 %>%
 A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that the two means are different. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
 
 
-```r
+``` r
 K_data_1_6 %>%
   wilcoxTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 7
@@ -2854,7 +3034,7 @@ A p-value of 0.028! This is higher than the value given by the t-test (0.012). T
 In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let's consider our hawaii aquifer data again, though this time let's use all the aquifers, not just two:
 
 
-```r
+``` r
 K_data <- hawaii_aquifers %>%
   filter(analyte == "K")
 
@@ -2874,18 +3054,21 @@ K_data
 ## 10 aquifer_1    Palolo_Tunnel         -158.     21.3 K      
 ## # ℹ 96 more rows
 ## # ℹ 1 more variable: abundance <dbl>
+```
+
+``` r
 
 ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
 
-```r
+``` r
 K_data %>%
   group_by(aquifer_code) %>%
   ggplot(aes(x = abundance)) + 
@@ -2894,12 +3077,12 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
 
-```r
+``` r
 K_data %>%
   group_by(aquifer_code) %>% 
   shapiroTest(abundance)
@@ -2919,7 +3102,7 @@ K_data %>%
 ```
 
 
-```r
+``` r
 K_data %>%
   leveneTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 4
@@ -2928,7 +3111,7 @@ K_data %>%
 ## 1     9    96      2.95 0.00387
 ```
 
-Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p = 0.000008), and the variances are certainly different from one another (Levene test p = 0.002).
+Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p < 0.05), and the variances are certainly different from one another (Levene test p > 0.05).
 
 Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
 
@@ -2937,7 +3120,7 @@ Let's assume for a second that our data passed these tests. This means that we c
 We will use the `anovaTest` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
 
 
-```r
+``` r
 K_data %>%
   anovaTest(abundance ~ aquifer_code)
 ## ANOVA Table (type II tests)
@@ -2946,10 +3129,10 @@ K_data %>%
 ## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471
 ```
 
-A p-value of 7.7e-11! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+A pretty small p-value! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
 
 
-```r
+``` r
 K_data %>%
   tukey_hsd(abundance ~ aquifer_code)
 ## # A tibble: 45 × 9
@@ -2968,6 +3151,9 @@ K_data %>%
 ## # ℹ 35 more rows
 ## # ℹ 3 more variables: conf.high <dbl>, p.adj <dbl>,
 ## #   p.adj.signif <chr>
+```
+
+``` r
 
 # K_data %>%
 #   tukeyHSD(abundance ~ aquifer_code)
@@ -2976,7 +3162,7 @@ K_data %>%
 Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
 
 
-```r
+``` r
 groups_based_on_tukey <- K_data %>%
   tukey_hsd(abundance ~ aquifer_code) %>%
   pGroups()
@@ -2997,14 +3183,14 @@ groups_based_on_tukey
 We can use the output from `pGroups` to annotate our plot:
 
 
-```r
+``` r
 ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
   geom_point(color = "maroon", alpha = 0.6, size = 3) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3013,7 +3199,7 @@ Excellent! This plot shows us, using the letters on the same line with each aqui
 The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
 
 
-```r
+``` r
 K_data %>%
   kruskalTest(abundance ~ aquifer_code)
 ## # A tibble: 1 × 6
@@ -3022,10 +3208,10 @@ K_data %>%
 ## 1 abundance   106      55.9     9 0.00000000807 Kruskal-Wal…
 ```
 
-A p-value of 3.9e-9! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
+A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
 
 
-```r
+``` r
 K_data %>%
   dunnTest(abundance ~ aquifer_code)
 ## # A tibble: 45 × 9
@@ -3048,7 +3234,7 @@ K_data %>%
 This gives us adjusted p-values for all pairwise comparisons. Once again, we can use `pGroups()` to give us a compact letter display for each group, which can then be used to annotate the plot:
 
 
-```r
+``` r
 groups_based_on_dunn <- K_data %>%
   dunnTest(abundance ~ aquifer_code) %>%
   pGroups()
@@ -3064,6 +3250,9 @@ groups_based_on_dunn
 ## aquifer_7   aquifer_7     b          b  
 ## aquifer_8   aquifer_8  abcd         abcd
 ## aquifer_9   aquifer_9    cd           cd
+```
+
+``` r
 
 ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_boxplot() +
@@ -3074,7 +3263,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3083,18 +3272,18 @@ Note that these groupings are different from those generated by ANOVA/Tukey.
 Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among *all* values of Na and Cl, rather, we want to test all *pairs* of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:
 
 
-```r
+``` r
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
 
-```r
+``` r
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(analyte, aquifer_code) %>%
@@ -3127,7 +3316,7 @@ hawaii_aquifers %>%
 Looks like some of those distributions are significantly different from normal! Let's run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
 
 
-```r
+``` r
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
@@ -3150,7 +3339,7 @@ hawaii_aquifers %>%
 It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use the `wilcox_test`, but we have may pairs, so we will use `pairwise_wilcox_test` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?pairwise_wilcox_test`):
 
 
-```r
+``` r
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
@@ -3177,7 +3366,7 @@ Excellent! It looks like there is a statistically significant difference between
 What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_TTest` of course!
 
 
-```r
+``` r
 hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(aquifer_code) %>%
@@ -3203,7 +3392,7 @@ hawaii_aquifers %>%
 Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:
 
 
-```r
+``` r
 
 anno <- data.frame(
   xmin = test_output$group1,
@@ -3235,7 +3424,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -3255,9 +3444,9 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 1. Choose one analyte and filter the data so only the rows for that analyte are shown.
 
-2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different.
+2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (ANOVA/Tukey HSD tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
 
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer.
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
 
@@ -3275,11 +3464,11 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;" />
 
-Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive.
+Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses.
 
-- Inferential models aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
+- Inferential uses aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.
 
-- Predictive models are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don't really care how the model works as long as it is accurate.
+- Predictive uses are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don't really care how the model works as long as it is accurate.
 
 In this course, we will build both types of models using a function called `buildModel`. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:
 
@@ -3290,34 +3479,37 @@ In this course, we will build both types of models using a function called `buil
 For model building, we also need to talk about handling missing data. If we have missing data in our data set, we need to  one way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
 
 
-```r
+``` r
 any(is.na(metabolomics_data))
 ## [1] TRUE
-metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, mean(x, na.rm = TRUE)))
+```
+
+``` r
+metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))
 any(is.na(metabolomics_data))
 ## [1] FALSE
 ```
 
-## inferential models {-}
+## inferential model use {-}
 
 ### single linear regression {-}
 
 We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use `buildModel`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:
 
 
-```r
+``` r
 ggplot(metabolomics_data) +
   geom_point(aes(x = ADP, y = AMP))
 ## Don't know how to automatically pick scale for object of
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
 
 
-```r
+``` r
 basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
@@ -3330,34 +3522,34 @@ names(basic_regression_model)
 The output of `buildModel` consists of three things: the model_type, the model itself, and the metric describing certain aspects of the model and/or its performance. Let's look at the model:
 
 
-```r
+``` r
 basic_regression_model$model
 ## 
 ## Call:
-## lm(formula = formula, data = training_data, model = TRUE, x = TRUE, 
-##     y = TRUE, qr = TRUE)
+## lm(formula = formula, data = data, model = TRUE, x = TRUE, y = TRUE, 
+##     qr = TRUE)
 ## 
 ## Coefficients:
 ## (Intercept)          ADP  
-##      4.5021       0.6763
+##      4.5764       0.6705
 ```
 
 This is a linear model stored inside a special object type inside R called an `lm`. They can be a bit tricky to work with, but we have a way to make it easier - we'll look at that in a second. Before that, let's look at the metrics.
 
 
-```r
+``` r
 basic_regression_model$metrics
 ##               variable   value std_err        type  p_value
-## 1            r_squared  0.4774      NA   statistic       NA
+## 1            r_squared  0.4693      NA   statistic       NA
 ## 2    total_sum_squares 38.6346      NA   statistic       NA
-## 3 residual_sum_squares 20.1904      NA   statistic       NA
-## 4          (Intercept)  4.5021  0.9593 coefficient 9.46e-06
-## 5                  ADP  0.6763  0.0742 coefficient 0.00e+00
+## 3 residual_sum_squares 20.5024      NA   statistic       NA
+## 4          (Intercept)  4.5764  0.9667 coefficient 8.04e-06
+## 5                  ADP  0.6705  0.0747 coefficient 0.00e+00
 ##   p_value_adj
 ## 1          NA
 ## 2          NA
 ## 3          NA
-## 4    9.46e-06
+## 4    8.04e-06
 ## 5    0.00e+00
 ```
 
@@ -3366,7 +3558,7 @@ It shows us the r-squared, the total and residual sum of squares, the intercept 
 We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for ADP and AMP. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of ADP for each value of AMP in our data set. We can do that like this:
 
 
-```r
+``` r
 AMP_values_predicted_from_ADP_values <- predictWithModel(
   data = metabolomics_data,
   model_type = "linear_regression",
@@ -3374,13 +3566,13 @@ AMP_values_predicted_from_ADP_values <- predictWithModel(
 )
 head(AMP_values_predicted_from_ADP_values)
 ##        1        2        3        4        5        6 
-## 13.18473 13.35509 13.48334 13.42981 12.57305 13.18377
+## 13.18461 13.35352 13.48067 13.42760 12.57818 13.18366
 ```
 
 So, `predictWithModel` is using the model to predict AMP values from ADP. However, note that we have the measured AMP values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
 
 
-```r
+``` r
 ADP_values <- metabolomics_data$ADP
 
 predictions_from_basic_linear_model <- data.frame(
@@ -3407,12 +3599,12 @@ plot1
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
 
-```r
+``` r
 ggplot(predictions_from_basic_linear_model) +
   geom_point(aes(x = ADP_values, y = AMP_values_measured)) +
   geom_line(aes(x = ADP_values, y = AMP_values_predicted_from_ADP_values)) +
@@ -3421,22 +3613,22 @@ ggplot(predictions_from_basic_linear_model) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
 
-```r
+``` r
 sum(
   (predictions_from_basic_linear_model$AMP_values_measured - predictions_from_basic_linear_model$AMP_values_predicted_from_ADP_values)^2
 , na.rm = TRUE)
-## [1] 20.1904
+## [1] 20.50235
 ```
 
 Cool! Let's call that the "residual sum of the squares". So... does that mean our model is good? I don't know. We have to compare that number to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
 
 
-```r
+``` r
 ggplot(metabolomics_data) +
   geom_point(aes(x = ADP, y = AMP)) +
   geom_hline(aes(yintercept = mean(AMP, na.rm = TRUE)))
@@ -3444,12 +3636,12 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
 
-```r
+``` r
 ggplot(metabolomics_data) +
   geom_point(aes(x = ADP, y = AMP)) +
   geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE))) +
@@ -3458,9 +3650,9 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
-```r
+``` r
 
 sum(
   (metabolomics_data$AMP - mean(metabolomics_data$AMP, na.rm = TRUE))^2
@@ -3468,21 +3660,21 @@ sum(
 ## [1] 38.63462
 ```
 
-38.63! Wow. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
+Cool. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
 
-```r
+``` r
 1-(20.1904/38.63)
 ## [1] 0.4773389
 ```
 
-0.47! Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
+Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
 - The amount of variance in the response explained by the dependent variable.
 - How much better the line of best fit describes the data than the flat line.
 Now, let's put it all together and make it pretty:
 
 
-```r
+``` r
 top <- ggplot() +
     geom_line(
         data = predictions_from_basic_linear_model,
@@ -3503,8 +3695,6 @@ top <- ggplot() +
     ) +
     coord_cartesian(ylim = c(10,16)) +
     theme_bw()
-## Coordinate system already present. Adding new coordinate
-## system, which will replace the existing one.
 
 bottom <- ggplot(predictions_from_basic_linear_model) +
   geom_col(
@@ -3520,14 +3710,14 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### multiple linear regression {-}
 
 Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
 
 
-```r
+``` r
 
 basic_regression_model <- buildModel2(
   data = metabolomics_data,
@@ -3575,9 +3765,9 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
 
-## predictive models {-}
+## predictive model use {-}
 
 In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model's mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.
 
@@ -3617,7 +3807,7 @@ The optimization_parameters argument takes a list to define the grid of paramete
 This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest's performance. This approach allows for a systematic exploration of how different configurations affect the model's ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.
 
 
-```r
+``` r
 random_forest_model <- buildModel2(
     data = metabolomics_data,
     model_type = "random_forest_regression",
@@ -3652,21 +3842,21 @@ The above code builds our random forest model. It's output provides both the mod
 We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.
 
 
-```r
+``` r
 random_forest_model$metrics %>%
-    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    ggplot(aes(x = mtry, y = trees, fill = mean)) +
     facet_grid(.~min_n) +
     scale_fill_viridis(direction = -1) +
     geom_tile() +
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-196-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
 
-```r
+``` r
 ggplot() +
   geom_point(
     data = metabolomics_data,
@@ -3690,12 +3880,12 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
 
-```r
+``` r
 set.seed(123)
 unknown <- metabolomics_data[35:40,]
 
@@ -3720,10 +3910,10 @@ rfc$metrics %>% arrange(desc(mean))
 ##  4                    40      20     2 accuracy binary    
 ##  5                    30     100     1 accuracy binary    
 ##  6                    35      50     2 accuracy binary    
-##  7                     5      70     2 accuracy binary    
-##  8                    15      20     3 accuracy binary    
-##  9                    50     100     3 accuracy binary    
-## 10                    25      10     1 accuracy binary    
+##  7                    15      20     3 accuracy binary    
+##  8                    50     100     3 accuracy binary    
+##  9                    25      10     1 accuracy binary    
+## 10                    30      20     1 accuracy binary    
 ## # ℹ 290 more rows
 ## # ℹ 4 more variables: mean <dbl>,
 ## #   fold_cross_validation <int>, std_err <dbl>,
@@ -3733,7 +3923,7 @@ rfc$metrics %>% arrange(desc(mean))
 Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:
 
 
-```r
+``` r
 rfc$metrics %>%
     ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
     facet_grid(.~min_n) +
@@ -3742,10 +3932,10 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-195-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
 
 
-```r
+``` r
 predictions <- predictWithModel(
   data = unknown,
   model_type = "random_forest_classification",
@@ -3767,20 +3957,14 @@ data.frame(
 
 ## further reading {-}
 
-https://github.com/easystats/performance
+- [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
 
-Here is more information on common machine learning tasks:
-https://pythonprogramminglanguage.com/machine-learning-tasks/
-
-Some major tasks include:
-  Classification
-  Regression
-  Clustering
+- [common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). Machine learning involves using algorithms to learn from data, with key tasks including classification, regression, and clustering. Classification categorizes data, such as recognizing images of animals, regression predicts continuous values like sales forecasts, and clustering groups data based on similarities without prior labels.
 
 Classification with random forests:
-1. http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
-2. https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
-3. https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
+- http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+- https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/
+- https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 
 ## exercises {-}
@@ -3793,7 +3977,9 @@ To practice creating models, try the following:
 
 3. Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using `buildModel` and `predictWithModel` create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.
 
-4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` data set and diagnose each patient in `metabolomics_unknown`.
+4. Have a look at the dataset `metabolomics_unknown`. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the `metabolomics_data` dataset and diagnose each patient in `metabolomics_unknown`.
+
+5. (optional) Explore the wine_quality dataset. What are the most important factors in determining what is a good wine? Use a model in an inferential way to provide evidence for your answer.
 
 
 
@@ -3805,9 +3991,17 @@ To practice creating models, try the following:
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
 
-In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
+In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text or protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
 
 A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.
+
+## pre-reading {-}
+
+Please read over the following:
+
+- [Text Embeddings: Comprehensive Guide](https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5). In her comprehensive article, "Text Embeddings: Comprehensive Guide", Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI’s embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.
+
+- [ESM3: Simulating 500 million years of evolution with a language model](https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution). The 2024 blog article "ESM3: Simulating 500 million years of evolution with a language model" by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural variants. The article highlights the model's potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. It also stresses the importance of responsible development and transparency, with the model and code being made openly available to accelerate scientific progress.
 
 ## text embeddings {-}
 
@@ -3827,8 +4021,7 @@ search_results <- searchPubMed(
 ## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
 ## Error encountered. Attempt 2 of 3. Retrying in 5 seconds...
 ## Error encountered. Attempt 3 of 3. Retrying in 5 seconds...
-## Failed to fetch data for term: friedelin synthase after 3 attempts.
-## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
+## Failed to fetch data for term: sorghum bicolor after 3 attempts.
 ```
 
 ``` r
@@ -3846,9 +4039,9 @@ select(search_results, term, title)
 ## 1 beta-amyrin synthase       β-Amyrin synthase from Conyza …
 ## 2 beta-amyrin synthase       Ginsenosides in Panax genus an…
 ## 3 beta-amyrin synthase       β-Amyrin biosynthesis: catalyt…
-## 4 sorghum bicolor            Sorghum (Sorghum bicolor).     
-## 5 sorghum bicolor            Molecular Breeding of Sorghum …
-## 6 sorghum bicolor            Proton-Coupled Electron Transf…
+## 4 friedelin synthase         Friedelin Synthase from Mayten…
+## 5 friedelin synthase         Friedelin in Maytenus ilicifol…
+## 6 friedelin synthase         Functional characterization of…
 ## 7 cuticular wax biosynthesis Regulatory mechanisms underlyi…
 ## 8 cuticular wax biosynthesis Update on Cuticular Wax Biosyn…
 ## 9 cuticular wax biosynthesis Advances in Biosynthesis, Regu…
@@ -3916,7 +4109,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -3958,7 +4151,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## protein embeddings {-}
 
@@ -3997,21 +4190,46 @@ Beyond the benefits described above, protein language models have an additional,
 
 By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.
 
-In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.
+In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
 
 
 ``` r
-embedded_p450s <- embedAminoAcids(
-  amino_acid_stringset = p450s,
+searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
+## AAStringSet object of length 100:
+##       width seq                         names               
+##   [1]   766 MVANSTGRDASA...SWALQGNGIEKS sp|A0A0E0SP71.1|E...
+##   [2]   726 MAAYAPLELPAS...AHRYLKELHAKK sp|D7NJ68.1|ERG7_...
+##   [3]   766 MWRLRTGSSTVD...RYKLFGKKNMYI sp|A0A125SXN2.1|L...
+##   [4]   756 MWKLKIAEGSPG...ALGEYRQKIFHS sp|A0A125SXN1.1|L...
+##   [5]   755 MWSLKIAEGGGP...ALGAYQCKVLGH sp|A0A125SXN3.1|L...
+##   ...   ... ...
+##  [96]   532 MSISTPIGTSYA...ACTEADVERTDA WP_376415580.1 pr...
+##  [97]   532 MRSISRQATPIR...TAALELLQTRRP WP_376406699.1 pr...
+##  [98]   431 MNTVRRGAAALA...VGIGFLVSGRKK WP_376404849.1 pr...
+##  [99]   402 MNVRRSAAVLAA...FLFTGRKKRQQS WP_376387762.1 pr...
+## [100]   419 MSVRRRAAALAI...FLLSGRRKNQQL WP_376368104.1 MU...
+```
+
+Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide a biolm API key and the amino acid sequences as an AAStringSet object:
+
+
+``` r
+embedded_OSCs <- embedAminoAcids(
+  amino_acid_stringset = OSC_sequences,
   biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt")
 )
-embedded_p450s$product <- tolower(gsub(".*_", "", embedded_p450s$name))
-embedded_p450s <- select(embedded_p450s, name, product, everything())
+embedded_OSCs$product <- tolower(gsub(".*_", "", embedded_OSCs$name))
+embedded_OSCs <- select(embedded_OSCs, name, product, everything())
+```
 
+Nice! Once we've bot the embeddings, we can run a PCA analysis to visualize them in 2D space:
+
+
+``` r
 runMatrixAnalysis(
-  data = embedded_p450s,
+  data = embedded_OSCs,
   analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(embedded_p450s)[3:dim(embedded_p450s)[2]],
+  columns_w_values_for_single_analyte = colnames(embedded_OSCs)[3:dim(embedded_OSCs)[2]],
   columns_w_sample_ID_info = c("name", "product")
 ) %>%
   ggplot() +
@@ -4022,9 +4240,15 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
+
+- [creating knowledge graphs with LLMs](https://bratanic-tomaz.medium.com/constructing-knowledge-graphs-from-text-using-openai-functions-096a6d010c17). This blog post explains how to create knowledge graphs from text using OpenAI functions combined with LangChain and Neo4j. It highlights how large language models (LLMs) have made information extraction more accessible, providing step-by-step instructions for setting up a pipeline to extract structured information and construct a graph from unstructured data.
+
+- [creating RAG systems with LLMs](https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f). This article provides a technical overview of implementing complex Retrieval Augmented Generation (RAG) systems, focusing on key concepts like chunking, query augmentation, document hierarchies, and knowledge graphs. It highlights the challenges in data retrieval, multi-hop reasoning, and query planning, while also discussing opportunities to improve RAG infrastructure for more accurate and efficient information extraction.
+
+- [using protein embeddings in biochemical research](https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3). This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.
 
 ## exercises {-}
 
@@ -4038,6 +4262,10 @@ search_results_ex <- searchPubMed(
   retmax_per_term = 50,
   sort = "date"
 )
+## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
+```
+
+``` r
 
 search_results_ex_embed <- embedText(
   search_results_ex, column_name = "abstract",
@@ -4061,7 +4289,7 @@ search_results_ex_embed_pca %>%
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 
@@ -4069,6 +4297,7 @@ search_results_ex_embed_pca %>%
 
 
 
+3. Using the `OSC_sequences` dataset provided
 
 # (PART) MIDTERM
 
@@ -4861,7 +5090,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-223-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4897,7 +5126,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-224-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4947,7 +5176,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-226-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4963,7 +5192,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-227-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4972,7 +5201,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-228-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5046,7 +5275,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5065,7 +5294,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5182,7 +5411,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5217,7 +5446,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5513,7 +5742,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5767,7 +5996,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -5790,7 +6019,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-256-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -5814,7 +6043,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -5890,21 +6119,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-256-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-262-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -5952,7 +6181,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6154,7 +6383,7 @@ Is there an efficient way to write a results and discussion section in the forma
   + Include important keywords
 
 
-## further reading
+## further reading {-}
 
 * [Titles Guide](https://libguides.usc.edu/writingguide/title)
 
@@ -6310,7 +6539,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-274-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6352,7 +6581,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6441,7 +6670,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-282-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

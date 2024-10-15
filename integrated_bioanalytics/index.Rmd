@@ -3547,7 +3547,7 @@ Nice! Once we've bot the embeddings, we can run a PCA analysis to visualize them
 runMatrixAnalysis(
   data = embedded_OSCs,
   analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(embedded_p450s)[3:dim(embedded_OSCs)[2]],
+  columns_w_values_for_single_analyte = colnames(embedded_OSCs)[3:dim(embedded_OSCs)[2]],
   columns_w_sample_ID_info = c("name", "product")
 ) %>%
   ggplot() +

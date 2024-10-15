@@ -114,12 +114,12 @@
 </h2>
 <p>Close RStudio, open the plain R GUI, then run the following:</p>
 <p>On Mac:</p>
-<div class="sourceCode" id="cb202"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb231"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'remotes'</span><span class="op">)</span> <span class="co">#assuming it is not remotes installed</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'andreacirilloac/updateR'</span><span class="op">)</span></span>
 <span><span class="fu">updateR</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>On PC:</p>
-<div class="sourceCode" id="cb203"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb232"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"installr"</span><span class="op">)</span></span>
 <span><span class="fu">installr</span><span class="fu">::</span><span class="fu">updateR</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -128,12 +128,12 @@
 </h2>
 <p>A list of numeric element has an inherent order to it: -inf -&gt; +inf. A list of character element also has an inherent order to it: A -&gt; Z, or if it’s a mixed number and letter list (which is interpreted by R as a character list): 0 -&gt; 9 -&gt; A -&gt; Z.</p>
 <p>However, there are cases where we will want a list of character elements to have some order other than A -&gt; Z. In these cases, we want to convert the list of character elements into a list of factor elements. Factors are lists of character elements that have an inherent order that is not A -&gt; Z. For example, in the plot below, the y axis is not, perhaps, in the “correct” order:</p>
-<div class="sourceCode" id="cb204"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb233"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">periodic_table</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">group_number</span>, x <span class="op">=</span> <span class="va">atomic_mass_rounded</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-274-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>How do we fix this? We need to convert the column <code>group_number</code> into a list of factors that have the correct order (see below). For this, we will use the command <code>factor</code>, which will accept an argument called <code>levels</code> in which we can define the order the the characters should be in:</p>
-<div class="sourceCode" id="cb205"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb234"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">periodic_table</span><span class="op">$</span><span class="va">group_number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span></span>
 <span>  <span class="va">periodic_table</span><span class="op">$</span><span class="va">group_number</span>,</span>
 <span>  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span>, <span class="st">"9"</span>, <span class="st">"10"</span>, <span class="st">"11"</span>, <span class="st">"12"</span>, <span class="st">"13"</span>, <span class="st">"14"</span>, <span class="st">"15"</span>, <span class="st">"16"</span>, <span class="st">"17"</span>, <span class="st">"18"</span>, <span class="st">"lanthanides"</span>, <span class="st">"actinides"</span><span class="op">)</span></span>
@@ -161,17 +161,17 @@
 <span><span class="co">## #   electronegativity_pauling &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   first_ionization_poten_eV &lt;dbl&gt;, …</span></span></code></pre></div>
 <p>Notice that now when we look at the type of data that is contained in the column <code>group_number</code> it says “<fct>”. This is great! It means we have converted that column into a list of factors, instead of characters. Now what happens when we make our plot?</fct></p>
-<div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb235"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">periodic_table</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">group_number</span>, x <span class="op">=</span> <span class="va">atomic_mass_rounded</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>VICTORY!</p>
 </div>
 <div id="column-manipulation" class="section level2 unnumbered">
 <h2>column manipulation<a class="anchor" aria-label="anchor" href="#column-manipulation"><i class="fas fa-link"></i></a>
 </h2>
 <p>How to select specific columns:</p>
-<div class="sourceCode" id="cb207"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb236"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">water_temp</span>, <span class="va">pH</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 220 × 2</span></span>
@@ -189,7 +189,7 @@
 <span><span class="co">## 10       6.46  7.69</span></span>
 <span><span class="co">## # ℹ 210 more rows</span></span></code></pre></div>
 <p>How to remove certain columns:</p>
-<div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb237"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="op">!</span><span class="va">water_temp</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 220 × 6</span></span>
@@ -211,28 +211,28 @@
 <h2>user color palettes<a class="anchor" aria-label="anchor" href="#user-color-palettes"><i class="fas fa-link"></i></a>
 </h2>
 <p>Suppose we want to create a specific color palette for each pack in <code>alaska_lake_data</code>. There are three unique parks:</p>
-<div class="sourceCode" id="cb209"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb238"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">park</span><span class="op">)</span></span>
 <span><span class="co">## [1] "BELA" "GAAR" "NOAT"</span></span></code></pre></div>
 <p>First we define the colors we want:</p>
-<div class="sourceCode" id="cb210"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb239"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom_colors_for_lakes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#1a9850"</span>, <span class="st">"#ffffbf"</span>, <span class="st">"#d73027"</span><span class="op">)</span></span>
 <span><span class="va">custom_colors_for_lakes</span></span>
 <span><span class="co">## [1] "#1a9850" "#ffffbf" "#d73027"</span></span></code></pre></div>
 <p>Then we name that vector according to which park we want to be which color:</p>
-<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb240"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">custom_colors_for_lakes</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GAAR"</span>, <span class="st">"NOAT"</span>, <span class="st">"BELA"</span><span class="op">)</span></span>
 <span><span class="va">custom_colors_for_lakes</span></span>
 <span><span class="co">##      GAAR      NOAT      BELA </span></span>
 <span><span class="co">## "#1a9850" "#ffffbf" "#d73027"</span></span></code></pre></div>
 <p>Now we feed that object to the <code>values</code> argument of scale_color_manual (or scale_fill_manual, if you want fill):</p>
-<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb241"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">water_temp</span>, fill <span class="op">=</span> <span class="va">park</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">custom_colors_for_lakes</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure">
-<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;"><!-- end -->
+<img src="index_files/figure-html/unnamed-chunk-282-1.png" width="100%" style="display: block; margin: auto;"><!-- end -->
 </div>
 <!-- start templates -->
 </div>
@@ -274,7 +274,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -133,7 +133,7 @@
 <h2>subsetting<a class="anchor" aria-label="anchor" href="#subsetting"><i class="fas fa-link"></i></a>
 </h2>
 <p>So far, we have always been passing whole data sets to ggplot to do our plotting. However, suppose we wanted to get at just certain portions of our dataset, say, specific columns, or specific rows? Here are a few ways to do that:</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># To look at a single column (the third column)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 1</span></span>
@@ -144,8 +144,9 @@
 <span><span class="co">## 3       6.46</span></span>
 <span><span class="co">## 4       6.46</span></span>
 <span><span class="co">## 5       6.46</span></span>
-<span><span class="co">## 6       6.46</span></span>
-<span></span>
+<span><span class="co">## 6       6.46</span></span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># To look at select columns:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 4</span></span>
@@ -156,15 +157,17 @@
 <span><span class="co">## 3 BELA        6.46  7.69 P      </span></span>
 <span><span class="co">## 4 BELA        6.46  7.69 Cl     </span></span>
 <span><span class="co">## 5 BELA        6.46  7.69 S      </span></span>
-<span><span class="co">## 6 BELA        6.46  7.69 F</span></span>
-<span></span>
+<span><span class="co">## 6 BELA        6.46  7.69 F</span></span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># To look at a single row (the second row)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 7</span></span>
 <span><span class="co">##   lake  park  water_temp    pH element mg_per_L element_type</span></span>
 <span><span class="co">##   &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;       </span></span>
-<span><span class="co">## 1 Devi… BELA        6.46  7.69 N          0.028 bound</span></span>
-<span></span>
+<span><span class="co">## 1 Devi… BELA        6.46  7.69 N          0.028 bound</span></span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># To look at select rows:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 4 × 7</span></span>
@@ -173,12 +176,14 @@
 <span><span class="co">## 1 Devi… BELA        6.46  7.69 N          0.028 bound       </span></span>
 <span><span class="co">## 2 Devi… BELA        6.46  7.69 P          0     bound       </span></span>
 <span><span class="co">## 3 Devi… BELA        6.46  7.69 Cl        10.4   free        </span></span>
-<span><span class="co">## 4 Devi… BELA        6.46  7.69 S          0.62  free</span></span>
-<span></span>
+<span><span class="co">## 4 Devi… BELA        6.46  7.69 S          0.62  free</span></span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># To look at just a single column, by name</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">alaska_lake_data</span><span class="op">$</span><span class="va">pH</span><span class="op">)</span></span>
-<span><span class="co">## [1] 7.69 7.69 7.69 7.69 7.69 7.69</span></span>
-<span></span>
+<span><span class="co">## [1] 7.69 7.69 7.69 7.69 7.69 7.69</span></span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># To look at select columns by name</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">select</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span>, <span class="va">water_temp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 2</span></span>
@@ -195,7 +200,7 @@
 <h2>wide and long data<a class="anchor" aria-label="anchor" href="#wide-and-long-data"><i class="fas fa-link"></i></a>
 </h2>
 <p>When we make data tables by hand, it’s often easy to make a <strong>wide-style table</strong> like the following. In it, the abundances of 7 different fatty acids in 10 different species are tabulated. Each fatty acid gets its own row, each species, its own column.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">fadb_sample</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 11</span></span>
 <span><span class="co">##   fatty_acid      Agonandra_brasiliensis Agonandra_silvatica</span></span>
@@ -212,7 +217,7 @@
 <span><span class="co">## #   Comandra_pallida &lt;dbl&gt;, Buckleya_distichophylla &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   Nuytsia_floribunda &lt;dbl&gt;</span></span></code></pre></div>
 <p>While this format is very nice for filling in my hand (such as in a lab notebook or similar), it does not groove with ggplot and other <code>tidyverse</code> functions very well. We need to convert it into a <strong>long-style table</strong>. This is done using <code>pivot_longer()</code>. You can think of this function as transforming both your data’s column names (or some of the column names) and your data matrix’s values (in this case, the measurements) each into their own variables (i.e. columns). We can do this for our fatty acid dataset using the command below. In it, we specify what data we want to transform (<code>data = fadb_sample</code>), we need to tell it what columns we want to transform (<code>cols = 2:11</code>), what we want the new variable that contains column names to be called (<code>names_to = "plant_species"</code>) and what we want the new variable that contains matrix values to be called (<code>values_to = "relative_abundance"</code>). All together now:</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pivot_longer</span><span class="op">(</span>data <span class="op">=</span> <span class="va">fadb_sample</span>, cols <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">11</span>, names_to <span class="op">=</span> <span class="st">"plant_species"</span>, values_to <span class="op">=</span> <span class="st">"relative_abundance"</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 70 × 3</span></span>
 <span><span class="co">##    fatty_acid        plant_species        relative_abundance</span></span>
@@ -234,15 +239,15 @@
 <h2>the pipe (%&gt;%)<a class="anchor" aria-label="anchor" href="#the-pipe"><i class="fas fa-link"></i></a>
 </h2>
 <p>We have seen how to create new objects using <code>&lt;-</code>, and we have been filtering and plotting data using, for example:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-89-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>However, as our analyses get more complex, the code can get long and hard to read. We’re going to use the pipe <code>%&gt;%</code> to help us with this. Check it out:</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">park</span> <span class="op">==</span> <span class="st">"BELA"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">pH</span>, y <span class="op">=</span> <span class="va">lake</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-90-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-94-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Neat! Another way to think about the pipe:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/pipe.jpg" width="100%" style="display: block; margin: auto;"></div>
 <p>The pipe will become more important as our analyses become more sophisticated, which happens very quickly when we start working with summary statistics, as we shall now see…</p>
@@ -251,7 +256,7 @@
 <h2>summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"><i class="fas fa-link"></i></a>
 </h2>
 <p>So far, we have been plotting raw data. This is well and good, but it is not always suitable. Often we have scientific questions that cannot be answered by looking at raw data alone, or sometimes there is too much raw data to plot. For this, we need summary statistics - things like averages, standard deviations, and so on. While these metrics can be computed in Excel, programming such can be time consuming, especially for group statistics. Consider the example below, which uses the <code>ny_trees</code> dataset. The NY Trees dataset contains information on nearly half a million trees in New York City (this is after considerable filtering and simplification):</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ny_trees</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 14</span></span>
 <span><span class="co">##   tree_height tree_diameter address        tree_loc pit_type</span></span>
@@ -268,14 +273,15 @@
 <span><span class="co">## #   longitude &lt;dbl&gt;</span></span></code></pre></div>
 <p>More than 300,000 observations of 14 variables! That’s 4.2M data points! Now, what is the average and standard deviation of the height and diameter of each tree species within each NY borough? Do those values change for trees that are in parks versus sidewalk pits?? I don’t even know how one would begin to approach such questions using traditional spreadsheets. Here, we will answer these questions with ease using two new commands: <code>group_by()</code> and <code>summarize()</code>. Let’s get to it.</p>
 <p>Say that we want to know (and of course, visualize) the mean and standard deviation of the heights of each tree species in NYC. We can see that data in first few columns of the NY trees dataset above, but how to calculate these statistics? In R, mean can be computed with <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and standard deviation can be calculated with <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code>. We will use the function <code>summarize()</code> to calculate summary statistics. So, we can calculate the average and standard deviation of all the trees in the data set as follows:</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 1</span></span>
 <span><span class="co">##   mean_height</span></span>
 <span><span class="co">##         &lt;dbl&gt;</span></span>
-<span><span class="co">## 1        72.6</span></span>
-<span></span>
+<span><span class="co">## 1        72.6</span></span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>stdev_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 1 × 1</span></span>
@@ -283,7 +289,7 @@
 <span><span class="co">##          &lt;dbl&gt;</span></span>
 <span><span class="co">## 1         28.7</span></span></code></pre></div>
 <p>Great! But how to do this for each species? We need to subdivide the data by species, then compute the mean and standard deviation, then recombine the results into a new table. First, we use <code>group_by()</code>. Note that in ny_trees, species are indicated in the column called <code>spc_latin</code>. Once the data is grouped, we can use <code>summarize()</code> to compute statistics.</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>mean_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">tree_height</span><span class="op">)</span><span class="op">)</span></span>
@@ -303,7 +309,7 @@
 <span><span class="co">## 11 TILIA CORDATA                 98.8</span></span>
 <span><span class="co">## 12 ZELKOVA SERRATA              101.</span></span></code></pre></div>
 <p>Bam. Mean height of each tree species. We can also count the number of observations using <code>n()</code>:</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span>number_of_individuals <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -323,7 +329,7 @@
 <span><span class="co">## 11 TILIA CORDATA                          25970</span></span>
 <span><span class="co">## 12 ZELKOVA SERRATA                        13221</span></span></code></pre></div>
 <p>Cool! <code>summarize()</code> is more powerful though, we can do many summary statistics at once:</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span></span>
@@ -347,7 +353,7 @@
 <span><span class="co">## 11 TILIA CORDATA                 98.8        32.6 </span></span>
 <span><span class="co">## 12 ZELKOVA SERRATA              101.         10.7</span></span></code></pre></div>
 <p>Now we can use this data in plotting. For this, we will use a new geom, <code>geom_pointrange</code>, which takes <code>x</code> and <code>y</code> aesthetics, as usual, but also requires two additional y-ish aesthetics <code>ymin</code> and <code>ymax</code> (or <code>xmin</code> and <code>xmax</code> if you want them to vary along x). Also, note that in the aesthetic mappings for <code>xmin</code> and <code>xmax</code>, we can use a mathematical expression: <code>mean-stdev</code> and <code>mean+stdev</code>, respectivey. In our case, these are <code>mean_height - stdev_height</code> and <code>mean_height + stdev_height</code>. Let’s see it in action:</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees_by_spc_summ</span> <span class="op">%&gt;%</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span></span>
@@ -358,9 +364,9 @@
 <span>        xmax <span class="op">=</span> <span class="va">mean_height</span> <span class="op">+</span> <span class="va">stdev_height</span></span>
 <span>      <span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-97-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-101-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Just like that, we’ve found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn’t stop there. We can use <code>group_by()</code> and <code>summarize()</code> on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let’s check it out:</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">spc_latin</span>, <span class="va">boroname</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">summarize</span><span class="op">(</span></span>
@@ -384,7 +390,7 @@
 <span><span class="co">## 10 ACER SACCHARINUM Brooklyn      22.2       10.1 </span></span>
 <span><span class="co">## # ℹ 38 more rows</span></span></code></pre></div>
 <p>Now we have summary statistics for each tree species within each borough. This is different from the previous plot in that we now have an additional variable (boroname) in our summarized dataset. This additional variable needs to be encoded in our plot. Let’s map boroname to x and facet over tree species, which used to be on x. We’ll also manually modify the theme element <code>strip.text.y</code> to get the species names in a readable position.</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span></span>
@@ -399,9 +405,9 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-99-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-103-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! And if we really want to go for something pretty:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ny_trees_by_spc_boro_summ</span> <span class="op">%&gt;%</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html">geom_pointrange</a></span><span class="op">(</span></span>
@@ -426,14 +432,14 @@
 <span>    strip.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>    plot.caption <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-100-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p><em>Now</em> we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.</p>
 </div>
 <div id="ordering" class="section level2 unnumbered">
 <h2>ordering<a class="anchor" aria-label="anchor" href="#ordering"><i class="fas fa-link"></i></a>
 </h2>
 <p>We can also sort or order a data frame based on a specific column with the command <code>arrange()</code>. Let’s have a quick look. Suppose we wanted to know which lake was the coldest:</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">arrange</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="va">water_temp</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 220 × 7</span></span>
 <span><span class="co">##    lake             park  water_temp    pH element mg_per_L</span></span>
@@ -451,7 +457,7 @@
 <span><span class="co">## # ℹ 210 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
 <p>Or suppose we wanted to know which was the warmest?</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">arrange</span><span class="op">(</span><span class="va">alaska_lake_data</span>, <span class="fu">desc</span><span class="op">(</span><span class="va">water_temp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 220 × 7</span></span>
 <span><span class="co">##    lake      park  water_temp    pH element mg_per_L</span></span>
@@ -469,7 +475,7 @@
 <span><span class="co">## # ℹ 210 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
 <p><code>arrange()</code> will work on grouped data, which is particularly useful in combination with <code>slice()</code>, which can show us the first n elements in each group:</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">park</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">water_temp</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -487,7 +493,7 @@
 <h2>mutate<a class="anchor" aria-label="anchor" href="#mutate"><i class="fas fa-link"></i></a>
 </h2>
 <p>One last thing before our exercises… there is another command called <code>mutate()</code>. It is like summarize it calculates user-defined statistics, but it creates output on a per-observation level instead of for each group. This means that it doesn’t make the data set smaller, in fact it makes it bigger, by creating a new row for the new variables defined inside <code>mutate()</code>. It can also take grouped data. This is really useful for calculating percentages within groups. For example: within each park, what percent of the park’s total dissolved sulfur does each lake have?</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">element</span> <span class="op">==</span> <span class="st">"S"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">park</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -590,7 +596,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

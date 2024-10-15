@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>language models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based...">
+<meta name="description" content="In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions...">
 <meta name="generator" content="bookdown 0.39 with bs4_book()">
 <meta property="og:title" content="language models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based...">
+<meta property="og:description" content="In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="language models | Integrated Bioanalytics">
-<meta name="twitter:description" content="In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based...">
+<meta name="twitter:description" content="In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
@@ -110,14 +110,23 @@
 <h1>language models<a class="anchor" aria-label="anchor" href="#language-models"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;"></div>
-<p>In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.</p>
+<p>In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text or protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.</p>
 <p>A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.</p>
+<div id="pre-reading" class="section level2 unnumbered">
+<h2>pre-reading<a class="anchor" aria-label="anchor" href="#pre-reading"><i class="fas fa-link"></i></a>
+</h2>
+<p>Please read over the following:</p>
+<ul>
+<li><p><a href="https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5">Text Embeddings: Comprehensive Guide</a>. In her comprehensive article, “Text Embeddings: Comprehensive Guide”, Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI’s embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.</p></li>
+<li><p><a href="https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution">ESM3: Simulating 500 million years of evolution with a language model</a>. The 2024 blog article “ESM3: Simulating 500 million years of evolution with a language model” by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural variants. The article highlights the model’s potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. It also stresses the importance of responsible development and transparency, with the model and code being made openly available to accelerate scientific progress.</p></li>
+</ul>
+</div>
 <div id="text-embeddings" class="section level2 unnumbered">
 <h2>text embeddings<a class="anchor" aria-label="anchor" href="#text-embeddings"><i class="fas fa-link"></i></a>
 </h2>
 <p>Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.</p>
 <p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
-<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
 <span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"beta-amyrin synthase"</span>, <span class="st">"friedelin synthase"</span>, <span class="st">"sorghum bicolor"</span>, <span class="st">"cuticular wax biosynthesis"</span><span class="op">)</span>,</span>
 <span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
@@ -128,14 +137,13 @@
 <span><span class="co">## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...</span></span>
 <span><span class="co">## Error encountered. Attempt 2 of 3. Retrying in 5 seconds...</span></span>
 <span><span class="co">## Error encountered. Attempt 3 of 3. Retrying in 5 seconds...</span></span>
-<span><span class="co">## Failed to fetch data for term: friedelin synthase after 3 attempts.</span></span>
-<span><span class="co">## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...</span></span></code></pre></div>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<span><span class="co">## Failed to fetch data for term: sorghum bicolor after 3 attempts.</span></span></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span></span>
 <span><span class="co">## [1] "entry_number" "term"         "date"        </span></span>
 <span><span class="co">## [4] "journal"      "title"        "doi"         </span></span>
 <span><span class="co">## [7] "abstract"</span></span></code></pre></div>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb171"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">select</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">term</span>, <span class="va">title</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 9 × 2</span></span>
 <span><span class="co">##   term                       title                          </span></span>
@@ -143,16 +151,16 @@
 <span><span class="co">## 1 beta-amyrin synthase       β-Amyrin synthase from Conyza …</span></span>
 <span><span class="co">## 2 beta-amyrin synthase       Ginsenosides in Panax genus an…</span></span>
 <span><span class="co">## 3 beta-amyrin synthase       β-Amyrin biosynthesis: catalyt…</span></span>
-<span><span class="co">## 4 sorghum bicolor            Sorghum (Sorghum bicolor).     </span></span>
-<span><span class="co">## 5 sorghum bicolor            Molecular Breeding of Sorghum …</span></span>
-<span><span class="co">## 6 sorghum bicolor            Proton-Coupled Electron Transf…</span></span>
+<span><span class="co">## 4 friedelin synthase         Friedelin Synthase from Mayten…</span></span>
+<span><span class="co">## 5 friedelin synthase         Friedelin in Maytenus ilicifol…</span></span>
+<span><span class="co">## 6 friedelin synthase         Functional characterization of…</span></span>
 <span><span class="co">## 7 cuticular wax biosynthesis Regulatory mechanisms underlyi…</span></span>
 <span><span class="co">## 8 cuticular wax biosynthesis Update on Cuticular Wax Biosyn…</span></span>
 <span><span class="co">## 9 cuticular wax biosynthesis Advances in Biosynthesis, Regu…</span></span></code></pre></div>
 <p>From the output here, you can see that we’ve retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.</p>
 <p>Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at <a href="https://huggingface.co" class="uri">https://huggingface.co</a> and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.</p>
 <p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, available through the Hugging Face API at <a href="https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5" class="uri">https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5</a>. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at <a href="https://huggingface.co" class="uri">https://huggingface.co</a>, where you will find detailed documentation and additional resources.</p>
-<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
 <span>  df <span class="op">=</span> <span class="va">search_results</span>,</span>
 <span>  column_name <span class="op">=</span> <span class="st">"title"</span>,</span>
@@ -168,7 +176,7 @@
 <span><span class="co">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.</p>
-<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">search_results_embedded</span>, by <span class="op">=</span> <span class="st">"title"</span><span class="op">)</span></span>
 <span><span class="va">search_results</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
 <span><span class="co">## # A tibble: 3 × 10</span></span>
@@ -180,7 +188,7 @@
 <span><span class="co">## # ℹ 4 more variables: abstract.x &lt;chr&gt;,</span></span>
 <span><span class="co">## #   entry_number.y &lt;dbl&gt;, term.y &lt;chr&gt;, date.y &lt;date&gt;</span></span></code></pre></div>
 <p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">search_results_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -197,9 +205,9 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb175"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">31</span></span>
 <span></span>
 <span><span class="va">odor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
@@ -234,7 +242,7 @@
 <span>  <span class="co"># scale_x_continuous(expand = c(1,0)) +</span></span>
 <span>  <span class="co"># scale_y_continuous(expand = c(1,0)) +</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="protein-embeddings" class="section level2 unnumbered">
 <h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
@@ -266,19 +274,36 @@
 <p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
 <p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
 <p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.</p>
-<p>In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">embedded_p450s</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
-<span>  amino_acid_stringset <span class="op">=</span> <span class="va">p450s</span>,</span>
+<p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code, though you can also use the <code>searchNCBI()</code> function to retrieve your own sequences. For example:</p>
+<div class="sourceCode" id="cb176"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"oxidosqualene cyclase"</span>, retmax <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co">## AAStringSet object of length 100:</span></span>
+<span><span class="co">##       width seq                         names               </span></span>
+<span><span class="co">##   [1]   766 MVANSTGRDASA...SWALQGNGIEKS sp|A0A0E0SP71.1|E...</span></span>
+<span><span class="co">##   [2]   726 MAAYAPLELPAS...AHRYLKELHAKK sp|D7NJ68.1|ERG7_...</span></span>
+<span><span class="co">##   [3]   766 MWRLRTGSSTVD...RYKLFGKKNMYI sp|A0A125SXN2.1|L...</span></span>
+<span><span class="co">##   [4]   756 MWKLKIAEGSPG...ALGEYRQKIFHS sp|A0A125SXN1.1|L...</span></span>
+<span><span class="co">##   [5]   755 MWSLKIAEGGGP...ALGAYQCKVLGH sp|A0A125SXN3.1|L...</span></span>
+<span><span class="co">##   ...   ... ...</span></span>
+<span><span class="co">##  [96]   532 MSISTPIGTSYA...ACTEADVERTDA WP_376415580.1 pr...</span></span>
+<span><span class="co">##  [97]   532 MRSISRQATPIR...TAALELLQTRRP WP_376406699.1 pr...</span></span>
+<span><span class="co">##  [98]   431 MNTVRRGAAALA...VGIGFLVSGRKK WP_376404849.1 pr...</span></span>
+<span><span class="co">##  [99]   402 MNVRRSAAVLAA...FLFTGRKKRQQS WP_376387762.1 pr...</span></span>
+<span><span class="co">## [100]   419 MSVRRRAAALAI...FLLSGRRKNQQL WP_376368104.1 MU...</span></span></code></pre></div>
+<p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide a biolm API key and the amino acid sequences as an AAStringSet object:</p>
+<div class="sourceCode" id="cb177"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
+<span>  amino_acid_stringset <span class="op">=</span> <span class="va">OSC_sequences</span>,</span>
 <span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">embedded_p450s</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">embedded_p450s</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">embedded_p450s</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">embedded_p450s</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">embedded_p450s</span>,</span>
+<span><span class="va">embedded_OSCs</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">embedded_OSCs</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">embedded_OSCs</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Nice! Once we’ve bot the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
+<div class="sourceCode" id="cb178"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">embedded_OSCs</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">embedded_p450s</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">embedded_p450s</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">embedded_OSCs</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">embedded_OSCs</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"product"</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -287,11 +312,16 @@
 <span>      shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2</span>, width <span class="op">=</span> <span class="fl">2</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
 <span>    <span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="further-reading-10" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-10"><i class="fas fa-link"></i></a>
 </h2>
+<ul>
+<li><p><a href="https://bratanic-tomaz.medium.com/constructing-knowledge-graphs-from-text-using-openai-functions-096a6d010c17">creating knowledge graphs with LLMs</a>. This blog post explains how to create knowledge graphs from text using OpenAI functions combined with LangChain and Neo4j. It highlights how large language models (LLMs) have made information extraction more accessible, providing step-by-step instructions for setting up a pipeline to extract structured information and construct a graph from unstructured data.</p></li>
+<li><p><a href="https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f">creating RAG systems with LLMs</a>. This article provides a technical overview of implementing complex Retrieval Augmented Generation (RAG) systems, focusing on key concepts like chunking, query augmentation, document hierarchies, and knowledge graphs. It highlights the challenges in data retrieval, multi-hop reasoning, and query planning, while also discussing opportunities to improve RAG infrastructure for more accurate and efficient information extraction.</p></li>
+<li><p><a href="https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3">using protein embeddings in biochemical research</a>. This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.</p></li>
+</ul>
 </div>
 <div id="exercises-8" class="section level2 unnumbered">
 <h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-8"><i class="fas fa-link"></i></a>
@@ -299,14 +329,16 @@
 <ol style="list-style-type: decimal">
 <li>Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set <code>sort</code> = “date”). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges. Below is an example to help you:</li>
 </ol>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb179"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results_ex</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
 <span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"oxidosqualene cyclase"</span>, <span class="st">"chemotaxonomy"</span>, <span class="st">"protein engineering"</span><span class="op">)</span>,</span>
 <span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
 <span>  retmax_per_term <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  sort <span class="op">=</span> <span class="st">"date"</span></span>
 <span><span class="op">)</span></span>
-<span></span>
+<span><span class="co">## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...</span></span></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">search_results_ex_embed</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
 <span>  <span class="va">search_results_ex</span>, column_name <span class="op">=</span> <span class="st">"abstract"</span>,</span>
 <span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
@@ -327,10 +359,11 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;"></div>
 <!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 <ol start="2" style="list-style-type: decimal">
-<li>Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.</li>
+<li><p>Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.</p></li>
+<li><p>Using the <code>OSC_sequences</code> dataset provided</p></li>
 </ol>
 </div>
 </div>
@@ -350,6 +383,7 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#language-models">language models</a></li>
+<li><a class="nav-link" href="#pre-reading">pre-reading</a></li>
 <li><a class="nav-link" href="#text-embeddings">text embeddings</a></li>
 <li><a class="nav-link" href="#protein-embeddings">protein embeddings</a></li>
 <li><a class="nav-link" href="#further-reading-10">further reading</a></li>
@@ -371,7 +405,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-08.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
