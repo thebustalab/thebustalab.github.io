@@ -6701,7 +6701,7 @@
                     
                     endpoint_url <- "https://api.openai.com/v1/chat/completions"
                     
-                    response <- content(POST(
+                    response <- content(httr::POST(
                         url = endpoint_url, 
                         add_headers( Authorization = paste("Bearer", openai_api_key) ),
                         content_type_json(), encode = "json",
@@ -6726,7 +6726,7 @@
                     
                     endpoint_url <- "https://api.openai.com/v1/completions"
                     
-                    response <- content(POST(
+                    response <- content(httr::POST(
                         url = endpoint_url, 
                         add_headers( Authorization = paste("Bearer", openai_api_key) ),
                         content_type_json(), encode = "json",
@@ -7628,7 +7628,7 @@
               
                 ## Run HF embeddings, process and return output
                 for (i in 1:length(text_vector)) { # i=1
-                    response <- POST(
+                    response <- httr::POST(
                         url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
                         add_headers(Authorization = paste0("Bearer ", hf_api_key)),
                         body = toJSON(list(inputs = text_vector[i])),
@@ -7652,7 +7652,7 @@
                 for( i in 1:length(amino_acid_stringset)) { #i=1
 
                     # Make the POST request
-                    response <- POST(
+                    response <- httr::POST(
                         url = "https://biolm.ai/api/v2/esm2-8m/encode/",
                         add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
                         body = toJSON(list(

@@ -3155,7 +3155,7 @@ The optimization_parameters argument takes a list to define the grid of paramete
 
 This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest's performance. This approach allows for a systematic exploration of how different configurations affect the model's ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.
 
-```{r}
+```{r, cache = TRUE}
 random_forest_model <- buildModel2(
     data = metabolomics_data,
     model_type = "random_forest_regression",
@@ -3223,7 +3223,7 @@ ggplot() +
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
-```{r}
+```{r, cache = TRUE}
 set.seed(123)
 unknown <- metabolomics_data[35:40,]
 
