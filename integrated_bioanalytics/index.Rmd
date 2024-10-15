@@ -3400,20 +3400,30 @@ Beyond the benefits described above, protein language models have an additional,
 
 By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.
 
-In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.
+In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
+
+```{r}
+searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
+```
+
+Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide a biolm API key and the amino acid sequences as an AAStringSet object:
 
 ```{r, cache = TRUE}
-embedded_p450s <- embedAminoAcids(
-  amino_acid_stringset = p450s,
+embedded_OSCs <- embedAminoAcids(
+  amino_acid_stringset = OSC_sequences,
   biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt")
 )
-embedded_p450s$product <- tolower(gsub(".*_", "", embedded_p450s$name))
-embedded_p450s <- select(embedded_p450s, name, product, everything())
+embedded_OSCs$product <- tolower(gsub(".*_", "", embedded_OSCs$name))
+embedded_OSCs <- select(embedded_OSCs, name, product, everything())
+```
 
+Nice! Once we've bot the embeddings, we can run a PCA analysis to visualize them in 2D space:
+
+```{r}
 runMatrixAnalysis(
-  data = embedded_p450s,
+  data = embedded_OSCs,
   analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(embedded_p450s)[3:dim(embedded_p450s)[2]],
+  columns_w_values_for_single_analyte = colnames(embedded_p450s)[3:dim(embedded_OSCs)[2]],
   columns_w_sample_ID_info = c("name", "product")
 ) %>%
   ggplot() +
@@ -3497,6 +3507,7 @@ ggplot(hops_embedded_pca) +
   theme_minimal()
 ```
 
+3. Using the `OSC_sequences` dataset provided
 
 # (PART) MIDTERM
 

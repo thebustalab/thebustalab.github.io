@@ -12569,7 +12569,7 @@
                     pb$tick()
                 }
 
-                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/p450s.fasta")
+                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta")
 
             ## Busta lab specific datasets
 
