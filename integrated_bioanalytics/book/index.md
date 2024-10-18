@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-15"
+date: "2024-10-18"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3971,7 +3971,7 @@ Classification with random forests:
 
 To practice creating models, try the following:
 
-1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca_ord" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
+1. Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run "pca" contains the Dimension 1 coordinate "Dim.1" for each sample, as well as the abundance of each analyte in that sample.
 
 2. Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using `buildModel`, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim.1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?
 
@@ -3990,6 +3990,20 @@ To practice creating models, try the following:
 # language models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
+
+To run the analyses in this chapter, you will need four things. 
+1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
+
+``` r
+source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
+## Loading packages...
+## Loading functions...
+## Done!
+```
+2. Please create an account and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/
+3. Please create an account and obtain an API key from https://huggingface.co
+4. Please create an account and obtain an API key from https://biolm.ai/
+
 
 In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text or protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
 
@@ -4017,14 +4031,6 @@ search_results <- searchPubMed(
   retmax_per_term = 3,
   sort = "relevance"
 )
-## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
-## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
-## Error encountered. Attempt 2 of 3. Retrying in 5 seconds...
-## Error encountered. Attempt 3 of 3. Retrying in 5 seconds...
-## Failed to fetch data for term: sorghum bicolor after 3 attempts.
-```
-
-``` r
 colnames(search_results)
 ## [1] "entry_number" "term"         "date"        
 ## [4] "journal"      "title"        "doi"         
@@ -4033,18 +4039,21 @@ colnames(search_results)
 
 ``` r
 select(search_results, term, title)
-## # A tibble: 9 × 2
-##   term                       title                          
-##   <chr>                      <chr>                          
-## 1 beta-amyrin synthase       β-Amyrin synthase from Conyza …
-## 2 beta-amyrin synthase       Ginsenosides in Panax genus an…
-## 3 beta-amyrin synthase       β-Amyrin biosynthesis: catalyt…
-## 4 friedelin synthase         Friedelin Synthase from Mayten…
-## 5 friedelin synthase         Friedelin in Maytenus ilicifol…
-## 6 friedelin synthase         Functional characterization of…
-## 7 cuticular wax biosynthesis Regulatory mechanisms underlyi…
-## 8 cuticular wax biosynthesis Update on Cuticular Wax Biosyn…
-## 9 cuticular wax biosynthesis Advances in Biosynthesis, Regu…
+## # A tibble: 12 × 2
+##    term                       title                         
+##    <chr>                      <chr>                         
+##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…
+##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…
+##  3 beta-amyrin synthase       Functional analysis of β-amyr…
+##  4 friedelin synthase         Friedelin Synthase from Mayte…
+##  5 friedelin synthase         Friedelin in Maytenus ilicifo…
+##  6 friedelin synthase         Functional characterization o…
+##  7 sorghum bicolor            Sorghum: A Multipurpose Crop. 
+##  8 sorghum bicolor            Molecular Breeding of Sorghum…
+##  9 sorghum bicolor            Sorghum (Sorghum bicolor).    
+## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
+## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
+## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…
 ```
 
 From the output here, you can see that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
@@ -4066,7 +4075,7 @@ search_results_embedded[1:3,1:10]
 ##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
 ## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
 ## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
-## 3            3 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…
+## 3            3 beta… 2023-12-13 Plant … Func… 10.1… Down-re…
 ## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
 ## #   embedding_3 <dbl>
 ```
@@ -4082,7 +4091,7 @@ search_results[1:3, 1:10]
 ##            <dbl> <chr>      <date>     <chr>     <chr> <chr>
 ## 1              1 beta-amyr… 2019-11-20 FEBS ope… β-Am… 10.1…
 ## 2              2 beta-amyr… 2024-04-03 Acta pha… Gins… 10.1…
-## 3              3 beta-amyr… 2019-12-10 Organic … β-Am… 10.1…
+## 3              3 beta-amyr… 2023-12-13 Plant ce… Func… 10.1…
 ## # ℹ 4 more variables: abstract.x <chr>,
 ## #   entry_number.y <dbl>, term.y <chr>, date.y <date>
 ```
@@ -4109,7 +4118,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -4151,7 +4160,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## protein embeddings {-}
 
@@ -4188,7 +4197,7 @@ Protein language models offer several advantages over traditional approaches, su
 
 Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.
 
-By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.
+By adding a mechanism called an "attention mechanism" to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.
 
 In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the `OSC_sequences` object provided by the `source()` code, though you can also use the `searchNCBI()` function to retrieve your own sequences. For example:
 
@@ -4197,17 +4206,17 @@ In this section, we will explore how to generate embeddings for protein sequence
 searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
 ## AAStringSet object of length 100:
 ##       width seq                         names               
-##   [1]   766 MVANSTGRDASA...SWALQGNGIEKS sp|A0A0E0SP71.1|E...
-##   [2]   726 MAAYAPLELPAS...AHRYLKELHAKK sp|D7NJ68.1|ERG7_...
-##   [3]   766 MWRLRTGSSTVD...RYKLFGKKNMYI sp|A0A125SXN2.1|L...
-##   [4]   756 MWKLKIAEGSPG...ALGEYRQKIFHS sp|A0A125SXN1.1|L...
-##   [5]   755 MWSLKIAEGGGP...ALGAYQCKVLGH sp|A0A125SXN3.1|L...
+##   [1]   736 MMTEGTCLRRRG...YPASPLAGKVKL XP_006636690.3 la...
+##   [2]   761 MWRLKIADGNNN...YRKKVLPQPTKV sp|B9X0J1.1|STBOS...
+##   [3]   771 MGVWRLKIGEGA...LTSKAHSSAVME sp|A8C981.1|TARS_...
+##   [4]   761 MWKLKIAEGQNG...YRKNVLLPLENN NP_001234604.1 be...
+##   [5]   723 MFGELNVPLDPK...KAHEYLENLSHA GAB1518314.1 Lano...
 ##   ...   ... ...
-##  [96]   532 MSISTPIGTSYA...ACTEADVERTDA WP_376415580.1 pr...
-##  [97]   532 MRSISRQATPIR...TAALELLQTRRP WP_376406699.1 pr...
-##  [98]   431 MNTVRRGAAALA...VGIGFLVSGRKK WP_376404849.1 pr...
-##  [99]   402 MNVRRSAAVLAA...FLFTGRKKRQQS WP_376387762.1 pr...
-## [100]   419 MSVRRRAAALAI...FLLSGRRKNQQL WP_376368104.1 MU...
+##  [96]   418 MTTVRRGAAAFA...VGIGFLLSGRKK WP_376438073.1 pr...
+##  [97]   572 MSFDSLRTSDGG...LTSGAPLPALNL WP_376433945.1 MU...
+##  [98]   418 MISVRRAAAALT...VGIGFLLSGRKK WP_376428432.1 pr...
+##  [99]   421 MTVRRSAAALAT...FLFSMRGKKKQP WP_376422267.1 pr...
+## [100]   357 MTVPEQTEHLVL...HLPRGLEPDCCR WP_376419229.1 MU...
 ```
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide a biolm API key and the amino acid sequences as an AAStringSet object:
@@ -4240,7 +4249,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -4249,6 +4258,8 @@ runMatrixAnalysis(
 - [creating RAG systems with LLMs](https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f). This article provides a technical overview of implementing complex Retrieval Augmented Generation (RAG) systems, focusing on key concepts like chunking, query augmentation, document hierarchies, and knowledge graphs. It highlights the challenges in data retrieval, multi-hop reasoning, and query planning, while also discussing opportunities to improve RAG infrastructure for more accurate and efficient information extraction.
 
 - [using protein embeddings in biochemical research](https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3). This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.
+
+- [attention mechanims and transformers explained](https://ig.ft.com/generative-ai/). This Financial Times article explains the development and workings of large language models (LLMs), emphasizing their foundation on the transformer model created by Google researchers in 2017. These models use self-attention mechanisms to understand context, allowing them to respond to subtle relationships between elements in their input, even if those elements are far from one another in the linear input sequence.
 
 ## exercises {-}
 
@@ -4262,10 +4273,6 @@ search_results_ex <- searchPubMed(
   retmax_per_term = 50,
   sort = "date"
 )
-## Error encountered. Attempt 1 of 3. Retrying in 5 seconds...
-```
-
-``` r
 
 search_results_ex_embed <- embedText(
   search_results_ex, column_name = "abstract",
@@ -4289,7 +4296,7 @@ search_results_ex_embed_pca %>%
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 
@@ -4297,7 +4304,9 @@ search_results_ex_embed_pca %>%
 
 
 
-3. Using the `OSC_sequences` dataset provided
+3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
+
+
 
 # (PART) MIDTERM
 
@@ -5090,7 +5099,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-229-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5126,7 +5135,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-230-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5176,7 +5185,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5192,7 +5201,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5201,7 +5210,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5275,7 +5284,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5294,7 +5303,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5411,7 +5420,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5446,7 +5455,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5742,7 +5751,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5996,7 +6005,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -6019,7 +6028,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-256-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -6043,7 +6052,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6119,21 +6128,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-262-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6181,7 +6190,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6539,7 +6548,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-274-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6581,7 +6590,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-278-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6670,7 +6679,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-282-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-284-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
