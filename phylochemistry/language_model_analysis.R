@@ -1,6 +1,6 @@
-######################
-## GCMS ANALYSIS V1 ##
-######################
+################################
+## Language Model Analysis v1 ##
+################################
 
 ###### Libraries
 
@@ -49,6 +49,7 @@
 
         invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
 
+        message("Loading functions...")
 
 #### searchNCBI
 
@@ -909,3 +910,4 @@
     }
 
     
+message("Done!")

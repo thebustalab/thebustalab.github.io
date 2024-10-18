@@ -26,7 +26,7 @@
                     "GenomicFeatures",
                     "Rsamtools",
                     "shinythemes",
-                    "FNN",
+                    "FNN"
                 )
 
                 source("https://thebustalab.github.io/phylochemistry/genomescope.R")
