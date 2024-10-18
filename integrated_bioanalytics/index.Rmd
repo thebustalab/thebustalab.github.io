@@ -3376,14 +3376,16 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 ```
 
 To run the analyses in this chapter, you will need four things. 
+
 1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
 ```{r}
 source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
 ```
-2. Please create an account and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/
-3. Please create an account and obtain an API key from https://huggingface.co
-4. Please create an account and obtain an API key from https://biolm.ai/
+2. Please create an account and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
+3. Please create an account and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens)
+4. Please create an account and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
 
+Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.
 
 In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text or protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the  techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively. 
 
@@ -3393,7 +3395,7 @@ A basic form of an embedding model is a neural network called an autoencoder. Au
 
 Please read over the following:
 
-- [Text Embeddings: Comprehensive Guide](https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5). In her comprehensive article, "Text Embeddings: Comprehensive Guide", Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI’s embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.
+- [Text Embeddings: Comprehensive Guide](https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5). In her article, "Text Embeddings: Comprehensive Guide", Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI’s embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.
 
 - [ESM3: Simulating 500 million years of evolution with a language model](https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution). The 2024 blog article "ESM3: Simulating 500 million years of evolution with a language model" by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural variants. The article highlights the model's potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. Please note the "Open Model" section of the blog, which highlights applications of ESM models in the natural sciences.
 
