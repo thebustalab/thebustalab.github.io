@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-18"
+date: "2024-10-21"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4002,7 +4002,7 @@ source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
 ## Done!
 ```
 2. Please create an account and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
-3. Please create an account and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens)
+3. Please create an account and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens, then configure your access token/key to "Make calls to the serverless Inference API" and "Make calls to Inference Endpoints")
 4. Please create an account and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
 
 Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.

@@ -3382,7 +3382,7 @@ To run the analyses in this chapter, you will need four things.
 source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
 ```
 2. Please create an account and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
-3. Please create an account and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens)
+3. Please create an account and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens, then configure your access token/key to "Make calls to the serverless Inference API" and "Make calls to Inference Endpoints")
 4. Please create an account and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
 
 Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.
