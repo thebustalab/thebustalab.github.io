@@ -12,7 +12,7 @@
         "XML", "lubridate", "tibble", "httr",
         "jsonlite", "dplyr", "tidyr", "FactoMineR", "fpc",
         "Rtsne", "Rfast", "umap", "cluster", "ape",
-        "bootstrap"
+        "bootstrap", "shipunov"
     )
     packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
 
@@ -887,20 +887,48 @@
 
     #### embedAminoAcids
 
-    embedAminoAcids <- function(amino_acid_stringset, biolm_api_key) {
+    embedAminoAcids <- function(
+        amino_acid_stringset,
+        biolm_api_key,
+        nvidia_api_key,
+        platform = c("nvidia", "biolm")
+    ) {
 
         embeddings <- list()
         for( i in 1:length(amino_acid_stringset)) { #i=1
 
-            # Make the POST request
-            response <- httr::POST(
-                url = "https://biolm.ai/api/v2/esm2-8m/encode/",
-                httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
-                body = toJSON(list(
-                items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
-                ), auto_unbox = TRUE), encode = "json"
-            )
-            embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+            if (platform[1] == "biolm") {
+
+                # Make the POST request
+                response <- httr::POST(
+                    url = "https://biolm.ai/api/v2/esm2-8m/encode/",
+                    httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
+                    body = toJSON(list(
+                    items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
+                    ), auto_unbox = TRUE), encode = "json"
+                )
+                embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+
+            }
+
+            if (platform[1] == "nvidia") {
+
+                response <- POST(
+                    "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
+                    add_headers(
+                        `Content-Type` = "application/json",
+                        `Authorization` = paste("Bearer", nvidia_api_key)
+                    ),
+                    body = toJSON(list(
+                        sequences = list(sequence),  # Ensure sequence is properly enclosed as a list
+                        format = EMB_FORMAT  # Replace with your specific format
+                    ), auto_unbox = TRUE),
+                    encode = "json"
+                )
+
+                temp_file <- tempfile(fileext = ".bin")
+                writeBin(content(response, "raw"), temp_file)
+                binary_data <- readBin(temp_file, what = "numeric", n = file.info(temp_file)$size / 8, size = 8, endian = "little")
 
         }
         embeddings <- as.data.frame(do.call(rbind, embeddings))

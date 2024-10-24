@@ -7597,28 +7597,89 @@
 
         #### embedAminoAcids
 
-            embedAminoAcids <- function(amino_acid_stringset, biolm_api_key) {
-  
-                embeddings <- list()
-                for( i in 1:length(amino_acid_stringset)) { #i=1
-
-                    # Make the POST request
-                    response <- httr::POST(
-                        url = "https://biolm.ai/api/v2/esm2-8m/encode/",
-                        httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
-                        body = toJSON(list(
-                        items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
-                        ), auto_unbox = TRUE), encode = "json"
-                    )
-                    embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+            embedAminoAcids <- function(
+                amino_acid_stringset,
+                biolm_api_key = NULL,
+                nvidia_api_key = NULL,
+                platform = c("nvidia", "biolm")
+            ) {
+              
+              pb <- progress::progress_bar$new(
+                format = "  Processing [:bar] :percent in :elapsed seconds",
+                total = length(amino_acid_stringset), clear = FALSE, width = 60
+              )
+              
+              embeddings <- list()
+              for( i in 1:length(amino_acid_stringset)) { #i=2
+                
+                if (platform[1] == "biolm") {
+                  
+                  # Make the POST request
+                  response <- httr::POST(
+                    url = "https://biolm.ai/api/v2/esm2-8m/encode/",
+                    httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
+                    body = toJSON(list(
+                      items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
+                    ), auto_unbox = TRUE), encode = "json"
+                  )
+                  embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+                  
+                }
+                
+                if (platform[1] == "nvidia") {
+                  
+                  response <- POST(
+                    "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
+                    add_headers(
+                      `Content-Type` = "application/json",
+                      `Authorization` = paste("Bearer", nvidia_api_key)
+                    ),
+                    body = toJSON(list(
+                      sequences = list(as.data.frame(amino_acid_stringset)[[1]][i]),  # Ensure sequence is properly enclosed as a list
+                      format = "h5"  # Replace with your specific format
+                    ), auto_unbox = TRUE),
+                    encode = "json"
+                  )
+                  
+                  file_path <- tempfile(fileext = ".h5")
+                  writeBin(content(response, "raw"), file_path)
+                  embeddings[[i]] <- as.numeric(h5read(file_path, "embeddings"))
+                  invisible(file.remove(file_path))
 
                 }
+                
+                pb$tick()
+              }
+                
                 embeddings <- as.data.frame(do.call(rbind, embeddings))
                 colnames(embeddings) <- paste0("embedding_", seq(1:dim(embeddings)[2]))
                 embeddings <- cbind(amino_acid_stringset@ranges@NAMES, embeddings)
                 colnames(embeddings)[1] <- "name"
-                return(embeddings)
+                return(as_tibble(embeddings))
             }
+
+            # embedAminoAcids <- function(amino_acid_stringset, biolm_api_key) {
+  
+            #     embeddings <- list()
+            #     for( i in 1:length(amino_acid_stringset)) { #i=1
+
+            #         # Make the POST request
+            #         response <- httr::POST(
+            #             url = "https://biolm.ai/api/v2/esm2-8m/encode/",
+            #             httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
+            #             body = toJSON(list(
+            #             items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
+            #             ), auto_unbox = TRUE), encode = "json"
+            #         )
+            #         embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+
+            #     }
+            #     embeddings <- as.data.frame(do.call(rbind, embeddings))
+            #     colnames(embeddings) <- paste0("embedding_", seq(1:dim(embeddings)[2]))
+            #     embeddings <- cbind(amino_acid_stringset@ranges@NAMES, embeddings)
+            #     colnames(embeddings)[1] <- "name"
+            #     return(embeddings)
+            # }
 
     ##### Networks
 
