@@ -12,7 +12,7 @@
         "XML", "lubridate", "tibble", "httr",
         "jsonlite", "dplyr", "tidyr", "FactoMineR", "fpc",
         "Rtsne", "Rfast", "umap", "cluster", "ape",
-        "bootstrap", "shipunov"
+        "bootstrap", "shipunov", "rhdf5"
     )
     packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
 
