@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-21"
+date: "2024-10-24"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4001,9 +4001,10 @@ source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
 ## Loading functions...
 ## Done!
 ```
-2. Please create an account and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
-3. Please create an account and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens, then configure your access token/key to "Make calls to the serverless Inference API" and "Make calls to Inference Endpoints")
-4. Please create an account and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
+2. Please create an account at and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
+3. Please create an account at and obtain an API key from https://huggingface.co (Login > Settings > Access Tokens, then configure your access token/key to "Make calls to the serverless Inference API" and "Make calls to Inference Endpoints")
+4. Please create an account at and obtain an API key from https://biolm.ai/ (Login > Account > API Tokens)
+5. Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from https://build.nvidia.com/. (To get API key, go to: https://build.nvidia.com/meta/esm2-650m, switch "input" to python and click "Get API Key" > Generate Key)
 
 Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.
 
@@ -4082,21 +4083,27 @@ search_results_embedded[1:3,1:10]
 ## #   embedding_3 <dbl>
 ```
 
-The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.
+The output of the embedText function is a data frame where the 384 appended columns represent the embedding variables. These embeddings capture the features of each publication title. These embeddings are like a bar codes:
 
 
 ``` r
-search_results <- left_join(search_results, search_results_embedded, by = "title")
-search_results[1:3, 1:10]
-## # A tibble: 3 × 10
-##   entry_number.x term.x     date.x     journal.x title doi.x
-##            <dbl> <chr>      <date>     <chr>     <chr> <chr>
-## 1              1 beta-amyr… 2019-11-20 FEBS ope… β-Am… 10.1…
-## 2              2 beta-amyr… 2024-04-03 Acta pha… Gins… 10.1…
-## 3              3 beta-amyr… 2023-12-13 Plant ce… Func… 10.1…
-## # ℹ 4 more variables: abstract.x <chr>,
-## #   entry_number.y <dbl>, term.y <chr>, date.y <date>
+search_results_embedded %>%
+  pivot_longer(
+    cols = grep("embed",colnames(search_results_embedded)),
+    names_to = "embedding_variable",
+    values_to = "value"
+  ) %>%
+  ggplot() +
+    geom_tile(aes(x = embedding_variable, y = factor(entry_number), fill = value)) +
+    scale_y_discrete(name = "article") +
+    scale_fill_gradient(low = "white", high = "black") +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
+    )
 ```
+
+<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -4105,7 +4112,7 @@ To examine the relationships between the publication titles, we perform PCA on t
 runMatrixAnalysis(
   data = search_results_embedded,
   analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
+  columns_w_values_for_single_analyte = colnames(search_results_embedded)[grep("embed", colnames(search_results_embedded))],
   columns_w_sample_ID_info = c("title", "journal", "term")
 ) %>%
   ggplot() +
@@ -4205,32 +4212,42 @@ In this section, we will explore how to generate embeddings for protein sequence
 
 
 ``` r
-searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
+ncbi_results <- searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
+ncbi_results
 ## AAStringSet object of length 100:
 ##       width seq                         names               
-##   [1]   736 MMTEGTCLRRRG...YPASPLAGKVKL XP_006636690.3 la...
-##   [2]   761 MWRLKIADGNNN...YRKKVLPQPTKV sp|B9X0J1.1|STBOS...
-##   [3]   771 MGVWRLKIGEGA...LTSKAHSSAVME sp|A8C981.1|TARS_...
-##   [4]   761 MWKLKIAEGQNG...YRKNVLLPLENN NP_001234604.1 be...
-##   [5]   723 MFGELNVPLDPK...KAHEYLENLSHA GAB1518314.1 Lano...
+##   [1]   661 MMAVVENSVREG...LGRVMQRDELLR WP_392557160.1 pr...
+##   [2]   309 MSGYLQELTLRL...IATMSLLQTLDL WP_392556640.1 pr...
+##   [3]   637 MPSVSTPPMIPV...LESYYRHSRRPE WP_392555018.1 pr...
+##   [4]   715 MDHRSTGLNRRE...VTVRQTVEFKVG WP_392550370.1 pr...
+##   [5]   433 MKRLNSTPSLPG...TLSLCAALTADS WP_392549663.1 pr...
 ##   ...   ... ...
-##  [96]   418 MTTVRRGAAAFA...VGIGFLLSGRKK WP_376438073.1 pr...
-##  [97]   572 MSFDSLRTSDGG...LTSGAPLPALNL WP_376433945.1 MU...
-##  [98]   418 MISVRRAAAALT...VGIGFLLSGRKK WP_376428432.1 pr...
-##  [99]   421 MTVRRSAAALAT...FLFSMRGKKKQP WP_376422267.1 pr...
-## [100]   357 MTVPEQTEHLVL...HLPRGLEPDCCR WP_376419229.1 MU...
+##  [96]   433 MNSVDSASILEM...VLNTLNVLVRRF WP_390951336.1 pr...
+##  [97]   411 MIVRRSAAVLAA...FLISARNKKQQP WP_390927812.1 pr...
+##  [98]   413 MNVRRSAAVLAT...LITRSRKHGRRQ WP_390917141.1 pr...
+##  [99]   417 MTVRRSAAALAT...FLLSMRRKKQQP WP_390916034.1 pr...
+## [100]   413 MNVRRSAAALAA...VLLSGRRKKNRL WP_390908471.1 pr...
 ```
 
-Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide a biolm API key and the amino acid sequences as an AAStringSet object:
+Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
 
 
 ``` r
 embedded_OSCs <- embedAminoAcids(
   amino_acid_stringset = OSC_sequences,
-  biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt")
+  biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt"),
+  nvidia_api_key = readLines("/Users/bust0037/Documents/Science/Websites/nvidia_api_key.txt"),
+  platform = "nvidia"
 )
 embedded_OSCs$product <- tolower(gsub(".*_", "", embedded_OSCs$name))
 embedded_OSCs <- select(embedded_OSCs, name, product, everything())
+embedded_OSCs[1:3,1:4]
+## # A tibble: 3 × 4
+##   name                   product     embedding_1 embedding_2
+##   <chr>                  <chr>             <dbl>       <dbl>
+## 1 ABK76265.1_beta-amyrin beta-amyrin     0.00905 -0.00000746
+## 2 ABL07607.1_beta-amyrin beta-amyrin     0.00468  0.00122   
+## 3 ABY90140.2_beta-amyrin beta-amyrin     0.0186  -0.00662
 ```
 
 Nice! Once we've bot the embeddings, we can run a PCA analysis to visualize them in 2D space:
@@ -4262,6 +4279,8 @@ runMatrixAnalysis(
 - [using protein embeddings in biochemical research](https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3). This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.
 
 - [attention mechanims and transformers explained](https://ig.ft.com/generative-ai/). This Financial Times article explains the development and workings of large language models (LLMs), emphasizing their foundation on the transformer model created by Google researchers in 2017. These models use self-attention mechanisms to understand context, allowing them to respond to subtle relationships between elements in their input, even if those elements are far from one another in the linear input sequence.
+
+- [other types of protein language models](https://build.nvidia.com/nim?q=protein). *3D Protein Structure Prediction* deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. *Protein Embedding Generation* meta / esm2-650m: Generates protein embeddings from amino acid sequences. *Protein Sequence Design* ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. *Generative Protein Design* ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. *Molecule-Protein Interaction Prediction* mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).
 
 ## exercises {-}
 

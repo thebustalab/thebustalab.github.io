@@ -3432,11 +3432,24 @@ search_results_embedded <- embedText(
 search_results_embedded[1:3,1:10]
 ```
 
-The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.
+The output of the embedText function is a data frame where the 384 appended columns represent the embedding variables. These embeddings capture the features of each publication title. These embeddings are like a bar codes:
 
-```{r}
-search_results <- left_join(search_results, search_results_embedded, by = "title")
-search_results[1:3, 1:10]
+```{r, fig.width = 8, fig.height = 2}
+search_results_embedded %>%
+  pivot_longer(
+    cols = grep("embed",colnames(search_results_embedded)),
+    names_to = "embedding_variable",
+    values_to = "value"
+  ) %>%
+  ggplot() +
+    geom_tile(aes(x = embedding_variable, y = factor(entry_number), fill = value)) +
+    scale_y_discrete(name = "article") +
+    scale_fill_gradient(low = "white", high = "black") +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
+    )
+
 ```
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
@@ -3445,7 +3458,7 @@ To examine the relationships between the publication titles, we perform PCA on t
 runMatrixAnalysis(
   data = search_results_embedded,
   analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
+  columns_w_values_for_single_analyte = colnames(search_results_embedded)[grep("embed", colnames(search_results_embedded))],
   columns_w_sample_ID_info = c("title", "journal", "term")
 ) %>%
   ggplot() +
@@ -3585,6 +3598,8 @@ runMatrixAnalysis(
 - [using protein embeddings in biochemical research](https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3). This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.
 
 - [attention mechanims and transformers explained](https://ig.ft.com/generative-ai/). This Financial Times article explains the development and workings of large language models (LLMs), emphasizing their foundation on the transformer model created by Google researchers in 2017. These models use self-attention mechanisms to understand context, allowing them to respond to subtle relationships between elements in their input, even if those elements are far from one another in the linear input sequence.
+
+- [other types of protein language models](https://build.nvidia.com/nim?q=protein). *3D Protein Structure Prediction* deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. *Protein Embedding Generation* meta / esm2-650m: Generates protein embeddings from amino acid sequences. *Protein Sequence Design* ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. *Generative Protein Design* ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. *Molecule-Protein Interaction Prediction* mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).
 
 ## exercises {-}
 
