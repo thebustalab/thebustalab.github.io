@@ -5,14 +5,14 @@
 ###### Libraries
 
     Bioconductor_packages <- c(
-        "Biostrings", "ggtree", "ips"
+        "Biostrings", "ggtree", "ips", "rhdf5"
     )
     CRAN_packages <- c(
         "BiocManager", "ggrepel", "ggplot2", "rentrez",
         "XML", "lubridate", "tibble", "httr",
         "jsonlite", "dplyr", "tidyr", "FactoMineR", "fpc",
         "Rtsne", "Rfast", "umap", "cluster", "ape",
-        "bootstrap", "shipunov", "rhdf5"
+        "bootstrap", "shipunov"
     )
     packages_needed <- c(CRAN_packages, Bioconductor_packages)[!c(CRAN_packages, Bioconductor_packages) %in% rownames(installed.packages())]
 
