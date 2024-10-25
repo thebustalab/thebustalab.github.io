@@ -932,7 +932,7 @@
               )
               
               file_path <- tempfile(fileext = ".h5")
-              writeBin(content(response, "raw"), file_path)
+              writeBin(httr::content(response, as = "raw"), file_path)
               embeddings[[i]] <- as.numeric(h5read(file_path, "embeddings"))
               invisible(file.remove(file_path))
 
@@ -999,4 +999,4 @@
         #     return(embeddings)
         # }
 
-message("Done!")
+message("Done!!")
