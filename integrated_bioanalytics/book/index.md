@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-24"
+date: "2024-10-28"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4337,7 +4337,7 @@ search_results_ex_embed_pca %>%
 
 Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
 
-1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke (3 pts). Within that wood type's smoke, which compound class is the most abundant (3 pts) and what is the single most abundant compound (3 pts)? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis (3x 2 pts) to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot (3x 1 pt). Write a detailed figure caption for your figure (`labs(caption = "Figure 1...")`) (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
+1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke (3 pts). Within that wood type's smoke, which compound class is the most abundant (3 pts) and what is the single most abundant compound (3 pts)? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis (3x 2 pts) to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot (3x 1 pt). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
 2. Considering all the species together, regardless of wood type, what are the ten most abundant compounds in wood smoke? Communicate this via a plot that shows averages and standard deviations (9 pts). Run a statistical analysis to determine whether there are significant differences among the abundances of these compounds (7 pts). Show the output of the statistical analyses in your plot (2 pts). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
 
