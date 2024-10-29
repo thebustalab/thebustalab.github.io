@@ -6702,7 +6702,7 @@
                     
                     endpoint_url <- "https://api.openai.com/v1/chat/completions"
                     
-                    response <- content(httr::POST(
+                    response <- httr::content(httr::POST(
                         url = endpoint_url, 
                         httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                         content_type_json(), encode = "json",
@@ -6727,7 +6727,7 @@
                     
                     endpoint_url <- "https://api.openai.com/v1/completions"
                     
-                    response <- content(httr::POST(
+                    response <- httr::content(httr::POST(
                         url = endpoint_url, 
                         httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                         content_type_json(), encode = "json",
@@ -7222,7 +7222,7 @@
 
                             ## Embed the query 
                                 embedding_df <- t(data.frame(
-                                    as.numeric(content(POST(
+                                    as.numeric(httr::content(httr::POST(
                                         url = "https://api.openai.com/v1/embeddings", 
                                         httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                                         content_type_json(), encode = "json",
@@ -7304,10 +7304,10 @@
                                         )
                                     )
                                 )
-                                output$gpt_response <- renderText({ as.character(content(GPT_response)$choices[[1]]$message$content) })
-                                output$prompt_tokens <- renderText({ as.character(content(GPT_response)$usage$prompt_tokens) })
-                                output$completion_tokens <- renderText({ as.character(content(GPT_response)$usage$completion_tokens) })
-                                output$total_tokens <- renderText({ as.character(content(GPT_response)$usage$total_tokens) })
+                                output$gpt_response <- renderText({ as.character(httr::content(GPT_response)$choices[[1]]$message$content) })
+                                output$prompt_tokens <- renderText({ as.character(httr::content(GPT_response)$usage$prompt_tokens) })
+                                output$completion_tokens <- renderText({ as.character(httr::content(GPT_response)$usage$completion_tokens) })
+                                output$total_tokens <- renderText({ as.character(httr::content(GPT_response)$usage$total_tokens) })
                         })
                 }
 
@@ -7375,7 +7375,7 @@
                 embedding_df <- list()
                 for (i in 1:dim(df)[1]) {
                     embedding_df[[i]] <- t(data.frame(
-                        as.numeric(content(POST(
+                        as.numeric(httr::content(httr::POST(
                             url = "https://api.openai.com/v1/embeddings", 
                             httr::add_headers( Authorization = paste("Bearer", openai_api_key) ),
                             content_type_json(), encode = "json",
