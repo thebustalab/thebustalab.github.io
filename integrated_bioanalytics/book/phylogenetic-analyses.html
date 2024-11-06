@@ -76,10 +76,8 @@
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
 <li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
 <li><a class="" href="cdf-export.html">CDF export</a></li>
-<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
-<li><a class="" href="transcriptome-assembly.html">transcriptome assembly</a></li>
-<li class="book-part">EVOLUTIONARY ANALYSIS</li>
-<li><a class="" href="similarity-searching.html">similarity searching</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
 <li><a class="" href="phylogenies.html">phylogenies</a></li>
 <li><a class="active" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
@@ -110,7 +108,7 @@
 <h1>phylogenetic analyses<a class="anchor" aria-label="anchor" href="#phylogenetic-analyses"><i class="fas fa-link"></i></a>
 </h1>
 <p>We use a wrapper function to run phylogenetic comparative analyses. It</p>
-<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_bloom_tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"http://thebustalab.github.io/data/angiosperms.newick"</span>,</span>
@@ -154,7 +152,7 @@
 <span><span class="co">## Pro tip: most tree read/write functions reset node numbers.</span></span>
 <span><span class="co">## Fortify your tree and save it as a csv file to preserve node numbering.</span></span>
 <span><span class="co">## Do not save your tree as a newick or nexus file.</span></span></code></pre></div>
-<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">runPhylogeneticAnalyses</span><span class="op">(</span></span>
 <span>    traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"trait"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span>,</span>
@@ -185,7 +183,7 @@
 <span><span class="co">## #   phylogenetic_signal_lambda_value &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   phylogenetic_signal_lambda_p_value &lt;dbl&gt;, pic &lt;dbl&gt;</span></span></code></pre></div>
 <p>For all the below, there are some structural requirements: (i) the tree needs to be a phylo object (ii) the traits need to be a data.frame in which each row is a species and each column is a variable, and (iii) the first column in the data.frame needs to be the names of the species and they must exactly match the tip labels of the tree (though they don’t have to be in the same order), for example:</p>
-<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb214"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chemical_bloom_tree</span> <span class="op">&lt;-</span> <span class="fu">buildTree</span><span class="op">(</span></span>
 <span>  scaffold_type <span class="op">=</span> <span class="st">"newick"</span>,</span>
 <span>  scaffold_in_path <span class="op">=</span> <span class="st">"http://thebustalab.github.io/data/angiosperms.newick"</span>,</span>
@@ -233,7 +231,7 @@
 <h2>phylogeneticSignal<a class="anchor" aria-label="anchor" href="#phylogeneticsignal"><i class="fas fa-link"></i></a>
 </h2>
 <p>Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species’ evolutionary history. <code>phylochemistry</code> provides the <code>phylogeneticSignal</code> function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:</p>
-<div class="sourceCode" id="cb214"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb215"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">phylogeneticSignal</span><span class="op">(</span></span>
 <span>  traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"compound"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span>,</span>
 <span>  column_w_names_of_tiplabels <span class="op">=</span> <span class="st">"label"</span>,</span>
@@ -326,7 +324,7 @@
 <h2>independentContrasts<a class="anchor" aria-label="anchor" href="#independentcontrasts"><i class="fas fa-link"></i></a>
 </h2>
 <p>Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to “independent contrasts” to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. <code>phylochemistry</code> provides the <code>independentContrasts</code> function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts.</p>
-<div class="sourceCode" id="cb215"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb216"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contrasts</span> <span class="op">&lt;-</span> <span class="fu">independentContrasts</span><span class="op">(</span></span>
 <span>  traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"compound"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span>,</span>
 <span>  column_w_names_of_tiplabels <span class="op">=</span> <span class="st">"label"</span>,</span>
@@ -348,7 +346,7 @@
 <h2>ancestralTraits<a class="anchor" aria-label="anchor" href="#ancestraltraits"><i class="fas fa-link"></i></a>
 </h2>
 <p>Ancestral trait reconstruction is a method to infer the characteristics (or “traits”) of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or “reconstruct” the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. <code>phylochemistry</code> provides the function <code>ancestralTraits</code> to perform these operations. Note that <code>ancestralTraits</code> is different from <code>buildTree</code>s “ancestral_states”. “ancestral_states” estimates ancestral sequence states at phylogeny nodes, while <code>ancestralTraits</code> will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.</p>
-<div class="sourceCode" id="cb216"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb217"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">anc_traits_tree</span> <span class="op">&lt;-</span> <span class="fu">ancestralTraits</span><span class="op">(</span></span>
 <span>  traits <span class="op">=</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">chemical_blooms</span>, cols <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>  column_w_names_of_tiplabels <span class="op">=</span> <span class="st">"label"</span>,</span>
@@ -368,7 +366,7 @@
 <span><span class="co">## 6     80     1          290. Ginkg… TRUE   352.     1   207.</span></span>
 <span><span class="co">## # ℹ 3 more variables: angle &lt;dbl&gt;, trait &lt;chr&gt;, value &lt;dbl&gt;</span></span></code></pre></div>
 <p>In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: <code>geom_ancestral_pie</code>. Here is an example. Note that <code>cols</code> is a vector of column numbers that correspond to the traits of interest. <code>pie_size</code> is the size of the pie chart that will be plotted at each node. <code>geom_ancestral_pie</code> relies on having columns in its input called <code>trait</code> and <code>value</code>, such as those output by <code>ancestralTraits</code>. Note that if you are passing an object to ggtree() that has duplicate node names, you will need to use the <code>distinct</code> function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.</p>
-<div class="sourceCode" id="cb217"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb218"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span></span>
 <span>  <span class="fu">distinct</span><span class="op">(</span><span class="va">anc_traits_tree</span>, <span class="va">node</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
@@ -379,7 +377,7 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span>offset <span class="op">=</span> <span class="fl">20</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">650</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 </div>
   <div class="chapter-nav">
@@ -418,7 +416,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-28.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-11-06.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

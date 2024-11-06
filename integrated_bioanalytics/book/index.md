@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-10-28"
+date: "2024-11-06"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3987,6 +3987,7 @@ To practice creating models, try the following:
 
 <!-- end -->
 
+<!-- start language models -->
 # language models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
@@ -4328,7 +4329,9 @@ search_results_ex_embed_pca %>%
 3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
 
 
+<!-- end -->
 
+<!-- start midterm -->
 # (PART) MIDTERM
 
 # midterm {-}
@@ -4559,11 +4562,11 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 
 
-# (PART) TRANSCRIPTOME ANALYSIS {-}
+<!-- # (PART) SEQUENCE DATA {-} -->
 
 <!-- start transcriptomic analyses -->
 
-# transcriptome assembly {-}
+<!-- # transcriptome assembly {-}
 
 For nonmodel species transcriptome analysis, `transXpress` is recommended. We often use a modified version of `transXpress` we call `transXpressLite`. It uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpressLite` for it to run properly.
 
@@ -4599,7 +4602,7 @@ cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
 * samples.txt
 * samples_trimmed.txt
 * busco_report.txt
-* /transdecoder/longest_orfs.pep -> is actually "transcriptome.orfs"
+* /transdecoder/longest_orfs.pep -> is actually "transcriptome.orfs" -->
 
 <!-- 1. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
 `pip install "numpy<1.24.0"`
@@ -4953,17 +4956,36 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 
 
-# (PART) EVOLUTIONARY ANALYSIS {-}
+# (PART) SEQUENCE ANALYSIS {-}
 
 <!-- start evolutionary analyses -->
 
-# similarity searching {-}
+# homology {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology.png" width="100%" style="display: block; margin: auto;" />
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png" width="100%" style="display: block; margin: auto;" />
 
-## blast {-}
+## NCBI blast {-}
 
-### setup {-}
+The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like "core_nt," you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. Here's a few examples, including how to approach this function if you're working with a StringSet object:
+
+
+``` r
+blastNCBI(
+    query_sequence = "AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA",
+    program = "blastn",
+    database = "core_nt"
+)
+
+seqs <- DNAStringSet("AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA")
+blastNCBI(
+    query_sequence = as.character(seqs[1]),
+    program = "blastn",
+    database = "core_nt"
+)
+
+```
+
+## local blast {-}
 
 On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
 
@@ -5006,35 +5028,6 @@ polyBlast(
 )
 ```
 
-### interpretation {-}
-
-bitscore v evalue - with very low evalue (< 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!
-
-The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
-
-The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
-
-* E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
-* 10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
-* 10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
-* 10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
-* E-value > 1 Proteins are most likely not related
-* E-value > 10 Hits are most likely junk unless the query sequence is very short.
-
-reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
-
-reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
-
-* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
-
-E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
-
-* Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
-
-* Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
-
-<!-- * bit-scores Taylor to write something? -->
-
 ## hmmer {-}
 
 HMM, which stands for Hidden Markov Model, is a statistical model often used in various applications involving sequences, including speech recognition, natural language processing, and bioinformatics. In the context of bioinformatics, HMMs are frequently applied for sequence similarity searching, notably in the analysis of protein or DNA sequences. When we talk about using HMMs for sequence similarity searching, we're often referring to identifying conserved patterns or domains within biological sequences. These conserved regions can be indicative of functional or structural properties of the molecule. One of the advantages of using HMMs over traditional sequence similarity searching tools like BLAST is that HMMs can be more sensitive in detecting distant homologues. They take into account the position-specific variability within a protein family, as opposed to just looking for stretches of similar sequence.
@@ -5066,6 +5059,33 @@ predictDomains(
 ## 3D similarity {-}
 
 `foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1`
+
+## interpreting homology data {-}
+
+bitscore v evalue - with very low evalue (< 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!
+
+The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
+
+The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
+
+* E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+* 10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+* 10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
+* 10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+* E-value > 1 Proteins are most likely not related
+* E-value > 10 Hits are most likely junk unless the query sequence is very short.
+
+reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
+
+reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
+
+E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
+
+* Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
+
+* Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
 # alignments {-}
 
@@ -5147,7 +5167,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5183,7 +5203,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5233,7 +5253,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5249,7 +5269,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5258,7 +5278,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5332,7 +5352,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5351,7 +5371,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5468,7 +5488,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5503,7 +5523,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5799,7 +5819,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -6053,7 +6073,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -6076,7 +6096,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -6100,7 +6120,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6176,21 +6196,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6238,7 +6258,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-269-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6596,7 +6616,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-277-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-278-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6638,7 +6658,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-279-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-280-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6727,7 +6747,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-285-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-286-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

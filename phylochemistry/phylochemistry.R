@@ -1550,6 +1550,97 @@
 
     ##### Sequence data handling
 
+        #### blastNCBI
+
+            blastNCBI <- function(query_sequence, program, database) {
+    
+                # Reference: https://blast.ncbi.nlm.nih.gov/doc/blast-help/urlapi.html#urlapi
+                # Adjust program parameter if necessary
+                if (program == "megablast") { program <- "blastn&MEGABLAST=on" } else if (program == "rpsblast") { program <- "blastp&SERVICE=rpsblast" }
+                
+                # Build the request and post the initial request to start the search
+                url <- "https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi"
+                args <- list(
+                    CMD = "Put", PROGRAM = program, DATABASE = database,
+                    QUERY = query_sequence
+                )
+                response <- POST(url, body = args, encode = "form")
+                
+                # Parse the RID (request ID) and RTOE (how long we have to wait... apparently?).. then wait that long
+                content_text <- content(response, "text", encoding = "UTF-8")
+                rid <- sub(".*RID = (\\S+).*", "\\1", content_text)
+                rtoe <- as.numeric(sub(".*RTOE = (\\d+).*", "\\1", content_text))
+                Sys.sleep(rtoe)
+                
+                # Poll for results
+                repeat {
+                    Sys.sleep(5)
+                    poll_response <- GET(url, query = list( CMD = "Get", FORMAT_OBJECT = "SearchInfo", RID = rid ))
+                    poll_content <- content(poll_response, "text", encoding = "UTF-8")
+                    if (grepl("\\s+Status=WAITING", poll_content)) { next }
+                    if (grepl("\\s+Status=FAILED", poll_content)) { stop(sprintf("Search %s failed; please report to blast-help@ncbi.nlm.nih.gov.", rid)) }
+                    if (grepl("\\s+Status=UNKNOWN", poll_content)) { stop(sprintf("Search %s expired.", rid)) }
+                    if (grepl("\\s+Status=READY", poll_content)) { if (grepl("\\s+ThereAreHits=yes", poll_content)) { break } else { stop("No hits found.") } }
+                    stop("Unexpected status encountered.") # Unexpected status
+                }
+                
+                # Retrieve and display results
+                result_response <- GET(url, query = list( CMD = "Get", FORMAT_TYPE = "Text", RID = rid ))
+                result_content <- content(result_response, "text", encoding = "UTF-8")
+                split_lines <- unlist(strsplit(result_content, "\n"))
+                
+                # Process human readable results file
+                identities_indices <- grep("Identities", split_lines)
+                results <- data.frame(Score_Line = character(), Identities_Line = character(), Greater_Than_Line = character(), stringsAsFactors = FALSE)
+                
+                for (index in identities_indices) {
+                    
+                    # Get the score line
+                    identity_line <- split_lines[index]
+                    
+                    # Look upwards for the first line that starts with ">"
+                    greater_than_line <- NA
+                    for (i in seq(index - 1, 1, by = -1)) {
+                        if (startsWith(split_lines[i], ">")) {
+                            greater_than_line <- split_lines[i]
+                            break
+                        }
+                    }
+                    
+                    # Look upwards for the first line that starts with " Score"
+                    score_line <- NA
+                    for (i in seq(index - 1, 1, by = -1)) {
+                        if (startsWith(split_lines[i], " Score")) {
+                            score_line <- split_lines[i]
+                            break
+                        }
+                    }
+                    
+                    # Append to results data frame
+                    results <- rbind(results, data.frame(Score_Line = score_line, Identities_Line = identity_line, Greater_Than_Line = greater_than_line, stringsAsFactors = FALSE))
+                }
+                
+                # Parse results
+                parsed_results <- results %>%
+                    mutate(
+                        Score = as.numeric(sub(".*Score = ([0-9]+\\.?[0-9]*) bits.*", "\\1", Score_Line)),
+                        Raw_Score = as.numeric(sub(".*Score = [0-9]+\\.?[0-9]* bits \\(([0-9]+)\\).*", "\\1", Score_Line)),
+                        Expect = as.numeric(sub(".*Expect = ([^,]+).*", "\\1", Score_Line)),
+                        Identities_Ratio = sub(".*Identities = ([0-9]+/[0-9]+).*", "\\1", Identities_Line),
+                        Identities_Percent = as.numeric(sub(".*Identities = [0-9]+/[0-9]+ \\(([^%]+)%\\).*", "\\1", Identities_Line)),
+                        Gaps_Ratio = sub(".*Gaps = ([0-9]+/[0-9]+).*", "\\1", Identities_Line),
+                        Gaps_Percent = as.numeric(sub(".*Gaps = [0-9]+/[0-9]+ \\(([^%]+)%\\).*", "\\1", Identities_Line)),
+                        Hit_Name = Greater_Than_Line
+                    ) %>%
+                    select(Hit_Name, Score, Raw_Score, Expect, Identities_Ratio, Identities_Percent, Gaps_Ratio, Gaps_Percent)
+                parsed_results$Hit_Name <- gsub(">", "", parsed_results$Hit_Name)
+                
+                # Display the resulting parsed data frame
+                return(as_tibble(parsed_results))
+
+            }
+
+
         #### searchNCBI
 
             searchNCBI <- function(search_term, retmax = 5) {
