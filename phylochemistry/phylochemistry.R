@@ -14,7 +14,7 @@
                 
                 CRAN_packages <- c(
                     # "imager",
-                    "minpack.lm"
+                    "minpack.lm", "XML"
                 )
 
                 Bioconductor_packages <- c(
@@ -6779,6 +6779,184 @@
 
     ##### Language models and text data handling
 
+        #### createNewsletter
+
+            createNewsletter <- function(
+                    search_terms,
+                    focus_areas,
+                    n_articles_per_newsletter,
+                    pubmed_api_key,
+                    openai_api_key,
+                    image_prompt,
+                    monitored_directory = NULL,
+                    monitored_time_window = NULL,
+                    monitored_file_suffix = NULL
+                ) {
+
+                ## Search PubMed for all terms
+                    output <- list()
+                    output$hits <- searchPubMed(
+                        search_terms = search_terms,
+                        pubmed_api_key = pubmed_api_key,
+                        sort = "date"
+                    )
+                    yesterdays_hits <- output$hits[output$hits$date == (Sys.Date() - 1),]
+                    yesterdays_hits <- yesterdays_hits[nchar(yesterdays_hits$abstract) > 200,]
+                    output$yesterdays_hits <- yesterdays_hits
+
+                ## Rank articles
+                    if (nrow(yesterdays_hits) > 0) {
+                        ratings <- list()
+                        for (i in 1:nrow(yesterdays_hits)) { # i=1
+                            summary <- completionGPT(
+                                system_prompt = paste(
+                                    "You are an expert at classifying scientific literature.",
+                                    "I will give you an abstract, and your job is to provide a rating on how closely related that abstract",
+                                    "is to the following plant chemistry focus areas: ",
+                                    paste0(focus_areas, collapse = ", "),
+                                    ". DO NOT RESPOND WITH ANYTHING EXCEPT A SINGLE NUMBER THAT IS THE RATING FROM 1-10,",
+                                    "with 10 being the most related to the focus areas, 1 being the least related."
+                                ),
+                                query = paste0("Here is the abstract: ", yesterdays_hits$abstract[i]),
+                                model = "gpt-3.5-turbo",
+                                temperature = 0,
+                                openai_api_key = openai_api_key
+                            )
+                            ratings[[i]] <- summary$response
+                        }
+                        ratings <- do.call(rbind, ratings)
+                        ratings <- gsub("Rating: ", "", ratings)
+                        yesterdays_ranked_hits <- yesterdays_hits
+                        yesterdays_ranked_hits$ratings <- as.numeric(as.character(ratings))
+                        yesterdays_ranked_hits <- yesterdays_ranked_hits %>% arrange(desc(ratings))
+                        output$yesterdays_ranked_hits <- yesterdays_ranked_hits
+                    } else {
+                        output$yesterdays_ranked_hits <- NULL
+                    }
+
+                ## Make cover image
+                    endpoint_url <- "https://api.openai.com/v1/images/generations"
+                    image_response <- httr::content(httr::POST(
+                        url = endpoint_url, 
+                        add_headers(Authorization = paste("Bearer", openai_api_key)),
+                        content_type_json(), encode = "json",
+                        body = list(
+                            model = "dall-e-3", n = 1,
+                            prompt = image_prompt,
+                            size = "1024x1024")
+                    ))
+
+                ## Get today's date
+                    today <- Sys.Date()
+                    day <- as.integer(format(today, "%d"))
+                    suffix <- ifelse(day %in% c(1, 21, 31), "st", ifelse(day %in% c(2, 22), "nd", ifelse(day %in% c(3, 23), "rd", "th")))
+                    formatted_date <- paste0(format(today, "%B "), day, suffix, format(today, ", %Y"))
+
+                ## Monitored directory
+                    if (!is.null(monitored_directory)) {
+                        hours = monitored_time_window
+                        monitored_directory = "/home/bustalab/Documents/general_lab_resources/literature/papers_chunked/"
+                        directories <- dir(monitored_directory, full.names = TRUE)
+                        file_info <- file.info(directories)
+                        threshold_time <- Sys.time() - hours * 3600
+                        recently_modified <- file_info[file_info$mtime > threshold_time, ]
+                
+                        if (length(rownames(recently_modified)) > 0) {
+                            # Initialize an empty data frame to hold the combined data
+                            monitored_directory_df <- list()
+                            for (i in 1:length(rownames(recently_modified))) {
+                                file_path <- file.path(
+                                    rownames(recently_modified)[i],
+                                    paste0(basename(rownames(recently_modified)[i]), monitored_file_suffix)
+                                )
+                                # print(file_path)
+                                if (file.exists(file_path)) {
+                                    monitored_directory_df[[i]] <- data.frame(
+                                        doi = basename(rownames(recently_modified)[i]),
+                                        file_path = file_path,
+                                        abstract = if(length(readLines(file_path)) > 0){ readLines(file_path) } else { "NA" }
+                                    )
+                                }
+                            }
+                            monitored_directory_df <- do.call(rbind, monitored_directory_df)
+                    
+                            # Print the combined data frame
+                            monitored_directory_df
+                        } else {
+                            monitored_directory_df = data.frame(doi = "", abstract = "")
+                        }
+                    } else {
+                        monitored_directory_df = data.frame(doi = "", abstract = "")
+                    }
+
+                ## Query and n articles per newsletter
+                    query <- paste0(
+                        "Here are the articles:\n\n",
+                        paste(
+                            "This article is located at the following doi:", yesterdays_ranked_hits$doi[1:n_articles_per_newsletter],
+                            "Here is the article's title:", yesterdays_ranked_hits$abstract[1:n_articles_per_newsletter],
+                            "Here is the article's abstract:", yesterdays_ranked_hits$abstract[1:n_articles_per_newsletter],
+                            collapse = "\n\n"
+                        ),
+                        "Here are the articles from the archives:\n\n",
+                        paste(
+                            "This article is located at the following doi:", monitored_directory_df$doi[1:n_articles_per_newsletter],
+                            "Here is the article's abstract:", monitored_directory_df$abstract[1:n_articles_per_newsletter],
+                            collapse = "\n\n"
+                        )
+                    )
+
+                ## Issue newsletter query to OpenAI
+                    newsletter <- completionGPT(
+                        system_prompt = paste(
+                            
+                            ## How to prepare blurbs
+                            "You are a news reporter that specializes in summarizing the abstracts of scientific articles into short two to three sentence blurbs.",
+                            "Each blurb should begin with the name of any chemical compounds or compound classes being described in the abstract.",
+                            "The content of each blurb should emphasize the findings of the article and their application in solving real-world problems.",
+                            "Avoid describing the level of impact of the study by avoiding words like \"groundbreaking\", \"revolutionary\", and so on.",
+                            "Use the tone of a reporter.",
+                            "Do not include any formatting like bold or italics in the blurbs. Save formatting for where I explicitly tell you to use it.",
+                            "You will be sure to provide the doi for each article at the end of its blurb.",
+                            "Prefix the doi with `https://doi.org/`, like this: (https://doi.org/10.1111/tpj.16580)",
+                
+                            ## How to prepare newsletter
+                            "Your job is to write a newsletter in which each of the abstracts that you are provided is summarized.",
+                            "I will provide you with a list of scientific abstracts separated by new lines and your job is to use them to construct the newsletter.",
+                            "Format the text so that it can be sent as an HTML email",
+                            
+                            ## Greeting
+                            "You will begin the newsletter with a center-justified div (use style=\"text-align:center\") that contains an image (scale it to 200x200px) located at this URL:",
+                            image_response$data[[1]]$url,
+                            "Follow the image with a center-justified header at the <h1> level:",
+                            "“Greetings! This is your phytochemistry newsletter for ", formatted_date, "”.",
+                            "Then close the center-justified div.",
+                
+                            ## Groupings
+                            "After the greeting you will make two sections of groups for the newsletter. The \"main\" group and the \"from the archives\" group.",
+                            "In the \"main\" group of blurbs, you will group the blurbs for each article according to their topic. AIM FOR 3-4 TOPICS in the \"main\" group.",
+                            "Under each topic, include each blurb as a separate bullet point, and introduce each bullet point with a keyword or two in bold, followed by a colon, then the rest of the blurb.",
+                            "Use broad topics like `crops`, `stress tolerance`, `metabolism`, etc. so that lots of articles fit under each topic.",
+                            "DO NOT skip any of the articles. They ALL need to be in the newsletter.",
+                            "Separate the topics in the \"main\" group with little subtitles at the <h2> level.",
+                            "The second main section in the newsletter will contain blurb from articles that are \"from the archives\".",
+                            "To start the \"from the archives\" section, which should come after the main section, create a center-justified title at the <h1> level that is titled \"From the archives\".",
+                            "For that section, you will also be provided with a series of articles about which you will write blurbs, just as above."
+                                        
+                        ),
+                        query = query,
+                        model = "gpt-4o",
+                        temperature = 0,
+                        openai_api_key = openai_api_key
+                    )
+                    newsletter$response <- gsub("```", "", gsub("```html", "", newsletter$response))
+                    output$newsletter <- newsletter
+
+                message("Newsletter complete!")
+                return(output)
+                     
+            }
+
         #### completionGPT
 
             completionGPT <- function(system_prompt, query, model, temperature, openai_api_key) {
@@ -7581,83 +7759,83 @@
 
             searchPubMed <- function(search_terms, pubmed_api_key, sort = c("date", "relevance"), retmax_per_term = 20) {
 
-                  pm_entries <- character()
-                  term_vector <- character()
+                pm_entries <- character()
+                term_vector <- character()
 
-                  for (i in 1:length(search_terms)) { 
-                      search_output <- rentrez::entrez_search(
-                        db = "pubmed", term = as.character(search_terms[i]), 
-                        retmax = retmax_per_term, use_history = TRUE, sort = sort[1]
-                      )
+                for (i in 1:length(search_terms)) { 
+                  search_output <- rentrez::entrez_search(
+                    db = "pubmed", term = as.character(search_terms[i]), 
+                    retmax = retmax_per_term, use_history = TRUE, sort = sort[1]
+                  )
+                  
+                  # Initialize variables for retry mechanism
+                  success <- FALSE
+                  attempts <- 0
+                  max_attempts <- 3  # Maximum number of retry attempts
+                  
+                  while (!success && attempts < max_attempts) {
+                      attempts <- attempts + 1
                       
-                      # Initialize variables for retry mechanism
-                      success <- FALSE
-                      attempts <- 0
-                      max_attempts <- 3  # Maximum number of retry attempts
+                      # Attempt to fetch data
+                      query_output <- try(rentrez::entrez_fetch(
+                        db = "pubmed", web_history = search_output$web_history, 
+                        rettype = "xml", retmax = retmax_per_term, 
+                        api_key = pubmed_api_key, timeout = 60), silent = TRUE)
                       
-                      while (!success && attempts < max_attempts) {
-                          attempts <- attempts + 1
-                          
-                          # Attempt to fetch data
-                          query_output <- try(rentrez::entrez_fetch(
-                            db = "pubmed", web_history = search_output$web_history, 
-                            rettype = "xml", retmax = retmax_per_term, 
-                            api_key = pubmed_api_key, timeout = 60), silent = TRUE)
-                          
-                          # Check if the attempt was successful
-                          if (inherits(query_output, "try-error")) {
-                              message("Error encountered. Attempt ", attempts, " of ", max_attempts, ". Retrying in 5 seconds...")
-                              Sys.sleep(5)  # Wait before retrying
-                          } else {
-                              # Parse and store the entries if successful
-                              current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
-                              pm_entries <- c(pm_entries, current_pm_entries)
-                              term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
-                              success <- TRUE
-                          }
+                      # Check if the attempt was successful
+                      if (inherits(query_output, "try-error")) {
+                          message("Error encountered. Attempt ", attempts, " of ", max_attempts, ". Retrying in 5 seconds...")
+                          Sys.sleep(5)  # Wait before retrying
+                      } else {
+                          # Parse and store the entries if successful
+                          current_pm_entries <- XML::xmlToList(XML::xmlParse(query_output))
+                          pm_entries <- c(pm_entries, current_pm_entries)
+                          term_vector <- c(term_vector, rep(as.character(search_terms[i]), length(current_pm_entries)))
+                          success <- TRUE
                       }
-                      
-                      if (!success) {
-                          message("Failed to fetch data for term: ", as.character(search_terms[i]), " after ", max_attempts, " attempts.")
-                      }
-                      
-                      Sys.sleep(4)  # Wait between different search terms to respect API rate limits
+                  }
+                  
+                  if (!success) {
+                      message("Failed to fetch data for term: ", as.character(search_terms[i]), " after ", max_attempts, " attempts.")
+                  }
+                  
+                  Sys.sleep(4)  # Wait between different search terms to respect API rate limits
+                }
+
+                unique_indices <- !duplicated(pm_entries)
+                pm_entries <- pm_entries[unique_indices]
+                term_vector <- term_vector[unique_indices]
+
+                pm_results <- list()
+                for (i in 1:length(pm_entries)) { # i=1
+
+                  if (length(pm_entries[[i]]) == 1) { next }
+                  if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
+
+                  options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
+                  for (option in options) { # option = 4
+                      if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
+                          doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
+                          break
+                      } else {next}
                   }
 
-                  unique_indices <- !duplicated(pm_entries)
-                  pm_entries <- pm_entries[unique_indices]
-                  term_vector <- term_vector[unique_indices]
-
-                  pm_results <- list()
-                  for (i in 1:length(pm_entries)) { # i=1
-
-                      if (length(pm_entries[[i]]) == 1) { next }
-                      if (is.null(pm_entries[[i]]$MedlineCitation$Article$ELocationID$text)) { next }
-
-                      options <- which(names(pm_entries[[i]]$MedlineCitation$Article) == "ELocationID")
-                      for (option in options) { # option = 4
-                          if (grepl("10\\.", pm_entries[[i]]$MedlineCitation$Article[[option]]$text)) {
-                              doi <<- pm_entries[[i]]$MedlineCitation$Article[[option]]$text
-                              break
-                          } else {next}
-                      }
-
-                      pm_results[[i]] <- data.frame(
-                          entry_number = as.numeric(i),
-                          term = term_vector[[i]],
-                          date = lubridate::as_date(paste(
-                              pm_entries[[i]]$MedlineCitation$DateRevised$Year,
-                              pm_entries[[i]]$MedlineCitation$DateRevised$Month,
-                              pm_entries[[i]]$MedlineCitation$DateRevised$Day,
-                          sep = "-"
-                          )),
-                          journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
-                          title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
-                          doi = doi,
-                          abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
-                      )
-                  }
-                  return(as_tibble(do.call(rbind, pm_results)))
+                  pm_results[[i]] <- data.frame(
+                      entry_number = as.numeric(i),
+                      term = term_vector[[i]],
+                      date = lubridate::as_date(paste(
+                          pm_entries[[i]]$MedlineCitation$DateRevised$Year,
+                          pm_entries[[i]]$MedlineCitation$DateRevised$Month,
+                          pm_entries[[i]]$MedlineCitation$DateRevised$Day,
+                      sep = "-"
+                      )),
+                      journal = pm_entries[[i]]$MedlineCitation$Article$Journal$Title,
+                      title = paste0(pm_entries[[i]]$MedlineCitation$Article$ArticleTitle, collapse = ""),
+                      doi = doi,
+                      abstract = paste0(pm_entries[[i]]$MedlineCitation$Article$Abstract$AbstractText, collapse = "")
+                  )
+                }
+                return(as_tibble(do.call(rbind, pm_results)))
             }
 
         #### embedText
