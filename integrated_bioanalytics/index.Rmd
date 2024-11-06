@@ -3702,6 +3702,8 @@ runMatrixAnalysis(
 
 <!-- start language models -->
 
+see: https://magazine.sebastianraschka.com/p/understanding-large-language-models
+
 ## completions {-}
 
 You can run completions using:
@@ -3726,7 +3728,7 @@ Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a
 
 You have to provide your OpenAI API key.
 
-## createNewsletter
+## createNewsletter {-}
 
 The `createNewsletter()` function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field.
 
