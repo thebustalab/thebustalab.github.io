@@ -3702,6 +3702,10 @@ runMatrixAnalysis(
 
 <!-- start language models -->
 
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/llm.png', dpi = NA)
+```
+
 see: https://magazine.sebastianraschka.com/p/understanding-large-language-models
 
 ## completions {-}
