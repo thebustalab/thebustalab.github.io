@@ -3452,12 +3452,14 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- end -->
 
+# (PART) MODELS
+
+# numerical models {-}
+
 <!-- start models -->
 
 
-# (PART) MODELING
 
-# numerical models {-}
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
 
@@ -3987,8 +3989,9 @@ To practice creating models, try the following:
 
 <!-- end -->
 
-<!-- start language models -->
-# language models {-}
+# embedding models {-}
+
+<!-- start embedding models -->
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
 
@@ -4331,10 +4334,159 @@ search_results_ex_embed_pca %>%
 
 <!-- end -->
 
-<!-- start midterm -->
+# language models {-}
+
+<!-- start language models -->
+
+## completions {-}
+
+You can run completions using:
+
+
+``` r
+completionGPT(
+  system_prompt = "",
+  query = "",
+  model = "",
+  temperature = 0,
+  openai_api_key = ""
+)
+```
+
+The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`.
+
+The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.`
+
+Available options for `model` include "gpt-4o", gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.
+
+Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a highly oversimplified and somewhat inaccurate explanation.
+
+You have to provide your OpenAI API key.
+
+## createNewsletter
+
+The `createNewsletter()` function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field.
+
+With createNewsletter, you can optionally also monitor a directory on the computer system you are using. Anything in the monitored_directory (and its subdirectories) that was added within the past number of hours indicated in monitored_time_window that has a suffix matching monitored_file_suffix (only .txt files currently supported) will be added to the newsletter. This allows your newsletter to include not only PubMed search results but also files stored in a specific directory (like a collection of chunked .pdf files).
+
+
+``` r
+bustalab = TRUE
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+
+newsletter <- createNewsletter(
+    search_terms = c(
+        "plant biochemistry", "plant genomics and genetics",
+        "cuticular waxes", "triterpenoid yeast engineering",
+        "plant triterpenoids", "plant ABC transporters", "plant specialized metabolism",
+        "plant metabolism", "plant metabolic evolution", "plant biochemistry", "plant metabolism",
+        "plant genomics", "cuticular wax", "triterpenoids", "plant ABC transporters",
+        "plant specialized metabolism",
+        "biosynthesis", "metabolic evolution",
+        "artificial intelligence", "large language models",
+        "protein language models"
+    ),
+    focus_areas = c(
+        "phytochemistry", "plant biochemistry", "plant metabolism", "plant genomics",
+        "cuticular wax", "triterpenoids", "plant ABC transporters",
+        "plant specialized metabolism",
+        "biosynthesis", "metabolic evolution",
+        "artificial intelligence", "large language models",
+        "protein language models"
+    ),
+    n_articles_per_newsletter = 20,
+    pubmed_api_key = "api_key",
+    openai_api_key = "api_key",
+    image_prompt = "I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS: A modern, minimalist blog cover image for a phytochemistry blog post, WITHOUT ANY TEXT. The image should embody a minimalist aesthetic with simple, clean lines and a limited color palette. Depict abstract representations of the diverse themes in the blog post: medicinal plants, phytoremediation, plant growth, plant stress response, environmental microbiology, and plant biochemistry. Include stylized, minimalistic illustrations of Leonurus heterophyllus for medicinal plants, Ipomoea carnea for phytoremediation, a seedling for plant growth, Citrus reticulata for stress response, rice plants for arsenic stress response, abstract soil microbes for environmental microbiology, a sesame plant for disease resistance, and oat plants for cell wall synthesis. The composition should be harmoniously adjusted to ensure a balanced and aesthetically pleasing layout that captures the essence of phytochemistry and plant science research with a contemporary, streamlined look.",
+    monitored_directory = "/project_data/shared/general_lab_resources/literature/papers_chunked/",
+    monitored_time_window = 336,
+    monitored_file_suffix = ".1.txt"
+)
+names(newsletter)
+```
+
+Finally, you can get this newsletter emailed to yourself using the following approach: (i) set up a Zapier account and a Zap that monitors a Google Sheet then send you an email with the contents of that sheet anytime it is updated; (ii) use the following code to update the sheet with the output of the newsletter; (iii) make an R script that contains the source() command, createNewsletter(), and the write_sheet command then have that script executed as a cron job daily, for example.
+
+
+``` r
+gs4_auth(path = "your_auth_token")
+write_sheet(
+    data = data.frame("content" = newsletter$newsletter$response),
+    sheet = "Sheet1", "your_sheet_share_link"
+)
+```
+
+Here is an example of the newsletter:
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/newsletter.png" width="100%" style="display: block; margin: auto;" />
+
+## prompting strategies {-}
+
+
+Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona.
+
+Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request.
+
+Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings.
+
+Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation.
+
+Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses.
+
+Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning.
+
+Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities.
+
+Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.
+
+Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.
+
+Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
+
+### structured prompting
+
+### few shot learning
+
+### prompt engineering
+
+### chain of thought
+
+### gpt chains
+
+### fine tuning
+
+### structured response
+
+### retrieval-augemented generation
+
+
+
+<!-- # analyzeLiterature {-}
+
+If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
+
+- Simple question: What are wax blooms?
+
+- Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
+
+- High-Complexity question: Can you describe what is known about the transcriptional regulation of lipid transfer proteins in plants?
+
+- Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
+
+ "In earlier studies, different other compounds including β-amyrin were overproduced through using strong constitutive promoters [12], enhancers [13] and transcription factors [14]. The β-amyrin is the triterpenoids belongs to oleanane group [15], which harbors anti-hyperglycemic, anti-inflammatory, hypolipidemic effects along with several other pharmacological activities [16,17]. The β-amyrin synthase (βAS) is responsible to synthesize the β-amyrin from 2,3-oxidosqualene[18]. This 2,3-oxidosqualene is synthesized from squalene through squalene epoxidase (SQE), encoded by the ERG1 gene in S. cerevisiae [19]. Squalene is synthesized from farnesyl-pyrophosphate through the
+action of squalene synthase (SQS) (ERG9 gene); and this farnesyl-pyrophosphate (FPP) is synthesized by farnesyl diphosphate synthase (FPPS) (ERG20 gene), from isopentenyl pyrophosphate (IPP), a precursor supplied by mevalonate (MVA) pathway (Fig. 1). The 3-Hydroxy-3-Methyl glutaryl-CoA reductase (HMG1) [20,21] and squalene
+monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway in yeast. For the biosynthesis of triterpenoids, SQS and SQE are important enzymes [23] and were previously overexpressed for
+the overproduction of triterpenoids [14,24]."
+
+- Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms?  -->
+
+<!-- end -->
+
 # (PART) MIDTERM
 
 # midterm {-}
+
+<!-- start midterm -->
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg" width="100%" style="display: block; margin: auto;" />
 
@@ -5167,7 +5319,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5203,7 +5355,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5253,7 +5405,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5269,7 +5421,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5278,7 +5430,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5352,7 +5504,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5371,7 +5523,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5488,7 +5640,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5523,7 +5675,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5819,7 +5971,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -5833,98 +5985,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) LANGUAGE MODELS {-}
-
-<!-- start language models -->
-
-# completions {-}
-
-You can run completions using:
-
-
-``` r
-completionGPT(
-  system_prompt = "",
-  query = "",
-  model = "",
-  temperature = 0,
-  openai_api_key = ""
-)
-```
-
-The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`.
-
-The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.`
-
-Available options for `model` include "gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.
-
-Temperature goes from 0 to 2 and adds randomness to the answer. 
-
-You have to provide your OpenAI API key.
-
-# prompting strategies {-}
-
-
-This content provides a comprehensive guide on how to effectively use AI, particularly language models like ChatGPT, through structured prompting. Key aspects include:
-
-Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona.
-
-Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request.
-
-Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings.
-
-Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation.
-
-Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses.
-
-Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning.
-
-Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities.
-
-Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.
-
-Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.
-
-Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
-
-## structured prompting
-
-## few shot learning
-
-## prompt engineering
-
-## chain of thought
-
-## gpt chains
-
-## fine tuning
-
-## structured response
-
-## retrieval-augemented generation
-
-
-
-# analyzeLiterature {-}
-
-If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
-
-- Simple question: What are wax blooms?
-
-- Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
-
-- High-Complexity question: Can you describe what is known about the transcriptional regulation of lipid transfer proteins in plants?
-
-- Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
-
- "In earlier studies, different other compounds including β-amyrin were overproduced through using strong constitutive promoters [12], enhancers [13] and transcription factors [14]. The β-amyrin is the triterpenoids belongs to oleanane group [15], which harbors anti-hyperglycemic, anti-inflammatory, hypolipidemic effects along with several other pharmacological activities [16,17]. The β-amyrin synthase (βAS) is responsible to synthesize the β-amyrin from 2,3-oxidosqualene[18]. This 2,3-oxidosqualene is synthesized from squalene through squalene epoxidase (SQE), encoded by the ERG1 gene in S. cerevisiae [19]. Squalene is synthesized from farnesyl-pyrophosphate through the
-action of squalene synthase (SQS) (ERG9 gene); and this farnesyl-pyrophosphate (FPP) is synthesized by farnesyl diphosphate synthase (FPPS) (ERG20 gene), from isopentenyl pyrophosphate (IPP), a precursor supplied by mevalonate (MVA) pathway (Fig. 1). The 3-Hydroxy-3-Methyl glutaryl-CoA reductase (HMG1) [20,21] and squalene
-monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway in yeast. For the biosynthesis of triterpenoids, SQS and SQE are important enzymes [23] and were previously overexpressed for
-the overproduction of triterpenoids [14,24]."
-
-- Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms? 
-
-<!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -6073,7 +6133,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-262-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -6096,7 +6156,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -6120,7 +6180,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6196,21 +6256,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-269-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6258,7 +6318,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-273-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6616,7 +6676,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-278-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-281-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6658,7 +6718,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-280-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-283-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6747,7 +6807,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-286-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-289-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

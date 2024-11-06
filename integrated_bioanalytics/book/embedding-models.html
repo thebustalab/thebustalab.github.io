@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>embedding models | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="To run the analyses in this chapter, you will need four things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<meta name="generator" content="bookdown 0.39 with bs4_book()">
+<meta property="og:title" content="embedding models | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="To run the analyses in this chapter, you will need four things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="embedding models | Integrated Bioanalytics">
+<meta name="twitter:description" content="To run the analyses in this chapter, you will need four things. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages....">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.9/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">GETTING STARTED</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="active" href="embedding-models.html">embedding models</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
+<li><a class="" href="midterm.html">midterm</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">SCIENTIFIC WRITING</li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html">results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html"><span class="header-section-number">6</span> datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="embedding-models" class="section level1 unnumbered">
+<h1>embedding models<a class="anchor" aria-label="anchor" href="#embedding-models"><i class="fas fa-link"></i></a>
+</h1>
+<!-- start embedding models -->
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<p>To run the analyses in this chapter, you will need four things.</p>
+<ol style="list-style-type: decimal">
+<li>Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.</li>
+</ol>
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/language_model_analysis.R"</span><span class="op">)</span></span>
+<span><span class="co">## Loading packages...</span></span>
+<span><span class="co">## Loading functions...</span></span>
+<span><span class="co">## Done!</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Please create an account at and obtain an API key from <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a> (Login &gt; Account Settings &gt; API Key Management)</li>
+<li>Please create an account at and obtain an API key from <a href="https://huggingface.co" class="uri">https://huggingface.co</a> (Login &gt; Settings &gt; Access Tokens, then configure your access token/key to “Make calls to the serverless Inference API” and “Make calls to Inference Endpoints”)</li>
+<li>Please create an account at and obtain an API key from <a href="https://biolm.ai/" class="uri">https://biolm.ai/</a> (Login &gt; Account &gt; API Tokens)</li>
+<li>Please create an account (you may also need to create an NVIDIA cloud account if prompted) at and obtain an API key from <a href="https://build.nvidia.com/" class="uri">https://build.nvidia.com/</a>. (To get API key, go to: <a href="https://build.nvidia.com/meta/esm2-650m" class="uri">https://build.nvidia.com/meta/esm2-650m</a>, switch “input” to python and click “Get API Key” &gt; Generate Key)</li>
+</ol>
+<p>Keep your API keys (long sequences of numbers and letters, like a password) handy for use in these analyses.</p>
+<p>In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential model use) and models that make predictions based on numerical data (predictive model use). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text or protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.</p>
+<p>A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.</p>
+<div id="pre-reading" class="section level2 unnumbered">
+<h2>pre-reading<a class="anchor" aria-label="anchor" href="#pre-reading"><i class="fas fa-link"></i></a>
+</h2>
+<p>Please read over the following:</p>
+<ul>
+<li><p><a href="https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5">Text Embeddings: Comprehensive Guide</a>. In her article, “Text Embeddings: Comprehensive Guide”, Mariya Mansurova explores the evolution, applications, and visualization of text embeddings. Beginning with early methods like Bag of Words and TF-IDF, she traces how embeddings have advanced to capture semantic meaning, highlighting significant milestones such as word2vec and transformer-based models like BERT and Sentence-BERT. Mansurova explains how these embeddings transform text into vectors that computers can analyze for tasks like clustering, classification, and anomaly detection. She provides practical examples using tools like OpenAI’s embedding models and dimensionality reduction techniques, making this article an in-depth resource for both theoretical and hands-on understanding of text embeddings.</p></li>
+<li><p><a href="https://www.evolutionaryscale.ai/blog/esm3-release#simulating-500-million-years-of-evolution">ESM3: Simulating 500 million years of evolution with a language model</a>. The 2024 blog article “ESM3: Simulating 500 million years of evolution with a language model” by EvolutionaryScale introduces ESM3, a revolutionary language model trained on billions of protein sequences. This article explores how ESM3 marks a major advancement in computational biology by enabling researchers to reason over protein sequences, structures, and functions. With massive datasets and powerful computational resources, ESM3 can generate entirely new proteins, including esmGFP, a green fluorescent protein that differs significantly from known natural variants. The article highlights the model’s potential to transform fields like medicine, synthetic biology, and environmental sustainability by making protein design programmable. Please note the “Open Model” section of the blog, which highlights applications of ESM models in the natural sciences.</p></li>
+</ul>
+</div>
+<div id="text-embeddings" class="section level2 unnumbered">
+<h2>text embeddings<a class="anchor" aria-label="anchor" href="#text-embeddings"><i class="fas fa-link"></i></a>
+</h2>
+<p>Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.</p>
+<p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
+<span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"beta-amyrin synthase"</span>, <span class="st">"friedelin synthase"</span>, <span class="st">"sorghum bicolor"</span>, <span class="st">"cuticular wax biosynthesis"</span><span class="op">)</span>,</span>
+<span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  retmax_per_term <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  sort <span class="op">=</span> <span class="st">"relevance"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span></span>
+<span><span class="co">## [1] "entry_number" "term"         "date"        </span></span>
+<span><span class="co">## [4] "journal"      "title"        "doi"         </span></span>
+<span><span class="co">## [7] "abstract"</span></span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">select</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">term</span>, <span class="va">title</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 12 × 2</span></span>
+<span><span class="co">##    term                       title                         </span></span>
+<span><span class="co">##    &lt;chr&gt;                      &lt;chr&gt;                         </span></span>
+<span><span class="co">##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…</span></span>
+<span><span class="co">##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…</span></span>
+<span><span class="co">##  3 beta-amyrin synthase       Functional analysis of β-amyr…</span></span>
+<span><span class="co">##  4 friedelin synthase         Friedelin Synthase from Mayte…</span></span>
+<span><span class="co">##  5 friedelin synthase         Friedelin in Maytenus ilicifo…</span></span>
+<span><span class="co">##  6 friedelin synthase         Functional characterization o…</span></span>
+<span><span class="co">##  7 sorghum bicolor            Sorghum: A Multipurpose Crop. </span></span>
+<span><span class="co">##  8 sorghum bicolor            Molecular Breeding of Sorghum…</span></span>
+<span><span class="co">##  9 sorghum bicolor            Sorghum (Sorghum bicolor).    </span></span>
+<span><span class="co">## 10 cuticular wax biosynthesis Regulatory mechanisms underly…</span></span>
+<span><span class="co">## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…</span></span>
+<span><span class="co">## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…</span></span></code></pre></div>
+<p>From the output here, you can see that we’ve retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.</p>
+<p>Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at <a href="https://huggingface.co" class="uri">https://huggingface.co</a> and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.</p>
+<p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, available through the Hugging Face API at <a href="https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5" class="uri">https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5</a>. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at <a href="https://huggingface.co" class="uri">https://huggingface.co</a>, where you will find detailed documentation and additional resources.</p>
+<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
+<span>  df <span class="op">=</span> <span class="va">search_results</span>,</span>
+<span>  column_name <span class="op">=</span> <span class="st">"title"</span>,</span>
+<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">search_results_embedded</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span><span class="co">## # A tibble: 3 × 10</span></span>
+<span><span class="co">##   entry_number term  date       journal title doi   abstract</span></span>
+<span><span class="co">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
+<span><span class="co">## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
+<span><span class="co">## 3            3 beta… 2023-12-13 Plant … Func… 10.1… Down-re…</span></span>
+<span><span class="co">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
+<p>The output of the embedText function is a data frame where the 384 appended columns represent the embedding variables. These embeddings capture the features of each publication title. These embeddings are like a bar codes:</p>
+<div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span></span>
+<span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results_embedded</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    names_to <span class="op">=</span> <span class="st">"embedding_variable"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"value"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">embedding_variable</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">entry_number</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_y_discrete</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"article"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_fill_gradient</a></span><span class="op">(</span>low <span class="op">=</span> <span class="st">"white"</span>, high <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
+<span>      axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      axis.ticks.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
+<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">search_results_embedded</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results_embedded</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results_embedded</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"title"</span>, <span class="st">"journal"</span>, <span class="st">"term"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_label_repel</span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="va">title</span>, width <span class="op">=</span> <span class="fl">35</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      size <span class="op">=</span> <span class="fl">2</span>, min.segment.length <span class="op">=</span> <span class="fl">0.5</span>, force <span class="op">=</span> <span class="fl">50</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span>  </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
+<div class="sourceCode" id="cb175"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">31</span></span>
+<span></span>
+<span><span class="va">odor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n</span>,<span class="fl">1</span><span class="op">)</span>,</span>
+<span>  odor <span class="op">=</span> <span class="fu">dropNA</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">beer_components</span><span class="op">$</span><span class="va">analyte_odor</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">96</span>, <span class="va">n</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
+<span>  <span class="va">odor</span>, column_name <span class="op">=</span> <span class="st">"odor"</span>,</span>
+<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">out</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sample"</span>, <span class="st">"odor"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">pca_out</span></span>
+<span></span>
+<span><span class="va">pca_out</span><span class="op">$</span><span class="va">color</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span><span class="op">(</span></span>
+<span>  <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/rescale.html">rescale</a></span><span class="op">(</span><span class="va">pca_out</span><span class="op">$</span><span class="va">Dim.1</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fl">0</span>,</span>
+<span>  <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/rescale.html">rescale</a></span><span class="op">(</span><span class="va">pca_out</span><span class="op">$</span><span class="va">Dim.2</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">pca_out</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_label_repel</span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="va">odor</span>, width <span class="op">=</span> <span class="fl">35</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">2</span>, min.segment.length <span class="op">=</span> <span class="fl">0.5</span>, force <span class="op">=</span> <span class="fl">25</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">pca_out</span><span class="op">$</span><span class="va">color</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># scale_x_continuous(expand = c(1,0)) +</span></span>
+<span>  <span class="co"># scale_y_continuous(expand = c(1,0)) +</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="protein-embeddings" class="section level2 unnumbered">
+<h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
+</h2>
+<!-- Protein Language Models: -->
+<!--     The goal in these models is to train them so that the embeddings they create capture important biological features of proteins. -->
+<!--     The attention mechanism in transformer models allows capturing both local and global information in a protein sequence: -->
+<!--         Local Information: Might include interactions between neighboring amino acids. -->
+<!--         Global Information: Could encompass long-range relationships between distant parts of the sequence. -->
+<!--     While embedding models can be simple autoencoders, many embedding models, especially in protein language modeling, use transformers with attention mechanisms to capture complex patterns in the data. -->
+<!-- Attention Mechanism: -->
+<!--     The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element. -->
+<!--     It generates attention scores to weigh how much attention one amino acid should give to another. -->
+<!--     The attention mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. -->
+<!-- Why Attention is Beneficial: -->
+<!--     Long-Range Dependencies: Captures interactions between distant amino acids. -->
+<!--     Structural Complexity: Weighs relationships between amino acids to account for protein folding and interactions. -->
+<!--     Handling Variable Sequence Lengths: Adjusts focus across sequences of varying lengths. -->
+<!--     Multi-Dimensional Relationships: Multi-head attention allows capturing different kinds of relationships, like hydrophobic interactions or secondary structures. -->
+<!--     Contextualized Embeddings: Embeddings reflect the broader sequence environment, not just local motifs. -->
+<!-- Additional Mechanisms in Protein Language Models: -->
+<!--     Positional Encoding: Adds position information to the sequence so that the model can differentiate between identical amino acids at different positions. -->
+<!--     Masked Language Modeling (MLM): Trains the model to predict masked amino acids, learning patterns in the sequence. -->
+<!--     Multiscale Representations: Allows capturing both fine-grained and coarse-grained structural information. -->
+<!--     Evolutionary Information: Incorporates multiple sequence alignments (MSAs) to learn from conserved regions. -->
+<!--     Residual Connections: Helps information flow through the network and stabilizes training by allowing the model to retain original input data as it processes through layers. -->
+<!--     Normalization and Regularization: Techniques like layer normalization and dropout are used to stabilize training and prevent overfitting. -->
+<p>Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.</p>
+<p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
+<p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
+<p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.</p>
+<p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code, though you can also use the <code>searchNCBI()</code> function to retrieve your own sequences. For example:</p>
+<div class="sourceCode" id="cb176"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ncbi_results</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"oxidosqualene cyclase"</span>, retmax <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="va">ncbi_results</span></span>
+<span><span class="co">## AAStringSet object of length 100:</span></span>
+<span><span class="co">##       width seq                         names               </span></span>
+<span><span class="co">##   [1]   661 MMAVVENSVREG...LGRVMQRDELLR WP_392557160.1 pr...</span></span>
+<span><span class="co">##   [2]   309 MSGYLQELTLRL...IATMSLLQTLDL WP_392556640.1 pr...</span></span>
+<span><span class="co">##   [3]   637 MPSVSTPPMIPV...LESYYRHSRRPE WP_392555018.1 pr...</span></span>
+<span><span class="co">##   [4]   715 MDHRSTGLNRRE...VTVRQTVEFKVG WP_392550370.1 pr...</span></span>
+<span><span class="co">##   [5]   433 MKRLNSTPSLPG...TLSLCAALTADS WP_392549663.1 pr...</span></span>
+<span><span class="co">##   ...   ... ...</span></span>
+<span><span class="co">##  [96]   433 MNSVDSASILEM...VLNTLNVLVRRF WP_390951336.1 pr...</span></span>
+<span><span class="co">##  [97]   411 MIVRRSAAVLAA...FLISARNKKQQP WP_390927812.1 pr...</span></span>
+<span><span class="co">##  [98]   413 MNVRRSAAVLAT...LITRSRKHGRRQ WP_390917141.1 pr...</span></span>
+<span><span class="co">##  [99]   417 MTVRRSAAALAT...FLLSMRRKKQQP WP_390916034.1 pr...</span></span>
+<span><span class="co">## [100]   413 MNVRRSAAALAA...VLLSGRRKKNRL WP_390908471.1 pr...</span></span></code></pre></div>
+<p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.</p>
+<div class="sourceCode" id="cb177"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
+<span>  amino_acid_stringset <span class="op">=</span> <span class="va">OSC_sequences</span>,</span>
+<span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  nvidia_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/nvidia_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  platform <span class="op">=</span> <span class="st">"nvidia"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">embedded_OSCs</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">embedded_OSCs</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">embedded_OSCs</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">embedded_OSCs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span><span class="co">## # A tibble: 3 × 4</span></span>
+<span><span class="co">##   name                   product     embedding_1 embedding_2</span></span>
+<span><span class="co">##   &lt;chr&gt;                  &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 ABK76265.1_beta-amyrin beta-amyrin     0.00905 -0.00000746</span></span>
+<span><span class="co">## 2 ABL07607.1_beta-amyrin beta-amyrin     0.00468  0.00122   </span></span>
+<span><span class="co">## 3 ABY90140.2_beta-amyrin beta-amyrin     0.0186  -0.00662</span></span></code></pre></div>
+<p>Nice! Once we’ve bot the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
+<div class="sourceCode" id="cb178"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">embedded_OSCs</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">embedded_OSCs</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">embedded_OSCs</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"product"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">product</span><span class="op">)</span>,</span>
+<span>      shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2</span>, width <span class="op">=</span> <span class="fl">2</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="further-reading-10" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-10"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p><a href="https://bratanic-tomaz.medium.com/constructing-knowledge-graphs-from-text-using-openai-functions-096a6d010c17">creating knowledge graphs with LLMs</a>. This blog post explains how to create knowledge graphs from text using OpenAI functions combined with LangChain and Neo4j. It highlights how large language models (LLMs) have made information extraction more accessible, providing step-by-step instructions for setting up a pipeline to extract structured information and construct a graph from unstructured data.</p></li>
+<li><p><a href="https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f">creating RAG systems with LLMs</a>. This article provides a technical overview of implementing complex Retrieval Augmented Generation (RAG) systems, focusing on key concepts like chunking, query augmentation, document hierarchies, and knowledge graphs. It highlights the challenges in data retrieval, multi-hop reasoning, and query planning, while also discussing opportunities to improve RAG infrastructure for more accurate and efficient information extraction.</p></li>
+<li><p><a href="https://www.biorxiv.org/content/10.1101/2024.01.29.577750v3">using protein embeddings in biochemical research</a>. This study presents a machine learning pipeline that successfully identifies and characterizes terpene synthases (TPSs), a challenging task due to the limited availability of labeled protein sequences. By combining a curated TPS dataset, advanced structural domain segmentation, and language model techniques, the authors discovered novel TPSs, including the first active enzymes in Archaea, significantly improving the accuracy of substrate prediction across TPS classes.</p></li>
+<li><p><a href="https://ig.ft.com/generative-ai/">attention mechanims and transformers explained</a>. This Financial Times article explains the development and workings of large language models (LLMs), emphasizing their foundation on the transformer model created by Google researchers in 2017. These models use self-attention mechanisms to understand context, allowing them to respond to subtle relationships between elements in their input, even if those elements are far from one another in the linear input sequence.</p></li>
+<li><p><a href="https://build.nvidia.com/nim?q=protein">other types of protein language models</a>. <em>3D Protein Structure Prediction</em> deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. <em>Protein Embedding Generation</em> meta / esm2-650m: Generates protein embeddings from amino acid sequences. <em>Protein Sequence Design</em> ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. <em>Generative Protein Design</em> ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. <em>Molecule-Protein Interaction Prediction</em> mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).</p></li>
+</ul>
+</div>
+<div id="exercises-8" class="section level2 unnumbered">
+<h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-8"><i class="fas fa-link"></i></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set <code>sort</code> = “date”). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges. Below is an example to help you:</li>
+</ol>
+<div class="sourceCode" id="cb179"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results_ex</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
+<span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"oxidosqualene cyclase"</span>, <span class="st">"chemotaxonomy"</span>, <span class="st">"protein engineering"</span><span class="op">)</span>,</span>
+<span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  retmax_per_term <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  sort <span class="op">=</span> <span class="st">"date"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">search_results_ex_embed</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
+<span>  <span class="va">search_results_ex</span>, column_name <span class="op">=</span> <span class="st">"abstract"</span>,</span>
+<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">search_results_ex_embed</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"title"</span>, <span class="st">"journal"</span>, <span class="st">"term"</span>, <span class="st">"date"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">search_results_ex_embed_pca</span></span>
+<span></span>
+<span><span class="va">search_results_ex_embed_pca</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">date</span>, fill <span class="op">=</span> <span class="va">date</span>, shape <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_shape_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">21</span>, <span class="fl">22</span>, <span class="fl">23</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;"></div>
+<!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
+<ol start="2" style="list-style-type: decimal">
+<li><p>Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.</p></li>
+<li><p>Generate and visualize a set of protein embeddings. You can use <code>OSC_sequences</code> dataset provided by the source() command, or you can create your own protein sequence dataset using the <code>searchNCBI()</code> function.</p></li>
+</ol>
+<!-- end -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="numerical-models.html">numerical models</a></div>
+<div class="next"><a href="language-models.html">language models</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#embedding-models">embedding models</a></li>
+<li><a class="nav-link" href="#pre-reading">pre-reading</a></li>
+<li><a class="nav-link" href="#text-embeddings">text embeddings</a></li>
+<li><a class="nav-link" href="#protein-embeddings">protein embeddings</a></li>
+<li><a class="nav-link" href="#further-reading-10">further reading</a></li>
+<li><a class="nav-link" href="#exercises-8">exercises</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-11-06.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

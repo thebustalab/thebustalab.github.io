@@ -67,8 +67,9 @@
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
 <li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
-<li class="book-part">MODELING</li>
+<li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="embedding-models.html">embedding models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li class="book-part">MIDTERM</li>
 <li><a class="" href="midterm.html">midterm</a></li>
@@ -82,10 +83,6 @@
 <li><a class="" href="phylogenies.html">phylogenies</a></li>
 <li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
 <li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
-<li class="book-part">LANGUAGE MODELS</li>
-<li><a class="" href="completions.html">completions</a></li>
-<li><a class="" href="prompting-strategies.html">prompting strategies</a></li>
-<li><a class="" href="analyzeliterature.html">analyzeLiterature</a></li>
 <li class="book-part">SCIENTIFIC WRITING</li>
 <li><a class="" href="overview-1.html">overview</a></li>
 <li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
@@ -137,7 +134,7 @@
 <h2>advanced usage of analyzeGCMSdata<a class="anchor" aria-label="anchor" href="#advanced-usage-of-analyzegcmsdata"><i class="fas fa-link"></i></a>
 </h2>
 <p>You can ask <code>analyzeGCMSdata</code> to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying “0” corresponds to the total ion chromatogram and must be included as the first item in the list. Here’s an example:</p>
-<div class="sourceCode" id="cb184"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb187"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span>, ions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"0"</span>, <span class="st">"218"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p>Will return an interface that shows chromatograms for the total ion count and for ion 218.</p>

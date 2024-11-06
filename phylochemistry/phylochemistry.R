@@ -6929,7 +6929,7 @@
                             "You will begin the newsletter with a center-justified div (use style=\"text-align:center\") that contains an image (scale it to 200x200px) located at this URL:",
                             image_response$data[[1]]$url,
                             "Follow the image with a center-justified header at the <h1> level:",
-                            "“Greetings! This is your phytochemistry newsletter for ", formatted_date, "”.",
+                            "“Greetings! This is your research newsletter for ", formatted_date, "”.",
                             "Then close the center-justified div.",
                 
                             ## Groupings

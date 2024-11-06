@@ -2,9 +2,8 @@ fig:unnamed-chunk-68
 part-getting-started
 part-data-visualization
 part-statistical-methods
-part-modeling
-part-midterm
-loading-gff-files
+part-models
+createnewsletter
 structured-prompting
 few-shot-learning
 prompt-engineering
@@ -13,6 +12,8 @@ gpt-chains
 fine-tuning
 structured-response
 retrieval-augemented-generation
+part-midterm
+loading-gff-files
 zoomed-insets
 plot-insets
 image-insets
