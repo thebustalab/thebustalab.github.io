@@ -4338,6 +4338,10 @@ search_results_ex_embed_pca %>%
 
 <!-- start language models -->
 
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" width="100%" style="display: block; margin: auto;" />
+
+see: https://magazine.sebastianraschka.com/p/understanding-large-language-models
+
 ## completions {-}
 
 You can run completions using:
@@ -4363,7 +4367,7 @@ Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a
 
 You have to provide your OpenAI API key.
 
-## createNewsletter
+## createNewsletter {-}
 
 The `createNewsletter()` function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field.
 
@@ -5319,7 +5323,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5355,7 +5359,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5405,7 +5409,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5421,7 +5425,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-241-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5430,7 +5434,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5504,7 +5508,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5523,7 +5527,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5640,7 +5644,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5675,7 +5679,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5971,7 +5975,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -6133,7 +6137,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-262-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -6156,7 +6160,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -6180,7 +6184,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6256,21 +6260,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-269-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-269-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-271-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6318,7 +6322,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-273-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-274-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6676,7 +6680,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-281-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-282-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6718,7 +6722,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-283-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-284-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6807,7 +6811,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-289-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-290-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

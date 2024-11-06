@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>language models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content='completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "",  temperature = 0,  openai_api_key = "" ) The system_prompt tells the model how to act. For...'>
+<meta name="description" content='see: https://magazine.sebastianraschka.com/p/understanding-large-language-models completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "", ...'>
 <meta name="generator" content="bookdown 0.39 with bs4_book()">
 <meta property="og:title" content="language models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content='completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "",  temperature = 0,  openai_api_key = "" ) The system_prompt tells the model how to act. For...'>
+<meta property="og:description" content='see: https://magazine.sebastianraschka.com/p/understanding-large-language-models completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "", ...'>
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="language models | Integrated Bioanalytics">
-<meta name="twitter:description" content='completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "",  temperature = 0,  openai_api_key = "" ) The system_prompt tells the model how to act. For...'>
+<meta name="twitter:description" content='see: https://magazine.sebastianraschka.com/p/understanding-large-language-models completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "", ...'>
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
@@ -105,6 +105,8 @@
 <h1>language models<a class="anchor" aria-label="anchor" href="#language-models"><i class="fas fa-link"></i></a>
 </h1>
 <!-- start language models -->
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" width="100%" style="display: block; margin: auto;"></div>
+<p>see: <a href="https://magazine.sebastianraschka.com/p/understanding-large-language-models" class="uri">https://magazine.sebastianraschka.com/p/understanding-large-language-models</a></p>
 <div id="completions" class="section level2 unnumbered">
 <h2>completions<a class="anchor" aria-label="anchor" href="#completions"><i class="fas fa-link"></i></a>
 </h2>
@@ -123,9 +125,8 @@
 <p>Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a highly oversimplified and somewhat inaccurate explanation.</p>
 <p>You have to provide your OpenAI API key.</p>
 </div>
-<div id="createnewsletter" class="section level2" number="4.1">
-<h2>
-<span class="header-section-number">4.1</span> createNewsletter<a class="anchor" aria-label="anchor" href="#createnewsletter"><i class="fas fa-link"></i></a>
+<div id="createnewsletter" class="section level2 unnumbered">
+<h2>createNewsletter<a class="anchor" aria-label="anchor" href="#createnewsletter"><i class="fas fa-link"></i></a>
 </h2>
 <p>The <code>createNewsletter()</code> function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field.</p>
 <p>With createNewsletter, you can optionally also monitor a directory on the computer system you are using. Anything in the monitored_directory (and its subdirectories) that was added within the past number of hours indicated in monitored_time_window that has a suffix matching monitored_file_suffix (only .txt files currently supported) will be added to the newsletter. This allows your newsletter to include not only PubMed search results but also files stored in a specific directory (like a collection of chunked .pdf files).</p>
@@ -185,44 +186,44 @@
 <p>Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.</p>
 <p>Testing and Feedback: It’s important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.</p>
 <p>Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.</p>
-<div id="structured-prompting" class="section level3" number="4.1.1">
+<div id="structured-prompting" class="section level3" number="4.0.1">
 <h3>
-<span class="header-section-number">4.1.1</span> structured prompting<a class="anchor" aria-label="anchor" href="#structured-prompting"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.1</span> structured prompting<a class="anchor" aria-label="anchor" href="#structured-prompting"><i class="fas fa-link"></i></a>
 </h3>
 </div>
-<div id="few-shot-learning" class="section level3" number="4.1.2">
+<div id="few-shot-learning" class="section level3" number="4.0.2">
 <h3>
-<span class="header-section-number">4.1.2</span> few shot learning<a class="anchor" aria-label="anchor" href="#few-shot-learning"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.2</span> few shot learning<a class="anchor" aria-label="anchor" href="#few-shot-learning"><i class="fas fa-link"></i></a>
 </h3>
 </div>
-<div id="prompt-engineering" class="section level3" number="4.1.3">
+<div id="prompt-engineering" class="section level3" number="4.0.3">
 <h3>
-<span class="header-section-number">4.1.3</span> prompt engineering<a class="anchor" aria-label="anchor" href="#prompt-engineering"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.3</span> prompt engineering<a class="anchor" aria-label="anchor" href="#prompt-engineering"><i class="fas fa-link"></i></a>
 </h3>
 </div>
-<div id="chain-of-thought" class="section level3" number="4.1.4">
+<div id="chain-of-thought" class="section level3" number="4.0.4">
 <h3>
-<span class="header-section-number">4.1.4</span> chain of thought<a class="anchor" aria-label="anchor" href="#chain-of-thought"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.4</span> chain of thought<a class="anchor" aria-label="anchor" href="#chain-of-thought"><i class="fas fa-link"></i></a>
 </h3>
 </div>
-<div id="gpt-chains" class="section level3" number="4.1.5">
+<div id="gpt-chains" class="section level3" number="4.0.5">
 <h3>
-<span class="header-section-number">4.1.5</span> gpt chains<a class="anchor" aria-label="anchor" href="#gpt-chains"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.5</span> gpt chains<a class="anchor" aria-label="anchor" href="#gpt-chains"><i class="fas fa-link"></i></a>
 </h3>
 </div>
-<div id="fine-tuning" class="section level3" number="4.1.6">
+<div id="fine-tuning" class="section level3" number="4.0.6">
 <h3>
-<span class="header-section-number">4.1.6</span> fine tuning<a class="anchor" aria-label="anchor" href="#fine-tuning"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.6</span> fine tuning<a class="anchor" aria-label="anchor" href="#fine-tuning"><i class="fas fa-link"></i></a>
 </h3>
 </div>
-<div id="structured-response" class="section level3" number="4.1.7">
+<div id="structured-response" class="section level3" number="4.0.7">
 <h3>
-<span class="header-section-number">4.1.7</span> structured response<a class="anchor" aria-label="anchor" href="#structured-response"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.7</span> structured response<a class="anchor" aria-label="anchor" href="#structured-response"><i class="fas fa-link"></i></a>
 </h3>
 </div>
-<div id="retrieval-augemented-generation" class="section level3" number="4.1.8">
+<div id="retrieval-augemented-generation" class="section level3" number="4.0.8">
 <h3>
-<span class="header-section-number">4.1.8</span> retrieval-augemented generation<a class="anchor" aria-label="anchor" href="#retrieval-augemented-generation"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.0.8</span> retrieval-augemented generation<a class="anchor" aria-label="anchor" href="#retrieval-augemented-generation"><i class="fas fa-link"></i></a>
 </h3>
 <!-- # analyzeLiterature {-}
 
@@ -263,17 +264,17 @@ the overproduction of triterpenoids [14,24]."
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#language-models">language models</a></li>
 <li><a class="nav-link" href="#completions">completions</a></li>
-<li><a class="nav-link" href="#createnewsletter"><span class="header-section-number">4.1</span> createNewsletter</a></li>
+<li><a class="nav-link" href="#createnewsletter">createNewsletter</a></li>
 <li>
 <a class="nav-link" href="#prompting-strategies">prompting strategies</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#structured-prompting"><span class="header-section-number">4.1.1</span> structured prompting</a></li>
-<li><a class="nav-link" href="#few-shot-learning"><span class="header-section-number">4.1.2</span> few shot learning</a></li>
-<li><a class="nav-link" href="#prompt-engineering"><span class="header-section-number">4.1.3</span> prompt engineering</a></li>
-<li><a class="nav-link" href="#chain-of-thought"><span class="header-section-number">4.1.4</span> chain of thought</a></li>
-<li><a class="nav-link" href="#gpt-chains"><span class="header-section-number">4.1.5</span> gpt chains</a></li>
-<li><a class="nav-link" href="#fine-tuning"><span class="header-section-number">4.1.6</span> fine tuning</a></li>
-<li><a class="nav-link" href="#structured-response"><span class="header-section-number">4.1.7</span> structured response</a></li>
-<li><a class="nav-link" href="#retrieval-augemented-generation"><span class="header-section-number">4.1.8</span> retrieval-augemented generation</a></li>
+<li><a class="nav-link" href="#structured-prompting"><span class="header-section-number">4.0.1</span> structured prompting</a></li>
+<li><a class="nav-link" href="#few-shot-learning"><span class="header-section-number">4.0.2</span> few shot learning</a></li>
+<li><a class="nav-link" href="#prompt-engineering"><span class="header-section-number">4.0.3</span> prompt engineering</a></li>
+<li><a class="nav-link" href="#chain-of-thought"><span class="header-section-number">4.0.4</span> chain of thought</a></li>
+<li><a class="nav-link" href="#gpt-chains"><span class="header-section-number">4.0.5</span> gpt chains</a></li>
+<li><a class="nav-link" href="#fine-tuning"><span class="header-section-number">4.0.6</span> fine tuning</a></li>
+<li><a class="nav-link" href="#structured-response"><span class="header-section-number">4.0.7</span> structured response</a></li>
+<li><a class="nav-link" href="#retrieval-augemented-generation"><span class="header-section-number">4.0.8</span> retrieval-augemented generation</a></li>
 </ul>
 </li>
 </ul>

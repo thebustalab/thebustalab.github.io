@@ -3,7 +3,6 @@ part-getting-started
 part-data-visualization
 part-statistical-methods
 part-models
-createnewsletter
 structured-prompting
 few-shot-learning
 prompt-engineering
