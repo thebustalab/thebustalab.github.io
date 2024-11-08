@@ -1778,6 +1778,37 @@
                     return(table)
             }
 
+        #### hmmAlign
+
+            hmmAlign <- function(fasta_in_path, hmm_in_path, domain_name) {
+    
+                # Fetch HMM and perform alignment
+                    hmm_file <- tempfile()
+                    alignment_file <- tempfile()
+                    system(sprintf("hmmfetch %s %s > %s", hmm_in_path, domain_name, hmm_file))
+                    system(sprintf("hmmalign %s %s > %s", hmm_file, fasta_in_path, alignment_file))
+
+                # Read alignment file, Extract RF sequence and determine positions to keep
+                    lines <- readLines(alignment_file)
+                    rf_sequence <- paste0(sub("^#=GC RF\\s+", "", grep("^#=GC RF", lines, value = TRUE)), collapse = "")
+                    positions_to_keep <- which(strsplit(rf_sequence, "")[[1]] == "x")
+                
+                # Extract and concatenate sequences per header
+                    sequence_lines <- lines[!grepl("^#", lines) & grepl("^[A-Za-z0-9_]", lines)]
+                    parts <- strsplit(sequence_lines, "\\s+")
+                    headers <- sapply(parts, `[[`, 1)
+                    sequences <- sapply(parts, function(x) x[length(x)])
+                    sequences_per_header <- tapply(sequences, headers, paste0, collapse = "")
+                
+                # Crop sequences based on RF and assemble into AAStringSet
+                    cropped_sequences <- sapply(sequences_per_header, function(seq) {
+                        paste0(strsplit(seq, "")[[1]][positions_to_keep], collapse = "")
+                    })
+                    sequences <- AAStringSet(cropped_sequences)
+                    names(sequences) <- names(cropped_sequences)
+                    return(sequences)
+            }
+
         #### extractORFs
 
             #' Extract open reading frames from multifasta files
