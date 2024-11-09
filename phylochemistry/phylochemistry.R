@@ -7134,9 +7134,9 @@
                 return(output)
             }
 
-        #### analyzeTerms
+        #### extractTerms
 
-            extractTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term) {
+            extractTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term, return = c("dataframe", "terms")) {
 
                 # Prepare text_vector to analyze
                     text_vector <- list()
@@ -7162,7 +7162,8 @@
                     data <- cbind(dataframe, gs_dfm)
 
                 # Return
-                    return(data)
+                    if(return[1] == "dataframe") {return(data)}
+                    if(return[1] == "terms") {return(search_hits_terms)}
             }
 
         #### searchField
