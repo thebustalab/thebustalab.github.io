@@ -1556,7 +1556,13 @@
     
                 # Reference: https://blast.ncbi.nlm.nih.gov/doc/blast-help/urlapi.html#urlapi
                 # Adjust program parameter if necessary
-                if (program == "megablast") { program <- "blastn&MEGABLAST=on" } else if (program == "rpsblast") { program <- "blastp&SERVICE=rpsblast" }
+                if (program == "megablast") { 
+                    program <- "blastn&MEGABLAST=on" 
+                } else if (program == "rpsblast") { 
+                    program <- "blastp&SERVICE=rpsblast" 
+                } else if (program == "blastp") {
+                    program <- "blastp"  # Enable protein->protein BLAST
+                }
                 
                 # Build the request and post the initial request to start the search
                 url <- "https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi"
@@ -1566,7 +1572,7 @@
                 )
                 response <- POST(url, body = args, encode = "form")
                 
-                # Parse the RID (request ID) and RTOE (how long we have to wait... apparently?).. then wait that long
+                # Parse the RID (request ID) and RTOE (how long we have to wait)
                 content_text <- content(response, "text", encoding = "UTF-8")
                 rid <- sub(".*RID = (\\S+).*", "\\1", content_text)
                 rtoe <- as.numeric(sub(".*RTOE = (\\d+).*", "\\1", content_text))
@@ -1637,8 +1643,8 @@
                 
                 # Display the resulting parsed data frame
                 return(as_tibble(parsed_results))
-
             }
+
 
 
         #### searchNCBI
@@ -11653,7 +11659,10 @@
 
             buildModel <- function(
                 data,
-                model_type = c("linear_regression", "random_forest_regression", "random_forest_classification", "logistic_regression"),
+                model_type = c(
+                    "linear_regression", "random_forest_regression",
+                    "random_forest_classification", "logistic_regression"
+                ),
                 predictor_variables = NULL,
                 outcome_variable = NULL,
                 train_test_ratio = 0.9,
@@ -11830,7 +11839,11 @@
 
             buildModel2 <- function(
                 data,
-                model_type = c("linear_regression", "random_forest_regression", "random_forest_classification", "logistic_regression"),
+                model_type = c(
+                    "linear_regression", "random_forest_regression",
+                    "random_forest_classification", "logistic_regression",
+                    "contrastive_learning"
+                ),
                 input_variables = NULL,
                 output_variable = NULL,
                 fold_cross_validation = 10,
@@ -11988,12 +12001,19 @@
 
             predictWithModel <- function(
                 data,
-                model_type = c("linear_regression", "random_forest_regression", "random_forest_classification", "logistic_regression"),
+                model_type = c(
+                    "linear_regression", "random_forest_regression",
+                    "random_forest_classification", "logistic_regression",
+                    "contrastive_learning"
+                ),
                 model
             ) {
 
                 ## Check to see that required data are provided
-
+                    if (missing(data)) {
+                        stop("Input data is required.")
+                    }
+            
                 ## Predictions
 
                     if (model_type == "linear_regression") {
@@ -12006,6 +12026,22 @@
 
                     if (model_type == "random_forest_classification") {
                         output <- stats::predict(model, new_data = data)
+                    }
+
+                    if (model_type == "contrastive_learning") {
+                        # Convert data to the required matrix format
+                        data <- data[,colnames(data) %in% model$input_variables]
+                        embedding_matrix <- as.matrix(data)
+
+                        # Load model architecture and parameters
+                        embedding_model <- model$architecture()
+                        embedding_model$load_state_dict(model$state_dict)
+
+                        # Pass the data through the model to get embeddings
+                        embeddings <- embedding_model(torch::torch_tensor(embedding_matrix))
+
+                        # Convert embeddings to a data frame or matrix format for easy use in R
+                        output <- as.matrix(embeddings$detach()$cpu())  # Detach and bring to CPU if running on GPU
                     }
 
                 ## Return
