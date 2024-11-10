@@ -7915,6 +7915,7 @@
                 seq_column = NULL,
                 model_name = "esm2_t30_150M_UR50D"
             ) {
+
                 input_type <- input_type[1]
                 platform <- platform[1]
                 
@@ -7972,6 +7973,7 @@
                     }
                     
                 } else if (input_type == "dataframe") {
+
                     if (!is.data.frame(dataframe)) {
                         stop("For input_type 'dataframe', dataframe must be a data frame.")
                     }
@@ -13124,4 +13126,4 @@
 
     #####################
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
