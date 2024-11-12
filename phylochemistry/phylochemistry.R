@@ -6892,7 +6892,6 @@
                 ## Monitored directory
                     if (!is.null(monitored_directory)) {
                         hours = monitored_time_window
-                        monitored_directory = "/home/bustalab/Documents/general_lab_resources/literature/papers_chunked/"
                         directories <- dir(monitored_directory, full.names = TRUE)
                         file_info <- file.info(directories)
                         threshold_time <- Sys.time() - hours * 3600
@@ -6931,7 +6930,7 @@
                         "Here are the articles:\n\n",
                         paste(
                             "This article is located at the following doi:", yesterdays_ranked_hits$doi[1:n_articles_per_newsletter],
-                            "Here is the article's title:", yesterdays_ranked_hits$abstract[1:n_articles_per_newsletter],
+                            "Here is the article's title:", yesterdays_ranked_hits$title[1:n_articles_per_newsletter],
                             "Here is the article's abstract:", yesterdays_ranked_hits$abstract[1:n_articles_per_newsletter],
                             collapse = "\n\n"
                         ),
@@ -11868,8 +11867,8 @@
                     if (model_type == "contrastive_learning") {
 
                         # Extract embeddings as a matrix and function labels
-                        embedding_matrix <- data %>% select(input_variables) %>% as.matrix()
-                        function_labels <- data %>% select(output_variable) %>% as.data.frame() %>% unlist()
+                        embedding_matrix <- data %>% select(all_of(input_variables)) %>% as.matrix()
+                        function_labels <- data %>% select(all_of(output_variable)) %>% as.data.frame() %>% unlist()
 
                         # Create all possible pairs of rows
                         pairs <- expand.grid(1:nrow(embedding_matrix), 1:nrow(embedding_matrix))
