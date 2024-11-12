@@ -2912,9 +2912,8 @@ In this course, we will build both types of models using a function called `buil
 For model building, we also need to talk about handling missing data. If we have missing data in our data set, we need to  one way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the `impute` function from the `rstatix` package. Let's do that now:
 
 ```{r}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 any(is.na(metabolomics_data))
-metabolomics_data<- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))
+metabolomics_data[] <- lapply(metabolomics_data, function(x) Hmisc::impute(x, median(x, na.rm = TRUE)))
 any(is.na(metabolomics_data))
 ```
 
@@ -3655,7 +3654,7 @@ search_results_ex_embed <- embedText(
 runMatrixAnalysis(
   data = search_results_ex_embed,
   analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(search_results)[grep("embed", colnames(search_results))],
+  columns_w_values_for_single_analyte = colnames(search_results_ex_embed)[grep("embed", colnames(search_results_ex_embed))],
   columns_w_sample_ID_info = c("title", "journal", "term", "date")
 ) -> search_results_ex_embed_pca
 

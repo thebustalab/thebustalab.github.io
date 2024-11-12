@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>numerical models | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses. Inferential...">
+<meta name="description" content="model use Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses....">
 <meta name="generator" content="bookdown 0.39 with bs4_book()">
 <meta property="og:title" content="numerical models | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses. Inferential...">
+<meta property="og:description" content="model use Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses....">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="numerical models | Integrated Bioanalytics">
-<meta name="twitter:description" content="Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses. Inferential...">
+<meta name="twitter:description" content="model use Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses....">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
@@ -107,11 +107,17 @@
 <!-- start models -->
 <!-- explain cross validation and rmse in some sort of metrics section -->
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;"></div>
+<div id="model-use" class="section level2 unnumbered">
+<h2>model use<a class="anchor" aria-label="anchor" href="#model-use"><i class="fas fa-link"></i></a>
+</h2>
 <p>Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main ways to use numerical models: for inferential uses and predictive uses.</p>
 <ul>
 <li><p>Inferential uses aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.</p></li>
 <li><p>Predictive uses are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don’t really care how the model works as long as it is accurate.</p></li>
 </ul>
+<p>In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model’s mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.</p>
+<p>Interestingly, increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is ‘overfitted’ which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.</p>
+<p>To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.</p>
 <p>In this course, we will build both types of models using a function called <code>buildModel</code>. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:</p>
 <ul>
 <li><p>input_variables: the input variables (sometimes called “features” or “predictors”) the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.</p></li>
@@ -125,12 +131,10 @@
 <code class="sourceCode R"><span><span class="va">metabolomics_data</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">metabolomics_data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/impute.html">impute</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [1] FALSE</span></span></code></pre></div>
-<div id="inferential-model-use" class="section level2 unnumbered">
-<h2>inferential model use<a class="anchor" aria-label="anchor" href="#inferential-model-use"><i class="fas fa-link"></i></a>
+</div>
+<div id="single-linear-regression" class="section level2 unnumbered">
+<h2>single linear regression<a class="anchor" aria-label="anchor" href="#single-linear-regression"><i class="fas fa-link"></i></a>
 </h2>
-<div id="single-linear-regression" class="section level3 unnumbered">
-<h3>single linear regression<a class="anchor" aria-label="anchor" href="#single-linear-regression"><i class="fas fa-link"></i></a>
-</h3>
 <p>We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use <code>buildModel</code>, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:</p>
 <div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
@@ -294,9 +298,9 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="multiple-linear-regression" class="section level3 unnumbered">
-<h3>multiple linear regression<a class="anchor" aria-label="anchor" href="#multiple-linear-regression"><i class="fas fa-link"></i></a>
-</h3>
+<div id="multiple-linear-regression" class="section level2 unnumbered">
+<h2>multiple linear regression<a class="anchor" aria-label="anchor" href="#multiple-linear-regression"><i class="fas fa-link"></i></a>
+</h2>
 <p>Cool! Now let’s try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + … + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let’s try it with the first 30 metabolites in our data set:</p>
 <div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -346,17 +350,48 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-</div>
-<div id="predictive-model-use" class="section level2 unnumbered">
-<h2>predictive model use<a class="anchor" aria-label="anchor" href="#predictive-model-use"><i class="fas fa-link"></i></a>
+<div id="assessing-regression-models" class="section level2 unnumbered">
+<h2>assessing regression models<a class="anchor" aria-label="anchor" href="#assessing-regression-models"><i class="fas fa-link"></i></a>
 </h2>
-<p>In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model’s mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.</p>
-<p>Interestingly, increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is ‘overfitted’ which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.</p>
-<p>To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.</p>
-<p>We can use the training/testing approach described above to build many different types of models. Here, we will look at random forests.</p>
-<div id="random-forests" class="section level3 unnumbered">
-<h3>random forests<a class="anchor" aria-label="anchor" href="#random-forests"><i class="fas fa-link"></i></a>
-</h3>
+<p>There are three aspects of a regression model that we should check on, to make sure the model isn’t violating and assumptions that we make when declaring the model to be valid:</p>
+<ol style="list-style-type: decimal">
+<li>
+<p>Residual-Based Assumptions. These checks are specifically about the behavior of residuals, which are the differences between observed values and model predictions. This group includes:</p>
+<ul>
+<li><p>Linearity: Examines if residuals show a random scatter around zero, indicating a linear relationship between predictors and the response variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.</p></li>
+<li><p>Homoscedasticity (Homogeneity of Variance): Looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.</p></li>
+<li><p>Normality of Residuals: Assesses whether residuals follow a normal distribution, crucial for statistical inference in regression. To check this characteristic, a Quantile-Quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.</p></li>
+</ul>
+</li>
+<li>
+<p>Predictor Relationships: This check pertains to relationships among the predictor/input variables themselves, rather than their relationship with the response/output variable. In this case:</p>
+<ul>
+<li>Collinearity: Assesses multicollinearity, which occurs when predictors are highly correlated with each other. This can lead to inflated variances of regression coefficients, making it challenging to attribute effects to individual predictors. This check helps ensure that predictors are independent enough to provide clear, interpretable results for each variable’s influence on the response.</li>
+</ul>
+</li>
+<li>
+<p>Model Fit and Influence: These checks look at the overall fit of the model and assess if specific data points have undue influence on the model’s results. This group includes:</p>
+<ul>
+<li><p>Posterior Predictive Check: This checks if model predictions align well with observed data, indicating a good overall fit. While not directly a residual analysis, it’s a comprehensive check for how well the model captures data patterns.</p></li>
+<li><p>Influential Observations: Identifies data points that might disproportionately affect the model. High-leverage points can distort model estimates, so it’s important to verify that no single observation is overly influential.</p></li>
+</ul>
+</li>
+</ol>
+<p>We can assess all of these using:</p>
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">multiple_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span>
+<span>  output_variable <span class="op">=</span> <span class="st">"AMP"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">check_model</span><span class="op">(</span><span class="va">multiple_regression_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="random-forests" class="section level2 unnumbered">
+<h2>random forests<a class="anchor" aria-label="anchor" href="#random-forests"><i class="fas fa-link"></i></a>
+</h2>
 <p>Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a ‘classification’ task) and for predicting numerical variables (a ‘regression’ task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree’s output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest’s final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg" width="100%" style="display: block; margin: auto;"></div>
 <p>We can use the <code>buildModel()</code> function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_n_leaves</code>. Here is more information on those parameters:</p>
@@ -386,7 +421,7 @@ Now, let’s put it all together and make it pretty:</p>
 <code>min_leaf_size</code> = seq(1,3,1) defines the minimal size of leaf nodes, ranging from 1 to 3 in steps of 1.</li>
 </ul>
 <p>This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest’s performance. This approach allows for a systematic exploration of how different configurations affect the model’s ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.</p>
-<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">random_forest_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
 <span>    model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
@@ -413,16 +448,16 @@ Now, let’s put it all together and make it pretty:</p>
 - std_err: The standard error of the mean accuracy, providing an idea of the variability in model performance.
 - .config: A unique identifier for each model configuration tested.</p>
 <p>We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.</p>
-<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">random_forest_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtry</span>, y <span class="op">=</span> <span class="va">trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_n</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-196-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can easily use the model to make predictions by using the <code>predictWithModel()</code> function:</p>
-<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
@@ -444,9 +479,9 @@ Now, let’s put it all together and make it pretty:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
 <span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-198-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to “random_forest_classification” instead of “random_forest_regression”. Let’s try that now:</p>
-<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">unknown</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fl">35</span><span class="op">:</span><span class="fl">40</span>,<span class="op">]</span></span>
 <span></span>
@@ -480,15 +515,15 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## #   fold_cross_validation &lt;int&gt;, std_err &lt;dbl&gt;,</span></span>
 <span><span class="co">## #   .config &lt;chr&gt;</span></span></code></pre></div>
 <p>Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:</p>
-<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_vars_tried_at_split</span>, y <span class="op">=</span> <span class="va">n_trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_n</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">unknown</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"random_forest_classification"</span>,</span>
@@ -507,12 +542,11 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="co">## .pred_class5 kidney_disease   kidney_disease</span></span>
 <span><span class="co">## .pred_class6 kidney_disease   kidney_disease</span></span></code></pre></div>
 </div>
-</div>
 <div id="further-reading-9" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
-<li><p><a href="https://github.com/easystats/performance">performance R package</a>. The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they’re too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.</p></li>
+<li><p>More on assessing regression models: <a href="https://github.com/easystats/performance">performance R package</a>. The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they’re too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.</p></li>
 <li><p><a href="https://pythonprogramminglanguage.com/machine-learning-tasks/">common machine learning tasks</a>. Machine learning involves using algorithms to learn from data, with key tasks including classification, regression, and clustering. Classification categorizes data, such as recognizing images of animals, regression predicts continuous values like sales forecasts, and clustering groups data based on similarities without prior labels.</p></li>
 </ul>
 <p>Classification with random forests:
@@ -550,15 +584,11 @@ Now, let’s put it all together and make it pretty:</p>
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#numerical-models">numerical models</a></li>
-<li>
-<a class="nav-link" href="#inferential-model-use">inferential model use</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#model-use">model use</a></li>
 <li><a class="nav-link" href="#single-linear-regression">single linear regression</a></li>
 <li><a class="nav-link" href="#multiple-linear-regression">multiple linear regression</a></li>
-</ul>
-</li>
-<li>
-<a class="nav-link" href="#predictive-model-use">predictive model use</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#random-forests">random forests</a></li></ul>
-</li>
+<li><a class="nav-link" href="#assessing-regression-models">assessing regression models</a></li>
+<li><a class="nav-link" href="#random-forests">random forests</a></li>
 <li><a class="nav-link" href="#further-reading-9">further reading</a></li>
 <li><a class="nav-link" href="#exercises-7">exercises</a></li>
 </ul>
@@ -578,7 +608,7 @@ Now, let’s put it all together and make it pretty:</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-11-06.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-11-12.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
