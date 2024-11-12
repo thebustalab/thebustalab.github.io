@@ -45,6 +45,7 @@
                     "ape",
                     "multcompView",
                     "jsonlite",
+                    "performance",
                     
                     ## ML packages
                         "recipes",
@@ -56,7 +57,6 @@
                     # "imager",
                     "httr",
                     "rentrez",
-                    "performance",
                     "shiny",
                     "png",
                     "DT",
@@ -11799,15 +11799,15 @@
                                 ) -> workflow
 
                         ## Tune the model on the training set
-                            tune_results <- tune_grid(
+                            tune_results <- tune::tune_grid(
                                 workflow,
-                                resamples = vfold_cv(data, v = fold_cross_validation), #CV object
+                                resamples = rsample::vfold_cv(data, v = fold_cross_validation), #CV object
                                 grid = expand.grid(
                                     mtry = optimization_parameters$n_vars_tried_at_split,
                                     trees = optimization_parameters$n_trees,
                                     min_n = optimization_parameters$min_leaf_size
                                 ), # grid of values to try
-                                metrics = metric_set(rmse) # metrics we care about
+                                metrics = yardstick::metric_set(yardstick::rmse) # metrics we care about
                             )
 
                         # Check model parameters if you want

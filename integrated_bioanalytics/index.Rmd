@@ -3120,6 +3120,41 @@ ggplot() +
   theme_bw()
 ```
 
+## assessing regression models {-}
+
+There are three aspects of a regression model that we should check on, to make sure the model isn't violating and assumptions that we make when declaring the model to be valid:
+
+1. Residual-Based Assumptions. These checks are specifically about the behavior of residuals, which are the differences between observed values and model predictions. This group includes:
+
+    - Linearity: Examines if residuals show a random scatter around zero, indicating a linear relationship between predictors and the response variable. Patterns or curves in this plot may indicate that the model does not adequately capture the true relationship, suggesting potential non-linearity.
+    
+    - Homoscedasticity (Homogeneity of Variance): Looks at the spread of residuals to confirm that variance is consistent across fitted values. In other words, the spread of the residuals should be uniform regardless of the fitted values. To assess homoscedasticity, residuals are plotted against fitted values. A horizontal band of residuals indicates that the variance is consistent, supporting the homoscedasticity assumption. Conversely, patterns such as a funnel shape, where residuals spread out or contract as fitted values increase, suggest heteroscedasticity, indicating that the variance of errors changes with the level of the independent variables.
+    
+    - Normality of Residuals: Assesses whether residuals follow a normal distribution, crucial for statistical inference in regression. To check this characteristic, a Quantile-Quantile (Q-Q) plot is used, where the residuals are plotted against a theoretical normal distribution. If the residuals are normally distributed, the points will align closely along a straight line. Significant deviations from this line indicate departures from normality, which may affect the reliability of statistical inferences drawn from the model.
+
+2. Predictor Relationships: This check pertains to relationships among the predictor/input variables themselves, rather than their relationship with the response/output variable. In this case:
+    
+    - Collinearity: Assesses multicollinearity, which occurs when predictors are highly correlated with each other. This can lead to inflated variances of regression coefficients, making it challenging to attribute effects to individual predictors. This check helps ensure that predictors are independent enough to provide clear, interpretable results for each variable’s influence on the response.
+
+3. Model Fit and Influence: These checks look at the overall fit of the model and assess if specific data points have undue influence on the model’s results. This group includes:
+
+    - Posterior Predictive Check: This checks if model predictions align well with observed data, indicating a good overall fit. While not directly a residual analysis, it’s a comprehensive check for how well the model captures data patterns.
+
+    - Influential Observations: Identifies data points that might disproportionately affect the model. High-leverage points can distort model estimates, so it’s important to verify that no single observation is overly influential.
+
+We can assess all of these using:
+
+```{r, fig.width = 12, fig.height = 10}
+multiple_regression_model <- buildModel2(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  input_variables = colnames(metabolomics_data)[3:10],
+  output_variable = "AMP"
+)
+
+check_model(multiple_regression_model$model)
+```
+
 ## random forests {-}
 
 Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a 'classification' task) and for predicting numerical variables (a 'regression' task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree's output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest's final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).
@@ -3263,7 +3298,7 @@ data.frame(
 
 ## further reading {-}
 
-- [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
+- More on assessing regression models: [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
 
 - [common machine learning tasks](https://pythonprogramminglanguage.com/machine-learning-tasks/). Machine learning involves using algorithms to learn from data, with key tasks including classification, regression, and clustering. Classification categorizes data, such as recognizing images of animals, regression predicts continuous values like sales forecasts, and clustering groups data based on similarities without prior labels.
 
