@@ -56,6 +56,7 @@
                     # "imager",
                     "httr",
                     "rentrez",
+                    "performance",
                     "shiny",
                     "png",
                     "DT",
