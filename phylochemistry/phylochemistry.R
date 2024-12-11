@@ -8037,9 +8037,6 @@
                 }
             }
 
-
-
-
     ##### Networks
 
         #### extractModules
@@ -10165,6 +10162,15 @@
         }
 
     ##### Mathematics, Statistical Testing, Modeling, Signal Processing
+
+        #### makeRectangular
+
+            makeRectangular <- function(dataframe, names_from, values_from, values_fill = c(0, NA)) {
+                wide_data <- pivot_wider(dataframe, names_from = names_from, values_from = values_from, values_fill = values_fill[1])
+                names <- unique(unlist(dataframe[,colnames(dataframe) == names_from]))
+                out <- pivot_longer(wide_data, cols = names, values_to = values_from, names_to = names_from)
+                return(out)  
+            }
 
         #### drawBaseline
 
