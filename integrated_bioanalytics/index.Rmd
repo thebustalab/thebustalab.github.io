@@ -411,7 +411,7 @@ You can compilie this document into a pdf. We can also run R chunks right inside
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 
-## exercises {-}
+<!-- ## exercises {-}
 
 In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
@@ -644,7 +644,12 @@ ggplot(
 )
 ```
 
-When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
+When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
+
+<!-- end -->
+
+<!-- start data visualization II -->
+
 
 # data visualization II {-}
 
@@ -822,7 +827,7 @@ plot3 <-  ggplot(
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
-## exercises {-}
+<!-- ## exercises {-}
 
 In this set of exercises we're going to practice making more plots using the dataset `solvents`. Well, you don't have to use `solvents`, you could use something else if you want, but `solvents` is a fun one to explore. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
 
@@ -844,7 +849,7 @@ Some pointers:
 
 5. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted. Note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized.
 
-6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem.
+6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem. -->
 
 ## {-}
 
@@ -5579,9 +5584,9 @@ ________________________________________________________________________________
 
 <!-- end -->
 
-# datasets
+# datasets {-}
 
-## alaska_lake_data
+## alaska_lake_data {-}
 
 The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition and environmental conditions of these unique ecosystems. Researchers took water samples from several lakes, measuring key environmental parameters like water temperature and pH, along with analyzing the abundance of different chemical elements, such as carbon, nitrogen, and phosphorus. By comparing the concentrations of both bound and free elements, the study aimed to understand the health of these aquatic environments and the impact of natural and anthropogenic factors on the water chemistry. The dataset will be used to inform conservation strategies for maintaining the ecological balance in these sensitive regions.
 - lake (Categorical): The name of the lake from which the water sample was collected. This refers to the sample.
@@ -5592,7 +5597,7 @@ water_temp (Continuous): The water temperature (in degrees Celsius) of the sampl
 - mg_per_L (Continuous): The concentration (in milligrams per liter) of the corresponding analyte from the element column, indicating the abundance of each analyte in the water sample.
 - element_type (Categorical): Describes whether the element is in a "bound" or "free" state, providing context for the form of the analyte.
 
-## algae_data
+## algae_data {-}
 
 This dataset was generated as part of a study investigating the biochemical composition of different algae strains under varying harvesting conditions. The goal of the research was to examine how different algae strains and harvesting regimes affect the abundance of various chemical species, particularly fatty acids and amino acids, which have potential applications in biofuel production and nutritional supplements. Replicates were performed to ensure consistency, and a wide range of chemical species was measured to provide insights into the algae's metabolic profile and its response to environmental or harvesting changes.
 
@@ -5602,7 +5607,7 @@ This dataset was generated as part of a study investigating the biochemical comp
 - chemical_species (Categorical): The type of chemical species or analyte measured in the algae sample, including various fatty acids (FAs) and amino acids (Aas).
 - abundance (Continuous): The measured abundance of the chemical species or analyte in the algae sample, expressed in a continuous quantitative form (e.g., mg/L or similar units).
 
-## beer_components
+## beer_components {-}
 
 This dataset captures the volatile compounds released from different ingredients like barley and corn, likely as part of a study on food aroma profiles. Researchers measured the abundance of specific analytes (such as 2-Methylpropanal) and classified them by chemical group (e.g., Aldehydes). The goal is to assess how different ingredients contribute to the overall aroma by linking each analyte to sensory descriptors, which include odor characteristics such as "Green," "Pungent," and "Malty." The dataset could be useful in food science research.
 
@@ -5613,7 +5618,7 @@ This dataset captures the volatile compounds released from different ingredients
 - abundance (Continuous): The concentration of the analyte measured in the sample, likely in a quantitative unit such as mg/L.
 - analyte_odor (Categorical): A sensory descriptor for the odors associated with the analyte, listed as a combination of descriptors (e.g., "Green; Pungent; Burnt; Malty; Toasted").
 
-## hawaii_aquifers
+## hawaii_aquifers {-}
 
 This dataset represents water quality measurements from various wells within an aquifer system, collected as part of a study on groundwater composition. Researchers measured the abundance of different dissolved elements and compounds, such as silica (SiO2) and chloride (Cl), from different wells in an aquifer. The dataset could be used to assess the chemical profile of groundwater and monitor any changes in water quality over time. Note the absence of geospatial data (latitude and longitude) for certain samples, and note that some samples come from the same well and aquifer but have different latitude and longitude coordinates.
 
@@ -5624,7 +5629,7 @@ This dataset represents water quality measurements from various wells within an 
 - analyte (Categorical): The specific dissolved compound or element measured in the water sample (e.g., "SiO2," "Cl").
 - abundance (Continuous): The concentration of the analyte in the water sample, expressed in a quantitative unit (mg/L).
 
-## hops_components
+## hops_components {-}
 
 This dataset contains detailed information on various hop varieties used in brewing, including their country of origin, brewing usage (aroma or bittering), and the chemical composition of their essential oils and acids. The dataset serves as a resource for brewers to select hop varieties based on their aroma profiles and chemical content, such as alpha acids and essential oils like humulene and myrcene, which influence the bitterness, flavor, and aroma of beer. The goal of this dataset is to help optimize the hop selection process in brewing for specific flavor profiles and brewing techniques like dry hopping or bittering.
 
