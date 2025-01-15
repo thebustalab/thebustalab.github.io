@@ -9241,7 +9241,6 @@
 
             }
 
-
         #### readChromatograms
 
             #' Import chromatograms stored as ChemStation exported .csv files
