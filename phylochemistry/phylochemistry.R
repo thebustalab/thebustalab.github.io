@@ -7597,7 +7597,8 @@
 
             }
 
-        
+        #### analyzeGCMSdata3
+            
             analyzeGCMSdata3 <- function(
                 CDF_directory_path = getwd(),
                 zoom_and_scroll_rate = 100,
@@ -9238,9 +9239,9 @@
                     }
                 
 
-        }
+            }
 
-        
+
         #### readChromatograms
 
             #' Import chromatograms stored as ChemStation exported .csv files
