@@ -105,9 +105,9 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 <!-- end -->
 
-<!-- start overview -->
-
 # (PART) GETTING STARTED 
+
+<!-- start overview -->
 
 # overview {-}
 
@@ -241,10 +241,9 @@ The first time you try this, it will very likely say: "You need to install the f
 
 <!-- end -->
 
-<!-- start data visualization -->
-
-
 # (PART) DATA VISUALIZATION
+
+<!-- start data visualization -->
 
 
 # data visualization I {-}
@@ -1182,6 +1181,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
+## {-}
 
 ## further reading {-}
 
@@ -1203,9 +1203,8 @@ For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
 
-## {-}
 
-## further reading {-}
+
 
 <!-- end -->
 
@@ -1468,7 +1467,7 @@ alaska_lake_data %>%
 
 The percent columns for each park add to 100%, so, for example, Devil Mountain Lake has 32.3% of BELA's dissolved sulfur.
 
-## exercises {-}
+<!-- ## exercises {-}
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?*  Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
@@ -1576,7 +1575,9 @@ ggplot(pt_by_year_summ,
   coord_flip()
 ```
 
-7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book.
+7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. -->
+
+## {-}
 
 ## further reading {-}
 
@@ -1778,7 +1779,7 @@ ggplot(
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
-### exercises {-}
+<!-- ### exercises {-}
 
 In this set of exercises, as you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
@@ -1895,10 +1896,8 @@ ggplot() +
   geom_segment(data = wine_grape_data_pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
   geom_label(data = filter(wine_grape_data_pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
 ```
+ -->
 
-### further reading {-}
-
-Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
 
 ## tsne and umap {-}
 
@@ -1965,7 +1964,11 @@ p2 <- ggplot(data) +
 p1 + p2
 ```
 
-### further reading {-}
+## {-}
+
+## further reading {-}
+
+Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
 
 https://datavizpyr.com/how-to-make-umap-plot-in-r/
 
@@ -2157,6 +2160,8 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
  
+## {-}
+
 ## further reading {-}
 
 http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
@@ -2168,7 +2173,7 @@ https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-
 https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
 
-## exercises {-}
+<!-- ## exercises {-}
 
 For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
 
@@ -2186,7 +2191,7 @@ For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_
 
 7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
 
-8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.
+8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups. -->
 
 
 <!-- 
@@ -2854,6 +2859,8 @@ hawaii_aquifers %>%
 
 ```
 
+## {-}
+
 ## further reading {-}
 
 For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
@@ -2866,7 +2873,8 @@ Ten common statistical mistakes and their solutions: [Science Forum: Ten common 
 
 How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue)
 
-## exercises {-}
+
+<!-- ## exercises {-}
 
 Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please complete the following:
 
@@ -2876,15 +2884,15 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
-4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
 
 <!-- end -->
 
 # (PART) MODELS
 
-# numerical models {-}
+<!-- start numerical models -->
 
-<!-- start models -->
+# numerical models {-}
 
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
@@ -3301,6 +3309,8 @@ data.frame(
 )
 ```
 
+## {-}
+
 ## further reading {-}
 
 - More on assessing regression models: [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
@@ -3313,7 +3323,7 @@ Classification with random forests:
 - https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 
-## exercises {-}
+<!-- ## exercises {-}
 
 To practice creating models, try the following:
 
@@ -3400,14 +3410,14 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 
 model$metrics
 
-```
+``` -->
 
 
 <!-- end -->
 
-# embedding models {-}
-
 <!-- start embedding models -->
+
+# embedding models {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg', dpi = NA)
@@ -3627,6 +3637,8 @@ runMatrixAnalysis(
 
 ```
 
+## {-}
+
 ## further reading {-}
 
 - [creating knowledge graphs with LLMs](https://bratanic-tomaz.medium.com/constructing-knowledge-graphs-from-text-using-openai-functions-096a6d010c17). This blog post explains how to create knowledge graphs from text using OpenAI functions combined with LangChain and Neo4j. It highlights how large language models (LLMs) have made information extraction more accessible, providing step-by-step instructions for setting up a pipeline to extract structured information and construct a graph from unstructured data.
@@ -3639,7 +3651,7 @@ runMatrixAnalysis(
 
 - [other types of protein language models](https://build.nvidia.com/nim?q=protein). *3D Protein Structure Prediction* deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. *Protein Embedding Generation* meta / esm2-650m: Generates protein embeddings from amino acid sequences. *Protein Sequence Design* ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. *Generative Protein Design* ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. *Molecule-Protein Interaction Prediction* mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).
 
-## exercises {-}
+<!-- ## exercises {-}
 
 1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set `sort` = "date"). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges. Below is an example to help you:
 
@@ -3673,7 +3685,6 @@ search_results_ex_embed_pca %>%
     theme_minimal()
 ```
 
-<!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
 
@@ -3730,11 +3741,13 @@ runMatrixAnalysis(
     theme_minimal()
 
 ```
+asdf -->
+
 <!-- end -->
 
-# language models {-}
-
 <!-- start language models -->
+
+# language models {-}
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/llm.png', dpi = NA)
@@ -3846,23 +3859,25 @@ Testing and Feedback: It's important to test prompts with various inputs and per
 
 Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
 
-### structured prompting
+### structured prompting {-}
 
-### few shot learning
+### few shot learning {-}
 
-### prompt engineering
+### prompt engineering {-}
 
-### chain of thought
+### chain of thought {-}
 
-### gpt chains
+### gpt chains {-}
 
-### fine tuning
+### fine tuning {-}
 
-### structured response
+### structured response {-}
 
-### retrieval-augemented generation
+### retrieval-augemented generation {-}
 
+## {-}
 
+## further reading {-}
 
 <!-- # analyzeLiterature {-}
 

@@ -69,7 +69,6 @@
 <li><a class="" href="comparing-means.html">comparing means</a></li>
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
-<li><a class="" href="embedding-models.html">embedding models</a></li>
 <li><a class="" href="language-models.html">language models</a></li>
 <li class="book-part">MIDTERM</li>
 <li><a class="" href="midterm.html">midterm</a></li>
@@ -91,7 +90,7 @@
 <li><a class="" href="abstract-and-title.html">abstract and title</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
-<li><a class="" href="datasets.html"><span class="header-section-number">6</span> datasets</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
 </ul>
@@ -112,7 +111,7 @@
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" width="100%" style="display: block; margin: auto;"></div>
 <p>One we know within-group variances, we find the “elbow” point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in <strong>B</strong> and <strong>C</strong>.)</p>
 <p>Let’s try k-means using <code>runMatrixAnalysis</code>. For this example, let’s run it on the PCA projection of the alaska lakes data set. We can set <code>analysis = "kmeans"</code>. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the <code>parameters</code> argument:</p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
@@ -135,7 +134,7 @@
 <span></span>
 <span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span>, <span class="va">alaska_lake_data_pca</span><span class="op">)</span> </span></code></pre></div>
 <p>We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using <code>geom_mark_ellipse</code>. Note that it is recommended to specify both <code>fill</code> and <code>label</code> for geom_mark_ellipse:</p>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
@@ -155,7 +154,7 @@
 <h2>dbscan<a class="anchor" aria-label="anchor" href="#dbscan"><i class="fas fa-link"></i></a>
 </h2>
 <p>There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, <code>runMatrixAnalysis()</code> will again load an interactive means of selecting parameters for defining dbscan clusters (“k”, and “threshold”). In the context of markdown document, simply provide “k” and “threshold” to the <code>parameters</code> argument:</p>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
@@ -178,7 +177,7 @@
 <span></span>
 <span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span>, <span class="va">alaska_lake_data_pca</span><span class="op">)</span></span></code></pre></div>
 <p>We can make the plot in the same way, but please note that to get <code>geom_mark_ellipse</code> to omit the ellipse for NAs you need to feed it data without NAs:</p>
-<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
@@ -198,7 +197,7 @@
 <h2>summarize by cluster<a class="anchor" aria-label="anchor" href="#summarize-by-cluster"><i class="fas fa-link"></i></a>
 </h2>
 <p>One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:</p>
-<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
@@ -268,28 +267,35 @@
 <span><span class="va">plot_1</span> <span class="op">+</span> <span class="va">plot_2</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="further-reading-6" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-6"><i class="fas fa-link"></i></a>
+<div id="section-5" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-5"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-4" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-4"><i class="fas fa-link"></i></a>
 </h2>
 <p><a href="http://www.sthda.com/english/wiki/wiki.php?id_contents=7940" class="uri">http://www.sthda.com/english/wiki/wiki.php?id_contents=7940</a></p>
 <p><a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/</a></p>
 <p><a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png</a></p>
 <p><a href="https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/" class="uri">https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/</a></p>
-</div>
-<div id="exercises-4" class="section level2 unnumbered">
-<h2>exercises<a class="anchor" aria-label="anchor" href="#exercises-4"><i class="fas fa-link"></i></a>
-</h2>
-<p>For this set of exercises, please use the dataset <code>hawaii_aquifers</code> or <code>tequila_chemistry</code>, available after you run the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command. Do the following:</p>
-<ol style="list-style-type: decimal">
-<li><p>Run a PCA analysis on the data set and plot the results.</p></li>
-<li><p>Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your “variables of interest”).</p></li>
-<li><p>Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.</p></li>
-<li><p>Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.</p></li>
-<li><p>Create a plot with three subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.</p></li>
-<li><p>Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.</p></li>
-<li><p>Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.</p></li>
-<li><p>Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.</p></li>
-</ol>
+<!-- ## exercises {-}
+
+For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
+
+1. Run a PCA analysis on the data set and plot the results. 
+
+2. Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
+
+3. Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
+
+4. Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.
+
+5. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.
+
+6. Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
+
+7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
+
+8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups. -->
 <!-- 
 
 
@@ -372,7 +378,9 @@ Maybe something like this:
 
 {r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
- --><!-- end --><!-- start comparing means -->
+ -->
+<!-- end -->
+<!-- start comparing means -->
 </div>
 </div>
   <div class="chapter-nav">
@@ -394,8 +402,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <li><a class="nav-link" href="#kmeans">kmeans</a></li>
 <li><a class="nav-link" href="#dbscan">dbscan</a></li>
 <li><a class="nav-link" href="#summarize-by-cluster">summarize by cluster</a></li>
-<li><a class="nav-link" href="#further-reading-6">further reading</a></li>
-<li><a class="nav-link" href="#exercises-4">exercises</a></li>
+<li><a class="nav-link" href="#section-5"></a></li>
+<li><a class="nav-link" href="#further-reading-4">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -413,7 +421,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-11-12.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-01-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

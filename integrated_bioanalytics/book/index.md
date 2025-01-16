@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2024-11-12"
+date: "2025-01-16"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -90,9 +90,9 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 
 <!-- end -->
 
-<!-- start overview -->
-
 # (PART) GETTING STARTED 
+
+<!-- start overview -->
 
 # overview {-}
 
@@ -236,10 +236,9 @@ The first time you try this, it will very likely say: "You need to install the f
 
 <!-- end -->
 
-<!-- start data visualization -->
-
-
 # (PART) DATA VISUALIZATION
+
+<!-- start data visualization -->
 
 
 # data visualization I {-}
@@ -494,7 +493,7 @@ You can compilie this document into a pdf. We can also run R chunks right inside
 
 3. You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.
 
-## exercises {-}
+<!-- ## exercises {-}
 
 In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
 
@@ -628,7 +627,12 @@ Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave
 
 
 
-When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped.
+When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. -->
+
+<!-- end -->
+
+<!-- start data visualization II -->
+
 
 # data visualization II {-}
 
@@ -862,7 +866,7 @@ plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 
 <img src="index_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
 
-## exercises {-}
+<!-- ## exercises {-}
 
 In this set of exercises we're going to practice making more plots using the dataset `solvents`. Well, you don't have to use `solvents`, you could use something else if you want, but `solvents` is a fun one to explore. Since you are now familiar with filtering and plotting data, the prompts in this assignment are going to be relatively open ended - I do not care what variables you map to x, y, fill, color, etc. Rather, I expect your submission to demonstrate to me that you have explored each of the new topics covered in the previous chapter. This includes geoms beyond `geom_point()` and `geom_violin()`, facets, scale modifications, and theme adjustments. Be creative! Explore the solvents dataset. Find something interesting! **Show me that you have mastered this material.** Don't forget about the ggplot cheat sheet (see the "Links" section in this book).
 
@@ -884,7 +888,7 @@ Some pointers:
 
 5. Identify a relationship between two variables in the dataset. Create a plot that is optimized (see note) to highlight the features of this relationship. Write a short caption that describes the plot *and* the trend you've identified and highlighted. Note: I realize that the word "optimize" is not clearly defined here. That's ok! You are the judge of what is optimized and what is not. Use your caption to make a case for *why* your plot is optimized.
 
-6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem.
+6. Watch [this video](https://www.youtube.com/watch?v=LFDbqw2xPbQ) on bar plots. Add a section to the end of the R Markdown document you made for Part 2 that describes the problem outlined in the video and one potential solution to the problem. -->
 
 ## {-}
 
@@ -1346,6 +1350,7 @@ plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 
 <img src="index_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" />
 
+## {-}
 
 ## further reading {-}
 
@@ -1367,9 +1372,8 @@ For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
 
-## {-}
 
-## further reading {-}
+
 
 <!-- end -->
 
@@ -1882,7 +1886,7 @@ alaska_lake_data %>%
 
 The percent columns for each park add to 100%, so, for example, Devil Mountain Lake has 32.3% of BELA's dissolved sulfur.
 
-## exercises {-}
+<!-- ## exercises {-}
 
 Isn’t seven the most powerfully magical number? *Isn’t seven the most powerfully magical number?*  Yes... I think the idea of a seven-part assignment would greatly appeal to an alchemist.
 
@@ -1920,7 +1924,9 @@ Some pointers:
 
 
 
-7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book.
+7. You have learned many things in this course so far. `read_csv()`, `filter()`, `ggplot()`, and now `group_by()`, `summarize()`, `mutate()`, `arrange()`, and `slice()`. Using **all** these commands, create one or more graphics to illustrate what you consider to be one or more interesting trends in a data set of your own choosing. Use theme elements and scales to enhance your plot. Give your plot a nice caption based on the caption guide in this book. -->
+
+## {-}
 
 ## further reading {-}
 
@@ -2192,7 +2198,7 @@ ggplot(
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
-### exercises {-}
+<!-- ### exercises {-}
 
 In this set of exercises, as you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
 
@@ -2248,10 +2254,8 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
 6. Complete this PCA analysis by creating a scree plot (i.e. use `analysis = "pca_dim"`). In your own words, what does this plot mean?
 
 
+ -->
 
-### further reading {-}
-
-Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
 
 ## tsne and umap {-}
 
@@ -2333,7 +2337,11 @@ p1 + p2
 
 <img src="index_files/figure-html/unnamed-chunk-129-1.png" width="100%" style="display: block; margin: auto;" />
 
-### further reading {-}
+## {-}
+
+## further reading {-}
+
+Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
 
 https://datavizpyr.com/how-to-make-umap-plot-in-r/
 
@@ -2534,6 +2542,8 @@ plot_1 + plot_2
 
 <img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
  
+## {-}
+
 ## further reading {-}
 
 http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
@@ -2545,7 +2555,7 @@ https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-
 https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
 
-## exercises {-}
+<!-- ## exercises {-}
 
 For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
 
@@ -2563,7 +2573,7 @@ For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_
 
 7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
 
-8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups.
+8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups. -->
 
 
 <!-- 
@@ -3426,6 +3436,8 @@ hawaii_aquifers %>%
 
 <img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
 
+## {-}
+
 ## further reading {-}
 
 For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
@@ -3438,7 +3450,8 @@ Ten common statistical mistakes and their solutions: [Science Forum: Ten common 
 
 How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue)
 
-## exercises {-}
+
+<!-- ## exercises {-}
 
 Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please complete the following:
 
@@ -3448,15 +3461,15 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
-4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different?
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
 
 <!-- end -->
 
 # (PART) MODELS
 
-# numerical models {-}
+<!-- start numerical models -->
 
-<!-- start models -->
+# numerical models {-}
 
 
 <!-- explain cross validation and rmse in some sort of metrics section -->
@@ -3989,6 +4002,8 @@ data.frame(
 ## .pred_class6 kidney_disease   kidney_disease
 ```
 
+## {-}
+
 ## further reading {-}
 
 - More on assessing regression models: [performance R package](https://github.com/easystats/performance). The performance package helps check how well your statistical models work by providing simple tools to evaluate things like fit quality and performance. It offers easy ways to spot problems in models, like if they're too complex or not fitting the data properly, and works with different types of models, including mixed-effects and Bayesian ones.
@@ -4001,7 +4016,7 @@ Classification with random forests:
 - https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173
 
 
-## exercises {-}
+<!-- ## exercises {-}
 
 To practice creating models, try the following:
 
@@ -4016,14 +4031,6 @@ To practice creating models, try the following:
 5. (optional) Explore the wine_quality dataset. What are the most important factors in determining what is a good wine? Use a model in an inferential way to provide evidence for your answer.
 
 
-
-
-
-<!-- end -->
-
-# embedding models {-}
-
-<!-- start embedding models -->
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
 
@@ -4310,6 +4317,8 @@ runMatrixAnalysis(
 
 <img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
+## {-}
+
 ## further reading {-}
 
 - [creating knowledge graphs with LLMs](https://bratanic-tomaz.medium.com/constructing-knowledge-graphs-from-text-using-openai-functions-096a6d010c17). This blog post explains how to create knowledge graphs from text using OpenAI functions combined with LangChain and Neo4j. It highlights how large language models (LLMs) have made information extraction more accessible, providing step-by-step instructions for setting up a pipeline to extract structured information and construct a graph from unstructured data.
@@ -4322,7 +4331,7 @@ runMatrixAnalysis(
 
 - [other types of protein language models](https://build.nvidia.com/nim?q=protein). *3D Protein Structure Prediction* deepmind / alphafold2-multimer: Predicts the 3D structure of protein complexes from amino acid sequences. deepmind / alphafold2: Predicts the 3D structure of single proteins from amino acid sequences. meta / esmfold: Predicts the 3D structure of proteins based on amino acid sequences. *Protein Embedding Generation* meta / esm2-650m: Generates protein embeddings from amino acid sequences. *Protein Sequence Design* ipd / proteinmpnn: Predicts amino acid sequences for given protein backbone structures. *Generative Protein Design* ipd / rfdiffusion: A generative model for designing protein backbones, particularly for protein binder design. *Molecule-Protein Interaction Prediction* mit / diffdock: Predicts the 3D interactions between molecules and proteins (docking simulations).
 
-## exercises {-}
+<!-- ## exercises {-}
 
 1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set `sort` = "date"). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges. Below is an example to help you:
 
@@ -4359,7 +4368,6 @@ search_results_ex_embed_pca %>%
 
 <img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
-<!-- Embedding Model Comparison: Repeat an analysis using a different embedding model (e.g., 'sentence-transformers/all-MiniLM-L6-v2') and compare the results with the original BAAI model. Discuss any differences in the clustering patterns and speculate why they might occur based on the model architecture and training data. -->
 
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
 
@@ -4368,11 +4376,13 @@ search_results_ex_embed_pca %>%
 3. Generate and visualize a set of protein embeddings. You can use `OSC_sequences` dataset provided by the source() command, or you can create your own protein sequence dataset using the `searchNCBI()` function.
 
 
+asdf -->
+
 <!-- end -->
 
-# language models {-}
-
 <!-- start language models -->
+
+# language models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" width="100%" style="display: block; margin: auto;" />
 
@@ -4483,23 +4493,25 @@ Testing and Feedback: It's important to test prompts with various inputs and per
 
 Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
 
-### structured prompting
+### structured prompting {-}
 
-### few shot learning
+### few shot learning {-}
 
-### prompt engineering
+### prompt engineering {-}
 
-### chain of thought
+### chain of thought {-}
 
-### gpt chains
+### gpt chains {-}
 
-### fine tuning
+### fine tuning {-}
 
-### structured response
+### structured response {-}
 
-### retrieval-augemented generation
+### retrieval-augemented generation {-}
 
+## {-}
 
+## further reading {-}
 
 <!-- # analyzeLiterature {-}
 
@@ -6618,9 +6630,9 @@ ________________________________________________________________________________
 
 <!-- end -->
 
-# datasets
+# datasets {-}
 
-## alaska_lake_data
+## alaska_lake_data {-}
 
 The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition and environmental conditions of these unique ecosystems. Researchers took water samples from several lakes, measuring key environmental parameters like water temperature and pH, along with analyzing the abundance of different chemical elements, such as carbon, nitrogen, and phosphorus. By comparing the concentrations of both bound and free elements, the study aimed to understand the health of these aquatic environments and the impact of natural and anthropogenic factors on the water chemistry. The dataset will be used to inform conservation strategies for maintaining the ecological balance in these sensitive regions.
 - lake (Categorical): The name of the lake from which the water sample was collected. This refers to the sample.
@@ -6631,7 +6643,7 @@ water_temp (Continuous): The water temperature (in degrees Celsius) of the sampl
 - mg_per_L (Continuous): The concentration (in milligrams per liter) of the corresponding analyte from the element column, indicating the abundance of each analyte in the water sample.
 - element_type (Categorical): Describes whether the element is in a "bound" or "free" state, providing context for the form of the analyte.
 
-## algae_data
+## algae_data {-}
 
 This dataset was generated as part of a study investigating the biochemical composition of different algae strains under varying harvesting conditions. The goal of the research was to examine how different algae strains and harvesting regimes affect the abundance of various chemical species, particularly fatty acids and amino acids, which have potential applications in biofuel production and nutritional supplements. Replicates were performed to ensure consistency, and a wide range of chemical species was measured to provide insights into the algae's metabolic profile and its response to environmental or harvesting changes.
 
@@ -6641,7 +6653,7 @@ This dataset was generated as part of a study investigating the biochemical comp
 - chemical_species (Categorical): The type of chemical species or analyte measured in the algae sample, including various fatty acids (FAs) and amino acids (Aas).
 - abundance (Continuous): The measured abundance of the chemical species or analyte in the algae sample, expressed in a continuous quantitative form (e.g., mg/L or similar units).
 
-## beer_components
+## beer_components {-}
 
 This dataset captures the volatile compounds released from different ingredients like barley and corn, likely as part of a study on food aroma profiles. Researchers measured the abundance of specific analytes (such as 2-Methylpropanal) and classified them by chemical group (e.g., Aldehydes). The goal is to assess how different ingredients contribute to the overall aroma by linking each analyte to sensory descriptors, which include odor characteristics such as "Green," "Pungent," and "Malty." The dataset could be useful in food science research.
 
@@ -6652,7 +6664,7 @@ This dataset captures the volatile compounds released from different ingredients
 - abundance (Continuous): The concentration of the analyte measured in the sample, likely in a quantitative unit such as mg/L.
 - analyte_odor (Categorical): A sensory descriptor for the odors associated with the analyte, listed as a combination of descriptors (e.g., "Green; Pungent; Burnt; Malty; Toasted").
 
-## hawaii_aquifers
+## hawaii_aquifers {-}
 
 This dataset represents water quality measurements from various wells within an aquifer system, collected as part of a study on groundwater composition. Researchers measured the abundance of different dissolved elements and compounds, such as silica (SiO2) and chloride (Cl), from different wells in an aquifer. The dataset could be used to assess the chemical profile of groundwater and monitor any changes in water quality over time. Note the absence of geospatial data (latitude and longitude) for certain samples, and note that some samples come from the same well and aquifer but have different latitude and longitude coordinates.
 
@@ -6663,7 +6675,7 @@ This dataset represents water quality measurements from various wells within an 
 - analyte (Categorical): The specific dissolved compound or element measured in the water sample (e.g., "SiO2," "Cl").
 - abundance (Continuous): The concentration of the analyte in the water sample, expressed in a quantitative unit (mg/L).
 
-## hops_components
+## hops_components {-}
 
 This dataset contains detailed information on various hop varieties used in brewing, including their country of origin, brewing usage (aroma or bittering), and the chemical composition of their essential oils and acids. The dataset serves as a resource for brewers to select hop varieties based on their aroma profiles and chemical content, such as alpha acids and essential oils like humulene and myrcene, which influence the bitterness, flavor, and aroma of beer. The goal of this dataset is to help optimize the hop selection process in brewing for specific flavor profiles and brewing techniques like dry hopping or bittering.
 
