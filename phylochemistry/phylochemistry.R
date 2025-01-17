@@ -14,7 +14,7 @@
                 
                 CRAN_packages <- c(
                     # "imager",
-                    "minpack.lm", "XML", "eulerr",
+                    "minpack.lm", "XML", "eulerr"
                 )
 
                 Bioconductor_packages <- c(
