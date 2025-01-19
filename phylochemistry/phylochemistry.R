@@ -220,6 +220,7 @@
                 c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89"),c("{","90"),c("|","91"),c("}","92"),c("~","93")
             ))
 
+
 ###### Functions
 
     message("Loading functions...")
@@ -381,7 +382,10 @@
         #### writePolylist
 
             #' Writes a polylist
+            #' 
+            #' This function allows the user to interactively select a location to save a polylist as a CSV file.
             #'
+            #' @param polylist The polylist to write out
             #' @param polylist_out_path The path to where the polylist should be written
             #' @examples
             #' @export
@@ -430,6 +434,77 @@
                     
                     return(alignment)
             }
+
+        #### writeAlignment
+
+            #' Write Alignment DataFrame to FASTA File
+            #'
+            #' This function writes a long-format alignment DataFrame to a FASTA file. The DataFrame must contain
+            #' specific columns: 'name', 'position', and 'state'. The function can automatically detect the type
+            #' of sequence data (DNA or AA) if not specified.
+            #'
+            #' @param alignment A DataFrame containing the alignment data with columns 'name', 'position', and 'state'.
+            #' @param alignment_out_path A string specifying the file path where the FASTA file will be saved.
+            #' @param type A string indicating the type of sequence data: "DNA", "AA", or "auto" for automatic detection.
+            #'             Default is "auto".
+            #' @return None. The function writes the alignment to a specified FASTA file.
+            #' @examples
+            #' \dontrun{
+            #' # Write a DNA alignment to a FASTA file
+            #' writeAlignment(alignment_df, "output.fasta", type = "DNA")
+            #'
+            #' # Automatically detect the type and write to a FASTA file
+            #' writeAlignment(alignment_df, "output.fasta")
+            #' }
+            #' @export
+            writeAlignment <- function(alignment, alignment_out_path, type = "auto") {
+                
+                # Input validation
+                if (!all(c("name", "position", "state") %in% colnames(alignment))) {
+                    stop("Alignment DataFrame must contain columns: 'name', 'position', and 'state'")
+                }
+
+                if (length(type) > 1) {
+                    stop("Please specify a single type of alignment: DNA, AA, or auto")
+                }
+
+                # Auto-detect type if set to "auto"
+                if (type == "auto") {
+                    dna_letters <- c("A", "T", "C", "G", "N", "-")
+                    aa_letters <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "B", "Z", "X", "*", "-")
+                    
+                    unique_states <- unique(toupper(alignment$state))
+                    if (all(unique_states %in% dna_letters)) {
+                        type <- "DNA"
+                    } else if (all(unique_states %in% aa_letters)) {
+                        type <- "AA"
+                    } else {
+                        stop("Unable to auto-detect type. Please specify 'DNA' or 'AA'.")
+                    }
+                }
+
+                # Convert long format to wide format
+                alignment_wide <- pivot_wider(
+                    alignment,
+                    names_from = position,
+                    values_from = state
+                )
+
+                # Combine sequence positions into single strings
+                sequences <- apply(alignment_wide[,-1], 1, paste, collapse="")
+                names(sequences) <- alignment_wide$name
+
+                # Convert to appropriate StringSet type
+                if (type == "DNA") {
+                    sequences <- DNAStringSet(sequences)
+                } else if (type == "AA") {
+                    sequences <- AAStringSet(sequences)
+                }
+
+                # Write to file
+                writeFasta(sequences, alignment_out_path, fasta_type = type)
+            }
+
 
         #### readTree
 
@@ -1056,20 +1131,23 @@
 
             #' Construct various types of phylogenetic trees from alignments or other trees
             #'
-            #' @param scaffold_type The type of information that should be used to build the tree. One of "amin_alignment", "nucl_alignment", or "newick"
-            #' @param scaffold_in_path The path to the information that should be used to build the tree.
+            #' This function allows the construction of phylogenetic trees using different types of input data.
+            #'
+            #' @param scaffold_type The type of information that should be used to build the tree. Options include "amin_alignment", "nucl_alignment", "newick", or "url".
+            #' @param scaffold_in_path The path to the information that should be used to build the tree. If using a URL, a recommended source is: 
+            #'        https://sftp.kew.org/pub/treeoflife/current_release/tree/species/
             #' @param members The tips of the tree that should be included. Default is to include everything.
             #' @param ml TRUE/FALSE whether to use maximum likelihood when constructing the tree.
-            #' @param model_test TRUE/FALSE whether to test various maximum likelihood models while constructing the tree
+            #' @param model_test TRUE/FALSE whether to test various maximum likelihood models while constructing the tree.
             #' @param bootstrap TRUE/FALSE whether to calculate bootstrap values for tree nodes.
-            #' @param ancestral_states TRUE/FALSE whether to calculate ancestral states at nodes in the tree. Requires specifying a root via the 'root' parameter
-            #' @param root The tree tip to use as the root of the tree
+            #' @param ancestral_states TRUE/FALSE whether to calculate ancestral states at nodes in the tree. Requires specifying a root via the 'root' parameter.
+            #' @param root The tree tip to use as the root of the tree.
             #' @examples
             #' @export
             #' buildTree
 
             buildTree <-    function(
-                                scaffold_type = c("amin_alignment", "nucl_alignment", "newick"),
+                                scaffold_type = c("amin_alignment", "nucl_alignment", "newick", "url"),
                                 scaffold_in_path,
                                 members = NULL,
                                 ml = FALSE, 
@@ -1236,6 +1314,61 @@
                         } else {
                             newick <- readTree( tree_in_path = scaffold_in_path )    
                         }
+
+                    ## Are the Genus_species in your members in the newick? Are the genera in your members in the newick?
+                        compatibility <- data.frame( Genus_species = unique(members), is_species_in_tree = NA, is_genus_in_tree = NA )
+                        compatibility$is_species_in_tree <- compatibility$Genus_species %in% newick$tip.label
+                        compatibility$is_genus_in_tree <- gsub("_.*$", "", compatibility$Genus_species) %in% gsub("_.*$", "", as.character(newick$tip.label))
+
+                    if ( all(compatibility$is_species_in_tree) == FALSE ) {
+                        ## For Genus_species in members whose genus is missing from the tree (orphans), remove them
+                            orphans <- as.character(dplyr::filter(compatibility, is_species_in_tree == FALSE & is_genus_in_tree == FALSE)$Genus_species)
+                            members <- members[!(members %in% orphans)]
+                            if ( length(orphans) > 0 ) {
+                                message("The following species belong to a genus not found in the newick scaffold and were removed: ")
+                                for ( orphan in 1:length(orphans) ) {
+                                    message("\n")
+                                    message(orphans[orphan])
+                                }
+                            }
+
+                        ## Check compatibility again
+                            compatibility <- data.frame(Genus_species = unique(members), is_species_in_tree = NA, is_genus_in_tree = NA)
+                            compatibility$is_species_in_tree <- compatibility$Genus_species %in% newick$tip.label
+                            compatibility$is_genus_in_tree <- gsub("_.*$", "", compatibility$Genus_species) %in% gsub("_.*$", "", as.character(newick$tip.label))
+
+                        ## For unique(members$Genus_species) in members not in the tree but whose genus in the tree (adoptees), substitute
+                            adoptees <- as.character(dplyr::filter(compatibility, is_species_in_tree == FALSE & is_genus_in_tree == TRUE)$Genus_species)
+
+                            for ( i in 1:length(adoptees) ) {
+                                potential_foster_species <- newick$tip.label[gsub("_.*$", "", newick$tip.label) %in% gsub("_.*$", "", adoptees[i])] # all species in tree of the adoptees genus
+                                available_foster_species <- potential_foster_species[!potential_foster_species %in% unique(members)] # potential_foster_species not already in the quantities
+                                if ( length(available_foster_species) == 0) {
+                                    members <- members[!members %in% adoptees[i]]
+                                    message(paste("There aren't enough fosters to include the following species in the tree so it was removed:", adoptees[i], "\n", sep = " "))
+                                } else {
+                                    message(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
+                                    newick$tip.label[newick$tip.label == as.character(available_foster_species[1])] <- as.character(adoptees[i])
+                                }
+                            }
+                    }
+
+                    ## Drop tree tips not in desired members
+                        newick <- ape::drop.tip(newick, newick$tip.label[!newick$tip.label %in% unique(members)])
+
+                    ## Sort members according to the tree
+                        ordered_tip_labels <- subset(ggtree::fortify(newick), isTip)$label[order(subset(ggtree::fortify(newick), isTip)$y, decreasing = TRUE)]
+                        members <- factor(members, levels = rev(ordered_tip_labels))
+
+                    ## Return tree
+                        message("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n")
+                        return ( newick )
+                }
+
+                if ( scaffold_type == "url" ) {
+
+                    ## Read in the tree from the URL
+                        newick <- ape::read.tree(scaffold_in_path)
 
                     ## Are the Genus_species in your members in the newick? Are the genera in your members in the newick?
                         compatibility <- data.frame( Genus_species = unique(members), is_species_in_tree = NA, is_genus_in_tree = NA )
