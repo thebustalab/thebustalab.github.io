@@ -230,10 +230,21 @@
 
             #' Interactive selection of a CSV file to read
             #'
-            #' @param sep The delimiter to use when writing the file out. Default is a comma, i.e. CSV.
+            #' This function allows the user to interactively select a CSV file to read. 
+            #' The file can be delimited by either a comma or a space.
+            #'
+            #' @param sep A character vector indicating the delimiter to use when reading the file. 
+            #'            The default is a comma (","), but a space (" ") can also be used.
+            #' @return A data frame containing the contents of the selected CSV file.
             #' @examples
+            #' \dontrun{
+            #' # To read a CSV file with comma delimiter
+            #' data <- readCSV()
+            #'
+            #' # To read a CSV file with space delimiter
+            #' data <- readCSV(sep = " ")
+            #' }
             #' @export
-            #' readCSV
 
             readCSV <- function(sep = c(",", " ")) {
                 if (sep[1] == ",") {
@@ -246,12 +257,18 @@
 
         #### writeCSV
 
-            #' Interactive selection of a CSV file to write
+            #' Write a monolist to a CSV file
             #'
-            #' @param monolist The monolist to write out
+            #' This function allows the user to interactively select a location to save a monolist as a CSV file.
+            #'
+            #' @param monolist A data frame representing the monolist to be written to a CSV file.
+            #' @return None. The function writes the monolist to a file and does not return a value.
             #' @examples
+            #' \dontrun{
+            #' # To write a monolist to a CSV file
+            #' writeCSV(monolist)
+            #' }
             #' @export
-            #' writeCSV
 
             writeCSV <- function(monolist) {
                 writeMonolist(monolist = monolist, monolist_out_path = file.choose(new = TRUE))
@@ -259,12 +276,21 @@
 
         #### readMonolist
 
-            #' Reads a monolist
+            #' Read a monolist from a CSV file or URL
             #'
-            #' @param monolist_in_path The path to the monolist (in .csv format) to be read. URLs are also accepted.
+            #' This function reads a monolist from a specified path or URL. The monolist should be in CSV format.
+            #'
+            #' @param monolist_in_path A string specifying the path or URL to the monolist CSV file.
+            #' @return A data frame containing the contents of the monolist.
             #' @examples
+            #' \dontrun{
+            #' # To read a monolist from a local file
+            #' monolist <- readMonolist("path/to/monolist.csv")
+            #'
+            #' # To read a monolist from a URL
+            #' monolist <- readMonolist("http://example.com/monolist.csv")
+            #' }
             #' @export
-            #' readMonolist
 
             readMonolist <- function( monolist_in_path ) {
                 if (length(grep("http", monolist_in_path)) > 0) {
@@ -15980,4 +16006,4 @@
 
     #####################
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
