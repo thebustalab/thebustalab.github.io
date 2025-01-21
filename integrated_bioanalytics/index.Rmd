@@ -64,6 +64,10 @@ Integrated Bioanalytics documents methods for analyzing chemical and sequence da
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
+```{r, message = FALSE, echo = FALSE}
+bustalab <- TRUE
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```
 <!-- Features provided by the source script: -->
 
 <!-- --Analysis and visualization tools-- -->

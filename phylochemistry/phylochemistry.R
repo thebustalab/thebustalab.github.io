@@ -914,6 +914,7 @@
 
             }
 
+    
     ##### Polylist construction and manipulation
 
         #### buildPolylist
@@ -1320,6 +1321,8 @@
                         compatibility$is_species_in_tree <- compatibility$Genus_species %in% newick$tip.label
                         compatibility$is_genus_in_tree <- gsub("_.*$", "", compatibility$Genus_species) %in% gsub("_.*$", "", as.character(newick$tip.label))
 
+                    substitution_made <- FALSE
+
                     if ( all(compatibility$is_species_in_tree) == FALSE ) {
                         ## For Genus_species in members whose genus is missing from the tree (orphans), remove them
                             orphans <- as.character(dplyr::filter(compatibility, is_species_in_tree == FALSE & is_genus_in_tree == FALSE)$Genus_species)
@@ -1347,10 +1350,15 @@
                                     members <- members[!members %in% adoptees[i]]
                                     message(paste("There aren't enough fosters to include the following species in the tree so it was removed:", adoptees[i], "\n", sep = " "))
                                 } else {
-                                    message(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
+                                    warning(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
                                     newick$tip.label[newick$tip.label == as.character(available_foster_species[1])] <- as.character(adoptees[i])
+                                    substitution_made <- TRUE
                                 }
                             }
+                    }
+
+                    if (substitution_made) {
+                        message("Some substitutions were made. Run warnings() to see them all.")
                     }
 
                     ## Drop tree tips not in desired members
@@ -1426,51 +1434,102 @@
 
             #' Prune a tree so it only contains user-specified tips
             #'
-            #' @param tree_in_path The path to the tree to manipulate
+            #' @param tree_in Either the path to the tree to manipulate, an in-memory phylo object, or a fortified tree
             #' @param tips_to_keep The tips to keep
             #' @importFrom ape drop.tip
+            #' @importFrom ggtree fortify
+            #' @importFrom dplyr right_join
             #' @examples
             #' @export
             #' pruneTree
 
-            pruneTree <- function( tree_in_path, tips_to_keep ) {
+            pruneTree <- function(tree_in, tips_to_keep) {
 
-                ## Read tree, drop all tips but those specified by user and return
-                    tree <- readTree(tree_in_path)
-                    tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% tips_to_keep])
-                    return( tree )
+                ## Check if tree_in is a path, a phylo object, or a fortified tree
+                if (is.character(tree_in)) {
+                    tree <- readTree(tree_in)
+                } else if (inherits(tree_in, "phylo")) {
+                    tree <- tree_in
+                } else if (is.data.frame(tree_in) && "node" %in% colnames(tree_in)) {
+                    fortified_tree <- tree_in
+                    tree <- ggtree::as.phylo(fortified_tree)
+                } else {
+                    stop("tree_in must be either a file path, a phylo object, or a fortified tree")
+                }
+
+                ## Drop all tips but those specified by user
+                tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% tips_to_keep])
+
+                ## If the input was a fortified tree, convert back to fortified and join with original
+                if (exists("fortified_tree")) {
+                    pruned_fortified_tree <- ggtree::fortify(tree)
+                    pruned_fortified_tree <- dplyr::right_join(fortified_tree, pruned_fortified_tree, by = "node")
+                    return(pruned_fortified_tree)
+                }
+
+                return(tree)
             }
 
         #### collapseTree
 
             #' Create a high-level cladogram from a low-level tree
             #'
-            #' @param tree The tree to manipulate, must be a phylo object
-            #' @param associations A two-column set of relationships between tree tip names (col 1) and the level on which to summarize (col 2)
+            #' This function takes a detailed phylogenetic tree and collapses it into a higher-level cladogram based on specified associations. 
+            #' It is useful for summarizing complex trees by grouping tips into broader categories.
+            #'
+            #' @param tree A phylogenetic tree to manipulate. It can be an object of class 'phylo' or a fortified tree.
+            #' @param associations A data frame or matrix with two columns. The first column contains tree tip names, and the second column contains the 
+            #'        corresponding higher-level group names to which these tips should be summarized.
+            #' @return A phylogenetic tree of class 'phylo' with tips renamed and collapsed according to the provided associations.
             #' @export
             #' @examples
-            #' updateCountData()
+            #' # Example usage:
+            #' # tree <- readTree("path/to/tree")
+            #' # associations <- data.frame(tip_name = c("tip1", "tip2"), group_name = c("group1", "group1"))
+            #' # collapsed_tree <- collapseTree(tree, associations)
+            #' # plot(collapsed_tree)
+            #'
+            #' collapseTree()
 
             collapseTree <- function(tree, associations) {
 
-                ## Convert assocaitions into data.frame
-                    associations <- as.data.frame(associations)
+                ## Convert associations into a data frame
+                associations <- as.data.frame(associations)
 
-                ## Drop all species names not in association list
-                    tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% associations[,1]])
+                ## Check if the tree is fortified
+                if (is.data.frame(tree) && "node" %in% colnames(tree)) {
+                    message("Warning: Data columns are only being preserved for select members of the original data frame.")
+                    fortified_tree <- tree
+                    tree <- ggtree::as.phylo(fortified_tree)
+                }
 
-                ## Subset the association list to one memeber per family
-                    tip_labels <- associations[associations[,1] %in% tree$tip.label,]
+                ## Drop all species names not in the association list
+                tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% associations[,1]])
 
-                ## Collapse tree, rename tips, return
-                    if ( length(duplicated(tip_labels[,2])) > 0 ) {
-                        collapsed_tree <- ape::drop.tip(tree, tip_labels[,1][duplicated(tip_labels[,2])])
-                    } else {
-                        collapsed_tree <- tree
-                    }
-                    
-                    collapsed_tree$tip.label <- associations[,2][match(collapsed_tree$tip.label, associations[,1])]
-                    return(collapsed_tree)
+                ## Subset the association list to one member per family
+                tip_labels <- associations[associations[,1] %in% tree$tip.label,]
+
+                ## Collapse tree, rename tips
+                if (length(duplicated(tip_labels[,2])) > 0) {
+                    collapsed_tree <- ape::drop.tip(tree, tip_labels[,1][duplicated(tip_labels[,2])])
+                } else {
+                    collapsed_tree <- tree
+                }
+                
+                collapsed_tree$tip.label <- associations[,2][match(collapsed_tree$tip.label, associations[,1])]
+
+                ## Set branch lengths to one
+                collapsed_tree$edge.length <- rep(1, length(collapsed_tree$edge.length))
+                message("Branch lengths have been set to one.")
+
+                ## If the input was a fortified tree, convert back to fortified and join with original
+                if (exists("fortified_tree")) {
+                    pruned_fortified_tree <- ggtree::fortify(collapsed_tree)
+                    pruned_fortified_tree <- dplyr::right_join(fortified_tree, pruned_fortified_tree, by = "node")
+                    return(pruned_fortified_tree)
+                }
+
+                return(collapsed_tree)
             }
 
     ##### Other functions
@@ -1808,51 +1867,93 @@
 
         #### searchNCBI
 
-            searchNCBI <- function(search_term, retmax = 5) {
+            #' Search NCBI for protein or DNA sequences
+            #'
+            #' @param search_term The term to search for in the NCBI database
+            #' @param retmax The maximum number of results to return. Default is 5.
+            #' @param type The type of sequence to search for. Options are "protein" or "nucleotide". Default is "protein".
+            #' @return A StringSet object containing the sequences found
+            #' @importFrom rentrez entrez_search entrez_fetch
+            #' @importFrom Biostrings readAAStringSet readDNAStringSet
+            #' @examples
+            #' searchNCBI("BRCA1", retmax = 10, type = "nucleotide")
+            #' @export
+            searchNCBI <- function(search_term, retmax = 5, type = "protein") {
+
+                # Determine the database to search
+                db <- ifelse(type == "protein", "protein", "nucleotide")
 
                 # Search, message if no results
-                    search_results <- rentrez::entrez_search(db = "protein", term = search_term, retmax = retmax)
-                    if (length(search_results$ids) == 0) {
-                        message("No proteins found for the search term.")
-                        return(NULL)
-                    }
+                search_results <- rentrez::entrez_search(db = db, term = search_term, retmax = retmax)
+                if (length(search_results$ids) == 0) {
+                    message("No sequences found for the search term.")
+                    return(NULL)
+                }
 
                 # Write results to temp file then read in as stringset
-                    temp_fasta <- tempfile(fileext = ".fasta")
-                    write(
-                        rentrez::entrez_fetch(db = "protein", id = search_results$ids, rettype = "fasta"),
-                        file = temp_fasta
-                    )
-                        return(readAAStringSet(temp_fasta))
+                temp_fasta <- tempfile(fileext = ".fasta")
+                write(
+                    rentrez::entrez_fetch(db = db, id = search_results$ids, rettype = "fasta"),
+                    file = temp_fasta
+                )
+
+                # Return the appropriate StringSet type
+                if (type == "protein") {
+                    return(readAAStringSet(temp_fasta))
+                } else {
+                    return(readDNAStringSet(temp_fasta))
+                }
             }
 
 
         #### buildDomainLibrary
 
-            #' Build a hmm database from a set of alignments
+            #' Build a Hidden Markov Model (HMM) database from a set of sequence alignments
             #'
-            #' @param alignment_in_paths The paths to the alignments to use
-            #' @param domain_library_out_path The path to the hmm file that will be created
+            #' This function takes a list of sequence alignment files and constructs a HMM database. 
+            #' It uses the HMMER suite to build individual HMMs from each alignment and then combines them 
+            #' into a single HMM database file. The resulting database is then indexed for efficient searching.
+            #'
+            #' @param alignment_in_paths A character vector containing the file paths to the sequence alignment files. 
+            #'        Each file should be in a format compatible with the HMMER 'hmmbuild' tool.
+            #' @param domain_library_out_path A character string specifying the file path where the resulting HMM database 
+            #'        will be saved. This file will contain all the HMMs built from the input alignments.
+            #' @return This function does not return a value. It creates and indexes an HMM database file at the specified path.
+            #' @details The function first removes any existing files at the output path to prevent appending to old data. 
+            #'          It then iterates over each alignment file, builds a temporary HMM file using 'hmmbuild', and appends 
+            #'          it to the output database file. After processing all alignments, the temporary file is deleted, and 
+            #'          the 'hmmpress' command is used to index the database for faster access during searches.
             #' @examples
+            #' \dontrun{
+            #' buildDomainLibrary(
+            #'     alignment_in_paths = c("alignment1.sto", "alignment2.sto"),
+            #'     domain_library_out_path = "output_hmm_database.hmm"
+            #' )
+            #' }
             #' @export
-            #' 
 
             buildDomainLibrary <- function(
                 alignment_in_paths,
                 domain_library_out_path
             ) {
 
+                # Remove any existing files at the output path to avoid appending to old data
                 system(paste0("rm ", domain_library_out_path, "*"))
 
+                # Iterate over each alignment file to build and append HMMs
                 for ( i in 1:length(alignment_in_paths) ) {
+                    # Build a temporary HMM from the current alignment
                     system(paste0(
                         "hmmbuild temp.hmm ", alignment_in_paths[i]
                     ), intern = TRUE)
+                    # Append the temporary HMM to the output database
                     system(paste0("cat temp.hmm >> ", domain_library_out_path))
                 }
                 
+                # Remove the temporary HMM file
                 system("rm temp.hmm")
                 
+                # Index the HMM database for efficient searching
                 system(paste0(
                     "hmmpress ", domain_library_out_path
                 ))
@@ -1860,91 +1961,124 @@
 
         #### predictDomains
 
-            #' predict PFAM domains from sequences in a fasta file
+            #' Predict PFAM domains from sequences in a FASTA file using HMMER
             #'
-            #' @param fasta_in_path The multifasta file to analyze
-            #' @param domain_library_in_path The path to the hmm file that contains a library of domains
+            #' This function utilizes the HMMER software suite to scan a given multifasta file for PFAM domains
+            #' using a specified HMM domain library. The results are parsed and returned as a data frame.
+            #'
+            #' @param fasta_in_path A character string specifying the path to the multifasta file containing the sequences to be analyzed.
+            #'        The file should be in a format compatible with the HMMER 'hmmscan' tool.
+            #' @param domain_library_in_path A character string specifying the path to the HMM file that contains a library of domains.
+            #'        By default, it uses the Pfam-A.hmm library located at "/project_data/shared/general_lab_resources/hmmer/Pfam-A.hmm".
+            #' @return A data frame containing the parsed results of the domain predictions. The data frame includes columns such as
+            #'         domain name, domain accession, domain length, query name, query accession, sequence e-value, and more.
+            #' @details The function first removes any existing temporary output file to ensure clean results. It then runs the 'hmmscan'
+            #'          command to predict domains in the input sequences. The output is parsed into a structured data frame using
+            #'          predefined column types. The function handles the parsing of domain descriptions separately and appends them
+            #'          to the resulting data frame.
             #' @examples
+            #' \dontrun{
+            #' predictDomains(
+            #'     fasta_in_path = "example_sequences.fasta",
+            #'     domain_library_in_path = "custom_domain_library.hmm"
+            #' )
+            #' }
             #' @export
-            #' predictDomains
-
             predictDomains <- function(
                 fasta_in_path,
                 domain_library_in_path = "/project_data/shared/general_lab_resources/hmmer/Pfam-A.hmm"
             ) {
-
+                # Define the path for the temporary output file
                 temp_file_path <- paste0(getwd(), "/predict_domains.txt")
+                # Remove the temporary file if it already exists
                 if (file.exists(temp_file_path)) {file.remove(temp_file_path)}
 
-                ## Run HMM3SCAN
-                    system(paste0(
-                        "hmmscan --domtblout ", temp_file_path,
-                        " ", domain_library_in_path, " ",
-                        fasta_in_path
-                    ))
+                ## Run HMM3SCAN to predict domains
+                system(paste0(
+                    "hmmscan --domtblout ", temp_file_path,
+                    " ", domain_library_in_path, " ",
+                    fasta_in_path
+                ))
 
-                ## Parse the output (from https://github.com/arendsee/rhmmer)
-                    col_types <- readr::cols(
-                        domain_name         = readr::col_character(),
-                        domain_accession    = readr::col_character(),
-                        domain_len          = readr::col_integer(),
-                        query_name          = readr::col_character(),
-                        query_accession     = readr::col_character(),
-                        qlen                = readr::col_integer(),
-                        sequence_evalue     = readr::col_double(),
-                        sequence_score      = readr::col_double(),
-                        sequence_bias       = readr::col_double(),
-                        domain_N            = readr::col_integer(),
-                        domain_of           = readr::col_integer(),
-                        domain_cevalue      = readr::col_double(),
-                        domain_ievalue      = readr::col_double(),
-                        domain_score        = readr::col_double(),
-                        domain_bias         = readr::col_double(),
-                        hmm_from            = readr::col_integer(),
-                        hmm_to              = readr::col_integer(),
-                        ali_from            = readr::col_integer(),
-                        ali_to              = readr::col_integer(),
-                        env_from            = readr::col_integer(),
-                        env_to              = readr::col_integer(),
-                        acc                 = readr::col_double()
-                    )
+                ## Parse the output using predefined column types
+                col_types <- readr::cols(
+                    domain_name         = readr::col_character(),
+                    domain_accession    = readr::col_character(),
+                    domain_len          = readr::col_integer(),
+                    query_name          = readr::col_character(),
+                    query_accession     = readr::col_character(),
+                    qlen                = readr::col_integer(),
+                    sequence_evalue     = readr::col_double(),
+                    sequence_score      = readr::col_double(),
+                    sequence_bias       = readr::col_double(),
+                    domain_N            = readr::col_integer(),
+                    domain_of           = readr::col_integer(),
+                    domain_cevalue      = readr::col_double(),
+                    domain_ievalue      = readr::col_double(),
+                    domain_score        = readr::col_double(),
+                    domain_bias         = readr::col_double(),
+                    hmm_from            = readr::col_integer(),
+                    hmm_to              = readr::col_integer(),
+                    ali_from            = readr::col_integer(),
+                    ali_to              = readr::col_integer(),
+                    env_from            = readr::col_integer(),
+                    env_to              = readr::col_integer(),
+                    acc                 = readr::col_double()
+                )
 
-                    N <- length(col_types$cols)
+                N <- length(col_types$cols)
 
-                    # the line delimiter should always be just "\n", even on Windows
-                    lines <- readr::read_lines(temp_file_path, lazy=FALSE, progress=FALSE)
+                # Read the lines from the temporary output file
+                lines <- readr::read_lines(temp_file_path, lazy=FALSE, progress=FALSE)
 
-                    table <- sub(
-                        pattern = sprintf("(%s).*", paste0(rep('\\S+', N), collapse=" +")),
-                        replacement = '\\1',
-                        x=lines,
-                        perl = TRUE
-                    ) %>%
-                    gsub(pattern="  *", replacement="\t") %>%
-                    paste0(collapse="\n") %>%
-                    readr::read_tsv(
-                        col_names=names(col_types$cols),
-                        comment='#',
-                        na='-',
-                        col_types = col_types,
-                        lazy=FALSE,
-                        progress=FALSE
-                    )
+                # Parse the table from the output lines
+                table <- sub(
+                    pattern = sprintf("(%s).*", paste0(rep('\\S+', N), collapse=" +")),
+                    replacement = '\\1',
+                    x=lines,
+                    perl = TRUE
+                ) %>%
+                gsub(pattern="  *", replacement="\t") %>%
+                paste0(collapse="\n") %>%
+                readr::read_tsv(
+                    col_names=names(col_types$cols),
+                    comment='#',
+                    na='-',
+                    col_types = col_types,
+                    lazy=FALSE,
+                    progress=FALSE
+                )
 
-                    descriptions <- lines[!grepl("^#", lines, perl=TRUE)] %>%
-                    sub(
-                        pattern = sprintf("%s *(.*)", paste0(rep('\\S+', N), collapse=" +")),
-                        replacement = '\\1',
-                        perl = TRUE
-                    )
+                # Extract and append domain descriptions
+                descriptions <- lines[!grepl("^#", lines, perl=TRUE)] %>%
+                sub(
+                    pattern = sprintf("%s *(.*)", paste0(rep('\\S+', N), collapse=" +")),
+                    replacement = '\\1',
+                    perl = TRUE
+                )
 
-                    table$description <- descriptions[!grepl(" *#", descriptions, perl=TRUE)]
+                table$description <- descriptions[!grepl(" *#", descriptions, perl=TRUE)]
 
-                    return(table)
+                return(table)
             }
 
         #### hmmAlign
 
+            #' Align sequences to a Hidden Markov Model (HMM)
+            #'
+            #' This function aligns sequences from a FASTA file to a specified domain in an HMM file.
+            #' It extracts the relevant positions based on the RF (Reference) sequence and returns
+            #' the aligned sequences as an AAStringSet object.
+            #'
+            #' @param fasta_in_path The path to the input FASTA file containing sequences to be aligned.
+            #' @param hmm_in_path The path to the HMM file containing the domain model.
+            #' @param domain_name The name of the domain to fetch from the HMM file for alignment.
+            #' @return An AAStringSet object containing the aligned sequences.
+            #' @importFrom Biostrings AAStringSet
+            #' @examples
+            #' # Example usage:
+            #' # aligned_sequences <- hmmAlign("sequences.fasta", "domains.hmm", "domain_name")
+            #' # print(aligned_sequences)
             hmmAlign <- function(fasta_in_path, hmm_in_path, domain_name) {
     
                 # Fetch HMM and perform alignment
@@ -1976,14 +2110,25 @@
 
         #### extractORFs
 
-            #' Extract open reading frames from multifasta files
+            #' Extract open reading frames (ORFs) from multifasta files
             #'
-            #' @param file_in_path The multifasta file to analyze
-            #' @param write_out_ORFs TRUE/FALSE whether to write out a new fasta that contains the ORFs
-            #' @param overwrite TRUE/FALSE Optionally overwrite the input file with the ORF file
-            #' @param alternative_ORFs TRUE/FALSE Whether to search for alternative ORFs
-            ####### Searching for ORFs in the reverse direction leads to issues during codon alignment...
+            #' This function identifies and extracts open reading frames (ORFs) from sequences in a multifasta file. 
+            #' It can optionally write the ORFs to a new fasta file and overwrite the input file with the ORF file.
+            #' The function can also search for alternative ORFs in the complementary, reverse, and reverse-complementary sequences.
+            #' Note: Searching for ORFs in the reverse direction leads to issues during codon alignment...
+            #'
+            #' @param file_in_path The path to the multifasta file to analyze.
+            #' @param write_out_ORFs Logical. If TRUE, writes out a new fasta file containing the ORFs.
+            #' @param overwrite Logical. If TRUE, optionally overwrites the input file with the ORF file.
+            #' @param alternative_ORFs Logical. If TRUE, searches for alternative ORFs in the complementary, reverse, and reverse-complementary sequences.
+            #' @return A data frame containing the accession, start codon position, stop codon position, direction, and length of each ORF.
+            #' @importFrom seqinr read.fasta translate
+            #' @importFrom Biostrings DNAStringSet writeXStringSet
             #' @examples
+            #' # Example usage:
+            #' # Extract ORFs from a multifasta file and write them to a new file
+            #' # orfs <- extractORFs("sequences.fasta", write_out_ORFs = TRUE, overwrite = FALSE, alternative_ORFs = TRUE)
+            #' # print(orfs)
             #' @export
             #' extractORFs
 
@@ -2289,9 +2434,22 @@
             #' @param blast_module_directory_path Path to directory containing the BLAST+ module (perhaps something like "/usr/local/ncbi/blast/bin/")
             #' @param blast_mode One of "blastn" or "dc-megablast". "blastn" is a traditional BLASTN requiring an exact match of 11. "dc-megablast" is a discontiguous megablast used to find more distant (e.g., interspecies) sequences.
             #' @param e_value_cutoff e-value cutoff to apply to results. Defaults to 1.
+            #' @param word_size Word size for the BLAST search. Defaults to 4.
             #' @param queries_in_output Should the queries be included in the fasta output?
             #' @param monolist_out_path Path to where the output monolist should be written
+            #' @return A data frame (monolist) containing the BLAST search results with columns for accession, Genus, species, annotation, length, longestORF, length_aligned_with_query, percent_identity, e_value, bitscore, subset_all, word_size, query, query_length, and query_longestORF.
+            #' @details This function performs a BLAST search on a set of query sequences against a list of subject transcriptomes. It supports both nucleotide and protein BLAST searches, and can handle both Unix and Windows operating systems. The function first translates the transcriptomes if necessary, builds BLAST databases, and then performs the BLAST search. The results are processed to remove duplicates and are written to a monolist, which is also saved to a specified output path.
             #' @examples
+            #' named_subjects_list <- list("species1" = "path/to/species1.fasta", "species2" = "path/to/species2.fasta")
+            #' query_in_path <- "path/to/query.fasta"
+            #' sequences_of_interest_directory_path <- "path/to/output/directory"
+            #' blast_module_directory_path <- "/usr/local/ncbi/blast/bin/"
+            #' blast_mode <- "blastn"
+            #' e_value_cutoff <- 1
+            #' word_size <- 4
+            #' queries_in_output <- TRUE
+            #' monolist_out_path <- "path/to/monolist_output"
+            #' polyBlast(named_subjects_list, query_in_path, sequences_of_interest_directory_path, blast_module_directory_path, blast_mode, e_value_cutoff, word_size, queries_in_output, monolist_out_path)
             #' @export
             #' polyBlast
 
@@ -2777,20 +2935,31 @@
 
             #' Align sequences in a seqlist
             #'
-            #' @param monolist Monolist of the sequences to be aligned. First column should be "accession"
-            #' @param subset TRUE/FALSE column in monolist that specifies which sequences should be included in the alignment
-            #' @param alignment_out_path Path to the file to which the alignment should be written
-            #' @param sequences_of_interest_directory_path Path to a directory where blast hits should be written out as fasta files
-            #' @param input_sequence_type One of "nucl" or "amin"
-            #' @param mode One of "nucl_align", "amin_align", or "codon_align"
-            #' @param base_fragment
-            #' TROUBLESHOOTING: 
-            #'      "ERROR: inconsistency between the following pep and nuc seqs" - usually means there are duplicate accessions numbers in the input monolist
+            #' This function aligns sequences from a given monolist based on the specified mode and input sequence type.
+            #' It supports nucleotide, amino acid, codon, and fragment alignments. The aligned sequences are written to the specified output path.
+            #' ERROR: inconsistency between the following pep and nuc seqs" - usually means there are duplicate accessions numbers in the input monolist
+            #'
+            #' @param monolist A data frame containing the sequences to be aligned. The first column should be "accession".
+            #' @param subset A logical vector indicating which sequences in the monolist should be included in the alignment.
+            #' @param alignment_out_path A character string specifying the path to the file where the alignment should be written.
+            #' @param sequences_of_interest_directory_path A character string specifying the path to a directory where blast hits should be written out as fasta files.
+            #' @param input_sequence_type A character string specifying the type of input sequences. Options are "nucl" for nucleotide sequences or "amin" for amino acid sequences.
+            #' @param mode A character string specifying the alignment mode. Options are "nucl_align" for nucleotide alignment, "amin_align" for amino acid alignment, "codon_align" for codon alignment, or "fragment_align" for fragment alignment.
+            #' @param base_fragment A character string specifying the base fragment for fragment alignment. Default is NULL.
+            #' @return This function does not return a value. It writes the aligned sequences to the specified output path.
             #' @import msa
             #' @examples
+            #' # Example usage:
+            #' # Align nucleotide sequences
+            #' alignSequences(
+            #'     monolist = my_monolist,
+            #'     subset = my_subset,
+            #'     alignment_out_path = "output_alignment.fa",
+            #'     sequences_of_interest_directory_path = "sequences/",
+            #'     input_sequence_type = "nucl",
+            #'     mode = "nucl_align"
+            #' )
             #' @export
-            #' alignSequences
-
             alignSequences <-   function(
                         monolist, 
                         subset, 
@@ -2835,7 +3004,7 @@
                         ## Run codon alignment, if requested
                             if ( mode == "codon_align") {
 
-                                ## Extarct ORFs, read in ORFs, translate them, then align them
+                                ## Extract ORFs, read in ORFs, translate them, then align them
 
                                     Biostrings::writeXStringSet(nucl_seqs_set, filepath = paste0(alignment_out_path, "_unaligned"))
                                     extractORFs(file = paste0(alignment_out_path, "_unaligned"), write_out_ORFs = TRUE)
@@ -2882,7 +3051,7 @@
             #                         if (file.exists(paste(alignment_directory_path, as.character(subset), "_fragment_seqs_aligned.fa", sep = ""))) {
             #                         file.remove(paste(alignment_directory_path, as.character(subset), "_fragment_seqs_aligned.fa", sep = ""))}
 
-            #                     ## Extarct ORFs
+            #                     ## Extract ORFs
             #                         extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
 
             #                     ## Translate the nucleotide sequences and write out *_amin_seqs.fa
@@ -2922,7 +3091,7 @@
                                     if (file.exists(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_amin_aligned.fa", sep = ""))) {
                                     file.remove(paste(alignment_directory_path, as.character(subset), "_", "nucl_seqs_amin_aligned.fa", sep = ""))}
 
-                                ## Extarct ORFs
+                                ## Extract ORFs
                                     extractORFs(file = paste(alignment_directory_path, subset, "_nucl_seqs.fa", sep = ""), write_out_ORFs = TRUE)
 
                                 ## Translate the nucleotide sequences and write out *_amin_seqs.fa
@@ -2949,7 +3118,7 @@
 
                         if ( mode == "amin_align" ) {
 
-                            ## Remove existing version of this alignment and it's files
+                            ## Remove existing version of this alignment and its files
                                 # if (file.exists(paste0(alignment_out_path, "_unaligned"))) {
                                 #     file.remove(paste0(alignment_out_path, "_unaligned")) }    
                                 if (file.exists(alignment_out_path)) {
@@ -2990,11 +3159,17 @@
         
             #' Analyze a multiple sequence alignment and subset it for phylogeny building
             #'
-            #' @param alignment_in_path The alignment to analyze, in fasta format
-            #' @param type DNA or AA
+            #' This function reads a multiple sequence alignment, analyzes the composition of each position, and subsets the alignment based on user-defined thresholds for gap percentage and conservation percentage. It also provides a user interface for visualizing the alignment and the resulting phylogenetic trees.
+            #'
+            #' @param alignment_in_path The path to the alignment file to analyze, in fasta format.
+            #' @param type The type of sequences in the alignment, either "DNA" or "AA".
+            #' @param jupyter Logical. If TRUE, the function will run in a Jupyter notebook environment.
+            #' @return A Shiny app for visualizing and subsetting the alignment.
             #' @examples
+            #' # Example usage:
+            #' # analyzeAlignment("path/to/alignment.fasta", type = "DNA", jupyter = FALSE)
             #' @export
-            #' extractORFs
+            #' analyzeAlignment
 
             analyzeAlignment <- function(
                 alignment_in_path,
@@ -3311,13 +3486,30 @@
             #' readGFFs
             #'
             #' Read multiple genome feature files into a tidy dataframe
+            #'
+            #' This function reads multiple genome feature files (GFFs) and processes them into a tidy dataframe. It allows for various modes of subsetting and concatenation of GFFs based on user-defined parameters.
+            #'
             #' @param input_frame A dataframe with columns: Genus_species, GFF_in_path, region_reach (20000), concatenation_spacing (10000)
             #' @param subset_mode A character vector of length 1. One of: "none", "goi_only", "goi_region", "name_check"
             #' @param goi A character vector of gene names. Labelling by species is not necessary
             #' @param concatenate_by_species A logical. If TRUE, concatenate all GFFs for a species into a single GFF
             #' @param chromosomes_only A logical. If TRUE, only keep chromosome features
             #' @param omit A character vector of columns to omit from the output dataframe
+            #' @return A tidy dataframe containing the processed GFF data
             #' @examples
+            #' # Example usage:
+            #' # Read GFFs without any subsetting
+            #' gff_data <- readGFFs(input_frame, subset_mode = "none")
+            #' 
+            #' # Read GFFs and subset by genes of interest (goi)
+            #' gff_data <- readGFFs(input_frame, subset_mode = "goi_only", goi = c("gene1", "gene2"))
+            #' 
+            #' # Read GFFs and subset by regions around genes of interest (goi)
+            #' gff_data <- readGFFs(input_frame, subset_mode = "goi_region", goi = c("gene1", "gene2"), region_reach = 20000)
+            #' 
+            #' # Read GFFs and check for unique gene names
+            #' gff_data <- readGFFs(input_frame, subset_mode = "name_check")
+            #' 
             #' @export
             #' readGFFs
 
@@ -3648,25 +3840,31 @@
 
         #### reverseTranslate
 
-            #' Reverse translate a protein sequence
+            #' Reverse translate a protein sequence to its corresponding nucleotide sequence
             #'
-            #' @param fasta_in_path The path to the fasta file containing the protein sequence
-            #' @param fasta_out_path The path to the fasta file to write the nucleotide sequence to
-            #' @param organism The codon table to use. One of "Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", or "Saccharomyces_cerevisiae".
-            #' @examples reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta", "peptide.fasta", "Arabidopsis_thaliana")
+            #' This function takes a protein sequence from a fasta file and reverse translates it into a nucleotide sequence using a specified codon table. The resulting nucleotide sequence is then written to an output fasta file.
+            #'
+            #' @param fasta_in_path A character string specifying the path to the input fasta file containing the protein sequence(s).
+            #' @param fasta_out_path A character string specifying the path to the output fasta file where the nucleotide sequence(s) will be written.
+            #' @param organism A character string specifying the organism whose codon table should be used for reverse translation. Options are "Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", or "Saccharomyces_cerevisiae". The default is to use the codon table for "Arabidopsis_thaliana".
+            #' @return This function does not return a value. It writes the reverse-translated nucleotide sequences to the specified output fasta file.
+            #' @details The function reads a codon table from a predefined URL and filters it based on the specified organism. It then constructs a substitution table to map amino acids to their most frequently used codons in the organism. Each protein sequence in the input file is reverse translated, ensuring a terminal stop codon is present, and the resulting nucleotide sequences are saved to the output file.
+            #' @examples 
+            #' # Reverse translate a protein sequence for Arabidopsis thaliana
+            #' reverseTranslate("https://thebustalab.github.io/R_For_Chemists/sample_data/peptide.fasta", "peptide.fasta", "Arabidopsis_thaliana")
             #' @export reverseTranslate
-            #' reverseTranslate
-
             reverseTranslate <- function(
                 fasta_in_path,
                 fasta_out_path,
                 organism = c("Arabidopsis_thaliana", "Zea_mays", "Nicotiana_tabacum", "Saccharomyces_cerevisiae")
             ) {
 
+                # Read the codon table for the specified organism
                 codon_tables <- readMonolist("https://thebustalab.github.io/phylochemistry/sample_data/codon_tables.csv")
                 codon_tables$Genus_species <- paste(codon_tables$Genus, codon_tables$species, sep = "_")
                 codon_tables <- dplyr::filter(codon_tables, Genus_species == organism)
                     
+                # Create a substitution table mapping amino acids to codons
                 substitution_table <- list()
                 for (i in 1:length(unique(codon_tables$amino_acid))) {
                     this_codon <- dplyr::filter(codon_tables, amino_acid == unique(codon_tables$amino_acid)[i])
@@ -3675,20 +3873,22 @@
                 substitution_table <- do.call(rbind, substitution_table)
                 rownames(substitution_table) <- NULL
 
+                # Read the amino acid sequences from the input fasta file
                 amin_seqs <- Biostrings::readAAStringSet(fasta_in_path)
                 output <- Biostrings::DNAStringSet()
                 for (i in 1:length(amin_seqs)) {
                     this_amin_seq <- strsplit(as.character(amin_seqs[i]), split = NULL)[[1]]
 
-                    ## Add terminal stop codon if not present
-                        if( this_amin_seq[length(this_amin_seq)] != "*" ) {
-                            this_amin_seq <- c(this_amin_seq, "*")
-                        }
+                    # Add a terminal stop codon if not present
+                    if( this_amin_seq[length(this_amin_seq)] != "*" ) {
+                        this_amin_seq <- c(this_amin_seq, "*")
+                    }
                     
-                    ## Determine codons and concatenate them
-                        output[[i]] <- paste(substitution_table$codon[match(this_amin_seq, substitution_table$amino_acid)], collapse = "")
+                    # Determine codons for each amino acid and concatenate them
+                    output[[i]] <- paste(substitution_table$codon[match(this_amin_seq, substitution_table$amino_acid)], collapse = "")
 
                 }
+                # Set the names for the output sequences and write them to the output file
                 output@ranges@NAMES <- amin_seqs@ranges@NAMES
                 Biostrings::writeXStringSet(output, fasta_out_path)
             }
@@ -5200,102 +5400,108 @@
 
         #### convertCDFstoCSVs
 
-            #' Convert mass spectral datafiles (CDF) into a csv file
+            #' Convert mass spectral data files (CDF) into a CSV file
             #'
-            #' @param paths_to_cdfs Paths to CDF files
-            #' @param min_mz Smallest m/z value to process (acts like a filter)
-            #' @param max_mz Largest m/z value to process (acts like a filter)
-            #' @param min_rt (optional) Smallest retention time to process (acts like a filter)
-            #' @param max_rt (optional) Largest retention time to process (acts like a filter)
-            #' @param force Convert all CDF files, even if they've already been converted previously
+            #' This function processes mass spectral data stored in CDF files and converts them into CSV format. It allows filtering based on m/z values and retention times, and can optionally force conversion even if CSV files already exist.
+            #'
+            #' @param paths_to_cdfs A character vector containing the paths to the CDF files that need to be converted.
+            #' @param min_mz A numeric value specifying the smallest m/z (mass-to-charge ratio) value to process. This acts as a filter to exclude data below this threshold.
+            #' @param max_mz A numeric value specifying the largest m/z value to process. This acts as a filter to exclude data above this threshold.
+            #' @param min_rt (optional) A numeric value specifying the smallest retention time to process. This acts as a filter to exclude data below this threshold. Default is NULL, meaning no minimum retention time filter is applied.
+            #' @param max_rt (optional) A numeric value specifying the largest retention time to process. This acts as a filter to exclude data above this threshold. Default is NULL, meaning no maximum retention time filter is applied.
+            #' @param force A logical value indicating whether to convert all CDF files even if they have already been converted previously. Default is FALSE, meaning only files without existing CSV counterparts will be converted.
             #' @examples
+            #' # Convert CDF files to CSV with default m/z range and no retention time filtering
+            #' convertCDFstoCSVs(paths_to_cdfs = c("file1.cdf", "file2.cdf"))
+            #'
+            #' # Convert CDF files to CSV with specified m/z and retention time ranges, forcing conversion
+            #' convertCDFstoCSVs(paths_to_cdfs = c("file1.cdf", "file2.cdf"), min_mz = 100, max_mz = 700, min_rt = 5, max_rt = 20, force = TRUE)
+            #'
             #' @export
-            #' convertCDFstoCSVs
+            convertCDFstoCSVs <- function(
+                                            paths_to_cdfs, 
+                                            min_mz = 50, 
+                                            max_mz = 800, 
+                                            min_rt = NULL, 
+                                            max_rt = NULL, 
+                                            force = FALSE
+                                        ) {
 
-                convertCDFstoCSVs <- 	function(
-    						            	paths_to_cdfs, 
-    						            	min_mz = 50, 
-    						            	max_mz = 800, 
-    						            	min_rt = NULL, 
-    						            	max_rt = NULL, 
-    						            	force = FALSE
-    						            ) {
-
-                    if ( force == FALSE ) {
-                        paths_to_cdfs <- paths_to_cdfs[!file.exists(paste0(paths_to_cdfs, ".csv"))]
-                    }
-
-                    if (length(paths_to_cdfs) > 0) {
-
-    	                for (file in 1:length(paths_to_cdfs)) {
-
-    	                    cat(paste("Reading data file ", paths_to_cdfs[file], sep = ""))
-    	                        rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
-
-    	                    cat("   Framing data file ... \n")
-    	                        rt <- rawDataFile$rt
-    	                        scanindex <- rawDataFile$scanindex
-
-    	                        filteredRawDataFile <- list()
-    	                        for ( i in 1:(length(rt)-1) ) {
-    	                            filteredRawDataFile[[i]] <- data.frame(
-    	                                mz = rawDataFile$mz[(scanindex[i]+1):(scanindex[i+1])],
-    	                                intensity = rawDataFile$intensity[(scanindex[i]+1):(scanindex[i+1])],
-    	                                rt = rt[i]
-    	                            )
-    	                        }
-    	                        framedDataFile <- do.call(rbind, filteredRawDataFile)
-    	                        framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
-
-    	                    cat("   Merging duplicate rows ...\n")
-    	                        if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
-                                    framedDataFile %>% group_by(mz,rt) %>% summarize(intensity = sum(intensity), .groups = "drop") -> framedDataFile
-                                    framedDataFile <- as.data.frame(framedDataFile)
-    	                        }
-
-    	                    cat("   Filling in blank m/z values ...\n")
-    	                        spreadDataFile <- tidyr::spread(framedDataFile, rt, intensity, fill = 0)
-    	                        
-    	                        numbers <- round(seq(min_mz, max_mz, 0.1), digits = 1)
-    	                        add <- numbers[!numbers %in% spreadDataFile$mz]
-    	                        addition <- spreadDataFile[1:length(add),]
-    	                        
-    	                        if ( length(add) > 0 ) {
-    	                            addition$mz <- add     
-    	                        }
-    	                        
-                                addition <- tidyr::pivot_longer(addition, cols = 2:dim(addition)[2], names_to = "rt", values_to = "intensity")
-    	                        addition$intensity <- 0
-    	                        addition$rt <- as.numeric(addition$rt)
-    	                        
-                                framedDataFile <- tidyr::pivot_longer(spreadDataFile, cols = 2:dim(spreadDataFile)[2], names_to = "rt", values_to = "intensity")
-
-                            cat("   still working ...\n")
-    	                        framedDataFile <- rbind(framedDataFile, addition)
-
-                            cat("   still working ... patience please\n")
-    	                        framedDataFile$rt <- as.numeric(framedDataFile$rt)
-    	                        framedDataFile <- framedDataFile[sort.list(framedDataFile$mz),]
-
-                            cat("   still working ... almost done\n")
-    	                        framedDataFile <- framedDataFile[sort.list(framedDataFile$rt),]
-    	                        rownames(framedDataFile) <- NULL
-
-    	                    if ( length(min_rt) > 0 ) {
-    	                        cat("   Filtering by minimum retention time thresholds ...\n")
-    	                            framedDataFile <- dplyr::filter(framedDataFile, rt > min_rt)
-    	                    }
-
-    	                    if ( length(max_rt) > 0 ) {
-    	                        cat("   Filtering by maximum retention time thresholds ...\n")
-    	                            framedDataFile <- dplyr::filter(framedDataFile, rt < max_rt)    
-    	                    }
-
-    	                    cat("   Writing out data file as CSV... \n\n")
-    	                        data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
-    	                }
-    	            }
+                if ( force == FALSE ) {
+                    paths_to_cdfs <- paths_to_cdfs[!file.exists(paste0(paths_to_cdfs, ".csv"))]
                 }
+
+                if (length(paths_to_cdfs) > 0) {
+
+                    for (file in 1:length(paths_to_cdfs)) {
+
+                        cat(paste("Reading data file ", paths_to_cdfs[file], sep = ""))
+                            rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
+
+                        cat("   Framing data file ... \n")
+                            rt <- rawDataFile$rt
+                            scanindex <- rawDataFile$scanindex
+
+                            filteredRawDataFile <- list()
+                            for ( i in 1:(length(rt)-1) ) {
+                                filteredRawDataFile[[i]] <- data.frame(
+                                    mz = rawDataFile$mz[(scanindex[i]+1):(scanindex[i+1])],
+                                    intensity = rawDataFile$intensity[(scanindex[i]+1):(scanindex[i+1])],
+                                    rt = rt[i]
+                                )
+                            }
+                            framedDataFile <- do.call(rbind, filteredRawDataFile)
+                            framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
+
+                        cat("   Merging duplicate rows ...\n")
+                            if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
+                                framedDataFile %>% group_by(mz,rt) %>% summarize(intensity = sum(intensity), .groups = "drop") -> framedDataFile
+                                framedDataFile <- as.data.frame(framedDataFile)
+                            }
+
+                        cat("   Filling in blank m/z values ...\n")
+                            spreadDataFile <- tidyr::spread(framedDataFile, rt, intensity, fill = 0)
+                            
+                            numbers <- round(seq(min_mz, max_mz, 0.1), digits = 1)
+                            add <- numbers[!numbers %in% spreadDataFile$mz]
+                            addition <- spreadDataFile[1:length(add),]
+                            
+                            if ( length(add) > 0 ) {
+                                addition$mz <- add     
+                            }
+                            
+                            addition <- tidyr::pivot_longer(addition, cols = 2:dim(addition)[2], names_to = "rt", values_to = "intensity")
+                            addition$intensity <- 0
+                            addition$rt <- as.numeric(addition$rt)
+                            
+                            framedDataFile <- tidyr::pivot_longer(spreadDataFile, cols = 2:dim(spreadDataFile)[2], names_to = "rt", values_to = "intensity")
+
+                        cat("   still working ...\n")
+                            framedDataFile <- rbind(framedDataFile, addition)
+
+                        cat("   still working ... patience please\n")
+                            framedDataFile$rt <- as.numeric(framedDataFile$rt)
+                            framedDataFile <- framedDataFile[sort.list(framedDataFile$mz),]
+
+                        cat("   still working ... almost done\n")
+                            framedDataFile <- framedDataFile[sort.list(framedDataFile$rt),]
+                            rownames(framedDataFile) <- NULL
+
+                        if ( length(min_rt) > 0 ) {
+                            cat("   Filtering by minimum retention time thresholds ...\n")
+                                framedDataFile <- dplyr::filter(framedDataFile, rt > min_rt)
+                        }
+
+                        if ( length(max_rt) > 0 ) {
+                            cat("   Filtering by maximum retention time thresholds ...\n")
+                                framedDataFile <- dplyr::filter(framedDataFile, rt < max_rt)    
+                        }
+
+                        cat("   Writing out data file as CSV... \n\n")
+                            data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
+                    }
+                }
+            }
 
         #### extractChromatogramsFromCSVs
 
@@ -5350,41 +5556,51 @@
 
         #### mergePeakLists
 
-    	    #' Merge multiple peaklists
-    	    #'
-    	    #' @param analysis_directory_path Path to the directory above all the peak lists
-    	    #' @examples
-    	    #' @export
-    	    #' mergePeakLists
+            #' Merge multiple peaklists into a single data frame
+            #'
+            #' This function reads multiple peak list files from a specified directory, processes them, and merges them into a single data frame. Each peak list is expected to be stored in a CSV file named "peaks_monolist.csv" within subdirectories of the specified directory.
+            #'
+            #' @param analysis_directory_path A character string specifying the path to the directory containing subdirectories with peak list files. Each subdirectory should contain a "peaks_monolist.csv" file.
+            #' @return A data frame containing the merged peak lists. The data frame includes the first nine columns of each peak list, with the 'area' column converted to numeric.
+            #' @examples
+            #' # Example usage:
+            #' # Merge peak lists from a specified directory
+            #' merged_peaks <- mergePeakLists("/path/to/analysis_directory")
+            #'
+            #' @export
+            mergePeakLists <- function(analysis_directory_path) {
 
-    	    mergePeakLists <- function(analysis_directory_path) {
+                # Construct paths to each "peaks_monolist.csv" file within the specified directory
+                paths_to_peak_monolists <- paste(
+                    analysis_directory_path,
+                    dir(analysis_directory_path),
+                    "peaks_monolist.csv",
+                    sep = "/"
+                )
 
-    	        paths_to_peak_monolists <- paste(
-    	            analysis_directory_path,
-    	            dir(analysis_directory_path),
-    	            "peaks_monolist.csv",
-    	            sep = "/"
-    	        )
-
-    	        peak_list <- list()
-    	        for (i in 1:length(paths_to_peak_monolists)) {
+                peak_list <- list()
+                # Iterate over each path to read and process the peak list
+                for (i in 1:length(paths_to_peak_monolists)) {
                     
-                    if ( file.exists(paths_to_peak_monolists[i]) ) {
+                    if (file.exists(paths_to_peak_monolists[i])) {
 
+                        # Read the peak list and ensure the 'area' column is numeric
                         data <- readMonolist(paths_to_peak_monolists[i])
                         data$area <- as.numeric(data$area)
 
+                        # If the data frame is not empty, store the first nine columns in the list
                         if (dim(data)[1] > 0) {
                             peak_list[[i]] <- data[,1:9]
                         }
                     
                     }
-    	        
+                
                 }
 
-    	        do.call(rbind, peak_list)
+                # Combine all the peak lists into a single data frame
+                do.call(rbind, peak_list)
 
-    	    }
+            }
 
         #### analyzeGCMSdata
 
@@ -16028,7 +16244,7 @@
                     pb$tick()
                 }
 
-                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta")
+                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta", verbose = FALSE)
 
             ## Busta lab specific datasets
 
@@ -16139,4 +16355,4 @@
 
     #####################
 
-message("phylochemistry loaded!!")
+message("phylochemistry loaded!")
