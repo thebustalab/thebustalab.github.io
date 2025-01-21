@@ -1374,7 +1374,7 @@
                         members <- factor(members, levels = rev(ordered_tip_labels))
 
                     ## Return tree
-                        message("Pro tip: most tree read/write functions reset node numbers.\nFortify your tree and save it as a csv file to preserve node numbering.\nDo not save your tree as a newick or nexus file.\n")
+                        message("Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.")
                         return ( newick )
                 }
 
@@ -15651,13 +15651,13 @@
                         species_dropped_from_traits <- data_tip_labels[!data_tip_labels %in% tree$tip.label]
                         if (length(species_dropped_from_traits) > 0) {
                           traits <- traits[traits[,colnames(traits) == column_w_names_of_tiplabels] %in% tree$tip.label,]
-                          message(paste("Species dropped from traits:", paste(species_dropped_from_traits, collapse = ", ")))
+                          message(paste("Species dropped from traits by runPhylogeneticAnalyses:", paste(species_dropped_from_traits, collapse = ", ")))
                         }
 
                         species_dropped_from_tree <- tree$tip.label[!tree$tip.label %in% data_tip_labels]
                         if (length(species_dropped_from_tree) > 0) {
                           tree <- drop.tip(tree, tree$tip.label[!tree$tip.label %in% data_tip_labels])
-                          message(paste("Species dropped from tree:", paste(species_dropped_from_tree, collapse = ", ")))
+                          message(paste("Species dropped from tree by runPhylogeneticAnalyses:", paste(species_dropped_from_tree, collapse = ", ")))
                         }
 
                     ## Reorder traits to match the order of the input
