@@ -1354,10 +1354,10 @@
                     }
 
                     if (length(substitutions) > 0 || length(removals) > 0) {
-                        message("Some substitutions or removals were made. Run build_tree_substitutions() to see them all.")
+                        message("IMPORTANT: Some species substitutions or removals were made as part of buildTree. Run build_tree_substitutions() to see them all.")
                     }
 
-                    build_tree_substitutions <- function() {
+                    build_tree_substitutions <<- function() {
                         if (length(removals) > 0) {
                             message("The following species were removed: ", paste(removals, collapse = ", "))
                         }
@@ -16249,7 +16249,7 @@
                     pb$tick()
                 }
 
-                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta", verbose = FALSE)
+                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta")
 
             ## Busta lab specific datasets
 
