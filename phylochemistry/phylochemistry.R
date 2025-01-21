@@ -1321,18 +1321,15 @@
                         compatibility$is_species_in_tree <- compatibility$Genus_species %in% newick$tip.label
                         compatibility$is_genus_in_tree <- gsub("_.*$", "", compatibility$Genus_species) %in% gsub("_.*$", "", as.character(newick$tip.label))
 
-                    substitution_made <- FALSE
+                    substitutions <- list()
+                    removals <- list()
 
                     if ( all(compatibility$is_species_in_tree) == FALSE ) {
                         ## For Genus_species in members whose genus is missing from the tree (orphans), remove them
                             orphans <- as.character(dplyr::filter(compatibility, is_species_in_tree == FALSE & is_genus_in_tree == FALSE)$Genus_species)
                             members <- members[!(members %in% orphans)]
                             if ( length(orphans) > 0 ) {
-                                message("The following species belong to a genus not found in the newick scaffold and were removed: ")
-                                for ( orphan in 1:length(orphans) ) {
-                                    message("\n")
-                                    message(orphans[orphan])
-                                }
+                                removals <- c(removals, orphans)
                             }
 
                         ## Check compatibility again
@@ -1348,17 +1345,25 @@
                                 available_foster_species <- potential_foster_species[!potential_foster_species %in% unique(members)] # potential_foster_species not already in the quantities
                                 if ( length(available_foster_species) == 0) {
                                     members <- members[!members %in% adoptees[i]]
-                                    message(paste("There aren't enough fosters to include the following species in the tree so it was removed:", adoptees[i], "\n", sep = " "))
+                                    removals <- c(removals, adoptees[i])
                                 } else {
-                                    warning(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
+                                    substitutions <- c(substitutions, paste(available_foster_species[1], "substituted with", adoptees[i]))
                                     newick$tip.label[newick$tip.label == as.character(available_foster_species[1])] <- as.character(adoptees[i])
-                                    substitution_made <- TRUE
                                 }
                             }
                     }
 
-                    if (substitution_made) {
-                        message("Some substitutions were made. Run warnings() to see them all.")
+                    if (length(substitutions) > 0 || length(removals) > 0) {
+                        message("Some substitutions or removals were made. Run build_tree_substitutions() to see them all.")
+                    }
+
+                    build_tree_substitutions <- function() {
+                        if (length(removals) > 0) {
+                            message("The following species were removed: ", paste(removals, collapse = ", "))
+                        }
+                        if (length(substitutions) > 0) {
+                            message("The following substitutions were made: ", paste(substitutions, collapse = "; "))
+                        }
                     }
 
                     ## Drop tree tips not in desired members
