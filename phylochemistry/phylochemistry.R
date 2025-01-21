@@ -1390,7 +1390,7 @@
                             if ( length(orphans) > 0 ) {
                                 message("The following species belong to a genus not found in the newick scaffold and were removed: ")
                                 for ( orphan in 1:length(orphans) ) {
-                                    message("\n")
+                                    # message("\n")
                                     message(orphans[orphan])
                                 }
                             }
@@ -1410,7 +1410,7 @@
                                     members <- members[!members %in% adoptees[i]]
                                     message(paste("There aren't enough fosters to include the following species in the tree so it was removed:", adoptees[i], "\n", sep = " "))
                                 } else {
-                                    message(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], "\n", sep = " "))
+                                    message(paste("Scaffold newick tip", available_foster_species[1], "substituted with", adoptees[i], sep = " "))
                                     newick$tip.label[newick$tip.label == as.character(available_foster_species[1])] <- as.character(adoptees[i])
                                 }
                             }
