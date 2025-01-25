@@ -11153,6 +11153,13 @@
                         stop("For input_type 'amino_acid_stringset', amino_acid_stringset must be of class 'XStringSet'.")
                     }
 
+                    # Initialize progress bar
+                    pb <- progress::progress_bar$new(
+                        format = "  Processing [:bar] :percent in :elapsed seconds",
+                        total = if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df), 
+                        clear = FALSE, width = 60
+                    )
+
                     # Remote embedding with biolm or nvidia
                     embeddings <- list()
                     for (i in 1:(if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df))) {
@@ -11178,8 +11185,9 @@
                                 encode = "json"
                             )
                             file_path <- tempfile(fileext = ".h5")
+                            print(file_path)
                             writeBin(httr::content(response, as = "raw"), file_path)
-                            embeddings[[i]] <- as.numeric(h5read(file_path, "embeddings"))
+                            embeddings[[i]] <- as.numeric(rhdf5::h5read(file_path, "embeddings"))
                             invisible(file.remove(file_path))
                         }
                         

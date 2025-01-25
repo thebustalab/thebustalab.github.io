@@ -62,16 +62,14 @@
 <li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
-<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
-<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
-<li><a class="" href="language-models.html">language models</a></li>
-<li class="book-part">MIDTERM</li>
-<li><a class="" href="midterm.html">midterm</a></li>
+<li><a class="" href="embedding-models.html">embedding models</a></li>
 <li class="book-part">GC-MS DATA</li>
 <li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
 <li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
@@ -108,7 +106,7 @@
 <h2>NCBI blast<a class="anchor" aria-label="anchor" href="#ncbi-blast"><i class="fas fa-link"></i></a>
 </h2>
 <p>The <code>blastNCBI()</code> function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like “core_nt,” you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. Here’s a few examples, including how to approach this function if you’re working with a StringSet object:</p>
-<div class="sourceCode" id="cb176"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb180"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">blastNCBI</span><span class="op">(</span></span>
 <span>    query_sequence <span class="op">=</span> <span class="st">"AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA"</span>,</span>
 <span>    program <span class="op">=</span> <span class="st">"blastn"</span>,</span>
@@ -138,7 +136,7 @@
 <li>“monolist_out_path”: The path to where we want a summary file of the BLAST hits to be written.</li>
 </ul>
 <p>Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits (“monolist_out”, which is written to “monolist_out_path”), and the hits themselves, written as individual files to “sequences_of_interest_directory_path”. These two things can be used in downstream analyses, such as alignments. The function does not return an object.</p>
-<div class="sourceCode" id="cb177"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb181"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">the_transcriptomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa"</span>,</span>
 <span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa"</span>,</span>
@@ -172,7 +170,7 @@
 <li><p>Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.</p></li>
 </ol>
 <p>We can implement these two steps using the <code>buildDomainLibrary()</code> function and the <code>predictDomains()</code> function. See below:</p>
-<div class="sourceCode" id="cb178"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb182"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">buildDomainLibrary</span><span class="op">(</span></span>
 <span>    alignment_in_paths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>        <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa"</span>,</span>
@@ -255,7 +253,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-01-16.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-01-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

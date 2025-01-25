@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-01-16"
+date: "2025-01-25"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -41,7 +41,6 @@ output:
 # WELCOME {-}
 
 <!-- start preface-->
-
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/cover3.png" width="100%" style="display: block; margin: auto;" />
 
 Integrated Bioanalytics documents methods for analyzing chemical and sequence data in R as well as some basics of scientific writing. It is maintained by Lucas Busta and members of the Busta lab. To run the analyses described in this book you will need to run a source script that will set up your R environment with a variety of packages, custom functions, and datasets. If you don't have R, see "installation" under "Data Analysis In R" in the table of contents. Run the source script by pasting and executing the following in your R command line (RStudio recommended). If you are in the Busta Lab (or want access to full features), define an object `bustalab = TRUE` before running the source command. If you have trouble running the source script, please reach out to Lucas Busta at: bust0037@d.umn.edu. The source script: 
@@ -151,8 +150,9 @@ Open RStudio by clicking on the appropriate file in your applications folder, or
 The R Console window should have a `>` in it. Type `head(Indometh)`. This should display the first six lines of a data set describing the pharmacokinets of indomethacin. This is one of the built in datasets in R - you do not need any additional files to run this test.
 
 
-```r
+``` r
 head(Indometh)
+## Grouped Data: conc ~ time | Subject
 ##   Subject time conc
 ## 1       1 0.25 1.50
 ## 2       1 0.50 0.94
@@ -165,11 +165,11 @@ head(Indometh)
 Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin dataset in a basic way.
 
 
-```r
+``` r
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -180,13 +180,13 @@ For us to run our analyses, we need to install a set of add-on functions that ex
 RSudio might ask you: "Do you want to install from sources the packages which need compilation? (Yes/no/cancel)", for now, type `no` and press enter.
 
 
-```r
+``` r
 install.packages("tidyverse", repos = "https://cran.us.r-project.org")
 ```
 
 Let's make sure your version of the tidyverse is installed correctly. To do this, we will load the `tidyverse` library/package inside of an R session. We can do this using `library(tidyverse)`. Let's try it:
 
-```r
+``` r
 library(tidyverse)
 ```
 
@@ -197,7 +197,7 @@ If the library load correctly - then you are set to go! If not, try updating you
 In this class we will generate high quality reports suitable for submission to supervisors, academic journals, etc. For this, we need the typesetting engine TeX. There are a few ways to do this. The easiest way is using the following commands:
 
 
-```r
+``` r
 install.packages(c('tinytex', 'rmarkdown'))
 ```
 
@@ -215,7 +215,7 @@ sudo chown -R \`whoami\`:admin /usr/local/bin
 
 Then, on both Mac and PC, you then need to do:
 
-```r
+``` r
 tinytex::install_tinytex()
 ```
 
@@ -228,7 +228,6 @@ In addition to the tidyverse, there are a variety of other packages we will need
 First, attempt to load phylochemistry, if you are on Windows, be sure you've opened RStudio as an administrator (right click, "run as administrator"):
 
 ``` r
-bustalab <- TRUE
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
@@ -254,14 +253,14 @@ Visualization is one of the most fun parts of working with data. In this section
 In R, data is stored in objects. You can think of objects as if they were "files" inside an R session. `phylochemistry` provides a variety of objects for us to work with. Let's look at how to create an object. For this, we can use an arrow: `<-` . The arrow will take something and store it inside an object. For example:
 
 
-```r
+``` r
 new_object <- 1
 ```
 
 Now we've got a new object called `new_object`, and inside of it is the number 1. To look at what's inside an object, we can simply type the name of the object into the console:
 
 
-```r
+``` r
 new_object 
 ## [1] 1
 ```
@@ -269,7 +268,7 @@ new_object
 Easy! Let's look at one of the objects that comes with our class code base. What are the dimensions of the "algae_data" data set?
 
 
-```r
+``` r
 algae_data
 ## # A tibble: 180 × 5
 ##    replicate algae_strain harvesting_regime chemical_species
@@ -299,7 +298,7 @@ Excellent - we've got data. Now we need to manipulate it. For this we need funct
 Let's illustrate this with an example. `algae_data` is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let's use another `tidyverse` command called `filter` to filter the `algae_data` object. We will need to tell the filter command what to filter out using "logical predicates" (things like equal to: `==`, less than: `<`, greater than: `>`, greater-than-or-equal-to: `<=`, etc.). Let's filter `algae_data` so that only rows where the `chemical_species` is equal to `FAs` (fatty acids) is preserved. This will look like `chemical_species == "FAs"`. Here we go:
 
 
-```r
+``` r
 filter(algae_data, chemical_species == "FAs")
 ## # A tibble: 18 × 5
 ##    replicate algae_strain harvesting_regime chemical_species
@@ -328,7 +327,7 @@ filter(algae_data, chemical_species == "FAs")
 Cool! Now it's just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let's write this new, smaller dataset into a new object. For that we use `<-`, remember?
 
 
-```r
+``` r
 algae_data_small <- filter(algae_data, chemical_species == "FAs")
 algae_data_small
 ## # A tibble: 18 × 5
@@ -384,96 +383,96 @@ There are three steps to setting up a ggplot:
 We do this using the ggplot function's data argument. When we run that line, it just shows a grey plot space. Why is this? It's because all we've done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven't explained how to represent features of the data using ink.
 
 
-```r
+``` r
 ggplot(data = algae_data_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-19-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-20-1.png" width="50%" style="display: block; margin: auto;" />
 
 2. **Define how your variables map onto the axes.**
 
 This is called aesthetic mapping and is done with the `aes()` function. `aes()` should be placed inside the `ggplot` command. Now when we run it, we get our axes!
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-20-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-21-1.png" width="50%" style="display: block; margin: auto;" />
 
 3. **Use geometric shapes to represent other variables in your data.**
 
 Map your variables onto the geometric features of the shapes. To define which shape should be used, use a `geom_*` command. Some options are, for example, `geom_point()`, `geom_boxplot()`, and `geom_violin()`. These functions should be added to your plot using the `+` sign. We can use a new line to keep the code from getting too wide, just make sure the `+` sign is at the end fo the top line. Let's try it:
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-21-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-22-1.png" width="50%" style="display: block; margin: auto;" />
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-22-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="50%" style="display: block; margin: auto;" />
 
 In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data(as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="50%" style="display: block; margin: auto;" />
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="50%" style="display: block; margin: auto;" />
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
 We can also stack geoms on top of one another by using multiple `+` signs. We also don't have to assign the same mappings to each geom.
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) + 
   geom_violin() +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="50%" style="display: block; margin: auto;" />
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_violin(aes(fill = algae_strain)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="50%" style="display: block; margin: auto;" />
 
 
-```r
+``` r
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="50%" style="display: block; margin: auto;" />
 
 ## markdown {-}
 
@@ -528,14 +527,14 @@ Some pointers:
 6. I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot's data argument:
 
 
-```r
+``` r
 ggplot(
   data = filter(algae_data, chemical_species == "essential_Aas"),
   aes(x = algae_strain, y = abundance)) +
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-34-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-35-1.png" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -556,7 +555,7 @@ Using the above as a template, make a plot that shows just `omega_3_polyunsatura
 9. Take the code that you made for the question above. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
 
 
-```r
+``` r
 ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
   geom_point(aes(<some things>), <some here too>) +
   facet_grid(.~algae_strain)
@@ -567,7 +566,7 @@ ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
 Also try, instead of `facet_grid(.~algae_strain)`, `facet_grid(algae_strain~.)` at the end of you plot command. (note the swap in the position of the `.~` relative to `algae_strain`). This means your code should look something like:
 
 
-```r
+``` r
 ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
   geom_point(aes(<some things>), <some here too>) +
   facet_grid(algae_strain~.)
@@ -610,7 +609,7 @@ What advantages does this one extra line (i.e. facet_grid) provide over what you
 8. Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn't make a very nice plot):
 
 
-```r
+``` r
 ggplot(
   data = filter(alaska_lake_data, lake == "Lake_Narvakrak"),
   aes(x = lake, y = mg_per_L)
@@ -621,7 +620,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-51-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-52-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -636,6 +635,8 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 
 # data visualization II {-}
 
+## {-}
+
 ## more geoms {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/chart_suggestions.jpeg" width="100%" style="display: block; margin: auto;" />
@@ -643,7 +644,7 @@ When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE S
 We've looked at how to filter data and map variables in our data to geometric shapes to make plots. Let's have a look at a few more things. For these examples, we're going to use the data set called `solvents`. In these examples, I'd like to introduce you to two new geoms. The first `geom_smooth()` is used when there are two continuous variables. It is particularly nice when geom_point() is stacked on top of it.
 
 
-```r
+``` r
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth() +
   geom_point()
@@ -651,12 +652,12 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-54-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-55-1.png" width="100%" style="display: block; margin: auto;" />
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
 
-```r
+``` r
 ggplot(
   data = filter(algae_data, harvesting_regime == "Heavy"),
   aes(x = algae_strain, y = chemical_species)
@@ -664,7 +665,7 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", size = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-55-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" />
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -674,52 +675,52 @@ As alluded to in Exercises 1, it is possible to map variables in your dataset to
 
 Here, we can facet in the horizontal direction:
 
-```r
+``` r
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(.~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can facet in the vertical direction:
 
-```r
+``` r
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(replicate~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" />
 
 And we can do both at the same time:
 
-```r
+``` r
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(harvesting_regime~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
 
 
 
-```r
+``` r
 ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_wrap(chemical_species~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## scales {-}
 
 Every time you define an aesthetic mapping (e.g. aes(x = algae_strain)), you are defining a new scale that is added to your plot. You can control these scales using the `scale_*` family of commands. Consider our faceting example above. In it, we use `geom_tile(aes(fill = abundance))` to map the abundance variable to the fill aesthetic of the tiles. This creates a scale called `fill` that we can adjust using `scale_fill_*`. In this case, fill is mapped to a continuous variable and so the fill scale is a color gradient. Therefore, `scale_fill_gradient()` is the command we need to change it. Remember that you could always type `?scale_fill_` into the console and it will help you find relevant help topics that will provide more detail. Another option is to google: "How to modify color scale ggplot geom_tile", which will undoubtedly turn up a wealth of help.
 
 
-```r
+``` r
 ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) + 
   geom_tile(aes(fill = abundance), color = "black") + 
   facet_grid(harvesting_regime~replicate) +
@@ -727,18 +728,18 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
 
 One particularly useful type of scale are the color scales provided by RColorBrewer:
 
 
-```r
+``` r
 display.brewer.all()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
 
-```r
+``` r
 ggplot(mtcars) +
   geom_point(
     aes(x = mpg, y = factor(cyl), fill = factor(carb)), 
@@ -747,7 +748,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
   
 ## themes {-}
   
@@ -756,7 +757,7 @@ So far we've just looked at how to control the means by which your *data* is rep
 `ggplot` comes with a handful of built in "complete themes". These will change the appearance of your plots with respect to the non-data ink. Compare the following plots:
 
 
-```r
+``` r
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth() +
   geom_point() +
@@ -765,10 +766,10 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
 
 
-```r
+``` r
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth() +
   geom_point() +
@@ -777,10 +778,10 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
   
 
-```r
+``` r
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth() +
   geom_point() +
@@ -789,14 +790,14 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/what_is_ggplot.jpeg" width="100%" style="display: block; margin: auto;" />
 
 You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
 
 
-```r
+``` r
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth() +
   geom_point() +
@@ -807,12 +808,12 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" />
 
 Last, here is an example of combining `scale_*` and `theme_*` with previous commands to really get a plot looking sharp.
 
 
-```r
+``` r
 ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) + 
   geom_smooth(color = "#4daf4a") +
   scale_x_continuous(
@@ -832,8 +833,8 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-68-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-68)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-69-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-69)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
 </div>
 
 ## subplots {-}
@@ -841,7 +842,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 We can make subplots using the `cowplot` package, which comes with the `source()` command. Let's see:
 
 
-```r
+``` r
 library(patchwork)
 plot1 <-  ggplot(
             filter(alaska_lake_data, element_type == "free")
@@ -864,7 +865,7 @@ plot3 <-  ggplot(
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-70-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- ## exercises {-}
 
@@ -916,6 +917,8 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 
 # data visualization III {-}
 
+## {-}
+
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/datavis3.png" width="100%" style="display: block; margin: auto;" />
 
 ## advanced plots {-}
@@ -925,7 +928,7 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 `phylochemistry` contains a function to help you make somewhat decent 3D scatter plots. Let's look at an example (see below). For this, we use the function `points3D`. Se give it a `data` argument that gives it vectors of data that should be on the x, y, and z axes, along with a vector that uniquely identifies each observation. We also tell it the angle of the z axis that we want, the integer to which ticks should be rounded, and the tick intervals. The function returns data that we can pass to ggplot to make a 3D plot.
 
 
-```r
+``` r
 pivot_wider(hawaii_aquifers, names_from = "analyte", values_from = "abundance") %>%
   mutate(sample_unique_ID = paste0(aquifer_code, "_", well_name)) -> aquifers
 
@@ -978,9 +981,12 @@ str(output)
 The output from points3D contains a grid, axes, and ticks, which should all be plotted using geom_segment. It also contains points that should be plotted with geom_point, and point segments that should be plotted with geom_segement. We can take the output from points3D and join it with the original data, which will occurr according to our sample_unique_ID column. Then, we can also plot point metadata:
 
 
-```r
+``` r
 output$points <- left_join(output$points, aquifers)
 ## Joining with `by = join_by(sample_unique_ID)`
+```
+
+``` r
   
 ggplot() +
   geom_segment(
@@ -1006,12 +1012,12 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### marginal summaries {-}
 
 
-```r
+``` r
 i2 <- iris %>%
   mutate(Species2 = rep(c("A","B"), 75))
 p <- ggplot(i2, aes(Sepal.Width, Sepal.Length, color = Species)) +
@@ -1027,14 +1033,14 @@ p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-74-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### representing distributions {-}
 
 You can also combine geoms to create more detailed representations of distributions:
 
 
-```r
+``` r
 mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggplot(aes(x = factor(cyl), y = hwy, fill = factor(cyl))) +
   ggdist::stat_halfeye(
@@ -1044,12 +1050,12 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-74-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### venn digrams {-}
 
 
-```r
+``` r
 df <- data.frame(
   plant1 = sample(c(TRUE, FALSE), 24, replace = TRUE),
   plant2 = sample(c(TRUE, FALSE), 24, replace = TRUE),
@@ -1067,44 +1073,15 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
 
 
-```r
+``` r
 library(ggplot2)
 library(ggtern)
-## Registered S3 methods overwritten by 'ggtern':
-##   method           from   
-##   grid.draw.ggplot ggplot2
-##   plot.ggplot      ggplot2
-##   print.ggplot     ggplot2
-## --
-## Remember to cite, run citation(package = 'ggtern') for further info.
-## --
-## 
-## Attaching package: 'ggtern'
-## The following objects are masked from 'package:ggtree':
-## 
-##     aes, ggplot, ggsave
-## The following object is masked from 'package:ggpp':
-## 
-##     annotate
-## The following object is masked from 'package:rstatix':
-## 
-##     mahalanobis_distance
-## The following objects are masked from 'package:ggplot2':
-## 
-##     aes, annotate, ggplot, ggplot_build,
-##     ggplot_gtable, ggplotGrob, ggsave, layer_data,
-##     theme_bw, theme_classic, theme_dark, theme_gray,
-##     theme_light, theme_linedraw, theme_minimal,
-##     theme_void
-## The following objects are masked from 'package:gridExtra':
-## 
-##     arrangeGrob, grid.arrange
 alaska_lake_data %>%
   pivot_wider(names_from = "element", values_from = "mg_per_L") %>%
   ggtern(aes(
@@ -1117,7 +1094,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-77-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ## map data {-}
@@ -1183,7 +1160,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -1195,7 +1172,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -1211,7 +1188,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -1226,7 +1203,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-85-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -1255,7 +1232,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-85-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-86-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. We could do something simple like plot total abundances as the size of a point:
 
@@ -1280,7 +1257,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-86-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -1327,7 +1304,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -1348,7 +1325,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-89-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -1381,11 +1358,13 @@ For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c
 
 # (PART) STATISTICAL METHODS
 
-# data wrangling and summaries {-}
+# wrangling and summaries {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/wrangling.png" width="100%" style="display: block; margin: auto;" />
 
 Data wrangling refers to the process of organizing, cleaning up, and making a "raw" data set more ready for downstream analysis. It is a key piece of any data analysis process. Here we will look at a few different aspects of wrangling, including data import, subsetting, pivoting, and summarizing data.
+
+## {-}
 
 ## data import {-}
 
@@ -1539,7 +1518,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1550,7 +1529,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-95-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1696,7 +1675,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-101-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-102-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1746,7 +1725,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-103-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1778,7 +1757,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1968,6 +1947,8 @@ We can see that this dataset is comprised of measurements of various *analytes* 
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png" width="100%" style="display: block; margin: auto;" />
 
+## {-}
+
 ## pca {-}
 
 "Which analytes are driving differences among my samples?"
@@ -2020,7 +2001,7 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
@@ -2085,7 +2066,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -2141,7 +2122,7 @@ ggplot() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
@@ -2154,7 +2135,7 @@ AK_lakes_pca_ord %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### principal components {-}
 
@@ -2194,7 +2175,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-126-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
@@ -2335,7 +2316,7 @@ p2 <- ggplot(data) +
 p1 + p2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-129-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -2358,6 +2339,8 @@ https://www.youtube.com/watch?v=jth4kEvJ3P8
 # flat clustering {-}
 
 "Do my samples fall into definable clusters?"
+
+## {-}
 
 ## kmeans {-}
 
@@ -2414,7 +2397,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-132-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-133-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
@@ -2463,7 +2446,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-134-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
@@ -2540,7 +2523,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" />
  
 ## {-}
 
@@ -2665,11 +2648,13 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <!-- start comparing means -->
 
 
-# heirarchical clustering {-}
+# hierarchical clustering {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;" />
 
 "Which of my samples are most closely related?"
+
+## {-}
 
 So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
 
@@ -2758,7 +2743,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2776,7 +2761,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
@@ -2822,6 +2807,8 @@ colnames(solvents)[c(1,5,7)]
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg" width="100%" style="display: block; margin: auto;" />
 
 **"Are these two things the same?"**
+
+## {-}
 
 Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
 
@@ -2883,7 +2870,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-154-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2968,7 +2955,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-156-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2981,7 +2968,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -3073,7 +3060,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-162-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -3087,7 +3074,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3200,7 +3187,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3273,7 +3260,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3288,7 +3275,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3434,7 +3421,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-178-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -3523,7 +3510,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
 
@@ -3618,7 +3605,7 @@ plot1
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -3632,7 +3619,7 @@ ggplot(predictions_from_basic_linear_model) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -3655,7 +3642,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -3669,7 +3656,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -3729,7 +3716,7 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -3784,7 +3771,7 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## assessing regression models {-}
 
@@ -3822,7 +3809,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-195-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -3898,7 +3885,7 @@ random_forest_model$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-198-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -3927,7 +3914,7 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-198-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -3979,7 +3966,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-200-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -4031,6 +4018,87 @@ To practice creating models, try the following:
 5. (optional) Explore the wine_quality dataset. What are the most important factors in determining what is a good wine? Use a model in an inferential way to provide evidence for your answer.
 
 
+{r, echo = FALSE, eval = FALSE}
+runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca_ord",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  na_replacement = "drop"
+) %>%
+filter(Dim.1 > 0.9) %>%
+ggplot() +
+  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
+
+runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca_ord",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  na_replacement = "drop"
+) %>%
+filter(Dim.1 < -0.9) %>%
+ggplot() +
+  geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
+  geom_label_repel(aes(x = Dim.1, y = Dim.2, label = analyte))
+
+out <- runMatrixAnalysis(
+  data = wine_grape_data,
+  analysis = "pca",
+  column_w_names_of_multiple_analytes = "metabolite",
+  column_w_values_for_multiple_analytes = "log_abundance",
+  columns_w_values_for_single_analyte = NULL,
+  columns_w_additional_analyte_info = NULL,
+  columns_w_sample_ID_info = c("cultivar", "treatment"),
+  na_replacement = "drop"
+)
+
+model <- buildLinearModel(
+  data = solvents,
+  # formula = "Dim.1 = Aspartic_acid_3TMS"
+  # formula = "Dim.1 = Tyrosine_2TMS"
+  formula = "refractive_index = formula_weight + melting_point"
+)
+
+
+top <- ggplot(model$data) +
+  geom_point(aes(x = input_x, y = input_y)) +
+  geom_line(aes(x = model_x, y = model_y)) +
+  # annotate(geom = "table",
+  #   x = 13,
+  #   y = 16,
+  #   label = list(model$metrics)
+  # ) +
+  # coord_cartesian(ylim = c(10,16)) +
+  theme_bw()
+
+bottom <- ggplot(model$data) +
+  geom_col(
+    aes(x = input_x, y = residuals),
+    width = 0.03, color = "black", position = "dodge", alpha = 0.5
+  ) +
+  theme_bw()
+
+cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
+
+model$metrics
+
+``` -->
+
+
+<!-- end -->
+
+<!-- start embedding models -->
+
+
+# embedding models {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;" />
 
@@ -4088,18 +4156,18 @@ select(search_results, term, title)
 ## # A tibble: 12 × 2
 ##    term                       title                         
 ##    <chr>                      <chr>                         
-##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…
-##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…
+##  1 beta-amyrin synthase       Ginsenosides in Panax genus a…
+##  2 beta-amyrin synthase       β-Amyrin synthase from Conyza…
 ##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
-##  4 friedelin synthase         Friedelin Synthase from Mayte…
-##  5 friedelin synthase         Friedelin in Maytenus ilicifo…
+##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
+##  5 friedelin synthase         Friedelin Synthase from Mayte…
 ##  6 friedelin synthase         Functional characterization o…
 ##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  8 sorghum bicolor            Molecular Breeding of Sorghum…
 ##  9 sorghum bicolor            Proton-Coupled Electron Trans…
 ## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
 ## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
-## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…
+## 12 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
 ```
 
 From the output here, you can see that we've retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.
@@ -4119,8 +4187,8 @@ search_results_embedded[1:3,1:10]
 ## # A tibble: 3 × 10
 ##   entry_number term  date       journal title doi   abstract
 ##          <dbl> <chr> <date>     <chr>   <chr> <chr> <chr>   
-## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
-## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
+## 1            1 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…
+## 2            2 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …
 ## 3            3 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…
 ## # ℹ 3 more variables: embedding_1 <dbl>, embedding_2 <dbl>,
 ## #   embedding_3 <dbl>
@@ -4194,10 +4262,6 @@ runMatrixAnalysis(
   columns_w_values_for_single_analyte = colnames(out)[grep("embed", colnames(out))],
   columns_w_sample_ID_info = c("sample", "odor")
 ) -> pca_out
-## Replacing NAs in your data with mean
-```
-
-``` r
 
 pca_out$color <- rgb(
   scales::rescale(pca_out$Dim.1, to = c(0, 1)),
@@ -4263,17 +4327,17 @@ ncbi_results <- searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
 ncbi_results
 ## AAStringSet object of length 100:
 ##       width seq                         names               
-##   [1]   427 MRLLAQLTDDPW...VAALHLACVVSR WP_396422334.1 pr...
-##   [2]   323 MQKLMIAAVLGA...SGGPAGAPQLTC WP_396420191.1 pr...
-##   [3]   541 MRLAPMTAGLPR...PLATAPLTAASP WP_396323561.1 pr...
-##   [4]   431 MLTAARLGAAAL...VLSIQRKRGPKP WP_396319534.1 pr...
-##   [5]   533 MTTGEIEMAGTG...LALTGFDNDETP WP_396315749.1 pr...
+##   [1]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412057070.1 pr...
+##   [2]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412057004.1 pr...
+##   [3]   632 MRRLRSLLEDVK...AFIKKAEKRETY WP_412056379.1 pr...
+##   [4]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412056343.1 pr...
+##   [5]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412056277.1 pr...
 ##   ...   ... ...
-##  [96]   414 MNVRRSAAALAA...IMLSGRRKKNQL WP_390546632.1 pr...
-##  [97]   415 MNVRRSAAALAA...IMLSGRRKKNQL WP_390541893.1 pr...
-##  [98]   929 MSAALLTFGASA...ARTRRDPAEEDR WP_390539473.1 pr...
-##  [99]   436 MNTVRRGAAALA...VGIGFLVSGRKK WP_390528608.1 pr...
-## [100]   994 MGTAELAERRTG...ARTRRNPAEEDR WP_390523159.1 pr...
+##  [96]   416 MTVRRSAAALAT...FLLSMRRKKQQP WP_411078812.1 pr...
+##  [97]   417 MNTVRSAAAALA...VGIGFLLSGRKK WP_411076721.1 pr...
+##  [98]   617 MLLYEKVHEEIA...LTLAHYAKKYRK WP_410986435.1 pr...
+##  [99]   619 MLLHEKVREEVK...LTFAHYIKKYWK WP_410983246.1 pr...
+## [100]   625 MIILLKEVQLEI...LALAHYAKKHSS WP_410903827.1 pr...
 ```
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
@@ -4284,17 +4348,11 @@ embedded_OSCs <- embedAminoAcids(
   amino_acid_stringset = OSC_sequences,
   biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt"),
   nvidia_api_key = readLines("/Users/bust0037/Documents/Science/Websites/nvidia_api_key.txt"),
-  platform = "nvidia"
+  platform = "biolm"
 )
 embedded_OSCs$product <- tolower(gsub(".*_", "", embedded_OSCs$name))
 embedded_OSCs <- select(embedded_OSCs, name, product, everything())
 embedded_OSCs[1:3,1:4]
-## # A tibble: 3 × 4
-##   name                   product     embedding_1 embedding_2
-##   <chr>                  <chr>             <dbl>       <dbl>
-## 1 ABK76265.1_beta-amyrin beta-amyrin     0.00905 -0.00000746
-## 2 ABL07607.1_beta-amyrin beta-amyrin     0.00468  0.00122   
-## 3 ABY90140.2_beta-amyrin beta-amyrin     0.0186  -0.00662
 ```
 
 Nice! Once we've bot the embeddings, we can run a PCA analysis to visualize them in 2D space:
@@ -4313,9 +4371,8 @@ runMatrixAnalysis(
       shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
     ) +
     theme_minimal()
-```
 
-<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
+```
 
 ## {-}
 
@@ -4382,136 +4439,137 @@ asdf -->
 
 <!-- start language models -->
 
-# language models {-}
+<!-- # language models {-} -->
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" width="100%" style="display: block; margin: auto;" />
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/llm.png', dpi = NA) -->
+<!-- ``` -->
 
-see: https://magazine.sebastianraschka.com/p/understanding-large-language-models
+<!-- see: https://magazine.sebastianraschka.com/p/understanding-large-language-models -->
 
-## completions {-}
+<!-- ## completions {-} -->
 
-You can run completions using:
+<!-- You can run completions using: -->
+
+<!-- ```{r, eval = FALSE} -->
+<!-- completionGPT( -->
+<!--   system_prompt = "", -->
+<!--   query = "", -->
+<!--   model = "", -->
+<!--   temperature = 0, -->
+<!--   openai_api_key = "" -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`. -->
+
+<!-- The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.` -->
+
+<!-- Available options for `model` include "gpt-4o", gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI. -->
+
+<!-- Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a highly oversimplified and somewhat inaccurate explanation. -->
+
+<!-- You have to provide your OpenAI API key. -->
+
+<!-- ## createNewsletter {-} -->
+
+<!-- The `createNewsletter()` function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field. -->
+
+<!-- With createNewsletter, you can optionally also monitor a directory on the computer system you are using. Anything in the monitored_directory (and its subdirectories) that was added within the past number of hours indicated in monitored_time_window that has a suffix matching monitored_file_suffix (only .txt files currently supported) will be added to the newsletter. This allows your newsletter to include not only PubMed search results but also files stored in a specific directory (like a collection of chunked .pdf files). -->
+
+<!-- ```{r, eval = FALSE} -->
+<!-- bustalab = TRUE -->
+<!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
+
+<!-- newsletter <- createNewsletter( -->
+<!--     search_terms = c( -->
+<!--         "plant biochemistry", "plant genomics and genetics", -->
+<!--         "cuticular waxes", "triterpenoid yeast engineering", -->
+<!--         "plant triterpenoids", "plant ABC transporters", "plant specialized metabolism", -->
+<!--         "plant metabolism", "plant metabolic evolution", "plant biochemistry", "plant metabolism", -->
+<!--         "plant genomics", "cuticular wax", "triterpenoids", "plant ABC transporters", -->
+<!--         "plant specialized metabolism", -->
+<!--         "biosynthesis", "metabolic evolution", -->
+<!--         "artificial intelligence", "large language models", -->
+<!--         "protein language models" -->
+<!--     ), -->
+<!--     focus_areas = c( -->
+<!--         "phytochemistry", "plant biochemistry", "plant metabolism", "plant genomics", -->
+<!--         "cuticular wax", "triterpenoids", "plant ABC transporters", -->
+<!--         "plant specialized metabolism", -->
+<!--         "biosynthesis", "metabolic evolution", -->
+<!--         "artificial intelligence", "large language models", -->
+<!--         "protein language models" -->
+<!--     ), -->
+<!--     n_articles_per_newsletter = 20, -->
+<!--     pubmed_api_key = "api_key", -->
+<!--     openai_api_key = "api_key", -->
+<!--     image_prompt = "I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS: A modern, minimalist blog cover image for a phytochemistry blog post, WITHOUT ANY TEXT. The image should embody a minimalist aesthetic with simple, clean lines and a limited color palette. Depict abstract representations of the diverse themes in the blog post: medicinal plants, phytoremediation, plant growth, plant stress response, environmental microbiology, and plant biochemistry. Include stylized, minimalistic illustrations of Leonurus heterophyllus for medicinal plants, Ipomoea carnea for phytoremediation, a seedling for plant growth, Citrus reticulata for stress response, rice plants for arsenic stress response, abstract soil microbes for environmental microbiology, a sesame plant for disease resistance, and oat plants for cell wall synthesis. The composition should be harmoniously adjusted to ensure a balanced and aesthetically pleasing layout that captures the essence of phytochemistry and plant science research with a contemporary, streamlined look.", -->
+<!--     monitored_directory = "/project_data/shared/general_lab_resources/literature/papers_chunked/", -->
+<!--     monitored_time_window = 336, -->
+<!--     monitored_file_suffix = ".1.txt" -->
+<!-- ) -->
+<!-- names(newsletter) -->
+<!-- ``` -->
+
+<!-- Finally, you can get this newsletter emailed to yourself using the following approach: (i) set up a Zapier account and a Zap that monitors a Google Sheet then send you an email with the contents of that sheet anytime it is updated; (ii) use the following code to update the sheet with the output of the newsletter; (iii) make an R script that contains the source() command, createNewsletter(), and the write_sheet command then have that script executed as a cron job daily, for example. -->
+
+<!-- ```{r, eval = FALSE} -->
+<!-- gs4_auth(path = "your_auth_token") -->
+<!-- write_sheet( -->
+<!--     data = data.frame("content" = newsletter$newsletter$response), -->
+<!--     sheet = "Sheet1", "your_sheet_share_link" -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- Here is an example of the newsletter: -->
+
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/newsletter.png', dpi = NA) -->
+<!-- ``` -->
+
+<!-- ## prompting strategies {-} -->
 
 
-``` r
-completionGPT(
-  system_prompt = "",
-  query = "",
-  model = "",
-  temperature = 0,
-  openai_api_key = ""
-)
-```
+<!-- Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona. -->
 
-The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`.
+<!-- Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request. -->
 
-The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.`
+<!-- Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings. -->
 
-Available options for `model` include "gpt-4o", gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.
+<!-- Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation. -->
 
-Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a highly oversimplified and somewhat inaccurate explanation.
+<!-- Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses. -->
 
-You have to provide your OpenAI API key.
+<!-- Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning. -->
 
-## createNewsletter {-}
+<!-- Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities. -->
 
-The `createNewsletter()` function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field.
+<!-- Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts. -->
 
-With createNewsletter, you can optionally also monitor a directory on the computer system you are using. Anything in the monitored_directory (and its subdirectories) that was added within the past number of hours indicated in monitored_time_window that has a suffix matching monitored_file_suffix (only .txt files currently supported) will be added to the newsletter. This allows your newsletter to include not only PubMed search results but also files stored in a specific directory (like a collection of chunked .pdf files).
+<!-- Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further. -->
 
+<!-- Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use. -->
 
-``` r
-bustalab = TRUE
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+<!-- ### structured prompting {-} -->
 
-newsletter <- createNewsletter(
-    search_terms = c(
-        "plant biochemistry", "plant genomics and genetics",
-        "cuticular waxes", "triterpenoid yeast engineering",
-        "plant triterpenoids", "plant ABC transporters", "plant specialized metabolism",
-        "plant metabolism", "plant metabolic evolution", "plant biochemistry", "plant metabolism",
-        "plant genomics", "cuticular wax", "triterpenoids", "plant ABC transporters",
-        "plant specialized metabolism",
-        "biosynthesis", "metabolic evolution",
-        "artificial intelligence", "large language models",
-        "protein language models"
-    ),
-    focus_areas = c(
-        "phytochemistry", "plant biochemistry", "plant metabolism", "plant genomics",
-        "cuticular wax", "triterpenoids", "plant ABC transporters",
-        "plant specialized metabolism",
-        "biosynthesis", "metabolic evolution",
-        "artificial intelligence", "large language models",
-        "protein language models"
-    ),
-    n_articles_per_newsletter = 20,
-    pubmed_api_key = "api_key",
-    openai_api_key = "api_key",
-    image_prompt = "I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS: A modern, minimalist blog cover image for a phytochemistry blog post, WITHOUT ANY TEXT. The image should embody a minimalist aesthetic with simple, clean lines and a limited color palette. Depict abstract representations of the diverse themes in the blog post: medicinal plants, phytoremediation, plant growth, plant stress response, environmental microbiology, and plant biochemistry. Include stylized, minimalistic illustrations of Leonurus heterophyllus for medicinal plants, Ipomoea carnea for phytoremediation, a seedling for plant growth, Citrus reticulata for stress response, rice plants for arsenic stress response, abstract soil microbes for environmental microbiology, a sesame plant for disease resistance, and oat plants for cell wall synthesis. The composition should be harmoniously adjusted to ensure a balanced and aesthetically pleasing layout that captures the essence of phytochemistry and plant science research with a contemporary, streamlined look.",
-    monitored_directory = "/project_data/shared/general_lab_resources/literature/papers_chunked/",
-    monitored_time_window = 336,
-    monitored_file_suffix = ".1.txt"
-)
-names(newsletter)
-```
+<!-- ### few shot learning {-} -->
 
-Finally, you can get this newsletter emailed to yourself using the following approach: (i) set up a Zapier account and a Zap that monitors a Google Sheet then send you an email with the contents of that sheet anytime it is updated; (ii) use the following code to update the sheet with the output of the newsletter; (iii) make an R script that contains the source() command, createNewsletter(), and the write_sheet command then have that script executed as a cron job daily, for example.
+<!-- ### prompt engineering {-} -->
 
+<!-- ### chain of thought {-} -->
 
-``` r
-gs4_auth(path = "your_auth_token")
-write_sheet(
-    data = data.frame("content" = newsletter$newsletter$response),
-    sheet = "Sheet1", "your_sheet_share_link"
-)
-```
+<!-- ### gpt chains {-} -->
 
-Here is an example of the newsletter:
+<!-- ### fine tuning {-} -->
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/newsletter.png" width="100%" style="display: block; margin: auto;" />
+<!-- ### structured response {-} -->
 
-## prompting strategies {-}
+<!-- ### retrieval-augemented generation {-} -->
 
+<!-- ## {-} -->
 
-Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona.
-
-Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request.
-
-Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings.
-
-Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation.
-
-Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses.
-
-Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning.
-
-Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities.
-
-Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.
-
-Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.
-
-Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.
-
-### structured prompting {-}
-
-### few shot learning {-}
-
-### prompt engineering {-}
-
-### chain of thought {-}
-
-### gpt chains {-}
-
-### fine tuning {-}
-
-### structured response {-}
-
-### retrieval-augemented generation {-}
-
-## {-}
-
-## further reading {-}
+<!-- ## further reading {-} -->
 
 <!-- # analyzeLiterature {-}
 
@@ -4531,57 +4589,6 @@ monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway
 the overproduction of triterpenoids [14,24]."
 
 - Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms?  -->
-
-<!-- end -->
-
-# (PART) MIDTERM
-
-# midterm {-}
-
-<!-- start midterm -->
-
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg" width="100%" style="display: block; margin: auto;" />
-
-Load the wood smoke data by running `source()`, inspect the data (`wood_smoke`), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.
-
-1. Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke (3 pts). Within that wood type's smoke, which compound class is the most abundant (3 pts) and, still within that wood type's smoke, what is the single most abundant compound (3 pts)? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis (3x 2 pts) to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot (3x 1 pt). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
-
-Note: in the question above, you may need to filter for analytes with non-zero values when conducting certain statistical test, for example:
-
-
-``` r
-wood_smoke %>%
-  filter(wood_type == "hardwood") %>%
-  filter(abundance_mg_g > 0) %>%
-  group_by(compound_class) %>%
-  mutate(size = n()) %>%
-  filter(size > 2) %>%
-  shapiroTest(abundance_mg_g)
-## # A tibble: 22 × 4
-##    compound_class           variable      statistic        p
-##    <chr>                    <chr>             <dbl>    <dbl>
-##  1 alkanedioic_acids        abundance_mg…     0.754 4.28e- 5
-##  2 alkanoic_acids           abundance_mg…     0.596 3.81e-10
-##  3 alkenoic_acids           abundance_mg…     0.624 3.56e- 6
-##  4 benzenediols             abundance_mg…     0.907 4.09e- 1
-##  5 coumarins_and_flavonoids abundance_mg…     0.817 1.56e- 1
-##  6 furans                   abundance_mg…     0.523 2.62e- 5
-##  7 guaiacols                abundance_mg…     0.616 1.66e- 9
-##  8 lignans                  abundance_mg…     0.610 2.00e- 5
-##  9 methyl_alkanoates        abundance_mg…     0.780 1.08e- 3
-## 10 methyl_alkenoates        abundance_mg…     0.787 8.48e- 2
-## # ℹ 12 more rows
-```
-
-2. Considering all the species together, regardless of wood type, what are the ten most abundant compounds in wood smoke? Communicate this via a plot that shows averages and standard deviations (9 pts). Run a statistical analysis to determine whether there are significant differences among the abundances of these compounds (7 pts). Show the output of the statistical analyses in your plot (2 pts). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
-
-3. Create a summarized wood smoke data set that contains the sum abundance of each compound class for each species. Conduct a PCA analysis of your summarized data set. Make a figure with three subpanels: a plot of where each species is located in a space defined by the first two principal components (a classical "pca" plot) (6 pts), a plot with ordination information on the compound class level (as opposed to on the single compound level) (6 pts), and a scree plot (6 pts). In your detailed figure caption, answer: How much of the overall variance in the data set is contained within the first two dimensions? (2 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
-
-4. Using your PCA analysis from question 3, select four compound classes, two that are negatively correlated with each other along dimension 1 and two that are positively correlated with each other along dimension 2. Create a plot that shows the abundances of these four compound classes in each wood species (16 pts). In your figure caption, explain: are these abundances consistent with your understanding of PCA and ordination? Why or why not? (4 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
-
-5. Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3 (5 pts), (ii) a kmeans-based clustering of your PCA analysis output from question 3 (5 pts), and (iii) a hierarchical clustering analysis of the raw data (5 pts). For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not? (5 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.
-
-6. Suppose that you are work in a forensics lab. A suspect has been apprehended as part of a murder case. The suspect’s coat smells strongly of wood smoke, and it is known that a bonfire was burning at the scene of the crime. The fire chief reported that red oak was the type of wood the victim was burning at the scene of their murder, but the suspect claims that the smell in the suspect’s coat is from a different bonfire – one that was burning at a party the suspect claims they were attending at the time of the murder. The fire chief investigated the place where the party took place and found a large supply of paper birch firewood. You extracted a segment of the suspects coat and analyzed it with LC-MS and GC-MS to obtain ‘unknown_smoke.csv’. Use that data and your analysis skills to provide a recommendation to the prosecutor in this case.
 
 <!-- end -->
 
@@ -5347,9 +5354,7 @@ tree <- buildTree(
   scaffold = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_thaliana", "Amborella_trichopoda")
 )
-## Pro tip: most tree read/write functions reset node numbers.
-## Fortify your tree and save it as a csv file to preserve node numbering.
-## Do not save your tree as a newick or nexus file.
+## Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.
 ```
 
 ``` r
@@ -5371,7 +5376,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5382,10 +5387,8 @@ tree <- buildTree(
   scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis", "Arabidopsis_neglecta", "Amborella_trichopoda")
 )
-## Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta
-## Pro tip: most tree read/write functions reset node numbers.
-## Fortify your tree and save it as a csv file to preserve node numbering.
-## Do not save your tree as a newick or nexus file.
+## IMPORTANT: Some species substitutions or removals were made as part of buildTree. Run build_tree_substitutions() to see them all.
+## Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.
 ```
 
 ``` r
@@ -5407,7 +5410,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5447,9 +5450,7 @@ test_tree_small <- buildTree(
   scaffold_in_path = "https://thebustalab.github.io/data/plant_phylogeny.newick",
   members = c("Sorghum_bicolor", "Zea_mays", "Setaria_viridis")
 )
-## Pro tip: most tree read/write functions reset node numbers.
-## Fortify your tree and save it as a csv file to preserve node numbering.
-## Do not save your tree as a newick or nexus file.
+## Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.
 ```
 
 ``` r
@@ -5457,7 +5458,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5473,7 +5474,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5482,7 +5483,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5556,7 +5557,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5571,11 +5572,15 @@ collapseTree(
     family = plant_species$Family[match(test_tree_big$tip.label, plant_species$Genus_species)]
   )
 ) -> test_tree_big_families
+## Branch lengths have been set to one.
+```
+
+``` r
 
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-247-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5588,44 +5593,8 @@ chemical_bloom_tree <- buildTree(
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
   members = unique(chemical_blooms$label)
 )
-## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
-## Scaffold newick tip Iris_lazica substituted with Iris_sp
-## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
-## Scaffold newick tip Allium_textile substituted with Allium_sp
-## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
-## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
-## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
-## Scaffold newick tip Agave_striata substituted with Agave_cerulata
-## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
-## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
-## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
-## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
-## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
-## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
-## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
-## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
-## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
-## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
-## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
-## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
-## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
-## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
-## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
-## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
-## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
-## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
-## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
-## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
-## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
-## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
-## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
-## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
-## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
-## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
-## Scaffold newick tip Rubus_repens substituted with Rubus_sp
-## Pro tip: most tree read/write functions reset node numbers.
-## Fortify your tree and save it as a csv file to preserve node numbering.
-## Do not save your tree as a newick or nexus file.
+## IMPORTANT: Some species substitutions or removals were made as part of buildTree. Run build_tree_substitutions() to see them all.
+## Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.
 ```
 
 Next we join the tree with the data:
@@ -5692,7 +5661,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5727,7 +5696,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5740,44 +5709,8 @@ chemical_bloom_tree <- buildTree(
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
   members = unique(chemical_blooms$label)
 )
-## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
-## Scaffold newick tip Iris_lazica substituted with Iris_sp
-## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
-## Scaffold newick tip Allium_textile substituted with Allium_sp
-## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
-## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
-## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
-## Scaffold newick tip Agave_striata substituted with Agave_cerulata
-## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
-## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
-## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
-## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
-## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
-## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
-## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
-## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
-## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
-## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
-## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
-## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
-## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
-## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
-## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
-## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
-## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
-## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
-## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
-## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
-## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
-## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
-## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
-## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
-## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
-## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
-## Scaffold newick tip Rubus_repens substituted with Rubus_sp
-## Pro tip: most tree read/write functions reset node numbers.
-## Fortify your tree and save it as a csv file to preserve node numbering.
-## Do not save your tree as a newick or nexus file.
+## IMPORTANT: Some species substitutions or removals were made as part of buildTree. Run build_tree_substitutions() to see them all.
+## Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.
 ```
 
 ``` r
@@ -5822,44 +5755,8 @@ chemical_bloom_tree <- buildTree(
   scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
   members = unique(chemical_blooms$label)
 )
-## Scaffold newick tip Sabal_pumos substituted with Sabal_palmetto
-## Scaffold newick tip Iris_lazica substituted with Iris_sp
-## Scaffold newick tip Iris_lacustris substituted with Iris_germanica
-## Scaffold newick tip Allium_textile substituted with Allium_sp
-## Scaffold newick tip Allium_subhirsutum substituted with Allium_brevistylum
-## Scaffold newick tip Ornithogalum_saundersiae substituted with Ornithogalum_candicans
-## Scaffold newick tip Hosta_plantaginea substituted with Hosta_sp
-## Scaffold newick tip Agave_striata substituted with Agave_cerulata
-## Scaffold newick tip Agave_tequilana substituted with Agave_chrysantha
-## Scaffold newick tip Aristolochia_serpentaria substituted with Aristolochia_labiata
-## Scaffold newick tip Thalictrum_clavatum substituted with Thalictrum_rochebrunianum
-## Scaffold newick tip Delphinium_pictum substituted with Delphinium_elatum
-## Scaffold newick tip Ferocactus_recurvus substituted with Ferocactus_wislizeni
-## Scaffold newick tip Opuntia_articulata substituted with Opuntia_sp
-## Scaffold newick tip Opuntia_quimilo substituted with Opuntia_robusta
-## Scaffold newick tip Cylindropuntia_fulgida substituted with Cylindropuntia_bigelovii
-## Scaffold newick tip Cylindropuntia_prolifera substituted with Cylindropuntia_versicolor
-## Scaffold newick tip Cylindropuntia_echinocarpa substituted with Cylindropuntia_ramosissima
-## Scaffold newick tip Kirengeshoma_palmata substituted with Kirengeshoma_Palmata
-## Scaffold newick tip Lavandula_bipinnata substituted with Lavandula_sp
-## Scaffold newick tip Rudbeckia_hirta substituted with Rudbeckia_occidentalis
-## Scaffold newick tip Crassula_campestris substituted with Crassula_ovata
-## Scaffold newick tip Crassula_tillaea substituted with Crassula_deceptor
-## Scaffold newick tip Crassula_alata substituted with Crassula_arborescens
-## Scaffold newick tip Crassula_colligata substituted with Crassula_perfoliata
-## Scaffold newick tip Hylotelephium_erythrostictum substituted with Hylotelephium_sp
-## Scaffold newick tip Echeveria_setosa substituted with Echeveria_pulidonis
-## Scaffold newick tip Bryophyllum_pinnatum substituted with Bryophyllum_fedtschenkoi
-## Scaffold newick tip Kalanchoe_linearifolia substituted with Kalanchoe_marginata
-## Scaffold newick tip Kalanchoe_tomentosa substituted with Kalanchoe_luciae
-## Scaffold newick tip Kalanchoe_beharensis substituted with Kalanchoe_thrysiflora
-## Scaffold newick tip Iliamna_latibracteata substituted with Iliamna_rivularis
-## Scaffold newick tip Euphorbia_lathyris substituted with Euphorbia_resinifera
-## Scaffold newick tip Quercus_valdinervosa substituted with Quercus_muehlenbergii
-## Scaffold newick tip Rubus_repens substituted with Rubus_sp
-## Pro tip: most tree read/write functions reset node numbers.
-## Fortify your tree and save it as a csv file to preserve node numbering.
-## Do not save your tree as a newick or nexus file.
+## IMPORTANT: Some species substitutions or removals were made as part of buildTree. Run build_tree_substitutions() to see them all.
+## Pro tip: most tree read/write functions reset node numbers. Fortify your tree and save it as a csv file to preserve node numbering.
 ```
 
 ## phylogeneticSignal {-}
@@ -6023,7 +5920,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -6185,7 +6082,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -6208,7 +6105,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -6232,7 +6129,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6308,21 +6205,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-270-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-271-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-272-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6370,7 +6267,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-275-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6728,7 +6625,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-283-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6770,7 +6667,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-285-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-278-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6859,7 +6756,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-291-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-284-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
