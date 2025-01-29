@@ -187,17 +187,63 @@
 
     ## Set up better warning messages for some functions
 
-        shapiroTest <- function( data, ... ) {
+        # shapiroTest <- function( data, ... ) {
 
-            if ( any(summarize(data, size = n())$size < 3) ) {
-                stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
-            } 
+        #     if ( any(summarize(data, size = n())$size < 3) ) {
+        #         stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
+        #     } 
 
-            if ( any(summarize(data, size = n())$size < 3) ) {
-                stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
-            }
-            rstatix::shapiro_test(data = data, ...)
+        #     if ( any(summarize(data, size = n())$size < 3) ) {
+        #         stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
+        #     }
+        #     rstatix::shapiro_test(data = data, ...)
             
+        # }
+
+        shapiroTest <- function(data, ...) {
+            # First, check if any group has fewer than 3 observations
+            # If 'data' is grouped, summarize() respects those groups
+            # If 'data' is ungrouped, it's treated as one whole group
+            group_sizes <- dplyr::summarize(data, size = dplyr::n())
+            if (any(group_sizes$size < 3)) {
+                stop("One of the groups has fewer than 3 members. A Shapiro–Wilk test cannot be run on such a group. 
+                    Please filter your data or choose new groups.")
+            }
+            
+            # We'll track whether we modified any group, so we can issue a single message later
+            modified <- FALSE
+            
+            # For each group with exactly 3 rows, check if there are duplicates in the 'values' column;
+            # if yes, add small random noise to each point
+            data <- data %>%
+                dplyr::group_modify(~ {
+                    # .x is the data for one group
+                    if (nrow(.x) == 3 && dplyr::n_distinct(.x$values) < 3) {
+                        .x <- .x %>%
+                            dplyr::mutate(
+                                values = values + stats::rnorm(
+                                    n(),
+                                    mean = values / 100000,
+                                    sd   = values / 200000
+                                )
+                            )
+                        modified <<- TRUE  # Mark that we've modified at least one group
+                    }
+                    .x  # Return the possibly modified group data
+                })
+            
+            # If we modified any group, display a warning message
+            if (modified) {
+                message(
+                    "Note: Found a group with exactly 3 data points where at least two were identical.\n",
+                    "A tiny bit of noise was added to these data points, because the Shapiro–Wilk test\n",
+                    "p-value can be artificially low in such edge cases due to test mechanics.\n",
+                    "Consider carefully whether you want to interpret the results of the test."
+                )
+            }
+            
+            # Finally, run the Shapiro–Wilk test on the updated dataset
+            rstatix::shapiro_test(data = data, ...)
         }
 
     ## Rename some stats functions so they use camelCase
