@@ -768,10 +768,6 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   theme_void()
 ```
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/what_is_ggplot.jpeg', dpi = NA)
-```
-
 You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
 
 ```{r}
@@ -802,12 +798,17 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
   )
 ```
 
+In some cases, the following diagram illustrates a useful way to think about the `ggplot()` / `geom_*()` / `scale_*()` / `theme_*()` situation. It shows how we use these things together to achieve a sharp-looking plot:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/what_is_ggplot.jpeg', dpi = NA)
+```
+
 ## subplots {-}
 
-We can make subplots using the `cowplot` package, which comes with the `source()` command. Let's see:
+We can make subplots using the `plot_grid()` function from the `cowplot` package, which comes with the `source()` command. Let's see:
 
 ```{r}
-library(patchwork)
 plot1 <-  ggplot(
             filter(alaska_lake_data, element_type == "free")
           ) +
@@ -857,7 +858,7 @@ Some pointers:
 
 ## further reading {-}
 
-There is a [handy cheat sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
+There is a [handy cheat sheet](https://thebustalab.github.io/integrated_bioanalytics/images/ggplot2_geoms.pdf) that can help you identify the right geom for your situation. Please keep this cheat sheet in mind for your future plotting needs...
 
 For additional explanations of ggplot2: [ggplot2-book](https://ggplot2-book.org/).
 
