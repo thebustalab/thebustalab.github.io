@@ -314,7 +314,7 @@ Here are a variety of ways to filter:
 
 `filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
 
-`filter(<data>, <variable> %in% c(18, 19, 20)` ## equal to 18 or 19 or 20
+`filter(<data>, <variable> %in% c(18, 19, 20))` ## equal to 18 or 19 or 20
 
 ## ggplot & geoms {-}
 
@@ -1909,84 +1909,97 @@ ggplot() +
  -->
 
 
-## tsne and umap {-}
+## umap and tsne {-}
 
-```{r, fig.height = 10, fig.width = 15}
-set.seed(235)
-runMatrixAnalysis(
-  data = metabolomics_data,
+"How do non-linear dimensionality reduction techniques reveal hidden structure in my data?"
+"Can I identify clusters or subtle gradients in my dataset that might be missed by linear methods?"
+
+UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features.
+
+We will work here with the `wine_quality` dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:
+
+```{r}
+wine_quality$ID <- seq(1, dim(wine_quality)[1], 1)
+```
+
+In this command, the dollar sign ($) is used to access (or create) the ID column within the wine_quality data frame. The seq() function generates a sequence of numbers starting at 1 and ending at the number of rows in the dataset (given by dim(wine_quality)[1]), with an increment of 1. This way, every sample is uniquely identified.
+
+Before diving into non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.
+
+```{r, fig.height = 7, fig.width = 7}
+wq <- runMatrixAnalysis(
+  data = wine_quality,
   analysis = "pca",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
-  na_replacement = "mean"
-) -> pca_data
-pca_data$technique <- "pca_data"
-colnames(pca_data) <- gsub("\\.", "_", colnames(pca_data))
-pca_data$Dim_1 <- as.numeric(scale(pca_data$Dim_1))
-pca_data$Dim_2 <- as.numeric(scale(pca_data$Dim_2))
+  columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
+  columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
+)
+wq %>%
+  arrange(quality_score) %>%
+  ggplot(aes(x = Dim.1, y = Dim.2)) +
+  geom_point(size = 3, aes(shape = type, fill = quality_score)) +
+  scale_shape_manual(values = c(21, 22)) +
+  scale_fill_viridis() +
+  theme_classic()
+```
+
+In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
+
+We can perform UMAP on the wine quality dataset just as easily as PCA. The code below shows how to run UMAP using runMatrixAnalysis():
 
 
+```{r, fig.height = 7, fig.width = 7}
 runMatrixAnalysis(
-  data = metabolomics_data,
+  data = wine_quality,
   analysis = "umap",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
-  na_replacement = "mean"
-) -> umap_data
-umap_data$technique <- "umap_data"
-umap_data$Dim_1 <- as.numeric(scale(umap_data$Dim_1))
-umap_data$Dim_2 <- as.numeric(scale(umap_data$Dim_2))
+  columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
+  columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
+) %>%
+  arrange(quality_score) %>%
+  ggplot(aes(x = Dim_1, y = Dim_2)) +
+  geom_point(size = 3, aes(shape = type, fill = quality_score)) +
+  scale_shape_manual(values = c(21, 22)) +
+  scale_fill_viridis() +
+  theme_classic()
+```
 
+In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
 
-runMatrixAnalysis(
-  data = metabolomics_data,
+### A Note on t‑SNE
+
+t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters by converting high-dimensional Euclidean distances into conditional probabilities that represent similarities. However, t‑SNE can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne":
+
+```{r, eval = FALSE}
+tsne_results <- runMatrixAnalysis(
+  data = wine_quality,
   analysis = "tsne",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
-  na_replacement = "mean"
-) -> tsne_data
-tsne_data$technique <- "tsne_data"
-tsne_data$Dim_1 <- as.numeric(scale(tsne_data$Dim_1))
-tsne_data$Dim_2 <- as.numeric(scale(tsne_data$Dim_2))
-
-
-data <- rbind(pca_data, umap_data, tsne_data)
-
-p1 <- ggplot(data) +
-  geom_point(aes(x = Dim_1, y = Dim_2, fill = patient_status), shape = 21, size= 4) +
-  facet_grid(technique~., scales = "free") +
-  scale_fill_brewer(palette = "Set1")
-
-p2 <- ggplot(data) +
-  geom_point(aes(x = Dim_1, y = Dim_2, fill = patient_status), shape = 21, size= 4) +
-  facet_grid(technique~., scales = "free") +
-  scale_fill_brewer(palette = "Set1")
-
-p1 + p2
+  columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
+  columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
+)
 ```
+
+From there, you could plot the t‑SNE dimensions in a similar fashion to the PCA and UMAP examples.
+Wrapping Up
+
+Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
+
+Remember, just like with PCA, ensuring that your plots have consistent axis scaling (using tools like coord_fixed(), if needed) is key to making accurate comparisons between samples.
 
 ## {-}
 
 ## further reading {-}
 
-Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
+- PCA Explanation Video: This YouTube video provides a detailed and visually intuitive explanation of Principal Component Analysis (PCA), breaking down complex concepts with clear examples and graphics. It is part of a curated playlist that covers a variety of topics related to data visualization and statistical analysis. [Watch the PCA video](https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR).
 
-https://datavizpyr.com/how-to-make-umap-plot-in-r/
+- Understanding UMAP: This blog post from Pair Code delves into the fundamentals of UMAP, explaining both the intuition behind the algorithm and its practical applications in data analysis. It provides an accessible overview that bridges the gap between theoretical concepts and real-world use cases, making it a valuable read for both beginners and advanced users. [Explore the Understanding UMAP Article](https://pair-code.github.io/understanding-umap/).
 
-https://datavizpyr.com/how-to-make-tsne-plot-in-r/
-
-https://pair-code.github.io/understanding-umap/
-
-https://www.youtube.com/watch?v=jth4kEvJ3P8
+- UMAP: Mathematical Details (clearly explained!!!) This YouTube video offers a detailed explanation of the mathematical underpinnings of UMAP, breaking down the algorithm in a clear and approachable manner. It is an excellent resource for viewers who want to deepen their understanding of how UMAP works behind the scenes.
+[Watch the UMAP Mathematical Details Video](https://www.youtube.com/watch?v=jth4kEvJ3P8).
 
 <!-- end -->
 
