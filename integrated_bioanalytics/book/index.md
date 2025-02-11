@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-01-29"
+date: "2025-02-11"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -370,7 +370,7 @@ Here are a variety of ways to filter:
 
 `filter(<data>, <variable> == 18 | <variable> == 19)` ## equal to 18 or 19
 
-`filter(<data>, <variable> %in% c(18, 19, 20)` ## equal to 18 or 19 or 20
+`filter(<data>, <variable> %in% c(18, 19, 20))` ## equal to 18 or 19 or 20
 
 ## ggplot & geoms {-}
 
@@ -2239,99 +2239,100 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
  -->
 
 
-## tsne and umap {-}
+## umap and tsne {-}
+
+"How do non-linear dimensionality reduction techniques reveal hidden structure in my data?"
+"Can I identify clusters or subtle gradients in my dataset that might be missed by linear methods?"
+
+UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features.
+
+We will work here with the `wine_quality` dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:
 
 
 ``` r
-set.seed(235)
-runMatrixAnalysis(
-  data = metabolomics_data,
+wine_quality$ID <- seq(1, dim(wine_quality)[1], 1)
+```
+
+In this command, the dollar sign ($) is used to access (or create) the ID column within the wine_quality data frame. The seq() function generates a sequence of numbers starting at 1 and ending at the number of rows in the dataset (given by dim(wine_quality)[1]), with an increment of 1. This way, every sample is uniquely identified.
+
+Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.
+
+
+``` r
+wq <- runMatrixAnalysis(
+  data = wine_quality,
   analysis = "pca",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
-  na_replacement = "mean"
-) -> pca_data
-## Replacing NAs in your data with mean
+  columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
+  columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
+)
+wq %>%
+  arrange(quality_score) %>%
+  ggplot(aes(x = Dim.1, y = Dim.2)) +
+  geom_point(size = 3, aes(shape = type, fill = quality_score)) +
+  scale_shape_manual(values = c(21, 22)) +
+  scale_fill_viridis() +
+  theme_classic()
 ```
 
+<img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" />
+
+In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
+
+We can perform UMAP on the wine quality dataset just as easily as PCA. The code below shows how to run UMAP using runMatrixAnalysis():
+
+
+
 ``` r
-pca_data$technique <- "pca_data"
-colnames(pca_data) <- gsub("\\.", "_", colnames(pca_data))
-pca_data$Dim_1 <- as.numeric(scale(pca_data$Dim_1))
-pca_data$Dim_2 <- as.numeric(scale(pca_data$Dim_2))
-
-
 runMatrixAnalysis(
-  data = metabolomics_data,
+  data = wine_quality,
   analysis = "umap",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
-  na_replacement = "mean"
-) -> umap_data
-## Replacing NAs in your data with mean
+  columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
+  columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
+) %>%
+  arrange(quality_score) %>%
+  ggplot(aes(x = Dim_1, y = Dim_2)) +
+  geom_point(size = 3, aes(shape = type, fill = quality_score)) +
+  scale_shape_manual(values = c(21, 22)) +
+  scale_fill_viridis() +
+  theme_classic()
 ```
 
+<img src="index_files/figure-html/unnamed-chunk-132-1.png" width="100%" style="display: block; margin: auto;" />
+
+In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
+
+t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne":
+
+
 ``` r
-umap_data$technique <- "umap_data"
-umap_data$Dim_1 <- as.numeric(scale(umap_data$Dim_1))
-umap_data$Dim_2 <- as.numeric(scale(umap_data$Dim_2))
-
-
-runMatrixAnalysis(
-  data = metabolomics_data,
+tsne_results <- runMatrixAnalysis(
+  data = wine_quality,
   analysis = "tsne",
   column_w_names_of_multiple_analytes = NULL,
   column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[c(3:126)],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[c(1:2)],
-  na_replacement = "mean"
-) -> tsne_data
-## Replacing NAs in your data with mean
+  columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
+  columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
+)
 ```
 
-``` r
-tsne_data$technique <- "tsne_data"
-tsne_data$Dim_1 <- as.numeric(scale(tsne_data$Dim_1))
-tsne_data$Dim_2 <- as.numeric(scale(tsne_data$Dim_2))
+From there, you could plot the t‑SNE dimensions in a similar fashion to the PCA and UMAP examples.
 
-
-data <- rbind(pca_data, umap_data, tsne_data)
-
-p1 <- ggplot(data) +
-  geom_point(aes(x = Dim_1, y = Dim_2, fill = patient_status), shape = 21, size= 4) +
-  facet_grid(technique~., scales = "free") +
-  scale_fill_brewer(palette = "Set1")
-
-p2 <- ggplot(data) +
-  geom_point(aes(x = Dim_1, y = Dim_2, fill = patient_status), shape = 21, size= 4) +
-  facet_grid(technique~., scales = "free") +
-  scale_fill_brewer(palette = "Set1")
-
-p1 + p2
-```
-
-<img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;" />
+Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
 
 ## {-}
 
 ## further reading {-}
 
-Here is a video that nicely explains PCA: https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR
+- PCA Explanation Video: This YouTube video provides a detailed and visually intuitive explanation of Principal Component Analysis (PCA), breaking down complex concepts with clear examples and graphics. It is part of a curated playlist that covers a variety of topics related to data visualization and statistical analysis. [Watch the PCA video](https://www.youtube.com/watch?v=FgakZw6K1QQ&list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR).
 
-https://datavizpyr.com/how-to-make-umap-plot-in-r/
+- Understanding UMAP: This blog post from Pair Code delves into the fundamentals of UMAP, explaining both the intuition behind the algorithm and its practical applications in data analysis. It provides an accessible overview that bridges the gap between theoretical concepts and real-world use cases, making it a valuable read for both beginners and advanced users. [Explore the Understanding UMAP Article](https://pair-code.github.io/understanding-umap/).
 
-https://datavizpyr.com/how-to-make-tsne-plot-in-r/
-
-https://pair-code.github.io/understanding-umap/
-
-https://www.youtube.com/watch?v=jth4kEvJ3P8
+- UMAP: Mathematical Details (clearly explained!!!) This YouTube video offers a detailed explanation of the mathematical underpinnings of UMAP, breaking down the algorithm in a clear and approachable manner. It is an excellent resource for viewers who want to deepen their understanding of how UMAP works behind the scenes.
+[Watch the UMAP Mathematical Details Video](https://www.youtube.com/watch?v=jth4kEvJ3P8).
 
 <!-- end -->
 
@@ -2398,7 +2399,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-133-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## dbscan {-}
 
@@ -2447,7 +2448,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## summarize by cluster {-}
 
@@ -2524,7 +2525,7 @@ plot_1<- ggplot() +
 plot_1 + plot_2
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
  
 ## {-}
 
@@ -2744,7 +2745,7 @@ ggtree() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-152-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Though that plot could use some tweaking... let's try:
 
@@ -2762,7 +2763,7 @@ ggtree() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-150-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very nice!
 
@@ -2871,7 +2872,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-154-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2956,7 +2957,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-160-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2969,7 +2970,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -3061,7 +3062,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -3075,7 +3076,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -3085,18 +3086,18 @@ K_data %>%
   group_by(aquifer_code) %>% 
   shapiroTest(abundance)
 ## # A tibble: 10 × 4
-##    aquifer_code variable  statistic         p
-##    <chr>        <chr>         <dbl>     <dbl>
-##  1 aquifer_1    abundance     0.885 0.102    
-##  2 aquifer_10   abundance     0.864 0.163    
-##  3 aquifer_2    abundance     0.913 0.459    
-##  4 aquifer_3    abundance     0.893 0.363    
-##  5 aquifer_4    abundance     0.948 0.421    
-##  6 aquifer_5    abundance     0.993 0.972    
-##  7 aquifer_6    abundance     0.914 0.239    
-##  8 aquifer_7    abundance     0.915 0.355    
-##  9 aquifer_8    abundance     0.842 0.220    
-## 10 aquifer_9    abundance     0.790 0.0000214
+##    aquifer_code variable statistic         p
+##    <chr>        <chr>        <dbl>     <dbl>
+##  1 aquifer_1    values       0.885 0.102    
+##  2 aquifer_10   values       0.864 0.163    
+##  3 aquifer_2    values       0.913 0.459    
+##  4 aquifer_3    values       0.893 0.363    
+##  5 aquifer_4    values       0.948 0.421    
+##  6 aquifer_5    values       0.993 0.972    
+##  7 aquifer_6    values       0.914 0.239    
+##  8 aquifer_7    values       0.915 0.355    
+##  9 aquifer_8    values       0.842 0.220    
+## 10 aquifer_9    values       0.790 0.0000214
 ```
 
 
@@ -3188,7 +3189,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -3261,7 +3262,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -3276,7 +3277,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -3286,29 +3287,33 @@ hawaii_aquifers %>%
   filter(analyte %in% c("Na", "Cl")) %>%
   group_by(analyte, aquifer_code) %>%
   shapiroTest(abundance)
+## Note: Found a group with exactly 3 data points where at least two were identical.
+## A tiny bit of noise was added to these data points, because the Shapiro–Wilk test
+## p-value can be artificially low in such edge cases due to test mechanics.
+## Consider carefully whether you want to interpret the results of the test, even with noise added.
 ## # A tibble: 20 × 5
-##    aquifer_code analyte variable  statistic        p
-##    <chr>        <chr>   <chr>         <dbl>    <dbl>
-##  1 aquifer_1    Cl      abundance     0.900 1.59e- 1
-##  2 aquifer_10   Cl      abundance     0.486 1.09e- 5
-##  3 aquifer_2    Cl      abundance     0.869 2.24e- 1
-##  4 aquifer_3    Cl      abundance     0.75  0       
-##  5 aquifer_4    Cl      abundance     0.903 7.49e- 2
-##  6 aquifer_5    Cl      abundance     0.849 2.24e- 1
-##  7 aquifer_6    Cl      abundance     0.741 2.15e- 3
-##  8 aquifer_7    Cl      abundance     0.893 2.12e- 1
-##  9 aquifer_8    Cl      abundance     0.878 3.17e- 1
-## 10 aquifer_9    Cl      abundance     0.420 2.68e-10
-## 11 aquifer_1    Na      abundance     0.886 1.06e- 1
-## 12 aquifer_10   Na      abundance     0.593 2.26e- 4
-## 13 aquifer_2    Na      abundance     0.884 2.88e- 1
-## 14 aquifer_3    Na      abundance     0.822 1.69e- 1
-## 15 aquifer_4    Na      abundance     0.933 2.41e- 1
-## 16 aquifer_5    Na      abundance     0.827 1.61e- 1
-## 17 aquifer_6    Na      abundance     0.764 3.80e- 3
-## 18 aquifer_7    Na      abundance     0.915 3.51e- 1
-## 19 aquifer_8    Na      abundance     0.855 2.53e- 1
-## 20 aquifer_9    Na      abundance     0.531 3.97e- 9
+##    analyte aquifer_code variable statistic        p
+##    <chr>   <chr>        <chr>        <dbl>    <dbl>
+##  1 Cl      aquifer_1    values       0.900 1.59e- 1
+##  2 Cl      aquifer_10   values       0.486 1.09e- 5
+##  3 Cl      aquifer_2    values       0.869 2.24e- 1
+##  4 Cl      aquifer_3    values       0.750 1.06e- 5
+##  5 Cl      aquifer_4    values       0.903 7.49e- 2
+##  6 Cl      aquifer_5    values       0.849 2.24e- 1
+##  7 Cl      aquifer_6    values       0.741 2.15e- 3
+##  8 Cl      aquifer_7    values       0.893 2.12e- 1
+##  9 Cl      aquifer_8    values       0.878 3.17e- 1
+## 10 Cl      aquifer_9    values       0.420 2.68e-10
+## 11 Na      aquifer_1    values       0.886 1.06e- 1
+## 12 Na      aquifer_10   values       0.593 2.26e- 4
+## 13 Na      aquifer_2    values       0.884 2.88e- 1
+## 14 Na      aquifer_3    values       0.822 1.69e- 1
+## 15 Na      aquifer_4    values       0.933 2.41e- 1
+## 16 Na      aquifer_5    values       0.827 1.61e- 1
+## 17 Na      aquifer_6    values       0.764 3.80e- 3
+## 18 Na      aquifer_7    values       0.915 3.51e- 1
+## 19 Na      aquifer_8    values       0.855 2.53e- 1
+## 20 Na      aquifer_9    values       0.531 3.97e- 9
 ```
 
 Looks like some of those distributions are significantly different from normal! Let's run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
@@ -3422,7 +3427,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -3511,7 +3516,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
 
@@ -3606,7 +3611,7 @@ plot1
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -3620,7 +3625,7 @@ ggplot(predictions_from_basic_linear_model) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -3643,7 +3648,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -3657,7 +3662,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-191-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -3717,7 +3722,7 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-196-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -3772,7 +3777,7 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## assessing regression models {-}
 
@@ -3810,7 +3815,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-195-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-198-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -3886,7 +3891,7 @@ random_forest_model$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-198-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -3915,7 +3920,7 @@ ggplot() +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-199-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
@@ -3967,7 +3972,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -4162,7 +4167,7 @@ select(search_results, term, title)
 ##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
 ##  5 friedelin synthase         Friedelin Synthase from Mayte…
-##  6 friedelin synthase         Functional characterization o…
+##  6 friedelin synthase         Genome Mining and Gene Expres…
 ##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    
 ##  8 sorghum bicolor            Molecular Breeding of Sorghum…
 ##  9 sorghum bicolor            Proton-Coupled Electron Trans…
@@ -4215,7 +4220,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -4239,7 +4244,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -4281,7 +4286,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-209-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## protein embeddings {-}
 
@@ -4328,17 +4333,17 @@ ncbi_results <- searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
 ncbi_results
 ## AAStringSet object of length 100:
 ##       width seq                         names               
-##   [1]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412057070.1 pr...
-##   [2]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412057004.1 pr...
-##   [3]   632 MRRLRSLLEDVK...AFIKKAEKRETY WP_412056379.1 pr...
-##   [4]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412056343.1 pr...
-##   [5]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412056277.1 pr...
+##   [1]   571 MSAPQFPQGQGL...GQRQHLPSLQLS WP_414195997.1 pr...
+##   [2]   390 MDAPAPGPTATA...FATEQYKNRRTA WP_414113916.1 MU...
+##   [3]   617 MLLYDKVREEIE...LALAHYIKKYKK WP_000928113.1 pr...
+##   [4]   421 MAPSFAVHARRG...ILLSGRMKKNQQ WP_414169360.1 pr...
+##   [5]   191 MGFRSVFFARSV...IKAFDRGSWKKD KAL4572563.1 hypo...
 ##   ...   ... ...
-##  [96]   416 MTVRRSAAALAT...FLLSMRRKKQQP WP_411078812.1 pr...
-##  [97]   417 MNTVRSAAAALA...VGIGFLLSGRKK WP_411076721.1 pr...
-##  [98]   617 MLLYEKVHEEIA...LTLAHYAKKYRK WP_410986435.1 pr...
-##  [99]   619 MLLHEKVREEVK...LTFAHYIKKYWK WP_410983246.1 pr...
-## [100]   625 MIILLKEVQLEI...LALAHYAKKHSS WP_410903827.1 pr...
+##  [96]   632 MRRLCSLLEDVK...AFIKKAEMRETY WP_412056102.1 pr...
+##  [97]   632 MRRLRSLLEDVK...AFIKKAEKRETY WP_412056075.1 pr...
+##  [98]   632 MRRLRSLLEDVK...AFIKKAEKRETY WP_412056060.1 pr...
+##  [99]   632 MRRLRSLLEDVK...AFIKKTEMRETY WP_412055958.1 pr...
+## [100]   632 MRRLRSLLEDVK...AFIKKAEMRETY WP_412055935.1 pr...
 ```
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
@@ -4424,7 +4429,7 @@ search_results_ex_embed_pca %>%
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 2. Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensional reduction (pca, if you like) to determine if any clear clusters are present.
@@ -5377,7 +5382,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5411,7 +5416,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-233-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5459,7 +5464,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5475,7 +5480,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5484,7 +5489,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-237-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5558,7 +5563,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5581,7 +5586,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-240-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5662,7 +5667,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-248-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5697,7 +5702,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-246-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-249-1.png" width="100%" style="display: block; margin: auto;" />
 
 # phylogenetic analyses {-}
 
@@ -5921,7 +5926,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
 
 # comparative genomics {-}
 
@@ -6083,7 +6088,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### plot insets
 
@@ -6106,7 +6111,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
 
 #### image insets
 
@@ -6130,7 +6135,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-262-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6206,21 +6211,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6268,7 +6273,7 @@ An example:
   theme(legend.position = 'right')
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-271-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## further reading {-}
 
@@ -6626,7 +6631,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-279-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6668,7 +6673,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-278-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-281-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6757,7 +6762,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-284-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-287-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

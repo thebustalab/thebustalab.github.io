@@ -153,7 +153,7 @@
 <div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">aquifers_summarized</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_wells</span>, y <span class="op">=</span> <span class="va">aquifer_code</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-154-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;"></div>
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
 <!-- ```{r, echo = FALSE, message = FALSE}
@@ -225,7 +225,7 @@ library(multcompView)
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">K_data_1_6</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">aquifer_code</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-157-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-160-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Are these data normally distributed? Do they have similar variance? Let’s get a first approximation by looking at a plot:</p>
 <div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -233,7 +233,7 @@ library(multcompView)
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-161-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Based on this graphic, it’s hard to say! Let’s use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is “aquifer_code”, i.e. aquifer_1 and aquifer_6). This means we need to <code>group_by(aquifer_code)</code> before we run the test:</p>
 <div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -304,7 +304,7 @@ library(multcompView)
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">K_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">aquifer_code</span>, x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-163-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Let’s check visually to see if each group is normally distributed and to see if they have roughly equal variance:</p>
 <div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -313,25 +313,25 @@ library(multcompView)
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">..density..</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let’s check using the Shapiro and Levene tests. Don’t forget: with the Shaprio test, we are looking within each group and so need to <code>group_by()</code>, with the Levene test, we are looking across groups, and so need to provide a <code>y~x</code> formula:</p>
 <div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 10 × 4</span></span>
-<span><span class="co">##    aquifer_code variable  statistic         p</span></span>
-<span><span class="co">##    &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 aquifer_1    abundance     0.885 0.102    </span></span>
-<span><span class="co">##  2 aquifer_10   abundance     0.864 0.163    </span></span>
-<span><span class="co">##  3 aquifer_2    abundance     0.913 0.459    </span></span>
-<span><span class="co">##  4 aquifer_3    abundance     0.893 0.363    </span></span>
-<span><span class="co">##  5 aquifer_4    abundance     0.948 0.421    </span></span>
-<span><span class="co">##  6 aquifer_5    abundance     0.993 0.972    </span></span>
-<span><span class="co">##  7 aquifer_6    abundance     0.914 0.239    </span></span>
-<span><span class="co">##  8 aquifer_7    abundance     0.915 0.355    </span></span>
-<span><span class="co">##  9 aquifer_8    abundance     0.842 0.220    </span></span>
-<span><span class="co">## 10 aquifer_9    abundance     0.790 0.0000214</span></span></code></pre></div>
+<span><span class="co">##    aquifer_code variable statistic         p</span></span>
+<span><span class="co">##    &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 aquifer_1    values       0.885 0.102    </span></span>
+<span><span class="co">##  2 aquifer_10   values       0.864 0.163    </span></span>
+<span><span class="co">##  3 aquifer_2    values       0.913 0.459    </span></span>
+<span><span class="co">##  4 aquifer_3    values       0.893 0.363    </span></span>
+<span><span class="co">##  5 aquifer_4    values       0.948 0.421    </span></span>
+<span><span class="co">##  6 aquifer_5    values       0.993 0.972    </span></span>
+<span><span class="co">##  7 aquifer_6    values       0.914 0.239    </span></span>
+<span><span class="co">##  8 aquifer_7    values       0.915 0.355    </span></span>
+<span><span class="co">##  9 aquifer_8    values       0.842 0.220    </span></span>
+<span><span class="co">## 10 aquifer_9    values       0.790 0.0000214</span></span></code></pre></div>
 <div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">leveneTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
@@ -399,7 +399,7 @@ library(multcompView)
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"maroon"</span>, alpha <span class="op">=</span> <span class="fl">0.6</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_tukey</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have “b” in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.</p>
 </div>
 <div id="kruskal-dunn-tests" class="section level3 unnumbered">
@@ -458,7 +458,7 @@ library(multcompView)
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_discrete.html">scale_y_discrete</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Aquifer code"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">groups_based_on_dunn</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">treatment</span>, x <span class="op">=</span> <span class="fl">9</span>, label <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Note that these groupings are different from those generated by ANOVA/Tukey.</p>
 </div>
 </div>
@@ -470,36 +470,40 @@ library(multcompView)
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">analyte</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">aquifer_code</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Fortunately, we can use an approach that is very similar to the what we’ve learned in the earlier portions of this chapter, just with minor modifications. Let’s have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):</p>
 <div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">analyte</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Na"</span>, <span class="st">"Cl"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">analyte</span>, <span class="va">aquifer_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span></span>
+<span><span class="co">## Note: Found a group with exactly 3 data points where at least two were identical.</span></span>
+<span><span class="co">## A tiny bit of noise was added to these data points, because the Shapiro–Wilk test</span></span>
+<span><span class="co">## p-value can be artificially low in such edge cases due to test mechanics.</span></span>
+<span><span class="co">## Consider carefully whether you want to interpret the results of the test, even with noise added.</span></span>
 <span><span class="co">## # A tibble: 20 × 5</span></span>
-<span><span class="co">##    aquifer_code analyte variable  statistic        p</span></span>
-<span><span class="co">##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;</span></span>
-<span><span class="co">##  1 aquifer_1    Cl      abundance     0.900 1.59e- 1</span></span>
-<span><span class="co">##  2 aquifer_10   Cl      abundance     0.486 1.09e- 5</span></span>
-<span><span class="co">##  3 aquifer_2    Cl      abundance     0.869 2.24e- 1</span></span>
-<span><span class="co">##  4 aquifer_3    Cl      abundance     0.75  0       </span></span>
-<span><span class="co">##  5 aquifer_4    Cl      abundance     0.903 7.49e- 2</span></span>
-<span><span class="co">##  6 aquifer_5    Cl      abundance     0.849 2.24e- 1</span></span>
-<span><span class="co">##  7 aquifer_6    Cl      abundance     0.741 2.15e- 3</span></span>
-<span><span class="co">##  8 aquifer_7    Cl      abundance     0.893 2.12e- 1</span></span>
-<span><span class="co">##  9 aquifer_8    Cl      abundance     0.878 3.17e- 1</span></span>
-<span><span class="co">## 10 aquifer_9    Cl      abundance     0.420 2.68e-10</span></span>
-<span><span class="co">## 11 aquifer_1    Na      abundance     0.886 1.06e- 1</span></span>
-<span><span class="co">## 12 aquifer_10   Na      abundance     0.593 2.26e- 4</span></span>
-<span><span class="co">## 13 aquifer_2    Na      abundance     0.884 2.88e- 1</span></span>
-<span><span class="co">## 14 aquifer_3    Na      abundance     0.822 1.69e- 1</span></span>
-<span><span class="co">## 15 aquifer_4    Na      abundance     0.933 2.41e- 1</span></span>
-<span><span class="co">## 16 aquifer_5    Na      abundance     0.827 1.61e- 1</span></span>
-<span><span class="co">## 17 aquifer_6    Na      abundance     0.764 3.80e- 3</span></span>
-<span><span class="co">## 18 aquifer_7    Na      abundance     0.915 3.51e- 1</span></span>
-<span><span class="co">## 19 aquifer_8    Na      abundance     0.855 2.53e- 1</span></span>
-<span><span class="co">## 20 aquifer_9    Na      abundance     0.531 3.97e- 9</span></span></code></pre></div>
+<span><span class="co">##    analyte aquifer_code variable statistic        p</span></span>
+<span><span class="co">##    &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 Cl      aquifer_1    values       0.900 1.59e- 1</span></span>
+<span><span class="co">##  2 Cl      aquifer_10   values       0.486 1.09e- 5</span></span>
+<span><span class="co">##  3 Cl      aquifer_2    values       0.869 2.24e- 1</span></span>
+<span><span class="co">##  4 Cl      aquifer_3    values       0.750 1.06e- 5</span></span>
+<span><span class="co">##  5 Cl      aquifer_4    values       0.903 7.49e- 2</span></span>
+<span><span class="co">##  6 Cl      aquifer_5    values       0.849 2.24e- 1</span></span>
+<span><span class="co">##  7 Cl      aquifer_6    values       0.741 2.15e- 3</span></span>
+<span><span class="co">##  8 Cl      aquifer_7    values       0.893 2.12e- 1</span></span>
+<span><span class="co">##  9 Cl      aquifer_8    values       0.878 3.17e- 1</span></span>
+<span><span class="co">## 10 Cl      aquifer_9    values       0.420 2.68e-10</span></span>
+<span><span class="co">## 11 Na      aquifer_1    values       0.886 1.06e- 1</span></span>
+<span><span class="co">## 12 Na      aquifer_10   values       0.593 2.26e- 4</span></span>
+<span><span class="co">## 13 Na      aquifer_2    values       0.884 2.88e- 1</span></span>
+<span><span class="co">## 14 Na      aquifer_3    values       0.822 1.69e- 1</span></span>
+<span><span class="co">## 15 Na      aquifer_4    values       0.933 2.41e- 1</span></span>
+<span><span class="co">## 16 Na      aquifer_5    values       0.827 1.61e- 1</span></span>
+<span><span class="co">## 17 Na      aquifer_6    values       0.764 3.80e- 3</span></span>
+<span><span class="co">## 18 Na      aquifer_7    values       0.915 3.51e- 1</span></span>
+<span><span class="co">## 19 Na      aquifer_8    values       0.855 2.53e- 1</span></span>
+<span><span class="co">## 20 Na      aquifer_9    values       0.531 3.97e- 9</span></span></code></pre></div>
 <p>Looks like some of those distributions are significantly different from normal! Let’s run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):</p>
 <div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hawaii_aquifers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -594,7 +598,7 @@ library(multcompView)
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>    text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-179-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="section-13" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-13"><i class="fas fa-link"></i></a></h2>
@@ -667,7 +671,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-01-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-02-11.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

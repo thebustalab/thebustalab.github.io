@@ -371,77 +371,65 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
  -->
 </div>
 </div>
-<div id="tsne-and-umap" class="section level2 unnumbered">
-<h2>tsne and umap<a class="anchor" aria-label="anchor" href="#tsne-and-umap"><i class="fas fa-link"></i></a>
+<div id="umap-and-tsne" class="section level2 unnumbered">
+<h2>umap and tsne<a class="anchor" aria-label="anchor" href="#umap-and-tsne"><i class="fas fa-link"></i></a>
 </h2>
+<p>“How do non-linear dimensionality reduction techniques reveal hidden structure in my data?”
+“Can I identify clusters or subtle gradients in my dataset that might be missed by linear methods?”</p>
+<p>UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features.</p>
+<p>We will work here with the <code>wine_quality</code> dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:</p>
 <div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">235</span><span class="op">)</span></span>
-<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<code class="sourceCode R"><span><span class="va">wine_quality</span><span class="op">$</span><span class="va">ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">wine_quality</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>In this command, the dollar sign ($) is used to access (or create) the ID column within the wine_quality data frame. The seq() function generates a sequence of numbers starting at 1 and ending at the number of rows in the dataset (given by dim(wine_quality)[1]), with an increment of 1. This way, every sample is uniquely identified.</p>
+<p>Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.</p>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wq</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">wine_quality</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
 <span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">126</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>  na_replacement <span class="op">=</span> <span class="st">"mean"</span></span>
-<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">pca_data</span></span>
-<span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pca_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"pca_data"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"\\."</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">pca_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">wine_quality</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fl">14</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ID"</span>, <span class="st">"type"</span>, <span class="st">"quality_score"</span>, <span class="st">"quality_category"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">wq</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">quality_score</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="va">type</span>, fill <span class="op">=</span> <span class="va">quality_score</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_shape_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">21</span>, <span class="fl">22</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.</p>
+<p>We can perform UMAP on the wine quality dataset just as easily as PCA. The code below shows how to run UMAP using runMatrixAnalysis():</p>
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">wine_quality</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"umap"</span>,</span>
 <span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">126</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>  na_replacement <span class="op">=</span> <span class="st">"mean"</span></span>
-<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">umap_data</span></span>
-<span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">umap_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"umap_data"</span></span>
-<span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">umap_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">wine_quality</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fl">14</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ID"</span>, <span class="st">"type"</span>, <span class="st">"quality_score"</span>, <span class="st">"quality_category"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">quality_score</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="va">type</span>, fill <span class="op">=</span> <span class="va">quality_score</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_shape_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">21</span>, <span class="fl">22</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-132-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.</p>
+<p>t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = “tsne”:</p>
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tsne_results</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">wine_quality</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"tsne"</span>,</span>
 <span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">126</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>  na_replacement <span class="op">=</span> <span class="st">"mean"</span></span>
-<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">tsne_data</span></span>
-<span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tsne_data</span><span class="op">$</span><span class="va">technique</span> <span class="op">&lt;-</span> <span class="st">"tsne_data"</span></span>
-<span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">tsne_data</span><span class="op">$</span><span class="va">Dim_2</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">pca_data</span>, <span class="va">umap_data</span>, <span class="va">tsne_data</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">patient_status</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim_1</span>, y <span class="op">=</span> <span class="va">Dim_2</span>, fill <span class="op">=</span> <span class="va">patient_status</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size<span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">technique</span><span class="op">~</span><span class="va">.</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-130-1.png" width="100%" style="display: block; margin: auto;"></div>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">wine_quality</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fl">14</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ID"</span>, <span class="st">"type"</span>, <span class="st">"quality_score"</span>, <span class="st">"quality_category"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>From there, you could plot the t‑SNE dimensions in a similar fashion to the PCA and UMAP examples.</p>
+<p>Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.</p>
 </div>
 <div id="section-8" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-8"><i class="fas fa-link"></i></a></h2>
@@ -449,13 +437,13 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
 <div id="further-reading-3" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
 </h2>
-<p>Here is a video that nicely explains PCA: <a href="https://www.youtube.com/watch?v=FgakZw6K1QQ&amp;list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR" class="uri">https://www.youtube.com/watch?v=FgakZw6K1QQ&amp;list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR</a></p>
-<p><a href="https://datavizpyr.com/how-to-make-umap-plot-in-r/" class="uri">https://datavizpyr.com/how-to-make-umap-plot-in-r/</a></p>
-<p><a href="https://datavizpyr.com/how-to-make-tsne-plot-in-r/" class="uri">https://datavizpyr.com/how-to-make-tsne-plot-in-r/</a></p>
-<p><a href="https://pair-code.github.io/understanding-umap/" class="uri">https://pair-code.github.io/understanding-umap/</a></p>
-<p><a href="https://www.youtube.com/watch?v=jth4kEvJ3P8" class="uri">https://www.youtube.com/watch?v=jth4kEvJ3P8</a></p>
-<!-- end -->
-<!-- start clustering -->
+<ul>
+<li><p>PCA Explanation Video: This YouTube video provides a detailed and visually intuitive explanation of Principal Component Analysis (PCA), breaking down complex concepts with clear examples and graphics. It is part of a curated playlist that covers a variety of topics related to data visualization and statistical analysis. <a href="https://www.youtube.com/watch?v=FgakZw6K1QQ&amp;list=PLblh5JKOoLUIcdlgu78MnlATeyx4cEVeR">Watch the PCA video</a>.</p></li>
+<li><p>Understanding UMAP: This blog post from Pair Code delves into the fundamentals of UMAP, explaining both the intuition behind the algorithm and its practical applications in data analysis. It provides an accessible overview that bridges the gap between theoretical concepts and real-world use cases, making it a valuable read for both beginners and advanced users. <a href="https://pair-code.github.io/understanding-umap/">Explore the Understanding UMAP Article</a>.</p></li>
+<li><p>UMAP: Mathematical Details (clearly explained!!!) This YouTube video offers a detailed explanation of the mathematical underpinnings of UMAP, breaking down the algorithm in a clear and approachable manner. It is an excellent resource for viewers who want to deepen their understanding of how UMAP works behind the scenes.
+<a href="https://www.youtube.com/watch?v=jth4kEvJ3P8">Watch the UMAP Mathematical Details Video</a>.</p></li>
+</ul>
+<!-- end --><!-- start clustering -->
 </div>
 </div>
   <div class="chapter-nav">
@@ -482,7 +470,7 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
 <li><a class="nav-link" href="#principal-components">principal components</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#tsne-and-umap">tsne and umap</a></li>
+<li><a class="nav-link" href="#umap-and-tsne">umap and tsne</a></li>
 <li><a class="nav-link" href="#section-8"></a></li>
 <li><a class="nav-link" href="#further-reading-3">further reading</a></li>
 </ul>
@@ -502,7 +490,7 @@ For this set of quesions, work with a dataset describing metabolomics data (i.e.
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-01-29.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-02-11.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

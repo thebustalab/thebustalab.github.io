@@ -1924,7 +1924,7 @@ wine_quality$ID <- seq(1, dim(wine_quality)[1], 1)
 
 In this command, the dollar sign ($) is used to access (or create) the ID column within the wine_quality data frame. The seq() function generates a sequence of numbers starting at 1 and ending at the number of rows in the dataset (given by dim(wine_quality)[1]), with an increment of 1. This way, every sample is uniquely identified.
 
-Before diving into non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.
+Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.
 
 ```{r, fig.height = 7, fig.width = 7}
 wq <- runMatrixAnalysis(
@@ -1968,9 +1968,7 @@ runMatrixAnalysis(
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
 
-### A Note on t‑SNE
-
-t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters by converting high-dimensional Euclidean distances into conditional probabilities that represent similarities. However, t‑SNE can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne":
+t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne":
 
 ```{r, eval = FALSE}
 tsne_results <- runMatrixAnalysis(
@@ -1984,11 +1982,8 @@ tsne_results <- runMatrixAnalysis(
 ```
 
 From there, you could plot the t‑SNE dimensions in a similar fashion to the PCA and UMAP examples.
-Wrapping Up
 
 Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s structure is non-linear. They can help uncover hidden patterns and clusters by focusing on preserving local relationships—UMAP while maintaining a sense of global structure, and t‑SNE by emphasizing the neighborhood structure of the data.
-
-Remember, just like with PCA, ensuring that your plots have consistent axis scaling (using tools like coord_fixed(), if needed) is key to making accurate comparisons between samples.
 
 ## {-}
 
