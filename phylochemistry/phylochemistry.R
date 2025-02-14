@@ -266,7 +266,6 @@
                 c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89"),c("{","90"),c("|","91"),c("}","92"),c("~","93")
             ))
 
-
 ###### Functions
 
     message("Loading functions...")
@@ -960,7 +959,6 @@
 
             }
 
-    
     ##### Polylist construction and manipulation
 
         #### buildPolylist
@@ -9036,74 +9034,77 @@
                                                 all_vlines  <- list()
                                                 all_labels  <- list()
 
+
                                                 # 2. Loop over peaks, but only assemble data frames
-                                                for (peak in 1:nrow(peak_table)) {
-                                                    # Filter chromatogram data for this peak
-                                                    signal_for_this_peak <- dplyr::filter(
-                                                        chromatograms_updated,
-                                                        path_to_cdf_csv == peak_table[peak, ]$path_to_cdf_csv,
-                                                        rt_rt_offset > peak_table[peak, ]$peak_start_rt_offset,
-                                                        rt_rt_offset < peak_table[peak, ]$peak_end_rt_offset
-                                                    )
+                                                if (nrow(peak_table) > 0) {
+                                                    for (peak in 1:nrow(peak_table)) {
+                                                        # Filter chromatogram data for this peak
+                                                        signal_for_this_peak <- dplyr::filter(
+                                                            chromatograms_updated,
+                                                            path_to_cdf_csv == peak_table[peak, ]$path_to_cdf_csv,
+                                                            rt_rt_offset > peak_table[peak, ]$peak_start_rt_offset,
+                                                            rt_rt_offset < peak_table[peak, ]$peak_end_rt_offset
+                                                        )
 
-                                                    # Only proceed if there is valid data
-                                                    if (nrow(signal_for_this_peak) > 0) {
-                                                        # Assign peak number
-                                                        signal_for_this_peak$peak_number_within_sample <- 
-                                                            peak_table$peak_number_within_sample[peak]
+                                                        # Only proceed if there is valid data
+                                                        if (nrow(signal_for_this_peak) > 0) {
+                                                            # Assign peak number
+                                                            signal_for_this_peak$peak_number_within_sample <- 
+                                                                peak_table$peak_number_within_sample[peak]
 
-                                                        # Extract ribbon data
-                                                        ribbon <- dplyr::filter(signal_for_this_peak, ion == 0)
-                                                        ribbon$baseline <- dplyr::filter(signal_for_this_peak, ion == "baseline")$abundance
+                                                            # Extract ribbon data
+                                                            ribbon <- dplyr::filter(signal_for_this_peak, ion == 0)
+                                                            ribbon$baseline <- dplyr::filter(signal_for_this_peak, ion == "baseline")$abundance
 
-                                                        # Store data in lists
-                                                        all_ribbons[[peak]] <- ribbon
-                                                        all_vlines[[peak]]  <- signal_for_this_peak[1, ]
+                                                            # Store data in lists
+                                                            all_ribbons[[peak]] <- ribbon
+                                                            all_vlines[[peak]]  <- signal_for_this_peak[1, ]
 
-                                                        # Create label data
-                                                        label_df <- dplyr::filter(signal_for_this_peak, ion == 0) %>%
-                                                            dplyr::summarize(
-                                                                peak_number_within_sample = peak_number_within_sample[1],
-                                                                x = median(rt_rt_offset),
-                                                                y = max(abundance),
-                                                                path_to_cdf_csv = path_to_cdf_csv[1]
-                                                            )
-                                                        all_labels[[peak]] <- label_df
+                                                            # Create label data
+                                                            label_df <- dplyr::filter(signal_for_this_peak, ion == 0) %>%
+                                                                dplyr::summarize(
+                                                                    peak_number_within_sample = peak_number_within_sample[1],
+                                                                    x = median(rt_rt_offset),
+                                                                    y = max(abundance),
+                                                                    path_to_cdf_csv = path_to_cdf_csv[1]
+                                                                )
+                                                            all_labels[[peak]] <- label_df
+                                                        }
                                                     }
+                                                
+                                                    # 3. Combine all stored data frames
+                                                    all_ribbons <- dplyr::bind_rows(all_ribbons)
+                                                    all_vlines  <- dplyr::bind_rows(all_vlines)
+                                                    all_labels  <- dplyr::bind_rows(all_labels)
+
+                                                    # 4. Add a single set of ggplot layers
+                                                    chromatogram_plot <- chromatogram_plot +
+                                                        geom_vline(
+                                                            data = all_vlines, 
+                                                            mapping = aes(xintercept = rt_rt_offset), 
+                                                            alpha = 0.3
+                                                        ) +
+                                                        geom_ribbon(
+                                                            data = all_ribbons,
+                                                            mapping = aes(
+                                                                x = rt_rt_offset, 
+                                                                ymax = abundance, 
+                                                                ymin = baseline, 
+                                                                fill = peak_number_within_sample,
+                                                                group = peak_number_within_sample
+                                                            ),
+                                                            alpha = 0.8
+                                                        ) +
+                                                        geom_text(
+                                                            data = all_labels,
+                                                            mapping = aes(
+                                                                label = peak_number_within_sample, 
+                                                                x = x, 
+                                                                y = y
+                                                            ),
+                                                            color = "black"
+                                                        )
                                                 }
-
-                                                # 3. Combine all stored data frames
-                                                all_ribbons <- dplyr::bind_rows(all_ribbons)
-                                                all_vlines  <- dplyr::bind_rows(all_vlines)
-                                                all_labels  <- dplyr::bind_rows(all_labels)
-
-                                                # 4. Add a single set of ggplot layers
-                                                chromatogram_plot <- chromatogram_plot +
-                                                    geom_vline(
-                                                        data = all_vlines, 
-                                                        mapping = aes(xintercept = rt_rt_offset), 
-                                                        alpha = 0.3
-                                                    ) +
-                                                    geom_ribbon(
-                                                        data = all_ribbons,
-                                                        mapping = aes(
-                                                            x = rt_rt_offset, 
-                                                            ymax = abundance, 
-                                                            ymin = baseline, 
-                                                            fill = peak_number_within_sample,
-                                                            group = peak_number_within_sample
-                                                        ),
-                                                        alpha = 0.8
-                                                    ) +
-                                                    geom_text(
-                                                        data = all_labels,
-                                                        mapping = aes(
-                                                            label = peak_number_within_sample, 
-                                                            x = x, 
-                                                            y = y
-                                                        ),
-                                                        color = "black"
-                                                    )
                                         }
 
                                     ## Draw the plot and communicate
