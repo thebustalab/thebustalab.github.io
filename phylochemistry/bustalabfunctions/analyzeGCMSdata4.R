@@ -1586,7 +1586,7 @@
                         ## Extract and classify mass spectra on button press (shift + 4)
                                 
                             if (input$keypress == 36) {
-                                message("UPDATED2!")
+                                message("UPDATED3!")
                                 # Read in the peak table (ensure your file is in the correct format)
                                     peak_table <<- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
                                     if(nrow(peak_table) == 0){
@@ -1615,7 +1615,7 @@
                                                 df_agg <- df_subset %>%
                                                     dplyr::mutate(mz = round(mz, 0)) %>%
                                                     dplyr::group_by(mz) %>%
-                                                    dplyr::summarize(intensity = mean(intensity, na.rm = TRUE))
+                                                    dplyr::summarize(intensity = sum(intensity, na.rm = TRUE))
                                                 # Tag the result with a peak identifier
                                                 df_agg$peak_id <- peak$peak_ID
                                                 df_agg$peak_unique_id <- i
