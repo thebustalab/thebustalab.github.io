@@ -15248,7 +15248,7 @@
                         output$model_type <- model_type
 
                     ## Various checkes
-                            if (dim(data)[2] < length(input_variables)) {
+                            if (dim(data)[1] < length(input_variables)) {
                                 stop("Heyyyyy, there are fewer observations in the data than input variables. You should change the number of input variables or make more observations.")
                             }
                             if (!is.numeric(data[,colnames(data) == output_variable]) & !model_type %in% c("random_forest_classification")) {
@@ -15307,11 +15307,11 @@
                                     set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
                                     set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
                                     set_mode("regression") # choose either the continuous regression or binary classification mode
-                                ) -> workflow
+                                ) -> workflow_for_training
 
                         ## Tune the model on the training set
                             tune_results <- tune_grid(
-                                workflow,
+                                workflow_for_training,
                                 resamples = vfold_cv(data, v = fold_cross_validation), #CV object
                                 grid = expand.grid(
                                     mtry = optimization_parameters$n_vars_tried_at_split,
@@ -15327,7 +15327,7 @@
 
                         ## Apply the best parameters to the workflow to creat the output model
                             output$model <- fit(
-                                finalize_workflow(workflow, select_best(tune_results, metric = "rmse")),
+                                finalize_workflow(workflow_for_training, select_best(tune_results, metric = "rmse")),
                                 data
                             )
                     }
@@ -15345,11 +15345,11 @@
                                     set_args(mtry = tune(), trees = tune(), min_n = tune()) %>% # specify that the `mtry` and `trees` parameters needs to be tuned
                                     set_engine("ranger", importance = "impurity") %>% # select the engine/package that underlies the model
                                     set_mode("classification") # choose either the continuous regression or binary classification mode
-                                ) -> workflow
+                                ) -> workflow_for_training
 
                         ## Tune the model on the training set
                             tune_results <- tune_grid(
-                                workflow,
+                                workflow_for_training,
                                 resamples = vfold_cv(data, v = fold_cross_validation), #CV object
                                 grid = expand.grid(
                                     mtry = optimization_parameters$n_vars_tried_at_split,
@@ -15367,7 +15367,7 @@
 
                         ## Apply the best parameters to the workflow to creat the output model
                             output$model <- fit(
-                                finalize_workflow(workflow, select_best(tune_results, metric = "accuracy")),
+                                finalize_workflow(workflow_for_training, select_best(tune_results, metric = "accuracy")),
                                 data
                             )
 
@@ -16290,6 +16290,7 @@
                     c("hawaii_aquifers", "https://thebustalab.github.io/phylochemistry/sample_data/hawaii_aquifers.csv"),
                     c("beer_components", "https://thebustalab.github.io/phylochemistry/sample_data/beer_components.csv"),
                     c("wood_smoke", "https://thebustalab.github.io/phylochemistry/sample_data/wood_smoke_data.csv"),
+                    c("unknown_smoke", "https://thebustalab.github.io/phylochemistry/sample_data/unknown_smoke.csv"),
                     c("hops_components", "https://thebustalab.github.io/phylochemistry/sample_data/hops_components.csv"),
                     c("tequila_chemistry", "https://thebustalab.github.io/phylochemistry/sample_data/tequila_chemistry.csv"),
                     c("chemical_blooms", "https://thebustalab.github.io/phylochemistry/sample_data/chemical_blooms.csv"),
