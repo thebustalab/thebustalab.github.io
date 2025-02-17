@@ -1586,7 +1586,7 @@
                         ## Extract and classify mass spectra on button press (shift + 4)
                                 
                             if (input$keypress == 36) {
-                                message("UPDATED!")
+                                message("UPDATED2!")
                                 # Read in the peak table (ensure your file is in the correct format)
                                     peak_table <<- read.csv("peaks_monolist.csv", stringsAsFactors = FALSE)
                                     if(nrow(peak_table) == 0){
