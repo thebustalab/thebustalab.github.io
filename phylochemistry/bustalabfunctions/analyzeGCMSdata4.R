@@ -1648,11 +1648,11 @@
                                     group_by(peak_unique_id, mz) %>%
                                     summarize(intensity = sum(intensity)) %>%
                                     bind_rows(data.frame(peak_unique_id = 0, mz = 0:1000, intensity = 0)) %>%
-                                    pivot_wider(names_from = mz, values_from = intensity, values_fill = 0) ->> ms_wide
+                                    pivot_wider(names_from = mz, values_from = intensity, values_fill = 0) -> ms_wide
                                 ms_wide <- ms_wide[ms_wide$peak_unique_id != 0,][,-1]
-                                ms_wide <- as_tibble(t(apply(ms_wide, 1, function(x) (x / max(x)) * 100))) # normalize to 100
+                                ms_wide <<- as_tibble(t(apply(ms_wide, 1, function(x) (x / max(x)) * 100))) # normalize to 100
 
-                                message("ms_wide made.")
+                                message("ms_wide made and saved for inspection and plotting.")
 
                                 predictions <<- as.character(predictWithModel(
                                     data = ms_wide,
@@ -1661,7 +1661,7 @@
                                 ))
 
                                 message("predictions made:")
-                                message(predictions)
+                                # message(predictions)
                                 
                                 peak_table$peak_ID <- paste0("(predicted) ", predictions)
                                 writeMonolist(peak_table, "peaks_monolist.csv")
