@@ -1613,7 +1613,7 @@
                                             if(nrow(df_subset) > 0){
                                                 # Round m/z values and average intensities by m/z
                                                 df_agg <- df_subset %>%
-                                                    dplyr::mutate(mz = round(mz, 1)) %>%
+                                                    dplyr::mutate(mz = round(mz, 0)) %>%
                                                     dplyr::group_by(mz) %>%
                                                     dplyr::summarize(intensity = mean(intensity, na.rm = TRUE))
                                                 # Tag the result with a peak identifier
