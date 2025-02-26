@@ -6564,7 +6564,7 @@
                                                                 color = "black", fill = "grey"
                                                             ) +
                                                             theme_classic() +
-                                                            scale_x_continuous(expand = c(0,0)) +
+                                                            scale_x_continuous(expand = c(2,0)) +
                                                             scale_y_continuous(expand = c(0,0)) +
                                                             coord_cartesian(xlim = c(MS1_low_x_limit, MS1_high_x_limit), ylim = c(0, MS1_high_y_limit)) +
                                                             geom_text(

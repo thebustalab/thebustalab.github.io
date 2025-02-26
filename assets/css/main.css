@@ -3843,6 +3843,48 @@ h2{
 
 		}
 
+/* four-column flex grid */
+
+.grid-style-four {
+	width: 100%;
+	margin: 1rem 0 0 0;
+	display: -moz-flex;
+	display: -webkit-flex;
+	display: -ms-flex;
+	display: flex;
+	-moz-flex-wrap: wrap;
+	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	-moz-align-items: stretch;
+	-webkit-align-items: stretch;
+	-ms-align-items: stretch;
+	align-items: stretch;
+}
+
+	.grid-style-four > * {
+		-moz-flex-shrink: 1;
+		-webkit-flex-shrink: 1;
+		-ms-flex-shrink: 1;
+		flex-shrink: 1;
+		-moz-flex-grow: 0;
+		-webkit-flex-grow: 0;
+		-ms-flex-grow: 0;
+		flex-grow: 0;
+	}
+
+	.grid-style-four > * {
+		padding: 0.5rem;
+		width: 25%;
+	}
+
+	@media screen and (max-width: 980px) {
+		.grid-style-four > * {
+			width: 100%;
+		}
+	}
+
+
 /* Header */
 
 	body.subpage {
