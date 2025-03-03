@@ -10433,19 +10433,22 @@
                       method = "fakerake", min_freq = min_freq_for_terms, min_n = min_n_words_per_term,
                       stopwords = stopwords::data_stopwords_stopwordsiso$en
                     )
-                    cat("Found", length(search_hits_terms), "search terms.")    
-                    if(length(search_hits_terms) == 0) { stop("Consider reducing min_n") }
+                    # cat("Found", length(search_hits_terms), "search terms.")    
+                    if(length(search_hits_terms) == 0) { #warning("Consider reducing min_n") 
+                    } else {
 
-                # Create Co-Occurrence Network and bind it to the data
-                    gs_dfm <- as.data.frame(litsearchr::create_dfm(
-                        elements = text_vector,
-                        features = search_hits_terms
-                    ))
-                    data <- cbind(dataframe, gs_dfm)
+                        # Create Co-Occurrence Network and bind it to the data
+                            gs_dfm <- as.data.frame(litsearchr::create_dfm(
+                                elements = text_vector,
+                                features = search_hits_terms
+                            ))
+                            data <- cbind(dataframe, gs_dfm)
 
-                # Return
-                    if(return[1] == "dataframe") {return(data)}
-                    if(return[1] == "terms") {return(search_hits_terms)}
+                        # Return
+                            if(return[1] == "dataframe") {return(data)}
+                            if(return[1] == "terms") {return(search_hits_terms)}
+
+                    }
             }
 
         #### searchField
