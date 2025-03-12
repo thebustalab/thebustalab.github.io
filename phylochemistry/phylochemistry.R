@@ -10111,9 +10111,9 @@
 
     ##### Language models and text data handling
 
-        #### parse_ris_file
+        #### parseRISFile
 
-                parse_ris_file <- function(filepath) {
+                parseRISFile <- function(filepath) {
                     cat(Sys.time(), "- Parsing RIS file: ", filepath, "\n")
                     lines <- readLines(filepath, warn = FALSE)
                     cat(Sys.time(), "- Number of lines read: ", length(lines), "\n")
@@ -10536,38 +10536,44 @@
 
         #### extractTerms
 
-            extractTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term, return = c("dataframe", "terms")) {
-
-                # Prepare text_vector to analyze
+                extractTerms <- function(dataframe, cols, min_freq_for_terms, min_n_words_per_term, return = c("dataframe", "terms")) {
+                    cat(Sys.time(), "- extractTerms() called with dataframe dimensions: "); print(dim(dataframe))
+                    
                     text_vector <- list()
                     for (i in 1:dim(dataframe)[1]) {
                         text_vector[[i]] <- paste(dataframe[i, cols], collapse = " ")
                     }
                     text_vector <- as.character(do.call(rbind, text_vector))
-
-                # Extract terms from from title and text
+                    cat(Sys.time(), "- Text vector length: ", length(text_vector), "\n")
+                    
                     search_hits_terms <- litsearchr::extract_terms(
-                      text = text_vector,
-                      method = "fakerake", min_freq = min_freq_for_terms, min_n = min_n_words_per_term,
-                      stopwords = stopwords::data_stopwords_stopwordsiso$en
+                        text = text_vector,
+                        method = "fakerake", 
+                        min_freq = min_freq_for_terms, 
+                        min_n = min_n_words_per_term,
+                        stopwords = stopwords::data_stopwords_stopwordsiso$en
                     )
-                    # cat("Found", length(search_hits_terms), "search terms.")    
-                    if(length(search_hits_terms) == 0) { #warning("Consider reducing min_n") 
+                    cat(Sys.time(), "- Number of search terms extracted: ", length(search_hits_terms), "\n")
+                    
+                    if(length(search_hits_terms) == 0) { 
+                        cat(Sys.time(), "- Warning: No search terms found!\n")
                     } else {
-
-                        # Create Co-Occurrence Network and bind it to the data
-                            gs_dfm <- as.data.frame(litsearchr::create_dfm(
-                                elements = text_vector,
-                                features = search_hits_terms
-                            ))
-                            data <- cbind(dataframe, gs_dfm)
-
-                        # Return
-                            if(return[1] == "dataframe") {return(data)}
-                            if(return[1] == "terms") {return(search_hits_terms)}
-
+                        gs_dfm <- as.data.frame(litsearchr::create_dfm(
+                            elements = text_vector,
+                            features = search_hits_terms
+                        ))
+                        cat(Sys.time(), "- DFM dimensions: "); print(dim(gs_dfm))
+                        data <- cbind(dataframe, gs_dfm)
+                        cat(Sys.time(), "- Combined dataframe dimensions after adding DFM: "); print(dim(data))
+                        
+                        if(return[1] == "dataframe") { 
+                            return(data) 
+                        }
+                        if(return[1] == "terms") { 
+                            return(search_hits_terms) 
+                        }
                     }
-            }
+                }
 
         #### searchField
 
