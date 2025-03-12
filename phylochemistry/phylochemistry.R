@@ -3229,307 +3229,325 @@
 
                 ## Prelim stuff
 
-                    ## Read in and process alignment
-                        
-                        alignment <- readAlignment(
-                            alignment_in_path = alignment_in_path,
-                            type = type
-                        )
+                ## Read in and process alignment
+                alignment <- readAlignment(
+                    alignment_in_path = alignment_in_path,
+                    type = type
+                )
 
-                        if (type == "DNA") {scaffold_type = "nucl_alignment"}
-                        if (type == "AA") {scaffold_type = "amin_alignment"}
+                if (type == "DNA") { scaffold_type <- "nucl_alignment" }
+                if (type == "AA") { scaffold_type <- "amin_alignment" }
 
-                        tree <- fortify(buildTree(
-                            scaffold_type = scaffold_type,
-                            scaffold_in_path = alignment_in_path,
-                        ))
+                tree <- fortify(buildTree(
+                    scaffold_type = scaffold_type,
+                    scaffold_in_path = alignment_in_path
+                ))
 
-                        alignment$name <- factor(alignment$name, levels = arrange(filter(tree, isTip == TRUE), y)$label)
+                alignment$name <- factor(alignment$name, levels = arrange(filter(tree, isTip == TRUE), y)$label)
 
-                    ## Analyze composition of each position
-                                
-                        alignment %>%
-                            group_by(position) %>%
-                            summarize(
-                                gap_percent = sum(str_count(state, "-"))/n()*100,
-                                conservation_percent = suppressWarnings(sum(state == mode(state))/n()*100)
-                            ) %>%
-                            pivot_longer(cols = c(2,3), names_to = "metric", values_to = "value") -> alignment_stats
+                ## Analyze composition of each position
+                alignment %>%
+                  group_by(position) %>%
+                  summarize(
+                    gap_percent = sum(str_count(state, "-"))/n()*100,
+                    conservation_percent = suppressWarnings(sum(state == mode(state))/n()*100)
+                  ) %>%
+                  pivot_longer(cols = c(2,3), names_to = "metric", values_to = "value") -> alignment_stats
 
                 ## User interface
 
-                    ui <- fluidPage(
+                ui <- fluidPage(
 
-                        sidebarLayout(
+                    sidebarLayout(
 
-                            sidebarPanel(
+                        sidebarPanel(
 
-                                sliderInput(
-                                    inputId = "x_start",
-                                    label = "x_start",
-                                    min = 0,
-                                    max = max(alignment$position),
-                                    value = 0
-                                ),
-
-                                sliderInput(
-                                    inputId = "x_end",
-                                    label = "x_end",
-                                    min = 0,
-                                    max = max(alignment$position),
-                                    value = max(alignment$position)
-                                ),
-
-                                sliderInput(
-                                    inputId = "gap_threshold",
-                                    label = "Maximum Gap Percent",
-                                    min = 0,
-                                    max = 100,
-                                    value = 100
-                                ),
-
-                                sliderInput(
-                                    inputId = "conservation_threshold",
-                                    label = "Minimum Conservation Percent",
-                                    min = 0,
-                                    max = 100,
-                                    value = 0
-                                ),
-
-                                "Here is a NJ representation of the original alignment:",
-
-                                plotOutput(
-                                    outputId = "tree",
-                                    height = "300px"
-                                ),
-
-                                "Here is a NJ representation of the alignment AFTER trimming:",
-
-                                plotOutput(
-                                    outputId = "filtered_tree",
-                                    height = "300px"
-                                ),
-
-                                tags$head(
-                                    HTML(
-                                        "
-                                        <script>
-                                            var socket_timeout_interval
-                                            var n = 0
-                                            $(document).on('shiny:connected', function(event) {
-                                            socket_timeout_interval = setInterval(function(){
-                                            Shiny.onInputChange('count', n++)
-                                            }, 15000)
-                                            });
-                                            $(document).on('shiny:disconnected', function(event) {
-                                            clearInterval(socket_timeout_interval)
-                                            });
-                                        </script>
-                                        "
-                                    )
-                                ),
-
-                                textOutput("keepAlive"),
-
-                                width = 3
-
+                            sliderInput(
+                                inputId = "x_start",
+                                label = "x_start",
+                                min = 0,
+                                max = max(alignment$position),
+                                value = 0
                             ),
 
-                            mainPanel(
+                            sliderInput(
+                                inputId = "x_end",
+                                label = "x_end",
+                                min = 0,
+                                max = max(alignment$position),
+                                value = max(alignment$position)
+                            ),
 
-                                plotOutput(
-                                    outputId = "plot",
-                                    height = "1000px"
+                            sliderInput(
+                                inputId = "gap_threshold",
+                                label = "Maximum Gap Percent",
+                                min = 0,
+                                max = 100,
+                                value = 100
+                            ),
+
+                            sliderInput(
+                                inputId = "conservation_threshold",
+                                label = "Minimum Conservation Percent",
+                                min = 0,
+                                max = 100,
+                                value = 0
+                            ),
+
+                            "Here is a NJ representation of the original alignment:",
+                            plotOutput(
+                                outputId = "tree",
+                                height = "300px"
+                            ),
+
+                            "Here is a NJ representation of the alignment AFTER trimming:",
+                            plotOutput(
+                                outputId = "filtered_tree",
+                                height = "300px"
+                            ),
+
+                            tags$head(
+                                HTML(
+                                    "
+                                    <script>
+                                        var socket_timeout_interval;
+                                        var n = 0;
+                                        $(document).on('shiny:connected', function(event) {
+                                          socket_timeout_interval = setInterval(function(){
+                                            Shiny.onInputChange('count', n++)
+                                          }, 15000)
+                                        });
+                                        $(document).on('shiny:disconnected', function(event) {
+                                          clearInterval(socket_timeout_interval)
+                                        });
+                                    </script>
+                                    "
                                 )
+                            ),
+
+                            textOutput("keepAlive"),
+                            br(),
+                            actionButton("return_btn", "Return Trimmed Alignment & Close App"),
+
+                            width = 3
+                        ),
+
+                        mainPanel(
+
+                            plotOutput(
+                                outputId = "plot",
+                                height = "1000px"
                             )
                         )
                     )
+                )
 
                 ## Server
 
-                    server <- function(input, output) {
+                server <- function(input, output) {
 
-                        ## Don't let it time out
-                            
-                            output$keepAlive <- renderText({
-                                req(input$count)
-                                paste("\nstayin' alive ", input$count)
-                            })
+                    ## Reactive to compute trimmed alignment from filtering criteria
+                    trimmedAlignment <- reactive({
 
-                        ## Original tree
+                        # Determine positions to keep based on filtering criteria
+                        pos <- alignment_stats %>%
+                            pivot_wider(names_from = "metric", values_from = "value") %>%
+                            filter(
+                                gap_percent < input$gap_threshold &
+                                conservation_percent > input$conservation_threshold
+                            ) %>%
+                            pull(position)
+                        validate(
+                            need(length(pos) > 0, "No positions meet the filtering criteria. Please adjust your gap or conservation thresholds.")
+                        )
 
-                            output$tree <- renderPlot({ ggtree(tree) })
+                        # Create a wide format alignment with only the positions to keep
+                        alignment_wide <- alignment %>%
+                            filter(position %in% pos) %>%
+                            pivot_wider(names_from = position, values_from = state)
+                        validate(
+                            need(ncol(alignment_wide) >= 2, "Trimmed alignment does not contain any sequence positions. Check your filtering criteria.")
+                        )
 
-                        ## Plot alignment
+                        # Build the trimmed alignment based on type
+                        if (type == "DNA") {
+                            trimmed_alignment <- DNAStringSet()
+                            for (i in 1:nrow(alignment_wide)) {
+                                seq_chars <- alignment_wide[i, 2:ncol(alignment_wide)]
+                                trimmed_seq <- paste0(as.character(seq_chars), collapse = "")
+                                trimmed_alignment <- c(trimmed_alignment, DNAStringSet(trimmed_seq))
+                            }
+                            # Convert factor to character before assigning names
+                            trimmed_alignment@ranges@NAMES <- as.character(alignment_wide[[1]])
+                            writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), fasta_type = "DNA")
+                        }
 
-                            output$plot <- renderPlot({
+                        if (type == "AA") {
+                            trimmed_alignment <- AAStringSet()
+                            for (i in 1:nrow(alignment_wide)) {
+                                seq_chars <- alignment_wide[i, 2:ncol(alignment_wide)]
+                                trimmed_seq <- paste0(as.character(seq_chars), collapse = "")
+                                trimmed_alignment <- c(trimmed_alignment, AAStringSet(trimmed_seq))
+                            }
+                            # Convert factor to character before assigning names
+                            trimmed_alignment@ranges@NAMES <- as.character(alignment_wide[[1]])
+                            writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), fasta_type = "AA")
+                        }
 
-                                ## Main plots
+                        trimmed_alignment
+                    })
 
-                                    stats_plot <- ggplot(alignment_stats, aes(x = position, y = value, color = metric)) +
-                                        geom_line(size = 1) +
-                                        geom_hline(data = data.frame(
-                                            metric = "conservation_percent",
-                                            yintercept = input$conservation_threshold
-                                            ), aes(yintercept = yintercept)
-                                        ) +
-                                        geom_hline(data = data.frame(
-                                            metric = "gap_percent",
-                                            yintercept = input$gap_threshold
-                                            ), aes(yintercept = yintercept)
-                                        ) +
-                                        scale_color_viridis(discrete = TRUE, guide = "none") +
-                                        theme_classic() +
-                                        scale_y_continuous(name = "Percent") +
-                                        scale_x_continuous(expand = c(0,0)) +
-                                        coord_cartesian(xlim = c(input$x_start, input$x_end)) +
-                                        facet_grid(metric~.) +
-                                        theme(
-                                            axis.text.y = element_blank()
-                                        )
-                                
-                                    alignment_plot <- ggplot(alignment, aes(x = position, y = name)) +
-                                        geom_tile(aes(fill = state)) +
-                                        scale_fill_viridis(discrete = TRUE, guide = "none") +
-                                        scale_y_discrete(name = "") +
-                                        scale_x_continuous(expand = c(0,0)) +
-                                        theme_classic() +
-                                        coord_cartesian(xlim = c(input$x_start, input$x_end)) +
-                                        theme(
-                                            axis.text.y = element_blank()
-                                        )
+                    ## Don't let it time out
+                    output$keepAlive <- renderText({
+                        req(input$count)
+                        paste("\nstayin' alive ", input$count)
+                    })
 
-                                    alignment_stats %>%
-                                        pivot_wider(names_from = "metric", values_from = "value") %>%
-                                        filter(
-                                            gap_percent < input$gap_threshold &
-                                            conservation_percent > input$conservation_threshold
-                                        ) %>% 
-                                        select(position) %>% as.data.frame() -> positions_to_keep
-                                        positions_to_keep <- positions_to_keep[,1]
+                    ## Original tree
+                    output$tree <- renderPlot({
+                        ggtree(tree)
+                    })
 
-                                    alignment %>%
-                                        filter(position %in% positions_to_keep) %>%
-                                        ggplot(aes(x = position, y = name)) +
-                                            geom_tile(aes(fill = state)) +
-                                            scale_fill_viridis(discrete = TRUE, guide = "none") +
-                                            scale_y_discrete(name = "") +
-                                            scale_x_continuous(expand = c(0,0)) +
-                                            theme_classic() +
-                                            coord_cartesian(xlim = c(input$x_start, input$x_end)) +
-                                            theme(
-                                                axis.text.y = element_blank()
-                                            ) -> filtered_alignment_plot
+                    ## Plot alignment
+                    output$plot <- renderPlot({
 
-                                    stats_plot + alignment_plot + filtered_alignment_plot + patchwork::plot_layout(ncol = 1)
+                        ## Main plots
+                        stats_plot <- ggplot(alignment_stats, aes(x = position, y = value, color = metric)) +
+                            geom_line(size = 1) +
+                            geom_hline(data = data.frame(
+                                metric = "conservation_percent",
+                                yintercept = input$conservation_threshold
+                            ), aes(yintercept = yintercept)) +
+                            geom_hline(data = data.frame(
+                                metric = "gap_percent",
+                                yintercept = input$gap_threshold
+                            ), aes(yintercept = yintercept)) +
+                            scale_color_viridis(discrete = TRUE, guide = "none") +
+                            theme_classic() +
+                            scale_y_continuous(name = "Percent") +
+                            scale_x_continuous(expand = c(0,0)) +
+                            coord_cartesian(xlim = c(input$x_start, input$x_end)) +
+                            facet_grid(metric ~ .) +
+                            theme(
+                                axis.text.y = element_blank()
+                            )
 
-                            })
+                        alignment_plot <- ggplot(alignment, aes(x = position, y = name)) +
+                            geom_tile(aes(fill = state)) +
+                            scale_fill_viridis(discrete = TRUE, guide = "none") +
+                            scale_y_discrete(name = "") +
+                            scale_x_continuous(expand = c(0,0)) +
+                            theme_classic() +
+                            coord_cartesian(xlim = c(input$x_start, input$x_end)) +
+                            theme(
+                                axis.text.y = element_blank()
+                            )
 
-                        ## Process and draw tree from filtered_alignment
+                        alignment_stats %>%
+                            pivot_wider(names_from = "metric", values_from = "value") %>%
+                            filter(
+                                gap_percent < input$gap_threshold &
+                                conservation_percent > input$conservation_threshold
+                            ) %>% 
+                            select(position) %>% as.data.frame() -> positions_to_keep
+                        positions_to_keep <- positions_to_keep[,1]
 
-                            output$filtered_tree <- renderPlot({
+                        filtered_alignment_plot <- alignment %>%
+                            filter(position %in% positions_to_keep) %>%
+                            ggplot(aes(x = position, y = name)) +
+                                geom_tile(aes(fill = state)) +
+                                scale_fill_viridis(discrete = TRUE, guide = "none") +
+                                scale_y_discrete(name = "") +
+                                scale_x_continuous(expand = c(0,0)) +
+                                theme_classic() +
+                                coord_cartesian(xlim = c(input$x_start, input$x_end)) +
+                                theme(
+                                    axis.text.y = element_blank()
+                                )
 
-                                alignment_stats %>%
-                                    pivot_wider(names_from = "metric", values_from = "value") %>%
-                                    filter(
-                                        gap_percent < input$gap_threshold &
-                                        conservation_percent > input$conservation_threshold
-                                    ) %>% 
-                                    select(position) %>% as.data.frame() -> positions_to_keep
-                                    positions_to_keep <- positions_to_keep[,1]
+                        stats_plot + alignment_plot + filtered_alignment_plot + patchwork::plot_layout(ncol = 1)
+                    })
 
-                                alignment %>%
-                                    filter(position %in% positions_to_keep) %>%
-                                    pivot_wider(names_from = position, values_from = state) -> alignment_wide
+                    ## Process and draw tree from filtered alignment
+                    output$filtered_tree <- renderPlot({
 
-                                if (type == "DNA") {
-                                    trimmed_alignment <- DNAStringSet()
-                                    for (i in 1:dim(alignment_wide)[1]) {
-                                        trimmed_alignment <- c(trimmed_alignment, DNAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
-                                    }
-                                    trimmed_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
-                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), fasta_type = "DNA")
-                                }
+                        # Trigger the reactive trimmed alignment (which writes the file)
+                        trimmedAlignment()
 
-                                if (type == "AA") {
-                                    trimmed_alignment <- AAStringSet()
-                                    for (i in 1:dim(alignment_wide)[1]) {
-                                        trimmed_alignment <- c(trimmed_alignment, AAStringSet(paste0(alignment_wide[i,2:(dim(alignment_wide)[2])], collapse = "")))
-                                    }
-                                    trimmed_alignment@ranges@NAMES <- as.character(as.data.frame(alignment_wide[,1])[,1])
-                                    writeFasta(trimmed_alignment, paste0(alignment_in_path, "_trimmed"), fasta_type = "AA")
-                                }
+                        trimmed_tree <- fortify(buildTree(
+                            scaffold_type = scaffold_type,
+                            scaffold_in_path = paste0(alignment_in_path, "_trimmed")
+                        ))
 
-                                trimmed_tree <- fortify(buildTree(
-                                    scaffold_type = scaffold_type,
-                                    scaffold_in_path = paste0(alignment_in_path, "_trimmed"),
-                                ))
+                        ggtree(trimmed_tree)
+                    })
 
-                                ggtree(trimmed_tree)
-
-                            })
-
-                    }
+                    ## Observer to handle the return button; when clicked, compute the trimmed alignment and close the app.
+                    observeEvent(input$return_btn, {
+                        trimmed <- trimmedAlignment()
+                        stopApp(trimmed)
+                    })
+                }
 
                 ## Call the app
 
-                    if ( jupyter == TRUE) {
+                if (jupyter == TRUE) {
 
-                        available_ports <- vector()
+                    available_ports <- vector()
 
-                        if ( length( unique( c(
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10123) }
+                    if ( length( unique( c(
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10122, max = 10123, host = "127.0.0.1", n = 50)
+                    ))) == 2 ) { available_ports <- c(available_ports, 10123) }
 
-                        if ( length( unique( c(
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10456) }
+                    if ( length( unique( c(
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10455, max = 10456, host = "127.0.0.1", n = 50)
+                    ))) == 2 ) { available_ports <- c(available_ports, 10456) }
 
-                        if ( length( unique( c(
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
-                                    randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
-                        ))) == 2 ) { available_ports <- c(available_ports, 10789) }
+                    if ( length( unique( c(
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50),
+                                randomPort(min = 10788, max = 10789, host = "127.0.0.1", n = 50)
+                    ))) == 2 ) { available_ports <- c(available_ports, 10789) }
 
-                        if (length(available_ports) > 0) {
-                            cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
-                            runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1])
-                        } else {
-                            cat("All available ports are in use. Please try again later.")
-                        }
-                    
+                    if (length(available_ports) > 0) {
+                        cat(paste0("Connect at: https://shiny", substr(available_ports[1],3,6), ".bustalab.d.umn.edu"))
+                        return(runApp(shinyApp(ui = ui, server = server), host = "127.0.0.1", port = available_ports[1]))
+                    } else {
+                        cat("All available ports are in use. Please try again later.")
                     }
 
-                    if (jupyter == FALSE) {
-                        shinyApp(ui = ui, server = server)
-                    }
+                }
 
+                if (jupyter == FALSE) {
+                    shinyApp(ui = ui, server = server)
+                }
             }
+
 
         #### readGFFs
 
@@ -11191,48 +11209,98 @@
                 nvidia_api_key = NULL,
                 platform = c("nvidia", "biolm", "local"),
                 input_type = c("amino_acid_stringset", "dataframe"),
-                seq_column = NULL,
-                model_name = "esm2_t30_150M_UR50D"
+                model_name = c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m", "esm2_t30_150M_UR50D"),
+                seq_column = NULL
             ) {
-
+                      
                 input_type <- input_type[1]
                 platform <- platform[1]
-                
+                model_name <- model_name[1]
+                      
+                # Validate that the provided model_name is allowed for the chosen platform
+                if (platform == "biolm") {
+                    allowed_models <- c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m")
+                    if (!model_name %in% allowed_models) {
+                        stop("For platform 'biolm', model_name must be one of: ", paste(allowed_models, collapse = ", "))
+                    }
+                }
+                if (platform == "nvidia") {
+                    if (model_name != "esm2-650m") {
+                        stop("For platform 'nvidia', only model_name 'esm2-650m' is allowed.")
+                    }
+                }
+                if (platform == "local") {
+                    if (model_name != "esm2_t30_150M_UR50D") {
+                        stop("For platform 'local', only model_name 'esm2_t30_150M_UR50D' is allowed.")
+                    }
+                }
+                      
                 # Check input data type and prepare data
                 if (input_type == "amino_acid_stringset") {
                     if (!inherits(amino_acid_stringset, "XStringSet")) {
                         stop("For input_type 'amino_acid_stringset', amino_acid_stringset must be of class 'XStringSet'.")
                     }
-
+                          
                     # Initialize progress bar
                     pb <- progress::progress_bar$new(
                         format = "  Processing [:bar] :percent in :elapsed seconds",
-                        total = if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df), 
+                        total = length(amino_acid_stringset), 
                         clear = FALSE, width = 60
                     )
-
+                          
                     # Remote embedding with biolm or nvidia
                     embeddings <- list()
-                    for (i in 1:(if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df))) {
-                        sequence <- if (input_type == "amino_acid_stringset") as.data.frame(amino_acid_stringset)[[1]][i] else df[[seq_column]][i]
-                        
+                    for (i in seq_len(length(amino_acid_stringset))) {
+                        sequence <- as.data.frame(amino_acid_stringset)[[1]][i]
+                              
                         if (platform == "biolm") {
-                            # Make the POST request to BioLM API
-                            response <- httr::POST(
-                                url = "https://biolm.ai/api/v2/esm2-8m/encode/",
-                                httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
-                                body = toJSON(list(items = list(list(sequence = sequence))), auto_unbox = TRUE), 
-                                encode = "json"
+                            # Build the JSON payload as a string
+                            payload <- sprintf(
+                                '{"params":{"include":["mean","contacts","logits","attentions"]},"items":[{"sequence":"%s"}]}',
+                                sequence
                             )
-                            embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+                                  
+                            # Set up headers as required by the API
+                            headers <- c(
+                                'Authorization' = paste('Token', biolm_api_key),
+                                'Content-Type'  = 'application/json',
+                                'Accept'        = 'application/json'
+                            )
+                                  
+                            # Construct the API endpoint URL dynamically based on model_name
+                            biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
+                                  
+                            response_content <- ""
+                            writefun <- function(x) {
+                                response_content <<- paste0(response_content, x)
+                                nchar(x)  # Must return the number of bytes written
+                            }
+                                  
+                            # Perform the POST request using RCurl
+                            curlPerform(
+                                url            = biolm_url,
+                                postfields     = payload,
+                                httpheader     = headers,
+                                writefunction  = writefun,
+                                verbose        = TRUE
+                            )
+                                  
+                            # Parse the JSON response and extract the embedding
+                            # (Note: The extraction method may vary depending on the API response format)
+                            result_data <- jsonlite::fromJSON(response_content)
+                            # Here we assume the 'esm2-650m' response structure; adjust if necessary for other models
+                            embeddings[[i]] <- as.numeric(unlist(result_data$results$embeddings[[1]]$embedding))
                         }
-                        
+                              
                         if (platform == "nvidia") {
-                            # Make the POST request to NVIDIA API
+                            # Existing NVIDIA API logic (only esm2-650m is allowed)
                             response <- httr::POST(
                                 url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
-                                httr::add_headers(`Content-Type` = "application/json", `Authorization` = paste("Bearer", nvidia_api_key)),
-                                body = toJSON(list(sequences = list(sequence), format = "h5"), auto_unbox = TRUE),
+                                httr::add_headers(
+                                    `Content-Type` = "application/json",
+                                    Authorization = paste("Bearer", nvidia_api_key)
+                                ),
+                                body = jsonlite::toJSON(list(sequences = list(sequence), format = "h5"), auto_unbox = TRUE),
                                 encode = "json"
                             )
                             file_path <- tempfile(fileext = ".h5")
@@ -11241,26 +11309,45 @@
                             embeddings[[i]] <- as.numeric(rhdf5::h5read(file_path, "embeddings"))
                             invisible(file.remove(file_path))
                         }
-                        
+                          
+                        if (platform == "local") { # i=2
+                                  
+                            # Create a temporary directory for the files
+                            temp_dir <- tempdir()
+                            fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
+                            output_file <- file.path(temp_dir, "temp_embeddings.csv")
+                            Biostrings::writeXStringSet(amino_acid_stringset[i], fasta_file)
+                                  
+                            # Run the Python script with system()
+                            python_path <- "/usr/bin/python3"  # Adjust path if necessary
+                            python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Set correct path to Python script
+                            command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
+                            system(command, intern = TRUE)
+                                  
+                            # Check if the output file was created
+                            if (!file.exists(output_file)) {
+                                stop("Python script did not produce an output file.")
+                            }
+                                  
+                            # Read the output CSV file and combine with original data frame
+                            emb <- read.csv(output_file)
+                            embeddings[[i]] <- emb[,c(2:dim(emb)[2])]
+                                  
+                            # Clean up temporary files
+                            unlink(c(fasta_file, output_file))
+                        }
                         pb$tick()
                     }
-                    
-                    # Process and return embeddings for remote platform options
-                    if (platform %in% c("biolm", "nvidia")) {
-                        embeddings_df <- as.data.frame(do.call(rbind, embeddings))
-                        colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-                        
-                        if (input_type == "amino_acid_stringset") {
-                            embeddings_df <- cbind(name = amino_acid_stringset@ranges@NAMES, embeddings_df)
-                        } else {
-                            embeddings_df <- cbind(df, embeddings_df)
-                        }
-                        
-                        return(as_tibble(embeddings_df))
-                    }
-                    
+                          
+                    # Combine embeddings with the original names from the XStringSet
+                    embeddings_df <- as.data.frame(do.call(rbind, embeddings))
+                    colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+                    embeddings_df <- cbind(name = amino_acid_stringset@ranges@NAMES, embeddings_df)
+                          
+                    return(as_tibble(embeddings_df))
+                          
                 } else if (input_type == "dataframe") {
-
+                          
                     if (!is.data.frame(dataframe)) {
                         stop("For input_type 'dataframe', dataframe must be a data frame.")
                     }
@@ -11268,61 +11355,266 @@
                         stop("Please provide the name of the sequence column when using a data frame as input.")
                     }
                     df <- dataframe
-
+                          
                     # Initialize progress bar
                     pb <- progress::progress_bar$new(
                         format = "  Processing [:bar] :percent in :elapsed seconds",
-                        total = if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df), 
+                        total = nrow(df), 
                         clear = FALSE, width = 60
                     )
-                
-                    # Local embedding using Python script (Function 2 logic)
-                    if (platform == "local") {
-                        if (input_type != "dataframe") {
-                            stop("The 'local' platform option requires input_type 'dataframe'.")
+                          
+                    embeddings <- list()
+                    for (i in seq_len(nrow(df))) {
+                        sequence <- df[[seq_column]][i]
+                              
+                        if (platform == "biolm") {
+                            payload <- sprintf(
+                                '{"params":{"include":["mean","contacts","logits","attentions"]},"items":[{"sequence":"%s"}]}',
+                                sequence
+                            )
+                                  
+                            headers <- c(
+                                'Authorization' = paste('Token', biolm_api_key),
+                                'Content-Type'  = 'application/json',
+                                'Accept'        = 'application/json'
+                            )
+                                  
+                            # Construct the API endpoint URL dynamically based on model_name
+                            biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
+                                  
+                            response_content <- ""
+                            writefun <- function(x) {
+                                response_content <<- paste0(response_content, x)
+                                nchar(x)
+                            }
+                                  
+                            curlPerform(
+                                url            = biolm_url,
+                                postfields     = payload,
+                                httpheader     = headers,
+                                writefunction  = writefun,
+                                verbose        = TRUE
+                            )
+                                  
+                            result_data <- jsonlite::fromJSON(response_content)
+                            # Note: For the dataframe branch, the extraction uses $mean.
+                            embeddings[[i]] <- result_data$results[[1]]$mean
                         }
-                        
+                              
+                        if (platform == "nvidia") {
+                            response <- httr::POST(
+                                url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
+                                httr::add_headers(
+                                    `Content-Type` = "application/json",
+                                    Authorization = paste("Bearer", nvidia_api_key)
+                                ),
+                                body = jsonlite::toJSON(list(sequences = list(sequence), format = "h5"), auto_unbox = TRUE),
+                                encode = "json"
+                            )
+                            file_path <- tempfile(fileext = ".h5")
+                            print(file_path)
+                            writeBin(httr::content(response, as = "raw"), file_path)
+                            embeddings[[i]] <- as.numeric(rhdf5::h5read(file_path, "embeddings"))
+                            invisible(file.remove(file_path))
+                        }
+                              
+                        pb$tick()
+                    }
+                          
+                    # For remote platforms, combine the embeddings with the original data frame
+                    if (platform %in% c("biolm", "nvidia")) {
+                        embeddings_df <- as.data.frame(do.call(rbind, embeddings))
+                        colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+                        result_df <- cbind(df, embeddings_df)
+                        return(as_tibble(result_df))
+                    }
+                          
+                    # Local platform logic remains unchanged
+                    if (platform == "local") {
                         # Create a temporary directory for the files
                         temp_dir <- tempdir()
                         fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
                         output_file <- file.path(temp_dir, "temp_embeddings.csv")
-                        
+                              
                         # Write sequences to a temporary FASTA file
-                        write_fasta <- function(sequences, headers, file_path) {
-                            con <- file(file_path, "w")
-                            on.exit(close(con))
-                            for (i in seq_along(sequences)) {
-                                if (!is.na(sequences[i]) && sequences[i] != "") {
-                                    writeLines(paste0(">", headers[i]), con)
-                                    writeLines(sequences[i], con)
+                        if (input_type == "dataframe") {
+                            write_fasta <- function(sequences, headers, file_path) {
+                                con <- file(file_path, "w")
+                                on.exit(close(con))
+                                for (i in seq_along(sequences)) {
+                                    if (!is.na(sequences[i]) && sequences[i] != "") {
+                                        writeLines(paste0(">", headers[i]), con)
+                                        writeLines(sequences[i], con)
+                                    }
                                 }
                             }
                         }
                         write_fasta(df[[seq_column]], seq_len(nrow(df)), fasta_file)
-                        
+                              
                         # Run the Python script with system()
                         python_path <- "/usr/bin/python3"  # Adjust path if necessary
                         python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Set correct path to Python script
                         command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
                         system(command, intern = TRUE)
-                        
+                              
                         # Check if the output file was created
                         if (!file.exists(output_file)) {
                             stop("Python script did not produce an output file.")
                         }
-                        
+                              
                         # Read the output CSV file and combine with original data frame
                         embeddings_df <- read.csv(output_file)
                         result_df <- cbind(df, embeddings_df)
-                        
+                              
                         # Clean up temporary files
                         unlink(c(fasta_file, output_file))
-                        
+                              
                         pb$tick()
                         return(result_df)
                     }
                 }
             }
+
+
+            # embedAminoAcids <- function(
+            #     amino_acid_stringset = NULL,
+            #     dataframe = NULL,
+            #     biolm_api_key = NULL,
+            #     nvidia_api_key = NULL,
+            #     platform = c("nvidia", "biolm", "local"),
+            #     input_type = c("amino_acid_stringset", "dataframe"),
+            #     seq_column = NULL,
+            #     model_name = "esm2_t30_150M_UR50D"
+            # ) {
+
+            #     input_type <- input_type[1]
+            #     platform <- platform[1]
+                
+            #     # Check input data type and prepare data
+            #     if (input_type == "amino_acid_stringset") {
+            #         if (!inherits(amino_acid_stringset, "XStringSet")) {
+            #             stop("For input_type 'amino_acid_stringset', amino_acid_stringset must be of class 'XStringSet'.")
+            #         }
+
+            #         # Initialize progress bar
+            #         pb <- progress::progress_bar$new(
+            #             format = "  Processing [:bar] :percent in :elapsed seconds",
+            #             total = if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df), 
+            #             clear = FALSE, width = 60
+            #         )
+
+            #         # Remote embedding with biolm or nvidia
+            #         embeddings <- list()
+            #         for (i in 1:(if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df))) {
+            #             sequence <- if (input_type == "amino_acid_stringset") as.data.frame(amino_acid_stringset)[[1]][i] else df[[seq_column]][i]
+                        
+            #             if (platform == "biolm") {
+            #                 # Make the POST request to BioLM API
+            #                 response <- httr::POST(
+            #                     url = "https://biolm.ai/api/v2/esm2-8m/encode/",
+            #                     httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
+            #                     body = toJSON(list(items = list(list(sequence = sequence))), auto_unbox = TRUE), 
+            #                     encode = "json"
+            #                 )
+            #                 embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+            #             }
+                        
+            #             if (platform == "nvidia") {
+            #                 # Make the POST request to NVIDIA API
+            #                 response <- httr::POST(
+            #                     url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
+            #                     httr::add_headers(`Content-Type` = "application/json", `Authorization` = paste("Bearer", nvidia_api_key)),
+            #                     body = toJSON(list(sequences = list(sequence), format = "h5"), auto_unbox = TRUE),
+            #                     encode = "json"
+            #                 )
+            #                 file_path <- tempfile(fileext = ".h5")
+            #                 print(file_path)
+            #                 writeBin(httr::content(response, as = "raw"), file_path)
+            #                 embeddings[[i]] <- as.numeric(rhdf5::h5read(file_path, "embeddings"))
+            #                 invisible(file.remove(file_path))
+            #             }
+                        
+            #             pb$tick()
+            #         }
+                    
+            #         # Process and return embeddings for remote platform options
+            #         if (platform %in% c("biolm", "nvidia")) {
+            #             embeddings_df <- as.data.frame(do.call(rbind, embeddings))
+            #             colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+                        
+            #             if (input_type == "amino_acid_stringset") {
+            #                 embeddings_df <- cbind(name = amino_acid_stringset@ranges@NAMES, embeddings_df)
+            #             } else {
+            #                 embeddings_df <- cbind(df, embeddings_df)
+            #             }
+                        
+            #             return(as_tibble(embeddings_df))
+            #         }
+                    
+            #     } else if (input_type == "dataframe") {
+
+            #         if (!is.data.frame(dataframe)) {
+            #             stop("For input_type 'dataframe', dataframe must be a data frame.")
+            #         }
+            #         if (is.null(seq_column) || !seq_column %in% names(dataframe)) {
+            #             stop("Please provide the name of the sequence column when using a data frame as input.")
+            #         }
+            #         df <- dataframe
+
+            #         # Initialize progress bar
+            #         pb <- progress::progress_bar$new(
+            #             format = "  Processing [:bar] :percent in :elapsed seconds",
+            #             total = if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df), 
+            #             clear = FALSE, width = 60
+            #         )
+                
+            #         # Local embedding using Python script (Function 2 logic)
+            #         if (platform == "local") {
+            #             if (input_type != "dataframe") {
+            #                 stop("The 'local' platform option requires input_type 'dataframe'.")
+            #             }
+                        
+            #             # Create a temporary directory for the files
+            #             temp_dir <- tempdir()
+            #             fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
+            #             output_file <- file.path(temp_dir, "temp_embeddings.csv")
+                        
+            #             # Write sequences to a temporary FASTA file
+            #             write_fasta <- function(sequences, headers, file_path) {
+            #                 con <- file(file_path, "w")
+            #                 on.exit(close(con))
+            #                 for (i in seq_along(sequences)) {
+            #                     if (!is.na(sequences[i]) && sequences[i] != "") {
+            #                         writeLines(paste0(">", headers[i]), con)
+            #                         writeLines(sequences[i], con)
+            #                     }
+            #                 }
+            #             }
+            #             write_fasta(df[[seq_column]], seq_len(nrow(df)), fasta_file)
+                        
+            #             # Run the Python script with system()
+            #             python_path <- "/usr/bin/python3"  # Adjust path if necessary
+            #             python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Set correct path to Python script
+            #             command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
+            #             system(command, intern = TRUE)
+                        
+            #             # Check if the output file was created
+            #             if (!file.exists(output_file)) {
+            #                 stop("Python script did not produce an output file.")
+            #             }
+                        
+            #             # Read the output CSV file and combine with original data frame
+            #             embeddings_df <- read.csv(output_file)
+            #             result_df <- cbind(df, embeddings_df)
+                        
+            #             # Clean up temporary files
+            #             unlink(c(fasta_file, output_file))
+                        
+            #             pb$tick()
+            #             return(result_df)
+            #         }
+            #     }
+            # }
 
     ##### Networks
 
@@ -15446,20 +15738,46 @@
             #' @examples
             #' mode()
 
+            # mode <- function(x, ignore_zero = FALSE) {
+                
+            #     x <- as.data.frame(table(x))
+            #     x <- x[order(x$Freq, decreasing = TRUE),]
+            #     if (ignore_zero) {
+            #       x <- filter(x, x != 0)
+            #     }
+                
+            #     ## If it can be numeric, return numeric, otherwise, return character
+            #         if(any(is.na(as.numeric(as.character(x$x))))) {
+            #             return(as.character(x$x[1]))
+            #         } else {
+            #             return(as.numeric(as.character(x$x[1])))
+            #         }
+            # }
+
             mode <- function(x, ignore_zero = FALSE) {
-                
-                x <- as.data.frame(table(x))
-                x <- x[order(x$Freq, decreasing = TRUE),]
-                if (ignore_zero) {
-                  x <- filter(x, x != 0)
-                }
-                
-                ## If it can be numeric, return numeric, otherwise, return character
-                    if(any(is.na(as.numeric(as.character(x$x))))) {
-                        return(as.character(x$x[1]))
-                    } else {
-                        return(as.numeric(as.character(x$x[1])))
-                    }
+              # Create a frequency table (do not use factor levels for ordering)
+              freq_table <- as.data.frame(table(x), stringsAsFactors = FALSE)
+              # Rename columns for clarity
+              names(freq_table) <- c("value", "count")
+              
+              # If requested, filter out zeros (note: zeros are treated as character "0")
+              if (ignore_zero) {
+                freq_table <- subset(freq_table, value != "0")
+              }
+              
+              # Order by frequency count in descending order
+              freq_table <- freq_table[order(freq_table$count, decreasing = TRUE), ]
+              
+              # Get the most common value (the mode)
+              mode_val <- freq_table$value[1]
+              
+              # Try converting to numeric if possible; if conversion fails, return character
+              num_val <- suppressWarnings(as.numeric(mode_val))
+              if (!is.na(num_val)) {
+                return(num_val)
+              } else {
+                return(mode_val)
+              }
             }
 
         #### geomSignif
