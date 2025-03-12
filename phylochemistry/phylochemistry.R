@@ -10111,6 +10111,106 @@
 
     ##### Language models and text data handling
 
+        #### parse_ris_file
+
+                parse_ris_file <- function(filepath) {
+                    cat(Sys.time(), "- Parsing RIS file: ", filepath, "\n")
+                    lines <- readLines(filepath, warn = FALSE)
+                    cat(Sys.time(), "- Number of lines read: ", length(lines), "\n")
+                    
+                    records <- list()
+                    current_rec <- list()
+                    
+                    for (line in lines) {
+                        line <- trimws(line)
+                        if (line == "") next
+                        
+                        if (grepl("^TY  -", line)) {
+                            if (length(current_rec) > 0) {
+                                records[[length(records) + 1]] <- current_rec
+                            }
+                            current_rec <- list()
+                        }
+                        
+                        if (grepl("^[A-Z0-9]{2}  -", line)) {
+                            tag <- substr(line, 1, 2)
+                            value <- trimws(sub("^.{6}", "", line))
+                            
+                            if (tag %in% names(current_rec)) {
+                                current_rec[[tag]] <- paste(current_rec[[tag]], value, sep = "; ")
+                            } else {
+                                current_rec[[tag]] <- value
+                            }
+                        } else {
+                            if (length(current_rec) > 0) {
+                                last_tag <- tail(names(current_rec), 1)
+                                current_rec[[last_tag]] <- paste(current_rec[[last_tag]], line, sep = " ")
+                            }
+                        }
+                    }
+                    
+                    if (length(current_rec) > 0) {
+                        records[[length(records) + 1]] <- current_rec
+                    }
+                    
+                    records <- lapply(records, function(rec) {
+                        rec[["ER"]] <- NULL
+                        rec
+                    })
+                    
+                    all_tags <- unique(unlist(lapply(records, names)))
+                    
+                    recs <- lapply(records, function(rec) {
+                        sapply(all_tags, function(tag) {
+                            if (tag %in% names(rec)) rec[[tag]] else NA
+                        }, USE.NAMES = TRUE, simplify = FALSE)
+                    })
+                    
+                    df <- do.call(rbind, lapply(recs, as.data.frame, stringsAsFactors = FALSE))
+                    df[] <- lapply(df, as.character)
+                    cat(Sys.time(), "- Parsed RIS file dataframe dimensions: "); print(dim(df))
+                    
+                    rename_mapping <- c(
+                        "TY" = "type",
+                        "AB" = "abstract",
+                        "AU" = "authors",
+                        "DO" = "doi",
+                        "PY" = "year",
+                        "ST" = "short_title",
+                        "T2" = "journal",
+                        "TI" = "title",
+                        "ID" = "custom_id",
+                        "CI" = "citation_count",
+                        "RC" = "reference_count",
+                        "PB" = "publisher",
+                        "IS" = "issued_date"
+                    )
+                    
+                    current_names <- names(df)
+                    new_names <- sapply(current_names, function(x) {
+                        if (x %in% names(rename_mapping)) rename_mapping[[x]] else tolower(x)
+                    })
+                    names(df) <- new_names
+                    
+                    if ("authors" %in% names(df)) {
+                        df$first_author_last <- sapply(df$authors, function(x) {
+                            if (is.na(x)) return(NA_character_)
+                            authors <- unlist(strsplit(x, ";"))
+                            first_author <- trimws(authors[1])
+                            parts <- unlist(strsplit(first_author, ","))
+                            if (length(parts) > 0) {
+                                return(trimws(parts[1]))
+                            } else {
+                                return(NA_character_)
+                            }
+                        })
+                    }
+                    
+                    cat(Sys.time(), "- Returning parsed RIS data as tibble with dimensions: "); print(dim(as_tibble(df)))
+                    return(as_tibble(df))
+                }
+
+
         #### createNewsletter
 
             createNewsletter <- function(
