@@ -15791,26 +15791,29 @@
                     "random_forest_classification", "logistic_regression",
                     "contrastive_learning"
                 ),
-                model
+                model,
+                id_cols = NULL
             ) {
 
                 ## Check to see that required data are provided
                     if (missing(data)) {
                         stop("Input data is required.")
                     }
-            
+
                 ## Predictions
 
                     if (model_type == "linear_regression") {
                         output <- stats::predict(model, data)
+                        output <- unlist(output)
                     }
 
                     if (model_type == "random_forest_regression") {
                         output <- stats::predict(model, new_data = data)
+                        output <- unlist(output)
                     }
 
                     if (model_type == "random_forest_classification") {
-                        output <- stats::predict(model, new_data = data)
+                        output <- stats::predict(model, new_data = data, type = "prob")
                     }
 
                     if (model_type == "contrastive_learning") {
@@ -15827,13 +15830,16 @@
 
                         # Convert embeddings to a data frame or matrix format for easy use in R
                         output <- as.matrix(embeddings$detach()$cpu())  # Detach and bring to CPU if running on GPU
+                        output <- unlist(output)
                     }
 
                 ## Return
-                    return(unlist(output))
+                    output <- as_tibble(output)
+                    if (!is.null(id_cols)) { output <- cbind(data[,colnames(data) %in% id_cols], output) }
+                    return(output)
 
             }
-
+            
         #### mode
 
             #' mode
@@ -16723,7 +16729,9 @@
                     c("chemical_blooms", "https://thebustalab.github.io/phylochemistry/sample_data/chemical_blooms.csv"),
                     c("metabolomics_unknown", "https://thebustalab.github.io/phylochemistry/sample_data/metabolomics_unknown.csv"),
                     c("wine_quality", "https://thebustalab.github.io/phylochemistry/sample_data/wine_quality.csv"),
-                    c("lake_superior_shoreline", "https://thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
+                    c("lake_superior_shoreline", "https://thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv"),
+                    c("rice_proteins", "https://thebustalab.github.io/phylochemistry/sample_data/rice_proteins.csv")
+                    c("mushrooms", "https://thebustalab.github.io/phylochemistry/sample_data/mushrooms.csv")
                 ))
 
                 pb <- progress::progress_bar$new(total = dim(sample_datasets)[1])
