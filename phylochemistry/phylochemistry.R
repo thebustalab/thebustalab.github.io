@@ -110,7 +110,8 @@
                     "shipunov",
                     "parallel",
                     "phytools",
-                    "rhdf5"
+                    "rhdf5",
+                    "RCurl"
                 )
 
                 if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
@@ -11318,268 +11319,145 @@
                 model_name = c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m", "esm2_t30_150M_UR50D"),
                 seq_column = NULL
             ) {
-                      
-                input_type <- input_type[1]
-                platform <- platform[1]
-                model_name <- model_name[1]
-                      
-                # Validate that the provided model_name is allowed for the chosen platform
-                if (platform == "biolm") {
-                    allowed_models <- c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m")
-                    if (!model_name %in% allowed_models) {
-                        stop("For platform 'biolm', model_name must be one of: ", paste(allowed_models, collapse = ", "))
-                    }
+              # Select first option for parameters
+              platform <- platform[1]
+              input_type <- input_type[1]
+              model_name <- model_name[1]
+              
+              # Validate that the provided model_name is allowed for the chosen platform
+              if (platform == "biolm") {
+                allowed_models <- c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m")
+                if (!model_name %in% allowed_models) {
+                  stop("For platform 'biolm', model_name must be one of: ", paste(allowed_models, collapse = ", "))
                 }
-                if (platform == "nvidia") {
-                    if (model_name != "esm2-650m") {
-                        stop("For platform 'nvidia', only model_name 'esm2-650m' is allowed.")
-                    }
+              }
+              if (platform == "nvidia") {
+                if (model_name != "esm2-650m") {
+                  stop("For platform 'nvidia', only model_name 'esm2-650m' is allowed.")
                 }
-                if (platform == "local") {
-                    if (model_name != "esm2_t30_150M_UR50D") {
-                        stop("For platform 'local', only model_name 'esm2_t30_150M_UR50D' is allowed.")
-                    }
+              }
+              if (platform == "local") {
+                if (model_name != "esm2_t30_150M_UR50D") {
+                  stop("For platform 'local', only model_name 'esm2_t30_150M_UR50D' is allowed.")
                 }
-                      
-                # Check input data type and prepare data
-                if (input_type == "amino_acid_stringset") {
-                    if (!inherits(amino_acid_stringset, "XStringSet")) {
-                        stop("For input_type 'amino_acid_stringset', amino_acid_stringset must be of class 'XStringSet'.")
-                    }
-                          
-                    # Initialize progress bar
-                    pb <- progress::progress_bar$new(
-                        format = "  Processing [:bar] :percent in :elapsed seconds",
-                        total = length(amino_acid_stringset), 
-                        clear = FALSE, width = 60
-                    )
-                          
-                    # Remote embedding with biolm or nvidia
-                    embeddings <- list()
-                    for (i in seq_len(length(amino_acid_stringset))) {
-                        sequence <- as.data.frame(amino_acid_stringset)[[1]][i]
-                              
-                        if (platform == "biolm") {
-                            # Build the JSON payload as a string
-                            payload <- sprintf(
-                                '{"params":{"include":["mean","contacts","logits","attentions"]},"items":[{"sequence":"%s"}]}',
-                                sequence
-                            )
-                                  
-                            # Set up headers as required by the API
-                            headers <- c(
-                                'Authorization' = paste('Token', biolm_api_key),
-                                'Content-Type'  = 'application/json',
-                                'Accept'        = 'application/json'
-                            )
-                                  
-                            # Construct the API endpoint URL dynamically based on model_name
-                            biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
-                                  
-                            response_content <- ""
-                            writefun <- function(x) {
-                                response_content <<- paste0(response_content, x)
-                                nchar(x)  # Must return the number of bytes written
-                            }
-                                  
-                            # Perform the POST request using RCurl
-                            curlPerform(
-                                url            = biolm_url,
-                                postfields     = payload,
-                                httpheader     = headers,
-                                writefunction  = writefun,
-                                verbose        = TRUE
-                            )
-                                  
-                            # Parse the JSON response and extract the embedding
-                            # (Note: The extraction method may vary depending on the API response format)
-                            result_data <- jsonlite::fromJSON(response_content)
-                            # Here we assume the 'esm2-650m' response structure; adjust if necessary for other models
-                            embeddings[[i]] <- as.numeric(unlist(result_data$results$embeddings[[1]]$embedding))
-                        }
-                              
-                        if (platform == "nvidia") {
-                            # Existing NVIDIA API logic (only esm2-650m is allowed)
-                            response <- httr::POST(
-                                url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
-                                httr::add_headers(
-                                    `Content-Type` = "application/json",
-                                    Authorization = paste("Bearer", nvidia_api_key)
-                                ),
-                                body = jsonlite::toJSON(list(sequences = list(sequence), format = "h5"), auto_unbox = TRUE),
-                                encode = "json"
-                            )
-                            file_path <- tempfile(fileext = ".h5")
-                            print(file_path)
-                            writeBin(httr::content(response, as = "raw"), file_path)
-                            embeddings[[i]] <- as.numeric(rhdf5::h5read(file_path, "embeddings"))
-                            invisible(file.remove(file_path))
-                        }
-                          
-                        if (platform == "local") { # i=2
-                                  
-                            # Create a temporary directory for the files
-                            temp_dir <- tempdir()
-                            fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
-                            output_file <- file.path(temp_dir, "temp_embeddings.csv")
-                            Biostrings::writeXStringSet(amino_acid_stringset[i], fasta_file)
-                                  
-                            # Run the Python script with system()
-                            python_path <- "/usr/bin/python3"  # Adjust path if necessary
-                            python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Set correct path to Python script
-                            command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
-                            system(command, intern = TRUE)
-                                  
-                            # Check if the output file was created
-                            if (!file.exists(output_file)) {
-                                stop("Python script did not produce an output file.")
-                            }
-                                  
-                            # Read the output CSV file and combine with original data frame
-                            emb <- read.csv(output_file)
-                            embeddings[[i]] <- emb[,c(2:dim(emb)[2])]
-                                  
-                            # Clean up temporary files
-                            unlink(c(fasta_file, output_file))
-                        }
-                        pb$tick()
-                    }
-                          
-                    # Combine embeddings with the original names from the XStringSet
-                    embeddings_df <- as.data.frame(do.call(rbind, embeddings))
-                    colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-                    embeddings_df <- cbind(name = amino_acid_stringset@ranges@NAMES, embeddings_df)
-                          
-                    return(as_tibble(embeddings_df))
-                          
-                } else if (input_type == "dataframe") {
-                          
-                    if (!is.data.frame(dataframe)) {
-                        stop("For input_type 'dataframe', dataframe must be a data frame.")
-                    }
-                    if (is.null(seq_column) || !seq_column %in% names(dataframe)) {
-                        stop("Please provide the name of the sequence column when using a data frame as input.")
-                    }
-                    df <- dataframe
-                          
-                    # Initialize progress bar
-                    pb <- progress::progress_bar$new(
-                        format = "  Processing [:bar] :percent in :elapsed seconds",
-                        total = nrow(df), 
-                        clear = FALSE, width = 60
-                    )
-                          
-                    embeddings <- list()
-                    for (i in seq_len(nrow(df))) {
-                        sequence <- df[[seq_column]][i]
-                              
-                        if (platform == "biolm") {
-                            payload <- sprintf(
-                                '{"params":{"include":["mean","contacts","logits","attentions"]},"items":[{"sequence":"%s"}]}',
-                                sequence
-                            )
-                                  
-                            headers <- c(
-                                'Authorization' = paste('Token', biolm_api_key),
-                                'Content-Type'  = 'application/json',
-                                'Accept'        = 'application/json'
-                            )
-                                  
-                            # Construct the API endpoint URL dynamically based on model_name
-                            biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
-                                  
-                            response_content <- ""
-                            writefun <- function(x) {
-                                response_content <<- paste0(response_content, x)
-                                nchar(x)
-                            }
-                                  
-                            curlPerform(
-                                url            = biolm_url,
-                                postfields     = payload,
-                                httpheader     = headers,
-                                writefunction  = writefun,
-                                verbose        = TRUE
-                            )
-                                  
-                            result_data <- jsonlite::fromJSON(response_content)
-                            # Note: For the dataframe branch, the extraction uses $mean.
-                            embeddings[[i]] <- result_data$results[[1]]$mean
-                        }
-                              
-                        if (platform == "nvidia") {
-                            response <- httr::POST(
-                                url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
-                                httr::add_headers(
-                                    `Content-Type` = "application/json",
-                                    Authorization = paste("Bearer", nvidia_api_key)
-                                ),
-                                body = jsonlite::toJSON(list(sequences = list(sequence), format = "h5"), auto_unbox = TRUE),
-                                encode = "json"
-                            )
-                            file_path <- tempfile(fileext = ".h5")
-                            print(file_path)
-                            writeBin(httr::content(response, as = "raw"), file_path)
-                            embeddings[[i]] <- as.numeric(rhdf5::h5read(file_path, "embeddings"))
-                            invisible(file.remove(file_path))
-                        }
-                              
-                        pb$tick()
-                    }
-                          
-                    # For remote platforms, combine the embeddings with the original data frame
-                    if (platform %in% c("biolm", "nvidia")) {
-                        embeddings_df <- as.data.frame(do.call(rbind, embeddings))
-                        colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-                        result_df <- cbind(df, embeddings_df)
-                        return(as_tibble(result_df))
-                    }
-                          
-                    # Local platform logic remains unchanged
-                    if (platform == "local") {
-                        # Create a temporary directory for the files
-                        temp_dir <- tempdir()
-                        fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
-                        output_file <- file.path(temp_dir, "temp_embeddings.csv")
-                              
-                        # Write sequences to a temporary FASTA file
-                        if (input_type == "dataframe") {
-                            write_fasta <- function(sequences, headers, file_path) {
-                                con <- file(file_path, "w")
-                                on.exit(close(con))
-                                for (i in seq_along(sequences)) {
-                                    if (!is.na(sequences[i]) && sequences[i] != "") {
-                                        writeLines(paste0(">", headers[i]), con)
-                                        writeLines(sequences[i], con)
-                                    }
-                                }
-                            }
-                        }
-                        write_fasta(df[[seq_column]], seq_len(nrow(df)), fasta_file)
-                              
-                        # Run the Python script with system()
-                        python_path <- "/usr/bin/python3"  # Adjust path if necessary
-                        python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Set correct path to Python script
-                        command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
-                        system(command, intern = TRUE)
-                              
-                        # Check if the output file was created
-                        if (!file.exists(output_file)) {
-                            stop("Python script did not produce an output file.")
-                        }
-                              
-                        # Read the output CSV file and combine with original data frame
-                        embeddings_df <- read.csv(output_file)
-                        result_df <- cbind(df, embeddings_df)
-                              
-                        # Clean up temporary files
-                        unlink(c(fasta_file, output_file))
-                              
-                        pb$tick()
-                        return(result_df)
-                    }
+              }
+              
+              # Validate input type
+              if (input_type == "amino_acid_stringset") { 
+                if (!inherits(amino_acid_stringset, "XStringSet")) {
+                  stop("For input_type 'amino_acid_stringset', amino_acid_stringset must be of class 'XStringSet'.")
                 }
-            }
+                # Convert the XStringSet to a character vector and preserve names
+                sequences <- as.character(amino_acid_stringset)
+                seq_names <- names(amino_acid_stringset)
+              }
+              
+              # BIOLM    
+              if (platform == "biolm") {
+                # Build the items string manually by iterating over the sequences.
+                # If needed, escape any internal quotes in the sequence.
+                items_str <- paste0(
+                  sapply(sequences, function(seq) {
+                    seq_escaped <- gsub("\"", "\\\\\"", seq)
+                    sprintf("{\"sequence\": \"%s\"}", seq_escaped)
+                  }),
+                  collapse = ","
+                )
+                
+                # Create the final JSON payload string.
+                # The formatting (line breaks and indentations) here matches the manual example.
+                payload <- sprintf("{\n    \"params\": {\n        \"include\": [\n            \"mean\",\n            \"contacts\",\n            \"logits\",\n            \"attentions\"\n        ]\n    },\n    \"items\": [\n        %s\n    ]\n}", items_str)
+                
+                headers <- c(
+                  'Authorization' = paste('Token', biolm_api_key),
+                  'Content-Type'  = 'application/json',
+                  'Accept'        = 'application/json'
+                )
+                
+                # Construct the API endpoint URL dynamically based on model_name
+                biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
+                response_content <- postForm(biolm_url, .opts = list(postfields = payload_auto, httpheader = headers, followlocation = TRUE), style = "httppost")
+                
+                # Parse the JSON response
+                result_data <- jsonlite::fromJSON(response_content)
+                
+                # Check for any error messages in the API response
+                if (!is.null(result_data$error)) {
+                  stop("API Error: ", result_data$error)
+                }
+                
+                embeddings <- list()
+                for (i in 1:length(result_data$results$embeddings)) { # i=1
+                  embeddings[[i]] <- result_data$results$embeddings[[i]]$embedding[[1]]
+                }
+                embeddings <- as_tibble(as.data.frame(do.call(rbind, embeddings)))
+                colnames(embeddings) <- paste0("embedding_", seq(1, dim(embeddings)[2], 1))
+                embeddings <- as_tibble(cbind(data.frame(name = seq_names), embeddings))
+                return(embeddings)
+              }
+              
+              if (platform == "nvidia") {
+                # NVIDIA API accepts a list of sequences
+                payload <- list(
+                  sequences = as.list(as.data.frame(amino_acid_stringset)[[1]]),
+                  format = "h5"
+                )
+                response <- httr::POST(
+                  url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
+                  httr::add_headers(
+                    `Content-Type` = "application/json",
+                    Authorization = paste("Bearer", nvidia_api_key)
+                  ),
+                  body = jsonlite::toJSON(payload, auto_unbox = TRUE),
+                  encode = "json"
+                )
+                # Save response to a temporary h5 file
+                file_path <- tempfile(fileext = ".h5")
+                writeBin(httr::content(response, as = "raw"), file_path)
+                temp_dir <- tempdir()
+                unzipped_files <- unzip(file_path, exdir = temp_dir)
+                embeddings <- as_tibble(t(rhdf5::h5read(unzipped_files, "embeddings")))
+                colnames(embeddings) <- paste0("embedding_", seq(1, dim(embeddings)[2], 1))
+                embeddings <- as_tibble(cbind(data.frame(name = seq_names), embeddings))
+                return(embeddings)
+              }
+              # 
+              # if (platform == "local") {
+              #   # Create a temporary FASTA file with all sequences
+              #   temp_dir <- tempdir()
+              #   fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
+              #   output_file <- file.path(temp_dir, "temp_embeddings.csv")
+              #   Biostrings::writeXStringSet(amino_acid_stringset, fasta_file)
+              #   
+              #   # Run the Python script to compute embeddings
+              #   python_path <- "/usr/bin/python3"  # Adjust path if necessary
+              #   python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Adjust script path as needed
+              #   command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
+              #   system(command, intern = TRUE)
+              #   
+              #   if (!file.exists(output_file)) {
+              #     stop("Python script did not produce an output file.")
+              #   }
+              #   embeddings <- read.csv(output_file)
+              #   unlink(c(fasta_file, output_file))
+              # }
+              # 
+              # # Combine embeddings with original sequence names
+              # if (platform %in% c("biolm", "nvidia")) {
+              #   
+              #   colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+              #   embeddings_df <- cbind(name = seq_names, embeddings_df)
+              #   return(as_tibble(embeddings_df))
+              # } else if (platform == "local") {
+              #   embeddings_df <- as.data.frame(embeddings)
+              #   embeddings_df <- cbind(name = seq_names, embeddings_df)
+              #   return(as_tibble(embeddings_df))
+              # }
+            } 
+
+
+        #### Run the app
+
 
 
             # embedAminoAcids <- function(
