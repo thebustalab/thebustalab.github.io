@@ -11376,7 +11376,7 @@
                 
                 # Construct the API endpoint URL dynamically based on model_name
                 biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
-                response_content <- postForm(biolm_url, .opts = list(postfields = payload_auto, httpheader = headers, followlocation = TRUE), style = "httppost")
+                response_content <- postForm(biolm_url, .opts = list(postfields = payload, httpheader = headers, followlocation = TRUE), style = "httppost")
                 
                 # Parse the JSON response
                 result_data <- jsonlite::fromJSON(response_content)
