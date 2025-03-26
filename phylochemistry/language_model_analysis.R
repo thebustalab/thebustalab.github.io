@@ -158,30 +158,87 @@
 
     #### embedText
 
-        embedText <- function(df, column_name, hf_api_key) {
-
+        embedText <- function(df, column_name, hf_api_key, path_to_glove_file = "glove.6B.50d.txt", local = FALSE) {
+    
             ## Prep input
             embeddings_list <- list()
             df <- as_tibble(df)
             text_vector <- unlist(df[,which(colnames(df) == column_name)])
-          
-            ## Run HF embeddings, process and return output
-            for (i in 1:length(text_vector)) { # i=1
-                response <- httr::POST(
-                    url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
-                    httr::add_headers(Authorization = paste0("Bearer ", hf_api_key)),
-                    body = toJSON(list(inputs = text_vector[i])),
-                    encode = "json"
-                )
-                if (response$status_code == 429) {stop("Warning: you have (probably) exceeded your HuggingFace rate limit.")}
-                embeddings_list[[i]] <- as.numeric(as.character(jsonlite::fromJSON(httr::content(response, as = "text", encoding = "UTF-8"))))
+            
+            if (local == TRUE) {
+                library(text2vec)
+                glove <- fread(path_to_glove_file, data.table = FALSE, quote = "")
+                rownames(glove) <- glove[,1]
+                glove <- glove[,-1]
+                
+                pb <- txtProgressBar(min = 0, max = length(text_vector), style = 3)
+                for(i in 1:length(text_vector)) {
+                    tokens <- word_tokenizer(text_vector[i])
+                    embeddings_list[[i]] <- colMeans(glove[tokens[[1]], , drop = FALSE], na.rm = TRUE)
+                    setTxtProgressBar(pb, i)
+                }
+                close(pb)
+                
+                embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
+                colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+                df <- bind_cols(df, embeddings_df)
+                return(df)
+                
+            } else {
+                
+                ## Run HF embeddings, process and return output
+                pb <- txtProgressBar(min = 0, max = length(text_vector), style = 3)
+                for (i in 1:length(text_vector)) {
+                    response <- httr::POST(
+                        url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
+                        httr::add_headers(Authorization = paste0("Bearer ", hf_api_key)),
+                        body = toJSON(list(inputs = text_vector[i])),
+                        encode = "json"
+                    )
+                    if (response$status_code == 429) {
+                        stop("Warning: you have (probably) exceeded your HuggingFace rate limit.")
+                    }
+                    embeddings_list[[i]] <- as.numeric(as.character(jsonlite::fromJSON(httr::content(response, as = "text", encoding = "UTF-8"))))
+                    setTxtProgressBar(pb, i)
+                }
+                close(pb)
+                
+                embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
+                colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+                df <- bind_cols(df, embeddings_df)
+                return(df)
             }
-
-            embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
-            colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-            df <- bind_cols(df, embeddings_df)
-            return(df)
         }
+
+
+        # embedText <- function(df, column_name, hf_api_key, path_to_glove_file = "glove.6B.50d.txt", local = FALSE) {
+
+        #     ## Prep input
+        #     embeddings_list <- list()
+        #     df <- as_tibble(df)
+        #     text_vector <- unlist(df[,which(colnames(df) == column_name)])
+
+        #     if (local == TRUE) {
+
+        #     }
+          
+        #     ## Run HF embeddings, process and return output
+        #     for (i in 1:length(text_vector)) { # i=1
+        #         response <- httr::POST(
+        #             url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
+        #             httr::add_headers(Authorization = paste0("Bearer ", hf_api_key)),
+        #             body = toJSON(list(inputs = text_vector[i])),
+        #             encode = "json"
+        #         )
+        #         if (response$status_code == 429) {stop("Warning: you have (probably) exceeded your HuggingFace rate limit.")}
+        #         embeddings_list[[i]] <- as.numeric(as.character(jsonlite::fromJSON(httr::content(response, as = "text", encoding = "UTF-8"))))
+        #     }
+
+        #     embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
+        #     colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+        #     df <- bind_cols(df, embeddings_df)
+        #     return(df)
+        # }
 
     #### runMatrixAnalysis
 
@@ -888,115 +945,149 @@
     #### embedAminoAcids
 
         embedAminoAcids <- function(
-            amino_acid_stringset,
-            biolm_api_key = NULL,
-            nvidia_api_key = NULL,
-            platform = c("nvidia", "biolm")
-        ) {
-          
-          pb <- progress::progress_bar$new(
-            format = "  Processing [:bar] :percent in :elapsed seconds",
-            total = length(amino_acid_stringset), clear = FALSE, width = 60
-          )
-          
-          embeddings <- list()
-          for( i in 1:length(amino_acid_stringset)) { #i=2
-            
-            if (platform[1] == "biolm") {
+                amino_acid_stringset = NULL,
+                dataframe = NULL,
+                biolm_api_key = NULL,
+                nvidia_api_key = NULL,
+                platform = c("nvidia", "biolm", "local"),
+                input_type = c("amino_acid_stringset", "dataframe"),
+                model_name = c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m", "esm2_t30_150M_UR50D"),
+                seq_column = NULL
+            ) {
+              # Select first option for parameters
+              platform <- platform[1]
+              input_type <- input_type[1]
+              model_name <- model_name[1]
               
-              # Make the POST request
-              response <- httr::POST(
-                url = "https://biolm.ai/api/v2/esm2-8m/encode/",
-                httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
-                body = toJSON(list(
-                  items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
-                ), auto_unbox = TRUE), encode = "json"
-              )
-              embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
+              # Validate that the provided model_name is allowed for the chosen platform
+              if (platform == "biolm") {
+                allowed_models <- c("esm2-650m", "esm2-8m", "esm2-35m", "esm2-150m")
+                if (!model_name %in% allowed_models) {
+                  stop("For platform 'biolm', model_name must be one of: ", paste(allowed_models, collapse = ", "))
+                }
+              }
+              if (platform == "nvidia") {
+                if (model_name != "esm2-650m") {
+                  stop("For platform 'nvidia', only model_name 'esm2-650m' is allowed.")
+                }
+              }
+              if (platform == "local") {
+                if (model_name != "esm2_t30_150M_UR50D") {
+                  stop("For platform 'local', only model_name 'esm2_t30_150M_UR50D' is allowed.")
+                }
+              }
               
-            }
-            
-            if (platform[1] == "nvidia") {
+              # Validate input type
+              if (input_type == "amino_acid_stringset") { 
+                if (!inherits(amino_acid_stringset, "XStringSet")) {
+                  stop("For input_type 'amino_acid_stringset', amino_acid_stringset must be of class 'XStringSet'.")
+                }
+                # Convert the XStringSet to a character vector and preserve names
+                sequences <- as.character(amino_acid_stringset)
+                seq_names <- names(amino_acid_stringset)
+              }
               
-              response <- POST(
-                "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
-                add_headers(
-                  `Content-Type` = "application/json",
-                  `Authorization` = paste("Bearer", nvidia_api_key)
-                ),
-                body = toJSON(list(
-                  sequences = list(as.data.frame(amino_acid_stringset)[[1]][i]),  # Ensure sequence is properly enclosed as a list
-                  format = "h5"  # Replace with your specific format
-                ), auto_unbox = TRUE),
-                encode = "json"
-              )
+              # BIOLM    
+              if (platform == "biolm") {
+                # Build the items string manually by iterating over the sequences.
+                # If needed, escape any internal quotes in the sequence.
+                items_str <- paste0(
+                  sapply(sequences, function(seq) {
+                    seq_escaped <- gsub("\"", "\\\\\"", seq)
+                    sprintf("{\"sequence\": \"%s\"}", seq_escaped)
+                  }),
+                  collapse = ","
+                )
+                
+                # Create the final JSON payload string.
+                # The formatting (line breaks and indentations) here matches the manual example.
+                payload <- sprintf("{\n    \"params\": {\n        \"include\": [\n            \"mean\",\n            \"contacts\",\n            \"logits\",\n            \"attentions\"\n        ]\n    },\n    \"items\": [\n        %s\n    ]\n}", items_str)
+                
+                headers <- c(
+                  'Authorization' = paste('Token', biolm_api_key),
+                  'Content-Type'  = 'application/json',
+                  'Accept'        = 'application/json'
+                )
+                
+                # Construct the API endpoint URL dynamically based on model_name
+                biolm_url <- sprintf("https://biolm.ai/api/v3/%s/encode/", model_name)
+                response_content <- postForm(biolm_url, .opts = list(postfields = payload, httpheader = headers, followlocation = TRUE), style = "httppost")
+                
+                # Parse the JSON response
+                result_data <- jsonlite::fromJSON(response_content)
+                
+                # Check for any error messages in the API response
+                if (!is.null(result_data$error)) {
+                  stop("API Error: ", result_data$error)
+                }
+                
+                embeddings <- list()
+                for (i in 1:length(result_data$results$embeddings)) { # i=1
+                  embeddings[[i]] <- result_data$results$embeddings[[i]]$embedding[[1]]
+                }
+                embeddings <- as_tibble(as.data.frame(do.call(rbind, embeddings)))
+                colnames(embeddings) <- paste0("embedding_", seq(1, dim(embeddings)[2], 1))
+                embeddings <- as_tibble(as.data.frame(cbind(data.frame(name = seq_names), embeddings)))
+                return(embeddings)
+              }
               
-              file_path <- tempfile(fileext = ".h5")
-              writeBin(httr::content(response, as = "raw"), file_path)
-              embeddings[[i]] <- as.numeric(h5read(file_path, "embeddings"))
-              invisible(file.remove(file_path))
-
-            }
-            
-            pb$tick()
-          }
-            
-            embeddings <- as.data.frame(do.call(rbind, embeddings))
-            colnames(embeddings) <- paste0("embedding_", seq(1:dim(embeddings)[2]))
-            embeddings <- cbind(amino_acid_stringset@ranges@NAMES, embeddings)
-            colnames(embeddings)[1] <- "name"
-            return(as_tibble(embeddings))
-        }
-
-        # embedAminoAcids <- function(
-        #     amino_acid_stringset,
-        #     biolm_api_key,
-        #     nvidia_api_key,
-        #     platform = c("nvidia", "biolm")
-        # ) {
-
-        #     embeddings <- list()
-        #     for( i in 1:length(amino_acid_stringset)) { #i=1
-
-        #         if (platform[1] == "biolm") {
-
-        #             # Make the POST request
-        #             response <- httr::POST(
-        #                 url = "https://biolm.ai/api/v2/esm2-8m/encode/",
-        #                 httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
-        #                 body = toJSON(list(
-        #                 items = list(list(sequence = as.data.frame(amino_acid_stringset)[[1]][i]))
-        #                 ), auto_unbox = TRUE), encode = "json"
-        #             )
-        #             embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
-
-        #         }
-
-        #         if (platform[1] == "nvidia") {
-
-        #             response <- POST(
-        #                 "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
-        #                 add_headers(
-        #                     `Content-Type` = "application/json",
-        #                     `Authorization` = paste("Bearer", nvidia_api_key)
-        #                 ),
-        #                 body = toJSON(list(
-        #                     sequences = list(sequence),  # Ensure sequence is properly enclosed as a list
-        #                     format = EMB_FORMAT  # Replace with your specific format
-        #                 ), auto_unbox = TRUE),
-        #                 encode = "json"
-        #             )
-
-        #             temp_file <- tempfile(fileext = ".bin")
-        #             writeBin(content(response, "raw"), temp_file)
-        #             binary_data <- readBin(temp_file, what = "numeric", n = file.info(temp_file)$size / 8, size = 8, endian = "little")
-
-        #     }
-        #     embeddings <- as.data.frame(do.call(rbind, embeddings))
-        #     colnames(embeddings) <- paste0("embedding_", seq(1:dim(embeddings)[2]))
-        #     embeddings <- cbind(amino_acid_stringset@ranges@NAMES, embeddings)
-        #     colnames(embeddings)[1] <- "name"
-        #     return(embeddings)
-        # }
+              if (platform == "nvidia") {
+                # NVIDIA API accepts a list of sequences
+                payload <- list(
+                  sequences = as.list(as.data.frame(amino_acid_stringset)[[1]]),
+                  format = "h5"
+                )
+                response <- httr::POST(
+                  url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
+                  httr::add_headers(
+                    `Content-Type` = "application/json",
+                    Authorization = paste("Bearer", nvidia_api_key)
+                  ),
+                  body = jsonlite::toJSON(payload, auto_unbox = TRUE),
+                  encode = "json"
+                )
+                # Save response to a temporary h5 file
+                file_path <- tempfile(fileext = ".h5")
+                writeBin(httr::content(response, as = "raw"), file_path)
+                temp_dir <- tempdir()
+                unzipped_files <- unzip(file_path, exdir = temp_dir)
+                embeddings <- as_tibble(t(rhdf5::h5read(unzipped_files, "embeddings")))
+                colnames(embeddings) <- paste0("embedding_", seq(1, dim(embeddings)[2], 1))
+                embeddings <- as_tibble(as.data.frame(cbind(data.frame(name = seq_names), embeddings)))
+                return(embeddings)
+              }
+              # 
+              # if (platform == "local") {
+              #   # Create a temporary FASTA file with all sequences
+              #   temp_dir <- tempdir()
+              #   fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
+              #   output_file <- file.path(temp_dir, "temp_embeddings.csv")
+              #   Biostrings::writeXStringSet(amino_acid_stringset, fasta_file)
+              #   
+              #   # Run the Python script to compute embeddings
+              #   python_path <- "/usr/bin/python3"  # Adjust path if necessary
+              #   python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Adjust script path as needed
+              #   command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
+              #   system(command, intern = TRUE)
+              #   
+              #   if (!file.exists(output_file)) {
+              #     stop("Python script did not produce an output file.")
+              #   }
+              #   embeddings <- read.csv(output_file)
+              #   unlink(c(fasta_file, output_file))
+              # }
+              # 
+              # # Combine embeddings with original sequence names
+              # if (platform %in% c("biolm", "nvidia")) {
+              #   
+              #   colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+              #   embeddings_df <- cbind(name = seq_names, embeddings_df)
+              #   return(as_tibble(embeddings_df))
+              # } else if (platform == "local") {
+              #   embeddings_df <- as.data.frame(embeddings)
+              #   embeddings_df <- cbind(name = seq_names, embeddings_df)
+              #   return(as_tibble(embeddings_df))
+              # }
+            } 
 
 message("Done!!")
