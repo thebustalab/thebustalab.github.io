@@ -11392,7 +11392,7 @@
                 }
                 embeddings <- as_tibble(as.data.frame(do.call(rbind, embeddings)))
                 colnames(embeddings) <- paste0("embedding_", seq(1, dim(embeddings)[2], 1))
-                embeddings <- as_tibble(cbind(data.frame(name = seq_names), embeddings))
+                embeddings <- as_tibble(as.data.frame(cbind(data.frame(name = seq_names), embeddings)))
                 return(embeddings)
               }
               
@@ -11418,7 +11418,7 @@
                 unzipped_files <- unzip(file_path, exdir = temp_dir)
                 embeddings <- as_tibble(t(rhdf5::h5read(unzipped_files, "embeddings")))
                 colnames(embeddings) <- paste0("embedding_", seq(1, dim(embeddings)[2], 1))
-                embeddings <- as_tibble(cbind(data.frame(name = seq_names), embeddings))
+                embeddings <- as_tibble(as.data.frame(cbind(data.frame(name = seq_names), embeddings)))
                 return(embeddings)
               }
               # 
