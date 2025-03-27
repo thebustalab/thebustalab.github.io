@@ -31,11 +31,12 @@
 
                 source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/genomescope.R")
                 source("https://thebustalab.github.io/phylochemistry/bustalabfunctions/analyzeGCMSdata4.R")
-                source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
             }
         }
 
     ## Load packages in general
+
+        source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
 
         if ( !exists("packages") ) {
 
