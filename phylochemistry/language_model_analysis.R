@@ -1,5 +1,5 @@
 ################################
-## Language Model Analysis v1 ##
+## LANGUAGE MODEL ANALYSIS v1 ##
 ################################
 
 ###### Libraries
