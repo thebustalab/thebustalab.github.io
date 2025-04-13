@@ -110,3 +110,5 @@ cluster
 bootstrap
 rhdf5
 performance
+zigg
+RCurl

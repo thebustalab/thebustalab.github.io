@@ -4,9 +4,6 @@ part-data-visualization
 part-statistical-methods
 part-models
 loading-gff-files
-zoomed-insets
-plot-insets
-image-insets
 other-thoughts
 abstract
 other-thoughts-1

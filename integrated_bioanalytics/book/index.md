@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-02-11"
+date: "2025-04-13"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -6043,26 +6043,25 @@ Appropriately Complex:  What main environmental, behavioral, and genetic factors
 
 # figures & captions {-}
 
+## high quality figures {-}
+
 One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures:
 
-General Appearance:
+- General Appearance:
 
 Create plots that are clean, professional, and easy to view from a distance. Ensure axes tick labels are clear, non-overlapping, and utilize the available space efficiently for enhanced readability and precision. Use an appealing (and color blind-friendly) color palette to differentiate data points or categories. Tailor axes labels to be descriptive, and select an appropriate theme that complements the data and maintains professionalism.
 
-
-Representing Data:
+- Representing Data:
 
 Appropriate Geoms and Annotations: Choose geoms that best represent the data and help the viewer evaluate the hypothesis or make the desired comparison. Include raw data points where possible for detailed data distribution understanding. Consider apply statistical transformations like smoothing lines or histograms where appropriate to provide deeper insights into the data. Consider using facets for visualizing multiple categories or groups, allowing for easier comparison while maintaining a consistent scale and layout. Adhere to specific standards or conventions relevant to your field, including the representation of data, error bars, or statistical significance markers.
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
 
-Here are some tips for figures, beyond the creation of individual plots:
-
-## figures {-}
+## advanced figure elements {-}
 
 ### insets {-}
 
-#### zoomed insets
+- zoomed insets
 
 Zoom in on certain plot regions
 
@@ -6090,7 +6089,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
 
 <img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
 
-#### plot insets
+- plot insets
 
 
 ``` r
@@ -6113,7 +6112,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
 
 <img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
 
-#### image insets
+- image insets
 
 
 ``` r
@@ -6160,6 +6159,7 @@ ggplot() +
 #   )
 
 ```
+
 ### composite figures {-}
 
 Many high quality figures are composite figures in which there is more than one panel. Here is a simple way to make such figures in R. First, make each component of the composite figure and send the plot to a new object:
@@ -6227,7 +6227,7 @@ plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 
 <img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
 
-### exporting graphics {-}
+## exporting graphics {-}
 
 To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
@@ -6268,26 +6268,23 @@ An example:
 
 
 ``` r
-(plot1 + plot2 + labs(caption = str_wrap("Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.", 90))) + plot_annotation(tag_levels = 'A') + 
-  plot_layout(widths = c(1.1, 3), guides = 'collect') &
-  theme(legend.position = 'right')
+plot_grid(plot1, plot2, labels = c("A", "B"))
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-271-1.png" width="100%" style="display: block; margin: auto;" />
 
-## further reading {-}
+Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
 
-### insets {-}
+## Further Reading {-}
 
-https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot
+- [Grammar extensions and insets with `ggpp`](https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot)  
+  This article explains how to use the `ggpp` extension to add insets and annotations to `ggplot2` graphics in R. It introduces grammar extensions that allow you to insert subplots, highlight specific regions, and incorporate custom graphical elements in a composable and expressive way. Particularly useful for emphasizing detail or providing context within complex figures.
 
-### plot layout {-}
+- [Patchwork: Simple plot layout with ggplot2](https://patchwork.data-imaginist.com/index.html)  
+  `Patchwork` is an elegant and intuitive package for arranging multiple `ggplot2` plots into a single composite figure. With a minimal syntax that mirrors mathematical layout expressions, it allows users to combine plots vertically, horizontally, or in nested arrangements—ideal for creating figure panels for publications or presentations.
 
-One option for plot layout, `patchwork`. This one is quick and simple.
-[patchwork, for plot layout](https://patchwork.data-imaginist.com/index.html)
-
-Another option for plot layout is `cowplot`. Cowplot is a bit more complicated, but is more versatile.
-[cowplot on Github](https://wilkelab.org/cowplot/articles/plot_grid.html)
+- [Cowplot: Versatile plot composition](https://wilkelab.org/cowplot/articles/plot_grid.html)  
+  `Cowplot` is another popular package for composing multiple `ggplot2` plots. It offers more control and customization than `patchwork`, particularly for aligning plots, adjusting spacing, and embedding annotations. This makes it well-suited for fine-tuned figure design when preparing publication-quality graphics.
 
 
 # results and discussion {-}

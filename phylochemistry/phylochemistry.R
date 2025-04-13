@@ -11424,29 +11424,29 @@
                 return(embeddings)
               }
               # 
-              # if (platform == "local") {
-              #   # Create a temporary FASTA file with all sequences
-              #   temp_dir <- tempdir()
-              #   fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
-              #   output_file <- file.path(temp_dir, "temp_embeddings.csv")
-              #   Biostrings::writeXStringSet(amino_acid_stringset, fasta_file)
-              #   
-              #   # Run the Python script to compute embeddings
-              #   python_path <- "/usr/bin/python3"  # Adjust path if necessary
-              #   python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Adjust script path as needed
-              #   command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
-              #   system(command, intern = TRUE)
-              #   
-              #   if (!file.exists(output_file)) {
-              #     stop("Python script did not produce an output file.")
-              #   }
-              #   embeddings <- read.csv(output_file)
-              #   unlink(c(fasta_file, output_file))
-              # }
-              # 
-              # # Combine embeddings with original sequence names
+              if (platform == "local") {
+                # Create a temporary FASTA file with all sequences
+                temp_dir <- tempdir()
+                fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
+                output_file <- file.path(temp_dir, "temp_embeddings.csv")
+                Biostrings::writeXStringSet(amino_acid_stringset, fasta_file)
+                
+                # Run the Python script to compute embeddings
+                python_path <- "/usr/bin/python3"  # Adjust path if necessary
+                python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Adjust script path as needed
+                command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
+                system(command, intern = TRUE)
+                
+                if (!file.exists(output_file)) {
+                  stop("Python script did not produce an output file.")
+                }
+                embeddings <- read.csv(output_file)
+                unlink(c(fasta_file, output_file))
+              }
+              
+              # Combine embeddings with original sequence names
               # if (platform %in% c("biolm", "nvidia")) {
-              #   
+                
               #   colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
               #   embeddings_df <- cbind(name = seq_names, embeddings_df)
               #   return(as_tibble(embeddings_df))
