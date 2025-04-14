@@ -4,11 +4,10 @@ part-data-visualization
 part-statistical-methods
 part-models
 loading-gff-files
-an-example
 other-thoughts
 abstract
 other-thoughts-1
-title-1
+title
 matrix-analyses
 basic-runmatrixanalysis-template
 advanced-runmatrixanalysis-template
