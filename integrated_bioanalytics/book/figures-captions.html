@@ -278,25 +278,144 @@
 <div id="captions" class="section level2 unnumbered">
 <h2>captions<a class="anchor" aria-label="anchor" href="#captions"><i class="fas fa-link"></i></a>
 </h2>
-<ol style="list-style-type: decimal">
-<li>Title - an overall description of the what is shown</li>
-<li>For each subplot:</li>
-</ol>
+<div id="title" class="section level3 unnumbered">
+<h3>title<a class="anchor" aria-label="anchor" href="#title"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Figure Title:</strong><br>
+- Provide a concise, descriptive title that summarizes the overall message or purpose of the figure.
+- Ensure the title quickly informs the reader about the main topic, experimental system, or hypothesis addressed by the figure.</p>
+</div>
+<div id="panel-by-panel-descriptions" class="section level3 unnumbered">
+<h3>panel-by-panel descriptions<a class="anchor" aria-label="anchor" href="#panel-by-panel-descriptions"><i class="fas fa-link"></i></a>
+</h3>
 <ul>
-<li>The type of plot (line plot, bar chart, etc.)</li>
-<li>Describe what is plotted as y vs x in words.</li>
-<li>Describe what each bar, point, or error bar represents.</li>
-<li>If applicable, describe the number of independent samples or measurements (sometimes called “replicates”) that underlie a given geometric feature or summary statistic.</li>
-<li>Describe where the data are from.</li>
+<li>
+<strong>Panel Identification:</strong>
+<ul>
+<li>Label each panel (e.g., A, B, C, etc.) and refer to these labels consistently in the caption.</li>
+<li>Briefly state what each panel represents or how it relates to the overarching figure.</li>
 </ul>
-<ol start="3" style="list-style-type: decimal">
-<li>Avoid abbreviations, but if you do use any, specify what they mean.</li>
-</ol>
-<p>An example:</p>
+</li>
+<li>
+<strong>Graph Type and Layout:</strong>
+<ul>
+<li>State the type of plot (line plot, bar chart, scatter plot, histogram, etc.).</li>
+<li>Describe any special features such as insets, overlays, or embedded plots (e.g., zoomed regions, additional mini-panels).</li>
+</ul>
+</li>
+<li>
+<strong>Axes and Variables:</strong>
+<ul>
+<li>Clearly define what is on each axis (x vs. y) in descriptive terms, including units of measurement (e.g., time in seconds, concentration in µM).</li>
+<li>Explain if additional dimensions (such as color coding, marker sizes, or symbols) are used to represent extra variables.</li>
+</ul>
+</li>
+<li>
+<strong>Data Representation Details:</strong>
+<ul>
+<li>Describe what the individual data points, bars, or error bars represent. For example:
+<ul>
+<li>
+<strong>Data Points/Bars:</strong> Explain whether they indicate individual measurements, means, medians, or other summary statistics.</li>
+<li>
+<strong>Error Bars:</strong> Specify whether these indicate standard error, standard deviation, 95% confidence intervals, or another metric.</li>
+</ul>
+</li>
+<li>Note any graphical elements like trend lines or regression lines and what model or fit has been applied.</li>
+</ul>
+</li>
+<li>
+<strong>Sample Size and Replicates:</strong>
+<ul>
+<li>Indicate the number of independent samples or experimental replicates underlying each element of the graph.</li>
+</ul>
+</li>
+<li>
+<strong>Statistical Analysis:</strong>
+<ul>
+<li>State any statistical tests used (e.g., t-test, ANOVA, regression analysis) and the significance level(s).</li>
+<li>Describe how statistical significance is indicated in the figure (e.g., asterisks, brackets, p-value annotations).</li>
+<li>Provide any necessary details about data normalization, transformation, or curve fitting that influence data interpretation.</li>
+</ul>
+</li>
+<li>
+<strong>Color, Symbols, and Legend Information:</strong>
+<ul>
+<li>Define any color codes or symbol shapes that differentiate groups, conditions, or categories within the plot.</li>
+<li>If the figure uses a legend, briefly note how the legend relates to the data elements.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="data-source-and-methodology" class="section level3 unnumbered">
+<h3>data source and methodology<a class="anchor" aria-label="anchor" href="#data-source-and-methodology"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>
+<strong>Data Origins:</strong>
+<ul>
+<li>Clearly state where the data come from (e.g., experimental assays, clinical samples, simulations, or databases).</li>
+<li>If the data are derived from previously published work or a public repository, include proper references or accession numbers.</li>
+</ul>
+</li>
+<li>
+<strong>Experimental or Computational Methods:</strong>
+<ul>
+<li>Summarize the methods used to obtain or generate the data that are crucial for the reader’s understanding.</li>
+<li>Mention any key experimental conditions (e.g., treatment concentrations, temperature, environmental conditions) or computational parameters (e.g., algorithm settings).</li>
+<li>Indicate if more detailed methodology is provided elsewhere (such as in the Methods section or Supporting Information).</li>
+</ul>
+</li>
+<li>
+<strong>Controls and Comparative Data:</strong>
+<ul>
+<li>Describe any control experiments or baseline data presented in the figure, including how they were used to validate or compare with experimental results.</li>
+</ul>
+</li>
+<li>
+<strong>Visual Adjustments:</strong>
+<ul>
+<li>Mention any image processing steps (e.g., brightness/contrast adjustments, background subtraction) if these steps are critical for understanding the visual data.</li>
+</ul>
+</li>
+<li>
+<strong>Data Analysis and Reproducibility:</strong>
+<ul>
+<li>Highlight any data analysis techniques used (e.g., filtering, normalization) that affect the interpretation of the figure.</li>
+<li>Provide information that supports reproducibility, such as the number of measurements, the exact statistical parameters, or references to analysis scripts.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="clarity-consistency-and-readability" class="section level3 unnumbered">
+<h3>clarity, consistency, and readability<a class="anchor" aria-label="anchor" href="#clarity-consistency-and-readability"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>
+<strong>Abbreviations and Terminology:</strong>
+<ul>
+<li>Avoid using unexplained abbreviations or jargon. If abbreviations are necessary, provide definitions at first use.</li>
+<li>Use consistent and clear terminology throughout the caption.</li>
+</ul>
+</li>
+<li>
+<strong>Unit and Scale Information:</strong>
+<ul>
+<li>Always include units of measurement and scale indicators (especially for imaging data or maps).</li>
+<li>For figures with scale bars or reference markers (e.g., microscopy images), specify the scale explicitly.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="an-example" class="section level3" number="4.1.1">
+<h3>
+<span class="header-section-number">4.1.1</span> An example:<a class="anchor" aria-label="anchor" href="#an-example"><i class="fas fa-link"></i></a>
+</h3>
 <div class="sourceCode" id="cb225"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-271-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve.</p>
+</div>
 </div>
 <div id="further-reading-9" class="section level2 unnumbered">
 <h2>Further Reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
@@ -333,7 +452,15 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 </ul>
 </li>
 <li><a class="nav-link" href="#exporting-graphics">exporting graphics</a></li>
-<li><a class="nav-link" href="#captions">captions</a></li>
+<li>
+<a class="nav-link" href="#captions">captions</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#title">title</a></li>
+<li><a class="nav-link" href="#panel-by-panel-descriptions">panel-by-panel descriptions</a></li>
+<li><a class="nav-link" href="#data-source-and-methodology">data source and methodology</a></li>
+<li><a class="nav-link" href="#clarity-consistency-and-readability">clarity, consistency, and readability</a></li>
+<li><a class="nav-link" href="#an-example"><span class="header-section-number">4.1.1</span> An example:</a></li>
+</ul>
+</li>
 <li><a class="nav-link" href="#further-reading-9">Further Reading</a></li>
 </ul>
 
@@ -352,7 +479,7 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-04-13.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-04-14.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-04-13"
+date: "2025-04-14"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -6255,16 +6255,77 @@ dev.off()
 
 ## captions {-}
 
-1. Title - an overall description of the what is shown
-2. For each subplot:
-  * The type of plot (line plot, bar chart, etc.)
-  * Describe what is plotted as y vs x in words.
-  * Describe what each bar, point, or error bar represents.
-  * If applicable, describe the number of independent samples or measurements (sometimes called “replicates”) that underlie a given geometric feature or summary statistic.
-  * Describe where the data are from.
-3. Avoid abbreviations, but if you do use any, specify what they mean.
+### title {-}
 
-An example:
+**Figure Title:**  
+- Provide a concise, descriptive title that summarizes the overall message or purpose of the figure.
+- Ensure the title quickly informs the reader about the main topic, experimental system, or hypothesis addressed by the figure.
+
+### panel-by-panel descriptions {-}
+
+- **Panel Identification:**  
+  - Label each panel (e.g., A, B, C, etc.) and refer to these labels consistently in the caption.
+  - Briefly state what each panel represents or how it relates to the overarching figure.
+
+- **Graph Type and Layout:**  
+  - State the type of plot (line plot, bar chart, scatter plot, histogram, etc.).
+  - Describe any special features such as insets, overlays, or embedded plots (e.g., zoomed regions, additional mini-panels).
+
+- **Axes and Variables:**  
+  - Clearly define what is on each axis (x vs. y) in descriptive terms, including units of measurement (e.g., time in seconds, concentration in µM).
+  - Explain if additional dimensions (such as color coding, marker sizes, or symbols) are used to represent extra variables.
+
+- **Data Representation Details:**  
+  - Describe what the individual data points, bars, or error bars represent. For example:
+    - **Data Points/Bars:** Explain whether they indicate individual measurements, means, medians, or other summary statistics.
+    - **Error Bars:** Specify whether these indicate standard error, standard deviation, 95% confidence intervals, or another metric.
+  - Note any graphical elements like trend lines or regression lines and what model or fit has been applied.
+
+- **Sample Size and Replicates:**  
+  - Indicate the number of independent samples or experimental replicates underlying each element of the graph.
+
+- **Statistical Analysis:**
+  - State any statistical tests used (e.g., t-test, ANOVA, regression analysis) and the significance level(s).
+  - Describe how statistical significance is indicated in the figure (e.g., asterisks, brackets, p-value annotations).
+  - Provide any necessary details about data normalization, transformation, or curve fitting that influence data interpretation.
+
+- **Color, Symbols, and Legend Information:**  
+  - Define any color codes or symbol shapes that differentiate groups, conditions, or categories within the plot.
+  - If the figure uses a legend, briefly note how the legend relates to the data elements.
+
+### data source and methodology {-}
+
+- **Data Origins:**  
+  - Clearly state where the data come from (e.g., experimental assays, clinical samples, simulations, or databases).
+  - If the data are derived from previously published work or a public repository, include proper references or accession numbers.
+
+- **Experimental or Computational Methods:**  
+  - Summarize the methods used to obtain or generate the data that are crucial for the reader’s understanding.
+  - Mention any key experimental conditions (e.g., treatment concentrations, temperature, environmental conditions) or computational parameters (e.g., algorithm settings).
+  - Indicate if more detailed methodology is provided elsewhere (such as in the Methods section or Supporting Information).
+
+- **Controls and Comparative Data:**  
+  - Describe any control experiments or baseline data presented in the figure, including how they were used to validate or compare with experimental results.
+  
+- **Visual Adjustments:**  
+  - Mention any image processing steps (e.g., brightness/contrast adjustments, background subtraction) if these steps are critical for understanding the visual data.
+
+- **Data Analysis and Reproducibility:**  
+  - Highlight any data analysis techniques used (e.g., filtering, normalization) that affect the interpretation of the figure.
+  - Provide information that supports reproducibility, such as the number of measurements, the exact statistical parameters, or references to analysis scripts.
+
+### clarity, consistency, and readability {-}
+
+- **Abbreviations and Terminology:**  
+  - Avoid using unexplained abbreviations or jargon. If abbreviations are necessary, provide definitions at first use.
+  - Use consistent and clear terminology throughout the caption.
+
+- **Unit and Scale Information:**  
+  - Always include units of measurement and scale indicators (especially for imaging data or maps).
+  - For figures with scale bars or reference markers (e.g., microscopy images), specify the scale explicitly.
+
+
+### An example:
 
 
 ``` r
