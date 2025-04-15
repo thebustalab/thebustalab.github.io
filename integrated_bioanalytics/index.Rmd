@@ -5024,10 +5024,9 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 ```
 
 1. **Find a data set: Large!** >10ish variables, >5ish categories
-+ Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
++ Sources: your research supervisor, CHEM5725 database spreadsheet, Google searches, Kaggle.com!
 + Relevant to your research or interests (ideally).
 + Requires approval from Dr. Busta.
-
 
 2. **Ask at least three scientific questions.**
 + These should drive your data analyses.
@@ -5116,7 +5115,9 @@ Appropriately Complex:  What main environmental, behavioral, and genetic factors
 
 # figures & captions {-}
 
-## high quality figures {-}
+## {-}
+
+## figures {-}
 
 One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures:
 
@@ -5132,7 +5133,7 @@ Appropriate Geoms and Annotations: Choose geoms that best represent the data and
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg', dpi = NA)
 ```
 
-## advanced figure elements {-}
+### advanced figure elements {-}
 
 ### insets {-}
 
@@ -5281,7 +5282,7 @@ plot_grid(plot1, plot2, ncol = 1)
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-## exporting graphics {-}
+### exporting graphics {-}
 
 To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
@@ -5306,6 +5307,8 @@ dev.off()
 ```
 
 ## captions {-}
+
+Figures are critical tools for clearly and effectively communicating scientific results. However, as Reviewer 2 will tell you, a figure is only as good as its caption. Captions provide essential context, guiding the reader through the significance, structure, and details of the visual information presented. Below are some guidelines to help you craft informative captions. The recommendations are organized into categories, covering essential components like figure titles, panel descriptions, variable definitions, data representation details, statistical analyses, and data sources. Some example captions and a helpful interactive tool (`buildCaption()`) are also included to streamline caption construction and ensure consistency in your scientific communication.
 
 ### title and text {-}
 
@@ -5354,15 +5357,23 @@ dev.off()
   - Consider including information on experimental conditions (e.g., treatment concentrations, temperature, environmental conditions) or computational parameters (e.g., algorithm settings), assuming these weren't already mentioned when describing the axes.
   - Mention any image processing steps (e.g., brightness/contrast adjustments, background subtraction) if these steps are critical for understanding the visual data.
 
-### An example {-}
+### example captions {-}
 
-```{r, fig.height = 8, fig.width = 12}
+```{r, fig.height = 8, fig.width = 12, fig.cap = "Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.", echo = FALSE}
 plot_grid(plot1, plot2, labels = c("A", "B"))
 ```
 
-Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
+### buildCaption {-}
 
-## Further Reading {-}
+To help you manage the suggestions above, please consider using the `buildCaption()` tool, which you can open using the command below. That command should open an interactive window with a checklist to help you quickly build quality captions.
+
+```{r, eval = FALSE}
+buildCaption()
+```
+
+## {-}
+
+## further reading {-}
 
 - [Grammar extensions and insets with `ggpp`](https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot)  
   This article explains how to use the `ggpp` extension to add insets and annotations to `ggplot2` graphics in R. It introduces grammar extensions that allow you to insert subplots, highlight specific regions, and incorporate custom graphical elements in a composable and expressive way. Particularly useful for emphasizing detail or providing context within complex figures.

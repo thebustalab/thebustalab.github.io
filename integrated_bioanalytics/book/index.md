@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-04-14"
+date: "2025-04-15"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -5955,10 +5955,9 @@ For your final project in this course you will use the techniques we have learne
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/project_overview.png" width="100%" style="display: block; margin: auto;" />
 
 1. **Find a data set: Large!** >10ish variables, >5ish categories
-+ Sources: your research supervisor, CHEM5725 database spreadsheet, google searches!
++ Sources: your research supervisor, CHEM5725 database spreadsheet, Google searches, Kaggle.com!
 + Relevant to your research or interests (ideally).
 + Requires approval from Dr. Busta.
-
 
 2. **Ask at least three scientific questions.**
 + These should drive your data analyses.
@@ -6043,7 +6042,9 @@ Appropriately Complex:  What main environmental, behavioral, and genetic factors
 
 # figures & captions {-}
 
-## high quality figures {-}
+## {-}
+
+## figures {-}
 
 One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures:
 
@@ -6057,7 +6058,7 @@ Appropriate Geoms and Annotations: Choose geoms that best represent the data and
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;" />
 
-## advanced figure elements {-}
+### advanced figure elements {-}
 
 ### insets {-}
 
@@ -6227,7 +6228,7 @@ plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 
 <img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
 
-## exporting graphics {-}
+### exporting graphics {-}
 
 To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: "C:\\Desktop\\the_file.png" (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.
 
@@ -6254,6 +6255,8 @@ dev.off()
 ```
 
 ## captions {-}
+
+Figures are critical tools for clearly and effectively communicating scientific results. However, as Reviewer 2 will tell you, a figure is only as good as its caption. Captions provide essential context, guiding the reader through the significance, structure, and details of the visual information presented. Below are some guidelines to help you craft informative captions. The recommendations are organized into categories, covering essential components like figure titles, panel descriptions, variable definitions, data representation details, statistical analyses, and data sources. Some example captions and a helpful interactive tool (`buildCaption()`) are also included to streamline caption construction and ensure consistency in your scientific communication.
 
 ### title and text {-}
 
@@ -6302,18 +6305,25 @@ dev.off()
   - Consider including information on experimental conditions (e.g., treatment concentrations, temperature, environmental conditions) or computational parameters (e.g., algorithm settings), assuming these weren't already mentioned when describing the axes.
   - Mention any image processing steps (e.g., brightness/contrast adjustments, background subtraction) if these steps are critical for understanding the visual data.
 
-### An example {-}
+### example captions {-}
+
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-271-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-271)Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.</p>
+</div>
+
+### buildCaption {-}
+
+To help you manage the suggestions above, please consider using the `buildCaption()` tool, which you can open using the command below. That command should open an interactive window with a checklist to help you quickly build quality captions.
 
 
 ``` r
-plot_grid(plot1, plot2, labels = c("A", "B"))
+buildCaption()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-271-1.png" width="100%" style="display: block; margin: auto;" />
+## {-}
 
-Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.
-
-## Further Reading {-}
+## further reading {-}
 
 - [Grammar extensions and insets with `ggpp`](https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot)  
   This article explains how to use the `ggpp` extension to add insets and annotations to `ggplot2` graphics in R. It introduces grammar extensions that allow you to insert subplots, highlight specific regions, and incorporate custom graphical elements in a composable and expressive way. Particularly useful for emphasizing detail or providing context within complex figures.
@@ -6666,7 +6676,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-279-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-280-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6708,7 +6718,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-281-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-282-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6797,7 +6807,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-287-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-288-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

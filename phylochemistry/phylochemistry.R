@@ -61,6 +61,7 @@
                     "httr",
                     "rentrez",
                     "shiny",
+                    "shinyjs",
                     "png",
                     "DT",
                     "RColorBrewer",
@@ -113,7 +114,8 @@
                     "parallel",
                     "phytools",
                     "rhdf5",
-                    "RCurl"
+                    "RCurl",
+                    "base64enc"
                 )
 
                 if (!exists("Bioconductor_packages")) {Bioconductor_packages <- vector()}
@@ -10112,7 +10114,252 @@
 
             }
 
-    ##### Language models and text data handling
+    ##### Language models and text data handling (embedText in language_model_analysis.R)
+
+        #### buildCaption
+
+            buildCaption <- function() {
+
+                ui <- fluidPage(
+                  theme = shinytheme("darkly"),
+                  useShinyjs(),
+                  sidebarLayout(
+                    sidebarPanel(
+                      h2("Caption"),
+                      textAreaInput("caption_input", "Enter your figure caption:", "", rows = 5),
+                      h2("Caption Element Checklist"),
+                      
+                      # TITLE SECTION
+                      h3("TITLE SECTION"),
+                      div(id = "elem_figure_title",
+                          radioButtons("figure_title",
+                                       label = "FIGURE TITLE: Provide a concise, descriptive title that summarizes the overall message or purpose of the figure, including the main topic, experimental system, or hypothesis.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      div(id = "elem_panel_id",
+                          radioButtons("panel_id",
+                                       label = "PANEL IDENTIFICATION: Label each panel (e.g., A, B, C) and refer to these labels consistently.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      actionButton("reset_title", "Reset Title Section"),
+                      
+                      br(), br(),
+                      
+                      # SUBPANEL SECTION
+                      h3("SUBPANEL SECTION"),
+                      div(id = "elem_graph_layout",
+                          radioButtons("graph_layout",
+                                       label = "GRAPH TYPE AND LAYOUT: State the type of plot (e.g., line plot, bar chart, scatter plot, histogram, etc.) and describe any special features such as insets, overlays, or embedded plots.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      div(id = "elem_axes_variables",
+                          radioButtons("axes_variables",
+                                       label = "AXES AND VARIABLE MAPPINGS: Clearly define what is on each axis (including units) and describe any additional dimensions (e.g., color coding, marker sizes, or symbols) used in the figure.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      div(id = "elem_data_representation",
+                          radioButtons("data_representation",
+                                       label = "DATA REPRESENTATIONS: Describe what the individual data points, bars, or error bars represent (e.g., individual measurements, means, medians, etc.), including any error metrics (such as standard error, standard deviation, or 95% confidence intervals) and details on any trend or regression lines.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      div(id = "elem_sample_size",
+                          radioButtons("sample_size",
+                                       label = "SAMPLE SIZE: Indicate the number of independent samples or experimental replicates underlying each element of the graph.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      div(id = "elem_stat_analysis",
+                          radioButtons("stat_analysis",
+                                       label = "STATISTICAL ANALYSES AND COMPARISONS: Describe any control experiments or baseline comparisons, specify the statistical tests used (e.g., t-test, ANOVA, regression analysis) and significance levels, and detail any data normalization, transformation, or curve fitting applied.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      actionButton("reset_subpanel", "Reset Subpanel Section"),
+                      
+                      br(), br(),
+                      
+                      # FINAL CHECKS SECTION
+                      h3("FINAL CHECKS SECTION"),
+                      div(id = "elem_caption_text",
+                          radioButtons("caption_text",
+                                       label = "AVOID OR DEFINE ABBREVIATIONS: Avoid using unexplained abbreviations or jargon; if abbreviations are necessary, provide definitions at first use.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      div(id = "elem_data_methodology",
+                          radioButtons("data_methodology",
+                                       label = "DATA METHODOLOGY: Outline the methods used to generate the data, including experimental conditions (e.g., treatment concentrations, temperature), computational parameters if applicable, and any image processing adjustments critical for interpreting the figure.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      div(id = "elem_data_source",
+                          radioButtons("data_source",
+                                       label = "DATA SOURCE: Indicate the origin of the data (e.g., experimental assays, clinical samples, simulations, databases, publications) and include relevant references if applicable.",
+                                       choices = list("Doesn't Apply" = "na", "Complete" = "complete"),
+                                       selected = character(0),
+                                       inline = TRUE)
+                      ),
+                      actionButton("reset_final", "Reset Final Checks Section")
+                    ),
+                    
+                    mainPanel(
+                      h3("Image Input"),
+                      textInput("img_path", label = "Enter image path (PDF, PNG, JPG)"),
+                      actionButton("read_btn", label = "Read Image"),
+                      hr(),
+                      uiOutput("figureImage")
+                    )
+                  )
+                )
+
+                server <- function(input, output, session) {
+                  
+                  # Reactive image path updated on 'Read Image' button click.
+                  imagePath <- eventReactive(input$read_btn, {
+                    input$img_path
+                  })
+                  
+                  # Render the image or error message if needed.
+                  output$figureImage <- renderUI({
+                    req(imagePath())
+                    
+                    if (!file.exists(imagePath())) {
+                      return(tags$div(style = "color:red;", 
+                                      sprintf("Error: File not found. Please check the path: %s", imagePath())))
+                    }
+                    
+                    ext <- tolower(tools::file_ext(imagePath()))
+                    
+                    if (ext == "pdf") {
+                      # Use iframe for PDFs.
+                      tags$iframe(style = "height:600px; width:100%; border: none;", src = imagePath())
+                    } else if (ext %in% c("png", "jpg", "jpeg", "gif")) {
+                      mime_type <- switch(ext,
+                                          "png" = "image/png",
+                                          "jpg" = "image/jpeg",
+                                          "jpeg" = "image/jpeg",
+                                          "gif" = "image/gif",
+                                          "application/octet-stream")
+                      
+                      img_data <- tryCatch({
+                        dataURI(file = imagePath(), mime = mime_type)
+                      }, error = function(e) {
+                        NULL
+                      })
+                      
+                      if (is.null(img_data)) {
+                        return(tags$div(style = "color:red;", "Error: Unable to read or encode the image file."))
+                      }
+                      
+                      tags$img(src = img_data, style = "max-width:100%; max-height:600px; height:auto;")
+                    } else {
+                      tags$div(style = "color:red;", 
+                               "Error: Unrecognized file type. Please use PDF, PNG, JPG, JPEG, or GIF.")
+                    }
+                  })
+                  
+                  # Hide checklist items when a selection is made.
+                  observeEvent(input$figure_title, {
+                    if (!is.null(input$figure_title) && input$figure_title != "")
+                      hide("elem_figure_title")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$caption_text, {
+                    if (!is.null(input$caption_text) && input$caption_text != "")
+                      hide("elem_caption_text")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$panel_id, {
+                    if (!is.null(input$panel_id) && input$panel_id != "")
+                      hide("elem_panel_id")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$graph_layout, {
+                    if (!is.null(input$graph_layout) && input$graph_layout != "")
+                      hide("elem_graph_layout")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$axes_variables, {
+                    if (!is.null(input$axes_variables) && input$axes_variables != "")
+                      hide("elem_axes_variables")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$data_representation, {
+                    if (!is.null(input$data_representation) && input$data_representation != "")
+                      hide("elem_data_representation")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$sample_size, {
+                    if (!is.null(input$sample_size) && input$sample_size != "")
+                      hide("elem_sample_size")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$stat_analysis, {
+                    if (!is.null(input$stat_analysis) && input$stat_analysis != "")
+                      hide("elem_stat_analysis")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$data_methodology, {
+                    if (!is.null(input$data_methodology) && input$data_methodology != "")
+                      hide("elem_data_methodology")
+                  }, ignoreInit = TRUE)
+                  
+                  observeEvent(input$data_source, {
+                    if (!is.null(input$data_source) && input$data_source != "")
+                      hide("elem_data_source")
+                  }, ignoreInit = TRUE)
+                  
+                  # Reset Title Section
+                  observeEvent(input$reset_title, {
+                    updateRadioButtons(session, "figure_title", selected = character(0))
+                    updateRadioButtons(session, "panel_id", selected = character(0))
+                    show("elem_figure_title")
+                    show("elem_panel_id")
+                  })
+                  
+                  # Reset Subpanel Section
+                  observeEvent(input$reset_subpanel, {
+                    updateRadioButtons(session, "graph_layout", selected = character(0))
+                    updateRadioButtons(session, "axes_variables", selected = character(0))
+                    updateRadioButtons(session, "data_representation", selected = character(0))
+                    updateRadioButtons(session, "sample_size", selected = character(0))
+                    updateRadioButtons(session, "stat_analysis", selected = character(0))
+                    show("elem_graph_layout")
+                    show("elem_axes_variables")
+                    show("elem_data_representation")
+                    show("elem_sample_size")
+                    show("elem_stat_analysis")
+                  })
+                  
+                  # Reset Final Checks Section
+                  observeEvent(input$reset_final, {
+                    updateRadioButtons(session, "caption_text", selected = character(0))
+                    updateRadioButtons(session, "data_methodology", selected = character(0))
+                    updateRadioButtons(session, "data_source", selected = character(0))
+                    show("elem_caption_text")
+                    show("elem_data_methodology")
+                    show("elem_data_source")
+                  })
+                  
+                }
+
+                shinyApp(ui = ui, server = server)
+            }
+
 
         #### parseRISFile
 
@@ -10212,7 +10459,6 @@
                     cat(Sys.time(), "- Returning parsed RIS data as tibble with dimensions: "); print(dim(as_tibble(df)))
                     return(as_tibble(df))
                 }
-
 
         #### createNewsletter
 
@@ -11282,33 +11528,6 @@
                 return(as_tibble(do.call(rbind, pm_results)))
             }
 
-        # #### embedText
-
-        #     embedText <- function(df, column_name, hf_api_key) {
-
-        #         ## Prep input
-        #         embeddings_list <- list()
-        #         df <- as_tibble(df)
-        #         text_vector <- unlist(df[,which(colnames(df) == column_name)])
-              
-        #         ## Run HF embeddings, process and return output
-        #         for (i in 1:length(text_vector)) { # i=1
-        #             response <- httr::POST(
-        #                 url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
-        #                 httr::add_headers(Authorization = paste0("Bearer ", hf_api_key)),
-        #                 body = toJSON(list(inputs = text_vector[i])),
-        #                 encode = "json"
-        #             )
-        #             if (response$status_code == 429) {stop("Warning: you have (probably) exceeded your HuggingFace rate limit.")}
-        #             embeddings_list[[i]] <- as.numeric(as.character(jsonlite::fromJSON(httr::content(response, as = "text", encoding = "UTF-8"))))
-        #         }
-
-        #         embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
-        #         colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-        #         df <- bind_cols(df, embeddings_df)
-        #         return(df)
-        #     }
-
         #### embedAminoAcids
 
             embedAminoAcids <- function(
@@ -11456,151 +11675,6 @@
               #   return(as_tibble(embeddings_df))
               # }
             } 
-
-
-        #### Run the app
-
-
-
-            # embedAminoAcids <- function(
-            #     amino_acid_stringset = NULL,
-            #     dataframe = NULL,
-            #     biolm_api_key = NULL,
-            #     nvidia_api_key = NULL,
-            #     platform = c("nvidia", "biolm", "local"),
-            #     input_type = c("amino_acid_stringset", "dataframe"),
-            #     seq_column = NULL,
-            #     model_name = "esm2_t30_150M_UR50D"
-            # ) {
-
-            #     input_type <- input_type[1]
-            #     platform <- platform[1]
-                
-            #     # Check input data type and prepare data
-            #     if (input_type == "amino_acid_stringset") {
-            #         if (!inherits(amino_acid_stringset, "XStringSet")) {
-            #             stop("For input_type 'amino_acid_stringset', amino_acid_stringset must be of class 'XStringSet'.")
-            #         }
-
-            #         # Initialize progress bar
-            #         pb <- progress::progress_bar$new(
-            #             format = "  Processing [:bar] :percent in :elapsed seconds",
-            #             total = if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df), 
-            #             clear = FALSE, width = 60
-            #         )
-
-            #         # Remote embedding with biolm or nvidia
-            #         embeddings <- list()
-            #         for (i in 1:(if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df))) {
-            #             sequence <- if (input_type == "amino_acid_stringset") as.data.frame(amino_acid_stringset)[[1]][i] else df[[seq_column]][i]
-                        
-            #             if (platform == "biolm") {
-            #                 # Make the POST request to BioLM API
-            #                 response <- httr::POST(
-            #                     url = "https://biolm.ai/api/v2/esm2-8m/encode/",
-            #                     httr::add_headers(Authorization = paste("Token", biolm_api_key), `Content-Type` = "application/json"),
-            #                     body = toJSON(list(items = list(list(sequence = sequence))), auto_unbox = TRUE), 
-            #                     encode = "json"
-            #                 )
-            #                 embeddings[[i]] <- fromJSON(rawToChar(response$content))$results[2][[1]][[1]][[1]]
-            #             }
-                        
-            #             if (platform == "nvidia") {
-            #                 # Make the POST request to NVIDIA API
-            #                 response <- httr::POST(
-            #                     url = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m",
-            #                     httr::add_headers(`Content-Type` = "application/json", `Authorization` = paste("Bearer", nvidia_api_key)),
-            #                     body = toJSON(list(sequences = list(sequence), format = "h5"), auto_unbox = TRUE),
-            #                     encode = "json"
-            #                 )
-            #                 file_path <- tempfile(fileext = ".h5")
-            #                 print(file_path)
-            #                 writeBin(httr::content(response, as = "raw"), file_path)
-            #                 embeddings[[i]] <- as.numeric(rhdf5::h5read(file_path, "embeddings"))
-            #                 invisible(file.remove(file_path))
-            #             }
-                        
-            #             pb$tick()
-            #         }
-                    
-            #         # Process and return embeddings for remote platform options
-            #         if (platform %in% c("biolm", "nvidia")) {
-            #             embeddings_df <- as.data.frame(do.call(rbind, embeddings))
-            #             colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-                        
-            #             if (input_type == "amino_acid_stringset") {
-            #                 embeddings_df <- cbind(name = amino_acid_stringset@ranges@NAMES, embeddings_df)
-            #             } else {
-            #                 embeddings_df <- cbind(df, embeddings_df)
-            #             }
-                        
-            #             return(as_tibble(embeddings_df))
-            #         }
-                    
-            #     } else if (input_type == "dataframe") {
-
-            #         if (!is.data.frame(dataframe)) {
-            #             stop("For input_type 'dataframe', dataframe must be a data frame.")
-            #         }
-            #         if (is.null(seq_column) || !seq_column %in% names(dataframe)) {
-            #             stop("Please provide the name of the sequence column when using a data frame as input.")
-            #         }
-            #         df <- dataframe
-
-            #         # Initialize progress bar
-            #         pb <- progress::progress_bar$new(
-            #             format = "  Processing [:bar] :percent in :elapsed seconds",
-            #             total = if (input_type == "amino_acid_stringset") length(amino_acid_stringset) else nrow(df), 
-            #             clear = FALSE, width = 60
-            #         )
-                
-            #         # Local embedding using Python script (Function 2 logic)
-            #         if (platform == "local") {
-            #             if (input_type != "dataframe") {
-            #                 stop("The 'local' platform option requires input_type 'dataframe'.")
-            #             }
-                        
-            #             # Create a temporary directory for the files
-            #             temp_dir <- tempdir()
-            #             fasta_file <- file.path(temp_dir, "temp_sequences.fasta")
-            #             output_file <- file.path(temp_dir, "temp_embeddings.csv")
-                        
-            #             # Write sequences to a temporary FASTA file
-            #             write_fasta <- function(sequences, headers, file_path) {
-            #                 con <- file(file_path, "w")
-            #                 on.exit(close(con))
-            #                 for (i in seq_along(sequences)) {
-            #                     if (!is.na(sequences[i]) && sequences[i] != "") {
-            #                         writeLines(paste0(">", headers[i]), con)
-            #                         writeLines(sequences[i], con)
-            #                     }
-            #                 }
-            #             }
-            #             write_fasta(df[[seq_column]], seq_len(nrow(df)), fasta_file)
-                        
-            #             # Run the Python script with system()
-            #             python_path <- "/usr/bin/python3"  # Adjust path if necessary
-            #             python_script <- "/home/bustalab/Documents/protein_lm/encode_proteins.py"  # Set correct path to Python script
-            #             command <- sprintf("%s %s %s %s %s", python_path, python_script, fasta_file, output_file, model_name)
-            #             system(command, intern = TRUE)
-                        
-            #             # Check if the output file was created
-            #             if (!file.exists(output_file)) {
-            #                 stop("Python script did not produce an output file.")
-            #             }
-                        
-            #             # Read the output CSV file and combine with original data frame
-            #             embeddings_df <- read.csv(output_file)
-            #             result_df <- cbind(df, embeddings_df)
-                        
-            #             # Clean up temporary files
-            #             unlink(c(fasta_file, output_file))
-                        
-            #             pb$tick()
-            #             return(result_df)
-            #         }
-            #     }
-            # }
 
     ##### Networks
 

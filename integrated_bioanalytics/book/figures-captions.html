@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>figures &amp; captions | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="high quality figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots...">
+<meta name="description" content="figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots that are...">
 <meta name="generator" content="bookdown 0.42 with bs4_book()">
 <meta property="og:title" content="figures &amp; captions | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="high quality figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots...">
+<meta property="og:description" content="figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots that are...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="figures &amp; captions | Integrated Bioanalytics">
-<meta name="twitter:description" content="high quality figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots...">
+<meta name="twitter:description" content="figures One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures: General Appearance: Create plots that are...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
@@ -101,8 +101,11 @@
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="figures-captions" class="section level1 unnumbered">
 <h1>figures &amp; captions<a class="anchor" aria-label="anchor" href="#figures-captions"><i class="fas fa-link"></i></a>
 </h1>
-<div id="high-quality-figures" class="section level2 unnumbered">
-<h2>high quality figures<a class="anchor" aria-label="anchor" href="#high-quality-figures"><i class="fas fa-link"></i></a>
+<div id="section-16" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="figures" class="section level2 unnumbered">
+<h2>figures<a class="anchor" aria-label="anchor" href="#figures"><i class="fas fa-link"></i></a>
 </h2>
 <p>One of the first components in preparing a scientific manuscript is creating high quality figures. Considering the following for your figures:</p>
 <ul>
@@ -114,10 +117,10 @@
 </ul>
 <p>Appropriate Geoms and Annotations: Choose geoms that best represent the data and help the viewer evaluate the hypothesis or make the desired comparison. Include raw data points where possible for detailed data distribution understanding. Consider apply statistical transformations like smoothing lines or histograms where appropriate to provide deeper insights into the data. Consider using facets for visualizing multiple categories or groups, allowing for easier comparison while maintaining a consistent scale and layout. Adhere to specific standards or conventions relevant to your field, including the representation of data, error bars, or statistical significance markers.</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/plot_quality.jpg" width="100%" style="display: block; margin: auto;"></div>
+<div id="advanced-figure-elements" class="section level3 unnumbered">
+<h3>advanced figure elements<a class="anchor" aria-label="anchor" href="#advanced-figure-elements"><i class="fas fa-link"></i></a>
+</h3>
 </div>
-<div id="advanced-figure-elements" class="section level2 unnumbered">
-<h2>advanced figure elements<a class="anchor" aria-label="anchor" href="#advanced-figure-elements"><i class="fas fa-link"></i></a>
-</h2>
 <div id="insets" class="section level3 unnumbered">
 <h3>insets<a class="anchor" aria-label="anchor" href="#insets"><i class="fas fa-link"></i></a>
 </h3>
@@ -255,10 +258,9 @@
 <code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>,<span class="va">plot2</span><span class="op">)</span>, <span class="va">plot1</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-</div>
-<div id="exporting-graphics" class="section level2 unnumbered">
-<h2>exporting graphics<a class="anchor" aria-label="anchor" href="#exporting-graphics"><i class="fas fa-link"></i></a>
-</h2>
+<div id="exporting-graphics" class="section level3 unnumbered">
+<h3>exporting graphics<a class="anchor" aria-label="anchor" href="#exporting-graphics"><i class="fas fa-link"></i></a>
+</h3>
 <p>To export graphics from R, consider the code below. The <path_to_file_you_want_to_create> should be something like: “C:\Desktop\the_file.png” (i.e. a path to a specific file with a .png suffix. It should be a file that does not yet exist - if it does already exist, it will be overwritten. You should adjust with height and width to get the image to look how you want, then once you have that dialed in, crank the resolution to 1200 or 2400 and export a final version.</path_to_file_you_want_to_create></p>
 <div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="figures-captions.html#cb223-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
 <span id="cb223-2"><a href="figures-captions.html#cb223-2" tabindex="-1"></a></span>
@@ -275,9 +277,11 @@
 <span id="cb224-6"><a href="figures-captions.html#cb224-6" tabindex="-1"></a></span>
 <span id="cb224-7"><a href="figures-captions.html#cb224-7" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
 </div>
+</div>
 <div id="captions" class="section level2 unnumbered">
 <h2>captions<a class="anchor" aria-label="anchor" href="#captions"><i class="fas fa-link"></i></a>
 </h2>
+<p>Figures are critical tools for clearly and effectively communicating scientific results. However, as Reviewer 2 will tell you, a figure is only as good as its caption. Captions provide essential context, guiding the reader through the significance, structure, and details of the visual information presented. Below are some guidelines to help you craft informative captions. The recommendations are organized into categories, covering essential components like figure titles, panel descriptions, variable definitions, data representation details, statistical analyses, and data sources. Some example captions and a helpful interactive tool (<code>buildCaption()</code>) are also included to streamline caption construction and ensure consistency in your scientific communication.</p>
 <div id="title-and-text" class="section level3 unnumbered">
 <h3>title and text<a class="anchor" aria-label="anchor" href="#title-and-text"><i class="fas fa-link"></i></a>
 </h3>
@@ -361,17 +365,29 @@
 </li>
 </ul>
 </div>
-<div id="an-example" class="section level3 unnumbered">
-<h3>An example<a class="anchor" aria-label="anchor" href="#an-example"><i class="fas fa-link"></i></a>
+<div id="example-captions" class="section level3 unnumbered">
+<h3>example captions<a class="anchor" aria-label="anchor" href="#example-captions"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb225"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_grid</span><span class="op">(</span><span class="va">plot1</span>, <span class="va">plot2</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-271-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-271"></span>
+<img src="index_files/figure-html/unnamed-chunk-271-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%"><p class="caption">
+Figure 4.1: Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve.
+</p>
 </div>
+</div>
+<div id="buildcaption" class="section level3 unnumbered">
+<h3>buildCaption<a class="anchor" aria-label="anchor" href="#buildcaption"><i class="fas fa-link"></i></a>
+</h3>
+<p>To help you manage the suggestions above, please consider using the <code>buildCaption()</code> tool, which you can open using the command below. That command should open an interactive window with a checklist to help you quickly build quality captions.</p>
+<div class="sourceCode" id="cb225"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">buildCaption</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="section-17" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-17"><i class="fas fa-link"></i></a></h2>
 </div>
 <div id="further-reading-9" class="section level2 unnumbered">
-<h2>Further Reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li><p><a href="https://docs.r4photobiology.info/ggpp/articles/grammar-extensions.html#geom_plot">Grammar extensions and insets with <code>ggpp</code></a><br>
@@ -397,23 +413,26 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#figures-captions">figures &amp; captions</a></li>
-<li><a class="nav-link" href="#high-quality-figures">high quality figures</a></li>
+<li><a class="nav-link" href="#section-16"></a></li>
 <li>
-<a class="nav-link" href="#advanced-figure-elements">advanced figure elements</a><ul class="nav navbar-nav">
+<a class="nav-link" href="#figures">figures</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#advanced-figure-elements">advanced figure elements</a></li>
 <li><a class="nav-link" href="#insets">insets</a></li>
 <li><a class="nav-link" href="#composite-figures">composite figures</a></li>
+<li><a class="nav-link" href="#exporting-graphics">exporting graphics</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#exporting-graphics">exporting graphics</a></li>
 <li>
 <a class="nav-link" href="#captions">captions</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#title-and-text">title and text</a></li>
 <li><a class="nav-link" href="#panel-by-panel-descriptions">panel-by-panel descriptions</a></li>
 <li><a class="nav-link" href="#data-source-and-methodology">data source and methodology</a></li>
-<li><a class="nav-link" href="#an-example">An example</a></li>
+<li><a class="nav-link" href="#example-captions">example captions</a></li>
+<li><a class="nav-link" href="#buildcaption">buildCaption</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#further-reading-9">Further Reading</a></li>
+<li><a class="nav-link" href="#section-17"></a></li>
+<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -431,7 +450,7 @@ This article explains how to use the <code>ggpp</code> extension to add insets a
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-04-14.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-04-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
