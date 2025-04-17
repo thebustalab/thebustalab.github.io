@@ -10096,6 +10096,8 @@
                         )
                 }
 
+                plots <<- plots
+
                 out <- do.call(rbind, out)
 
                 out$rep <- gsub(".CSV", "", gsub(".*-", "", out$sample))
@@ -10327,8 +10329,8 @@
                   observeEvent(input$reset_title, {
                     updateRadioButtons(session, "figure_title", selected = character(0))
                     updateRadioButtons(session, "panel_id", selected = character(0))
-                    show("elem_figure_title")
-                    show("elem_panel_id")
+                    shinyjs::show("elem_figure_title")
+                    shinyjs::show("elem_panel_id")
                   })
                   
                   # Reset Subpanel Section
@@ -10338,11 +10340,11 @@
                     updateRadioButtons(session, "data_representation", selected = character(0))
                     updateRadioButtons(session, "sample_size", selected = character(0))
                     updateRadioButtons(session, "stat_analysis", selected = character(0))
-                    show("elem_graph_layout")
-                    show("elem_axes_variables")
-                    show("elem_data_representation")
-                    show("elem_sample_size")
-                    show("elem_stat_analysis")
+                    shinyjs::show("elem_graph_layout")
+                    shinyjs::show("elem_axes_variables")
+                    shinyjs::show("elem_data_representation")
+                    shinyjs::show("elem_sample_size")
+                    shinyjs::show("elem_stat_analysis")
                   })
                   
                   # Reset Final Checks Section
@@ -10350,16 +10352,15 @@
                     updateRadioButtons(session, "caption_text", selected = character(0))
                     updateRadioButtons(session, "data_methodology", selected = character(0))
                     updateRadioButtons(session, "data_source", selected = character(0))
-                    show("elem_caption_text")
-                    show("elem_data_methodology")
-                    show("elem_data_source")
+                    shinyjs::show("elem_caption_text")
+                    shinyjs::show("elem_data_methodology")
+                    shinyjs::show("elem_data_source")
                   })
                   
                 }
 
                 shinyApp(ui = ui, server = server)
             }
-
 
         #### parseRISFile
 
