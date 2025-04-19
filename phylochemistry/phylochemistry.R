@@ -60,8 +60,11 @@
                     # "imager",
                     "httr",
                     "rentrez",
+                    
                     "shiny",
                     "shinyjs",
+                    "shinythemes",
+                    
                     "png",
                     "DT",
                     "RColorBrewer",
@@ -10123,7 +10126,7 @@
             buildCaption <- function() {
 
                 ui <- fluidPage(
-                  theme = shinytheme("darkly"),
+                  theme = shinythemes::shinytheme("darkly"),
                   useShinyjs(),
                   sidebarLayout(
                     sidebarPanel(
