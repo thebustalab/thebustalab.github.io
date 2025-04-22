@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-04-15"
+date: "2025-04-22"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -5944,86 +5944,92 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-# (PART) SCIENTIFIC WRITING {-}
+# (PART) ANALYTICAL REPORTS {-}
 
 <!-- start WRITING -->
 
-# overview {-}
+<!-- # overview {-} -->
 
-For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results:
+<!-- For your final project in this course you will use the techniques we have learned in class to analyze a large dataset, prepare high quality figures, and write a miniature manuscript describing the results: -->
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/project_overview.png" width="100%" style="display: block; margin: auto;" />
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/project_overview.png', dpi = NA) -->
+<!-- ``` -->
 
-1. **Find a data set: Large!** >10ish variables, >5ish categories
-+ Sources: your research supervisor, CHEM5725 database spreadsheet, Google searches, Kaggle.com!
-+ Relevant to your research or interests (ideally).
-+ Requires approval from Dr. Busta.
+<!-- 1. **Find a data set: Large!** >10ish variables, >5ish categories -->
+<!-- + Sources: your research supervisor, CHEM5725 database spreadsheet, Google searches, Kaggle.com! -->
+<!-- + Relevant to your research or interests (ideally). -->
+<!-- + Requires approval from Dr. Busta. -->
 
-2. **Ask at least three scientific questions.**
-+ These should drive your data analyses.
-+ Requires approval from Dr. Busta.
+<!-- 2. **Ask at least three scientific questions.** -->
+<!-- + These should drive your data analyses. -->
+<!-- + Requires approval from Dr. Busta. -->
 
-3. **Analyze your data using what you learned in class.**
-+ Refer to our book.
-+ Ask Dr. Busta for assistance.
+<!-- 3. **Analyze your data using what you learned in class.** -->
+<!-- + Refer to our book. -->
+<!-- + Ask Dr. Busta for assistance. -->
 
-4. **Create a written overview of your analysis**. A mini-manuscript in R Markdown:
-+ *Content* similar to the articles we looked at in class, though shorter.
-+ *Layout* similar to this example ([pdf](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.pdf), [rmd](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.Rmd)).
+<!-- 4. **Create a written overview of your analysis**. A mini-manuscript in R Markdown: -->
+<!-- + *Content* similar to the articles we looked at in class, though shorter. -->
+<!-- + *Layout* similar to this example ([pdf](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.pdf), [rmd](https://github.com/thebustalab/thebustalab.github.io/blob/master/integrated_bioanalytics/final_project/final_project_example.Rmd)). -->
 
-## scope {-}
+<!-- ## scope {-} -->
 
-When conducting a project of this type, it is very common for there to be mismatches in the scope of how the project was conducted and how the written report is presented (see image below). We often spend LOTS of time exploring our data and running into dead ends, conclusions that are mundane, or questions we can't answer. When we write a report on the project, we often focus the report of a specific discovery we made during our vast avenues of exploration, rather than boring the reader with all the mundane details.
+<!-- When conducting a project of this type, it is very common for there to be mismatches in the scope of how the project was conducted and how the written report is presented (see image below). We often spend LOTS of time exploring our data and running into dead ends, conclusions that are mundane, or questions we can't answer. When we write a report on the project, we often focus the report of a specific discovery we made during our vast avenues of exploration, rather than boring the reader with all the mundane details. -->
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/scope.jpeg" width="100%" style="display: block; margin: auto;" />
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/scope.jpeg', dpi = NA) -->
+<!-- ``` -->
 
-## order and content {-}
+<!-- ## order and content {-} -->
 
-The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript: the orders of presentation and preparation do not have to be the same (see the images below)! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester.
+<!-- The manuscript will be comprised of a title, abstract, introduction, results and discussion section, figures and captions, conclusions section, and at least five references. Please note the following when preparing your manuscript: the orders of presentation and preparation do not have to be the same (see the images below)! While in some instances a scientist may choose to write the components of a manuscript in the same order in which they appear on the page, this is not always the case. The order of preparation suggsted above is designed to minimize the amount of revision / re-writing that needs to be performed during the manuscript preparation process. Note that the suggested order of composition is in line with the class schedule for the rest of the semester. -->
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/writing_order2.png" width="100%" style="display: block; margin: auto;" />
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/writing_order2.png', dpi = NA) -->
+<!-- ``` -->
 
-Here is a guide for documenting analysis in a format that is polished and comprehensible. Note that each section is written for a specific and slightly unique audience. Utilizing R Markdown, the document created will convey findings and narrate the research process. In crafting your R Markdown document, ensure that code remains concealed in the final presentation by including echo = FALSE within chunk headers. This action hides the R code blocks in the output, yet permits their execution for generating figures and results.
+<!-- Here is a guide for documenting analysis in a format that is polished and comprehensible. Note that each section is written for a specific and slightly unique audience. Utilizing R Markdown, the document created will convey findings and narrate the research process. In crafting your R Markdown document, ensure that code remains concealed in the final presentation by including echo = FALSE within chunk headers. This action hides the R code blocks in the output, yet permits their execution for generating figures and results. -->
 
-TITLE: Craft a title that’s both clear and descriptive. It should be accessible to specialists in the field as well as the wider scientific audience, avoiding overly technical language that might limit its broader appeal.
+<!-- TITLE: Craft a title that’s both clear and descriptive. It should be accessible to specialists in the field as well as the wider scientific audience, avoiding overly technical language that might limit its broader appeal. -->
 
-ABSTRACT: Summarize the study in the abstract, providing detail that will be informative to experts and also comprehensible to those outside the field. It should briefly outline the study’s aims, methods, key results, and conclusions, offering a snapshot of the entire project.
+<!-- ABSTRACT: Summarize the study in the abstract, providing detail that will be informative to experts and also comprehensible to those outside the field. It should briefly outline the study’s aims, methods, key results, and conclusions, offering a snapshot of the entire project. -->
 
-INTRODUCTION: In the introduction, present the context and significance of the research in a way that's understandable to researchers and those not as versed in the subject. Clearly enumerate the multiple research questions that the you aim to answer, highlighting the research's relevance and framing the inquiry.
+<!-- INTRODUCTION: In the introduction, present the context and significance of the research in a way that's understandable to researchers and those not as versed in the subject. Clearly enumerate the multiple research questions that the you aim to answer, highlighting the research's relevance and framing the inquiry. -->
 
-METHODS: Describe where the dataset was sourced, any data processing steps taken, and provide a detailed description of the analysis procedures utilized in RStudio. This section should be detailed enough to allow for replication and validation, yet clearly written to be accessible to non-experts. The explanation of the methods should help readers understand how the research questions were addressed.
+<!-- METHODS: Describe where the dataset was sourced, any data processing steps taken, and provide a detailed description of the analysis procedures utilized in RStudio. This section should be detailed enough to allow for replication and validation, yet clearly written to be accessible to non-experts. The explanation of the methods should help readers understand how the research questions were addressed. -->
 
-RESULTS AND DISCUSSION WITH FIGURES AND CAPTIONS: Integrate your findings with clear, illustrative figures and captions within this section, ensuring they can be understood independently of the text for visual learners. The written portion should concisely interpret the results in light of the research questions, discussing the significance of the findings in a way that appeals to both those interested in the analytical nuances and those seeking to understand the overall implications.
+<!-- RESULTS AND DISCUSSION WITH FIGURES AND CAPTIONS: Integrate your findings with clear, illustrative figures and captions within this section, ensuring they can be understood independently of the text for visual learners. The written portion should concisely interpret the results in light of the research questions, discussing the significance of the findings in a way that appeals to both those interested in the analytical nuances and those seeking to understand the overall implications. -->
 
-CONCLUSION: Summarize the primary insights and their relevance, keeping this section succinct and to the point. It should crystallize the main findings and their contribution to the field, suited for readers who seek a quick synopsis without delving into the full text.
+<!-- CONCLUSION: Summarize the primary insights and their relevance, keeping this section succinct and to the point. It should crystallize the main findings and their contribution to the field, suited for readers who seek a quick synopsis without delving into the full text. -->
 
-REFERENCES: Include at least five references to substantiate your research, ensuring they are pertinent and formatted to facilitate easy follow-up for interested readers. The references should be organized to serve both as a trail for fellow researchers and a resource for those who are less experienced in the academic discourse.
+<!-- REFERENCES: Include at least five references to substantiate your research, ensuring they are pertinent and formatted to facilitate easy follow-up for interested readers. The references should be organized to serve both as a trail for fellow researchers and a resource for those who are less experienced in the academic discourse. -->
 
-## scientific questions {-}
+<!-- ## scientific questions {-} -->
 
-Scientific questions are pivotal in plant chemistry research, especially when examining the quantification of compounds in various plants, tissues, or environments. They orient the scope of inquiry and dictate the choice of analytical methods to draw pertinent conclusions from data.
+<!-- Scientific questions are pivotal in plant chemistry research, especially when examining the quantification of compounds in various plants, tissues, or environments. They orient the scope of inquiry and dictate the choice of analytical methods to draw pertinent conclusions from data. -->
 
-DESCRIPTIVE questions might catalog the variety or concentration of phytochemicals present in a given species, often employing summary statistics to encapsulate the data:
+<!-- DESCRIPTIVE questions might catalog the variety or concentration of phytochemicals present in a given species, often employing summary statistics to encapsulate the data: -->
 
-- What is the average concentration of alkaloids found in the leaves of nightshade plants in temperate zones?
+<!-- - What is the average concentration of alkaloids found in the leaves of nightshade plants in temperate zones? -->
 
-- How do the levels of flavonoids vary among different tissues of the grapevine?
+<!-- - How do the levels of flavonoids vary among different tissues of the grapevine? -->
 
-- What is the frequency distribution of terpene profiles in pine populations across different altitudes?
+<!-- - What is the frequency distribution of terpene profiles in pine populations across different altitudes? -->
 
-CORRELATIVE questions investigate the relationships between environmental factors and chemical expression in plants, typically utilizing regression modeling:
+<!-- CORRELATIVE questions investigate the relationships between environmental factors and chemical expression in plants, typically utilizing regression modeling: -->
 
-- Does the level of UV radiation correlate with the production of protective anthocyanins in vineyard grape varieties?
+<!-- - Does the level of UV radiation correlate with the production of protective anthocyanins in vineyard grape varieties? -->
 
-- How is the accumulation of heavy metals in fern tissues related to soil pollution levels?
+<!-- - How is the accumulation of heavy metals in fern tissues related to soil pollution levels? -->
 
-COMPARATIVE questions explore variations or consistencies across groups or conditions, often answered through statistical comparisons or pattern recognition methods like clustering:
+<!-- COMPARATIVE questions explore variations or consistencies across groups or conditions, often answered through statistical comparisons or pattern recognition methods like clustering: -->
 
-- Which are more similar in their secondary metabolite profiles, medicinal herbs grown in greenhouse conditions or in the wild?
+<!-- - Which are more similar in their secondary metabolite profiles, medicinal herbs grown in greenhouse conditions or in the wild? -->
 
-- What distinguishes the phenolic compound content in shade-grown coffee plants versus those grown in direct sunlight?
+<!-- - What distinguishes the phenolic compound content in shade-grown coffee plants versus those grown in direct sunlight? -->
 
-- Is there a significant difference in essential oil compositions between lavender plants cultivated in different soil types?
+<!-- - Is there a significant difference in essential oil compositions between lavender plants cultivated in different soil types? -->
 
 <!-- Unclear: How should social networking sites address the harm they cause?
 Clear: What action should social networking sites like MySpace and Facebook take to protect users’ personal information and privacy?
@@ -6034,7 +6040,6 @@ Unfocused: What is the effect on the environment from global warming?
 Focused: What is the most significant effect of glacial melting on the lives of penguins in Antarctica?
 
 The unfocused research question is so broad that it couldn’t be adequately answered in a book-length piece, let alone a standard college-level paper. The focused version narrows down to a specific effect of global warming (glacial melting), a specific place (Antarctica), and a specific animal that is affected (penguins). It also requires the writer to take a stance on which effect has the greatest impact on the affected animal. When in doubt, make a research question as narrow and focused as possible.
-
 
 Too simple: How are doctors addressing diabetes in the U.S.?
 Appropriately Complex:  What main environmental, behavioral, and genetic factors predict whether Americans will develop diabetes, and how can these commonalities be used to aid the medical community in prevention of the disease? -->
@@ -6088,7 +6093,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-257-1.png" width="100%" style="display: block; margin: auto;" />
 
 - plot insets
 
@@ -6111,7 +6116,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-258-1.png" width="100%" style="display: block; margin: auto;" />
 
 - image insets
 
@@ -6135,7 +6140,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-262-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6212,21 +6217,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-266-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-263-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-267-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-264-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-268-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-265-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6308,8 +6313,8 @@ Figures are critical tools for clearly and effectively communicating scientific 
 ### example captions {-}
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-271-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-271)Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.</p>
+<img src="index_files/figure-html/unnamed-chunk-268-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-268)Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.</p>
 </div>
 
 ### buildCaption {-}
@@ -6335,9 +6340,9 @@ buildCaption()
   `Cowplot` is another popular package for composing multiple `ggplot2` plots. It offers more control and customization than `patchwork`, particularly for aligning plots, adjusting spacing, and embedding annotations. This makes it well-suited for fine-tuned figure design when preparing publication-quality graphics.
 
 
-# results and discussion {-}
+# observation-driven narrative {-}
 
-* Objective: Walk your reader through your results, drawing conclusions and making interpretations as you go.
+* Objective: Walk your reader through your results, drawing conclusions as you go.
 
 <!-- * Tense: past tense and passive voice, because we are talking about what happened in the experiments, and reflecting with distance on the results.
  -->
@@ -6347,12 +6352,20 @@ buildCaption()
 
 (key: **number of suggested sentences**: *purpose*: "example")
 
+* Title
+  + **Structure** *One sentence* Use about 75-140 characters (ideally no more than 125 characters). There are essentially two types of titles: descriptive titles and mechanistic titles. 
+    + If your manuscript is exploratory research, consider using a descriptive title. For example: "Comparative analysis of carbon, sulfur, and phoshorous chemistry in six Alaskan lakes."
+    + If your manuscript is hypothesis-driven research, consider using a mechanistic title. For example: "Dissolved organic carbon in Alaskan lakes is heavily influenced by water pH and temperature."
+
+  * **Function: a title captures attention and highlight the research question(s).** A good title should:
+    + Be indicative of the content of the paper
+    + Attract the interest of potential readers
+    + Reflect whether the article is deascriptive or mechanistic
+    + Include important keywords
+
 * Introductory paragraph:
   + **1**: *Review the aim of the paper*: "In order to understand…"
-  + **3-4**: *Combine a methods summary (with generalized summary of results?) to call out subsections*: "We used method X to quantify property Y of our study subject (section 2.1)"
-    <!-- + *Keep it as short as possible! No details are required*  -->
-    <!-- + *Some exceptions:*
-      + including method details to avoid topic switching in later paragraphs (i.e. FID v. MS) -->
+  + **3-4**: *Use a methods summary to call out subsections*: "We used method X to quantify property Y of our study subject (section 2.1)"
 
 * Each subsection paragraph:
   <!-- + 1: *Statement of observation or lead-in*: "Based on the observation of X..." -->
@@ -6361,11 +6374,11 @@ buildCaption()
   + **4-5**: *Results of that method or experiment (i.e. data features)*
   + **1-2**: *Comparison of new results against those in literature (if possible)*
   + **1-2**: *Conclusion from the combined results or some other concluding remark* "Thus, analysis X revealed that..."
-  + **1**: *Interpretation of the conclusion in a larger context (if possible / reasonable)*
+  <!-- + **1**: *Interpretation of the conclusion in a larger context (if possible / reasonable)* -->
 
 * Let's look at an example:
 
-> **2. Results and Discussion.**\
+> **Chemical Pollutants in Minnesota Soils**\
 >
 >
 >In order to better understand pollution in the state of Minnesota, this study focused on a detailed analyses of chemical measurements from soil samples from 300 sites around the state. The analyses consisted of a principal components analysis to determine which sites were similar to one another (Section 2.1) followed by statistical tests to see whether differences could be detected in the sites' chemistry (Section 2.2).\
@@ -6385,7 +6398,7 @@ buildCaption()
 
 ## suggestions {-}
 
-Is there an efficient way to write a results and discussion section in the format outlined above? Yes. Follow the step-by-step instructions below:
+Is there an efficient way to write in the format outlined above? Yes. Follow the step-by-step instructions below:
 
 ### outline then draft paragraphs {-}
 
@@ -6420,111 +6433,98 @@ Is there an efficient way to write a results and discussion section in the forma
   + There should be no abrupt jumps in subject between paragraphs, if there are consider breaking the discussion into subsections to help the reader identify logical resting points.
   + The discussion should not require the reader to go back and read its first half in order to understand its second half.
 
-### other thoughts
+<!-- ### other thoughts -->
 
-* Somewhere in the discussion, be sure to list out what any unsolved problems you faced are.
+<!-- * Somewhere in the discussion, be sure to list out what any unsolved problems you faced are. -->
 
 <!-- end -->
 
 <!-- start Conclusions -->
 
-# conclusion and introduction {-}
+<!-- # conclusion and introduction {-} -->
 
-* Objective (conclusion): to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study?
+<!-- * Objective (conclusion): to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study? -->
 
-* Objective (introduciton): to prepare the reader by giving the reader sufficient background to understand the study as a whole. It therefore should only contain information pertinent to understanding the study and its broader significance. 
+<!-- * Objective (introduciton): to prepare the reader by giving the reader sufficient background to understand the study as a whole. It therefore should only contain information pertinent to understanding the study and its broader significance.  -->
 
-* Make sure that the scope of your introduction is in-line with the scope of the conclusion. That way, the reader will not be underwhelmed, nor will your work be undersold.
+<!-- * Make sure that the scope of your introduction is in-line with the scope of the conclusion. That way, the reader will not be underwhelmed, nor will your work be undersold. -->
 
-## structure {-}
+<!-- ## structure {-} -->
 
-**Conclusion:**
+<!-- **Conclusion:** -->
 
-* *One paragraph*
-  <!-- first sentence of the conclusion should be a restatment of the goal -->
-  + **2-3**: Summarize over-arching conclusions from each section of the paper (omit the details described in results or discussion)
-  + **2-3**: Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses.
-  + **1-2**: Suggest experiments to test these hypotheses.
-  + **1-2**: Describe future directions.
-<!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. -->
+<!-- * *One paragraph* -->
+<!--   <!-- first sentence of the conclusion should be a restatment of the goal --> -->
+<!--   + **2-3**: Summarize over-arching conclusions from each section of the paper (omit the details described in results or discussion) -->
+<!--   + **2-3**: Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses. -->
+<!--   + **1-2**: Suggest experiments to test these hypotheses. -->
+<!--   + **1-2**: Describe future directions. -->
+<!-- <!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. --> -->
 
-**Introduction:**
+<!-- **Introduction:** -->
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/knowledge_gaps.jpeg" width="100%" style="display: block; margin: auto;" />
-  
-* *Paragraph 1: Introduce the topic*
-  + **1**: Introduce a topic and, ideally, an application of the research you will describe. Grab reader's attention.
-  + **1**: State why the topic is important.
-  + **1**: Describe what is known about the topic (at least, as pertains to the work at hand).
-  + **1**: Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic."
-  + **1**: List the negative things that will happen if we don't fill this gap in knowledge.
-    
-* *Paragraph 2: Provide background information*
-  + **3-5**: Describe, in moderate detail, the background information (concepts, literature) relevant to the study.
-  + **1**: End by saying how the details you just described relate to the application/topic described in the first paragraph.
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/knowledge_gaps.jpeg', dpi = NA) -->
+<!-- ``` -->
 
-* *Paragraph 3: Objectives of this study*
-  + **1**: State the objective of this study.
-  + **1**: Briefly describe what was done and the techniques or instruments used.
-  + **1-2**: For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc.
-  + **1**: (optional) State the major conclusion from the work and what it means for the application described in paragraph 1.
+<!-- * *Paragraph 1: Introduce the topic* -->
+<!--   + **1**: Introduce a topic and, ideally, an application of the research you will describe. Grab reader's attention. -->
+<!--   + **1**: State why the topic is important. -->
+<!--   + **1**: Describe what is known about the topic (at least, as pertains to the work at hand). -->
+<!--   + **1**: Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic." -->
+<!--   + **1**: List the negative things that will happen if we don't fill this gap in knowledge. -->
 
-## suggestions {-}
+<!-- * *Paragraph 2: Provide background information* -->
+<!--   + **3-5**: Describe, in moderate detail, the background information (concepts, literature) relevant to the study. -->
+<!--   + **1**: End by saying how the details you just described relate to the application/topic described in the first paragraph. -->
 
-  + If something is well-established, say so.
-  + Be clear about what is speculation.
-  + Last paragraph can mention objectives in list form.
-  + Last sentence can briefly mention methods (specific techniques or instruments) that were used.
+<!-- * *Paragraph 3: Objectives of this study* -->
+<!--   + **1**: State the objective of this study. -->
+<!--   + **1**: Briefly describe what was done and the techniques or instruments used. -->
+<!--   + **1-2**: For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc. -->
+<!--   + **1**: (optional) State the major conclusion from the work and what it means for the application described in paragraph 1. -->
+
+<!-- ## suggestions {-} -->
+
+<!--   + If something is well-established, say so. -->
+<!--   + Be clear about what is speculation. -->
+<!--   + Last paragraph can mention objectives in list form. -->
+<!--   + Last sentence can briefly mention methods (specific techniques or instruments) that were used. -->
 
 <!-- end -->
 
 <!-- start Abstract -->
 
-# abstract and title {-}
+<!-- # abstract and title {-} -->
 
-## abstract
+<!-- ## abstract -->
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/abstract_guide.jpeg" width="100%" style="display: block; margin: auto;" />
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/abstract_guide.jpeg', dpi = NA) -->
+<!-- ``` -->
 
-* **Structure** *One paragraph* Use about 200 - 500 words (ideally no more than 400 words)
-  + **1-2 sentences**: Introduction: Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?)
-  + **1-2 sentences**: Objective: Specific research objective, and potentially hypotheses/predictions, if any.
-  + **1-2 sentences**: Methods: Very concise overview of the methods used to address the research questions.
-  + **2-3 sentences**: Results/Discussion: Describe the major results (what you found) and interpretation of the results (what the results mean).
-  + **1-2 sentences**: Conclusions: Synthesizes the major contributions of the study into the context of the larger field to which the study belongs. What did we learn about the bigger picture of this field in general from doing this study?
+<!-- * **Structure** *One paragraph* Use about 200 - 500 words (ideally no more than 400 words) -->
+<!--   + **1-2 sentences**: Introduction: Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?) -->
+<!--   + **1-2 sentences**: Objective: Specific research objective, and potentially hypotheses/predictions, if any. -->
+<!--   + **1-2 sentences**: Methods: Very concise overview of the methods used to address the research questions. -->
+<!--   + **2-3 sentences**: Results/Discussion: Describe the major results (what you found) and interpretation of the results (what the results mean). -->
+<!--   + **1-2 sentences**: Conclusions: Synthesizes the major contributions of the study into the context of the larger field to which the study belongs. What did we learn about the bigger picture of this field in general from doing this study? -->
 
-* **Function: an abstract proves a short summary of the entire study.** The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study. A good abstract should:
-  + Inform readers about the article’s content
-  + Summarize complex information in a clear, concise manner
-  + Help readers decide whether or not to read the article
-  + Used in conferences to summarize what the speaker will say during his/her presentation
+<!-- * **Function: an abstract proves a short summary of the entire study.** The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study. A good abstract should: -->
+<!--   + Inform readers about the article’s content -->
+<!--   + Summarize complex information in a clear, concise manner -->
+<!--   + Help readers decide whether or not to read the article -->
+<!--   + Used in conferences to summarize what the speaker will say during his/her presentation -->
 
-### other thoughts
+<!-- ### other thoughts -->
 
-* Whatever you identify as the strongest sentences in the main text, make sure those are reflected in the abstract
+<!-- * Whatever you identify as the strongest sentences in the main text, make sure those are reflected in the abstract -->
 
+<!-- ## further reading {-} -->
 
+<!-- * [Titles Guide](https://libguides.usc.edu/writingguide/title) -->
 
-## title
-
-* **Structure** *One sentence* Use about 75-140 characters (ideally no more than 125 characters). There are essentially two types of titles: descriptive titles and mechanistic titles. 
-  + If your manuscript is exploratory research, consider using a descriptive title. For example:
-    + "Comparative analysis of carbon, sulfur, and phoshorous chemistry in six Alaskan lakes."
-  + If your manuscript is hypothesis-driven research, consider using a mechanistic title. For example:
-    + "Dissolved organic carbon in Alaskan lakes is heavily influenced by water pH and temperature."
-
-* **Function: a title captures attention and highlight the research question(s).** A good title should:
-  + Be indicative of the content of the paper
-  + Attract the interest of potential readers
-  + Reflect whether the article is deascriptive or mechanistic
-  + Include important keywords
-
-
-## further reading {-}
-
-* [Titles Guide](https://libguides.usc.edu/writingguide/title)
-
-* [Abstract Guide] (https://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf)
+<!-- * [Abstract Guide] (https://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf) -->
 
 <!-- end -->
 ________________________________________________________________________________________________
@@ -6676,7 +6676,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-280-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-275-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6718,7 +6718,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-282-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-277-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6807,7 +6807,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-288-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-283-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->

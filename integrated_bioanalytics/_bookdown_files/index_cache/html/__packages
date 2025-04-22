@@ -112,3 +112,5 @@ rhdf5
 performance
 zigg
 RCurl
+shinyjs
+base64enc
