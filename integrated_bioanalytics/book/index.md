@@ -6349,15 +6349,15 @@ buildCaption()
 <!-- * As you go: make notes of what should go into the introduction. -->
 
 - A structured report with the following components:
- + Cover page: Title and author, Introductory paragraph
- + One section for each of three scientific question. Each section has one figure + caption, as well as one or more paragraphs explaining that figure and any conclusions that follow from it.
- + References
+  + Cover page: Title and author, Introductory paragraph
+  + One section for each of three scientific question. Each section has one figure + caption, as well as one or more paragraphs explaining that figure and any conclusions that follow from it.
+  + References
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/report_outline.jpeg" width="100%" style="display: block; margin: auto;" />
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/report_outline.jpg" width="100%" style="display: block; margin: auto;" />
 
+## {-}
 
-
-## example {-}
+## brief structural example {-}
 
 > **Chemical Pollutants in Minnesota Soils**\
 >
