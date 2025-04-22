@@ -82,7 +82,7 @@
 <li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
 <li class="book-part">ANALYTICAL REPORTS</li>
 <li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
-<li><a class="" href="observation-driven-narrative.html">observation-driven narrative</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
 <li class="book-part">APPENDIX</li>
 <li><a class="" href="links.html">links</a></li>
 <li><a class="" href="datasets.html">datasets</a></li>
@@ -120,7 +120,7 @@
 <div class="sourceCode" id="cb228"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">periodic_table</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">group_number</span>, x <span class="op">=</span> <span class="va">atomic_mass_rounded</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-275-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>How do we fix this? We need to convert the column <code>group_number</code> into a list of factors that have the correct order (see below). For this, we will use the command <code>factor</code>, which will accept an argument called <code>levels</code> in which we can define the order the the characters should be in:</p>
 <div class="sourceCode" id="cb229"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">periodic_table</span><span class="op">$</span><span class="va">group_number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span></span>
@@ -153,7 +153,7 @@
 <div class="sourceCode" id="cb230"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">periodic_table</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">group_number</span>, x <span class="op">=</span> <span class="va">atomic_mass_rounded</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-277-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-278-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>VICTORY!</p>
 </div>
 <div id="column-manipulation" class="section level2 unnumbered">
@@ -221,7 +221,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">custom_colors_for_lakes</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure">
-<img src="index_files/figure-html/unnamed-chunk-283-1.png" width="100%" style="display: block; margin: auto;"><!-- end -->
+<img src="index_files/figure-html/unnamed-chunk-284-1.png" width="100%" style="display: block; margin: auto;"><!-- end -->
 </div>
 <!-- start templates -->
 </div>

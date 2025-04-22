@@ -6340,48 +6340,29 @@ buildCaption()
   `Cowplot` is another popular package for composing multiple `ggplot2` plots. It offers more control and customization than `patchwork`, particularly for aligning plots, adjusting spacing, and embedding annotations. This makes it well-suited for fine-tuned figure design when preparing publication-quality graphics.
 
 
-# observation-driven narrative {-}
+# question-driven report {-}
 
-* Objective: Walk your reader through your results, drawing conclusions as you go.
+<!-- * Objective: Walk your reader through your results, drawing conclusions as you go. -->
 
 <!-- * Tense: past tense and passive voice, because we are talking about what happened in the experiments, and reflecting with distance on the results.
  -->
-* As you go: make notes of what should go into the introduction.
+<!-- * As you go: make notes of what should go into the introduction. -->
 
-## structure {-}
+- A structured report with the following components:
+ + Cover page: Title and author, Introductory paragraph
+ + One section for each of three scientific question. Each section has one figure + caption, as well as one or more paragraphs explaining that figure and any conclusions that follow from it.
+ + References
 
-(key: **number of suggested sentences**: *purpose*: "example")
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/report_outline.jpeg" width="100%" style="display: block; margin: auto;" />
 
-* Title
-  + **Structure** *One sentence* Use about 75-140 characters (ideally no more than 125 characters). There are essentially two types of titles: descriptive titles and mechanistic titles. 
-    + If your manuscript is exploratory research, consider using a descriptive title. For example: "Comparative analysis of carbon, sulfur, and phoshorous chemistry in six Alaskan lakes."
-    + If your manuscript is hypothesis-driven research, consider using a mechanistic title. For example: "Dissolved organic carbon in Alaskan lakes is heavily influenced by water pH and temperature."
 
-  * **Function: a title captures attention and highlight the research question(s).** A good title should:
-    + Be indicative of the content of the paper
-    + Attract the interest of potential readers
-    + Reflect whether the article is deascriptive or mechanistic
-    + Include important keywords
 
-* Introductory paragraph:
-  + **1**: *Review the aim of the paper*: "In order to understand…"
-  + **3-4**: *Use a methods summary to call out subsections*: "We used method X to quantify property Y of our study subject (section 2.1)"
-
-* Each subsection paragraph:
-  <!-- + 1: *Statement of observation or lead-in*: "Based on the observation of X..." -->
-  + **1**: *Purpose of the work described in this paragraph*: "In order to determine..."
-  + **1**: *Review methods or experimental design specific to this subsection (if necessary)*
-  + **4-5**: *Results of that method or experiment (i.e. data features)*
-  + **1-2**: *Comparison of new results against those in literature (if possible)*
-  + **1-2**: *Conclusion from the combined results or some other concluding remark* "Thus, analysis X revealed that..."
-  <!-- + **1**: *Interpretation of the conclusion in a larger context (if possible / reasonable)* -->
-
-* Let's look at an example:
+## example {-}
 
 > **Chemical Pollutants in Minnesota Soils**\
 >
 >
->In order to better understand pollution in the state of Minnesota, this study focused on a detailed analyses of chemical measurements from soil samples from 300 sites around the state. The analyses consisted of a principal components analysis to determine which sites were similar to one another (Section 2.1) followed by statistical tests to see whether differences could be detected in the sites' chemistry (Section 2.2).\
+>In order to better understand pollution in the state of Minnesota, this study focused on a detailed analyses of chemical measurements from soil samples from 300 sites around the state. The analyses consisted of a principal components analysis to determine which sites were similar to one another, thus answering the question of what sites exhibited similar pollutant profiles (Section 2.1). This first analysis was followed by statistical tests to see whether differences could be detected in the sites' chemistry, answering the question of whether there were any significant differences in the pollutant profiles at each site (Section 2.2).\
 >
 >
 >*2.1 Principal Components Analysis*\
@@ -6395,6 +6376,46 @@ buildCaption()
 >
 >Using the groupings that were identified via principal components analysis, statistical tests were conducted to determine if chemical abundances differed between groups. Tests for normality and homogeneity of variance (Shapiro and Levene tests) revealed that the data could not be assessed using ANOVA but instead required the use of a non-parametric test. Accordingly, the Kruskall-Wallis test followed by post-hoc Dunn tests were applied, which showed that the abundances of halogenated pollutants is significantly higher in urban versus rural areas (p = 0.0035, Fig. 2A). These direct observations are consistent with conclusions drawn by others in recent literature reviews focused on hydrocarbon compounds (Petrucci et al., 2018; Hendrix et al., 2019). *Thus, the new chemical analyses presented here demonstrate that the discrepancy in urban versus rural pollution is true not only for hydrocarbon compounds (as had been found previously), but also for halogenated compounds.* Together, these findings strongly suggest that either cities are a source of more pollution or that there is some other mechanism that concentrates pollution in cities.\
 >
+
+## structure {-}
+
+(key: **number of suggested sentences**: *purpose*: "example")
+
+* Title and Author
+  + **1** Use about 75-140 characters (ideally no more than 125 characters). There are essentially two types of titles: descriptive titles and mechanistic titles. 
+    + If your manuscript is exploratory research, consider using a descriptive title. For example: "Comparative analysis of carbon, sulfur, and phoshorous chemistry in six Alaskan lakes."
+    + If your manuscript is hypothesis-driven research, consider using a mechanistic title. For example: "Dissolved organic carbon in Alaskan lakes is heavily influenced by water pH and temperature."
+    + A good title should:
+      + Be indicative of the content of the paper
+      + Attract the interest of potential readers
+      + Reflect whether the article is deascriptive or mechanistic
+      + Include important keywords
+
+* Introductory paragraph:
+  + **1**: *State the aim of the report*: "The objective of this report is to..."
+  + **3-4**: *Call out the subsections of the report according to methodology and scientific questions*: "We used method X to quantify property Y of our study subject and address the question "Does property Y vary based on the date the sample was collected?" (section 2.1)."
+
+* Each subsection paragraph:
+  <!-- + 1: *Statement of observation or lead-in*: "Based on the observation of X..." -->
+  + **1**: *Purpose of the work described in this paragraph*: "In order to determine..."
+  + **1**: *Review methods or experimental design specific to this subsection (if necessary)*
+  + **4-5**: *Results of that method or experiment (i.e. data features)*
+  + **1-2**: *Comparison of new results against those in literature (if possible)*
+  + **1-2**: *Conclusion from the combined results or some other concluding remark* "Thus, analysis X revealed that..."
+  <!-- + **1**: *Interpretation of the conclusion in a larger context (if possible / reasonable)* -->
+
+<!-- * Introductory paragraph: -->
+<!--   + **1**: *Review the aim of the paper*: "In order to understand…" -->
+<!--   + **3-4**: *Use a methods summary to call out subsections*: "We used method X to quantify property Y of our study subject (section 2.1)" -->
+
+<!-- * Each subsection paragraph: -->
+<!--   <!-- + 1: *Statement of observation or lead-in*: "Based on the observation of X..." -->
+<!--   + **1**: *Purpose of the work described in this paragraph*: "In order to determine..." -->
+<!--   + **1**: *Review methods or experimental design specific to this subsection (if necessary)* -->
+<!--   + **4-5**: *Results of that method or experiment (i.e. data features)* -->
+<!--   + **1-2**: *Comparison of new results against those in literature (if possible)* -->
+<!--   + **1-2**: *Conclusion from the combined results or some other concluding remark* "Thus, analysis X revealed that..." -->
+<!--   <!-- + **1**: *Interpretation of the conclusion in a larger context (if possible / reasonable)* -->
 
 ## suggestions {-}
 
@@ -6454,12 +6475,12 @@ Is there an efficient way to write in the format outlined above? Yes. Follow the
 <!-- **Conclusion:** -->
 
 <!-- * *One paragraph* -->
-<!--   <!-- first sentence of the conclusion should be a restatment of the goal --> -->
+<!--   <!-- first sentence of the conclusion should be a restatment of the goal -->
 <!--   + **2-3**: Summarize over-arching conclusions from each section of the paper (omit the details described in results or discussion) -->
 <!--   + **2-3**: Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses. -->
 <!--   + **1-2**: Suggest experiments to test these hypotheses. -->
 <!--   + **1-2**: Describe future directions. -->
-<!-- <!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. --> -->
+<!-- <!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. -->
 
 <!-- **Introduction:** -->
 
@@ -6676,7 +6697,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-275-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-276-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6718,7 +6739,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-277-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-278-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6807,7 +6828,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-283-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-284-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
