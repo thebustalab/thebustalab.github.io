@@ -158,57 +158,173 @@
 
     #### embedText
 
-        embedText <- function(df, column_name, hf_api_key, path_to_glove_file = "glove.6B.50d.txt", local = FALSE) {
-    
-            ## Prep input
-            embeddings_list <- list()
-            df <- as_tibble(df)
-            text_vector <- unlist(df[,which(colnames(df) == column_name)])
-            
-            if (local == TRUE) {
-                library(text2vec)
-                glove <- fread(path_to_glove_file, data.table = FALSE, quote = "")
-                rownames(glove) <- glove[,1]
-                glove <- glove[,-1]
-                
-                pb <- txtProgressBar(min = 0, max = length(text_vector), style = 3)
-                for(i in 1:length(text_vector)) {
-                    tokens <- word_tokenizer(text_vector[i])
-                    embeddings_list[[i]] <- colMeans(glove[tokens[[1]], , drop = FALSE], na.rm = TRUE)
-                    setTxtProgressBar(pb, i)
-                }
-                close(pb)
-                
-                embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
-                colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-                df <- bind_cols(df, embeddings_df)
-                return(df)
-                
-            } else {
-                
-                ## Run HF embeddings, process and return output
-                pb <- txtProgressBar(min = 0, max = length(text_vector), style = 3)
-                for (i in 1:length(text_vector)) {
-                    response <- httr::POST(
-                        url = "https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5",
-                        httr::add_headers(Authorization = paste0("Bearer ", hf_api_key)),
-                        body = toJSON(list(inputs = text_vector[i])),
-                        encode = "json"
-                    )
-                    if (response$status_code == 429) {
-                        stop("Warning: you have (probably) exceeded your HuggingFace rate limit.")
-                    }
-                    embeddings_list[[i]] <- as.numeric(as.character(jsonlite::fromJSON(httr::content(response, as = "text", encoding = "UTF-8"))))
-                    setTxtProgressBar(pb, i)
-                }
-                close(pb)
-                
-                embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
-                colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
-                df <- bind_cols(df, embeddings_df)
-                return(df)
+        embedText <- function(
+          df,
+          column_name,
+          hf_api_key = Sys.getenv("HF_TOKEN"),
+          path_to_glove_file = "glove.6B.50d.txt",
+          local = FALSE,
+          model_id = "BAAI/bge-small-en-v1.5",
+          batch_size = 16,
+          max_retries = 5,
+          timeout_sec = 60
+        ) {
+          # deps
+          suppressPackageStartupMessages({
+            library(jsonlite)
+            library(httr)
+            library(dplyr)
+            library(tibble)
+            library(data.table)
+            library(stringr)
+          })
+
+          # --- prep input ----
+          df <- as_tibble(df)
+          if (!column_name %in% colnames(df)) stop("`column_name` not found in df.")
+          text_vector <- as.character(df[[column_name]])
+          text_vector[is.na(text_vector)] <- ""  # avoid NAs to API
+
+          if (local) {
+            # ---------- LOCAL (GloVe) ----------
+            if (!file.exists(path_to_glove_file)) {
+              stop("GloVe file not found at: ", path_to_glove_file)
             }
+            # load GloVe
+            glove <- fread(path_to_glove_file, data.table = FALSE, quote = "")
+            rownames(glove) <- glove[, 1]
+            glove <- glove[, -1, drop = FALSE]
+
+            # simple tokenizer
+            word_tokenizer <- function(x) {
+              # split on non-letters/numbers, lowercase
+              toks <- str_split(tolower(x), "[^a-z0-9_]+", simplify = FALSE)[[1]]
+              toks[nzchar(toks)]
+            }
+
+            pb <- txtProgressBar(min = 0, max = length(text_vector), style = 3)
+            embeddings_list <- vector("list", length(text_vector))
+            for (i in seq_along(text_vector)) {
+              tokens <- word_tokenizer(text_vector[i])
+              if (length(tokens) == 0) {
+                # empty -> zeros
+                embeddings_list[[i]] <- rep(0, ncol(glove))
+              } else {
+                present <- tokens[tokens %in% rownames(glove)]
+                if (length(present) == 0) {
+                  embeddings_list[[i]] <- rep(0, ncol(glove))
+                } else {
+                  embeddings_list[[i]] <- colMeans(glove[present, , drop = FALSE], na.rm = TRUE)
+                }
+              }
+              setTxtProgressBar(pb, i)
+            }
+            close(pb)
+
+            embeddings_df <- as.data.frame(do.call(rbind, embeddings_list))
+            colnames(embeddings_df) <- paste0("embedding_", seq_len(ncol(embeddings_df)))
+            out <- bind_cols(df, embeddings_df)
+            return(out)
+          }
+
+          # ---------- REMOTE (Hugging Face Router) ----------
+          if (is.null(hf_api_key) || hf_api_key == "") {
+            stop("Please provide an HF API key via `hf_api_key` or set HF_TOKEN env var.")
+          }
+
+          base_url <- sprintf(
+            "https://router.huggingface.co/hf-inference/models/%s/pipeline/feature-extraction",
+            URLencode(model_id, reserved = TRUE)
+          )
+
+          # helper: POST with retries/backoff
+          post_with_retries <- function(payload_json) {
+            delay <- 1
+            for (attempt in seq_len(max_retries)) {
+              resp <- httr::POST(
+                url = base_url,
+                httr::add_headers(
+                  Authorization = paste0("Bearer ", hf_api_key),
+                  `Content-Type` = "application/json"
+                ),
+                body = payload_json,
+                encode = "raw",
+                timeout(timeout_sec)
+              )
+
+              code <- resp$status_code
+              if (code >= 200 && code < 300) return(resp)
+
+              # handle 429 / 5xx with backoff
+              if (code == 429 || (code >= 500 && code < 600)) {
+                retry_after <- as.numeric(httr::headers(resp)[["retry-after"]])
+                if (is.finite(retry_after)) {
+                  Sys.sleep(retry_after)
+                } else {
+                  Sys.sleep(delay)
+                  delay <- min(delay * 2, 30)
+                }
+                next
+              }
+
+              # Other errors: stop with message body
+              msg <- tryCatch(httr::content(resp, as = "text", encoding = "UTF-8"), error = function(e) "")
+              stop(sprintf("HF request failed (HTTP %s): %s", code, msg))
+            }
+            stop("HF request failed after retries.")
+          }
+
+          # batching
+          n <- length(text_vector)
+          idx <- split(seq_len(n), ceiling(seq_len(n) / batch_size))
+
+          pb <- txtProgressBar(min = 0, max = length(idx), style = 3)
+          all_rows <- vector("list", length(idx))
+          out_dim <- NULL
+
+          for (b in seq_along(idx)) {
+            batch_idx <- idx[[b]]
+            batch_text <- as.list(text_vector[batch_idx])
+
+            # Body: either single string or list of strings is accepted.
+            # We always send a list to keep parsing simple.
+            body <- list(inputs = batch_text)
+            payload <- jsonlite::toJSON(body, auto_unbox = TRUE)
+
+            resp <- post_with_retries(payload)
+            txt <- httr::content(resp, as = "text", encoding = "UTF-8")
+            parsed <- jsonlite::fromJSON(txt, simplifyVector = FALSE)
+
+            # Expected: list(list(numeric ...), list(numeric ...), ...)
+            # Some models may return matrix-like nested lists; handle both.
+            # Ensure we end up with a matrix rows = items, cols = dims.
+            # If single item came back as a single vector, coerce to list-of-one.
+            if (!is.list(parsed[[1]]) && is.numeric(unlist(parsed))) {
+              # single vector -> wrap
+              parsed <- list(parsed)
+            }
+
+            # Convert each element to numeric vector
+            mat <- do.call(rbind, lapply(parsed, function(v) as.numeric(unlist(v, recursive = TRUE))))
+            if (is.null(out_dim)) out_dim <- ncol(mat)
+            if (ncol(mat) != out_dim) {
+              stop("Inconsistent embedding dimensions returned by the model.")
+            }
+
+            all_rows[[b]] <- mat
+            setTxtProgressBar(pb, b)
+          }
+          close(pb)
+
+          embeddings_mat <- do.call(rbind, all_rows)
+          colnames(embeddings_mat) <- paste0("embedding_", seq_len(ncol(embeddings_mat)))
+          embeddings_df <- as.data.frame(embeddings_mat, stringsAsFactors = FALSE)
+
+          # preserve original row order
+          out <- bind_cols(df, embeddings_df)
+          return(out)
         }
+
 
 
         # embedText <- function(df, column_name, hf_api_key, path_to_glove_file = "glove.6B.50d.txt", local = FALSE) {
