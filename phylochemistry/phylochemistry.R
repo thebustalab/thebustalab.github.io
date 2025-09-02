@@ -16700,7 +16700,13 @@
                     pb$tick()
                 }
 
-                OSC_sequences <- readAAStringSet("https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta")
+                tmpfile <- tempfile(fileext = ".fasta")
+                utils::download.file(
+                  "https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/phylochemistry/sample_data/OSCs.fasta",
+                  tmpfile,
+                  quiet = TRUE
+                )
+                OSC_sequences <- Biostrings::readAAStringSet(tmpfile)
 
             ## Busta lab specific datasets
 
@@ -16811,4 +16817,4 @@
 
     #####################
 
-message("phylochemistry loaded!")
+message("phylochemistry loaded!!")
