@@ -45,11 +45,11 @@
             }
         }
         
-        message("Loading packages...")
+        message("Loading language model packages...")
 
         invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
 
-        message("Loading functions...")
+        message("Loading language model functions...")
 
 ###### Functions
 
@@ -1206,4 +1206,4 @@
               # }
             } 
 
-message("Done!!")
+message("Done with language model loading!")
