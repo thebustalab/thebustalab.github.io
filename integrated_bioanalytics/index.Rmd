@@ -1106,7 +1106,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
 Now we could add some data. We could do something simple like plot total abundances as the size of a point:
 
 ```{r, fig.width = 8, fig.height = 4}
-lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Science/Websites/pfas_data_private.csv")
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Websites/pfas_data_private.csv")
 lake_superior_PFAS %>%
   group_by(site, lon, lat) %>%
   summarize(total = sum(abundance)) -> lake_superior_PFAS_summarized
@@ -1129,7 +1129,7 @@ Or we could do something more sophisticated like add pie charts at each point:
 
 
 ```{r, fig.width = 8, fig.height = 4}
-lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Science/Websites/pfas_data_private.csv")
+lake_superior_PFAS <- readMonolist("/Users/bust0037/Documents/Websites/pfas_data_private.csv")
 
 grouped_by_site <- filter(lake_superior_PFAS, component == "PFBA")
 site_less_than_90lon <- filter(grouped_by_site, lon <= -90)
@@ -1172,7 +1172,7 @@ ggplot() +
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
 ```{r, fig.width = 8, fig.height = 4}
-shore <- readMonolist("/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
+shore <- readMonolist("/Users/bust0037/Documents/Websites/thebustalab.github.io/phylochemistry/sample_data/lake_superior_shoreline.csv")
 
 wide_view <- ggplot(shore) +
     geom_point(aes(y = lat, x = lon), size = 0.01) +
@@ -1601,19 +1601,19 @@ Be sure to check out the Tidy Data Tutor: https://tidydatatutor.com/vis.html. An
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png', dpi = NA)
 ```
 
-In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction useing `runMatrixAnalysis()`, a function that is loaded into your R Session when you run the source() command.
+In the previous chapters, we looked at how to explore our data sets by visualizing many variables and manually identifying trends. Sometimes, we encounter data sets with so many variables, that it is not reasonable to manually select certain variables with which to create plots and manually search for trends. In these cases, we need dimensionality reduction - a set of techniques that helps us identify which variables are driving differences among our samples. In this course, we will conduct dimensionality reduction using `runMatrixAnalyses()`, a function that is loaded into your R Session when you run the source() command.
 
-Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalysis()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
+Matrix analyses can be a bit tricky to set up. There are two things that we can do to help us with this: (i) we will use a template for `runMatrixAnalyses()` (see below) and (ii) it is *critical* that we think about our data in terms of **samples** and **analytes**. Let's consider our Alaska lakes data set:
 
 ```{r, message = FALSE}
 alaska_lake_data
 ```
 
-We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalysis()` function how each column relates to this samples and analytes structure. See the image below for an explanation.
+We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalyses()` function how each column relates to this samples and analytes structuree
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png', dpi = NA)
-```
+<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
+<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png', dpi = NA) -->
+<!-- ``` -->
 
 ## {-}
 
@@ -1632,18 +1632,18 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 In the example above, the three dimensional space can be reduced to a two dimensional space with the principal components analysis. New axes (principal components) are selected (bold arrows on left) that become the x and y axes in the principal components space (right).
 
-We can run and visualize principal components analyses using the `runMatrixAnalysis()` function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case you wish to do further processing.
+We can run and visualize principal components analyses using the `runMatrixAnalyses()` function as in the example below. As you can see in the output, the command provides the sample_IDs, sample information, then the coordinates for each sample in the 2D projection (the "PCA plot") and the raw data, in case you wish to do further processing.
 
 ```{r, message = FALSE, fig.align = "center"}
-AK_lakes_pca <- runMatrixAnalysis(
-  data = alaska_lake_data,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
-  columns_w_sample_ID_info = c("lake", "park"),
-  scale_variance = TRUE
+
+alaska_lake_data_wide <- pivot_wider(alaska_lake_data[,1:6], names_from = "element", values_from = "mg_per_L")
+alaska_lake_data_wide
+
+AK_lakes_pca <- runMatrixAnalyses(
+  data = alaska_lake_data_wide,
+  analysis = "pca",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+  columns_w_sample_ID_info = c("lake", "park")
 )
 head(AK_lakes_pca)
 ```
@@ -1663,16 +1663,13 @@ Important question: what makes the lakes listed above different from the others?
 
 ### ordination plots {-}
 
-Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalysis()` with `analysis = "pca_ord"`:
+Let's look at how to access the information about which analytes are major contributors to each principal component. This is important because it will tell you which analytes are associated with particular dimensions, and by extension, which analytes are associated with (and are markers for) particular groups in the PCA plot. This can be determined using an ordination plot. Let's look at an example. We can obtain the ordination plot information using `runMatrixAnalyses()` with `analysis = "pca_ord"`:
 
 ```{r, echo = FALSE, message = FALSE}
-AK_lakes_pca_ord <- runMatrixAnalysis(
-  data = alaska_lake_data,
+AK_lakes_pca_ord <- runMatrixAnalyses(
+  data = alaska_lake_data_wide,
   analysis = c("pca_ord"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
   columns_w_sample_ID_info = c("lake", "park")
 )
 head(AK_lakes_pca_ord)
@@ -1681,16 +1678,16 @@ head(AK_lakes_pca_ord)
 We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
 
 ```{r, fig.align = "center", fig.height = 4, fig.width = 5, message = FALSE}
-AK_lakes_pca_ord <- runMatrixAnalysis(
-  data = alaska_lake_data,
-  analysis = c("pca_ord"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
-  columns_w_sample_ID_info = c("lake", "park")
-)
-head(AK_lakes_pca_ord)
+# AK_lakes_pca_ord <- runMatrixAnalysis(
+#   data = alaska_lake_data,
+#   analysis = c("pca_ord"),
+#   column_w_names_of_multiple_analytes = "element",
+#   column_w_values_for_multiple_analytes = "mg_per_L",
+#   columns_w_values_for_single_analyte = c("water_temp", "pH"),
+#   columns_w_additional_analyte_info = "element_type",
+#   columns_w_sample_ID_info = c("lake", "park")
+# )
+# head(AK_lakes_pca_ord)
 
 ggplot(AK_lakes_pca_ord) +
   geom_segment(aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2, color = analyte), size = 1) +
@@ -1716,26 +1713,26 @@ Great! Here is how to read the ordination plot:
 With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a "biplot":
 
 ```{r, fig.height = 4.5, fig.width = 6}
-AK_lakes_pca <- runMatrixAnalysis(
-  data = alaska_lake_data,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
-  columns_w_sample_ID_info = c("lake", "park"),
-  scale_variance = TRUE
-)
-
-AK_lakes_pca_ord <- runMatrixAnalysis(
-  data = alaska_lake_data,
-  analysis = c("pca_ord"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
-  columns_w_sample_ID_info = c("lake", "park")
-)
+# AK_lakes_pca <- runMatrixAnalysis(
+#   data = alaska_lake_data,
+#   analysis = c("pca"),
+#   column_w_names_of_multiple_analytes = "element",
+#   column_w_values_for_multiple_analytes = "mg_per_L",
+#   columns_w_values_for_single_analyte = c("water_temp", "pH"),
+#   columns_w_additional_analyte_info = "element_type",
+#   columns_w_sample_ID_info = c("lake", "park"),
+#   scale_variance = TRUE
+# )
+# 
+# AK_lakes_pca_ord <- runMatrixAnalysis(
+#   data = alaska_lake_data,
+#   analysis = c("pca_ord"),
+#   column_w_names_of_multiple_analytes = "element",
+#   column_w_values_for_multiple_analytes = "mg_per_L",
+#   columns_w_values_for_single_analyte = c("water_temp", "pH"),
+#   columns_w_additional_analyte_info = "element_type",
+#   columns_w_sample_ID_info = c("lake", "park")
+# )
 
 ggplot() +
   geom_point(
@@ -1767,13 +1764,10 @@ AK_lakes_pca_ord %>%
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
 ```{r, message = FALSE, fig.height = 2.5, fig.width = 3, fig.align = "center"}
-AK_lakes_pca_dim <- runMatrixAnalysis(
-  data = alaska_lake_data,
+AK_lakes_pca_dim <- runMatrixAnalyses(
+  data = alaska_lake_data_wide,
   analysis = c("pca_dim"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
   columns_w_sample_ID_info = c("lake", "park")
 )
 head(AK_lakes_pca_dim)
@@ -1788,126 +1782,6 @@ ggplot(
 ```
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
-
-<!-- ### exercises {-}
-
-In this set of exercises, as you are filling out the `runMatrixAnalysis()` template, you can use the `colnames()` function to help you specify a long list of column names rather than typing them out by hand. For example, in the periodic table data set, we can refer to a set of columns (columns 10 through 20) with the following command:
-
-```{r, message = FALSE}
-colnames(periodic_table_subset)[10:20]
-colnames(periodic_table_subset)[c(18:20, 23:25)]
-```
-We can use that command in the template, as in the example below. With the notation `colnames(periodic_table_subset)[c(5:7,9:25)]`, we can mark columns 5 - 7 and 9 - 25 as columns_w_values_for_single_analyte (note what happens when you run `c(5:7,9:25)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(5:7,9:25)]` in the console). With the notation `colnames(periodic_table_subset)[c(1:4, 8)]` we can mark columns 1 - 4 and column 8 as columns_w_sample_ID_info (note what happens when you run `c(1:4, 8)` in the console, and what happens when you run `colnames(periodic_table_subset)[c(1:4, 8)]` in the console).
-
-#### human metabolomics {-}
-
-For these questions, work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from each of 93 human patients, some of which have Chronic Kidney Disease. Your task is to discover a biomarker for Chronic Kidney Disease. This means that you will need to determine a metabolite whose abundance is strongly associated with the disease. To do this you should complete the following:
-
-1. Run a PCA analysis on `metabolomics_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
-2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`). In your own words, how does this plot correspond to the original data set?
-4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the healthy and kidney_disease samples.
-5. Bingo! These analytes are associated with Chronic Kidney Disease and could be biomarkers for such.
-6. Complete this PCA analysis by creating a scree plot (i.e. use `analysis = "pca_dim"`). In your own words, what does this plot mean?
-
-```{r, eval = FALSE, message = FALSE, fig.height = 4, fig.width = 6, fig.align = "center", echo = FALSE}
-head(metabolomics_data)
-
-pca <- runMatrixAnalysis(
-  data = metabolomics_data,
-  analysis = "pca",
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
-)
-
-pca$Label <- factor(pca$patient_status)
-
-ggplot(pca) +
-  geom_point(
-    aes(x = Dim.1, y = Dim.2, fill = patient_status),
-    shape = 21, size = 5, alpha = 0.8
-  ) +
-  theme_bw() +
-  scale_fill_manual(values = c("#e41a1c", "#377eb8")) +
-  theme(
-    text = element_text(size = 16)
-  )
-
-## The first dimension
-
-pca_ord <- runMatrixAnalysis(
-  data = metabolomics_data,
-  analysis = "pca_ord",
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = colnames(metabolomics_data)[3:124],
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = colnames(metabolomics_data)[1:2]
-)
-
-
-ggplot() +
-  geom_segment(data = pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
-  geom_label(data = filter(pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
-
-## Citrulline
-
-```
-
-#### grape vine chemistry {-}
-
-For this set of quesions, work with a dataset describing metabolomics data (i.e. abundances of > 100 different biochemicals) from 5 different wine grape varieties. Your task is to discover a biomarker for Chardonnay and a biomarker for Cabernet Sauvignon. This means that you will need to identify two metabolites, each of which are associated with one of those two grape varieties. To do this you should complete the following:
-
-1. Run a PCA analysis on `wine_grape_data` (i.e. `runMatrixAnalysis()` with `analysis = "pca"`)
-2. Plot the results of the analysis to determine which principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
-3. Obtain the ordination plot coordinates for the analytes in the PCA analysis (i.e. `runMatrixAnalysis()` with `analysis = "pca_ord"`). In your own words, how does this plot correspond to the original data set?
-4. Visualize the ordination plot and determine which of the analytes are strongly associated with the principal component (i.e. dimension) separates the Chardonnay samples from the other varieties and the Cabernet Sauvignon samples from the other varieties.
-5. Bingo! These analytes are associated with those varieites and could be biomarkers for such.
-6. Complete this PCA analysis by creating a scree plot (i.e. use `analysis = "pca_dim"`). In your own words, what does this plot mean?
-
-```{r, message = FALSE, echo = FALSE, eval = FALSE}
-head(wine_grape_data)
-
-wine_grape_data_pca <- runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment")
-)
-
-head(wine_grape_data_pca)
-
-ggplot(
-  wine_grape_data_pca,
-  aes(x = Dim.1, y = Dim.2, fill = cultivar)
-) + 
-  geom_point(shape = 21, size = 5) +
-  scale_fill_manual(values = c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00"))
-
-wine_grape_data_pca_ord <- runMatrixAnalysis(
-  data = wine_grape_data,
-  analysis = "pca_ord",
-  column_w_names_of_multiple_analytes = "metabolite",
-  column_w_values_for_multiple_analytes = "log_abundance",
-  columns_w_values_for_single_analyte = NULL,
-  columns_w_additional_analyte_info = NULL,
-  columns_w_sample_ID_info = c("cultivar", "treatment")
-)
-
-head(wine_grape_data_pca_ord)
-
-ggplot() +
-  geom_segment(data = wine_grape_data_pca_ord, aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2)) +
-  geom_label(data = filter(wine_grape_data_pca_ord, Dim.1 > 0.75, Dim.2 < 0.1, Dim.2 > -0.1), aes(x = Dim.1, y = Dim.2, label = analyte), alpha = 0.4)
-```
- -->
-
 
 ## umap and tsne {-}
 
@@ -1927,11 +1801,9 @@ In this command, the dollar sign ($) is used to access (or create) the ID column
 Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.
 
 ```{r, fig.height = 7, fig.width = 7}
-wq <- runMatrixAnalysis(
+wq <- runMatrixAnalyses(
   data = wine_quality,
   analysis = "pca",
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
   columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
 )
@@ -1950,11 +1822,9 @@ We can perform UMAP on the wine quality dataset just as easily as PCA. The code 
 
 
 ```{r, fig.height = 7, fig.width = 7}
-runMatrixAnalysis(
+runMatrixAnalyses(
   data = wine_quality,
   analysis = "umap",
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
   columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
 ) %>%
@@ -1968,14 +1838,13 @@ runMatrixAnalysis(
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
 
-t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne":
+t‑SNE (t‑Distributed Stochastic Neighbor Embedding) is another popular non-linear dimensionality reduction technique. It excels at revealing clusters but can sometimes distort the global structure in favor of preserving local relationships. Although we’re not showing a full t‑SNE example here, you can run t‑SNE using the runMatrixAnalysis() function by specifying analysis = "tsne" (see below). Note that tsne fails with samples that have duplicate analyte values, so we have to filter out any duplicates.
 
 ```{r, eval = FALSE}
-tsne_results <- runMatrixAnalysis(
-  data = wine_quality,
+wine_quality_deduplicated <- wine_quality[!duplicated(wine_quality[4:14]),]
+tsne_results <- runMatrixAnalyses(
+  data = wine_quality_deduplicated,
   analysis = "tsne",
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = colnames(wine_quality)[4:14],
   columns_w_sample_ID_info = c("ID", "type", "quality_score", "quality_category")
 )
@@ -3009,6 +2878,7 @@ predictions_from_basic_linear_model <- data.frame(
     AMP_values_predicted_from_ADP_values = AMP_values_predicted_from_ADP_values,
     AMP_values_measured = metabolomics_data$AMP
 )
+colnames(predictions_from_basic_linear_model)[2] <- "AMP_values_predicted_from_ADP_values"
 
 plot1 <- ggplot() +
     geom_line(
@@ -3111,7 +2981,7 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 
 Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
 
-```{r, fig.width = 9, fig.height = 9}
+```{r, fig.width = 9, fig.height = 9, eval = FALSE}
 
 basic_regression_model <- buildModel2(
   data = metabolomics_data,
@@ -3267,7 +3137,7 @@ random_forest_model$metrics %>%
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
-```{r}
+```{r, eval = FALSE}
 ggplot() +
   geom_point(
     data = metabolomics_data,
@@ -3291,7 +3161,7 @@ ggplot() +
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
-```{r, cache = TRUE}
+```{r, cache = TRUE, eval = FALSE}
 set.seed(123)
 unknown <- metabolomics_data[35:40,]
 
@@ -3311,7 +3181,7 @@ rfc$metrics %>% arrange(desc(mean))
 
 Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:
 
-```{r}
+```{r, eval = FALSE}
 rfc$metrics %>%
     ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
     facet_grid(.~min_n) +
@@ -3320,7 +3190,7 @@ rfc$metrics %>%
     theme_bw()
 ```
 
-```{r}
+```{r, eval = FALSE}
 predictions <- predictWithModel(
   data = unknown,
   model_type = "random_forest_classification",
@@ -3482,7 +3352,7 @@ First, we use the searchPubMed function to extract relevant publications from Pu
 ```{r, cache = TRUE}
 search_results <- searchPubMed(
   search_terms = c("beta-amyrin synthase", "friedelin synthase", "sorghum bicolor", "cuticular wax biosynthesis"),
-  pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
+  pubmed_api_key = readLines("/Users/bust0037/Documents/Websites/pubmed_api_key.txt"),
   retmax_per_term = 3,
   sort = "relevance"
 )
@@ -3500,7 +3370,7 @@ To set up the embedText function, provide the dataset containing the text you wa
 search_results_embedded <- embedText(
   df = search_results,
   column_name = "title",
-  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+  hf_api_key = readLines("/Users/bust0037/Documents/Websites/hf_api_key.txt")
 )
 search_results_embedded[1:3,1:10]
 ```
@@ -3558,7 +3428,7 @@ odor <- data.frame(
 
 out <- embedText(
   odor, column_name = "odor",
-  hf_api_key = readLines("/Users/bust0037/Documents/Science/Websites/hf_api_key.txt")
+  hf_api_key = readLines("/Users/bust0037/Documents/Websites/hf_api_key.txt")
 )
 
 runMatrixAnalysis(
@@ -3635,8 +3505,8 @@ Once you have some sequences, we can embed them with the function `embedAminoAci
 ```{r, cache = TRUE, eval = FALSE}
 embedded_OSCs <- embedAminoAcids(
   amino_acid_stringset = OSC_sequences,
-  biolm_api_key = readLines("/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt"),
-  nvidia_api_key = readLines("/Users/bust0037/Documents/Science/Websites/nvidia_api_key.txt"),
+  biolm_api_key = readLines("/Users/bust0037/Documents/Websites/biolm_api_key.txt"),
+  nvidia_api_key = readLines("/Users/bust0037/Documents/Websites/nvidia_api_key.txt"),
   platform = "biolm"
 )
 embedded_OSCs$product <- tolower(gsub(".*_", "", embedded_OSCs$name))
@@ -3680,7 +3550,7 @@ runMatrixAnalysis(
 
 1. Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in. Use multiple search terms and retrieve publications over a period of several years (you may need to set `sort` = "date"). Embed the titles and visualize the changes in clustering over time using PCA or an x-axis that is the date. Discuss how research trends might evolve and reflect broader changes in the scientific community or societal challenges. Below is an example to help you:
 
-```{r, cache = TRUE, fig.width = 8, fig.height = 6}
+```{r, cache = TRUE, fig.width = 8, fig.height = 6, eval = FALSE}
 search_results_ex <- searchPubMed(
   search_terms = c("oxidosqualene cyclase", "chemotaxonomy", "protein engineering"),
   pubmed_api_key = readLines("/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"),
@@ -4843,7 +4713,7 @@ IMPORTANT! When we plot the traits, we need to reorder whatever is on the shared
 ```{r, fig.height = 14, fig.width = 7, messages = FALSE}
 trait_plot <- ggplot(
     data = pivot_longer(
-      filter(data, isTip == TRUE),
+      dplyr::filter(data, isTip == TRUE),
       cols = 10:18, names_to = "compound", values_to = "abundance"
     ),
     aes(x = compound, y = reorder(label, y), size = abundance)
