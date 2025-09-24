@@ -64,9 +64,9 @@
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
 <li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
-<li><a class="" href="flat-clustering.html">flat clustering</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
 <li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="active" href="embedding-models.html">embedding models</a></li>
@@ -296,17 +296,17 @@
 <span><span class="va">ncbi_results</span></span>
 <span><span class="co">## AAStringSet object of length 100:</span></span>
 <span><span class="co">##       width seq                         names               </span></span>
-<span><span class="co">##   [1]   930 MGTAQQQDRHVG...RNRREAAAGGER WP_445138180.1 pr...</span></span>
-<span><span class="co">##   [2]   401 MKNNSSTVLDRP...FRRLPFLGYHTL WP_445102016.1 pr...</span></span>
-<span><span class="co">##   [3]   410 MFVRRTAAVLAA...FLISGRNKKRQL WP_392177577.1 MU...</span></span>
-<span><span class="co">##   [4]   418 MTVRRSAAALAA...FLISGRRKNQQP WP_362377536.1 MU...</span></span>
-<span><span class="co">##   [5]   417 MNVRRSATALAA...FLISTRGRKRQL WP_319197539.1 MU...</span></span>
+<span><span class="co">##   [1]   575 MPPSALTESVGT...KDITGDGEGGRP WP_283887978.1 pr...</span></span>
+<span><span class="co">##   [2]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_283886809.1 pr...</span></span>
+<span><span class="co">##   [3]   428 MNIRRSVAALSL...GFLLSGRKRRQL WP_251772202.1 pr...</span></span>
+<span><span class="co">##   [4]   575 MPPSALTESVGT...KDITGDGEGGRP WP_251770008.1 pr...</span></span>
+<span><span class="co">##   [5]   468 MTESVGTAIVAG...TRHPDGSWSTGE WP_237509046.1 pr...</span></span>
 <span><span class="co">##   ...   ... ...</span></span>
-<span><span class="co">##  [96]   571 MIVPRFPQGQGL...GQRDSLPNLHLS WP_440777606.1 pr...</span></span>
-<span><span class="co">##  [97]   326 MAHPYLFRLDER...LGLLWSETPLKR WP_440592363.1 pr...</span></span>
-<span><span class="co">##  [98]   300 MESRDDETQNHE...LNFLEKSIKESL WP_440214030.1 pr...</span></span>
-<span><span class="co">##  [99]   426 MNVRRRSSAAAL...FLLSGRTKKQQP WP_440580429.1 pr...</span></span>
-<span><span class="co">## [100]   928 MGTAQRTDRKPG...VARRRASEAGRI WP_440574560.1 pr...</span></span></code></pre></div>
+<span><span class="co">##  [96]   489 MFFKYSPIDIED...QSVRPQTFEYVP WP_072873004.1 pr...</span></span>
+<span><span class="co">##  [97]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444608723.1 pr...</span></span>
+<span><span class="co">##  [98]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444574685.1 pr...</span></span>
+<span><span class="co">##  [99]   735 MTEGTHLRRRGG...YPGSPLAGKVKL XP_076603171.1 la...</span></span>
+<span><span class="co">## [100]   530 MELKSEVSESLV...TLQVPRRSFLKL WP_308894994.1 pr...</span></span></code></pre></div>
 <p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.</p>
 <div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
@@ -456,7 +456,7 @@ the overproduction of triterpenoids [14,24]."
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-16.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

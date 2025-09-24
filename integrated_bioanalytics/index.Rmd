@@ -68,44 +68,6 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 bustalab <- TRUE
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
-<!-- Features provided by the source script: -->
-
-<!-- --Analysis and visualization tools-- -->
-
-<!-- * A GC-MS data analysis application with a MS reference library. -->
-<!-- * A sequence alignment analysis application for trimming alignments. -->
-<!-- * BLAST searches that export .fasta files of hits and store results in a .csv file. -->
-<!-- * Functions for dimensionality reduction, clustering, modeling, and visualization. -->
-
-<!-- --Useful data and data structures-- -->
-
-<!-- * More than 12 chemical data sets for running practice analyses. -->
-<!-- * A phylogeny for >30,000 plant species, including nearly 30,000 angiosperms, >500 gymnosperms, nearly 500 pteridophytes, and 100 bryophytes (https://thebustalab.github.io/data/plant_phylogeny.newick). -->
-<!-- * A list of nearly 400,000 plant species as well as the families, orders, and phyla to which they belong (https://thebustalab.github.io/data/plant_species.csv). -->
-<!-- * Support for multiple column and row names. -->
-
-<!-- ## new features
-
-1. A Shiny app for GC-FID and GC-MS data analysis, including a large MS library.
-2. Open reading frame extraction from multiple fasta files.
-3. 
-4. Minor ticks for ggplot2 axes.
-5. Phylogenetic signal for discrete traits.
-6. Analyze multiple sequence alignments for sites associated with user-defined function
-7. Multiple column name, multiple row name data structures (aka "polylists").
-8. Draw annotated multiple sequence alignments.
-9. Use image analysis to automatically get the csv of a mass spectrum from a published image.
-10. Draw chemical structures in R from a csv of molecular coordinates.
-
-## wrapped features
-
-1. BLAST transcriptomes, via [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download).
-2. Multiple sequence alignments and codon alignments of amino acid and nucleotide sequences, via [msa](https://bioconductor.org/packages/release/bioc/html/msa.html) and [orthologr](https://github.com/HajkD/orthologr).
-3. Phylogenetic tree construction (including g-blocks trimming, pruning, ancestral states reconstruction), via [phangorn](https://cran.r-project.org/web/packages/phangorn/index.html).
-4. Systematic read/write functions (csv, newick, wide tables, fasta, summary statistic tables, GFFs, chromatograms, mass spectra).
-5. Phylogenetic signal for continuous traits, via [picante](https://cran.r-project.org/web/packages/picante/index.html). -->
-
-<!-- end -->
 
 # (PART) GETTING STARTED 
 
@@ -1869,6 +1831,483 @@ Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s st
 
 <!-- start clustering -->
 
+# hierarchical clustering {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
+```
+
+"Which of my samples are most closely related?"
+
+## {-}
+
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
+```
+
+Please note that we can get distance matrices directly from `runMatrixAnalyses` by specifying `analysis = "dist"`:
+
+```{r}
+alaska_lake_data %>%
+    select(-element_type) %>%
+    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
+
+dist <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+as.matrix(dist)[1:3,1:3]
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalyses()` to use `analysis = "hclust"`: 
+
+```{r, message = FALSE}
+AK_lakes_clustered <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("hclust"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+)
+AK_lakes_clustered
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalyses>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+```{r, message = FALSE}
+library(ggtree)
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic() +
+  scale_x_continuous(limits = c(0,700))
+```
+
+Cool! Though that plot could use some tweaking... let's try:
+
+```{r, fig.height = 4, fig.width = 5}
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,600)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.4,0.2)
+    )
+    
+```
+
+Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
+
+
+
+```{r, fig.height = 4, fig.width = 5}
+alaska_lake_data_wide %>%
+  filter(!lake %in% c("North_Killeak_Lake","White_Fish_Lake")) -> alaska_lake_data_wide_filtered
+
+runMatrixAnalyses(
+    data = alaska_lake_data_wide_filtered,
+    analysis = c("hclust"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide_filtered)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+) %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,100)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.05,0.9)
+    )
+    
+```
+
+## further reading {-}
+ 
+For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
+
+For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
+
+<!-- ## exercises {-} -->
+
+<!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
+
+<!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
+
+<!-- ```{r} -->
+<!-- colnames(solvents) -->
+
+<!-- colnames(solvents)[1:3] -->
+
+<!-- colnames(solvents)[c(1,5,7)] -->
+<!-- ``` -->
+
+# comparing means {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
+```
+
+**"Are these two things the same?"**
+
+## {-}
+
+Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
+
+I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose that you are an analytical chemist on Hawaii that is studying the chemistry of the island's aquifers. you have the data set `hawaii_aquifers`. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
+
+```{r}
+hawaii_aquifers
+unique(hawaii_aquifers$aquifer_code)
+```
+Importantly, there are many wells that draw on each aquifer, as shown in the graph below.
+
+```{r}
+hawaii_aquifers %>%
+  select(aquifer_code, well_name) %>%
+  group_by(aquifer_code) %>%
+  summarize(n_wells = length(unique(well_name))) -> aquifers_summarized
+
+aquifers_summarized
+
+ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
+```
+
+<!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
+ -->
+<!-- ```{r, echo = FALSE, message = FALSE}
+source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
+library(rstatix)
+library(agricolae)
+library(multcompView)
+``` -->
+
+## definitions {-}
+
+1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
+
+2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference bewteen the means (hence the name "null"). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.
+
+3. **the *p* value**: The *p* value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the *p* value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same magneisum levels (i.e. assuming the null hypothesis is true), there is a 4% chance that we would get the measured values that we did. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
+
+Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
+
+## test selection {-}
+
+There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/stats.png', dpi = NA)
+```
+
+When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
+
+We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
+
+```{r, message = FALSE}
+K_data <- hawaii_aquifers %>%
+  filter(analyte == "K")
+  K_data
+```
+
+To work with two means, let's just look at aquifers 1 and 6:
+
+```{r}
+K_data_1_6 <- K_data %>%
+    filter(aquifer_code %in% c("aquifer_1", "aquifer_6"))
+
+K_data_1_6
+
+ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
+    geom_boxplot() +
+    geom_point()
+```
+
+Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
+
+```{r}
+K_data_1_6 %>%
+  ggplot(aes(x = abundance)) + 
+    geom_histogram(bins = 30) +
+    facet_wrap(~aquifer_code) +
+    geom_density(aes(y = ..density..*10), color = "blue")
+```
+
+Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
+
+```{r}
+K_data_1_6 %>%
+  group_by(aquifer_code) %>% 
+  shapiroTest(abundance)
+```
+
+Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the variances about the two means? Are they similar? For this we need a Levene test. With that test, we are not looking within each group, but rather across groups - this means we do NOT need to `group_by(aquifer_code)` and should specify a `y ~ x` formula instead:
+
+```{r}
+K_data_1_6 %>%
+  leveneTest(abundance ~ aquifer_code)
+```
+
+The p-value from this test is 0.596! This means that their variances are not significantly different. If their shape is the same (normality) and their variances are the same (equal variances), then the only thing that can be different is their means. This allows us to set up our null hypothesis and calculate the probability of obtaining these different means if the two sets of observations come from an identical source.
+
+## two means {-}
+
+Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
+
+```{r}
+K_data_1_6 %>%
+  tTest(abundance ~ aquifer_code)
+```
+
+A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that the two means are different. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
+
+```{r}
+K_data_1_6 %>%
+  wilcoxTest(abundance ~ aquifer_code)
+```
+
+A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.
+
+## more than two means {-}
+
+In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let's consider our hawaii aquifer data again, though this time let's use all the aquifers, not just two:
+
+```{r}
+K_data <- hawaii_aquifers %>%
+  filter(analyte == "K")
+
+K_data
+
+ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
+  geom_boxplot() +
+  geom_point(color = "maroon", alpha = 0.6, size = 3)
+```
+
+Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
+
+```{r}
+K_data %>%
+  group_by(aquifer_code) %>%
+  ggplot(aes(x = abundance)) + 
+    geom_histogram(bins = 30) +
+    facet_wrap(~aquifer_code) +
+    geom_density(aes(y = ..density..*10), colour = "blue")
+```
+
+Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
+
+```{r}
+K_data %>%
+  group_by(aquifer_code) %>% 
+  shapiroTest(abundance)
+```
+
+```{r}
+K_data %>%
+  leveneTest(abundance ~ aquifer_code)
+```
+
+Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p < 0.05), and the variances are certainly different from one another (Levene test p > 0.05).
+
+Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
+
+### ANOVA, Tukey tests {-}
+
+We will use the `anovaTest` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
+
+```{r}
+K_data %>%
+  anovaTest(abundance ~ aquifer_code)
+```
+
+A pretty small p-value! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+
+```{r}
+K_data %>%
+  tukey_hsd(abundance ~ aquifer_code)
+
+# K_data %>%
+#   tukeyHSD(abundance ~ aquifer_code)
+```
+
+Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
+
+```{r, message = FALSE}
+groups_based_on_tukey <- K_data %>%
+  tukey_hsd(abundance ~ aquifer_code) %>%
+  pGroups()
+groups_based_on_tukey
+```
+
+We can use the output from `pGroups` to annotate our plot:
+
+```{r, fig.width = 5}
+ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
+  geom_boxplot() +
+  geom_point(color = "maroon", alpha = 0.6, size = 3) +
+  geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
+```
+
+Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
+
+### Kruskal, Dunn tests {-}
+
+The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
+
+```{r}
+K_data %>%
+  kruskalTest(abundance ~ aquifer_code)
+```
+
+A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
+
+```{r}
+K_data %>%
+  dunnTest(abundance ~ aquifer_code)
+```
+
+This gives us adjusted p-values for all pairwise comparisons. Once again, we can use `pGroups()` to give us a compact letter display for each group, which can then be used to annotate the plot:
+
+```{r, fig.width = 6}
+groups_based_on_dunn <- K_data %>%
+  dunnTest(abundance ~ aquifer_code) %>%
+  pGroups()
+groups_based_on_dunn
+
+ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
+  geom_boxplot() +
+  geom_point(color = "black", alpha = 0.4, size = 2) +
+  scale_x_continuous(name = "Potassium abundance", breaks = seq(0,10,1)) +
+  scale_y_discrete(name = "Aquifer code") +
+  geom_text(data = groups_based_on_dunn, aes(y = treatment, x = 9, label = group)) +
+  theme_bw()
+```
+
+Note that these groupings are different from those generated by ANOVA/Tukey.
+
+## pairs of means {-}
+
+Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among *all* values of Na and Cl, rather, we want to test all *pairs* of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:
+
+```{r, fig.width = 7}
+hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
+```
+
+Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
+
+```{r}
+hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  group_by(analyte, aquifer_code) %>%
+  shapiroTest(abundance)
+```
+
+Looks like some of those distributions are significantly different from normal! Let's run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
+
+```{r, message = FALSE}
+hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  group_by(aquifer_code) %>%
+  leveneTest(abundance ~ analyte)
+```
+
+It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use the `wilcox_test`, but we have may pairs, so we will use `pairwise_wilcox_test` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?pairwise_wilcox_test`):
+
+```{r}
+hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  group_by(aquifer_code) %>%
+  pairwiseWilcoxTest(abundance~analyte)
+```
+
+Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
+
+What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_TTest` of course!
+
+```{r}
+hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  group_by(aquifer_code) %>%
+  pairwiseTTest(abundance~analyte) -> test_output
+  test_output
+```
+
+Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:
+
+```{r, fig.width = 8}
+
+anno <- data.frame(
+  xmin = test_output$group1,
+  xmax = test_output$group2,
+  y_position = c(150, 150, 150, 175, 80, 50, 300, 150, 50, 125),
+  text = test_output$p.signif,
+  text_size = 10,
+  text_vert_offset = 10,
+  text_horiz_offset = 1.5,
+  tip_length_xmin = 5,
+  tip_length_xmax = 5,
+  aquifer_code = test_output$aquifer_code,
+  hjust = 0.5,
+  vjust = 0.5
+)
+
+hawaii_aquifers %>%
+  filter(analyte %in% c("Na", "Cl")) %>%
+  ggplot(aes(x = analyte, y = abundance)) +
+  geom_violin(fill = "gold", color = "black") +
+  geom_point(shape = 21, fill = "maroon", color = "black") +
+  facet_grid(.~aquifer_code) +
+  geomSignif(data = anno, orientation = "horizontal") +
+  scale_x_discrete(name = "Analyte") +
+  scale_y_continuous(name = "Abundance") +
+  theme_bw() +
+  theme(
+    text = element_text(size = 16)
+    )
+
+```
+
+## {-}
+
+## further reading {-}
+
+For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
+
+For more on parametric versus non-parametric tests: [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/)
+
+For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
+
+Ten common statistical mistakes and their solutions: [Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript](https://elifesciences.org/articles/48175)
+
+How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue)
+
+
+<!-- ## exercises {-}
+
+Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please complete the following:
+
+1. Choose one analyte and filter the data so only the rows for that analyte are shown.
+
+2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (ANOVA/Tukey HSD tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
+
+3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
+
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
+
+<!-- end -->
+
 # flat clustering {-}
 
 "Do my samples fall into definable clusters?"
@@ -2324,462 +2763,6 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <!-- end -->
 
 <!-- start comparing means -->
-
-
-# hierarchical clustering {-}
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
-```
-
-"Which of my samples are most closely related?"
-
-## {-}
-
-So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
-```
-
-Please note that we can get distance matrices directly from `runMatrixAnalysis` by specifying `analysis = "dist"`:
-
-```{r}
-dist <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = c("dist"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park")
-)
-
-as.matrix(dist)[1:3,1:3]
-```
-
-There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalysis()` to use `analysis = "hclust"`: 
-
-```{r, message = FALSE}
-AK_lakes_clustered <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = "hclust",
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park"),
-    na_replacement = "mean"
-)
-AK_lakes_clustered
-```
-
-It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalysis>) + geom_*()` etc.
-
-Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
-
-```{r, message = FALSE}
-library(ggtree)
-AK_lakes_clustered %>%
-ggtree() +
-  geom_tiplab() +
-  geom_tippoint() +
-  theme_classic()
-```
-
-Cool! Though that plot could use some tweaking... let's try:
-
-```{r, fig.height = 4, fig.width = 5}
-AK_lakes_clustered %>%
-ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
-    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,375)) +
-    scale_fill_brewer(palette = "Set1") +
-    # theme_classic() +
-    theme(
-      legend.position = c(0.2,0.8)
-    )
-    
-```
-
-Very nice!
-
-## further reading {-}
- 
-For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
-
-For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
-
-## exercises {-}
-
-For this set of exercises, please use `runMatrixAnalysis()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info".
-
-For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example:
-
-```{r}
-colnames(solvents)
-
-colnames(solvents)[1:3]
-
-colnames(solvents)[c(1,5,7)]
-```
-
-# comparing means {-}
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/hawaii_aquifers.jpeg', dpi = NA)
-```
-
-**"Are these two things the same?"**
-
-## {-}
-
-Often, we want to know if our study subjects contain different amounts of certain analytes. For example, "Does this lake over here contain more potassium than that lake over there?" For this, we need statistical tests. Here, we will have a look at comparing mean values for analyte abundance in situations with two samples and in situations with more than two samples.
-
-I find many of the concepts discussed in this chapter easier to think about with an example in mind. For that, suppose that you are an analytical chemist on Hawaii that is studying the chemistry of the island's aquifers. you have the data set `hawaii_aquifers`. You can see in the output below the structure of the data set - we have 990 measurements of a 9 different analytes in multiple wells that draw on a set of 10 aquifers.
-
-```{r}
-hawaii_aquifers
-unique(hawaii_aquifers$aquifer_code)
-```
-Importantly, there are many wells that draw on each aquifer, as shown in the graph below.
-
-```{r}
-hawaii_aquifers %>%
-  select(aquifer_code, well_name) %>%
-  group_by(aquifer_code) %>%
-  summarize(n_wells = length(unique(well_name))) -> aquifers_summarized
-
-aquifers_summarized
-
-ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
-```
-
-<!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
- -->
-<!-- ```{r, echo = FALSE, message = FALSE}
-source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
-library(rstatix)
-library(agricolae)
-library(multcompView)
-``` -->
-
-## definitions {-}
-
-1. **populations and independent measurements**: When we are comparing means, we are comparing two *sets* of values. It is important to consider where these values came from in the first place. In particular, it is usually useful to think of these values as representatives of larger populations. In the example of our aquifer data set, we can think of the measurements from different wells drawing on the same aquifer as independent measurements of the "population" (i.e. the aquifer).
-
-2. **the null hypothesis**: When we conduct a statistical test, we are testing the null hypothesis. The null (think "default") hypothesis is that there is no difference bewteen the means (hence the name "null"). In the example of our aquifers, let's say that we're interested in whether two aquifers have different abundances of potassium - in this case the null hypothesis is that they do not differ, in other words, that they have the same amount of potassium.
-
-3. **the *p* value**: The *p* value represents the probability of getting data as extreme as our results if the null hypothesis is true. In other words - the *p* value is the probability that we would observe the differences we did, if in fact there were no differences in the means at all. To continue with our example: suppose we measure potassium levels in 10% of the wells that access each aquifer and find that aquifer_1 has potassium levels of 14 +/- 2 and aquifer_2 has potassium levels of 12 +/- 1. Suppose that we then conduct a statistical test and get a p value of 0.04. This means that, assuming the aquifers have the same magneisum levels (i.e. assuming the null hypothesis is true), there is a 4% chance that we would get the measured values that we did. In other words, IF the aquifers have the same potassium abundance, it is pretty unlikely that we would have obtained the measurements that we did.
-
-Please note that the the *p* value is not the probability of a detected difference being a false positive. The probability of a false positive requires additional information in order to be calculated. For further discussion please see the end of this chapter.
-
-## test selection {-}
-
-There are many different types of statistical tests. Below is a flow chart illustrating how it is recommended that statistical tests be used in this course. You can see that there are three regimes of tests: variance and normality tests (blue), parametric tests (green), and non-parametric tests (orange):
-
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/stats.png', dpi = NA)
-```
-
-When we are comparing means, we need to first determine what kind of statistical tests we can use with our data. If (i) our data can be reasonably modelled by a normal distribution and (ii) the variances about the two means are similar, then we can use the more powerful "parametric" tests (i.e. tests that will be more likely to detect a difference in means, assuming one exists). If one of these criteria are not met, then we need to use less powerful "non-parametric" tests.
-
-We can check our data for normality and similar variances using the Shapiro test and the Levene test. Let's use the `hawaii_aquifers` data as an example, and let's consider only the element potassium:
-
-```{r, message = FALSE}
-K_data <- hawaii_aquifers %>%
-  filter(analyte == "K")
-  K_data
-```
-
-To work with two means, let's just look at aquifers 1 and 6:
-
-```{r}
-K_data_1_6 <- K_data %>%
-    filter(aquifer_code %in% c("aquifer_1", "aquifer_6"))
-
-K_data_1_6
-
-ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
-    geom_boxplot() +
-    geom_point()
-```
-
-Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
-
-```{r}
-K_data_1_6 %>%
-  ggplot(aes(x = abundance)) + 
-    geom_histogram(bins = 30) +
-    facet_wrap(~aquifer_code) +
-    geom_density(aes(y = ..density..*10), color = "blue")
-```
-
-Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
-
-```{r}
-K_data_1_6 %>%
-  group_by(aquifer_code) %>% 
-  shapiroTest(abundance)
-```
-
-Both p-values are above 0.05! This means that the distributions are not significantly different from a normal distribution. What about the variances about the two means? Are they similar? For this we need a Levene test. With that test, we are not looking within each group, but rather across groups - this means we do NOT need to `group_by(aquifer_code)` and should specify a `y ~ x` formula instead:
-
-```{r}
-K_data_1_6 %>%
-  leveneTest(abundance ~ aquifer_code)
-```
-
-The p-value from this test is 0.596! This means that their variances are not significantly different. If their shape is the same (normality) and their variances are the same (equal variances), then the only thing that can be different is their means. This allows us to set up our null hypothesis and calculate the probability of obtaining these different means if the two sets of observations come from an identical source.
-
-## two means {-}
-
-Now, since our data passed both test, this means we can use a normal t-test. A t-test is a parametric test. This means that it relies on modelling the data using a normal distribution in order to make comparisons. It is also a powerful test. This means that it is likely to detect a difference in means, assuming one is present. Let's try it out:
-
-```{r}
-K_data_1_6 %>%
-  tTest(abundance ~ aquifer_code)
-```
-
-A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that the two means are different. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
-
-```{r}
-K_data_1_6 %>%
-  wilcoxTest(abundance ~ aquifer_code)
-```
-
-A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.
-
-## more than two means {-}
-
-In the previous section we compared two means. What if we want to compare means from more than two study subjects? The first step is again to determine which tests to use. Let's consider our hawaii aquifer data again, though this time let's use all the aquifers, not just two:
-
-```{r}
-K_data <- hawaii_aquifers %>%
-  filter(analyte == "K")
-
-K_data
-
-ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
-  geom_boxplot() +
-  geom_point(color = "maroon", alpha = 0.6, size = 3)
-```
-
-Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
-
-```{r}
-K_data %>%
-  group_by(aquifer_code) %>%
-  ggplot(aes(x = abundance)) + 
-    geom_histogram(bins = 30) +
-    facet_wrap(~aquifer_code) +
-    geom_density(aes(y = ..density..*10), colour = "blue")
-```
-
-Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
-
-```{r}
-K_data %>%
-  group_by(aquifer_code) %>% 
-  shapiroTest(abundance)
-```
-
-```{r}
-K_data %>%
-  leveneTest(abundance ~ aquifer_code)
-```
-
-Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p < 0.05), and the variances are certainly different from one another (Levene test p > 0.05).
-
-Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
-
-### ANOVA, Tukey tests {-}
-
-We will use the `anovaTest` function from the package `rstatix`. It will tell us if any of the means in the data are statistically different from one another. However, if there are differences between the means, it will not tell us which of them are different.
-
-```{r}
-K_data %>%
-  anovaTest(abundance ~ aquifer_code)
-```
-
-A pretty small p-value! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
-
-```{r}
-K_data %>%
-  tukey_hsd(abundance ~ aquifer_code)
-
-# K_data %>%
-#   tukeyHSD(abundance ~ aquifer_code)
-```
-
-Using the output from our tukey test, we can determine which means are similar. We can do this using the pGroups function:
-
-```{r, message = FALSE}
-groups_based_on_tukey <- K_data %>%
-  tukey_hsd(abundance ~ aquifer_code) %>%
-  pGroups()
-groups_based_on_tukey
-```
-
-We can use the output from `pGroups` to annotate our plot:
-
-```{r, fig.width = 5}
-ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
-  geom_boxplot() +
-  geom_point(color = "maroon", alpha = 0.6, size = 3) +
-  geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
-```
-
-Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
-
-### Kruskal, Dunn tests {-}
-
-The above ANOVA example is great, but remember - our data did not pass the Shapiro or Levene tests. This means not all our data can be modelled by a normal distribution and taht we need to use a non-parametric test. The non-parametric alternative to the ANOVA is called the Kruskal test. Like the Wilcox test, it is less powerful that its parametric relative, meaning that it is less likely to detected differences, should they exist. However, since our data do not pass the Shapiro/Levene tests, we have to resort to the Kruskal test. Let's try it out:
-
-```{r}
-K_data %>%
-  kruskalTest(abundance ~ aquifer_code)
-```
-
-A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
-
-```{r}
-K_data %>%
-  dunnTest(abundance ~ aquifer_code)
-```
-
-This gives us adjusted p-values for all pairwise comparisons. Once again, we can use `pGroups()` to give us a compact letter display for each group, which can then be used to annotate the plot:
-
-```{r, fig.width = 6}
-groups_based_on_dunn <- K_data %>%
-  dunnTest(abundance ~ aquifer_code) %>%
-  pGroups()
-groups_based_on_dunn
-
-ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
-  geom_boxplot() +
-  geom_point(color = "black", alpha = 0.4, size = 2) +
-  scale_x_continuous(name = "Potassium abundance", breaks = seq(0,10,1)) +
-  scale_y_discrete(name = "Aquifer code") +
-  geom_text(data = groups_based_on_dunn, aes(y = treatment, x = 9, label = group)) +
-  theme_bw()
-```
-
-Note that these groupings are different from those generated by ANOVA/Tukey.
-
-## pairs of means {-}
-
-Oftentimes we have more than two means to compare, but rather than wanting to compare all means at once, we want to compare them in a pairwise fashion. For example, suppose we want to know if any of the aquifers contain different amounts of Na and Cl. We are not interested in testing for differences among *all* values of Na and Cl, rather, we want to test all *pairs* of Na and Cl values arising from each aquifer. That is to say, we want to compare the means in each facet of the plot below:
-
-```{r, fig.width = 7}
-hawaii_aquifers %>%
-  filter(analyte %in% c("Na", "Cl")) %>%
-  ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
-```
-
-Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
-
-```{r}
-hawaii_aquifers %>%
-  filter(analyte %in% c("Na", "Cl")) %>%
-  group_by(analyte, aquifer_code) %>%
-  shapiroTest(abundance)
-```
-
-Looks like some of those distributions are significantly different from normal! Let's run the levene test anyway. Note that for this particular case of the Levene test, we are interested in testing whether each pair of distributions has similar variances. For that we need to feed the Levene test data that is grouped by aquifer_code (so that it tests each pair as a group), then we need to specify the y ~ x formula (which in this case is abundance ~ analyte):
-
-```{r, message = FALSE}
-hawaii_aquifers %>%
-  filter(analyte %in% c("Na", "Cl")) %>%
-  group_by(aquifer_code) %>%
-  leveneTest(abundance ~ analyte)
-```
-
-It looks like the variances of the pair in aquifer 1 have significantly different variances. So - we for sure need to be using non-parametric testing. If this were a simple case of two means we would use the `wilcox_test`, but we have may pairs, so we will use `pairwise_wilcox_test` (note that with this test there are options for various styles of controlling for multiple comparisons, see: `?pairwise_wilcox_test`):
-
-```{r}
-hawaii_aquifers %>%
-  filter(analyte %in% c("Na", "Cl")) %>%
-  group_by(aquifer_code) %>%
-  pairwiseWilcoxTest(abundance~analyte)
-```
-
-Excellent! It looks like there is a statistically significant difference between the means of the abundances of Cl and Na in aquifer_2 and (surprisingly?) in aquifer_9 (perhaps due to the large number of observations?).
-
-What would we have done if our Shaprio and Levene tests had revealed no significant differences? Well, a `pairwise_TTest` of course!
-
-```{r}
-hawaii_aquifers %>%
-  filter(analyte %in% c("Na", "Cl")) %>%
-  group_by(aquifer_code) %>%
-  pairwiseTTest(abundance~analyte) -> test_output
-  test_output
-```
-
-Excellent, now we see how to run parametric and non-parametric pairwise comparisons. How do we annotate plots with the output of these tests? Here is an example:
-
-```{r, fig.width = 8}
-
-anno <- data.frame(
-  xmin = test_output$group1,
-  xmax = test_output$group2,
-  y_position = c(150, 150, 150, 175, 80, 50, 300, 150, 50, 125),
-  text = test_output$p.signif,
-  text_size = 10,
-  text_vert_offset = 10,
-  text_horiz_offset = 1.5,
-  tip_length_xmin = 5,
-  tip_length_xmax = 5,
-  aquifer_code = test_output$aquifer_code,
-  hjust = 0.5,
-  vjust = 0.5
-)
-
-hawaii_aquifers %>%
-  filter(analyte %in% c("Na", "Cl")) %>%
-  ggplot(aes(x = analyte, y = abundance)) +
-  geom_violin(fill = "gold", color = "black") +
-  geom_point(shape = 21, fill = "maroon", color = "black") +
-  facet_grid(.~aquifer_code) +
-  geomSignif(data = anno, orientation = "horizontal") +
-  scale_x_discrete(name = "Analyte") +
-  scale_y_continuous(name = "Abundance") +
-  theme_bw() +
-  theme(
-    text = element_text(size = 16)
-    )
-
-```
-
-## {-}
-
-## further reading {-}
-
-For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
-
-For more on parametric versus non-parametric tests: [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/)
-
-For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
-
-Ten common statistical mistakes and their solutions: [Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript](https://elifesciences.org/articles/48175)
-
-How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue)
-
-
-<!-- ## exercises {-}
-
-Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please complete the following:
-
-1. Choose one analyte and filter the data so only the rows for that analyte are shown.
-
-2. Choose two of the aquifers (or bottles of tequila). Are the mean abundances for your chosen analyte different in these two aquifers? Don't forget to test your data for normality and homogeneity of variance before selecting a statistical test. Use a plot to illustrate whether the means are similar or different. If you wish, you can use the figure caption to help illustrate whether means are significantly different or not. Either way, be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests. For example, you should include a statment like "Groups sharing a letter label (a, b) are not significantly different (ANOVA/Tukey HSD tests, p > 0.05). Groups with different letters indicate a significant difference (p < 0.05).", or, if you are using asterisks then perhaps something like "Significant differences between groups are indicated by asterisks: \* = p < 0.05, \*\* = p < 0.01 (Kruskal / Dunn tests)."
-
-3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
-
-4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
-
-<!-- end -->
 
 # (PART) MODELS
 
