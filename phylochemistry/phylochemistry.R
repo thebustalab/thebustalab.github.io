@@ -13978,31 +13978,35 @@
             #' runMatrixAnalyses 
 
                 runMatrixAnalyses <-    function(
-                                            data,
-                                            analysis = c(
-                                                "pca", "pca_ord", "pca_dim",
-                                                "mca", "mca_ord", "mca_dim",
-                                                "mds", "mds_ord", "mds_dim",
-                                                "tsne", "dbscan", "kmeans",
-                                                "hclust", "hclust_phylo", "hclust_cat", "dist"
-                                            ),
-                                            parameters = NULL,
-                                            columns_w_values_for_single_analyte = NULL,
-                                            columns_w_sample_ID_info = NULL,
-                                            distance_method = c("euclidean", "manhattan", "gower"),
-                                            agglomeration_method = c(
-                                                "ward.D2", "ward.D", "single", "complete",
-                                                "average", # (= UPGMA)
-                                                "mcquitty", # (= WPGMA)
-                                                "median", # (= WPGMC)
-                                                "centroid" # (= UPGMC)
-                                            ),
-                                            components_to_return = 2,
-                                            scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
-                                            na_replacement = c("mean", "none", "zero", "drop"),
-                                            output_format = c("wide", "long"),
-                                            ...
-                                        ) {
+                        data,
+                        analysis = c(
+                            "pca", "pca_ord", "pca_dim",
+                            "mca", "mca_ord", "mca_dim",
+                            "mds", "mds_ord", "mds_dim",
+                            "tsne", "dbscan", "kmeans",
+                            "hclust", "hclust_phylo", "hclust_cat", "dist"
+                        ),
+                        parameters = NULL,
+                        columns_w_values_for_single_analyte = NULL,
+                        columns_w_sample_ID_info = NULL,
+                        distance_method = c("euclidean", "manhattan", "gower"),
+                        agglomeration_method = c(
+                            "ward.D2", "ward.D", "single", "complete",
+                            "average", # (= UPGMA)
+                            "mcquitty", # (= WPGMA)
+                            "median", # (= WPGMC)
+                            "centroid" # (= UPGMC)
+                        ),
+                        tree_method = c(
+                          "neighbor_joining",     # ape::nj; additive, non-ultrametric
+                          "linkage_dendrogram"   # hclust -> as.phylo; branch lengths = merge heights (tips aligned)
+                        ),
+                        components_to_return = 2,
+                        scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE
+                        na_replacement = c("mean", "none", "zero", "drop"),
+                        output_format = c("wide", "long"),
+                        ...
+                    ) {
 
                     # Check that argument names are spelled correctly
 
@@ -14018,6 +14022,7 @@
                                 "transpose",
                                 "distance_method",
                                 "agglomeration_method",
+                                "tree_method",
                                 "components_to_return",
                                 "scale_variance",
                                 "na_replacement",
@@ -14172,8 +14177,6 @@
                                 }
                             }
 
-                    # Run the matrix analysis selected
-
                         # Scale data, unless not requested
 
                             if ( is.null(scale_variance) ) {
@@ -14195,20 +14198,46 @@
                                 scaled_matrix <- matrix
                             }
 
+                        # Generate distance matrix
+
+                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
+
+                                if (distance_method[1] == "gower") {
+                                    dist_matrix <- cluster::daisy(scaled_matrix, metric = "gower")
+                                } else {
+                                    dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
+                                }
+                                
+                                if( analysis == "dist") {
+                                    return(dist_matrix)
+                                    stop()
+                                }
+
+                            }
+
+                            if( analysis %in% c("mca", "mca_ord", "mca_dim") ) { scaled_matrix <- matrix }
+
+                    # Run the matrix analysis selected
+
+
                         ## HCLUST, HCLUST_PHYLO ##
 
-                            if( analysis == "hclust" | analysis == "hclust_phylo") {
-                                
-                                ## BClust approach to bootstrapped hclust
+                            if( analysis %in% c("hclust", "hclust_phylo")) {
 
-                                    bclust <- Bclust(
-                                        scaled_matrix, method.d = distance_method[1],
-                                        method.c = agglomeration_method[1],
-                                        monitor = FALSE
-                                    )
-                                    # print(bclust$value)
-                                    # plot(bclust)
-                                    phylo <- ape::as.phylo(bclust$hclust)
+                                if (tree_method[1] == "linkage_dendrogram") {
+                                
+                                    ## BClust approach to bootstrapped hclust
+
+                                        bclust <- Bclust(
+                                            scaled_matrix, method.d = distance_method[1],
+                                            method.c = agglomeration_method[1],
+                                            monitor = FALSE
+                                        )
+                                        phylo <- ape::as.phylo(bclust$hclust)
+
+                                } else if (tree_method[1] == "neighbor_joining") {
+                                    phylo <- ape::nj(dist_matrix)
+                                }
 
                                 if( analysis == "hclust_phylo" ) {
                                     return(phylo)
@@ -14219,6 +14248,7 @@
                                 clustering$bootstrap <- NA
 
                                 ## Add bootstrap values starting from the furthest node to the highest node
+                                if (tree_method[1] == "linkage_dendrogram") {
                                     bs_vals <- data.frame(
                                         xval = clustering$x[clustering$isTip != TRUE],
                                         bs_val = NA
@@ -14228,8 +14258,8 @@
                                             order(bs_vals$xval, decreasing = TRUE)[i]
                                         ] <- bclust$values[i]
                                     }
-
-                                clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
+                                    clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
+                                }
                             }
 
                             if (analysis == "hclust_cat") {
@@ -14253,48 +14283,6 @@
                                 clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
 
                             }
-
-                            # if( analysis == "hclust" | analysis == "hclust_phylo" ) {
-                            #     scaled_matrix <- as.data.frame(lapply(scaled_matrix, function(x) if(is.character(x)) factor(x) else x))
-                            #     createHclustObject <- function(x)hclust(cluster::daisy(x, metric = distance_method[1]), method = agglomeration_method[1])
-                            #     b <- bootstrap(scaled_matrix, fun = createHclustObject, n = 100L)
-                            #     phylo <- ape::as.phylo(createHclustObject(scaled_matrix))
-                            #     if( analysis == "hclust_phylo" ) {
-                            #         return(phylo)
-                            #         stop("Returning hclust_phylo.")
-                            #     }
-                            #     clustering <- ggtree::fortify(phylo)
-                            #     clustering$sample_unique_ID <- clustering$label
-                            #     clustering$bootstrap <- NA
-
-                            #     ## Add bootstrap values starting from the furthest node to the highest node
-                            #         bs_vals <- data.frame(
-                            #             xval = clustering$x[clustering$isTip != TRUE],
-                            #             bs_val = NA
-                            #         )
-                            #         for (i in 1:length(b)) { # i=1
-                            #             bs_vals$bs_val[
-                            #                 order(bs_vals$xval, decreasing = TRUE)[i]
-                            #             ] <- b[i]
-                            #         }
-
-                            #     clustering$bootstrap[clustering$isTip != TRUE] <- bs_vals$bs_val
-                            # }
-
-                        # Generate distance matrix
-
-                            if(  !analysis %in% c("mca", "mca_ord", "mca_dim") ) {
-
-                                dist_matrix <- stats::dist(scaled_matrix, method = distance_method[1])
-                                
-                                if( analysis == "dist") {
-                                    return(dist_matrix)
-                                    stop()
-                                }
-
-                            }
-
-                            if( analysis %in% c("mca", "mca_ord", "mca_dim") ) { scaled_matrix <- matrix }
 
                         ## Dimensionality reduction
 
@@ -14521,7 +14509,6 @@
                                 return( clustering )
                         }
                 }
-
 
 
         #### runMatrixAnalysis
