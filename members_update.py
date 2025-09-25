@@ -231,7 +231,7 @@ def generate_member_html(row):
     photo = row.get("PhotoPath", "")   # path to the image
 
     # If the image doesn't exist at PhotoPath, use the placeholder image
-    if not os.path.exists(f"/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/{photo}"):
+    if not os.path.exists(f"/Users/bust0037/Documents/Websites/thebustalab.github.io/{photo}"):
         photo = "images/members/placeholder.jpg"
 
     snippet = f"""
