@@ -185,8 +185,6 @@
         source("https://thebustalab.github.io/phylochemistry/modules/datasets.R")
         source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
         source("https://thebustalab.github.io/phylochemistry/modules/pca_visualizer.R")
-        source("https://thebustalab.github.io/phylochemistry/modules/integrationAppLite.R")
-
 
     ## Set up prioriy functions
 
@@ -17599,7 +17597,5 @@
                         pie_list, width = pie_size, height = pie_size
                     ))
             }
-
-
 
 message("phylochemistry loaded!!")
