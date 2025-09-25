@@ -2,6 +2,8 @@
 ## LANGUAGE MODEL ANALYSIS v1 ##
 ################################
 
+message("Loading language model module...")
+
 ###### Libraries
 
     Bioconductor_packages <- c(
@@ -45,11 +47,11 @@
             }
         }
         
-        message("Loading language model packages...")
+        # message("Loading language model packages...")
 
         invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
 
-        message("Loading language model functions...")
+        # message("Loading language model functions...")
 
 ###### Functions
 
