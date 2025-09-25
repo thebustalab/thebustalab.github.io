@@ -1,9 +1,0 @@
-base
-knitr
-dplyr
-terra
-sf
-tmap
-rcartocolor
-ggplot2
-spData

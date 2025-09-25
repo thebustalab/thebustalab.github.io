@@ -34,9 +34,9 @@ def main():
     current_rank = parse_semester_arg(current_semester_arg)
 
     # Path to your Excel file
-    excel_path = "/Users/bust0037/Documents/Science/Master_Plan.xlsx"
+    excel_path = "/Users/bust0037/Documents/Master_Plan.xlsx"
     # Output HTML file
-    output_html = "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/members.html"
+    output_html = "/Users/bust0037/Documents/Websites/thebustalab.github.io/members.html"
 
     # Read the spreadsheet into a DataFrame
     df = pd.read_excel(excel_path)
