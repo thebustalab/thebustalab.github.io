@@ -34,9 +34,8 @@
             }
         }
 
+    
     ## Load packages in general
-
-        source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
 
         if ( !exists("packages") ) {
 
@@ -180,6 +179,13 @@
             message("Object 'packages' exists, not loading phylochemistry packages...")
         
         }
+
+    ## Load phylochemistry modules
+
+        source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
+        source("https://thebustalab.github.io/phylochemistry/modules/pca_visualizer.R")
+        source("https://thebustalab.github.io/phylochemistry/modules/integrationApLite.R")
+
 
     ## Set up prioriy functions
 
