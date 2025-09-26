@@ -1,6 +1,6 @@
 # dimensional reduction {-}
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Overview of dimensional reduction. The schematic shows how high-dimensional measurements are projected into a lower-dimensional space so that dominant trends among samples can be visualized and interpreted.'}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dimensionality.png', dpi = NA)
 ```
 
@@ -29,7 +29,7 @@ We can see that this dataset is comprised of measurements of various *analytes* 
 
 PCA looks at all the variance in a high dimensional data set and chooses new axes within that data set that align with the directions containing highest variance. These new axes are called principal components. Let's look at an example:
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.'}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/PCA.png', dpi = NA)
 ```
 
@@ -53,7 +53,7 @@ head(AK_lakes_pca)
 
 Let's plot the 2D projection of the Alaska lakes data:
 
-```{r, message = FALSE, fig.align = "center"}
+```{r, message = FALSE, fig.align = "center", fig.cap='PCA scores for Alaskan lake chemistry. Points show each lake positioned by the first two principal components, with fill encoding the park and labels highlighting chemically distinct sites; distances capture multivariate differences across the analyte panel.'}
 ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   geom_point(aes(fill = park), shape = 21, size = 4, alpha = 0.8) +
   geom_label_repel(aes(label = lake), alpha = 0.5) +
@@ -80,7 +80,7 @@ head(AK_lakes_pca_ord)
 
 We can now visualize the ordination plot using our standard ggplot plotting techniques. Note the use of `geom_label_repel()` and `filter()` to label certain segments in the ordination plot. You do not need to use `geom_label_repel()`, you could use the built in `geom_label()`, but `geom_label_repel()` can make labelling your segments easier.
 
-```{r, fig.align = "center", fig.height = 4, fig.width = 5, message = FALSE}
+```{r, fig.align = "center", fig.height = 4, fig.width = 5, message = FALSE, fig.cap='Circular ordination plot for Alaskan lakes. Arrows mark analyte loadings scaled to the correlation circle, and labels flag the elements that dominate each principal axis so we can connect chemistry to lake groupings.'}
 # AK_lakes_pca_ord <- runMatrixAnalysis(
 #   data = alaska_lake_data,
 #   analysis = c("pca_ord"),
@@ -115,7 +115,7 @@ Great! Here is how to read the ordination plot:
 
 With the ordination plot above, we can now see that the abundances of K, Cl, Br, and Na are the major contributors of variance to the first principal component (or the first dimension). The abundances of these elements are what make White Fish Lake and North Killeak Lake different from the other lakes. We can also see that the abundances of N, S, and Ca are the major contributors to variance in the second dimension, which means that these elements ar what set Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park apart from the rest of the lakes in the data set. It slightly easier to understand this if we look at an overlay of the two plots, which is often called a "biplot":
 
-```{r, fig.height = 4.5, fig.width = 6}
+```{r, fig.height = 4.5, fig.width = 6, fig.cap='PCA biplot combining scores and loadings. Lakes are plotted as points coloured by park while analyte vectors overlay the same coordinate system, helping us link sample groupings to the drivers of chemical variance.'}
 # AK_lakes_pca <- runMatrixAnalysis(
 #   data = alaska_lake_data,
 #   analysis = c("pca"),
@@ -154,7 +154,7 @@ ggplot() +
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
-```{r}
+```{r, fig.cap='Analyte loadings by principal component. The dot plot re-expresses the PCA loadings as coordinates along Dim.1, making it easy to compare how each element contributes relative to the others.'}
 AK_lakes_pca_ord %>%
   ggplot(aes(x = Dim.1, y = analyte)) +
     geom_point(aes(fill = analyte), shape = 22, size = 3) +
@@ -166,7 +166,7 @@ AK_lakes_pca_ord %>%
 
 We also can access information about the how much of the variance in the data set is explained by each principal component, and we can plot that using ggplot:
 
-```{r, message = FALSE, fig.height = 2.5, fig.width = 3, fig.align = "center"}
+```{r, message = FALSE, fig.height = 2.5, fig.width = 3, fig.align = "center", fig.cap='Variance explained by principal components. The scree curve shows how much of the total chemical variability is captured by each component, informing how many dimensions to retain.'}
 AK_lakes_pca_dim <- runMatrixAnalyses(
   data = alaska_lake_data_wide,
   analysis = c("pca_dim"),
@@ -186,6 +186,38 @@ ggplot(
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
+### pcaVisualizer {-}
+
+Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between your samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalyses()` and assembles a dashboard with coordinated plots.
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.'}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png', dpi = NA)
+```
+
+The function takes three key arguments:
+
+* `data`: a data frame that contains both the sample identifiers and the numeric analyte columns.
+* `columns_w_sample_ID_info`: the column names that identify each sample (for example `c("lake", "park")`).
+* `columns_w_values_for_single_analyte`: the numeric columns that should be analysed (for example `colnames(alaska_lake_data_wide)[3:15]`).
+
+To launch the app for the Alaska lakes example:
+
+```{r, eval = FALSE}
+pcaVisualizer(
+  data = alaska_lake_data_wide,
+  columns_w_sample_ID_info = c("lake", "park"),
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15]
+)
+```
+
+This opens a browser window (or RStudio viewer) with three linked panels:
+
+* **PCA Plot** – the familiar scores plot. Use the sidebar dropdowns to map any sample ID column to colour or shape; the app reuses the `discrete_palette` defined earlier so colours stay consistent with the rest of this chapter.
+* **Ordination Plot** – the loadings plot. Adjust the *Filter ordination plot* slider to hide vectors whose combined PC1/PC2 loading magnitude falls below your chosen threshold, making it easier to focus on the analytes that matter.
+* **Analyte Abundance Heatmap** – a scaled (z-scored) heatmap for the analytes that pass the loading filter. You can order rows by Dim.1 or Dim.2 so the heatmap aligns with the direction of separation you care about in the scores plot.
+
+Because `pcaVisualizer()` calls `runMatrixAnalyses()` under the hood, any transformations you perform on your data before launching the app (scaling, filtering, subsetting) carry through automatically. Use it as a quick sanity check while you are refining preprocessing steps, and once you are satisfied, you can reproduce the final view with scripted ggplot code for publication-quality figures.
+
 ## umap and tsne {-}
 
 "How do non-linear dimensionality reduction techniques reveal hidden structure in my data?"
@@ -203,7 +235,7 @@ In this command, the dollar sign ($) is used to access (or create) the ID column
 
 Before starting with non-linear techniques, it can be helpful to see how a linear method like PCA clusters our samples. We run the analysis using runMatrixAnalysis(), specifying the relevant columns that contain our continuous variables (columns 4 to 14), and passing along our sample identifier along with additional information such as wine type, quality_score, and quality_category.
 
-```{r, fig.height = 7, fig.width = 7}
+```{r, fig.height = 7, fig.width = 7, fig.cap='PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.'}
 wq <- runMatrixAnalyses(
   data = wine_quality,
   analysis = "pca",
@@ -224,7 +256,7 @@ In this PCA plot, each point represents a wine sample, with its position determi
 We can perform UMAP on the wine quality dataset just as easily as PCA. The code below shows how to run UMAP using runMatrixAnalysis():
 
 
-```{r, fig.height = 7, fig.width = 7}
+```{r, fig.height = 7, fig.width = 7, fig.cap='UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.'}
 runMatrixAnalyses(
   data = wine_quality,
   analysis = "umap",

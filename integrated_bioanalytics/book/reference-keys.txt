@@ -1,4 +1,13 @@
 fig:unnamed-chunk-178
+fig:unnamed-chunk-308
+fig:unnamed-chunk-310
+fig:unnamed-chunk-312
+fig:unnamed-chunk-314
+fig:unnamed-chunk-315
+fig:unnamed-chunk-316
+fig:unnamed-chunk-317
+fig:unnamed-chunk-320
+fig:unnamed-chunk-321
 fig:unnamed-chunk-37
 part-getting-started
 part-data-visualization

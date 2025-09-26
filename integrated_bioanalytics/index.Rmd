@@ -1009,9 +1009,6 @@ ggplot(alaska_lake_data) +
   scale_fill_manual(values = custom_colors_for_lakes) +
   theme_classic()
 ```
-<!-- end -->
-
-<!-- start templates -->
 
 # templates {-}
 
@@ -1021,16 +1018,11 @@ ggplot(alaska_lake_data) +
 
 ```{r, eval = FALSE}
 
-runMatrixAnalyses(
-                
+runMatrixAnalyses(   
   data = NULL,
-
   analysis = c("hclust", "pca", "pca_ord", "pca_dim"),
-  
   columns_w_values_for_single_analyte = NULL,
-
   columns_w_sample_ID_info = NULL
-
 )
 ```
 
@@ -1067,6 +1059,7 @@ runMatrixAnalysis(
       "median", # (= WPGMC)
       "centroid" # (= UPGMC)
   ),
+  tree_method = 
   unknown_sample_ID_info = NULL,
   components_to_return = 2, # how many principal components to return
   scale_variance = NULL, ## default = TRUE, except for hclust, then default = FALSE

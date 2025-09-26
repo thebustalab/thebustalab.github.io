@@ -102,7 +102,7 @@
 <ol style="list-style-type: decimal">
 <li>Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.</li>
 </ol>
-<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R"</span><span class="op">)</span></span>
 <span><span class="co">## Loading language model module...</span></span>
 <span><span class="co">## Done with language model loading!</span></span></code></pre></div>
@@ -129,7 +129,7 @@
 </h2>
 <p>Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.</p>
 <p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
 <span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"beta-amyrin synthase"</span>, <span class="st">"friedelin synthase"</span>, <span class="st">"sorghum bicolor"</span>, <span class="st">"cuticular wax biosynthesis"</span><span class="op">)</span>,</span>
 <span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
@@ -159,27 +159,27 @@
 <p>From the output here, you can see that we’ve retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.</p>
 <p>Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at <a href="https://huggingface.co" class="uri">https://huggingface.co</a> and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.</p>
 <p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, available through the Hugging Face API at <a href="https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5" class="uri">https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5</a>. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at <a href="https://huggingface.co" class="uri">https://huggingface.co</a>, where you will find detailed documentation and additional resources.</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="embedding-models.html#cb146-1" tabindex="-1"></a>search_results_embedded <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
-<span id="cb146-2"><a href="embedding-models.html#cb146-2" tabindex="-1"></a>  <span class="at">df =</span> search_results,</span>
-<span id="cb146-3"><a href="embedding-models.html#cb146-3" tabindex="-1"></a>  <span class="at">column_name =</span> <span class="st">"title"</span>,</span>
-<span id="cb146-4"><a href="embedding-models.html#cb146-4" tabindex="-1"></a>  <span class="at">hf_api_key =</span> <span class="fu">readLines</span>(<span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span>)</span>
-<span id="cb146-5"><a href="embedding-models.html#cb146-5" tabindex="-1"></a>)</span>
-<span id="cb146-6"><a href="embedding-models.html#cb146-6" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb146-7"><a href="embedding-models.html#cb146-7" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb146-8"><a href="embedding-models.html#cb146-8" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
-<span id="cb146-9"><a href="embedding-models.html#cb146-9" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb146-10"><a href="embedding-models.html#cb146-10" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
-<span id="cb146-11"><a href="embedding-models.html#cb146-11" tabindex="-1"></a>search_results_embedded[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
-<span id="cb146-12"><a href="embedding-models.html#cb146-12" tabindex="-1"></a><span class="do">## # A tibble: 3 × 10</span></span>
-<span id="cb146-13"><a href="embedding-models.html#cb146-13" tabindex="-1"></a><span class="do">##   entry_number term  date       journal title doi   abstract</span></span>
-<span id="cb146-14"><a href="embedding-models.html#cb146-14" tabindex="-1"></a><span class="do">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
-<span id="cb146-15"><a href="embedding-models.html#cb146-15" tabindex="-1"></a><span class="do">## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
-<span id="cb146-16"><a href="embedding-models.html#cb146-16" tabindex="-1"></a><span class="do">## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
-<span id="cb146-17"><a href="embedding-models.html#cb146-17" tabindex="-1"></a><span class="do">## 3            3 beta… 2017-03-16 Phytoc… β-Am… 10.1… Siberia…</span></span>
-<span id="cb146-18"><a href="embedding-models.html#cb146-18" tabindex="-1"></a><span class="do">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
-<span id="cb146-19"><a href="embedding-models.html#cb146-19" tabindex="-1"></a><span class="do">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="embedding-models.html#cb147-1" tabindex="-1"></a>search_results_embedded <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
+<span id="cb147-2"><a href="embedding-models.html#cb147-2" tabindex="-1"></a>  <span class="at">df =</span> search_results,</span>
+<span id="cb147-3"><a href="embedding-models.html#cb147-3" tabindex="-1"></a>  <span class="at">column_name =</span> <span class="st">"title"</span>,</span>
+<span id="cb147-4"><a href="embedding-models.html#cb147-4" tabindex="-1"></a>  <span class="at">hf_api_key =</span> <span class="fu">readLines</span>(<span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span>)</span>
+<span id="cb147-5"><a href="embedding-models.html#cb147-5" tabindex="-1"></a>)</span>
+<span id="cb147-6"><a href="embedding-models.html#cb147-6" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb147-7"><a href="embedding-models.html#cb147-7" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb147-8"><a href="embedding-models.html#cb147-8" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
+<span id="cb147-9"><a href="embedding-models.html#cb147-9" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb147-10"><a href="embedding-models.html#cb147-10" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
+<span id="cb147-11"><a href="embedding-models.html#cb147-11" tabindex="-1"></a>search_results_embedded[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb147-12"><a href="embedding-models.html#cb147-12" tabindex="-1"></a><span class="do">## # A tibble: 3 × 10</span></span>
+<span id="cb147-13"><a href="embedding-models.html#cb147-13" tabindex="-1"></a><span class="do">##   entry_number term  date       journal title doi   abstract</span></span>
+<span id="cb147-14"><a href="embedding-models.html#cb147-14" tabindex="-1"></a><span class="do">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span id="cb147-15"><a href="embedding-models.html#cb147-15" tabindex="-1"></a><span class="do">## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
+<span id="cb147-16"><a href="embedding-models.html#cb147-16" tabindex="-1"></a><span class="do">## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
+<span id="cb147-17"><a href="embedding-models.html#cb147-17" tabindex="-1"></a><span class="do">## 3            3 beta… 2017-03-16 Phytoc… β-Am… 10.1… Siberia…</span></span>
+<span id="cb147-18"><a href="embedding-models.html#cb147-18" tabindex="-1"></a><span class="do">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
+<span id="cb147-19"><a href="embedding-models.html#cb147-19" tabindex="-1"></a><span class="do">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
 <p>The output of the embedText function is a data frame where the 384 appended columns represent the embedding variables. These embeddings capture the features of each publication title. These embeddings are like a bar codes:</p>
-<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span></span>
 <span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results_embedded</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -194,9 +194,9 @@
 <span>      axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>      axis.ticks.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-478-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-480-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
-<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">search_results_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -213,50 +213,50 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-479-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-481-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="embedding-models.html#cb149-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">31</span></span>
-<span id="cb149-2"><a href="embedding-models.html#cb149-2" tabindex="-1"></a></span>
-<span id="cb149-3"><a href="embedding-models.html#cb149-3" tabindex="-1"></a>odor <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb149-4"><a href="embedding-models.html#cb149-4" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">seq</span>(<span class="dv">1</span>,n,<span class="dv">1</span>),</span>
-<span id="cb149-5"><a href="embedding-models.html#cb149-5" tabindex="-1"></a>  <span class="at">odor =</span> <span class="fu">dropNA</span>(<span class="fu">unique</span>(beer_components<span class="sc">$</span>analyte_odor))[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">96</span>, n)]</span>
-<span id="cb149-6"><a href="embedding-models.html#cb149-6" tabindex="-1"></a>)</span>
-<span id="cb149-7"><a href="embedding-models.html#cb149-7" tabindex="-1"></a></span>
-<span id="cb149-8"><a href="embedding-models.html#cb149-8" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
-<span id="cb149-9"><a href="embedding-models.html#cb149-9" tabindex="-1"></a>  odor, <span class="at">column_name =</span> <span class="st">"odor"</span>,</span>
-<span id="cb149-10"><a href="embedding-models.html#cb149-10" tabindex="-1"></a>  <span class="at">hf_api_key =</span> <span class="fu">readLines</span>(<span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span>)</span>
-<span id="cb149-11"><a href="embedding-models.html#cb149-11" tabindex="-1"></a>)</span>
-<span id="cb149-12"><a href="embedding-models.html#cb149-12" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb149-13"><a href="embedding-models.html#cb149-13" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb149-14"><a href="embedding-models.html#cb149-14" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
-<span id="cb149-15"><a href="embedding-models.html#cb149-15" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb149-16"><a href="embedding-models.html#cb149-16" tabindex="-1"></a>  <span class="er">|=========================</span>                         <span class="er">|</span>  <span class="dv">50</span>%</span>
-<span id="cb149-17"><a href="embedding-models.html#cb149-17" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
-<span id="cb149-18"><a href="embedding-models.html#cb149-18" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
-<span id="cb149-19"><a href="embedding-models.html#cb149-19" tabindex="-1"></a></span>
-<span id="cb149-20"><a href="embedding-models.html#cb149-20" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
-<span id="cb149-21"><a href="embedding-models.html#cb149-21" tabindex="-1"></a>  <span class="at">data =</span> out,</span>
-<span id="cb149-22"><a href="embedding-models.html#cb149-22" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">"pca"</span>,</span>
-<span id="cb149-23"><a href="embedding-models.html#cb149-23" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(out)[<span class="fu">grep</span>(<span class="st">"embed"</span>, <span class="fu">colnames</span>(out))],</span>
-<span id="cb149-24"><a href="embedding-models.html#cb149-24" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">"sample"</span>, <span class="st">"odor"</span>)</span>
-<span id="cb149-25"><a href="embedding-models.html#cb149-25" tabindex="-1"></a>) <span class="ot">-&gt;</span> pca_out</span>
-<span id="cb149-26"><a href="embedding-models.html#cb149-26" tabindex="-1"></a></span>
-<span id="cb149-27"><a href="embedding-models.html#cb149-27" tabindex="-1"></a>pca_out<span class="sc">$</span>color <span class="ot">&lt;-</span> <span class="fu">rgb</span>(</span>
-<span id="cb149-28"><a href="embedding-models.html#cb149-28" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.1</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)),</span>
-<span id="cb149-29"><a href="embedding-models.html#cb149-29" tabindex="-1"></a>  <span class="dv">0</span>,</span>
-<span id="cb149-30"><a href="embedding-models.html#cb149-30" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.2</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb149-31"><a href="embedding-models.html#cb149-31" tabindex="-1"></a>)</span>
-<span id="cb149-32"><a href="embedding-models.html#cb149-32" tabindex="-1"></a></span>
-<span id="cb149-33"><a href="embedding-models.html#cb149-33" tabindex="-1"></a><span class="fu">ggplot</span>(pca_out) <span class="sc">+</span></span>
-<span id="cb149-34"><a href="embedding-models.html#cb149-34" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
-<span id="cb149-35"><a href="embedding-models.html#cb149-35" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> <span class="fu">str_wrap</span>(odor, <span class="at">width =</span> <span class="dv">35</span>)),</span>
-<span id="cb149-36"><a href="embedding-models.html#cb149-36" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">2</span>, <span class="at">min.segment.length =</span> <span class="fl">0.5</span>, <span class="at">force =</span> <span class="dv">25</span></span>
-<span id="cb149-37"><a href="embedding-models.html#cb149-37" tabindex="-1"></a>  ) <span class="sc">+</span>  </span>
-<span id="cb149-38"><a href="embedding-models.html#cb149-38" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>), <span class="at">fill =</span> pca_out<span class="sc">$</span>color, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb149-39"><a href="embedding-models.html#cb149-39" tabindex="-1"></a>  <span class="co"># scale_x_continuous(expand = c(1,0)) +</span></span>
-<span id="cb149-40"><a href="embedding-models.html#cb149-40" tabindex="-1"></a>  <span class="co"># scale_y_continuous(expand = c(1,0)) +</span></span>
-<span id="cb149-41"><a href="embedding-models.html#cb149-41" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-480-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="embedding-models.html#cb150-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">31</span></span>
+<span id="cb150-2"><a href="embedding-models.html#cb150-2" tabindex="-1"></a></span>
+<span id="cb150-3"><a href="embedding-models.html#cb150-3" tabindex="-1"></a>odor <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb150-4"><a href="embedding-models.html#cb150-4" tabindex="-1"></a>  <span class="at">sample =</span> <span class="fu">seq</span>(<span class="dv">1</span>,n,<span class="dv">1</span>),</span>
+<span id="cb150-5"><a href="embedding-models.html#cb150-5" tabindex="-1"></a>  <span class="at">odor =</span> <span class="fu">dropNA</span>(<span class="fu">unique</span>(beer_components<span class="sc">$</span>analyte_odor))[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">96</span>, n)]</span>
+<span id="cb150-6"><a href="embedding-models.html#cb150-6" tabindex="-1"></a>)</span>
+<span id="cb150-7"><a href="embedding-models.html#cb150-7" tabindex="-1"></a></span>
+<span id="cb150-8"><a href="embedding-models.html#cb150-8" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">embedText</span>(</span>
+<span id="cb150-9"><a href="embedding-models.html#cb150-9" tabindex="-1"></a>  odor, <span class="at">column_name =</span> <span class="st">"odor"</span>,</span>
+<span id="cb150-10"><a href="embedding-models.html#cb150-10" tabindex="-1"></a>  <span class="at">hf_api_key =</span> <span class="fu">readLines</span>(<span class="st">"/Users/bust0037/Documents/Websites/hf_api_key.txt"</span>)</span>
+<span id="cb150-11"><a href="embedding-models.html#cb150-11" tabindex="-1"></a>)</span>
+<span id="cb150-12"><a href="embedding-models.html#cb150-12" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb150-13"><a href="embedding-models.html#cb150-13" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb150-14"><a href="embedding-models.html#cb150-14" tabindex="-1"></a>  <span class="er">|</span>                                                  <span class="er">|</span>   <span class="dv">0</span>%</span>
+<span id="cb150-15"><a href="embedding-models.html#cb150-15" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb150-16"><a href="embedding-models.html#cb150-16" tabindex="-1"></a>  <span class="er">|=========================</span>                         <span class="er">|</span>  <span class="dv">50</span>%</span>
+<span id="cb150-17"><a href="embedding-models.html#cb150-17" tabindex="-1"></a>  <span class="sc">|</span>                                                        </span>
+<span id="cb150-18"><a href="embedding-models.html#cb150-18" tabindex="-1"></a>  <span class="er">|==================================================|</span> <span class="dv">100</span>%</span>
+<span id="cb150-19"><a href="embedding-models.html#cb150-19" tabindex="-1"></a></span>
+<span id="cb150-20"><a href="embedding-models.html#cb150-20" tabindex="-1"></a><span class="fu">runMatrixAnalysis</span>(</span>
+<span id="cb150-21"><a href="embedding-models.html#cb150-21" tabindex="-1"></a>  <span class="at">data =</span> out,</span>
+<span id="cb150-22"><a href="embedding-models.html#cb150-22" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="st">"pca"</span>,</span>
+<span id="cb150-23"><a href="embedding-models.html#cb150-23" tabindex="-1"></a>  <span class="at">columns_w_values_for_single_analyte =</span> <span class="fu">colnames</span>(out)[<span class="fu">grep</span>(<span class="st">"embed"</span>, <span class="fu">colnames</span>(out))],</span>
+<span id="cb150-24"><a href="embedding-models.html#cb150-24" tabindex="-1"></a>  <span class="at">columns_w_sample_ID_info =</span> <span class="fu">c</span>(<span class="st">"sample"</span>, <span class="st">"odor"</span>)</span>
+<span id="cb150-25"><a href="embedding-models.html#cb150-25" tabindex="-1"></a>) <span class="ot">-&gt;</span> pca_out</span>
+<span id="cb150-26"><a href="embedding-models.html#cb150-26" tabindex="-1"></a></span>
+<span id="cb150-27"><a href="embedding-models.html#cb150-27" tabindex="-1"></a>pca_out<span class="sc">$</span>color <span class="ot">&lt;-</span> <span class="fu">rgb</span>(</span>
+<span id="cb150-28"><a href="embedding-models.html#cb150-28" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.1</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)),</span>
+<span id="cb150-29"><a href="embedding-models.html#cb150-29" tabindex="-1"></a>  <span class="dv">0</span>,</span>
+<span id="cb150-30"><a href="embedding-models.html#cb150-30" tabindex="-1"></a>  scales<span class="sc">::</span><span class="fu">rescale</span>(pca_out<span class="sc">$</span>Dim<span class="fl">.2</span>, <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb150-31"><a href="embedding-models.html#cb150-31" tabindex="-1"></a>)</span>
+<span id="cb150-32"><a href="embedding-models.html#cb150-32" tabindex="-1"></a></span>
+<span id="cb150-33"><a href="embedding-models.html#cb150-33" tabindex="-1"></a><span class="fu">ggplot</span>(pca_out) <span class="sc">+</span></span>
+<span id="cb150-34"><a href="embedding-models.html#cb150-34" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(</span>
+<span id="cb150-35"><a href="embedding-models.html#cb150-35" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>, <span class="at">label =</span> <span class="fu">str_wrap</span>(odor, <span class="at">width =</span> <span class="dv">35</span>)),</span>
+<span id="cb150-36"><a href="embedding-models.html#cb150-36" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">2</span>, <span class="at">min.segment.length =</span> <span class="fl">0.5</span>, <span class="at">force =</span> <span class="dv">25</span></span>
+<span id="cb150-37"><a href="embedding-models.html#cb150-37" tabindex="-1"></a>  ) <span class="sc">+</span>  </span>
+<span id="cb150-38"><a href="embedding-models.html#cb150-38" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Dim<span class="fl">.1</span>, <span class="at">y =</span> Dim<span class="fl">.2</span>), <span class="at">fill =</span> pca_out<span class="sc">$</span>color, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb150-39"><a href="embedding-models.html#cb150-39" tabindex="-1"></a>  <span class="co"># scale_x_continuous(expand = c(1,0)) +</span></span>
+<span id="cb150-40"><a href="embedding-models.html#cb150-40" tabindex="-1"></a>  <span class="co"># scale_y_continuous(expand = c(1,0)) +</span></span>
+<span id="cb150-41"><a href="embedding-models.html#cb150-41" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-482-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="protein-embeddings" class="section level2 unnumbered">
 <h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
@@ -289,24 +289,24 @@
 <p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
 <p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.</p>
 <p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code, though you can also use the <code>searchNCBI()</code> function to retrieve your own sequences. For example:</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ncbi_results</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"oxidosqualene cyclase"</span>, retmax <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">ncbi_results</span></span>
 <span><span class="co">## AAStringSet object of length 100:</span></span>
 <span><span class="co">##       width seq                         names               </span></span>
-<span><span class="co">##   [1]   370 MSWIRSGVLNLI...ITLKYCKPGSGK WP_437223952.1 pr...</span></span>
-<span><span class="co">##   [2]   294 MADKEILARART...DRLITLRAYGWL WP_378157646.1 MU...</span></span>
-<span><span class="co">##   [3]   307 MASTSIQEERVC...QAVNVLRKLNLL WP_445870199.1 pr...</span></span>
-<span><span class="co">##   [4]   575 MPPSALTESVGT...KDITGDGEGGRP WP_283887978.1 pr...</span></span>
-<span><span class="co">##   [5]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_283886809.1 pr...</span></span>
+<span><span class="co">##   [1]   528 MTVLTEDLALDA...VLGALRLGGRII WP_344451332.1 pr...</span></span>
+<span><span class="co">##   [2]   576 MTYDALQRSSGV...PEELALPPLALS WP_298557538.1 pr...</span></span>
+<span><span class="co">##   [3]   528 MTVLTEDLALDA...VLGALRLGGRII WP_182846159.1 pr...</span></span>
+<span><span class="co">##   [4]   370 MSWIRSGVLNLI...ITLKYCKPGSGK WP_437223952.1 pr...</span></span>
+<span><span class="co">##   [5]   294 MADKEILARART...DRLITLRAYGWL WP_378157646.1 MU...</span></span>
 <span><span class="co">##   ...   ... ...</span></span>
-<span><span class="co">##  [96]   576 MQEEKLNMMIEY...YKKKLSRTKIIT WP_444794536.1 pr...</span></span>
-<span><span class="co">##  [97]   644 MSVFFSPEFTML...QSVRPQTFEYVP WP_306954195.1 pr...</span></span>
-<span><span class="co">##  [98]   489 MFFKYSPIDIED...QSVRPQTFEYVP WP_072873004.1 pr...</span></span>
-<span><span class="co">##  [99]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444608723.1 pr...</span></span>
-<span><span class="co">## [100]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444574685.1 pr...</span></span></code></pre></div>
+<span><span class="co">##  [96]   906 MSPLVSRTSRSS...RRRAVTGAGGGS WP_444947572.1 pr...</span></span>
+<span><span class="co">##  [97]    74 LCQQDEDDGGIS...QRAGTTNLSNNC WP_444728713.1 pr...</span></span>
+<span><span class="co">##  [98]   293 MQSISANILDTL...GLLAIGSALSKN WP_444794537.1 pr...</span></span>
+<span><span class="co">##  [99]   576 MQEEKLNMMIEY...YKKKLSRTKIIT WP_444794536.1 pr...</span></span>
+<span><span class="co">## [100]   644 MSVFFSPEFTML...QSVRPQTFEYVP WP_306954195.1 pr...</span></span></code></pre></div>
 <p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.</p>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
 <span>  amino_acid_stringset <span class="op">=</span> <span class="va">OSC_sequences</span>,</span>
 <span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/biolm_api_key.txt"</span><span class="op">)</span>,</span>
@@ -317,7 +317,7 @@
 <span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">embedded_OSCs</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">embedded_OSCs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></code></pre></div>
 <p>Nice! Once we’ve bot the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
-<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">embedded_OSCs</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
@@ -433,7 +433,7 @@ asdf --><hr>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-25.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-26.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
