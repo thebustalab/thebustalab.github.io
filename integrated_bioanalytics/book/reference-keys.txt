@@ -6,8 +6,9 @@ fig:unnamed-chunk-314
 fig:unnamed-chunk-315
 fig:unnamed-chunk-316
 fig:unnamed-chunk-317
-fig:unnamed-chunk-320
+fig:unnamed-chunk-318
 fig:unnamed-chunk-321
+fig:unnamed-chunk-322
 fig:unnamed-chunk-37
 part-getting-started
 part-data-visualization

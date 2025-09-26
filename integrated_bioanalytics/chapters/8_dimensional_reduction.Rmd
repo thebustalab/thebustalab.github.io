@@ -14,10 +14,6 @@ alaska_lake_data
 
 We can see that this dataset is comprised of measurements of various *analytes* (i.e. several chemical elements, as well as water_temp, and pH), in different *samples* (i.e. lakes). We need to tell the `runMatrixAnalyses()` function how each column relates to this samples and analytes structuree
 
-<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
-<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png', dpi = NA) -->
-<!-- ``` -->
-
 ## {-}
 
 ## pca {-}
@@ -190,7 +186,7 @@ Cool! We can see that the first principal component retains nearly 50% of the va
 
 Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between your samples and analytes. Our `source()` command provides an interactive app helper called `pcaVisualizer()` that wraps `runMatrixAnalyses()` and assembles a dashboard with coordinated plots.
 
-```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Principal component rotation illustrated. The bold axes denote the new principal components that capture the largest variance directions, enabling us to describe complex data with fewer coordinates.'}
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup", fig.cap='Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.'}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png', dpi = NA)
 ```
 
@@ -221,9 +217,9 @@ Because `pcaVisualizer()` calls `runMatrixAnalyses()` under the hood, any transf
 ## umap and tsne {-}
 
 "How do non-linear dimensionality reduction techniques reveal hidden structure in my data?"
-"Can I identify clusters or subtle gradients in my dataset that might be missed by linear methods?"
+"Can I identify clusters or subtle gradients in my dataset that might be missed by PCA?"
 
-UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features.
+UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features. You can think of umap as a technique that "unwinds" a dataset, rather than projecting it onto a plane. Compared with PCA, UMAP often reveals tighter clusters and curved trajectories because it optimizes neighborhood relationships rather than a straight-line variance objective. That flexibility is powerful, but it comes with trade-offs: UMAP axes have no direct numerical interpretation, results depend on hyperparameters such as `n_neighbors` and `min_dist`, and the algorithm is stochastic, so repeated runs can vary slightly. PCA, in contrast, is deterministic and easier to interpret because each principal component is a weighted combination of the original variables, but it may miss nonlinear structure that UMAP highlights.
 
 We will work here with the `wine_quality` dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:
 
@@ -299,7 +295,3 @@ Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s st
 
 - UMAP: Mathematical Details (clearly explained!!!) This YouTube video offers a detailed explanation of the mathematical underpinnings of UMAP, breaking down the algorithm in a clear and approachable manner. It is an excellent resource for viewers who want to deepen their understanding of how UMAP works behind the scenes.
 [Watch the UMAP Mathematical Details Video](https://www.youtube.com/watch?v=jth4kEvJ3P8).
-
-<!-- end -->
-
-<!-- start clustering -->

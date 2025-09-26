@@ -194,7 +194,7 @@
 <span>      axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>      axis.ticks.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-480-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-482-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
 <div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
@@ -213,7 +213,7 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-481-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-483-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
 <div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="embedding-models.html#cb150-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">31</span></span>
 <span id="cb150-2"><a href="embedding-models.html#cb150-2" tabindex="-1"></a></span>
@@ -256,7 +256,7 @@
 <span id="cb150-39"><a href="embedding-models.html#cb150-39" tabindex="-1"></a>  <span class="co"># scale_x_continuous(expand = c(1,0)) +</span></span>
 <span id="cb150-40"><a href="embedding-models.html#cb150-40" tabindex="-1"></a>  <span class="co"># scale_y_continuous(expand = c(1,0)) +</span></span>
 <span id="cb150-41"><a href="embedding-models.html#cb150-41" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-482-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-484-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="protein-embeddings" class="section level2 unnumbered">
 <h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>

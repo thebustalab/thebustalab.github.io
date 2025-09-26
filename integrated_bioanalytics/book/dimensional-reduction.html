@@ -123,9 +123,6 @@ Figure 3.1: Overview of dimensional reduction. The schematic shows how high-dime
 <span><span class="co">## # ℹ 210 more rows</span></span>
 <span><span class="co">## # ℹ 1 more variable: element_type &lt;chr&gt;</span></span></code></pre></div>
 <p>We can see that this dataset is comprised of measurements of various <em>analytes</em> (i.e. several chemical elements, as well as water_temp, and pH), in different <em>samples</em> (i.e. lakes). We need to tell the <code>runMatrixAnalyses()</code> function how each column relates to this samples and analytes structuree</p>
-<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
-<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/runMatrixAnalysis1.png', dpi = NA) -->
-<!-- ``` -->
 <div id="section-8" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-8"><i class="fas fa-link"></i></a></h2>
 </div>
@@ -357,6 +354,12 @@ Figure 3.7: Variance explained by principal components. The scree curve shows ho
 <h3>pcaVisualizer<a class="anchor" aria-label="anchor" href="#pcavisualizer"><i class="fas fa-link"></i></a>
 </h3>
 <p>Static plots are great for reporting, but exploring PCA interactively can make it easier to understand the relationships between your samples and analytes. Our <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> command provides an interactive app helper called <code>pcaVisualizer()</code> that wraps <code>runMatrixAnalyses()</code> and assembles a dashboard with coordinated plots.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:unnamed-chunk-318"></span>
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/pca_visualizer.png" alt="Screenshot of the `pcaVisualizer()` dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively." width="100%"><p class="caption">
+Figure 3.8: Screenshot of the <code>pcaVisualizer()</code> dashboard showing the linked scores plot, loadings plot, and heatmap panels used to explore PCA interactively.
+</p>
+</div>
 <p>The function takes three key arguments:</p>
 <ul>
 <li>
@@ -389,8 +392,8 @@ Figure 3.7: Variance explained by principal components. The scree curve shows ho
 <h2>umap and tsne<a class="anchor" aria-label="anchor" href="#umap-and-tsne"><i class="fas fa-link"></i></a>
 </h2>
 <p>“How do non-linear dimensionality reduction techniques reveal hidden structure in my data?”
-“Can I identify clusters or subtle gradients in my dataset that might be missed by linear methods?”</p>
-<p>UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features.</p>
+“Can I identify clusters or subtle gradients in my dataset that might be missed by PCA?”</p>
+<p>UMAP (Uniform Manifold Approximation and Projection) is a non-linear dimensionality reduction technique that, unlike PCA, can capture both local and global data structure. It is especially useful when your data might have clusters or manifold structures that aren’t well-represented by linear combinations of features. You can think of umap as a technique that “unwinds” a dataset, rather than projecting it onto a plane. Compared with PCA, UMAP often reveals tighter clusters and curved trajectories because it optimizes neighborhood relationships rather than a straight-line variance objective. That flexibility is powerful, but it comes with trade-offs: UMAP axes have no direct numerical interpretation, results depend on hyperparameters such as <code>n_neighbors</code> and <code>min_dist</code>, and the algorithm is stochastic, so repeated runs can vary slightly. PCA, in contrast, is deterministic and easier to interpret because each principal component is a weighted combination of the original variables, but it may miss nonlinear structure that UMAP highlights.</p>
 <p>We will work here with the <code>wine_quality</code> dataset. Our wine quality dataset doesn’t come with unique sample identifiers, which are essential for any matrix analysis. We can create these identifiers by adding a new column called ID to our data frame. The code below demonstrates how to do this:</p>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wine_quality</span><span class="op">$</span><span class="va">ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">wine_quality</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
@@ -411,9 +414,9 @@ Figure 3.7: Variance explained by principal components. The scree curve shows ho
 <span>  <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-320"></span>
-<img src="index_files/figure-html/unnamed-chunk-320-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%"><p class="caption">
-Figure 3.8: PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.
+<span style="display:block;" id="fig:unnamed-chunk-321"></span>
+<img src="index_files/figure-html/unnamed-chunk-321-1.png" alt="PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures." width="100%"><p class="caption">
+Figure 3.9: PCA projection of wine chemistry. Samples are positioned by the first two components, with point shape distinguishing red and white wines and fill showing sensory quality scores; the layout highlights gradients that PCA captures.
 </p>
 </div>
 <p>In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.</p>
@@ -432,9 +435,9 @@ Figure 3.8: PCA projection of wine chemistry. Samples are positioned by the firs
 <span>  <span class="fu">scale_fill_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:unnamed-chunk-321"></span>
-<img src="index_files/figure-html/unnamed-chunk-321-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%"><p class="caption">
-Figure 3.9: UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.
+<span style="display:block;" id="fig:unnamed-chunk-322"></span>
+<img src="index_files/figure-html/unnamed-chunk-322-1.png" alt="UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view." width="100%"><p class="caption">
+Figure 3.10: UMAP embedding of wine chemistry. The non-linear projection preserves neighbourhood relationships, revealing clusters driven by wine type and quality scores that complement the PCA view.
 </p>
 </div>
 <p>In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.</p>
@@ -462,7 +465,6 @@ Figure 3.9: UMAP embedding of wine chemistry. The non-linear projection preserve
 <li><p>UMAP: Mathematical Details (clearly explained!!!) This YouTube video offers a detailed explanation of the mathematical underpinnings of UMAP, breaking down the algorithm in a clear and approachable manner. It is an excellent resource for viewers who want to deepen their understanding of how UMAP works behind the scenes.
 <a href="https://www.youtube.com/watch?v=jth4kEvJ3P8">Watch the UMAP Mathematical Details Video</a>.</p></li>
 </ul>
-<!-- end --><!-- start clustering -->
 </div>
 </div>
   <div class="chapter-nav">
