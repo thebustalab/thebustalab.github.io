@@ -1,0 +1,97 @@
+# phylogenetic analyses {-}
+
+We use a wrapper function to run phylogenetic comparative analyses. It 
+
+```{r, messages = FALSE}
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+
+runPhylogeneticAnalyses(
+    traits = pivot_longer(chemical_blooms[,1:4], cols = c(3:4), names_to = "trait", values_to = "value"),
+    column_w_names_of_tiplabels = "label",
+    column_w_names_of_traits = "trait",
+    column_w_values_for_traits = "value",
+    tree = chemical_bloom_tree
+)
+```
+
+
+For all the below, there are some structural requirements: (i) the tree needs to be a phylo object (ii) the traits need to be a data.frame in which each row is a species and each column is a variable, and (iii) the first column in the data.frame needs to be the names of the species and they must exactly match the tip labels of the tree (though they don't have to be in the same order), for example:
+
+```{r}
+chemical_bloom_tree <- buildTree(
+  scaffold_type = "newick",
+  scaffold_in_path = "http://thebustalab.github.io/data/angiosperms.newick",
+  members = unique(chemical_blooms$label)
+)
+```
+
+## phylogeneticSignal {-}
+
+Phylogenetic signal is a measure of the degree to which related species share similar trait values. It is used to determine whether a trait has evolved in a manner that is consistent with the species' evolutionary history. `phylochemistry` provides the `phylogeneticSignal` function, which can be used to calculate phylogenetic signal for a given set of traits and a phylogenetic tree. Here is an example:
+
+```{r}
+phylogeneticSignal(
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
+  tree = chemical_bloom_tree
+)
+```
+
+## independentContrasts {-}
+
+Phylogenetic independent contrasts are a method for analyzing the relationship between two or more traits while taking into account the evolutionary history of the species being studied. This method involves transforming the data in to "independent contrasts" to remove the effects of shared ancestry, allowing for more accurate analysis of the relationship between traits. `phylochemistry` provides the `independentContrasts` function to calculate phylogenetic independent contrasts for a given set of traits and a phylogenetic tree. Here is an example of calculating independent contrasts for an example dataset, followed by generating a linear model based on the contrasts.
+
+```{r}
+contrasts <- independentContrasts(
+  traits = pivot_longer(chemical_blooms, cols = c(2:10), names_to = "compound", values_to = "value"),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "compound",
+  column_w_values_for_traits = "value",
+  tree = chemical_bloom_tree
+)
+
+# buildLinearModel(
+#   data = contrasts,
+#   formula = "Fatty_acids = Alkanes + 0"
+# ) -> model
+# 
+# ggplot(model$data) +
+#   geom_point(aes(x = input_x, y = input_y)) +
+#   geom_line(aes(x = model_x, model_y))
+``` 
+
+## ancestralTraits {-}
+
+Ancestral trait reconstruction is a method to infer the characteristics (or "traits") of ancestral organisms based on the traits of their modern descendants. By examining the traits of present-day species and using phylogenetic trees, we can estimate or "reconstruct" the traits of common ancestors. This method can be applied to various types of traits, including continuously varying and discrete traits. Ancestral trait reconstruction helps us gain insights into the evolutionary processes and the historical transitions that led to current biodiversity. `phylochemistry` provides the function `ancestralTraits` to perform these operations. Note that `ancestralTraits` is different from `buildTree`s "ancestral_states". "ancestral_states"  estimates ancestral sequence states at phylogeny nodes, while `ancestralTraits` will estimate the traits of an ancestor, given the traits of extant species that are present on the leaves of a phylogeny. Here is an example. Please note that ancestralTraits accepts data in a long-style data frame.
+
+```{r}
+anc_traits_tree <- ancestralTraits(
+  traits = pivot_longer(chemical_blooms, cols = -1),
+  column_w_names_of_tiplabels = "label",
+  column_w_names_of_traits = "name",
+  column_w_values_for_traits = "value",
+  tree = chemical_bloom_tree
+)
+head(anc_traits_tree)
+```
+
+In addition to providing ancestral state estimations, there is also a function for plotting those estimations on a phylogeny: `geom_ancestral_pie`. Here is an example. Note that `cols` is a vector of column numbers that correspond to the traits of interest. `pie_size` is the size of the pie chart that will be plotted at each node. `geom_ancestral_pie` relies on having columns in its input called `trait` and `value`, such as those output by   `ancestralTraits`. Note that if you are passing an object to ggtree() that has duplicate node names, you will need to use the `distinct` function to remove the duplicates, otherwise geom_ancestral_pie will get confused about where to place the pies.
+
+```{r, fig.height = 10}
+ggtree(
+  distinct(anc_traits_tree, node, .keep_all = TRUE)
+) +
+  geom_ancestral_pie(
+    data = filter(anc_traits_tree, isTip == FALSE),
+    pie_size = 0.1, pie_alpha = 1
+  ) +
+  geom_tiplab(offset = 20, align = TRUE) +
+  scale_x_continuous(limits = c(0,650)) +
+  theme_void()
+```

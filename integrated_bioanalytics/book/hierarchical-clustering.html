@@ -63,10 +63,10 @@
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="active" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="embedding-models.html">embedding models</a></li>
@@ -79,7 +79,6 @@
 <li><a class="" href="alignments.html">alignments</a></li>
 <li><a class="" href="phylogenies.html">phylogenies</a></li>
 <li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
-<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
 <li class="book-part">ANALYTICAL REPORTS</li>
 <li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
 <li><a class="" href="question-driven-report.html">question-driven report</a></li>
@@ -100,12 +99,12 @@
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;"></div>
 <p>“Which of my samples are most closely related?”</p>
-<div id="section-9" class="section level2 unnumbered">
-<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-9"><i class="fas fa-link"></i></a></h2>
+<div id="section-7" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a></h2>
 <p>So far we have been looking at how to plot raw data, summarize data, and reduce a data set’s dimensionality. It’s time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:</p>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;"></div>
 <p>Please note that we can get distance matrices directly from <code>runMatrixAnalyses</code> by specifying <code>analysis = "dist"</code>:</p>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"element"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide</span></span>
@@ -132,7 +131,7 @@
 <span><span class="co">## Imuruk_Lake_BELA                   3.062381</span></span>
 <span><span class="co">## Kuzitrin_Lake_BELA                 0.000000</span></span></code></pre></div>
 <p>There is more that we can do with distance matrices though, lots more. Let’s start by looking at an example of hierarchical clustering. For this, we just need to tell <code>runMatrixAnalyses()</code> to use <code>analysis = "hclust"</code>:</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_clustered</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hclust"</span><span class="op">)</span>,</span>
@@ -161,7 +160,7 @@
 <span><span class="co">## #   K &lt;dbl&gt;, Ca &lt;dbl&gt;, Mg &lt;dbl&gt;</span></span></code></pre></div>
 <p>It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We’ve seen that ggplot takes a “data” argument (i.e. <code>ggplot(data = &lt;some_data&gt;) + geom_*()</code> etc.). In contrast, ggtree takes an argument called <code>tr</code>, though if you’re using the <code>runMatrixAnalysis()</code> function, you can treat these two (<code>data</code> and <code>tr</code>) the same, so, use: <code>ggtree(tr = &lt;output_from_runMatrixAnalyses&gt;) + geom_*()</code> etc.</p>
 <p>Note that <code>ggtree</code> also comes with several great new geoms: <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab()</a></code> and <code><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint()</a></code>. Let’s try those out:</p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.amazon.com/Integration-Manipulation-Visualization-Phylogenetic-Computational-ebook/dp/B0B5NLZR1Z/">ggtree</a></span><span class="op">)</span></span>
 <span><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -169,9 +168,9 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">700</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-134-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-296-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html">ggtree</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">lake</span><span class="op">)</span>, offset <span class="op">=</span> <span class="fl">10</span>, align <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
@@ -182,9 +181,9 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.4</span>,<span class="fl">0.2</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_wide</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">lake</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"North_Killeak_Lake"</span>,<span class="st">"White_Fish_Lake"</span><span class="op">)</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide_filtered</span></span>
 <span></span>
@@ -204,26 +203,21 @@
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>,<span class="fl">0.9</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-298-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
-<div id="further-reading-4" class="section level2 unnumbered">
-<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-4"><i class="fas fa-link"></i></a>
+<div id="further-reading-3" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
 </h2>
-<p>For more information on plotting annotated trees, see: <a href="https://yulab-smu.top/treedata-book/chapter10.html" class="uri">https://yulab-smu.top/treedata-book/chapter10.html</a>.</p>
-<p>For more on clustering, see: <a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/</a>.</p>
-<!-- ## exercises {-} -->
-<!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
-<!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
-<!-- ```{r} -->
-<!-- colnames(solvents) -->
-<!-- colnames(solvents)[1:3] -->
-<!-- colnames(solvents)[c(1,5,7)] -->
-<!-- ``` -->
+<ul>
+<li><p><a href="https://yulab-smu.top/treedata-book/chapter10.html">annotating phylogenetic trees with ggtree</a>. This free, book-length reference from the ggtree authors walks through annotating dendrograms and phylogenetic trees in R, explaining how to layer metadata, add tip labels, and customize themes—perfect for polishing the cluster plots we generated in this chapter.</p></li>
+<li><p><a href="https://uc-r.github.io/hc_clustering">hierarchical clustering in R</a>. UC Business Analytics’ tutorial provides a gentle, R-focused walkthrough of agglomerative clustering, covering distance matrices, linkage choices, dendrogram interpretation, and cluster cutting with reproducible code examples. Note that this text uses base R instead of our in-class functions.</p></li>
+</ul>
+<!-- ## exercises {-} --><!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". --><!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: --><!-- ```{r} --><!-- colnames(solvents) --><!-- colnames(solvents)[1:3] --><!-- colnames(solvents)[c(1,5,7)] --><!-- ``` -->
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="dimensional-reduction.html">dimensional reduction</a></div>
-<div class="next"><a href="comparing-means.html">comparing means</a></div>
+<div class="prev"><a href="wrangling-and-summaries.html">wrangling and summaries</a></div>
+<div class="next"><a href="dimensional-reduction.html">dimensional reduction</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -237,8 +231,8 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#hierarchical-clustering">hierarchical clustering</a></li>
-<li><a class="nav-link" href="#section-9"></a></li>
-<li><a class="nav-link" href="#further-reading-4">further reading</a></li>
+<li><a class="nav-link" href="#section-7"></a></li>
+<li><a class="nav-link" href="#further-reading-3">further reading</a></li>
 </ul>
 
       <div class="book-extra">
@@ -256,7 +250,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-24.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

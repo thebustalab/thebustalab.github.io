@@ -1,10 +1,9 @@
-fig:unnamed-chunk-68
-fig:unnamed-chunk-264
+fig:unnamed-chunk-178
+fig:unnamed-chunk-37
 part-getting-started
 part-data-visualization
 part-statistical-methods
 part-models
-loading-gff-files
 matrix-analyses
-basic-runmatrixanalysis-template
+basic-runmatrixanalyses-template
 advanced-runmatrixanalysis-template

@@ -1,0 +1,41 @@
+# alignments {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg', dpi = NA)
+```
+
+## alignSequences {-}
+
+There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_out_path.
+
+* "monolist": a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the "sequences_of_interest_directory_path".
+
+* "subset": The monolist .csv also needs to contain at least one "subset_*" column. The most simple implementation of this is a column called "subset_all" which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.
+
+* "alignment_out_path": a path to a directory that should contain the output alignment.
+
+* "sequences_of_interest_directory_path": a path to a directory that contains one fasta file for each of the accessions in the monolist.
+
+* "input_sequence_type": options are "nucl" or "amin" specifying what type of sequence is to be aligned.
+
+* "mode": options are "nucl_align", a basic nucleotide alignment, "amin_align", a basic amino acid alignment, "codon_align", a codon alignment, and "fragment_align", which will align all the sequences to a base fragment.
+
+* "base_fragment": a path to a fasta file containing the base fragment to which the subjects should be aligned.
+
+```{r, eval = FALSE}
+alignSequences(
+  monolist = readMonolist("/path_to/a_csv_file_that_will_list_all_blast_hits.csv"), 
+  subset = "subset_all", 
+  alignment_directory_path = "/path_to/a_folder_for_alignments/", 
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  input_sequence_type = "amin", 
+  mode = "amin_alignment",
+  base_fragment = NULL
+)
+```
+
+## analyzeAlignment {-}
+
+```{r, eval = FALSE}
+
+```

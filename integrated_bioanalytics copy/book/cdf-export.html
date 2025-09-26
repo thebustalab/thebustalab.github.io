@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>CDF export | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="On the GC-MS computer, open Enhanced Data Analysis File &gt; Export Data To .AIA Format, Create New Directory (“OK”) &gt; Desktop (create a folder with a name you will remember) Select all the datafiles...">
+<meta name="generator" content="bookdown 0.44 with bs4_book()">
+<meta property="og:title" content="CDF export | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="On the GC-MS computer, open Enhanced Data Analysis File &gt; Export Data To .AIA Format, Create New Directory (“OK”) &gt; Desktop (create a folder with a name you will remember) Select all the datafiles...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CDF export | Integrated Bioanalytics">
+<meta name="twitter:description" content="On the GC-MS computer, open Enhanced Data Analysis File &gt; Export Data To .AIA Format, Create New Directory (“OK”) &gt; Desktop (create a folder with a name you will remember) Select all the datafiles...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">GETTING STARTED</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="embedding-models.html">embedding models</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="active" href="cdf-export.html">CDF export</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="cdf-export" class="section level1 unnumbered">
+<h1>CDF export<a class="anchor" aria-label="anchor" href="#cdf-export"><i class="fas fa-link"></i></a>
+</h1>
+<ol style="list-style-type: decimal">
+<li>On the GC-MS computer, open Enhanced Data Analysis</li>
+<li>File &gt; Export Data To .AIA Format, Create New Directory (“OK”) &gt; Desktop (create a folder with a name you will remember)</li>
+<li>Select all the datafiles you wish to analyze and process them, saving the output into the folder you just created</li>
+<li>Copy the .D files for the samples you wish to analyze to the same folder</li>
+<li>Move this folder to your personal computer</li>
+<li>Create one folder for each sample, and put the corresponding .CDF file into that folder.</li>
+</ol>
+<!-- end --><!-- # (PART) SEQUENCE DATA {-}
+
+# data acquisition {-}
+
+Updating MinKNOW on GridIon
+
+`sudo apt update`
+`sudo apt install ont-gridion-release`
+`sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub`
+
+# data transfer {-}
+
+Once you've completed a sequencing run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
+
+1. Identify which files are of interest/where they are in the system. Useful commands:
+
+Display all currently mounted filesystems (& their usage, storage space, mounting point):
+
+`df -h`
+
+Also:
+
+`lsblk -f`
+
+Display more data pertaining to the identification of disks. Can also change partitioning of hard disks:
+
+`sudo fdisk -l` 
+
+-Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
+
+2. Mounting
+
+-Use command:
+`sudo mount </dev/sd_> </file_path>`
+-Replace `</sd_>` with actual hard drive label and `/file_path` with the pathway for the location in which you want to mount the drive.
+-Make sure the location (`</file_path>`) is preexisting location. Use the `mkdir` command to make a new directory if necessary.
+
+3. Copy data
+
+-Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
+
+4. Additional Information
+
+bootable USB: https://rufus.ie/en/#
+
+
+# nanopore read assessment {-}
+
+With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
+
+
+``` r
+qc_data <- fastxQC(
+    paths_to_fastxs = c(
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",
+        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example2.fastq"
+    ),
+    type = "fasta",
+    mode = "slow",
+    max_n_seqs = 1000
+)
+
+head(qc_data)
+
+qc_data %>%
+  mutate(category = case_when(
+    length > mean(qc_data$length)*5 ~ "chromosome",
+    length <= mean(qc_data$length)*5 ~ "leftover_bit"
+  )) %>%
+  ggplot() +
+    geom_treemap(aes(area = length, fill = category), color = "black", size = 1) +
+    scale_fill_manual(values = c("gold", "maroon"))
+```
+
+--><!-- end --><hr>
+<hr>
+<hr>
+<!-- # (PART) SEQUENCE DATA {-} --><!-- start transcriptomic analyses --><!-- # transcriptome assembly {-}
+
+For nonmodel species transcriptome analysis, `transXpress` is recommended. We often use a modified version of `transXpress` we call `transXpressLite`. It uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpressLite` for it to run properly.
+
+1. Download the transXpressLite code into the directory in which you wish to perform the assembly:
+
+`git clone https://github.com/thebustalab/transXpressLite.git`
+
+2. Rename the downloaded folder to make it unique. Perhaps:
+
+`mv transXpressLite transXpressLite-kfed`
+
+2. Move into that directory and set up and activate the main transXpress environment:
+
+`cd transXpressLite-kfed`
+`conda create --name transxpress`
+`conda activate transxpress`
+
+3. Create a tab-separated file called *samples.txt* with the following contents. Important! Remember that there must be an empty line on the end of the samples.tex file.
+`
+cond_A    cond_A_rep1    A_rep1_left.fq    A_rep1_right.fq
+cond_A    cond_A_rep2    A_rep2_left.fq    A_rep2_right.fq
+cond_B    cond_B_rep1    B_rep1_left.fq    B_rep1_right.fq
+cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
+`
+
+4. Start `transXpressLite`:
+
+`./transXpress.sh`
+
+5. Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
+
+* all the sample name folders (ex. "fed_epi_hi_rep1")
+* samples.txt
+* samples_trimmed.txt
+* busco_report.txt
+* /transdecoder/longest_orfs.pep -> is actually "transcriptome.orfs" --><!-- 1. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
+`pip install "numpy<1.24.0"`
+ --><!-- 2. You also need to add targetp to the PATH variable in the transexpress environment:
+`export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
+ --><!-- end --><hr>
+<hr>
+<hr>
+<!-- # (PART) PROTEOME ANALYSIS {-} --><!-- start proteome analyses --><!-- ## structure similarity
+
+`conda create --name foldseek`
+`conda activate foldseek`
+`conda install -c conda-forge -c bioconda foldseek`
+ --><!-- end --><hr>
+<hr>
+<hr>
+<!-- # (PART) GENOME ANALYSIS {-} --><!-- start genomic analyses --><!-- # setup {-}
+
+* Get docker.
+
+https://hub.docker.com/
+
+* Connecting to remote host:
+
+Make sure the remote host has openSSH installed:
+
+`sudo apt install openssh-server`
+
+On the client computer (usually your laptop or something), first create the key:
+
+`ssh-keygen -t rsa`
+
+Then copy that key to the host (usually the computer you want to connect remotely to):
+
+`ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address`
+
+Done! Log in with `ssh {username}@host.address`
+
+* Initializing a conda environment:
+
+`conda create --name <name> python=3.6`
+`conda activate <name>`
+`conda install -c bioconda flye`
+`conda install -c bioconda abyss`
+
+# genome assembly {-}
+
+To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.
+
+## assembly
+
+
+### equipment
+
+Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may differ. To run a genome assembly, start by determining what computing resources are available. Some helpful commands when investigating these resources on Linux machines:
+
+* Assessing RAM (It is recommended to assign about 75% of available RAM to the assembly process):
+
+`grep MeMTotal /proc/meminfo`
+
+* Assessing CPU resources (note that "threads per CPU" can denote the availability of hyperthreading):
+
+`lscpu`
+
+* Assessing disk/storage space (Make sure you are running your assembly on a disk with lots of open space. Ideally > 2TB):
+
+`df -h`
+
+### assembly software
+
+#### abyss
+
+`abyss-pe k=111 name=SS1 B=10G in='SS1_1.fa SS1_2.fa'`
+
+A rough indicator is, for 2x150bp reads and 40x coverage, the right k value is often around 70 to 90. For 2x250bp reads and 40x coverage, the right value might be around 110 to 140.
+
+A good value for B depends on a number of factors, but primarily on the genome being assembled. A general guideline is: P. glauca (~20Gbp): B=500G; H. sapiens (~3.1Gbp): B=50G; C. elegans (~101Mbp): B=2G. Using more is fine though, 
+
+#### canu
+
+`docker pull staphb/canu-racon`
+
+For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
+
+`cat *.fastq > all_reads.fastq`
+
+Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
+
+
+``` r
+sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4
+```
+
+Notes on Canu options:
+
+Defaults:
+
+* minReadLength=1000
+* minOverlapLength=500bp
+* correctedErrorRate=0.114
+* stopOnLowCoverage <integer=10>
+
+Essentially only speed optimization:
+
+* For over 30X coverage:
+* Nanopore flip-flop R9.4 or R10.3: try: `corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105`
+* For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
+correctedErrorRate=0.12
+* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
+
+#### flye
+
+`docker pull staphb/flye`
+
+### kmer-based metrics
+
+Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data found in the .histogram files (i.e. in correction/0-mercounts/x.histogram, trimming/0-mercounts/x.histogram, unitigging/0-mercounts/x.histogram) and process them with `canuHistogramToKmerTable()`, as shown below. You can upload the output to : http://qb.cshl.edu/genomescope/genomescope2.0/. This will give you approximate genome size, ploidy, heterozygosity, repeat content, and read error rate. All good stuff to know!
+
+
+``` r
+canuHistogramToKmerTable(
+  file_in_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram",
+  file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
+)
+```
+
+Also check on this tutorial:
+
+[genomics tutorial](https://ucdavis-bioinformatics-training.github.io/2020-Genome_Assembly_Workshop/kmers/kmers)
+
+#### merqury
+
+`docker pull quay.io/chai/merqury`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
+
+References:
+https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
+Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
+
+## evaluating contigs
+
+Can these be merged into a single wrapper that can be run after each step in assembly/polishing/scaffolding etc?
+
+### BUSCO
+
+- Real BUSCO input will be /home/bust0037/data1/comparative_genomics/Kfedtschenkoi_382_v1.0.fa
+- Note BUSCO uses current working directory for input and output
+
+`docker pull ezlabgva/busco:v5.3.2_cv1`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
+`
+
+### quast
+
+Quast provides a score called ALE: alignment liklihood estimate.
+
+`docker pull longas/quast`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/:/tmp/work/quast_results longas/quast:latest quast.py -h`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/ben_test/_ben_genomes/:/tmp/work/quast_results longas/quast:latest quast.py --fragmented /tmp/work/quast_results/ben_pre_n_frust.contigs.fasta --nanopore /tmp/work/quast_results/all_pass_reads.fastq --space-efficient --memory-efficient --fast`
+
+## polishing contigs
+
+### medaka
+
+Pull the docker image:
+
+`docker pull ontresearch/medaka`
+
+Run medaka:
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/medaka/ ontresearch/medaka:latest medaka_consensus -i medaka/all_reads.fastq -d medaka/k_fed.contigs.fasta -b 50`
+
+Good documentation here: https://labs.epi2me.io/notebooks/Introduction_to_how_ONT's_medaka_works.html
+
+Medaka will:
+* Map all your raw reads. Look for feedback like: `[M::worker_pipeline::2924.325*0.25] mapped 75823 sequences`.
+* Do something else, updates in the form of: `21.7% Done (88.2/406.1 Mbases) in 6815.1s`.
+
+## methylation with remora
+
+can we call methylation status on our Kalanchoe genomes? -> yes, we can use Remora -> watch for new guppy release, MinKNOW integration -> currently in bonito
+
+```
+bonito basecaller dna_r10.4_e8.1_sup@v3.4 /data/reads --modified-bases 5mC --reference ref.mmi > basecalls_with_mods.bam
+bonito basecaller dna_r10.4_e8.1_sup@v3.4 --reference consensus.fasta --modified-bases 5mC
+```
+
+## scaffolding assembly
+
+### RagTag
+
+INSTALL PYTHON (or upgrade python) <- can this be done using docker?
+
+INSTALL BIOCONDA
+1. install miniconda:
+  curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  sh ...
+  
+## annotation
+
+### augustus
+
+see: https://hub.docker.com/r/pegi3s/autoaugustus/
+
+```
+docker pull pegi3s/autoaugustus
+```
+
+```
+sudo docker run --rm -v $(pwd):$(pwd) pegi3s/autoaugustus augustus --species=help
+sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species=tomato /augustus/consensus.fasta > consensus-preductions.gff --progress=TRUE
+```
+
+## final assessment
+
+https://www.molecularecologist.com/2017/03/29/whats-n50/
+
+### mosdepth
+
+`sudo docker pull quay.io/biocontainers/mosdepth:0.2.4--he527e40_0`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -h`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd gfanz/mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth --quantize 0:1:4:100:200: --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
+
+2. set up channels
+
+  /home/bust0037/miniconda3/bin/conda config --add channels defaults
+  /home/bust0037/miniconda3/bin/conda config --add channels bioconda
+  /home/bust0037/miniconda3/bin/conda config --add channels conda-forge
+
+3. install packages
+
+  /home/bust0037/miniconda3/bin/conda install sibeliaz
+  /home/bust0037/miniconda3/bin/conda install -c bioconda ragtag
+
+4. run your stuff
+
+  /home/bust0037/miniconda3/bin/conda run sibeliaz -n k_fed.contigs.scaffolded.fasta KlaxifloraFTBG2000359A_699_v3.0.fa
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  /home/bust0037/miniconda3/bin/conda run ragtag
+
+  ragtag.py
+
+
+  /home/bust0037/meryl-1.3/bin/meryl
+  /home/bust0037/merqury-1.3/merqury.sh
+
+sh $MERQURY/best_k.sh <genome_size>
+
+
+Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: --><div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># reads &lt;- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")</span></span>
+<span></span>
+<span><span class="co"># # post &lt;- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")</span></span>
+<span><span class="co"># n_chroms &lt;- 18</span></span>
+<span></span>
+<span><span class="co"># pb &lt;- progress::progress_bar$new(total = n_chroms)</span></span>
+<span></span>
+<span><span class="co"># out &lt;- list()</span></span>
+<span></span>
+<span><span class="co"># for (i in 1:n_chroms) {</span></span>
+<span></span>
+<span><span class="co">#   pb$tick()</span></span>
+<span></span>
+<span><span class="co">#   dat &lt;- strsplit(substr(as.character(post[i]), 1, 50000000), "")[[1]]</span></span>
+<span>  </span>
+<span><span class="co">#   b &lt;- rle(dat)</span></span>
+<span></span>
+<span><span class="co">#   # Create a data frame</span></span>
+<span><span class="co">#   dt &lt;- data.frame(number = b$values, lengths = b$lengths, scaff = i)</span></span>
+<span><span class="co">#   # Get the end</span></span>
+<span><span class="co">#   dt$end &lt;- cumsum(dt$lengths)</span></span>
+<span><span class="co">#   # Get the start</span></span>
+<span><span class="co">#   dt$start &lt;- dt$end - dt$lengths + 1</span></span>
+<span></span>
+<span><span class="co">#   # Select columns</span></span>
+<span><span class="co">#   dt &lt;- dt[, c("number", "start", "end", "scaff")]</span></span>
+<span><span class="co">#   # Sort rows</span></span>
+<span><span class="co">#   dt &lt;- dt[order(dt$number), ]</span></span>
+<span></span>
+<span><span class="co">#   dt %&gt;%</span></span>
+<span><span class="co">#     filter(number == "N") -&gt; N_dat</span></span>
+<span></span>
+<span><span class="co">#   out[[i]] &lt;- N_dat</span></span>
+<span></span>
+<span><span class="co"># }</span></span>
+<span></span>
+<span><span class="co"># out &lt;- do.call(rbind, out)</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># chroms &lt;- data.frame(</span></span>
+<span><span class="co">#   lengths = post@ranges@width[1:n_chroms],</span></span>
+<span><span class="co">#   scaff = seq(1,n_chroms,1)</span></span>
+<span><span class="co"># )</span></span>
+<span></span>
+<span><span class="co"># ggplot() +</span></span>
+<span><span class="co">#   statebins:::geom_rrect(data = chroms, aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +</span></span>
+<span><span class="co">#   geom_rect(data = out, aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +</span></span>
+<span><span class="co">#   facet_grid(scaff~.) +</span></span>
+<span><span class="co">#   scale_fill_viridis(end = 0.8) +</span></span>
+<span><span class="co">#   theme_classic()</span></span>
+<span></span>
+<span><span class="co"># ggplot() +</span></span>
+<span><span class="co">#   geom_rect(data = filter(chroms, scaff == 1 | scaff == 2), aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +</span></span>
+<span><span class="co">#   geom_rect(data = filter(out, scaff == 1 | scaff == 2), aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +</span></span>
+<span><span class="co">#   facet_grid(scaff~.) +</span></span>
+<span><span class="co">#   scale_y_continuous(limits = c(-2,2)) +</span></span>
+<span><span class="co">#   scale_fill_viridis(end = 0.8) +</span></span>
+<span><span class="co">#   theme_classic() +</span></span>
+<span><span class="co">#   coord_polar()</span></span></code></pre></div>
+<!-- # annotation {-} -->
+<!-- docker pull nanozoo/braker2 -->
+<!-- end -->
+<hr>
+<hr>
+<hr>
+</div>
+
+
+
+<div class="chapter-nav">
+<div class="prev"><a href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></div>
+<div class="next"><a href="homology.html">homology</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#cdf-export">CDF export</a></li></ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+</div>
+  
+
+  
+
+</div>
+ <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-24.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

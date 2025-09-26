@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>data visualization I | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data...">
+<meta name="generator" content="bookdown 0.44 with bs4_book()">
+<meta property="og:title" content="data visualization I | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="data visualization I | Integrated Bioanalytics">
+<meta name="twitter:description" content="Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">GETTING STARTED</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="active" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="embedding-models.html">embedding models</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="data-visualization-i" class="section level1 unnumbered">
+<h1>data visualization I<a class="anchor" aria-label="anchor" href="#data-visualization-i"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/tufte_train.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<p>Visualization is one of the most fun parts of working with data. In this section, we will jump into visualization as quickly as possible - after just a few prerequisites. Please note that data visualization is a whole field in and of itself (just google “data visualization” and see what happens). Data visualization is also rife with “trendy” visuals, misleading visuals, and visuals that look cool but don’t actually communicate much information. We will touch on these topics briefly, but will spend most of our time practicing how to represent our data in intuitive and interpretable ways. Let’s get started!</p>
+<div id="section" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="objects" class="section level2 unnumbered">
+<h2>objects<a class="anchor" aria-label="anchor" href="#objects"><i class="fas fa-link"></i></a>
+</h2>
+<p>In R, data is stored in objects. You can think of objects as if they were “files” inside an R session. <code>phylochemistry</code> provides a variety of objects for us to work with. Let’s look at how to create an object. For this, we can use an arrow: <code>&lt;-</code> . The arrow will take something and store it inside an object. For example:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new_object</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></code></pre></div>
+<p>Now we’ve got a new object called <code>new_object</code>, and inside of it is the number 1. To look at what’s inside an object, we can simply type the name of the object into the console:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new_object</span> </span>
+<span><span class="co">## [1] 1</span></span></code></pre></div>
+<p>Easy! Let’s look at one of the objects that comes with our class code base. What are the dimensions of the “algae_data” data set?</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">algae_data</span></span>
+<span><span class="co">## # A tibble: 180 × 5</span></span>
+<span><span class="co">##    replicate algae_strain harvesting_regime chemical_species</span></span>
+<span><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;           </span></span>
+<span><span class="co">##  1         1 Tsv1         Heavy             FAs             </span></span>
+<span><span class="co">##  2         1 Tsv1         Heavy             saturated_Fas   </span></span>
+<span><span class="co">##  3         1 Tsv1         Heavy             omega_3_polyuns…</span></span>
+<span><span class="co">##  4         1 Tsv1         Heavy             monounsaturated…</span></span>
+<span><span class="co">##  5         1 Tsv1         Heavy             polyunsaturated…</span></span>
+<span><span class="co">##  6         1 Tsv1         Heavy             omega_6_polyuns…</span></span>
+<span><span class="co">##  7         1 Tsv1         Heavy             lysine          </span></span>
+<span><span class="co">##  8         1 Tsv1         Heavy             methionine      </span></span>
+<span><span class="co">##  9         1 Tsv1         Heavy             essential_Aas   </span></span>
+<span><span class="co">## 10         1 Tsv1         Heavy             non_essential_A…</span></span>
+<span><span class="co">## # ℹ 170 more rows</span></span>
+<span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
+</div>
+<div id="functions" class="section level2 unnumbered">
+<h2>functions<a class="anchor" aria-label="anchor" href="#functions"><i class="fas fa-link"></i></a>
+</h2>
+<p>Excellent - we’ve got data. Now we need to manipulate it. For this we need functions:</p>
+<ul>
+<li>A function is a command that tells R to perform an action!</li>
+<li>A function begins and ends with parentheses: <code>this_is_a_function()</code>
+</li>
+<li>The stuff inside the parentheses are the details of how you want the function to perform its action: <code>run_this_analysis(on_this_data)</code>
+</li>
+</ul>
+<p>Let’s illustrate this with an example. <code>algae_data</code> is a pretty big object. For our next chapter on visualization, it would be nice to have a smaller dataset object to work with. Let’s use another <code>tidyverse</code> command called <code>filter</code> to filter the <code>algae_data</code> object. We will need to tell the filter command what to filter out using “logical predicates” (things like equal to: <code>==</code>, less than: <code>&lt;</code>, greater than: <code>&gt;</code>, greater-than-or-equal-to: <code>&lt;=</code>, etc.). Let’s filter <code>algae_data</code> so that only rows where the <code>chemical_species</code> is equal to <code>FAs</code> (fatty acids) is preserved. This will look like <code>chemical_species == "FAs"</code>. Here we go:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"FAs"</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 18 × 5</span></span>
+<span><span class="co">##    replicate algae_strain harvesting_regime chemical_species</span></span>
+<span><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;           </span></span>
+<span><span class="co">##  1         1 Tsv1         Heavy             FAs             </span></span>
+<span><span class="co">##  2         2 Tsv1         Heavy             FAs             </span></span>
+<span><span class="co">##  3         3 Tsv1         Heavy             FAs             </span></span>
+<span><span class="co">##  4         1 Tsv1         Light             FAs             </span></span>
+<span><span class="co">##  5         2 Tsv1         Light             FAs             </span></span>
+<span><span class="co">##  6         3 Tsv1         Light             FAs             </span></span>
+<span><span class="co">##  7         1 Tsv2         Heavy             FAs             </span></span>
+<span><span class="co">##  8         2 Tsv2         Heavy             FAs             </span></span>
+<span><span class="co">##  9         3 Tsv2         Heavy             FAs             </span></span>
+<span><span class="co">## 10         1 Tsv2         Light             FAs             </span></span>
+<span><span class="co">## 11         2 Tsv2         Light             FAs             </span></span>
+<span><span class="co">## 12         3 Tsv2         Light             FAs             </span></span>
+<span><span class="co">## 13         1 Tsv11        Heavy             FAs             </span></span>
+<span><span class="co">## 14         2 Tsv11        Heavy             FAs             </span></span>
+<span><span class="co">## 15         3 Tsv11        Heavy             FAs             </span></span>
+<span><span class="co">## 16         1 Tsv11        Light             FAs             </span></span>
+<span><span class="co">## 17         2 Tsv11        Light             FAs             </span></span>
+<span><span class="co">## 18         3 Tsv11        Light             FAs             </span></span>
+<span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
+<p>Cool! Now it’s just showing us the 18 rows where the chemical_species is fatty acids (FAs). Let’s write this new, smaller dataset into a new object. For that we use <code>&lt;-</code>, remember?</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">algae_data_small</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">algae_data</span>, <span class="va">chemical_species</span> <span class="op">==</span> <span class="st">"FAs"</span><span class="op">)</span></span>
+<span><span class="va">algae_data_small</span></span>
+<span><span class="co">## # A tibble: 18 × 5</span></span>
+<span><span class="co">##    replicate algae_strain harvesting_regime chemical_species</span></span>
+<span><span class="co">##        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;           </span></span>
+<span><span class="co">##  1         1 Tsv1         Heavy             FAs             </span></span>
+<span><span class="co">##  2         2 Tsv1         Heavy             FAs             </span></span>
+<span><span class="co">##  3         3 Tsv1         Heavy             FAs             </span></span>
+<span><span class="co">##  4         1 Tsv1         Light             FAs             </span></span>
+<span><span class="co">##  5         2 Tsv1         Light             FAs             </span></span>
+<span><span class="co">##  6         3 Tsv1         Light             FAs             </span></span>
+<span><span class="co">##  7         1 Tsv2         Heavy             FAs             </span></span>
+<span><span class="co">##  8         2 Tsv2         Heavy             FAs             </span></span>
+<span><span class="co">##  9         3 Tsv2         Heavy             FAs             </span></span>
+<span><span class="co">## 10         1 Tsv2         Light             FAs             </span></span>
+<span><span class="co">## 11         2 Tsv2         Light             FAs             </span></span>
+<span><span class="co">## 12         3 Tsv2         Light             FAs             </span></span>
+<span><span class="co">## 13         1 Tsv11        Heavy             FAs             </span></span>
+<span><span class="co">## 14         2 Tsv11        Heavy             FAs             </span></span>
+<span><span class="co">## 15         3 Tsv11        Heavy             FAs             </span></span>
+<span><span class="co">## 16         1 Tsv11        Light             FAs             </span></span>
+<span><span class="co">## 17         2 Tsv11        Light             FAs             </span></span>
+<span><span class="co">## 18         3 Tsv11        Light             FAs             </span></span>
+<span><span class="co">## # ℹ 1 more variable: abundance &lt;dbl&gt;</span></span></code></pre></div>
+<p>Here are a variety of ways to filter:</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt; 18)</code> ## less than 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &lt;= 18)</code> ## less than or equal to 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt; 18)</code> ## greater than 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; &gt;= 18)</code> ## greater than or equal to 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18)</code> ## equals than 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; != 18)</code> ## not equal to 18</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; == 18 | &lt;variable&gt; == 19)</code> ## equal to 18 or 19</p>
+<p><code>filter(&lt;data&gt;, &lt;variable&gt; %in% c(18, 19, 20))</code> ## equal to 18 or 19 or 20</p>
+</div>
+<div id="ggplot-geoms" class="section level2 unnumbered">
+<h2>ggplot &amp; geoms<a class="anchor" aria-label="anchor" href="#ggplot-geoms"><i class="fas fa-link"></i></a>
+</h2>
+<p>Now we have a nice, small table that we can use to practice data visualization. For visualization, we’re going to use <code>ggplot2</code> - a powerful set of commands for plot generation.</p>
+<p>There are three steps to setting up a ggplot:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Define the data you want to use.</strong></li>
+</ol>
+<p>We do this using the ggplot function’s data argument. When we run that line, it just shows a grey plot space. Why is this? It’s because all we’ve done is told ggplot that (i) we want to make a plot and (ii) what data should be used. We haven’t explained how to represent features of the data using ink.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-20-1.png" width="50%" style="display: block; margin: auto;"></div>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Define how your variables map onto the axes.</strong></li>
+</ol>
+<p>This is called aesthetic mapping and is done with the <code>aes()</code> function. <code>aes()</code> should be placed inside the <code>ggplot</code> command. Now when we run it, we get our axes!</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-21-1.png" width="50%" style="display: block; margin: auto;"></div>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Use geometric shapes to represent other variables in your data.</strong></li>
+</ol>
+<p>Map your variables onto the geometric features of the shapes. To define which shape should be used, use a <code>geom_*</code> command. Some options are, for example, <code>geom_point()</code>, <code>geom_boxplot()</code>, and <code>geom_violin()</code>. These functions should be added to your plot using the <code>+</code> sign. We can use a new line to keep the code from getting too wide, just make sure the <code>+</code> sign is at the end fo the top line. Let’s try it:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use <code>aes()</code> to map your variables onto the geometric features of the shapes:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-23-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the <code>geom_*()</code> functions. To change the size of the points created by the <code>geom_point()</code> function, this means that we need to add the <code>size =</code> argument. IMPORTANT! Please note that when we map a feature of a shape to a <em>variable</em> in our data(as we did with color/harvesting regime, above) then it goes <em>inside</em> aes(). In contrast, when we map a feature of a shape to a <em>constant</em>, it goes <em>outside</em> aes(). Here’s an example:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>One powerful aspect of <code>ggplot</code> is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>size <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-25-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>** Important note: Inside the <code>aes()</code> function, map aesthetics (the features of the geom’s shape) to a <em>variable</em>. Outside the <code>aes()</code> function, map aesthetics to <em>constants</em>. You can see this in the above two plots - in the first one, color is inside <code>aes()</code> and mapped to the variable called harvesting_regime, while size is outside the <code>aes()</code> call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the <code>aes()</code> function and mapped to the variable harvesting_regime, while color is outside the <code>aes()</code> call and is mapped to the constant “black”.</p>
+<p>We can also stack geoms on top of one another by using multiple <code>+</code> signs. We also don’t have to assign the same mappings to each geom.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_violin</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">algae_strain</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">harvesting_regime</span>, size <span class="op">=</span> <span class="va">replicate</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="50%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">algae_data_small</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">algae_strain</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-28-1.png" width="50%" style="display: block; margin: auto;"></div>
+</div>
+<div id="markdown" class="section level2 unnumbered">
+<h2>markdown<a class="anchor" aria-label="anchor" href="#markdown"><i class="fas fa-link"></i></a>
+</h2>
+<p>Now that we are able to filter our data and make plots, we are ready to make reports to show others the data processing and visualization that we are doing. For this, we will use R Markdown. You can open a new markdown document in RStudio by clicking: <code>File -&gt; New File -&gt; R Markdown</code>. You should get a template document that compiles when you press “knit”.</p>
+<p>Customize this document by modifying the title, and add <code>author: "your_name"</code> to the header. Delete all the content below the header, then compile again. You should get a page that is blank except for the title and the author name.</p>
+<p>You can think of your markdown document as a stand-alone R Session. This means you will need to load our class code base into each new markdown doument you create. You can do this by adding a “chunk” or R code. That looks like this:</p>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/markdown_1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>You can compilie this document into a pdf. We can also run R chunks right inside the document and create figures. You should notice a few things when you compile this document:</p>
+<ol style="list-style-type: decimal">
+<li><p>Headings: When you compile that code, the “# My first analysis” creates a header. You can create headers of various levels by increasing the number of hashtags you use in front of the header. For example, “## Part 1” will create a subheading, “### Part 1.1” will create a sub-subheading, and so on.</p></li>
+<li><p>Plain text: Plain text in an R Markdown document creates a plan text entry in your compiled document. You can use this to explain your analyses and your figures, etc.</p></li>
+<li><p>You can modify the output of a code chunk by adding arguments to its header. Useful arguments are fig.height, fig.width, and fig.cap. Dr. Busta will show you how to do this in class.</p></li>
+</ol>
+<!-- ## exercises {-}
+
+In this set of exercises we're going to practice filtering and plotting data in R Markdown. We're going to work with two datasets: (i) algae_data and (ii) alaska_lake_data. **For these exercises, you will write your code and answers to all questions in an R Markdown report, compile it as a pdf, and submit it on Canvas. If you have any questions please let me know**
+
+Some pointers:
+
+- If your code goes off the page, don't be afraid to wrap it across multiple lines, as shown in some of the examples.
+
+- Don't be afraid to put the variable with the long elements / long text on the y-axis and the continuous variable on the x-axis.
+
+### algae {-}
+
+1. You will have `algae_data` stored in an object called `algae_data` as soon as you run `source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")`. For this question, filter the data so that only entries are shown for which the `chemical_species` is "FAs" (remember that quotes are needed around FAs here!). What are the dimensions (i.e. number of rows and columns) of the resulting dataset?
+
+
+
+2. Now filter the original dataset (`algae_data`) so that only entries for the `algae_strain` "Tsv1" are shown. What are the dimensions of the resulting dataset?
+
+
+
+3. Now filter the original dataset (`algae_data`) so that only entries with an abundance greater than 250 are shown. Note that `>` can be used in the filter command instead of `==`, and that numbers inside a filter command do not require quotes around them. What are the dimensions of the resulting dataset?
+
+
+
+4. Use the original dataset (`algae_data`) to make a ggplot that has `algae_strain` on the x axis and `abundance` on the y axis. Remember about `aes()`. Use points (`geom_point()`) to represent each compound. You don't need to color the points. Which algae strain has the most abundant compound out of all the compounds in the dataset?
+
+
+
+5. Make a ggplot that has `abundance` on the x axis and `chemical_species` on the y axis. Use points to represent each compound. You don't need to color the points. Generally speaking, what are the two most abundant classes of chemical species in these algae strains? (FAs/Fas stand for fatty acids, AAs/Aas stand for amino acids.)
+
+
+
+6. I am going to show you an example of how you can filter and plot at the same time. To do this, we nest the filter command inside ggplot's data argument:
+
+
+``` r
+ggplot(
+  data = filter(algae_data, chemical_species == "essential_Aas"),
+  aes(x = algae_strain, y = abundance)) +
+geom_point()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-35-1.png" width="100%" style="display: block; margin: auto;" />
+
+Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
+
+
+
+7. Use a combination of filtering and plotting to show the abundance of the different chemical species in just the `algae_strain` called "Tsv1". Use an x and y axis, as well as points to represent the measurements. Make point size correspond to the replicate, and color the points according to harvesting regime.
+
+
+
+8. Make a plot that checks to see which `chemical_species` were more abundant under light as opposed to heavy `harvesting_regime` in all three replicates. Use filtered data so that just one `algae_strain` is shown, an x and a y axis, and points to represent the measurements. Make the points `size = 5` and also set the point's `alpha = 0.6`. The points should be colored according to harvesting_regime. Make 3 plots, one for each strain of algae.
+
+
+
+
+
+
+
+9. Take the code that you made for the question above. Remove the filtering. Add the following line to the end of the plot: `facet_grid(.~algae_strain)`. Remember that adding things to plots is done with the `+` sign, so your code should look something like:
+
+
+``` r
+ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
+  geom_point(aes(<some things>), <some here too>) +
+  facet_grid(.~algae_strain)
+```
+
+
+
+Also try, instead of `facet_grid(.~algae_strain)`, `facet_grid(algae_strain~.)` at the end of you plot command. (note the swap in the position of the `.~` relative to `algae_strain`). This means your code should look something like:
+
+
+``` r
+ggplot(data = algae_data, aes(x = <something>, y = <something else>)) +
+  geom_point(aes(<some things>), <some here too>) +
+  facet_grid(algae_strain~.)
+```
+
+
+
+What advantages does this one extra line (i.e. facet_grid) provide over what you had to do in question 8?
+
+### alaska lakes {-}
+
+1. Use R to view the first few lines of the `alaska_lake_data` dataset. Do your best to describe, in written format, the kind of data that are in this data set.
+
+
+
+2. How many variables are in the Alaska lakes dataset?
+
+
+
+3. Filter the data set so only meausurements of free elements (i.e. element_type is "free") are shown. Remember, it's `==`, not `=`. What are the dimensions of the resulting dataset?
+
+
+
+4. Make a plot that shows the water temperatures of each lake. Don't worry if you get a warning message from R about "missing values". Which is the hottest lake? The coolest?
+
+
+
+5. Make a plot that shows the water temperature of each lake. The x axis should be `park`, the y axis `water temp`. Add geom_violin() to the plot first, then geom_point(). Make the points size = 5. Color the points according to water_temp. Which park has four lakes with very similar temperatures?
+
+
+
+6. From the plot you made for question 5, it should be apparent that there is one lake in NOAT that is much warmer than the others. Filter the data so that only entries from `park == "NOAT"` are shown (note the double equals sign and the quotes around NOAT...). Combine this filtering with plotting and use geom_point() to make a plot that shows which specific lake that is.
+
+
+
+7. Make a plot that shows which lake has the highest abundance of sulfur.
+
+
+
+8. Make a plot that uses geom_point(). Set the "shape" aesthetic of the points to 21, i.e. `geom_point(aes(...), shape = 21)`. This gives you access to a new aesthetics: `fill`. It also changes the behaviour of the `color` aesthetic slightly, in that it now controls border color, not the internal color. Here is an example (though it doesn't make a very nice plot):
+
+
+``` r
+ggplot(
+  data = filter(alaska_lake_data, lake == "Lake_Narvakrak"),
+  aes(x = lake, y = mg_per_L)
+) +
+  geom_point(
+    shape = 21, size = 10,
+    color = "black", fill = "green"
+  )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-52-1.png" width="100%" style="display: block; margin: auto;" />
+
+Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
+
+
+
+When you are done with this plot, take a screen shot of it. Go to [THIS GOOGLE SHEET](https://docs.google.com/presentation/d/1G0BJ_qye9a_HAPLktFytj66qSj20BjoUOTKtjmCyuN0/edit?usp=sharing), make a slide for yourself (you don't have to include your name), and paste your screen shot there. Add a small caption that explains how your variables are mapped. --><!-- end --><!-- start data visualization II -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="installation.html">installation</a></div>
+<div class="next"><a href="data-visualization-ii.html">data visualization II</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#data-visualization-i">data visualization I</a></li>
+<li><a class="nav-link" href="#section"></a></li>
+<li><a class="nav-link" href="#objects">objects</a></li>
+<li><a class="nav-link" href="#functions">functions</a></li>
+<li><a class="nav-link" href="#ggplot-geoms">ggplot &amp; geoms</a></li>
+<li><a class="nav-link" href="#markdown">markdown</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-24.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

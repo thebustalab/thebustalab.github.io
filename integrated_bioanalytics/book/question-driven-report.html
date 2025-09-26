@@ -63,10 +63,10 @@
 <li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
 <li class="book-part">STATISTICAL METHODS</li>
 <li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
-<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
-<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
 <li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="embedding-models.html">embedding models</a></li>
@@ -79,7 +79,6 @@
 <li><a class="" href="alignments.html">alignments</a></li>
 <li><a class="" href="phylogenies.html">phylogenies</a></li>
 <li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
-<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
 <li class="book-part">ANALYTICAL REPORTS</li>
 <li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
 <li><a class="active" href="question-driven-report.html">question-driven report</a></li>
@@ -247,27 +246,6 @@
 <!-- ### other thoughts --><!-- * Somewhere in the discussion, be sure to list out what any unsolved problems you faced are. --><!-- end --><!-- start Conclusions --><!-- # conclusion and introduction {-} --><!-- * Objective (conclusion): to convey a short statement of the take-home messages of your study. What are the most important things that you want the reader to remember from your study? --><!-- * Objective (introduciton): to prepare the reader by giving the reader sufficient background to understand the study as a whole. It therefore should only contain information pertinent to understanding the study and its broader significance.  --><!-- * Make sure that the scope of your introduction is in-line with the scope of the conclusion. That way, the reader will not be underwhelmed, nor will your work be undersold. --><!-- ## structure {-} --><!-- **Conclusion:** --><!-- * *One paragraph* --><!--   <!-- first sentence of the conclusion should be a restatment of the goal --><!--   + **2-3**: Summarize over-arching conclusions from each section of the paper (omit the details described in results or discussion) --><!--   + **2-3**: Based on a general description of findings, use pros and cons to argue for, if possible, alternative hypotheses. --><!--   + **1-2**: Suggest experiments to test these hypotheses. --><!--   + **1-2**: Describe future directions. --><!-- <!-- * Integrate over-arching conclusions to discuss new avenues, i.e. integrating chain length specificity and secondary functional group installation to discuss how both might affect physical properties of wax mixtures, then how these might have evolved. --><!-- **Introduction:** --><!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} --><!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/knowledge_gaps.jpeg', dpi = NA) --><!-- ``` --><!-- * *Paragraph 1: Introduce the topic* --><!--   + **1**: Introduce a topic and, ideally, an application of the research you will describe. Grab reader's attention. --><!--   + **1**: State why the topic is important. --><!--   + **1**: Describe what is known about the topic (at least, as pertains to the work at hand). --><!--   + **1**: Identify a gap in knowledge: "despite research in this area, here is what we don't know about the topic." --><!--   + **1**: List the negative things that will happen if we don't fill this gap in knowledge. --><!-- * *Paragraph 2: Provide background information* --><!--   + **3-5**: Describe, in moderate detail, the background information (concepts, literature) relevant to the study. --><!--   + **1**: End by saying how the details you just described relate to the application/topic described in the first paragraph. --><!-- * *Paragraph 3: Objectives of this study* --><!--   + **1**: State the objective of this study. --><!--   + **1**: Briefly describe what was done and the techniques or instruments used. --><!--   + **1-2**: For this project, briefly describe where you got the data, how you cleaned it up, if you merged multiple datasets, etc. --><!--   + **1**: (optional) State the major conclusion from the work and what it means for the application described in paragraph 1. --><!-- ## suggestions {-} --><!--   + If something is well-established, say so. --><!--   + Be clear about what is speculation. --><!--   + Last paragraph can mention objectives in list form. --><!--   + Last sentence can briefly mention methods (specific techniques or instruments) that were used. --><!-- end --><!-- start Abstract --><!-- # abstract and title {-} --><!-- ## abstract --><!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} --><!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/abstract_guide.jpeg', dpi = NA) --><!-- ``` --><!-- * **Structure** *One paragraph* Use about 200 - 500 words (ideally no more than 400 words) --><!--   + **1-2 sentences**: Introduction: Describe the topic, the motivation, and overall purpose of the research (Why is this research interesting and important? What gap in our knowledge does it fill?) --><!--   + **1-2 sentences**: Objective: Specific research objective, and potentially hypotheses/predictions, if any. --><!--   + **1-2 sentences**: Methods: Very concise overview of the methods used to address the research questions. --><!--   + **2-3 sentences**: Results/Discussion: Describe the major results (what you found) and interpretation of the results (what the results mean). --><!--   + **1-2 sentences**: Conclusions: Synthesizes the major contributions of the study into the context of the larger field to which the study belongs. What did we learn about the bigger picture of this field in general from doing this study? --><!-- * **Function: an abstract proves a short summary of the entire study.** The abstract should include the motivation or reason for conducting the study, what the research question or hypothesis was, how the experiments were conducted, what the results were, how the results are interpreted in light of the research question or hypothesis, and a concluding sentence about the general contribution or importance of the study. A good abstract should: --><!--   + Inform readers about the article’s content --><!--   + Summarize complex information in a clear, concise manner --><!--   + Help readers decide whether or not to read the article --><!--   + Used in conferences to summarize what the speaker will say during his/her presentation --><!-- ### other thoughts --><!-- * Whatever you identify as the strongest sentences in the main text, make sure those are reflected in the abstract --><!-- ## further reading {-} --><!-- * [Titles Guide](https://libguides.usc.edu/writingguide/title) --><!-- * [Abstract Guide] (https://www.cbs.umn.edu/sites/default/files/public/downloads/Annotated_Nature_abstract.pdf) --><!-- end --><hr>
 <hr>
 <hr>
-<!-- # (PART) IMAGE ANALYSIS {-} --><!-- start IMAGE ANALYSIS --><!-- # image color analysis {-}
-
-For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
-
-
-``` r
-analyzeImage(
-  share_link = "https://drive.google.com/file/d/1rvfh9_DqEWlpaegGwfLZLdjjYEDlM0ZL/view?usp=sharing",
-  monolist_out_path = "/Users/bust0037/Desktop/output.csv"
-)
-```
-
-# images of mass spectra {-}
-
-
-``` r
-# analyzeMassSpectralImages()
-```
- --><!-- end --><hr>
-<hr>
-<hr>
 </div>
 </div>
 </div>
@@ -320,7 +298,7 @@ analyzeImage(
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-24.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-25.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

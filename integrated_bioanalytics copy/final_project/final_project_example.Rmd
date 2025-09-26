@@ -1,0 +1,110 @@
+---
+title: "Analysis of Cars"
+author: "Lucas Busta"
+date: "11/10/2021"
+output: pdf_document
+---
+
+```{r, echo = FALSE, message = FALSE}
+source("http://thebustalab.github.io/phylochemistry/phylochemistry.R")
+```
+
+# Abstract
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed velit sapien. Suspendisse potenti. Integer iaculis eu lorem ac laoreet. Integer turpis erat, vehicula id ex a, vehicula fermentum nibh. Curabitur aliquam sed mi sed euismod. Sed tincidunt felis a nulla euismod pulvinar. Pellentesque vitae luctus ante, feugiat ultricies elit. Praesent gravida bibendum enim, nec condimentum risus placerat eget. Maecenas augue elit, bibendum sit amet mi id, dapibus ullamcorper nisi. Cras ornare consequat commodo. Aliquam tristique varius nulla euismod pharetra. Quisque eu arcu consequat nulla faucibus sagittis. Morbi tincidunt libero eros, et iaculis mi feugiat iaculis. Cras in lorem ut mauris ultricies rhoncus lobortis et augue. Vestibulum cursus elit mi, eu porta erat iaculis id. Suspendisse pretium a diam quis hendrerit. Vivamus quam arcu, egestas ac commodo eget, interdum et elit. Nunc eget feugiat felis, vel aliquet augue. Suspendisse non condimentum sem. Suspendisse vitae dictum orci. Donec imperdiet facilisis augue, vel sagittis dui finibus in. Etiam luctus porta diam, quis lacinia odio mattis in. Vestibulum posuere venenatis neque tempus gravida.
+
+# Introduction
+
+Aliquam malesuada lectus volutpat semper porta. Morbi et tincidunt leo. Donec ullamcorper tristique mi. Ut placerat tincidunt accumsan. Cras mollis nunc nibh, vel posuere risus blandit id. Cras sed urna ultrices, malesuada nunc non, faucibus mi. Sed et lacinia magna. Mauris sodales mauris a purus consectetur congue. In id sodales nunc. Mauris velit ligula, iaculis sed mollis at, congue sit amet lacus. Integer et purus vel orci ullamcorper euismod.
+
+Proin sit amet imperdiet dolor. Mauris dolor nisl, sollicitudin vel tempor ac, fringilla eu dolor. Quisque rutrum ultrices auctor. Sed faucibus congue urna, nec porttitor lectus interdum non **[1]**. Vivamus tempus nulla ut risus venenatis, sed fringilla elit dapibus. Sed venenatis non purus vel scelerisque. Integer nec ante sed massa efficitur molestie rhoncus in turpis. Nam mi tortor, semper non ante nec, pretium dictum magna. Aenean nec mi aliquam, placerat ligula eu, finibus ante. Cras eu lectus quis sapien eleifend tempus. Ut id aliquam purus. Sed non ligula quis dolor pharetra luctus. Praesent lacinia sagittis mattis. Quisque porta odio id enim rutrum, eget facilisis leo ultricies. Curabitur condimentum velit nec augue sagittis efficitur. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+
+Etiam auctor sagittis laoreet. Mauris tempor congue tellus, eget consequat augue pharetra eu. Sed elit eros, posuere nec posuere ut, lacinia id tortor. Donec tincidunt magna et leo tincidunt molestie **[2]**. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus **[3]**. Nullam eget ex nisi. Aenean vestibulum id lacus a venenatis. Aliquam rutrum, lacus congue fringilla fringilla, nulla nibh viverra leo, a auctor lectus augue sit amet dui.
+
+Fusce non maximus lorem, sed gravida leo. Vestibulum posuere vehicula enim. Curabitur quis dui eu lectus cursus tincidunt sed venenatis nulla. Suspendisse enim turpis, dictum non convallis vestibulum, faucibus in neque. Quisque elementum lacus et lacinia aliquet. Quisque blandit arcu ac ipsum vulputate, in tincidunt leo dapibus. Duis ac bibendum dui, sit amet bibendum neque. Curabitur a lorem faucibus, commodo erat in, pellentesque lorem. Interdum et malesuada fames ac ante ipsum primis in faucibus. Integer pulvinar felis at turpis porttitor, at eleifend mi pellentesque. Fusce pellentesque lacinia lectus, ac rhoncus nunc. Aenean interdum nunc eu pretium malesuada. Sed vel tristique mi. Curabitur scelerisque eu nisl sit amet porta.
+
+Aliquam erat volutpat. Nam convallis tortor a odio tristique, eget venenatis orci dapibus. Vestibulum quis justo ac eros facilisis ullamcorper sit amet eu purus. Praesent non augue sit amet tortor gravida semper at et elit. Maecenas dictum odio dui, tincidunt scelerisque purus maximus ut **[4]**. Fusce in pulvinar felis, eget finibus odio. Ut vitae fringilla libero. Nunc placerat pretium pharetra. Fusce egestas ut purus sed facilisis. Duis fringilla tortor et tortor cursus, et pellentesque arcu molestie **[5]**. Vestibulum blandit mi mauris, id consectetur odio congue a. Nullam volutpat ultrices nibh sed venenatis. Quisque sed scelerisque velit.
+
+### Question 1: Aliquam erat volutpat. Nam convallis tortor a odio tristique, eget venenatis orci dapibus?
+
+### Question 2: Fusce in pulvinar felis, eget finibus odio. Ut vitae fringilla libero?
+
+### Question 3: Vestibulum blandit mi mauris, id consectetur odio congue a?
+
+Duis in sagittis quam. Aliquam a ante sit amet eros varius fringilla. Morbi lacinia tempor lorem, a interdum magna egestas nec. Proin nisl metus, suscipit nec dignissim quis, gravida id mi. Suspendisse potenti. Cras venenatis sit amet quam ut mollis. In interdum volutpat ipsum in bibendum.
+
+Suspendisse interdum ullamcorper aliquam. Quisque eros justo, vestibulum eu massa at, consequat blandit nunc. Integer tincidunt ipsum luctus bibendum bibendum. Sed a convallis nunc. Donec ullamcorper sapien ac finibus tempus. Donec interdum tempor elit et consectetur. Nullam egestas faucibus ipsum, id imperdiet metus imperdiet sit amet. Etiam id lectus non orci iaculis varius. Nulla a ornare risus, a pharetra arcu. Suspendisse facilisis at ante ac convallis.
+
+\newpage
+
+# Results and Discussion
+
+## Nullam in turpis mauris.
+
+Suspendisse non eleifend diam. Duis commodo diam in nisl tristique consectetur. Vestibulum eget consectetur turpis. Donec quis pretium diam. Phasellus non malesuada libero, non tristique tortor. Aenean bibendum nec sapien non placerat. Vestibulum vitae lacinia ligula. Cras vel consequat turpis, vitae ultrices nunc. Ut facilisis nunc vel iaculis hendrerit. Pellentesque eget neque non justo ullamcorper dapibus a et augue. Suspendisse ultrices, purus ut faucibus sagittis, ligula est vehicula enim, ac fringilla turpis felis porttitor magna. Fusce tincidunt sapien eget turpis consequat rhoncus.
+
+Nullam non justo erat. Suspendisse tempor non neque tristique venenatis. Suspendisse quam dui, placerat dapibus iaculis ut, rhoncus ut metus. Aenean commodo purus quis leo dignissim auctor. Nullam finibus sit amet velit sit amet dictum. Suspendisse ornare urna non interdum sodales. Nam rutrum fringilla egestas. Aenean molestie condimentum auctor. Sed dictum lobortis purus, eu suscipit mauris mattis eget. Integer tincidunt iaculis sapien et semper. Duis molestie scelerisque ligula sit amet condimentum. Vivamus ut velit id urna tempus viverra ac nec mauris. Sed lobortis nisi vel arcu placerat efficitur.  
+
+```{r, echo = FALSE}
+head(mtcars, 4)
+```
+
+Etiam auctor sagittis laoreet. Mauris tempor congue tellus, eget consequat augue pharetra eu. Sed elit eros, posuere nec posuere ut, lacinia id tortor. Donec tincidunt magna et leo tincidunt molestie. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus. Nullam eget ex nisi. Aenean vestibulum id lacus a venenatis. Aliquam rutrum, lacus congue fringilla fringilla, nulla nibh viverra leo, a auctor lectus augue sit amet dui. Etiam auctor sagittis laoreet. Mauris tempor congue tellus, eget consequat augue pharetra eu. Sed elit eros, posuere nec posuere ut, lacinia id tortor. Donec tincidunt magna et leo tincidunt molestie **(Fig. 1)**. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus. Nullam eget ex nisi. Aenean vestibulum id lacus a venenatis. Aliquam rutrum, lacus congue fringilla fringilla, nulla nibh viverra leo, a auctor lectus augue sit amet dui.
+
+```{r, echo = FALSE, fig.height = 2, fig.width = 4, fig.align = "center"}
+ggplot(mtcars, aes(x = mpg, y = factor(cyl))) +
+  geom_violin(aes(fill = factor(cyl))) +
+  geom_point() +
+  theme_classic() +
+  scale_y_discrete(name = "Number of cylinders (n)") +
+  scale_x_continuous(name = "Gas mileage (mpg)") +
+  scale_fill_brewer(palette = "Set1", guide = "none")
+```
+*Figure 1: Donec tincidunt magna et leo tincidunt molestie. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus. Nullam eget ex nisi. Aenean vestibulum id lacus a venenatis. Aliquam rutrum, lacus congue fringilla fringilla, nulla nibh viverra leo, a auctor lectus augue sit amet dui. Etiam auctor sagittis laoreet. Mauris tempor congue tellus, eget consequat augue pharetra eu. Sed elit eros, posuere nec posuere ut, lacinia id tortor.*
+
+Pellentesque vitae luctus ante, feugiat ultricies elit. Praesent gravida bibendum enim, nec condimentum risus placerat eget. Maecenas augue elit, bibendum sit amet mi id, dapibus ullamcorper nisi. Cras ornare consequat commodo. Aliquam tristique varius nulla euismod pharetra. Quisque eu arcu consequat nulla faucibus sagittis. Morbi tincidunt libero eros, et iaculis mi feugiat iaculis. Cras in lorem ut mauris ultricies rhoncus lobortis et augue.
+
+## Suspendisse tempor non neque tristique venenatis.
+
+Suspendisse quam dui, placerat dapibus iaculis ut, rhoncus ut metus. Aenean commodo purus quis leo dignissim auctor. Nullam finibus sit amet velit sit amet dictum. Suspendisse ornare urna non interdum sodales. Nam rutrum fringilla egestas. Praesent gravida bibendum enim, nec condimentum risus placerat eget. Maecenas augue elit, bibendum sit amet mi id, dapibus ullamcorper nisi. Cras ornare consequat commodo. Aliquam tristique varius nulla euismod pharetra. Quisque eu arcu consequat nulla faucibus sagittis. Morbi tincidunt libero eros, et iaculis mi feugiat iaculis. Cras in lorem ut mauris ultricies rhoncus lobortis et augue. Vestibulum cursus elit mi, eu porta erat iaculis id. Suspendisse pretium a diam quis hendrerit. Vivamus quam arcu, egestas ac commodo eget, interdum et elit.
+
+Proin sit amet imperdiet dolor. Mauris dolor nisl, sollicitudin vel tempor ac, fringilla eu dolor. Quisque rutrum ultrices auctor. Sed faucibus congue urna, nec porttitor lectus interdum non **[2]**. Vivamus tempus nulla ut risus venenatis, sed fringilla elit dapibus. Sed venenatis non purus vel scelerisque. Integer nec ante sed massa efficitur molestie rhoncus in turpis. Nam mi tortor, semper non ante nec, pretium dictum magna. Aenean nec mi aliquam, placerat ligula eu, finibus ante. Cras eu lectus quis sapien eleifend tempus. Ut id aliquam purus. Sed non ligula quis dolor pharetra luctus. Praesent lacinia sagittis mattis. Quisque porta odio id enim rutrum, eget facilisis leo ultricies. Curabitur condimentum velit nec augue sagittis efficitur. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+
+Praesent gravida bibendum enim, nec condimentum risus placerat eget. Maecenas augue elit, bibendum sit amet mi id, dapibus ullamcorper nisi. Cras ornare consequat commodo. Aliquam tristique varius nulla euismod pharetra **(Fig. 2)**. Quisque eu arcu consequat nulla faucibus sagittis. Morbi tincidunt libero eros, et iaculis mi feugiat iaculis. Cras in lorem ut mauris ultricies rhoncus lobortis et augue. Vestibulum cursus elit mi, eu porta erat iaculis id. Suspendisse pretium a diam quis hendrerit.
+
+```{r, echo = FALSE, fig.height = 2, fig.width = 4, fig.align = "center"}
+ggplot(mtcars, aes(x = disp, y = hp)) +
+  geom_point(size = 4) +
+  theme_bw() +
+  scale_y_continuous(name = "Horsepower (hp)") +
+  scale_x_continuous(name = "Engine displacement (cu. in.)") +
+  scale_fill_brewer(palette = "Set1", guide = "none")
+```
+
+*Figure 2: Donec tincidunt magna et leo tincidunt molestie. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus. Nullam eget ex nisi. Aenean vestibulum id lacus a venenatis. Aliquam rutrum, lacus congue fringilla fringilla, nulla nibh viverra leo, a auctor lectus augue sit amet dui. Etiam auctor sagittis laoreet. Mauris tempor congue tellus, eget consequat augue pharetra eu. Sed elit eros, posuere nec posuere ut.*
+
+Etiam auctor sagittis laoreet. Mauris tempor congue tellus, eget consequat augue pharetra eu. Sed elit eros, posuere nec posuere ut, lacinia id tortor. Donec tincidunt magna et leo tincidunt molestie. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus. Nullam eget ex nisi. Aenean vestibulum id lacus a venenatis. Aliquam rutrum, lacus congue fringilla fringilla, nulla nibh viverra leo, a auctor lectus augue sit amet dui.
+
+Aliquam erat volutpat. Nam convallis tortor a odio tristique, eget venenatis orci dapibus. Vestibulum quis justo ac eros facilisis ullamcorper sit amet eu purus. Praesent non augue sit amet tortor gravida semper at et elit. Maecenas dictum odio dui, tincidunt scelerisque purus maximus ut **[1, 3]**. Fusce in pulvinar felis, eget finibus odio. Ut vitae fringilla libero. Nunc placerat pretium pharetra. Fusce egestas ut purus sed facilisis. Duis fringilla tortor et tortor cursus, et pellentesque arcu molestie. Vestibulum blandit mi mauris, id consectetur odio congue a. Nullam volutpat ultrices nibh sed venenatis. Quisque sed scelerisque velit.
+
+Suspendisse non eleifend diam. Duis commodo diam in nisl tristique consectetur. Vestibulum eget consectetur turpis. Donec quis pretium diam. Phasellus non malesuada libero, non tristique tortor. Aenean bibendum nec sapien non placerat. Vestibulum vitae lacinia ligula. Cras vel consequat turpis, vitae ultrices nunc. Ut facilisis nunc vel iaculis hendrerit. Pellentesque eget neque non justo ullamcorper dapibus a et augue. Suspendisse ultrices, purus ut faucibus sagittis, ligula est vehicula enim, ac fringilla turpis felis porttitor magna. Fusce tincidunt sapien eget turpis consequat rhoncus.
+
+Nullam non justo erat. Suspendisse tempor non neque tristique venenatis. Suspendisse quam dui, placerat dapibus iaculis ut, rhoncus ut metus. Aenean commodo purus quis leo dignissim auctor. Nullam finibus sit amet velit sit amet dictum. Suspendisse ornare urna non interdum sodales. Nam rutrum fringilla egestas. Aenean molestie condimentum auctor. Sed dictum lobortis purus, eu suscipit mauris mattis eget. Integer tincidunt iaculis sapien et semper. Duis molestie scelerisque ligula sit amet condimentum. Vivamus ut velit id urna tempus viverra ac nec mauris. Sed lobortis nisi vel arcu placerat efficitur. 
+
+# Conclusion
+
+Donec tincidunt magna et leo tincidunt molestie. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus. Nullam eget ex nisi. Aenean vestibulum id lacus a venenatis. Aliquam rutrum, lacus congue fringilla fringilla, nulla nibh viverra leo, a auctor lectus augue sit amet dui. Etiam auctor sagittis laoreet. Mauris tempor congue tellus, eget consequat augue pharetra eu. Sed elit eros, posuere nec posuere ut, lacinia id tortor. Donec tincidunt magna et leo tincidunt molestie. Donec ut mauris congue, sollicitudin turpis eu, sagittis lectus. Nullam eget ex nisi.
+
+# References
+
+[1] Bajusz, D., et al., (2015), Journal of Cheminformatics, 7(1).
+
+[2] Wurtzel et al., (2016), Science, 353(6305).
+
+[3] Kader, G.D., et al., (2007), Journal of Statistics Education, 15(2).
+
+[4] Skinnider et al., (2017), Journal of Cheminformatics, 9(1).
+
+[5] Bero, S.A., et al., (2017), Journal of Physics: Conference Series, 892(1).
+
+[6] Martin, Y.C., et al., (2002), Journal of Medicinal Chemistry, 45(19).

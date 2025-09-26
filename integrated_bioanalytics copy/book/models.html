@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>models | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive. Inferential models aim to...">
+<meta name="generator" content="bookdown 0.39 with bs4_book()">
+<meta property="og:title" content="models | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive. Inferential models aim to...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="models | Integrated Bioanalytics">
+<meta name="twitter:description" content="Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive. Inferential models aim to...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.9/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA ANALYSIS IN R</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="clustering.html">clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="active" href="models.html">models</a></li>
+<li><a class="" href="midterm.html">midterm</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
+<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
+<li><a class="" href="transcriptome-assembly.html">transcriptome assembly</a></li>
+<li class="book-part">EVOLUTIONARY ANALYSIS</li>
+<li><a class="" href="similarity-searching.html">similarity searching</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">LANGUAGE MODELS</li>
+<li><a class="" href="completions.html">completions</a></li>
+<li><a class="" href="prompting-strategies.html">prompting strategies</a></li>
+<li><a class="" href="analyzeliterature.html">analyzeLiterature</a></li>
+<li class="book-part">SCIENTIFIC WRITING</li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html">results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html"><span class="header-section-number">2</span> datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="models" class="section level1 unnumbered">
+<h1>models<a class="anchor" aria-label="anchor" href="#models"><i class="fas fa-link"></i></a>
+</h1>
+<!-- explain cross validation and rmse in some sort of metrics section -->
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/models.png" width="100%" style="display: block; margin: auto;"></div>
+<p>Next on our quest to develop our abilities in analytical data exploration is modeling. We will discuss two main types of numerical models: inferential and predictive.</p>
+<ul>
+<li><p>Inferential models aim to understand and quantify the relationships between variables, focusing on the significance, direction, and strength of these relationships to draw conclusions about the data. When using inferential models we care a lot about the exact inner workings of the model because those inner workings are how we understand relationships between variables.</p></li>
+<li><p>Predictive models are designed with the primary goal of forecasting future outcomes or behaviors based on historical data. When using predictive models we often care much less about the exact inner workings of the model and instead care about accuracy. In other words, we don’t really care how the model works as long as it is accurate.</p></li>
+</ul>
+<p>In this course, we will build both types of models using a function called <code>buildModel</code>. To use it, we simply give it our data, and tell it which to sets of values we want to compare. To tell it what we want to compare, we need to specify (at least) two things:</p>
+<ul>
+<li><p>input_variables: the input variables (sometimes called “features” or “predictors”) the model should use as inputs for the prediction. Depending on the model, these could be continuous or categorical variables.</p></li>
+<li><p>output_variable: the variable that the model should predict. Depending on the model, it could be a continuous value (regression) or a category/class (classification).</p></li>
+</ul>
+<p>For model building, we also need to talk about handling missing data. If we have missing data in our data set, we need to one way forward is to impute it. This means that we need to fill in the missing values with something. There are many ways to do this, but we will use the median value of each column. We can do this using the <code>impute</code> function from the <code>rstatix</code> package. Let’s do that now:</p>
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## [1] TRUE</span></span>
+<span><span class="va">metabolomics_data</span><span class="op">[</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">metabolomics_data</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/impute.html">impute</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## [1] FALSE</span></span></code></pre></div>
+<div id="inferential-models" class="section level2 unnumbered">
+<h2>inferential models<a class="anchor" aria-label="anchor" href="#inferential-models"><i class="fas fa-link"></i></a>
+</h2>
+<div id="single-linear-regression" class="section level3 unnumbered">
+<h3>single linear regression<a class="anchor" aria-label="anchor" href="#single-linear-regression"><i class="fas fa-link"></i></a>
+</h3>
+<p>We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use <code>buildModel</code>, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:</p>
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>It looks like there might be a relationship! Let’s build an inferential model to examine the details of that that relationship:</p>
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">basic_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  input_variables <span class="op">=</span> <span class="st">"ADP"</span>,</span>
+<span>  output_variable <span class="op">=</span> <span class="st">"AMP"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">basic_regression_model</span><span class="op">)</span></span>
+<span><span class="co">## [1] "model_type" "model"      "metrics"</span></span></code></pre></div>
+<p>The output of <code>buildModel</code> consists of three things: the model_type, the model itself, and the metric describing certain aspects of the model and/or its performance. Let’s look at the model:</p>
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">model</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## lm(formula = formula, data = training_data, model = TRUE, x = TRUE, </span></span>
+<span><span class="co">##     y = TRUE, qr = TRUE)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Coefficients:</span></span>
+<span><span class="co">## (Intercept)          ADP  </span></span>
+<span><span class="co">##      4.5021       0.6763</span></span></code></pre></div>
+<p>This is a linear model stored inside a special object type inside R called an <code>lm</code>. They can be a bit tricky to work with, but we have a way to make it easier - we’ll look at that in a second. Before that, let’s look at the metrics.</p>
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">metrics</span></span>
+<span><span class="co">##               variable   value std_err        type  p_value</span></span>
+<span><span class="co">## 1            r_squared  0.4774      NA   statistic       NA</span></span>
+<span><span class="co">## 2    total_sum_squares 38.6346      NA   statistic       NA</span></span>
+<span><span class="co">## 3 residual_sum_squares 20.1904      NA   statistic       NA</span></span>
+<span><span class="co">## 4          (Intercept)  4.5021  0.9593 coefficient 9.46e-06</span></span>
+<span><span class="co">## 5                  ADP  0.6763  0.0742 coefficient 0.00e+00</span></span>
+<span><span class="co">##   p_value_adj</span></span>
+<span><span class="co">## 1          NA</span></span>
+<span><span class="co">## 2          NA</span></span>
+<span><span class="co">## 3          NA</span></span>
+<span><span class="co">## 4    9.46e-06</span></span>
+<span><span class="co">## 5    0.00e+00</span></span></code></pre></div>
+<p>It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).</p>
+<p>We can also use a function called <code>predictWithModel</code> to make some predictions using the model. Let’s try that for ADP and AMP. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of ADP for each value of AMP in our data set. We can do that like this:</p>
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">AMP_values_predicted_from_ADP_values</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">basic_regression_model</span><span class="op">$</span><span class="va">model</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span></span>
+<span><span class="co">##        1        2        3        4        5        6 </span></span>
+<span><span class="co">## 13.18473 13.35509 13.48334 13.42981 12.57305 13.18377</span></span></code></pre></div>
+<p>So, <code>predictWithModel</code> is using the model to predict AMP values from ADP. However, note that we have the measured AMP values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:</p>
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ADP_values</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span></span>
+<span></span>
+<span><span class="va">predictions_from_basic_linear_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>    ADP_values <span class="op">=</span> <span class="va">ADP_values</span>,</span>
+<span>    AMP_values_predicted_from_ADP_values <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span>,</span>
+<span>    AMP_values_measured <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">AMP</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">predictions_from_basic_linear_model</span>,</span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">predictions_from_basic_linear_model</span>,</span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="va">plot1</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-182-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>Very good. Now let’s talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.</p>
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_measured</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_measured</span>, xend <span class="op">=</span> <span class="va">ADP_values</span>, yend <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-183-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>We can calculate the sum of the squared residuals:</p>
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
+<span>  <span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">AMP_values_measured</span> <span class="op">-</span> <span class="va">predictions_from_basic_linear_model</span><span class="op">$</span><span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">## [1] 20.1904</span></span></code></pre></div>
+<p>Cool! Let’s call that the “residual sum of the squares”. So… does that mean our model is good? I don’t know. We have to compare that number to something. Let’s compare it to a super simple model that is just defined by the mean y value of the input data.</p>
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">AMP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-185-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>A pretty bad model, I agree. How much better is our linear model that the flat line model? Let’s create a measure of the distance between each point and the point predicted for that same x value on the model:</p>
+<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ADP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span>, xend <span class="op">=</span> <span class="va">ADP</span>, yend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ADP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span></span>
+<span>  <span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">AMP</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">AMP</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
+<span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">## [1] 38.63462</span></span></code></pre></div>
+<p>38.63! Wow. Let’s call that the “total sum of the squares”, and now we can compare that to our “residual sum of the squares”:</p>
+<div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fl">1</span><span class="op">-</span><span class="op">(</span><span class="fl">20.1904</span><span class="op">/</span><span class="fl">38.63</span><span class="op">)</span></span>
+<span><span class="co">## [1] 0.4773389</span></span></code></pre></div>
+<p>0.47! Alright. That is our R squared value. It is equal to 1 minus the ratio of the “residual sum of the squares” to the “total sum of the squares”. You can think of the R squared value as:
+- The amount of variance in the response explained by the dependent variable.
+- How much better the line of best fit describes the data than the flat line.
+Now, let’s put it all together and make it pretty:</p>
+<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">top</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">predictions_from_basic_linear_model</span>,</span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">predictions_from_basic_linear_model</span>,</span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>        data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"blue"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"table"</span>,</span>
+<span>      x <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>      y <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>      label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu">select</span><span class="op">(</span><span class="va">basic_regression_model</span><span class="op">$</span><span class="va">metrics</span>, <span class="va">variable</span>, <span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">16</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Coordinate system already present. Adding new coordinate</span></span>
+<span><span class="co">## system, which will replace the existing one.</span></span>
+<span></span>
+<span><span class="va">bottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">predictions_from_basic_linear_model</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP_values</span>, y <span class="op">=</span> <span class="va">AMP_values_measured</span><span class="op">-</span><span class="va">AMP_values_predicted_from_ADP_values</span><span class="op">)</span>,</span>
+<span>    width <span class="op">=</span> <span class="fl">0.03</span>, color <span class="op">=</span> <span class="st">"black"</span>, position <span class="op">=</span> <span class="st">"dodge"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html">plot_grid</a></span><span class="op">(</span><span class="va">top</span>, <span class="va">bottom</span>, ncol <span class="op">=</span> <span class="fl">1</span>, labels <span class="op">=</span> <span class="st">"AUTO"</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-188-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="multiple-linear-regression" class="section level3 unnumbered">
+<h3>multiple linear regression<a class="anchor" aria-label="anchor" href="#multiple-linear-regression"><i class="fas fa-link"></i></a>
+</h3>
+<p>Cool! Now let’s try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of y = m1x1 + m2x2 + … + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let’s try it with the first 30 metabolites in our data set:</p>
+<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">basic_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  input_variables <span class="op">=</span> <span class="st">"ADP"</span>,</span>
+<span>  output_variable <span class="op">=</span> <span class="st">"AMP"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">multiple_regression_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">33</span><span class="op">]</span>,</span>
+<span>  output_variable <span class="op">=</span> <span class="st">"AMP"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"gold"</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">AMP</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>, color <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>      data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>      model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>      model <span class="op">=</span> <span class="va">basic_regression_model</span><span class="op">$</span><span class="va">model</span></span>
+<span>    <span class="op">)</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"maroon"</span>, size <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>      data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>      model_type <span class="op">=</span> <span class="st">"linear_regression"</span>,</span>
+<span>      model <span class="op">=</span> <span class="va">multiple_regression_model</span><span class="op">$</span><span class="va">model</span></span>
+<span>    <span class="op">)</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"black"</span>, size <span class="op">=</span> <span class="fl">1</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+</div>
+<div id="predictive-models" class="section level2 unnumbered">
+<h2>predictive models<a class="anchor" aria-label="anchor" href="#predictive-models"><i class="fas fa-link"></i></a>
+</h2>
+<p>In the preceding section, we explored inferential models, highlighting the significance of grasping the quantitative aspects of the model’s mechanisms in order to understand relationships between variables. Now we will look at predictive models. Unlike inferential models, predictive models are typically more complex, often making it challenging to fully comprehend their internal processes. That is okay though, because when using predictive models we usually care most about their predictive accuracy, and are willing to sacrifice our quantitative understanding of the model’s inner workings to achieve higher accuracy.</p>
+<p>Interestingly, increasingly complex predictive models do not always have higher accuracy. If a model is too complex we say that the model is ‘overfitted’ which means that the model is capturing noise and random fluctuations in the input data and using those erroneous patterns in its predictions. On the other hand, if a model is not complex enough then it will not be able to capture important true patterns in the data that are required to make accurate predictions. This means that we have to build models with the right level of complexity.</p>
+<p>To build a model with the appropriate level of complexity we usually use this process: (i) separate out 80% of our data and call it the training data, (ii) build a series of models with varying complexity using the training data, (iii) use each of the models to make predictions about the remaining 20% of the data (the testing data), (iv) whichever model has the best predictive accuracy on the remaining 20% is the model with the appropriate level of complexity.</p>
+<p>We can use the training/testing approach described above to build many different types of models. Here, we will look at random forests.</p>
+<div id="random-forests" class="section level3 unnumbered">
+<h3>random forests<a class="anchor" aria-label="anchor" href="#random-forests"><i class="fas fa-link"></i></a>
+</h3>
+<p>Random forests are collections of decision trees that can be used for predicting categorical variables (i.e. a ‘classification’ task) and for predicting numerical variables (a ‘regression’ task). Random forests are built by constructing multiple decision trees, each using a randomly selected subset of the training data, to ensure diversity among the trees. At each node of each tree, a number of input variables are randomly chosen as candidates for splitting the data, introducing further randomness beyond the data sampling. Among the variables randomly selected as candidates for splitting at each node, one is chosen for that node based on a criterion, such as maximizing purity in the tree’s output, or minimizing mean squared error for regression tasks, guiding the construction of a robust ensemble model. The forest’s final prediction is derived either through averaging the outputs (for regression) or a majority vote (for classification).</p>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/random_forests.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<p>We can use the <code>buildModel()</code> function to make a random forest model. We need to specify data, a model type, input and output variables, and in the case of a random forest model, we also need to provide a list of optimization parameters: <code>n_vars_tried_at_split</code>, <code>n_trees</code>, and <code>min_n_leaves</code>. Here is more information on those parameters:</p>
+<ul>
+<li><p>n_vars_at_split (often called “mtry” in other implementations): this parameter specifies the number of variables that are randomly sampled as candidate features at each split point in the construction of a tree. The main idea behind selecting a subset of features (variables) is to introduce randomness into the model, which helps in making the model more robust and less likely to overfit to the training data. By trying out different numbers of features, the model can find the right level of complexity, leading to more generalized predictions. A smaller value of n_vars_at_split increases the randomness of the forest, potentially increasing bias but decreasing variance. Conversely, a larger mtry value makes the model resemble a bagged ensemble of decision trees, potentially reducing bias but increasing variance.</p></li>
+<li><p>n_trees (often referred to as “num.trees” or “n_estimators” in other implementations): this parameter defines the number of trees that will be grown in the random forest. Each individual tree predicts the outcome based on the subset of features it considers, and the final prediction is typically the mode (for classification tasks) or average (for regression tasks) of all individual tree predictions. Increasing the number of trees generally improves the model’s performance because it averages more predictions, which tends to reduce overfitting and makes the model more stable. However, beyond a certain point, adding more trees offers diminishing returns in terms of performance improvement and can significantly increase computational cost and memory usage without substantial gains.</p></li>
+<li><p>min_n_leaves (often referred to as “min_n” in other implementations, default value is 1): This parameter sets the minimum number of samples that must be present in a node for it to be split further. Increasing this value makes each tree in the random forest less complex by reducing the depth of the trees, leading to larger, more generalized leaf nodes. This can help prevent overfitting by ensuring that the trees do not grow too deep or too specific to the training data. By carefully tuning this parameter, you can strike a balance between the model’s ability to capture the underlying patterns in the data and its generalization to unseen data.</p></li>
+</ul>
+<p><code>buildModel()</code> is configured to allow you to explore a number of settings for both n_vars_at_split and n_trees, then pick the combination with the highest predictive accuracy. In this function:</p>
+<ul>
+<li>
+<code>data</code> specifies the dataset to be used for model training, here metabolomics_data.</li>
+<li>
+<code>model_type</code> defines the type of model to build, with “random_forest_regression” indicating a random forest model for regression tasks.</li>
+<li>
+<code>input_variables</code> selects the features or predictors for the model, here using columns 3 to 33 from metabolomics_data as predictors.</li>
+<li>
+<code>output_variable</code> is the target variable for prediction, in this case, “AMP”.</li>
+</ul>
+<p>The optimization_parameters argument takes a list to define the grid of parameters for optimization, including n_vars_tried_at_split, n_trees, and min_leaf_size. The seq() function generates sequences of numbers and is used here to create ranges for each parameter:</p>
+<ul>
+<li>
+<code>n_vars_tried_at_split</code> = seq(1,24,3) generates a sequence for the number of variables tried at each split, starting at 1, ending at 24, in steps of 3 (e.g., 1, 4, 7, …, 24).</li>
+<li>
+<code>n_trees</code> = seq(1,40,2) creates a sequence for the number of trees in the forest, from 1 to 40 in steps of 2.</li>
+<li>
+<code>min_leaf_size</code> = seq(1,3,1) defines the minimal size of leaf nodes, ranging from 1 to 3 in steps of 1.</li>
+</ul>
+<p>This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest’s performance. This approach allows for a systematic exploration of how different configurations affect the model’s ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.</p>
+<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">random_forest_model</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>    model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
+<span>    input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">33</span><span class="op">]</span>,</span>
+<span>    output_variable <span class="op">=</span> <span class="st">"AMP"</span>,</span>
+<span>    optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>      n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">24</span>,<span class="fl">3</span><span class="op">)</span>,</span>
+<span>      n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">40</span>,<span class="fl">2</span><span class="op">)</span>,</span>
+<span>      min_leaf_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">random_forest_model</span><span class="op">)</span></span>
+<span><span class="co">## [1] "metrics" "model"</span></span></code></pre></div>
+<p>The above code builds our random forest model. It’s output provides both the model itself and key components indicating the performance and configuration of the model. Here’s a breakdown of each part of the output:</p>
+<p><code>$model_type</code> tells us what type of model this is.</p>
+<p><code>$model</code> shows the configuration of the best random forest model that was created.</p>
+<p><code>$metrics</code> provides detailed results of model performance across different combinations of the random forest parameters n_vars_tried_at_split (the number of variables randomly sampled as candidates at each split) and n_trees (the number of trees in the forest). For each combination, it shows:
+- n_vars_tried_at_split and n_trees: The specific values used in that model configuration.
+- .metric: The performance metric used, here it’s accuracy, which measures how often the model correctly predicts the patient status.
+- .estimator: Indicates the type of averaging used for the metric, here it’s binary for binary classification tasks.
+- mean: The average accuracy across the cross-validation folds.
+- fold_cross_validation: Indicates the number of folds used in cross-validation, here it’s 3 for all models.
+- std_err: The standard error of the mean accuracy, providing an idea of the variability in model performance.
+- .config: A unique identifier for each model configuration tested.</p>
+<p>We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.</p>
+<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">random_forest_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_vars_tried_at_split</span>, y <span class="op">=</span> <span class="va">n_trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_n</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>We can easily use the model to make predictions by using the <code>predictWithModel()</code> function:</p>
+<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">ADP</span>, y <span class="op">=</span> <span class="va">AMP</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"gold"</span>, shape <span class="op">=</span> <span class="fl">21</span>, color <span class="op">=</span> <span class="st">"black"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">$</span><span class="va">AMP</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>, color <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">$</span><span class="va">ADP</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>      data <span class="op">=</span> <span class="va">metabolomics_data</span>,</span>
+<span>      model_type <span class="op">=</span> <span class="st">"random_forest_regression"</span>,</span>
+<span>      model <span class="op">=</span> <span class="va">random_forest_model</span><span class="op">$</span><span class="va">model</span></span>
+<span>    <span class="op">)</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"maroon"</span>, size <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Don't know how to automatically pick scale for object of</span></span>
+<span><span class="co">## type &lt;impute&gt;. Defaulting to continuous.</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-193-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to “random_forest_classification” instead of “random_forest_regression”. Let’s try that now:</p>
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">unknown</span> <span class="op">&lt;-</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fl">35</span><span class="op">:</span><span class="fl">40</span>,<span class="op">]</span></span>
+<span></span>
+<span><span class="va">rfc</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">34</span>, <span class="fl">41</span><span class="op">:</span><span class="fl">93</span><span class="op">)</span>,<span class="op">]</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"random_forest_classification"</span>,</span>
+<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">126</span><span class="op">]</span>,</span>
+<span>  output_variable <span class="op">=</span> <span class="st">"patient_status"</span>,</span>
+<span>  optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">50</span>,<span class="fl">5</span><span class="op">)</span>,</span>
+<span>    n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">100</span>,<span class="fl">10</span><span class="op">)</span>,</span>
+<span>    min_leaf_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 300 × 9</span></span>
+<span><span class="co">##    n_vars_tried_at_split n_trees min_n .metric  .estimator</span></span>
+<span><span class="co">##                    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;     </span></span>
+<span><span class="co">##  1                    40      10     1 accuracy binary    </span></span>
+<span><span class="co">##  2                    40      60     3 accuracy binary    </span></span>
+<span><span class="co">##  3                    50      50     2 accuracy binary    </span></span>
+<span><span class="co">##  4                    40      20     2 accuracy binary    </span></span>
+<span><span class="co">##  5                    30     100     1 accuracy binary    </span></span>
+<span><span class="co">##  6                    35      50     2 accuracy binary    </span></span>
+<span><span class="co">##  7                     5      70     2 accuracy binary    </span></span>
+<span><span class="co">##  8                    15      20     3 accuracy binary    </span></span>
+<span><span class="co">##  9                    50     100     3 accuracy binary    </span></span>
+<span><span class="co">## 10                    25      10     1 accuracy binary    </span></span>
+<span><span class="co">## # ℹ 290 more rows</span></span>
+<span><span class="co">## # ℹ 4 more variables: mean &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   fold_cross_validation &lt;int&gt;, std_err &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   .config &lt;chr&gt;</span></span></code></pre></div>
+<p>Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:</p>
+<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_vars_tried_at_split</span>, y <span class="op">=</span> <span class="va">n_trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_n</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-195-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">unknown</span>,</span>
+<span>  model_type <span class="op">=</span> <span class="st">"random_forest_classification"</span>,</span>
+<span>  model <span class="op">=</span> <span class="va">rfc</span><span class="op">$</span><span class="va">model</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  real_status <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fl">35</span><span class="op">:</span><span class="fl">40</span>,<span class="op">]</span><span class="op">$</span><span class="va">patient_status</span>,</span>
+<span>  predicted_status <span class="op">=</span> <span class="va">predictions</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">##                 real_status predicted_status</span></span>
+<span><span class="co">## .pred_class1        healthy          healthy</span></span>
+<span><span class="co">## .pred_class2        healthy          healthy</span></span>
+<span><span class="co">## .pred_class3        healthy          healthy</span></span>
+<span><span class="co">## .pred_class4 kidney_disease   kidney_disease</span></span>
+<span><span class="co">## .pred_class5 kidney_disease   kidney_disease</span></span>
+<span><span class="co">## .pred_class6 kidney_disease   kidney_disease</span></span></code></pre></div>
+</div>
+<div id="exercises-7" class="section level3 unnumbered">
+<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-7"><i class="fas fa-link"></i></a>
+</h3>
+<p>To practice creating models, try the following:</p>
+<ol style="list-style-type: decimal">
+<li><p>Choose one of the datasets we have used so far, and run a principal components analysis on it. Note that the output of the analysis when you run “pca_ord” contains the Dimension 1 coordinate “Dim.1” for each sample, as well as the abundance of each analyte in that sample.</p></li>
+<li><p>Using the information from the ordination plot, identify two analytes: one that has a variance that is strongly and positively correlated with the first principal component (i.e. dimension 1), and one that has a variance that is slightly less strongly, but still positively correlated with the first principal component. Using <code>buildModel</code>, create and plot two linear regression models, one that regresses each of those analytes against dimension 1 (in other words, the x-axis should be the Dim.1 coordinate for each sample, and the y-axis should be the values for one of the two selected analytes). Which has the greater r-squared value? Based on what you know about PCA, does that make sense?</p></li>
+<li><p>Choose two analytes: one should be one of the analytes from question 2 above, the other should be an analyte that, according to your PCA ordination analysis, is negatively correlated with the first principal component. Using <code>buildModel</code> and <code>predictWithModel</code> create plots showing how those two analytes are correlated with dimension 1. One should be positively correlated, and the other negatively correlated.</p></li>
+<li><p>Have a look at the dataset <code>metabolomics_unknown</code>. It is metabolomics data from patients with an unknown healthy/kidney disease status. Build a classification model using the <code>metabolomics_data</code> data set and diagnose each patient in <code>metabolomics_unknown</code>.</p></li>
+</ol>
+</div>
+<div id="further-reading-9" class="section level3 unnumbered">
+<h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
+</h3>
+<p><a href="https://github.com/easystats/performance" class="uri">https://github.com/easystats/performance</a></p>
+<p>Here is more information on common machine learning tasks:
+<a href="https://pythonprogramminglanguage.com/machine-learning-tasks/" class="uri">https://pythonprogramminglanguage.com/machine-learning-tasks/</a></p>
+<p>Some major tasks include:
+Classification
+Regression
+Clustering</p>
+<p>Classification with random forests:
+1. <a href="http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/" class="uri">http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/</a>
+2. <a href="https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/" class="uri">https://hansjoerg.me/2020/02/09/tidymodels-for-machine-learning/</a>
+3. <a href="https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173" class="uri">https://towardsdatascience.com/dials-tune-and-parsnip-tidymodels-way-to-create-and-tune-model-parameters-c97ba31d6173</a></p>
+<!-- end -->
+</div>
+</div>
+<div id="language-models" class="section level2 unnumbered">
+<h2>language models<a class="anchor" aria-label="anchor" href="#language-models"><i class="fas fa-link"></i></a>
+</h2>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/embedding.jpeg" width="100%" style="display: block; margin: auto;"></div>
+<p>In the last chapter, we looked at models that use numerical data to understand the relationships between different aspects of a data set (inferential models) and models that make predictions based on numerical data (predictive models). In this chapter, we will explore a set of models called language models that transform non-numerical data (such as written text and protein sequences) into the numerical domain, enabling the non-numerical data to be analyzed using the techniques we have already covered. Language models are algorithms that are trained on large amounts of text (or, in the case of protein language models, many sequences) and can perform a variety of tasks related to their training data. In particular, we will focus on embedding models, which convert language data into numerical data. An embedding is a numerical representation of data that captures its essential features in a lower-dimensional space or in a different domain. In the context of language models, embeddings transform text, such as words or sentences, into vectors of numbers, enabling machine learning models and other statistical methods to process and analyze the data more effectively.</p>
+<p>A basic form of an embedding model is a neural network called an autoencoder. Autoencoders consist of two main parts: an encoder and a decoder. The encoder takes the input data and compresses it into a lower-dimensional representation, called an embedding. The decoder then reconstructs the original input from this embedding, and the output from the decoder is compared against the original input. The model (the encoder and the decoder) are then iteratively optimized with the objective of minimizing a loss function that measures the difference between the original input and its reconstruction, resulting in an embedding model that creates meaningful embeddings that capture the important aspects of the original input.</p>
+<div id="text-embeddings" class="section level3 unnumbered">
+<h3>text embeddings<a class="anchor" aria-label="anchor" href="#text-embeddings"><i class="fas fa-link"></i></a>
+</h3>
+<p>Here, we will create text embeddings using publication data from PubMed. Text embeddings are numerical representations of text that preserve important information and allow us to apply mathematical and statistical analyses to textual data. Below, we use a series of functions to obtain titles and abstracts from PubMed, create embeddings for their titles, and analyze them using principal component analysis.</p>
+<p>First, we use the searchPubMed function to extract relevant publications from PubMed based on specific search terms. This function interacts with the PubMed website via a tool called an API. An API, or Application Programming Interface, is a set of rules that allows different software programs to communicate with each other. In this case, the API allows our code to access data from the PubMed database directly, without needing to manually search through the website. An API key is a unique identifier that allows you to authenticate yourself when using an API. It acts like a password, giving you permission to access the API services. Here, I am reading my API key from a local file. You can obtain by signing up for an NCBI account at <a href="https://pubmed.ncbi.nlm.nih.gov/" class="uri">https://pubmed.ncbi.nlm.nih.gov/</a>. Once you have an API key, pass it to the searchPubMed function along with your search terms. Here I am using “beta-amyrin synthase,” “friedelin synthase,” “Sorghum bicolor,” and “cuticular wax biosynthesis.” I also specify that I want the results to be sorted according to relevance (as opposed to sorting by date) and I only want three results per term (the top three most relevant hits) to be returned:</p>
+<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">searchPubMed</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">search_terms</span>, <span class="va">pubmed_api_key</span>, <span class="va">sort</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"date"</span>, <span class="st">"relevance"</span><span class="op">)</span>, <span class="va">retmax_per_term</span> <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">{</span></span>
+<span></span>
+<span>  <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="kw">for</span><span class="op">(</span> <span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">)</span> <span class="op">)</span> <span class="op">{</span> <span class="co"># i=1</span></span>
+<span>      <span class="va">search_output</span> <span class="op">&lt;-</span> <span class="fu">rentrez</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/entrez_search.html">entrez_search</a></span><span class="op">(</span>db <span class="op">=</span> <span class="st">"pubmed"</span>, term <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, retmax <span class="op">=</span> <span class="va">retmax_per_term</span>, use_history <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="va">sort</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span>      <span class="va">query_output</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html">try</a></span><span class="op">(</span><span class="fu">rentrez</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/entrez_fetch.html">entrez_fetch</a></span><span class="op">(</span>db <span class="op">=</span> <span class="st">"pubmed"</span>, web_history <span class="op">=</span> <span class="va">search_output</span><span class="op">$</span><span class="va">web_history</span>, rettype <span class="op">=</span> <span class="st">"xml"</span>, retmax <span class="op">=</span> <span class="va">retmax_per_term</span>, api_key <span class="op">=</span> <span class="va">pubmed_api_key</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">current_pm_entries</span> <span class="op">&lt;-</span> <span class="fu">XML</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/XML/man/xmlToList.html">xmlToList</a></span><span class="op">(</span><span class="fu">XML</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/XML/man/xmlTreeParse.html">xmlParse</a></span><span class="op">(</span><span class="va">query_output</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">pm_entries</span>, <span class="va">current_pm_entries</span><span class="op">)</span></span>
+<span>      <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">term_vector</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">search_terms</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">current_pm_entries</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html">Sys.sleep</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">unique_indices</span> <span class="op">&lt;-</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">)</span></span>
+<span>  <span class="va">pm_entries</span> <span class="op">&lt;-</span> <span class="va">pm_entries</span><span class="op">[</span><span class="va">unique_indices</span><span class="op">]</span></span>
+<span>  <span class="va">term_vector</span> <span class="op">&lt;-</span> <span class="va">term_vector</span><span class="op">[</span><span class="va">unique_indices</span><span class="op">]</span></span>
+<span></span>
+<span>  <span class="va">pm_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="co"># i=1</span></span>
+<span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span> <span class="kw">next</span> <span class="op">}</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">ELocationID</span><span class="op">$</span><span class="va">text</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="kw">next</span> <span class="op">}</span></span>
+<span></span>
+<span>      <span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">)</span> <span class="op">==</span> <span class="st">"ELocationID"</span><span class="op">)</span></span>
+<span>      <span class="kw">for</span> <span class="op">(</span><span class="va">option</span> <span class="kw">in</span> <span class="va">options</span><span class="op">)</span> <span class="op">{</span> <span class="co"># option = 4</span></span>
+<span>          <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"10\\."</span>, <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">[[</span><span class="va">option</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">text</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>              <span class="va">doi</span> <span class="op">&lt;&lt;-</span> <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">[[</span><span class="va">option</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">text</span></span>
+<span>              <span class="kw">break</span></span>
+<span>          <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span><span class="kw">next</span><span class="op">}</span></span>
+<span>      <span class="op">}</span></span>
+<span></span>
+<span>      <span class="va">pm_results</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>          entry_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span>,</span>
+<span>          term <span class="op">=</span> <span class="va">term_vector</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>          date <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html">as_date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span></span>
+<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Year</span>,</span>
+<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Month</span>,</span>
+<span>              <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">DateRevised</span><span class="op">$</span><span class="va">Day</span>,</span>
+<span>          sep <span class="op">=</span> <span class="st">"-"</span></span>
+<span>          <span class="op">)</span><span class="op">)</span>,</span>
+<span>          journal <span class="op">=</span> <span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">Journal</span><span class="op">$</span><span class="va">Title</span>,</span>
+<span>          title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">ArticleTitle</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
+<span>          doi <span class="op">=</span> <span class="va">doi</span>,</span>
+<span>          abstract <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">pm_entries</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">MedlineCitation</span><span class="op">$</span><span class="va">Article</span><span class="op">$</span><span class="va">Abstract</span><span class="op">$</span><span class="va">AbstractText</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu">as_tibble</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">pm_results</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">searchPubMed</span><span class="op">(</span></span>
+<span>  search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"beta-amyrin synthase"</span>, <span class="st">"friedelin synthase"</span>, <span class="st">"sorghum bicolor"</span>, <span class="st">"cuticular wax biosynthesis"</span><span class="op">)</span>,</span>
+<span>  pubmed_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/pubmed_api_key.txt"</span><span class="op">)</span>,</span>
+<span>  retmax_per_term <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  sort <span class="op">=</span> <span class="st">"relevance"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span></span>
+<span><span class="co">## [1] "entry_number" "term"         "date"        </span></span>
+<span><span class="co">## [4] "journal"      "title"        "doi"         </span></span>
+<span><span class="co">## [7] "abstract"</span></span></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">select</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">term</span>, <span class="va">title</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 12 × 2</span></span>
+<span><span class="co">##    term                       title                         </span></span>
+<span><span class="co">##    &lt;chr&gt;                      &lt;chr&gt;                         </span></span>
+<span><span class="co">##  1 beta-amyrin synthase       β-Amyrin synthase from Conyza…</span></span>
+<span><span class="co">##  2 beta-amyrin synthase       Ginsenosides in Panax genus a…</span></span>
+<span><span class="co">##  3 beta-amyrin synthase       β-Amyrin biosynthesis: cataly…</span></span>
+<span><span class="co">##  4 friedelin synthase         Friedelin Synthase from Mayte…</span></span>
+<span><span class="co">##  5 friedelin synthase         Friedelin in Maytenus ilicifo…</span></span>
+<span><span class="co">##  6 friedelin synthase         The Methionine 549 and Leucin…</span></span>
+<span><span class="co">##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    </span></span>
+<span><span class="co">##  8 sorghum bicolor            Molecular Breeding of Sorghum…</span></span>
+<span><span class="co">##  9 sorghum bicolor            Proton-Coupled Electron Trans…</span></span>
+<span><span class="co">## 10 cuticular wax biosynthesis Regulatory mechanisms underly…</span></span>
+<span><span class="co">## 11 cuticular wax biosynthesis Update on Cuticular Wax Biosy…</span></span>
+<span><span class="co">## 12 cuticular wax biosynthesis Advances in Biosynthesis, Reg…</span></span></code></pre></div>
+<p>From the output here, you can see that we’ve retrieved records for various publications, each containing information such as the title, journal, and search term used. This gives us a dataset that we can further analyze to gain insights into the relationships between different research topics.</p>
+<p>Next, we use the embedText function to create embeddings for the titles of the extracted publications. Just like PubMed, the Hugging Face API requires an API key, which acts as a unique identifier and grants you access to their services. You can obtain an API key by signing up at <a href="https://huggingface.co" class="uri">https://huggingface.co</a> and following the instructions to generate your own key. Once you have your API key, you will need to specify it when using the embedText function. In the example below, I am reading the key from a local file for convenience.</p>
+<p>To set up the embedText function, provide the dataset containing the text you want to embed (in this case, search_results, the output from the PubMed search above), the column with the text (title), and your Hugging Face API key. This function will then generate numerical embeddings for each of the publication titles. By default, the embeddings are generated using a pre-trained embedding language model called ‘BAAI/bge-small-en-v1.5’, available through the Hugging Face API at <a href="https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5" class="uri">https://api-inference.huggingface.co/models/BAAI/bge-small-en-v1.5</a>. This model is designed to create compact, informative numerical representations of text, making it suitable for a wide range of downstream tasks, such as clustering or similarity analysis. If you would like to know more about the model and its capabilities, you can visit the Hugging Face website at <a href="https://huggingface.co" class="uri">https://huggingface.co</a>, where you will find detailed documentation and additional resources.</p>
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
+<span>  df <span class="op">=</span> <span class="va">search_results</span>,</span>
+<span>  column_name <span class="op">=</span> <span class="st">"title"</span>,</span>
+<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">search_results_embedded</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span><span class="co">## # A tibble: 3 × 10</span></span>
+<span><span class="co">##   entry_number term  date       journal title doi   abstract</span></span>
+<span><span class="co">##          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">## 1            1 beta… 2019-11-20 FEBS o… β-Am… 10.1… Conyza …</span></span>
+<span><span class="co">## 2            2 beta… 2024-04-03 Acta p… Gins… 10.1… Ginseno…</span></span>
+<span><span class="co">## 3            3 beta… 2019-12-10 Organi… β-Am… 10.1… The enz…</span></span>
+<span><span class="co">## # ℹ 3 more variables: embedding_1 &lt;dbl&gt;, embedding_2 &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   embedding_3 &lt;dbl&gt;</span></span></code></pre></div>
+<p>The output of the embedText function is a data frame where the first column contains the title and the subsequent 384 columns represent the embedding variables. These embeddings capture the key features of each publication title. You can join this data frame with the original input to create a complete dataset that includes both the original metadata (such as titles and journals) and the numerical embeddings. Below is an example of how to use the left_join function from the dplyr package in R to combine the original search_results data frame with the new embeddings. This merged dataset allows you to perform further analyses on both the original metadata and the generated embeddings.</p>
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">search_results</span>, <span class="va">search_results_embedded</span>, by <span class="op">=</span> <span class="st">"title"</span><span class="op">)</span></span>
+<span><span class="va">search_results</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span>
+<span><span class="co">## # A tibble: 3 × 10</span></span>
+<span><span class="co">##   entry_number.x term.x     date.x     journal.x title doi.x</span></span>
+<span><span class="co">##            &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;</span></span>
+<span><span class="co">## 1              1 beta-amyr… 2019-11-20 FEBS ope… β-Am… 10.1…</span></span>
+<span><span class="co">## 2              2 beta-amyr… 2024-04-03 Acta pha… Gins… 10.1…</span></span>
+<span><span class="co">## 3              3 beta-amyr… 2019-12-10 Organic … β-Am… 10.1…</span></span>
+<span><span class="co">## # ℹ 4 more variables: abstract.x &lt;chr&gt;,</span></span>
+<span><span class="co">## #   entry_number.y &lt;dbl&gt;, term.y &lt;chr&gt;, date.y &lt;date&gt;</span></span></code></pre></div>
+<p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">search_results_embedded</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">search_results</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"title"</span>, <span class="st">"journal"</span>, <span class="st">"term"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_label_repel</span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="va">title</span>, width <span class="op">=</span> <span class="fl">35</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      size <span class="op">=</span> <span class="fl">2</span>, min.segment.length <span class="op">=</span> <span class="fl">0.5</span>, force <span class="op">=</span> <span class="fl">50</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span>  </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">term</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;"></div>
+<p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span></span>
+<span></span>
+<span><span class="va">odor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n</span>,<span class="fl">1</span><span class="op">)</span>,</span>
+<span>  odor <span class="op">=</span> <span class="fu">dropNA</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">beer_components</span><span class="op">$</span><span class="va">analyte_odor</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">96</span>, <span class="va">n</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">embedText</span><span class="op">(</span></span>
+<span>  <span class="va">odor</span>, column_name <span class="op">=</span> <span class="st">"odor"</span>,</span>
+<span>  hf_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/hf_api_key.txt"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">out</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="st">"embed"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sample"</span>, <span class="st">"odor"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">pca_out</span></span>
+<span></span>
+<span><span class="va">pca_out</span><span class="op">$</span><span class="va">color</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span><span class="op">(</span></span>
+<span>  <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/rescale.html">rescale</a></span><span class="op">(</span><span class="va">pca_out</span><span class="op">$</span><span class="va">Dim.1</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fl">0</span>,</span>
+<span>  <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/rescale.html">rescale</a></span><span class="op">(</span><span class="va">pca_out</span><span class="op">$</span><span class="va">Dim.2</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">pca_out</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_label_repel</span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, label <span class="op">=</span> <span class="fu">str_wrap</span><span class="op">(</span><span class="va">odor</span>, width <span class="op">=</span> <span class="fl">35</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">2</span>, min.segment.length <span class="op">=</span> <span class="fl">0.5</span>, force <span class="op">=</span> <span class="fl">25</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">pca_out</span><span class="op">$</span><span class="va">color</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># scale_x_continuous(expand = c(1,0)) +</span></span>
+<span>  <span class="co"># scale_y_continuous(expand = c(1,0)) +</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="exercises-8" class="section level3 unnumbered">
+<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-8"><i class="fas fa-link"></i></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li><p>Recreate the PubMed search and subsequent analysis described in this chapter using search terms that relate to research you are involved in or are interested in.</p></li>
+<li><p>Using the hops_components dataset, determine whether there are any major clusters of hops that are grouped by aroma. To do this, compute embeddings for the hop_aroma column of the dataset, then use a dimensionality reduction (pca, if you like) to determine if any clear clusters are present.</p></li>
+</ol>
+</div>
+<div id="further-reading-10" class="section level3 unnumbered">
+<h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-10"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+</div>
+<div id="protein-embeddings" class="section level2 unnumbered">
+<h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
+</h2>
+<p>Autoencoders can be trained to accept various types of inputs, such as text (as shown above), images, audio, videos, sensor data, and sequence-based information like peptides and DNA. Protein language models convert protein sequences into numerical representations that can be used for a variety of downstream tasks, such as structure prediction or function annotation. Protein language models, like their text counterparts, are trained on large datasets of protein sequences to learn meaningful patterns and relationships within the sequence data.</p>
+<p>Protein language models offer several advantages over traditional approaches, such as multiple sequence alignments (MSAs). One major disadvantage of MSAs is that they are computationally expensive and become increasingly slow as the number of sequences grows. While language models are also computationally demanding, they are primarily resource-intensive during the training phase, whereas applying a trained language model is much faster. Additionally, protein language models can capture both local and global sequence features, allowing them to identify complex relationships that span across different parts of a sequence. Furthermore, unlike MSAs, which rely on evolutionary information, protein language models can be applied to proteins without homologous sequences, making them suitable for analyzing sequences where little evolutionary data is available. This flexibility broadens the scope of proteins that can be effectively studied using these models.</p>
+<p>Beyond the benefits described above, protein language models have an additional, highly important capability: the ability to capture information about connections between elements in their input, even if those elements are very distant from each other in the sequence. This capability is achieved through the use of a model architecture called a transformer, which is a more sophisticated version of an autoencoder. For example, amino acids that are far apart in the primary sequence may be very close in the 3D, folded protein structure. Proximate amino acids in 3D space can play crucial roles in protein stability, enzyme catalysis, or binding interactions, depending on their spatial arrangement and interactions with other residues. Embedding models with transformer architecture can effectively capture these functionally important relationships.</p>
+<p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs.</p>
+<p>In the following section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively.</p>
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">embedded_p450s</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
+<span>  amino_acid_stringset <span class="op">=</span> <span class="va">p450s</span>,</span>
+<span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Science/Websites/biolm_api_key.txt"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">embedded_p450s</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">embedded_p450s</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">embedded_p450s</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">embedded_p450s</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">embedded_p450s</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">embedded_p450s</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">embedded_p450s</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"product"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">product</span><span class="op">)</span>,</span>
+<span>      shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2</span>, width <span class="op">=</span> <span class="fl">2</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div id="exercises-9" class="section level3 unnumbered">
+<h3>exercises<a class="anchor" aria-label="anchor" href="#exercises-9"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="further-reading-11" class="section level3 unnumbered">
+<h3>further reading<a class="anchor" aria-label="anchor" href="#further-reading-11"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="comparing-means.html">comparing means</a></div>
+<div class="next"><a href="midterm.html">midterm</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#models">models</a></li>
+<li>
+<a class="nav-link" href="#inferential-models">inferential models</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#single-linear-regression">single linear regression</a></li>
+<li><a class="nav-link" href="#multiple-linear-regression">multiple linear regression</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#predictive-models">predictive models</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#random-forests">random forests</a></li>
+<li><a class="nav-link" href="#exercises-7">exercises</a></li>
+<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#language-models">language models</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#text-embeddings">text embeddings</a></li>
+<li><a class="nav-link" href="#exercises-8">exercises</a></li>
+<li><a class="nav-link" href="#further-reading-10">further reading</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#protein-embeddings">protein embeddings</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#exercises-9">exercises</a></li>
+<li><a class="nav-link" href="#further-reading-11">further reading</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2024-10-07.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

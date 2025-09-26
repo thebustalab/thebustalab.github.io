@@ -1,0 +1,125 @@
+# homology {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png', dpi = NA)
+```
+
+## NCBI blast {-}
+
+The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like "core_nt," you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. Here's a few examples, including how to approach this function if you're working with a StringSet object:
+
+```{r, eval = FALSE}
+blastNCBI(
+    query_sequence = "AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA",
+    program = "blastn",
+    database = "core_nt"
+)
+
+seqs <- DNAStringSet("AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA")
+blastNCBI(
+    query_sequence = as.character(seqs[1]),
+    program = "blastn",
+    database = "core_nt"
+)
+
+```
+
+## local blast {-}
+
+On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from [NCBI BLAST+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download). Download the program and then point this function to the executable via the `blast_module_directory_path` argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.
+
+Let's check out `polyBlast()` by looking at an example. For this example, we need to set up a few things:
+
+* "named_subjects_list": A named list of sequence collections (often transcriptomes) to search (one fasta for each collection, often one collection for each species or accession).
+* "query_in_path": One or more queries, all listed in a single fasta file.
+* "sequences_of_interest_directory_path": The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
+* "blast_module_directory_path": The path to the folder of BLAST+ executable.
+* "blast_mode": The format is XYblastZ where X is subject type (the transcriptome or proteome, use "n" for nucleotide, "p" for amino acids). Y is whether the subjects should be translated ("t" for translate, "n" for no translation, if you choose "t" your subjects will not be searched for ORFs, every three base pairs are just translated verbatim). Z is the format of the query/queries ("n" for nucleotide, "p" for amino acids). Allowed formats: nnblastn, ntblastp, pnblastp.
+* "e_value_cutoff": Hits with a e-value below this cutoff will not be returned. Default = 1.
+* "queries_in_outout": TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.
+* "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
+
+Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
+
+```{r, eval = FALSE}
+the_transcriptomes <- c(
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa",
+  "/path_to/the_transcriptomes_or_proteomes/Nicotiana_benthamiana.fa"
+)
+
+names(the_transcriptomes) <- c(
+  "Nicotiana_glauca",
+  "Nicotiana_tabacum",
+  "Nicotiana_benthamiana"
+)
+
+polyBlast(
+  named_subjects_list = the_transcriptomes,
+  query_in_path = "/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa",
+  sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
+  blast_module_directory_path = "/path_to/the_blast_module/",
+  blast_mode = c("nnblastn", "ntblastp", "pnblastp", "dc-megablast"), 
+  e_value_cutoff = 1,
+  queries_in_output = TRUE,
+  monolist_out_path = "/path_to/a_csv_file_that_will_list_all_blast_hits.csv"
+)
+```
+
+## hmmer {-}
+
+HMM, which stands for Hidden Markov Model, is a statistical model often used in various applications involving sequences, including speech recognition, natural language processing, and bioinformatics. In the context of bioinformatics, HMMs are frequently applied for sequence similarity searching, notably in the analysis of protein or DNA sequences. When we talk about using HMMs for sequence similarity searching, we're often referring to identifying conserved patterns or domains within biological sequences. These conserved regions can be indicative of functional or structural properties of the molecule. One of the advantages of using HMMs over traditional sequence similarity searching tools like BLAST is that HMMs can be more sensitive in detecting distant homologues. They take into account the position-specific variability within a protein family, as opposed to just looking for stretches of similar sequence.
+
+Here's a general idea of how HMMs are used for sequence similarity searching:
+
+1. Build a library of HMM domains: In bioinformatics, a typical application is the construction of library of HMM domains. These are HMMs built from multiple sequence alignments of a family of related proteins or genes. The alignments help highlight the conserved and variable positions in the sequence family. Once you have an alignment, the HMM can be 'trained' on this data. The training process estimates the probabilities of different events, like a particular amino acid (in the case of proteins) appearing at a specific position.
+
+2. Predict domains in unknown sequences: After training, you can then use the HMMs to score other sequences. If a sequence scores above a certain threshold, it suggests that the sequence may be a member of the protein or gene family represented by the HMM. You can search databases of uncharacterized sequences using the HMM. Sequences in the database that get a high score against the HMM are potential new members of the family, and thus might share similar functional or structural properties.
+
+We can implement these two steps using the `buildDomainLibrary()` function and the `predictDomains()` function. See below:
+
+```{r, eval = FALSE}
+buildDomainLibrary(
+    alignment_in_paths = c(
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_1_amin_seqs_aligned.fa",
+        "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_2_amin_seqs_aligned.fa"
+    ),
+    domain_library_out_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+
+predictDomains(
+    fasta_in_path = "/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_3_amin_seqs.fa",
+    domain_library_in_path = "/project_data/shared/kalanchoe_transporters/test.hmm"
+)
+```
+
+## 3D similarity {-}
+
+`foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1`
+
+## interpreting homology data {-}
+
+bitscore v evalue - with very low evalue (< 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!
+
+The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
+
+The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
+
+* E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+* 10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+* 10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
+* 10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+* E-value > 1 Proteins are most likely not related
+* E-value > 10 Hits are most likely junk unless the query sequence is very short.
+
+reference: https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html
+
+reference: Pearson W. R. (2013). An introduction to sequence similarity ("homology") searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. https://doi.org/10.1002/0471250953.bi0301s42.
+
+* E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.
+
+E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.
+
+* Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.
+
+* Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.

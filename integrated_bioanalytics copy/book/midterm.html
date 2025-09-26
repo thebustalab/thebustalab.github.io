@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>midterm | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="Load the wood smoke data by running source(), inspect the data (wood_smoke), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication...">
+<meta name="generator" content="bookdown 0.39 with bs4_book()">
+<meta property="og:title" content="midterm | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="Load the wood smoke data by running source(), inspect the data (wood_smoke), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="midterm | Integrated Bioanalytics">
+<meta name="twitter:description" content="Load the wood smoke data by running source(), inspect the data (wood_smoke), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.9/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">GETTING STARTED</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
+<li><a class="active" href="midterm.html">midterm</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">SCIENTIFIC WRITING</li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html">results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="midterm" class="section level1 unnumbered">
+<h1>midterm<a class="anchor" aria-label="anchor" href="#midterm"><i class="fas fa-link"></i></a>
+</h1>
+<!-- start midterm -->
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/wood_smoke.jpg" width="100%" style="display: block; margin: auto;"></div>
+<p>Load the wood smoke data by running <code><a href="https://rdrr.io/r/base/source.html">source()</a></code>, inspect the data (<code>wood_smoke</code>), then respond to the following prompts. Use themes, scales, etc. to make all of your plots professional and publication quality. Include a figure caption with each plot. If the prompt asks you to answer a question in the figure caption, your response should be a few sentences long. It does not need to be multiple paragraphs long.</p>
+<ol style="list-style-type: decimal">
+<li>Create a plot with three subpanels. In the first, show which wood type, hard wood or soft wood, has the highest abundance of compounds in its smoke (3 pts). Within that wood type’s smoke, which compound class is the most abundant (3 pts) and, still within that wood type’s smoke, what is the single most abundant compound (3 pts)? Show these two things in the second and third subplots, respectively. For each of the comparisons you performed in this question, run a statistical analysis (3x 2 pts) to whether there are significant differences among the quantities being compared. Show the output of the statistical analyses in your plot (3x 1 pt). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.</li>
+</ol>
+<p>Note: in the question above, you may need to filter for analytes with non-zero values when conducting certain statistical test, for example:</p>
+<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wood_smoke</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">wood_type</span> <span class="op">==</span> <span class="st">"hardwood"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">abundance_mg_g</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">compound_class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>size <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">size</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">shapiroTest</span><span class="op">(</span><span class="va">abundance_mg_g</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 22 × 4</span></span>
+<span><span class="co">##    compound_class           variable      statistic        p</span></span>
+<span><span class="co">##    &lt;chr&gt;                    &lt;chr&gt;             &lt;dbl&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 alkanedioic_acids        abundance_mg…     0.754 4.28e- 5</span></span>
+<span><span class="co">##  2 alkanoic_acids           abundance_mg…     0.596 3.81e-10</span></span>
+<span><span class="co">##  3 alkenoic_acids           abundance_mg…     0.624 3.56e- 6</span></span>
+<span><span class="co">##  4 benzenediols             abundance_mg…     0.907 4.09e- 1</span></span>
+<span><span class="co">##  5 coumarins_and_flavonoids abundance_mg…     0.817 1.56e- 1</span></span>
+<span><span class="co">##  6 furans                   abundance_mg…     0.523 2.62e- 5</span></span>
+<span><span class="co">##  7 guaiacols                abundance_mg…     0.616 1.66e- 9</span></span>
+<span><span class="co">##  8 lignans                  abundance_mg…     0.610 2.00e- 5</span></span>
+<span><span class="co">##  9 methyl_alkanoates        abundance_mg…     0.780 1.08e- 3</span></span>
+<span><span class="co">## 10 methyl_alkenoates        abundance_mg…     0.787 8.48e- 2</span></span>
+<span><span class="co">## # ℹ 12 more rows</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Considering all the species together, regardless of wood type, what are the ten most abundant compounds in wood smoke? Communicate this via a plot that shows averages and standard deviations (9 pts). Run a statistical analysis to determine whether there are significant differences among the abundances of these compounds (7 pts). Show the output of the statistical analyses in your plot (2 pts). Write a detailed figure caption for your figure (2 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.</p></li>
+<li><p>Create a summarized wood smoke data set that contains the sum abundance of each compound class for each species. Conduct a PCA analysis of your summarized data set. Make a figure with three subpanels: a plot of where each species is located in a space defined by the first two principal components (a classical “pca” plot) (6 pts), a plot with ordination information on the compound class level (as opposed to on the single compound level) (6 pts), and a scree plot (6 pts). In your detailed figure caption, answer: How much of the overall variance in the data set is contained within the first two dimensions? (2 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.</p></li>
+<li><p>Using your PCA analysis from question 3, select four compound classes, two that are negatively correlated with each other along dimension 1 and two that are positively correlated with each other along dimension 2. Create a plot that shows the abundances of these four compound classes in each wood species (16 pts). In your figure caption, explain: are these abundances consistent with your understanding of PCA and ordination? Why or why not? (4 pts) Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.</p></li>
+<li><p>Create a plot with three subpanels: (i) a dbscan-based clustering of your PCA analysis output from question 3 (5 pts), (ii) a kmeans-based clustering of your PCA analysis output from question 3 (5 pts), and (iii) a hierarchical clustering analysis of the raw data (5 pts). For the dbscan and kmeans analyses, you can choose the number of clusters to create. In your figure caption, compare and contrast the three methods of clustering. In the case of the wood smoke data, does one seem to be more useful than the others? Why or why not? (5 pts). Points will be taken off if there are major visual issues with your plots and/or if text is illegible or overlapping.</p></li>
+<li><p>Suppose that you are work in a forensics lab. A suspect has been apprehended as part of a murder case. The suspect’s coat smells strongly of wood smoke, and it is known that a bonfire was burning at the scene of the crime. The fire chief reported that red oak was the type of wood the victim was burning at the scene of their murder, but the suspect claims that the smell in the suspect’s coat is from a different bonfire – one that was burning at a party the suspect claims they were attending at the time of the murder. The fire chief investigated the place where the party took place and found a large supply of paper birch firewood. You extracted a segment of the suspects coat and analyzed it with LC-MS and GC-MS to obtain ‘unknown_smoke.csv’. Use that data and your analysis skills to provide a recommendation to the prosecutor in this case.</p></li>
+</ol>
+<!-- end --><hr>
+<hr>
+<hr>
+</div>
+
+
+
+<div class="chapter-nav">
+<div class="prev"><a href="language-models.html">language models</a></div>
+<div class="next"><a href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav"><li><a class="nav-link" href="#midterm">midterm</a></li></ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+</div>
+  
+
+  
+
+</div>
+ <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-01-16.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

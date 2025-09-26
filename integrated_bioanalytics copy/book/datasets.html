@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>datasets | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition...">
+<meta name="generator" content="bookdown 0.44 with bs4_book()">
+<meta property="og:title" content="datasets | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="datasets | Integrated Bioanalytics">
+<meta name="twitter:description" content="alaska_lake_data The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.10/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.9.0/transition.js"></script><script src="libs/bs3compat-0.9.0/tabs.js"></script><script src="libs/bs3compat-0.9.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">GETTING STARTED</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="wrangling-and-summaries.html">wrangling and summaries</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="hierarchical-clustering.html">hierarchical clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="" href="embedding-models.html">embedding models</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">ANALYTICAL REPORTS</li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="question-driven-report.html">question-driven report</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="active" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="datasets" class="section level1 unnumbered">
+<h1>datasets<a class="anchor" aria-label="anchor" href="#datasets"><i class="fas fa-link"></i></a>
+</h1>
+<div id="alaska_lake_data" class="section level2 unnumbered">
+<h2>alaska_lake_data<a class="anchor" aria-label="anchor" href="#alaska_lake_data"><i class="fas fa-link"></i></a>
+</h2>
+<p>The Alaska Lake Data was collected as part of a water quality monitoring initiative across various lakes in protected national parks, aimed at assessing the chemical composition and environmental conditions of these unique ecosystems. Researchers took water samples from several lakes, measuring key environmental parameters like water temperature and pH, along with analyzing the abundance of different chemical elements, such as carbon, nitrogen, and phosphorus. By comparing the concentrations of both bound and free elements, the study aimed to understand the health of these aquatic environments and the impact of natural and anthropogenic factors on the water chemistry. The dataset will be used to inform conservation strategies for maintaining the ecological balance in these sensitive regions.
+- lake (Categorical): The name of the lake from which the water sample was collected. This refers to the sample.
+- park (Categorical): The park or national park code where the lake is located. This is part of the sample identification.
+water_temp (Continuous): The water temperature (in degrees Celsius) of the sample at the time of collection. This is an analyte describing an environmental condition of the sample.
+- pH (Continuous): The pH value of the water, representing its acidity or alkalinity. This is an analyte providing an environmental characteristic of the sample.
+- element (Categorical): The chemical element being measured in the water (e.g., C for carbon, N for nitrogen). This is an analyte.
+- mg_per_L (Continuous): The concentration (in milligrams per liter) of the corresponding analyte from the element column, indicating the abundance of each analyte in the water sample.
+- element_type (Categorical): Describes whether the element is in a “bound” or “free” state, providing context for the form of the analyte.</p>
+</div>
+<div id="algae_data" class="section level2 unnumbered">
+<h2>algae_data<a class="anchor" aria-label="anchor" href="#algae_data"><i class="fas fa-link"></i></a>
+</h2>
+<p>This dataset was generated as part of a study investigating the biochemical composition of different algae strains under varying harvesting conditions. The goal of the research was to examine how different algae strains and harvesting regimes affect the abundance of various chemical species, particularly fatty acids and amino acids, which have potential applications in biofuel production and nutritional supplements. Replicates were performed to ensure consistency, and a wide range of chemical species was measured to provide insights into the algae’s metabolic profile and its response to environmental or harvesting changes.</p>
+<ul>
+<li>replicate (Categorical): The replicate number of the sample for the experiment, indicating which iteration of the algae sample was analyzed.</li>
+<li>algae_strain (Categorical): The specific strain of algae used in the experiment (e.g., “Tsv1”). This refers to the strain from which each sample was collected.</li>
+<li>harvesting_regime (Categorical): The method or condition under which the algae sample was harvested (e.g., “Heavy” regime).</li>
+<li>chemical_species (Categorical): The type of chemical species or analyte measured in the algae sample, including various fatty acids (FAs) and amino acids (Aas).</li>
+<li>abundance (Continuous): The measured abundance of the chemical species or analyte in the algae sample, expressed in a continuous quantitative form (e.g., mg/L or similar units).</li>
+</ul>
+</div>
+<div id="beer_components" class="section level2 unnumbered">
+<h2>beer_components<a class="anchor" aria-label="anchor" href="#beer_components"><i class="fas fa-link"></i></a>
+</h2>
+<p>This dataset captures the volatile compounds released from different ingredients like barley and corn, likely as part of a study on food aroma profiles. Researchers measured the abundance of specific analytes (such as 2-Methylpropanal) and classified them by chemical group (e.g., Aldehydes). The goal is to assess how different ingredients contribute to the overall aroma by linking each analyte to sensory descriptors, which include odor characteristics such as “Green,” “Pungent,” and “Malty.” The dataset could be useful in food science research.</p>
+<ul>
+<li>ingredient (Categorical): The ingredient from which the analytes were measured (e.g., “barley,” “corn”). This refers to the ingredient from which the sample was collected.</li>
+<li>replicate (Categorical): The replicate number of the sample for the experiment, indicating the repetition of the measurement for consistency.</li>
+<li>analyte (Categorical): The specific volatile compound or chemical measured in the ingredient (e.g., “2-Methylpropanal”).</li>
+<li>analyte_class (Categorical): The chemical classification of the analyte (e.g., “Aldehyde”).</li>
+<li>abundance (Continuous): The concentration of the analyte measured in the sample, likely in a quantitative unit such as mg/L.</li>
+<li>analyte_odor (Categorical): A sensory descriptor for the odors associated with the analyte, listed as a combination of descriptors (e.g., “Green; Pungent; Burnt; Malty; Toasted”).</li>
+</ul>
+</div>
+<div id="hawaii_aquifers" class="section level2 unnumbered">
+<h2>hawaii_aquifers<a class="anchor" aria-label="anchor" href="#hawaii_aquifers"><i class="fas fa-link"></i></a>
+</h2>
+<p>This dataset represents water quality measurements from various wells within an aquifer system, collected as part of a study on groundwater composition. Researchers measured the abundance of different dissolved elements and compounds, such as silica (SiO2) and chloride (Cl), from different wells in an aquifer. The dataset could be used to assess the chemical profile of groundwater and monitor any changes in water quality over time. Note the absence of geospatial data (latitude and longitude) for certain samples, and note that some samples come from the same well and aquifer but have different latitude and longitude coordinates.</p>
+<ul>
+<li>aquifer_code (Categorical): The code assigned to identify the aquifer system (e.g., “aquifer_1”) that the sample came from.</li>
+<li>well_name (Categorical): The name of the well from which the water sample was collected (e.g., “Alewa_Heights_Spring”).</li>
+<li>longitude (Continuous): The longitudinal coordinates of the well location from which the sample was take.</li>
+<li>latitude (Continuous): The latitudinal coordinates of the well location from which the sample was take.</li>
+<li>analyte (Categorical): The specific dissolved compound or element measured in the water sample (e.g., “SiO2,” “Cl”).</li>
+<li>abundance (Continuous): The concentration of the analyte in the water sample, expressed in a quantitative unit (mg/L).</li>
+</ul>
+</div>
+<div id="hops_components" class="section level2 unnumbered">
+<h2>hops_components<a class="anchor" aria-label="anchor" href="#hops_components"><i class="fas fa-link"></i></a>
+</h2>
+<p>This dataset contains detailed information on various hop varieties used in brewing, including their country of origin, brewing usage (aroma or bittering), and the chemical composition of their essential oils and acids. The dataset serves as a resource for brewers to select hop varieties based on their aroma profiles and chemical content, such as alpha acids and essential oils like humulene and myrcene, which influence the bitterness, flavor, and aroma of beer. The goal of this dataset is to help optimize the hop selection process in brewing for specific flavor profiles and brewing techniques like dry hopping or bittering.</p>
+<ul>
+<li>hop_variety (Categorical): The specific variety of hop used (e.g., “Cascade,” “Chinook”).</li>
+<li>hop_origin (Categorical): The country of origin for the hop variety (e.g., “USA,” “England”).</li>
+<li>hop_brewing_usage (Categorical): The primary use of the hop in brewing, either for aroma or bittering, or techniques like dry hopping.</li>
+<li>hop_aroma (Categorical): The sensory description of the hop’s aroma profile, which can include terms like “floral,” “citrus,” or “spicy.”</li>
+<li>total_oil (Continuous): The total essential oil content of the hop, typically measured in milliliters per 100 grams.</li>
+<li>alpha_acids (Continuous): The percentage of alpha acids in the hop, which contribute to the bitterness of the beer.</li>
+<li>beta_acids (Continuous): The percentage of beta acids in the hop, which also contribute to the bitterness but degrade more slowly over time.</li>
+<li>humulene (Continuous): A compound contributing to the hop’s woody, earthy aroma.</li>
+<li>myrcene (Continuous): A compound that contributes to the hop’s citrus and floral aroma.</li>
+<li>humulone (Continuous): Another compound found in hop oils, related to bitterness and aroma.</li>
+<li>caryophyllene (Continuous): A compound contributing to spicy, peppery aromas.</li>
+<li>farnesene (Continuous): A compound contributing to green, woody, or fruity aromas.</li>
+</ul>
+<!-- start R FAQ -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="links.html">links</a></div>
+<div class="next"><a href="r-faq.html">r faq</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#datasets">datasets</a></li>
+<li><a class="nav-link" href="#alaska_lake_data">alaska_lake_data</a></li>
+<li><a class="nav-link" href="#algae_data">algae_data</a></li>
+<li><a class="nav-link" href="#beer_components">beer_components</a></li>
+<li><a class="nav-link" href="#hawaii_aquifers">hawaii_aquifers</a></li>
+<li><a class="nav-link" href="#hops_components">hops_components</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-24.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

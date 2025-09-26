@@ -1,0 +1,121 @@
+# hierarchical clustering {-}
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png', dpi = NA)
+```
+
+"Which of my samples are most closely related?"
+
+## {-}
+
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
+
+```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg', dpi = NA)
+```
+
+Please note that we can get distance matrices directly from `runMatrixAnalyses` by specifying `analysis = "dist"`:
+
+```{r}
+alaska_lake_data %>%
+    select(-element_type) %>%
+    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
+
+dist <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+)
+
+as.matrix(dist)[1:3,1:3]
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalyses()` to use `analysis = "hclust"`: 
+
+```{r, message = FALSE}
+AK_lakes_clustered <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("hclust"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+)
+AK_lakes_clustered
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalyses>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+```{r, message = FALSE}
+library(ggtree)
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic() +
+  scale_x_continuous(limits = c(0,700))
+```
+
+Cool! Though that plot could use some tweaking... let's try:
+
+```{r, fig.height = 4, fig.width = 5}
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,600)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.4,0.2)
+    )
+    
+```
+
+Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
+
+
+
+```{r, fig.height = 4, fig.width = 5}
+alaska_lake_data_wide %>%
+  filter(!lake %in% c("North_Killeak_Lake","White_Fish_Lake")) -> alaska_lake_data_wide_filtered
+
+runMatrixAnalyses(
+    data = alaska_lake_data_wide_filtered,
+    analysis = c("hclust"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide_filtered)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+) %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,100)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.05,0.9)
+    )
+    
+```
+
+## further reading {-}
+
+- [annotating phylogenetic trees with ggtree](https://yulab-smu.top/treedata-book/chapter10.html). This free, book-length reference from the ggtree authors walks through annotating dendrograms and phylogenetic trees in R, explaining how to layer metadata, add tip labels, and customize themes—perfect for polishing the cluster plots we generated in this chapter.
+
+- [hierarchical clustering in R](https://uc-r.github.io/hc_clustering). UC Business Analytics’ tutorial provides a gentle, R-focused walkthrough of agglomerative clustering, covering distance matrices, linkage choices, dendrogram interpretation, and cluster cutting with reproducible code examples. Note that this text uses base R instead of our in-class functions.
+
+<!-- ## exercises {-} -->
+
+
+<!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
+
+<!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
+
+<!-- ```{r} -->
+<!-- colnames(solvents) -->
+
+<!-- colnames(solvents)[1:3] -->
+
+<!-- colnames(solvents)[c(1,5,7)] -->
+<!-- ``` -->

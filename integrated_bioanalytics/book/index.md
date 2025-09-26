@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-09-24"
+date: "2025-09-25"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -50,10 +50,12 @@ Integrated Bioanalytics documents methods for analyzing chemical and sequence da
 source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 ```
 
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
 # (PART) GETTING STARTED 
 
-<!-- start overview -->
 
 # overview {-}
 
@@ -65,9 +67,6 @@ This book first covers data analysis in R. We will first look at tools for hypot
 
 Let's get started!
 
-<!-- end -->
-
-<!-- start installation -->
 
 # installation {-}
 
@@ -131,7 +130,7 @@ Next, type `plot(Indometh)` into the R Console. This will plot the indomethacin 
 plot(Indometh)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
 
 If both the above commands (`head(Indometh)` and `plot(Indometh)`) worked and there were no error messages during installation, then you should be ready to proceed.
 
@@ -196,10 +195,11 @@ source("https://thebustalab.github.io/phylochemistry/phylochemistry.R")
 The first time you try this, it will very likely say: "You need to install the following packages before proceeding […] Is it okay if phylochemistry installs them for you?" You should say "yes".
 
 <!-- end -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
 # (PART) DATA VISUALIZATION
-
-<!-- start data visualization -->
 
 
 # data visualization I {-}
@@ -349,7 +349,7 @@ We do this using the ggplot function's data argument. When we run that line, it 
 ggplot(data = algae_data_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-20-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="50%" style="display: block; margin: auto;" />
 
 2. **Define how your variables map onto the axes.**
 
@@ -360,7 +360,7 @@ This is called aesthetic mapping and is done with the `aes()` function. `aes()` 
 ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-21-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-89-1.png" width="50%" style="display: block; margin: auto;" />
 
 3. **Use geometric shapes to represent other variables in your data.**
 
@@ -372,7 +372,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-22-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-90-1.png" width="50%" style="display: block; margin: auto;" />
 
 In the same way that we mapped variables in our dataset to the plot axes, we can map variables in the dataset to the geometric features of the shapes we are using to represent our data. For this, again, use `aes()` to map your variables onto the geometric features of the shapes:
 
@@ -382,7 +382,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-23-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-91-1.png" width="50%" style="display: block; margin: auto;" />
 
 In the plot above, the points are a bit small, how could we fix that? We can modify the features of the shapes by adding additional arguments to the `geom_*()` functions. To change the size of the points created by the `geom_point()` function, this means that we need to add the `size = ` argument. IMPORTANT! Please note that when we map a feature of a shape to a *variable* in our data(as we did with color/harvesting regime, above) then it goes *inside* aes(). In contrast, when we map a feature of a shape to a *constant*, it goes *outside* aes(). Here's an example:
 
@@ -392,7 +392,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-24-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-92-1.png" width="50%" style="display: block; margin: auto;" />
 
 One powerful aspect of `ggplot` is the ability to quickly change mappings to see if alternative plots are more effective at bringing out the trends in the data. For example, we could modify the plot above by switching how harvesting_regime is mapped:
 
@@ -402,7 +402,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(size = harvesting_regime), color = "black")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-25-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-93-1.png" width="50%" style="display: block; margin: auto;" />
 
 ** Important note: Inside the `aes()` function, map aesthetics (the features of the geom's shape) to a *variable*. Outside the `aes()` function, map aesthetics to *constants*. You can see this in the above two plots - in the first one, color is inside `aes()` and mapped to the variable called harvesting_regime, while size is outside the `aes()` call and is set to the constant 5. In the second plot, the situation is reversed, with size being inside the `aes()` function and mapped to the variable harvesting_regime, while color is outside the `aes()` call and is mapped to the constant "black".
 
@@ -415,7 +415,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime), size = 5)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="50%" style="display: block; margin: auto;" />
 
 As you can probably guess right now, there are lots of mappings that can be done, and lots of different ways to look at the same data!
 
@@ -426,7 +426,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_point(aes(color = harvesting_regime, size = replicate))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-95-1.png" width="50%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -434,7 +434,7 @@ ggplot(data = algae_data_small, aes(x = algae_strain, y = abundance)) +
   geom_boxplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-96-1.png" width="50%" style="display: block; margin: auto;" />
 
 ## markdown {-}
 
@@ -496,7 +496,7 @@ ggplot(
 geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-35-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-103-1.png" width="100%" style="display: block; margin: auto;" />
 
 Using the above as a template, make a plot that shows just `omega_3_polyunsaturated_Fas`, with algae_strain on the x axis, and abundance on the y axis. Color the points so that they correspond to `harvesting_regime`. Remember that mapping a feature of a shape onto a variable must be done inside `aes()`. Change the plot so that all the points are size = 5. Remember that mapping features of a shape to a constant needs to be done outside `aes()`. Which harvesting regime leads to higher levels of `omega_3_polyunsaturated_Fas`?
 
@@ -582,7 +582,7 @@ ggplot(
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-52-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we have lots of aesthetics we can map to: x, y, size, color, and fill (leave shape set to 21 for now). Make a plot of your own design. It should include filtering, and all the aesthetics listed above, though whether you map them to a variable or a constant is up to you.
 
@@ -614,7 +614,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-55-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-165-1.png" width="100%" style="display: block; margin: auto;" />
 
 Also, please be aware of `geom_tile()`, which is nice for situations with two discrete variables and one continuous variable. `geom_tile()` makes what are often referred to as heat maps. Note that `geom_tile()` is somewhat similar to `geom_point(shape = 21)`, in that it has both `fill` and `color` aesthetics that control the fill color and the border color, respectively.
 
@@ -627,7 +627,7 @@ ggplot(
   geom_tile(aes(fill = abundance), color = "black", size = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-166-1.png" width="100%" style="display: block; margin: auto;" />
 
 These examples should illustrate that there is, to some degree, correspondence between the type of data you are interested in plotting (number of discrete and continuous variables) and the types of geoms that can effectively be used to represent the data.
 
@@ -643,7 +643,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(.~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can facet in the vertical direction:
 
@@ -653,7 +653,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(replicate~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-168-1.png" width="100%" style="display: block; margin: auto;" />
 
 And we can do both at the same time:
 
@@ -663,7 +663,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   facet_grid(harvesting_regime~replicate)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
 
 Faceting is a great way to describe more variation in your plot without having to make your geoms more complicated. For situations where you need to generate lots and lots of facets, consider `facet_wrap` instead of `facet_grid`:
 
@@ -675,7 +675,7 @@ ggplot(data = algae_data, aes(x = replicate, y = algae_strain)) +
   facet_wrap(chemical_species~.)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-60-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## scales {-}
 
@@ -690,7 +690,7 @@ ggplot(data = algae_data, aes(x = algae_strain, y = chemical_species)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-61-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-171-1.png" width="100%" style="display: block; margin: auto;" />
 
 One particularly useful type of scale are the color scales provided by RColorBrewer:
 
@@ -699,7 +699,7 @@ One particularly useful type of scale are the color scales provided by RColorBre
 display.brewer.all()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-172-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 ggplot(mtcars) +
@@ -710,7 +710,7 @@ ggplot(mtcars) +
   scale_fill_brewer(palette = "Set1")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-173-1.png" width="100%" style="display: block; margin: auto;" />
   
 ## themes {-}
   
@@ -728,7 +728,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-64-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-174-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -740,7 +740,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-175-1.png" width="100%" style="display: block; margin: auto;" />
   
 
 ``` r
@@ -752,7 +752,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-176-1.png" width="100%" style="display: block; margin: auto;" />
 
 You can also change individual components of themes. This can be a bit tricky, but it's all explained if you run `?theme()`. Hare is an example (and google will provide many, many more).
 
@@ -768,7 +768,7 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ## x'
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-177-1.png" width="100%" style="display: block; margin: auto;" />
 
 Last, here is an example of combining `scale_*` and `theme_*` with previous commands to really get a plot looking sharp.
 
@@ -793,8 +793,8 @@ ggplot(data = solvents, aes(x = boiling_point, y = vapor_pressure)) +
 ```
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-68-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-68)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
+<img src="index_files/figure-html/unnamed-chunk-178-1.png" alt="Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-178)Vapor pressure as a function of boiling point. A scatter plot with trendline showing the vapor pressure of thirty-two solvents (y-axis) a as a function of their boiling points (x-axis). Each point represents the boiling point and vapor pressure of one solvent. Data are from the 'solvents' dataset used in UMD CHEM5725.</p>
 </div>
 
 In some cases, the following diagram illustrates a useful way to think about the `ggplot()` / `geom_*()` / `scale_*()` / `theme_*()` situation. It shows how we use these things together to achieve a sharp-looking plot:
@@ -828,7 +828,7 @@ plot3 <-  ggplot(
 plot_grid(plot_grid(plot1, plot2), plot3, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-70-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-180-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- ## exercises {-}
 
@@ -877,6 +877,7 @@ Additional color palettes: [MetBrewer](https://github.com/BlakeRMills/MetBrewer)
 <!-- end -->
 
 <!-- start data visualization III -->
+
 
 # data visualization III {-}
 
@@ -947,9 +948,6 @@ The output from points3D contains a grid, axes, and ticks, which should all be p
 ``` r
 output$points <- left_join(output$points, aquifers)
 ## Joining with `by = join_by(sample_unique_ID)`
-```
-
-``` r
   
 ggplot() +
   geom_segment(
@@ -975,7 +973,7 @@ ggplot() +
   scale_fill_manual(values = discrete_palette)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-73-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-201-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### marginal summaries {-}
 
@@ -996,7 +994,7 @@ p + geom_xsidedensity(aes(y=stat(density), xfill = Species), position = "stack")
   scale_yfill_manual(values = c("black","gold"))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-74-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-202-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### representing distributions {-}
 
@@ -1013,7 +1011,7 @@ mpg %>% filter(cyl %in% c(4,6,8)) %>%
   ggdist::stat_dots(side = "left", justification = 1.1, binwidth = .25)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-203-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### venn digrams {-}
 
@@ -1036,7 +1034,7 @@ vennAnalysis(df[,1:3]) %>%
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-76-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-204-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ### ternary plots {-}
@@ -1057,7 +1055,7 @@ alaska_lake_data %>%
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-77-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-205-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ## map data {-}
@@ -1123,7 +1121,7 @@ ggplot(map_data("world")) +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-82-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-210-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that we can use `coord_map()` to do some pretty cool things!
 
@@ -1135,7 +1133,7 @@ ggplot(map_data("world")) +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-83-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-211-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can use filtering to produce maps of specific regions.
 
@@ -1151,7 +1149,7 @@ ggplot() +
   coord_map()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-212-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### maps with plots {-}
 
@@ -1166,7 +1164,7 @@ filter(map_data("lakes"), region == "Great Lakes", subregion == "Superior") %>%
       theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-85-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-213-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can clean up the map by making different groups for geom_path() whenever two consecutive points are far apart:
 
@@ -1195,7 +1193,7 @@ ggplot(lake_superior, aes(x = long, y = lat, group = distance_group)) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-86-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-214-1.png" width="100%" style="display: block; margin: auto;" />
 
 Now we could add some data. We could do something simple like plot total abundances as the size of a point:
 
@@ -1220,7 +1218,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-87-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-215-1.png" width="100%" style="display: block; margin: auto;" />
 
 Or we could do something more sophisticated like add pie charts at each point:
 
@@ -1267,7 +1265,7 @@ ggplot() +
   theme_cowplot()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-216-1.png" width="100%" style="display: block; margin: auto;" />
 
 You can also access a high resolution shoreline dataset for Lake Superior directly from the source() command as `lake_superior_shoreline`:
 
@@ -1288,7 +1286,7 @@ zoom_view <- ggplot(filter(shore, lat < 47.2, lat > 46.6, lon < -90)) +
 plot_grid(wide_view, zoom_view, nrow = 1, rel_widths = c(1,2))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-89-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-217-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -1312,14 +1310,13 @@ For more on ternary plots: [ggtern](https://www.jstatsoft.org/article/view/v087c
 
 4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
 
-
-
-
-<!-- end -->
-
-<!-- start data wrangling -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
 # (PART) STATISTICAL METHODS
+
+
 
 # wrangling and summaries {-}
 
@@ -1364,9 +1361,6 @@ head(alaska_lake_data[,3])
 ## 4       6.46
 ## 5       6.46
 ## 6       6.46
-```
-
-``` r
 
 # To look at select columns:
 head(alaska_lake_data[,2:5])
@@ -1379,9 +1373,6 @@ head(alaska_lake_data[,2:5])
 ## 4 BELA        6.46  7.69 Cl     
 ## 5 BELA        6.46  7.69 S      
 ## 6 BELA        6.46  7.69 F
-```
-
-``` r
 
 # To look at a single row (the second row)
 head(alaska_lake_data[2,])
@@ -1389,9 +1380,6 @@ head(alaska_lake_data[2,])
 ##   lake  park  water_temp    pH element mg_per_L element_type
 ##   <chr> <chr>      <dbl> <dbl> <chr>      <dbl> <chr>       
 ## 1 Devi… BELA        6.46  7.69 N          0.028 bound
-```
-
-``` r
 
 # To look at select rows:
 head(alaska_lake_data[2:5,])
@@ -1402,16 +1390,10 @@ head(alaska_lake_data[2:5,])
 ## 2 Devi… BELA        6.46  7.69 P          0     bound       
 ## 3 Devi… BELA        6.46  7.69 Cl        10.4   free        
 ## 4 Devi… BELA        6.46  7.69 S          0.62  free
-```
-
-``` r
 
 # To look at just a single column, by name
 head(alaska_lake_data$pH)
 ## [1] 7.69 7.69 7.69 7.69 7.69 7.69
-```
-
-``` r
 
 # To look at select columns by name
 head(select(alaska_lake_data, park, water_temp))
@@ -1481,7 +1463,7 @@ We have seen how to create new objects using `<-`, and we have been filtering an
 ggplot(filter(alaska_lake_data, park == "BELA"), aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-94-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-242-1.png" width="100%" style="display: block; margin: auto;" />
 
 However, as our analyses get more complex, the code can get long and hard to read. We're going to use the pipe `%>%` to help us with this. Check it out:
 
@@ -1492,7 +1474,7 @@ alaska_lake_data %>%
   ggplot(aes(x = pH, y = lake)) + geom_col()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-95-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-243-1.png" width="100%" style="display: block; margin: auto;" />
 
 Neat! Another way to think about the pipe:
 
@@ -1534,9 +1516,6 @@ ny_trees %>%
 ##   mean_height
 ##         <dbl>
 ## 1        72.6
-```
-
-``` r
 
 ny_trees %>%
   summarize(stdev_height = sd(tree_height))
@@ -1638,7 +1617,7 @@ ggplot() +
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-102-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-250-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! Just like that, we've found (and visualized) the average and standard deviation of tree heights, by species, in NYC. But it doesn't stop there. We can use `group_by()` and `summarize()` on multiple variables (i.e. more groups). We can do this to examine the properties of each tree species in each NYC borough. Let's check it out:
 
@@ -1688,7 +1667,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-252-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! And if we really want to go for something pretty:
 
@@ -1720,7 +1699,7 @@ ggplot() +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-105-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
 
 *Now* we are getting somewhere. It looks like there are some really big maple trees (Acer) in Queens.
 
@@ -1809,7 +1788,7 @@ alaska_lake_data %>%
 ##  3 Kuzitrin_Lake       BELA  S           0.29     15.1 
 ##  4 Lava_Lake           BELA  S           0.59     30.7 
 ##  5 North_Killeak_Lake  BELA  S           0.04      2.08
-##  6 White_Fish_Lake     BELA  S           0.18      9.38
+##  6 White_Fish_Lake     BELA  S           0.18      9.37
 ##  7 Iniakuk_Lake        GAAR  S          12.1      13.2 
 ##  8 Kurupa_Lake         GAAR  S          12.4      13.6 
 ##  9 Lake_Matcharak      GAAR  S          13.3      14.5 
@@ -1872,11 +1851,176 @@ Some pointers:
 
 ## further reading {-}
 
-Be sure to check out the Tidy Data Tutor: https://tidydatatutor.com/vis.html. An easy way to visualize what's going on during data wrangling!
+- [Tidy Data Tutor](https://tidydatatutor.com/vis.html). This interactive site animates what happens to a data frame as you apply verbs like `select()`, `filter()`, or `pivot_longer()`, making it easier to see how each operation reshapes your tables.
 
-<!-- end -->
+- [tidyverse cheat sheet](https://posit.co/resources/cheatsheets/#r-programming). Posit maintains printable cheat sheets for dplyr, tidyr, and readr that summarize the verbs we used here; they’re handy for quick lookups when you forget an argument name or want to explore related functions.
 
-<!-- start dimensionality reduction -->
+- [tidyr and dplyr vignettes](https://tidyr.tidyverse.org/articles/tidy-data.html). The official package articles dig into the philosophy behind tidy data, the rationale for pivoting functions, and worked examples that go deeper than our walkthrough.
+
+- [R for Data Science, Chapter 5–10](https://r4ds.hadley.nz/transform). Hadley Wickham and Mine Çetinkaya-Rundel’s open textbook expands on wrangling, reshaping, and summarizing with narratives, exercises, and datasets that reinforce the patterns we practiced.
+
+
+
+# hierarchical clustering {-}
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;" />
+
+"Which of my samples are most closely related?"
+
+## {-}
+
+So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
+
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;" />
+
+Please note that we can get distance matrices directly from `runMatrixAnalyses` by specifying `analysis = "dist"`:
+
+
+``` r
+alaska_lake_data %>%
+    select(-element_type) %>%
+    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
+
+dist <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("dist"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+)
+## Replacing NAs in your data with mean
+
+as.matrix(dist)[1:3,1:3]
+##                          Devil_Mountain_Lake_BELA
+## Devil_Mountain_Lake_BELA                 0.000000
+## Imuruk_Lake_BELA                         3.672034
+## Kuzitrin_Lake_BELA                       1.663147
+##                          Imuruk_Lake_BELA
+## Devil_Mountain_Lake_BELA         3.672034
+## Imuruk_Lake_BELA                 0.000000
+## Kuzitrin_Lake_BELA               3.062381
+##                          Kuzitrin_Lake_BELA
+## Devil_Mountain_Lake_BELA           1.663147
+## Imuruk_Lake_BELA                   3.062381
+## Kuzitrin_Lake_BELA                 0.000000
+```
+
+There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalyses()` to use `analysis = "hclust"`: 
+
+
+``` r
+AK_lakes_clustered <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
+    analysis = c("hclust"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+)
+AK_lakes_clustered
+## # A tibble: 38 × 26
+##    sample_unique_ID   lake  park  parent  node branch.length
+##    <chr>              <chr> <chr>  <int> <int>         <dbl>
+##  1 Devil_Mountain_La… Devi… BELA      23     1         7.81 
+##  2 Imuruk_Lake_BELA   Imur… BELA      25     2         6.01 
+##  3 Kuzitrin_Lake_BELA Kuzi… BELA      24     3         3.27 
+##  4 Lava_Lake_BELA     Lava… BELA      32     4         3.14 
+##  5 North_Killeak_Lak… Nort… BELA      38     5       256.   
+##  6 White_Fish_Lake_B… Whit… BELA      38     6         0.828
+##  7 Iniakuk_Lake_GAAR  Inia… GAAR      36     7         2.59 
+##  8 Kurupa_Lake_GAAR   Kuru… GAAR      30     8         6.00 
+##  9 Lake_Matcharak_GA… Lake… GAAR      35     9         2.09 
+## 10 Lake_Selby_GAAR    Lake… GAAR      29    10         3.49 
+## # ℹ 28 more rows
+## # ℹ 20 more variables: label <chr>, isTip <lgl>, x <dbl>,
+## #   y <dbl>, branch <dbl>, angle <dbl>, bootstrap <lgl>,
+## #   water_temp <dbl>, pH <dbl>, C <dbl>, N <dbl>, P <dbl>,
+## #   Cl <dbl>, S <dbl>, F <dbl>, Br <dbl>, Na <dbl>,
+## #   K <dbl>, Ca <dbl>, Mg <dbl>
+```
+
+It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalyses>) + geom_*()` etc.
+
+Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+
+
+``` r
+library(ggtree)
+AK_lakes_clustered %>%
+ggtree() +
+  geom_tiplab() +
+  geom_tippoint() +
+  theme_classic() +
+  scale_x_continuous(limits = c(0,700))
+```
+
+<img src="index_files/figure-html/unnamed-chunk-296-1.png" width="100%" style="display: block; margin: auto;" />
+
+Cool! Though that plot could use some tweaking... let's try:
+
+
+``` r
+AK_lakes_clustered %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,600)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.4,0.2)
+    )
+```
+
+<img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;" />
+
+Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
+
+
+
+
+``` r
+alaska_lake_data_wide %>%
+  filter(!lake %in% c("North_Killeak_Lake","White_Fish_Lake")) -> alaska_lake_data_wide_filtered
+
+runMatrixAnalyses(
+    data = alaska_lake_data_wide_filtered,
+    analysis = c("hclust"),
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide_filtered)[3:15],
+    columns_w_sample_ID_info = c("lake", "park")
+) %>%
+ggtree() +
+    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
+    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
+    scale_x_continuous(limits = c(0,100)) +
+    scale_fill_brewer(palette = "Set1") +
+    # theme_classic() +
+    theme(
+      legend.position = c(0.05,0.9)
+    )
+## Replacing NAs in your data with mean
+```
+
+<img src="index_files/figure-html/unnamed-chunk-298-1.png" width="100%" style="display: block; margin: auto;" />
+
+## further reading {-}
+
+- [annotating phylogenetic trees with ggtree](https://yulab-smu.top/treedata-book/chapter10.html). This free, book-length reference from the ggtree authors walks through annotating dendrograms and phylogenetic trees in R, explaining how to layer metadata, add tip labels, and customize themes—perfect for polishing the cluster plots we generated in this chapter.
+
+- [hierarchical clustering in R](https://uc-r.github.io/hc_clustering). UC Business Analytics’ tutorial provides a gentle, R-focused walkthrough of agglomerative clustering, covering distance matrices, linkage choices, dendrogram interpretation, and cluster cutting with reproducible code examples. Note that this text uses base R instead of our in-class functions.
+
+<!-- ## exercises {-} -->
+
+
+<!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
+
+<!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
+
+<!-- ```{r} -->
+<!-- colnames(solvents) -->
+
+<!-- colnames(solvents)[1:3] -->
+
+<!-- colnames(solvents)[c(1,5,7)] -->
+<!-- ``` -->
+
 
 # dimensional reduction {-}
 
@@ -1991,7 +2135,7 @@ ggplot(data = AK_lakes_pca, aes(x = Dim.1, y = Dim.2)) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-120-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-312-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! In this plot we can see that White Fish Lake and North Killeak Lake, both in BELA park, are quite different from the other parks (they are separated from the others along dimension 1, i.e. the first principal component). At the same time, Wild Lake, Iniakuk Lake, Walker Lake, and several other lakes in GAAR park are different from all the others (they are separated from the others along dimension 2, i.e. the second principal component).
 
@@ -2044,7 +2188,7 @@ ggplot(AK_lakes_pca_ord) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-122-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-314-1.png" width="100%" style="display: block; margin: auto;" />
 
 Great! Here is how to read the ordination plot:
 
@@ -2092,7 +2236,7 @@ ggplot() +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-315-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that you do not have to plot ordination data as a circular layout of segments. Sometimes it is much easier to plot (and interpret!) alternatives:
 
@@ -2105,7 +2249,7 @@ AK_lakes_pca_ord %>%
     theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-124-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-316-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### principal components {-}
 
@@ -2139,7 +2283,7 @@ ggplot(
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-317-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We can see that the first principal component retains nearly 50% of the variance in the original dataset, while the second dimension contains only about 20%. We can derive an important notion about PCA visualization from this: the scales on the two axes need to be the same for distances between points in the x and y directions to be comparable. This can be accomplished using `coord_fixed()` as an addition to your ggplots.
 
@@ -2178,7 +2322,7 @@ wq %>%
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-127-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-319-1.png" width="100%" style="display: block; margin: auto;" />
 
 In this PCA plot, each point represents a wine sample, with its position determined by the first two principal components. We’re using quality_score to fill the points with color, and different shapes to distinguish the wine type. This serves as a baseline for comparing how non-linear methods handle our data.
 
@@ -2201,7 +2345,7 @@ runMatrixAnalyses(
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-128-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-320-1.png" width="100%" style="display: block; margin: auto;" />
 
 In the UMAP plot, each point’s coordinates (Dim_1 and Dim_2) are derived from UMAP’s algorithm, which strives to preserve the overall topology of the data. As a result, UMAP might reveal clusters or continuous gradients related to wine quality and type that aren’t as apparent with PCA.
 
@@ -2237,164 +2381,318 @@ Both UMAP and t‑SNE provide powerful alternatives to PCA when your data’s st
 
 <!-- start clustering -->
 
-# hierarchical clustering {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/clustering.png" width="100%" style="display: block; margin: auto;" />
+# flat clustering {-}
 
-"Which of my samples are most closely related?"
+"Do my samples fall into definable clusters?"
 
 ## {-}
 
-So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
+## kmeans {-}
 
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/dist_matrix.jpg" width="100%" style="display: block; margin: auto;" />
+One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
 
-Please note that we can get distance matrices directly from `runMatrixAnalyses` by specifying `analysis = "dist"`:
+<img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" width="100%" style="display: block; margin: auto;" />
+
+One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
+
+Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We can set `analysis = "kmeans"`. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the `parameters` argument:
+
 
 
 ``` r
-alaska_lake_data %>%
-    select(-element_type) %>%
-    pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
-
-dist <- runMatrixAnalyses(
-    data = alaska_lake_data_wide,
-    analysis = c("dist"),
-    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
+alaska_lake_data_pca <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("pca"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
     columns_w_sample_ID_info = c("lake", "park")
 )
-## Replacing NAs in your data with mean
 
-as.matrix(dist)[1:3,1:3]
-##                          Devil_Mountain_Lake_BELA
-## Devil_Mountain_Lake_BELA                 0.000000
-## Imuruk_Lake_BELA                         3.672034
-## Kuzitrin_Lake_BELA                       1.663147
-##                          Imuruk_Lake_BELA
-## Devil_Mountain_Lake_BELA         3.672034
-## Imuruk_Lake_BELA                 0.000000
-## Kuzitrin_Lake_BELA               3.062381
-##                          Kuzitrin_Lake_BELA
-## Devil_Mountain_Lake_BELA           1.663147
-## Imuruk_Lake_BELA                   3.062381
-## Kuzitrin_Lake_BELA                 0.000000
-```
-
-There is more that we can do with distance matrices though, lots more. Let's start by looking at an example of hierarchical clustering. For this, we just need to tell `runMatrixAnalyses()` to use `analysis = "hclust"`: 
-
-
-``` r
-AK_lakes_clustered <- runMatrixAnalyses(
-    data = alaska_lake_data_wide,
-    analysis = c("hclust"),
-    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:15],
-    columns_w_sample_ID_info = c("lake", "park")
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("kmeans"),
+    parameters = c(5),
+    column_w_names_of_multiple_analytes = NULL,
+    column_w_values_for_multiple_analytes = NULL,
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID"
 )
-AK_lakes_clustered
-## # A tibble: 38 × 26
-##    sample_unique_ID   lake  park  parent  node branch.length
-##    <chr>              <chr> <chr>  <int> <int>         <dbl>
-##  1 Devil_Mountain_La… Devi… BELA      23     1         7.81 
-##  2 Imuruk_Lake_BELA   Imur… BELA      25     2         6.01 
-##  3 Kuzitrin_Lake_BELA Kuzi… BELA      24     3         3.27 
-##  4 Lava_Lake_BELA     Lava… BELA      32     4         3.14 
-##  5 North_Killeak_Lak… Nort… BELA      38     5       256.   
-##  6 White_Fish_Lake_B… Whit… BELA      38     6         0.828
-##  7 Iniakuk_Lake_GAAR  Inia… GAAR      36     7         2.59 
-##  8 Kurupa_Lake_GAAR   Kuru… GAAR      30     8         6.00 
-##  9 Lake_Matcharak_GA… Lake… GAAR      35     9         2.09 
-## 10 Lake_Selby_GAAR    Lake… GAAR      29    10         3.49 
-## # ℹ 28 more rows
-## # ℹ 20 more variables: label <chr>, isTip <lgl>, x <dbl>,
-## #   y <dbl>, branch <dbl>, angle <dbl>, bootstrap <lgl>,
-## #   water_temp <dbl>, pH <dbl>, C <dbl>, N <dbl>, P <dbl>,
-## #   Cl <dbl>, S <dbl>, F <dbl>, Br <dbl>, Na <dbl>,
-## #   K <dbl>, Ca <dbl>, Mg <dbl>
+
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca) 
 ```
 
-It works! Now we can plot our cluster diagram with a ggplot add-on called ggtree. We've seen that ggplot takes a "data" argument (i.e. `ggplot(data = <some_data>) + geom_*()` etc.). In contrast, ggtree takes an argument called `tr`, though if you're using the `runMatrixAnalysis()` function, you can treat these two (`data` and `tr`) the same, so, use: `ggtree(tr = <output_from_runMatrixAnalyses>) + geom_*()` etc.
-
-Note that `ggtree` also comes with several great new geoms: `geom_tiplab()` and `geom_tippoint()`. Let's try those out:
+We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
 
 
 ``` r
-library(ggtree)
-AK_lakes_clustered %>%
-ggtree() +
-  geom_tiplab() +
-  geom_tippoint() +
+alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
+ggplot() +
+  geom_point(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+  ) +
+  geom_mark_ellipse(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+  ) +
   theme_classic() +
-  scale_x_continuous(limits = c(0,700))
+  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-134-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-340-1.png" width="100%" style="display: block; margin: auto;" />
 
-Cool! Though that plot could use some tweaking... let's try:
+## dbscan {-}
+
+There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
 
 
 ``` r
-AK_lakes_clustered %>%
-ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
-    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,600)) +
-    scale_fill_brewer(palette = "Set1") +
-    # theme_classic() +
-    theme(
-      legend.position = c(0.4,0.2)
-    )
-```
-
-<img src="index_files/figure-html/unnamed-chunk-135-1.png" width="100%" style="display: block; margin: auto;" />
-
-Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
-
-
-
-
-``` r
-alaska_lake_data_wide %>%
-  filter(!lake %in% c("North_Killeak_Lake","White_Fish_Lake")) -> alaska_lake_data_wide_filtered
-
-runMatrixAnalyses(
-    data = alaska_lake_data_wide_filtered,
-    analysis = c("hclust"),
-    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide_filtered)[3:15],
+alaska_lake_data_pca <- runMatrixAnalysis(
+    data = alaska_lake_data,
+    analysis = c("pca"),
+    column_w_names_of_multiple_analytes = "element",
+    column_w_values_for_multiple_analytes = "mg_per_L",
+    columns_w_values_for_single_analyte = c("water_temp", "pH"),
+    columns_w_additional_analyte_info = "element_type",
     columns_w_sample_ID_info = c("lake", "park")
-) %>%
-ggtree() +
-    geom_tiplab(aes(label = lake), offset = 10, align = TRUE) +
-    geom_tippoint(shape = 21, aes(fill = park), size = 4) +
-    scale_x_continuous(limits = c(0,100)) +
-    scale_fill_brewer(palette = "Set1") +
-    # theme_classic() +
-    theme(
-      legend.position = c(0.05,0.9)
-    )
-## Replacing NAs in your data with mean
+) 
+
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+    data = alaska_lake_data_pca,
+    analysis = c("dbscan"),
+    parameters = c(4, 0.45),
+    column_w_names_of_multiple_analytes = NULL,
+    column_w_values_for_multiple_analytes = NULL,
+    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+    columns_w_sample_ID_info = "sample_unique_ID"
+)
+
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+```
+We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs you need to feed it data without NAs:
+
+
+``` r
+alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
+ggplot() +
+  geom_point(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+  ) +
+  geom_mark_ellipse(
+    data = drop_na(alaska_lake_data_pca_clusters),
+    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+  ) +
+  theme_classic() +
+  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  scale_fill_manual(values = discrete_palette) 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-342-1.png" width="100%" style="display: block; margin: auto;" />
+
+## summarize by cluster {-}
+
+One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
+
+
+``` r
+alaska_lake_data_pca <- runMatrixAnalysis(
+  data = alaska_lake_data,
+  analysis = c("pca"),
+  column_w_names_of_multiple_analytes = "element",
+  column_w_values_for_multiple_analytes = "mg_per_L",
+  columns_w_values_for_single_analyte = c("water_temp", "pH"),
+  columns_w_additional_analyte_info = "element_type",
+  columns_w_sample_ID_info = c("lake", "park")
+)
+
+alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+  data = alaska_lake_data_pca,
+  analysis = c("dbscan"),
+  parameters = c(4, 0.45),
+  column_w_names_of_multiple_analytes = NULL,
+  column_w_values_for_multiple_analytes = NULL,
+  columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
+  columns_w_sample_ID_info = "sample_unique_ID",
+  columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
+) 
+
+alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
+
+alaska_lake_data_pca_clusters %>%
+  select(cluster, S, Ca) %>%
+  pivot_longer(cols = c(2,3), names_to = "analyte", values_to = "mg_per_L") %>%
+  drop_na() %>%
+  group_by(cluster, analyte) -> alaska_lake_data_pca_clusters_clean
+
+plot_2 <- ggplot() + 
+  geom_col(
+    data = summarize(
+      alaska_lake_data_pca_clusters_clean,
+      mean = mean(mg_per_L), sd = sd(mg_per_L)
+    ),
+    aes(x = cluster, y = mean, fill = cluster),
+    color = "black", alpha = 0.6
+  ) +
+  geom_errorbar(
+    data = summarize(
+      alaska_lake_data_pca_clusters_clean,
+      mean = mean(mg_per_L), sd = sd(mg_per_L)
+    ),
+    aes(x = cluster, ymin = mean-sd, ymax = mean+sd, fill = cluster),
+    color = "black", alpha = 0.6, width = 0.5, size = 1
+  ) +
+  facet_grid(.~analyte) + theme_bw() +
+  geom_jitter(
+    data = alaska_lake_data_pca_clusters_clean,
+    aes(x = cluster, y = mg_per_L, fill = cluster), width = 0.05,
+    shape = 21
+  ) +
+  scale_fill_manual(values = discrete_palette) 
+
+plot_1<- ggplot() +
+  geom_point(
+    data = alaska_lake_data_pca_clusters,
+    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
+  ) +
+  geom_mark_ellipse(
+    data = drop_na(alaska_lake_data_pca_clusters),
+    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
+  ) +
+  theme_classic() + coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
+  scale_fill_manual(values = discrete_palette)
+
+plot_1 + plot_2
+```
+
+<img src="index_files/figure-html/unnamed-chunk-343-1.png" width="100%" style="display: block; margin: auto;" />
+ 
+## {-}
 
 ## further reading {-}
- 
-For more information on plotting annotated trees, see: https://yulab-smu.top/treedata-book/chapter10.html.
 
-For more on clustering, see: https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/.
+http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
 
-<!-- ## exercises {-} -->
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/
 
-<!-- For this set of exercises, please use `runMatrixAnalyses()` to run and visualize a hierarchical cluster analysis with each of the main datasets that we have worked with so far, except for NY_trees. This means: `algae_data` (which algae strains are most similar to each other?), `alaska_lake_data` (which lakes are most similar to each other?). and `solvents` (which solvents are most similar to each other?). It also means you should use the periodic table (which elements are most similar to each other?), though please don't use the whole periodic table, rather, use `periodic_table_subset`. Please also conduct a heirarchical clustering analysis for a dataset of your own choice that is not provided by the `source()` code. For each of these, create (i) a tree diagram that shows how the "samples" in each data set are related to each other based on the numerical data associated with them, (ii) a caption for each diagram, and (iii) describe, in two or so sentences, an interesting trend you see in the diagram. You can ignore columns that contain categorical data, or you can list those columns as "additional_analyte_info". -->
+https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png
 
-<!-- For this assignment, you may again find the `colnames()` function and square bracket-subsetting useful. It will list all or a subset of the column names in a dataset for you. For example: -->
+https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
 
-<!-- ```{r} -->
-<!-- colnames(solvents) -->
 
-<!-- colnames(solvents)[1:3] -->
+<!-- ## exercises {-}
 
-<!-- colnames(solvents)[c(1,5,7)] -->
-<!-- ``` -->
+For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
+
+1. Run a PCA analysis on the data set and plot the results. 
+
+2. Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
+
+3. Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
+
+4. Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.
+
+5. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.
+
+6. Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
+
+7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
+
+8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups. -->
+
+
+<!-- 
+
+
+
+* Question 1
+
+Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
+
+
+
+* Question 2
+
+Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
+
+
+
+* Question 3
+
+Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
+
+
+
+* Question 4
+
+Modify your code from Question 2 so that five clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?
+
+
+
+* Question 5
+
+Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?
+
+
+
+* Question 6
+
+Google "Quercetin". What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using `geom_pointrange` and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, `theme_classic()`).
+
+Does one cluster have a large amount of variation in Quercetin abundance? Why do you think this might be?
+
+
+
+* Question 7
+
+Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
+
+
+
+* Challenge (optional)
+
+Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
+
+`align = TRUE` inside `geom_tiplab()`
+
+`nrow = 1` inside `plot_grid()`
+
+`rel_widths = <your_choice>` inside `plot_grid()`
+
+`name = <your_choice>` inside `scale_*_*`
+
+`label = cluster` inside `geom_mark_ellipse()`
+
+`breaks = <your_choice>` inside `scale_x_continuous()` or `scale_y_continuous()` (as an example, `breaks = seq(0,10,1)`)
+
+Also, consider using:
+
+`guides(fill = "none", color = "none")`
+
+Install the RColorBrewer package, and use one of its color schemes. As an example with the color scheme `Set1`:
+
+`scale_fill_brewer(palette = "Set1", na.value = "grey")`
+
+`scale_color_brewer(palette = "Set1", na.value = "grey")`
+
+Save your plot as a png using `ggsave()`.
+
+
+
+Maybe something like this:
+
+{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
+knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
+ -->
+
+<!-- end -->
+
+<!-- start comparing means -->
+
 
 # comparing means {-}
 
@@ -2458,7 +2756,7 @@ aquifers_summarized
 ggplot(aquifers_summarized) + geom_col(aes(x = n_wells, y = aquifer_code))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-139-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-370-1.png" width="100%" style="display: block; margin: auto;" />
 
 <!-- To run these statistical analyses, we will need several new R packages: `rstatix`, `agricolae`, and `multcompView`. Please install these with `install.packages("rstatix")`, `install.packages("agricolae")`, and `install.packages("multcompView")`. Load them into your R session using `library(rstatix)`, `library(agricolae)`, and `library(multcompView)`.
  -->
@@ -2540,7 +2838,7 @@ ggplot(K_data_1_6, aes(x = aquifer_code, y = abundance)) +
     geom_point()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-142-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-373-1.png" width="100%" style="display: block; margin: auto;" />
 
 Are these data normally distributed? Do they have similar variance? Let's get a first approximation by looking at a plot:
 
@@ -2553,7 +2851,7 @@ K_data_1_6 %>%
     geom_density(aes(y = ..density..*10), color = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-143-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-374-1.png" width="100%" style="display: block; margin: auto;" />
 
 Based on this graphic, it's hard to say! Let's use a statistical test to help. When we want to run the Shaprio test, we are looking to see if each group has normally distributed here (here group is "aquifer_code", i.e. aquifer_1 and aquifer_6). This means we need to `group_by(aquifer_code)` before we run the test:
 
@@ -2642,7 +2940,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_point(color = "maroon", alpha = 0.6, size = 3)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-379-1.png" width="100%" style="display: block; margin: auto;" />
 
 Let's check visually to see if each group is normally distributed and to see if they have roughly equal variance:
 
@@ -2656,7 +2954,7 @@ K_data %>%
     geom_density(aes(y = ..density..*10), colour = "blue")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-149-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-380-1.png" width="100%" style="display: block; margin: auto;" />
 
 Again, it is somewhat hard to tell visually if these data are normally distributed. It seems pretty likely that they have different variances about the means, but let's check using the Shapiro and Levene tests. Don't forget: with the Shaprio test, we are looking within each group and so need to `group_by()`, with the Levene test, we are looking across groups, and so need to provide a `y~x` formula:
 
@@ -2766,7 +3064,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   geom_text(data = groups_based_on_tukey, aes(y = treatment, x = 9, label = group))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-155-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-386-1.png" width="100%" style="display: block; margin: auto;" />
 
 Excellent! This plot shows us, using the letters on the same line with each aquifer, which means are the same and which are different. If a letter is shared among the labels in line with two aquifers, it means that their means do not differ significantly. For example, aquifer 2 and aquifer 6 both have "b" in their labels, so their means are not different - and are the same as those of aquifers 3 and 10.
 
@@ -2836,7 +3134,7 @@ ggplot(data = K_data, aes(y = aquifer_code, x = abundance)) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-158-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-389-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that these groupings are different from those generated by ANOVA/Tukey.
 
@@ -2851,7 +3149,7 @@ hawaii_aquifers %>%
   ggplot(aes(x = analyte, y = abundance)) + geom_violin() + geom_point() + facet_grid(.~aquifer_code)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-159-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-390-1.png" width="100%" style="display: block; margin: auto;" />
 
 Fortunately, we can use an approach that is very similar to the what we've learned in the earlier portions of this chapter, just with minor modifications. Let's have a look! We start with the Shapiro and Levene tests, as usual (note that we group using two variables when using the Shapiro test so that each analyte within each aquifer is considered as an individual distribution):
 
@@ -2871,7 +3169,7 @@ hawaii_aquifers %>%
 ##  1 Cl      aquifer_1    values       0.900 1.59e- 1
 ##  2 Cl      aquifer_10   values       0.486 1.09e- 5
 ##  3 Cl      aquifer_2    values       0.869 2.24e- 1
-##  4 Cl      aquifer_3    values       0.750 2.42e- 6
+##  4 Cl      aquifer_3    values       0.750 5.19e- 6
 ##  5 Cl      aquifer_4    values       0.903 7.49e- 2
 ##  6 Cl      aquifer_5    values       0.849 2.24e- 1
 ##  7 Cl      aquifer_6    values       0.741 2.15e- 3
@@ -3001,7 +3299,7 @@ hawaii_aquifers %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-164-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-395-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
@@ -3032,318 +3330,12 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 <!-- end -->
 
-# flat clustering {-}
-
-"Do my samples fall into definable clusters?"
-
-## {-}
-
-## kmeans {-}
-
-One of the questions we've been asking is "which of my samples are most closely related?". We've been answering that question using clustering. However, now that we know how to run principal components analyses, we can use another approach. This alternative approach is called k-means, and can help us decide how to assign our data into clusters. It is generally desirable to have a small number of clusters, however, this must be balanced by not having the variance within each cluster be too big. To strike this balance point, the elbow method is used. For it, we must first determine the maximum within-group variance at each possible number of clusters. An illustration of this is shown in **A** below:
-
-<img src="https://thebustalab.github.io/integrated_bioanalytics/images/kmeans.png" width="100%" style="display: block; margin: auto;" />
-
-One we know within-group variances, we find the "elbow" point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in **B** and **C**.)
-
-Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on the PCA projection of the alaska lakes data set. We can set `analysis = "kmeans"`. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the `parameters` argument:
-
-
-
-``` r
-alaska_lake_data_pca <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = c("pca"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park")
-)
-
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
-    data = alaska_lake_data_pca,
-    analysis = c("kmeans"),
-    parameters = c(5),
-    column_w_names_of_multiple_analytes = NULL,
-    column_w_values_for_multiple_analytes = NULL,
-    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID"
-)
-
-alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca) 
-```
-
-We can plot the results and color them according to the group that kmeans suggested. We can also highlight groups using `geom_mark_ellipse`. Note that it is recommended to specify both `fill` and `label` for geom_mark_ellipse:
-
-
-``` r
-alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
-ggplot() +
-  geom_point(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
-  ) +
-  geom_mark_ellipse(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
-  ) +
-  theme_classic() +
-  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
-  scale_fill_manual(values = discrete_palette) 
-```
-
-<img src="index_files/figure-html/unnamed-chunk-167-1.png" width="100%" style="display: block; margin: auto;" />
-
-## dbscan {-}
-
-There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, `runMatrixAnalysis()` will again load an interactive means of selecting parameters for defining dbscan clusters ("k", and "threshold"). In the context of markdown document, simply provide "k" and "threshold" to the `parameters` argument:
-
-
-``` r
-alaska_lake_data_pca <- runMatrixAnalysis(
-    data = alaska_lake_data,
-    analysis = c("pca"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
-    columns_w_sample_ID_info = c("lake", "park")
-) 
-
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
-    data = alaska_lake_data_pca,
-    analysis = c("dbscan"),
-    parameters = c(4, 0.45),
-    column_w_names_of_multiple_analytes = NULL,
-    column_w_values_for_multiple_analytes = NULL,
-    columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-    columns_w_sample_ID_info = "sample_unique_ID"
-)
-
-alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
-```
-We can make the plot in the same way, but please note that to get `geom_mark_ellipse` to omit the ellipse for NAs you need to feed it data without NAs:
-
-
-``` r
-alaska_lake_data_pca_clusters$cluster <- factor(alaska_lake_data_pca_clusters$cluster)
-ggplot() +
-  geom_point(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
-  ) +
-  geom_mark_ellipse(
-    data = drop_na(alaska_lake_data_pca_clusters),
-    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
-  ) +
-  theme_classic() +
-  coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
-  scale_fill_manual(values = discrete_palette) 
-```
-
-<img src="index_files/figure-html/unnamed-chunk-169-1.png" width="100%" style="display: block; margin: auto;" />
-
-## summarize by cluster {-}
-
-One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:
-
-
-``` r
-alaska_lake_data_pca <- runMatrixAnalysis(
-  data = alaska_lake_data,
-  analysis = c("pca"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
-  columns_w_sample_ID_info = c("lake", "park")
-)
-
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
-  data = alaska_lake_data_pca,
-  analysis = c("dbscan"),
-  parameters = c(4, 0.45),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-  columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-  columns_w_sample_ID_info = "sample_unique_ID",
-  columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
-) 
-
-alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
-
-alaska_lake_data_pca_clusters %>%
-  select(cluster, S, Ca) %>%
-  pivot_longer(cols = c(2,3), names_to = "analyte", values_to = "mg_per_L") %>%
-  drop_na() %>%
-  group_by(cluster, analyte) -> alaska_lake_data_pca_clusters_clean
-
-plot_2 <- ggplot() + 
-  geom_col(
-    data = summarize(
-      alaska_lake_data_pca_clusters_clean,
-      mean = mean(mg_per_L), sd = sd(mg_per_L)
-    ),
-    aes(x = cluster, y = mean, fill = cluster),
-    color = "black", alpha = 0.6
-  ) +
-  geom_errorbar(
-    data = summarize(
-      alaska_lake_data_pca_clusters_clean,
-      mean = mean(mg_per_L), sd = sd(mg_per_L)
-    ),
-    aes(x = cluster, ymin = mean-sd, ymax = mean+sd, fill = cluster),
-    color = "black", alpha = 0.6, width = 0.5, size = 1
-  ) +
-  facet_grid(.~analyte) + theme_bw() +
-  geom_jitter(
-    data = alaska_lake_data_pca_clusters_clean,
-    aes(x = cluster, y = mg_per_L, fill = cluster), width = 0.05,
-    shape = 21
-  ) +
-  scale_fill_manual(values = discrete_palette) 
-
-plot_1<- ggplot() +
-  geom_point(
-    data = alaska_lake_data_pca_clusters,
-    aes(x = Dim.1, y = Dim.2, fill = cluster), shape = 21, size = 5, alpha = 0.6
-  ) +
-  geom_mark_ellipse(
-    data = drop_na(alaska_lake_data_pca_clusters),
-    aes(x = Dim.1, y = Dim.2, label = cluster, fill = cluster), alpha = 0.2
-  ) +
-  theme_classic() + coord_cartesian(xlim = c(-7,12), ylim = c(-4,5)) +
-  scale_fill_manual(values = discrete_palette)
-
-plot_1 + plot_2
-```
-
-<img src="index_files/figure-html/unnamed-chunk-170-1.png" width="100%" style="display: block; margin: auto;" />
- 
-## {-}
-
-## further reading {-}
-
-http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
-
-https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/
-
-https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png
-
-https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
-
-
-<!-- ## exercises {-}
-
-For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
-
-1. Run a PCA analysis on the data set and plot the results. 
-
-2. Create an ordination plot and identify one analyte that varies with Dim.1 and one analyte that varies with Dim.2 (these are your "variables of interest").
-
-3. Run kmeans clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
-
-4. Use the clusters defined by kmeans as groupings on which to run summary statistics for your two variables of interest.
-
-5. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by kmeans clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the kmeans groups. Please note that subpanel plots can be created by sending ggplots to their own objects and then adding those objects together. Please see the subsection in the data visualization chapter on subplots.
-
-6. Run dbscan clustering on your PCA output. Create a set of clusters that seems to appropriately subdivide the data set.
-
-7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
-
-8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups. -->
-
-
-<!-- 
-
-
-
-* Question 1
-
-Run a principal components analysis on the dataset. Use `na_replacement = "drop"` (so that variables with NA values are not included in the analysis) and generate clusters automatically using kmeans by setting `kmeans = "auto"`. Make scatter plot of the results. How many clusters does kmeans recommend? 
-
-
-
-* Question 2
-
-Modify your code from Question 1 so that only two clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Which varieties are put into each of the two clusters?
-
-
-
-* Question 3
-
-Use an ordination plot to determine what chemicals makes Chardonnay so different from the other varieties. To what class of compounds do these chemical belong?
-
-
-
-* Question 4
-
-Modify your code from Question 2 so that five clusters are generated. Plot the results. Use `geom_mark_ellipse` to highlight each cluster in your plot (note that the `fill` aesthetic is required to mark groups). Based on this plot, which grape variety undergoes the least amount of change, chemically speaking, between dry and well-watered conditions?
-
-
-
-* Question 5
-
-Run a heirarchical clustering analysis on the wine grapes data set, using kmeans to create five groups, and also continue using `na_replacement = "drop"`. Plot the results. Which grape variety undergoes the most change in terms of its chemistry between well-watered and dry conditions? (hint: remember that the x-axis shows the distances between nodes and tips, the y-axis is meaningless). Compare the method you used to compare sample shifts in question 4 (i.e. pca+kmeans) versus the method you used in this question (i.e. hclust+kmeans). Which do you is better? Would this change depending on the circumstances?
-
-
-
-* Question 6
-
-Google "Quercetin". What kind of compound is it? Use the clusters created by the heirarchical clustering analysis in question 5 as groups for which to calculate summary statistics. Calculate the mean and standard deviation of the concentration of Quercetin in each group. Plot the result using `geom_pointrange` and adjust axis font sizes so that they are in good proportion with the size of the plot. Also specify a theme (for example, `theme_classic()`).
-
-Does one cluster have a large amount of variation in Quercetin abundance? Why do you think this might be?
-
-
-
-* Question 7
-
-Use `cowplot::plot_grid` to display your plots from questions 4 and 5 next to each other.
-
-
-
-* Challenge (optional)
-
-Use cowplot to display your plots from questions 4, 5, and 6 alongside each other. **Make your combined plot as attractive as possible!** Use each of the following:
-
-`align = TRUE` inside `geom_tiplab()`
-
-`nrow = 1` inside `plot_grid()`
-
-`rel_widths = <your_choice>` inside `plot_grid()`
-
-`name = <your_choice>` inside `scale_*_*`
-
-`label = cluster` inside `geom_mark_ellipse()`
-
-`breaks = <your_choice>` inside `scale_x_continuous()` or `scale_y_continuous()` (as an example, `breaks = seq(0,10,1)`)
-
-Also, consider using:
-
-`guides(fill = "none", color = "none")`
-
-Install the RColorBrewer package, and use one of its color schemes. As an example with the color scheme `Set1`:
-
-`scale_fill_brewer(palette = "Set1", na.value = "grey")`
-
-`scale_color_brewer(palette = "Set1", na.value = "grey")`
-
-Save your plot as a png using `ggsave()`.
-
-
-
-Maybe something like this:
-
-{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
-knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
- -->
-
-<!-- end -->
-
-<!-- start comparing means -->
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+________________________________________________________________________________________________
 
 # (PART) MODELS
+
 
 <!-- start numerical models -->
 
@@ -3398,7 +3390,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-181-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-428-1.png" width="100%" style="display: block; margin: auto;" />
 
 It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
 
@@ -3501,7 +3493,7 @@ plot1
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-186-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-433-1.png" width="100%" style="display: block; margin: auto;" />
 
 Very good. Now let's talk about evaluating the quality of our model. For this we need some means of assessing how well our line fits our data. We will use residuals - the distance between each of our points and our line.
 
@@ -3515,7 +3507,7 @@ ggplot(predictions_from_basic_linear_model) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-187-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-434-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can calculate the sum of the squared residuals:
 
@@ -3538,7 +3530,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-189-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-436-1.png" width="100%" style="display: block; margin: auto;" />
 
 A pretty bad model, I agree. How much better is our linear model that the flat line model? Let's create a measure of the distance between each point and the point predicted for that same x value on the model:
 
@@ -3552,7 +3544,7 @@ ggplot(metabolomics_data) +
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-190-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-437-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -3612,7 +3604,7 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 ## type <impute>. Defaulting to continuous.
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-192-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-439-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## multiple linear regression {-}
 
@@ -3701,7 +3693,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-194-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-441-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -3747,7 +3739,6 @@ random_forest_model <- buildModel2(
 )
 
 names(random_forest_model)
-## [1] "metrics" "model"
 ```
 
 The above code builds our random forest model. It's output provides both the model itself and key components indicating the performance and configuration of the model. Here's a breakdown of each part of the output:
@@ -3776,8 +3767,6 @@ random_forest_model$metrics %>%
     geom_tile() +
     theme_bw()
 ```
-
-<img src="index_files/figure-html/unnamed-chunk-197-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -3969,9 +3958,8 @@ To run the analyses in this chapter, you will need four things.
 1. Please ensure that your computer can run the following R script. It may prompt you to install additional R packages.
 
 ``` r
-source("https://thebustalab.github.io/phylochemistry/language_model_analysis.R")
-## Loading language model packages...
-## Loading language model functions...
+source("https://thebustalab.github.io/phylochemistry/modules/language_model_analysis.R")
+## Loading language model module...
 ## Done with language model loading!
 ```
 2. Please create an account at and obtain an API key from https://pubmed.ncbi.nlm.nih.gov/ (Login > Account Settings > API Key Management)
@@ -4074,7 +4062,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-206-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-478-1.png" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -4098,7 +4086,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-207-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-479-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -4141,7 +4129,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-208-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-480-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## protein embeddings {-}
 
@@ -4188,17 +4176,17 @@ ncbi_results <- searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
 ncbi_results
 ## AAStringSet object of length 100:
 ##       width seq                         names               
-##   [1]   575 MPPSALTESVGT...KDITGDGEGGRP WP_283887978.1 pr...
-##   [2]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_283886809.1 pr...
-##   [3]   428 MNIRRSVAALSL...GFLLSGRKRRQL WP_251772202.1 pr...
-##   [4]   575 MPPSALTESVGT...KDITGDGEGGRP WP_251770008.1 pr...
-##   [5]   468 MTESVGTAIVAG...TRHPDGSWSTGE WP_237509046.1 pr...
+##   [1]   370 MSWIRSGVLNLI...ITLKYCKPGSGK WP_437223952.1 pr...
+##   [2]   294 MADKEILARART...DRLITLRAYGWL WP_378157646.1 MU...
+##   [3]   307 MASTSIQEERVC...QAVNVLRKLNLL WP_445870199.1 pr...
+##   [4]   575 MPPSALTESVGT...KDITGDGEGGRP WP_283887978.1 pr...
+##   [5]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_283886809.1 pr...
 ##   ...   ... ...
-##  [96]   489 MFFKYSPIDIED...QSVRPQTFEYVP WP_072873004.1 pr...
-##  [97]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444608723.1 pr...
-##  [98]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444574685.1 pr...
-##  [99]   735 MTEGTHLRRRGG...YPGSPLAGKVKL XP_076603171.1 la...
-## [100]   530 MELKSEVSESLV...TLQVPRRSFLKL WP_308894994.1 pr...
+##  [96]   576 MQEEKLNMMIEY...YKKKLSRTKIIT WP_444794536.1 pr...
+##  [97]   644 MSVFFSPEFTML...QSVRPQTFEYVP WP_306954195.1 pr...
+##  [98]   489 MFFKYSPIDIED...QSVRPQTFEYVP WP_072873004.1 pr...
+##  [99]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444608723.1 pr...
+## [100]   399 MKTVARDALDCR...KRALLQAAGTPP WP_444574685.1 pr...
 ```
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
@@ -4294,162 +4282,6 @@ search_results_ex_embed_pca %>%
 
 asdf -->
 
-<!-- end -->
-
-<!-- start language models -->
-
-<!-- # language models {-} -->
-
-<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
-<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/llm.png', dpi = NA) -->
-<!-- ``` -->
-
-<!-- see: https://magazine.sebastianraschka.com/p/understanding-large-language-models -->
-
-<!-- ## completions {-} -->
-
-<!-- You can run completions using: -->
-
-<!-- ```{r, eval = FALSE} -->
-<!-- completionGPT( -->
-<!--   system_prompt = "", -->
-<!--   query = "", -->
-<!--   model = "", -->
-<!--   temperature = 0, -->
-<!--   openai_api_key = "" -->
-<!-- ) -->
-<!-- ``` -->
-
-<!-- The `system_prompt` tells the model how to act. For example, you might say `system_prompt = "you are a helpful assistant"`. -->
-
-<!-- The `query` is the question you want to ask. For example, you might say: `query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.` -->
-
-<!-- Available options for `model` include "gpt-4o", gpt-4", "gpt-4-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001". Note that you may hot have API access to gpt-4 unless you requested it from OpenAI. -->
-
-<!-- Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a highly oversimplified and somewhat inaccurate explanation. -->
-
-<!-- You have to provide your OpenAI API key. -->
-
-<!-- ## createNewsletter {-} -->
-
-<!-- The `createNewsletter()` function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field. -->
-
-<!-- With createNewsletter, you can optionally also monitor a directory on the computer system you are using. Anything in the monitored_directory (and its subdirectories) that was added within the past number of hours indicated in monitored_time_window that has a suffix matching monitored_file_suffix (only .txt files currently supported) will be added to the newsletter. This allows your newsletter to include not only PubMed search results but also files stored in a specific directory (like a collection of chunked .pdf files). -->
-
-<!-- ```{r, eval = FALSE} -->
-<!-- bustalab = TRUE -->
-<!-- source("https://thebustalab.github.io/phylochemistry/phylochemistry.R") -->
-
-<!-- newsletter <- createNewsletter( -->
-<!--     search_terms = c( -->
-<!--         "plant biochemistry", "plant genomics and genetics", -->
-<!--         "cuticular waxes", "triterpenoid yeast engineering", -->
-<!--         "plant triterpenoids", "plant ABC transporters", "plant specialized metabolism", -->
-<!--         "plant metabolism", "plant metabolic evolution", "plant biochemistry", "plant metabolism", -->
-<!--         "plant genomics", "cuticular wax", "triterpenoids", "plant ABC transporters", -->
-<!--         "plant specialized metabolism", -->
-<!--         "biosynthesis", "metabolic evolution", -->
-<!--         "artificial intelligence", "large language models", -->
-<!--         "protein language models" -->
-<!--     ), -->
-<!--     focus_areas = c( -->
-<!--         "phytochemistry", "plant biochemistry", "plant metabolism", "plant genomics", -->
-<!--         "cuticular wax", "triterpenoids", "plant ABC transporters", -->
-<!--         "plant specialized metabolism", -->
-<!--         "biosynthesis", "metabolic evolution", -->
-<!--         "artificial intelligence", "large language models", -->
-<!--         "protein language models" -->
-<!--     ), -->
-<!--     n_articles_per_newsletter = 20, -->
-<!--     pubmed_api_key = "api_key", -->
-<!--     openai_api_key = "api_key", -->
-<!--     image_prompt = "I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS: A modern, minimalist blog cover image for a phytochemistry blog post, WITHOUT ANY TEXT. The image should embody a minimalist aesthetic with simple, clean lines and a limited color palette. Depict abstract representations of the diverse themes in the blog post: medicinal plants, phytoremediation, plant growth, plant stress response, environmental microbiology, and plant biochemistry. Include stylized, minimalistic illustrations of Leonurus heterophyllus for medicinal plants, Ipomoea carnea for phytoremediation, a seedling for plant growth, Citrus reticulata for stress response, rice plants for arsenic stress response, abstract soil microbes for environmental microbiology, a sesame plant for disease resistance, and oat plants for cell wall synthesis. The composition should be harmoniously adjusted to ensure a balanced and aesthetically pleasing layout that captures the essence of phytochemistry and plant science research with a contemporary, streamlined look.", -->
-<!--     monitored_directory = "/project_data/shared/general_lab_resources/literature/papers_chunked/", -->
-<!--     monitored_time_window = 336, -->
-<!--     monitored_file_suffix = ".1.txt" -->
-<!-- ) -->
-<!-- names(newsletter) -->
-<!-- ``` -->
-
-<!-- Finally, you can get this newsletter emailed to yourself using the following approach: (i) set up a Zapier account and a Zap that monitors a Google Sheet then send you an email with the contents of that sheet anytime it is updated; (ii) use the following code to update the sheet with the output of the newsletter; (iii) make an R script that contains the source() command, createNewsletter(), and the write_sheet command then have that script executed as a cron job daily, for example. -->
-
-<!-- ```{r, eval = FALSE} -->
-<!-- gs4_auth(path = "your_auth_token") -->
-<!-- write_sheet( -->
-<!--     data = data.frame("content" = newsletter$newsletter$response), -->
-<!--     sheet = "Sheet1", "your_sheet_share_link" -->
-<!-- ) -->
-<!-- ``` -->
-
-<!-- Here is an example of the newsletter: -->
-
-<!-- ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"} -->
-<!-- knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/newsletter.png', dpi = NA) -->
-<!-- ``` -->
-
-<!-- ## prompting strategies {-} -->
-
-
-<!-- Role and Goal-Based Constraints: These constraints narrow the AI's response range, making it more appropriate and effective. Leveraging the AI's pre-trained knowledge, they guide conversation within a specific persona. -->
-
-<!-- Step-by-Step Instructions: Clarity and organization in instructions are crucial. It's recommended to use simple, direct language and to break down complex problems into steps. This approach, including the "Chain of Thought" method, helps the AI follow and effectively respond to the user's request. -->
-
-<!-- Expertise and Pedagogy: The user's knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings. -->
-
-<!-- Constraints: Setting rules or conditions within prompts helps guide the AI's behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation. -->
-
-<!-- Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses. -->
-
-<!-- Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning. -->
-
-<!-- Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI's capabilities. -->
-
-<!-- Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts. -->
-
-<!-- Testing and Feedback: It's important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further. -->
-
-<!-- Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use. -->
-
-<!-- ### structured prompting {-} -->
-
-<!-- ### few shot learning {-} -->
-
-<!-- ### prompt engineering {-} -->
-
-<!-- ### chain of thought {-} -->
-
-<!-- ### gpt chains {-} -->
-
-<!-- ### fine tuning {-} -->
-
-<!-- ### structured response {-} -->
-
-<!-- ### retrieval-augemented generation {-} -->
-
-<!-- ## {-} -->
-
-<!-- ## further reading {-} -->
-
-<!-- # analyzeLiterature {-}
-
-If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
-
-- Simple question: What are wax blooms?
-
-- Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
-
-- High-Complexity question: Can you describe what is known about the transcriptional regulation of lipid transfer proteins in plants?
-
-- Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
-
- "In earlier studies, different other compounds including β-amyrin were overproduced through using strong constitutive promoters [12], enhancers [13] and transcription factors [14]. The β-amyrin is the triterpenoids belongs to oleanane group [15], which harbors anti-hyperglycemic, anti-inflammatory, hypolipidemic effects along with several other pharmacological activities [16,17]. The β-amyrin synthase (βAS) is responsible to synthesize the β-amyrin from 2,3-oxidosqualene[18]. This 2,3-oxidosqualene is synthesized from squalene through squalene epoxidase (SQE), encoded by the ERG1 gene in S. cerevisiae [19]. Squalene is synthesized from farnesyl-pyrophosphate through the
-action of squalene synthase (SQS) (ERG9 gene); and this farnesyl-pyrophosphate (FPP) is synthesized by farnesyl diphosphate synthase (FPPS) (ERG20 gene), from isopentenyl pyrophosphate (IPP), a precursor supplied by mevalonate (MVA) pathway (Fig. 1). The 3-Hydroxy-3-Methyl glutaryl-CoA reductase (HMG1) [20,21] and squalene
-monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway in yeast. For the biosynthesis of triterpenoids, SQS and SQE are important enzymes [23] and were previously overexpressed for
-the overproduction of triterpenoids [14,24]."
-
-- Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms?  -->
-
-<!-- end -->
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
@@ -4457,8 +4289,6 @@ ________________________________________________________________________________
 
 
 # (PART) GC-MS DATA {-}
-
-<!-- start mass spectrometric analysis -->
 
 
 # loading analyzeGCMSdata {-}
@@ -4548,487 +4378,12 @@ At this point, note that you have a new set of files in your data-containing fol
 5. Move this folder to your personal computer
 6. Create one folder for each sample, and put the corresponding .CDF file into that folder. 
 
-<!-- end -->
-
-<!-- # (PART) SEQUENCE DATA {-}
-
-# data acquisition {-}
-
-Updating MinKNOW on GridIon
-
-`sudo apt update`
-`sudo apt install ont-gridion-release`
-`sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub`
-
-# data transfer {-}
-
-Once you've completed a sequencing run, the data are can be transferred to an external hard drive, which can then be plugged into the storage computer. The next steps are:
-
-1. Identify which files are of interest/where they are in the system. Useful commands:
-
-Display all currently mounted filesystems (& their usage, storage space, mounting point):
-
-`df -h`
-
-Also:
-
-`lsblk -f`
-
-Display more data pertaining to the identification of disks. Can also change partitioning of hard disks:
-
-`sudo fdisk -l` 
-
--Hard drives are labeled as sd’s. Organization follows as /dev/sd_ with the underscore replaced with a  letter (first hard drive starting with ‘a’ and continuing alphabetically). If partitions are present, the letter if followed by a number (starting with ‘1’ for the first partition and continuing numerically). Ex) /dev/sdb2
-
-2. Mounting
-
--Use command:
-`sudo mount </dev/sd_> </file_path>`
--Replace `</sd_>` with actual hard drive label and `/file_path` with the pathway for the location in which you want to mount the drive.
--Make sure the location (`</file_path>`) is preexisting location. Use the `mkdir` command to make a new directory if necessary.
-
-3. Copy data
-
--Just use the `cp` command and make sure you have the right filenames and locations to transfer the data from the hard drive to the internal disk.
-
-4. Additional Information
-
-bootable USB: https://rufus.ie/en/#
-
-
-# nanopore read assessment {-}
-
-With your nanopore reads stored on a suitable machine, you can analyze them with several `phylochemistry` functions. Here is a quick overview:
-
-
-``` r
-qc_data <- fastxQC(
-    paths_to_fastxs = c(
-        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example.fastq",
-        "/Users/bust0037/Documents/Science/Websites/thebustalab.github.io/data/example2.fastq"
-    ),
-    type = "fasta",
-    mode = "slow",
-    max_n_seqs = 1000
-)
-
-head(qc_data)
-
-qc_data %>%
-  mutate(category = case_when(
-    length > mean(qc_data$length)*5 ~ "chromosome",
-    length <= mean(qc_data$length)*5 ~ "leftover_bit"
-  )) %>%
-  ggplot() +
-    geom_treemap(aes(area = length, fill = category), color = "black", size = 1) +
-    scale_fill_manual(values = c("gold", "maroon"))
-```
-
--->
-
-<!-- end -->
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
-
-
-<!-- # (PART) SEQUENCE DATA {-} -->
-
-<!-- start transcriptomic analyses -->
-
-<!-- # transcriptome assembly {-}
-
-For nonmodel species transcriptome analysis, `transXpress` is recommended. We often use a modified version of `transXpress` we call `transXpressLite`. It uses the Trinity assembler by default, which can require at least 500GB of free disk space to run. Depending on your machine, you may also need to make some modifications to `transXpressLite` for it to run properly.
-
-1. Download the transXpressLite code into the directory in which you wish to perform the assembly:
-
-`git clone https://github.com/thebustalab/transXpressLite.git`
-
-2. Rename the downloaded folder to make it unique. Perhaps:
-
-`mv transXpressLite transXpressLite-kfed`
-
-2. Move into that directory and set up and activate the main transXpress environment:
-
-`cd transXpressLite-kfed`
-`conda create --name transxpress`
-`conda activate transxpress`
-
-3. Create a tab-separated file called *samples.txt* with the following contents. Important! Remember that there must be an empty line on the end of the samples.tex file.
-`
-cond_A    cond_A_rep1    A_rep1_left.fq    A_rep1_right.fq
-cond_A    cond_A_rep2    A_rep2_left.fq    A_rep2_right.fq
-cond_B    cond_B_rep1    B_rep1_left.fq    B_rep1_right.fq
-cond_B    cond_B_rep2    B_rep2_left.fq    B_rep2_right.fq
-`
-
-4. Start `transXpressLite`:
-
-`./transXpress.sh`
-
-5. Once transXpress is complete, you may wish to move its output files to a long-term storage device. You may wish to keep the following files handy for downstream analysis though:
-
-* all the sample name folders (ex. "fed_epi_hi_rep1")
-* samples.txt
-* samples_trimmed.txt
-* busco_report.txt
-* /transdecoder/longest_orfs.pep -> is actually "transcriptome.orfs" -->
-
-<!-- 1. It's possible that you will need to downgrade numpy for tmhmm to work (make sure you do this in the transxpress env):
-`pip install "numpy<1.24.0"`
- -->
-<!-- 2. You also need to add targetp to the PATH variable in the transexpress environment:
-`export PATH=$PATH:/project_data/shared/general_lab_resources/targetp-2.0/bin/`
- -->
-
-<!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
-<!-- # (PART) PROTEOME ANALYSIS {-} -->
-
-<!-- start proteome analyses -->
-
-<!-- ## structure similarity
-
-`conda create --name foldseek`
-`conda activate foldseek`
-`conda install -c conda-forge -c bioconda foldseek`
- -->
-
-
-<!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
-<!-- # (PART) GENOME ANALYSIS {-} -->
-
-<!-- start genomic analyses -->
-
-<!-- # setup {-}
-
-* Get docker.
-
-https://hub.docker.com/
-
-* Connecting to remote host:
-
-Make sure the remote host has openSSH installed:
-
-`sudo apt install openssh-server`
-
-On the client computer (usually your laptop or something), first create the key:
-
-`ssh-keygen -t rsa`
-
-Then copy that key to the host (usually the computer you want to connect remotely to):
-
-`ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@host.address`
-
-Done! Log in with `ssh {username}@host.address`
-
-* Initializing a conda environment:
-
-`conda create --name <name> python=3.6`
-`conda activate <name>`
-`conda install -c bioconda flye`
-`conda install -c bioconda abyss`
-
-# genome assembly {-}
-
-To some degree, refer to: https://github.com/dithiii/ant-pipeline/blob/main/README.md.
-
-## assembly
-
-
-### equipment
-
-Genome assembly requires computing resources - and since not all genomes are of equal size, the computing resources required for different assemblies may differ. To run a genome assembly, start by determining what computing resources are available. Some helpful commands when investigating these resources on Linux machines:
-
-* Assessing RAM (It is recommended to assign about 75% of available RAM to the assembly process):
-
-`grep MeMTotal /proc/meminfo`
-
-* Assessing CPU resources (note that "threads per CPU" can denote the availability of hyperthreading):
-
-`lscpu`
-
-* Assessing disk/storage space (Make sure you are running your assembly on a disk with lots of open space. Ideally > 2TB):
-
-`df -h`
-
-### assembly software
-
-#### abyss
-
-`abyss-pe k=111 name=SS1 B=10G in='SS1_1.fa SS1_2.fa'`
-
-A rough indicator is, for 2x150bp reads and 40x coverage, the right k value is often around 70 to 90. For 2x250bp reads and 40x coverage, the right value might be around 110 to 140.
-
-A good value for B depends on a number of factors, but primarily on the genome being assembled. A general guideline is: P. glauca (~20Gbp): B=500G; H. sapiens (~3.1Gbp): B=50G; C. elegans (~101Mbp): B=2G. Using more is fine though, 
-
-#### canu
-
-`docker pull staphb/canu-racon`
-
-For assembly on the BustaLab storage box, navigate to the directory that contains your reads. Merge all reads into one file using:
-
-`cat *.fastq > all_reads.fastq`
-
-Then use Canu to assemble, we suggest creating a file that contains the Canu call. You can create the file using `nano`. In it, try something like:
-
-
-``` r
-sudo docker run -u $(id -u) -v /data/ben_diatom2/basecalled_reads/:/canu-racon_wd staphb/canu-racon canu -p n_frust2assembly -d /canu-racon_wd/ -genomeSize=150m -nanopore /canu-racon_wd/all_reads2.fastq -minReadLength=1000 -correctedErrorRate=0.12 -minOverlapLength=500 -useGrid=false -minInputCoverage=0.5 -maxInputCoverage=100 -stopOnLowCoverage=0.5 -corMemory=48 -corThreads=4 -hapMemory=48 -hapThreads=4 -merylMemory=48 -merylthreads=4 -batMemory=48 -batThreads=4
-```
-
-Notes on Canu options:
-
-Defaults:
-
-* minReadLength=1000
-* minOverlapLength=500bp
-* correctedErrorRate=0.114
-* stopOnLowCoverage <integer=10>
-
-Essentially only speed optimization:
-
-* For over 30X coverage:
-* Nanopore flip-flop R9.4 or R10.3: try: `corMhapOptions=--threshold 0.8 –ordered-sketch-size 1000 –ordered-kmer-size 14’ correctedErrorRate=0.105`
-* For over 60X coverage: 2 recommendations were made, one said to decrease slightly (~1%). Another suggested using 12%
-correctedErrorRate=0.12
-* Increasing minReadLength increases run time, increasing minOverlapLength improves assembly quality but increasing too much quickly degrades assemblies.
-
-#### flye
-
-`docker pull staphb/flye`
-
-### kmer-based metrics
-
-Canu will take some time to run. As it goes along, you can both check on its progress and learn about the genome you are assembling from some intermediate results. Take the k-mer data found in the .histogram files (i.e. in correction/0-mercounts/x.histogram, trimming/0-mercounts/x.histogram, unitigging/0-mercounts/x.histogram) and process them with `canuHistogramToKmerTable()`, as shown below. You can upload the output to : http://qb.cshl.edu/genomescope/genomescope2.0/. This will give you approximate genome size, ploidy, heterozygosity, repeat content, and read error rate. All good stuff to know!
-
-
-``` r
-canuHistogramToKmerTable(
-  file_in_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram",
-  file_out_path = "/Users/bust0037/Desktop/n_frust3assemblyB.ms22.histogram_table"
-)
-```
-
-Also check on this tutorial:
-
-[genomics tutorial](https://ucdavis-bioinformatics-training.github.io/2020-Genome_Assembly_Workshop/kmers/kmers)
-
-#### merqury
-
-`docker pull quay.io/chai/merqury`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/merqury/ quay.io/chai/merqury:latest quast.py -h`
-
-References:
-https://www.biorxiv.org/content/10.1101/2020.03.15.992941v1.abstract
-Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies
-
-## evaluating contigs
-
-Can these be merged into a single wrapper that can be run after each step in assembly/polishing/scaffolding etc?
-
-### BUSCO
-
-- Real BUSCO input will be /home/bust0037/data1/comparative_genomics/Kfedtschenkoi_382_v1.0.fa
-- Note BUSCO uses current working directory for input and output
-
-`docker pull ezlabgva/busco:v5.3.2_cv1`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/comparative_genomics/:/busco_wd ezlabgva/busco:v5.3.2_cv1 busco -i k_fed.contigs.fa -o busco_our_kfed/ -m genome -l eudicots_odb10
-`
-
-### quast
-
-Quast provides a score called ALE: alignment liklihood estimate.
-
-`docker pull longas/quast`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/:/tmp/work/quast_results longas/quast:latest quast.py -h`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/ben_test/_ben_genomes/:/tmp/work/quast_results longas/quast:latest quast.py --fragmented /tmp/work/quast_results/ben_pre_n_frust.contigs.fasta --nanopore /tmp/work/quast_results/all_pass_reads.fastq --space-efficient --memory-efficient --fast`
-
-## polishing contigs
-
-### medaka
-
-Pull the docker image:
-
-`docker pull ontresearch/medaka`
-
-Run medaka:
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/round2_pass_reads_assembly/:/medaka/ ontresearch/medaka:latest medaka_consensus -i medaka/all_reads.fastq -d medaka/k_fed.contigs.fasta -b 50`
-
-Good documentation here: https://labs.epi2me.io/notebooks/Introduction_to_how_ONT's_medaka_works.html
-
-Medaka will:
-* Map all your raw reads. Look for feedback like: `[M::worker_pipeline::2924.325*0.25] mapped 75823 sequences`.
-* Do something else, updates in the form of: `21.7% Done (88.2/406.1 Mbases) in 6815.1s`.
-
-## methylation with remora
-
-can we call methylation status on our Kalanchoe genomes? -> yes, we can use Remora -> watch for new guppy release, MinKNOW integration -> currently in bonito
-
-```
-bonito basecaller dna_r10.4_e8.1_sup@v3.4 /data/reads --modified-bases 5mC --reference ref.mmi > basecalls_with_mods.bam
-bonito basecaller dna_r10.4_e8.1_sup@v3.4 --reference consensus.fasta --modified-bases 5mC
-```
-
-## scaffolding assembly
-
-### RagTag
-
-INSTALL PYTHON (or upgrade python) <- can this be done using docker?
-
-INSTALL BIOCONDA
-1. install miniconda:
-  curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  sh ...
-  
-## annotation
-
-### augustus
-
-see: https://hub.docker.com/r/pegi3s/autoaugustus/
-
-```
-docker pull pegi3s/autoaugustus
-```
-
-```
-sudo docker run --rm -v $(pwd):$(pwd) pegi3s/autoaugustus augustus --species=help
-sudo docker run --rm -v $(pwd):/augustus/ pegi3s/autoaugustus augustus --species=tomato /augustus/consensus.fasta > consensus-preductions.gff --progress=TRUE
-```
-
-## final assessment
-
-https://www.molecularecologist.com/2017/03/29/whats-n50/
-
-### mosdepth
-
-`sudo docker pull quay.io/biocontainers/mosdepth:0.2.4--he527e40_0`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -h`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd gfanz/mosdepth -n --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
-
-`sudo docker run -u $(id -u) -v /home/bust0037/data1/Kalanchoe_DNASeq/rounds_1and2_pass_assembly/:/mosdepth_wd quay.io/biocontainers/mosdepth:0.2.4--he527e40_0 mosdepth --quantize 0:1:4:100:200: --fast-mode --by 1000 mosdepth_wd/mosdepth_out /mosdepth_wd/calls_to_draft.bam`
-
-2. set up channels
-
-  /home/bust0037/miniconda3/bin/conda config --add channels defaults
-  /home/bust0037/miniconda3/bin/conda config --add channels bioconda
-  /home/bust0037/miniconda3/bin/conda config --add channels conda-forge
-
-3. install packages
-
-  /home/bust0037/miniconda3/bin/conda install sibeliaz
-  /home/bust0037/miniconda3/bin/conda install -c bioconda ragtag
-
-4. run your stuff
-
-  /home/bust0037/miniconda3/bin/conda run sibeliaz -n k_fed.contigs.scaffolded.fasta KlaxifloraFTBG2000359A_699_v3.0.fa
-
-  /home/bust0037/miniconda3/bin/conda run ragtag
-
-  /home/bust0037/miniconda3/bin/conda run ragtag
-
-  ragtag.py
-
-
-  /home/bust0037/meryl-1.3/bin/meryl
-  /home/bust0037/merqury-1.3/merqury.sh
-
-sh $MERQURY/best_k.sh <genome_size>
-
-
-Let's look at some examples. For these example, we will use some fasta files stored in a Google Drive folder: -->
-
-
-``` r
-# reads <- readFasta("https://drive.google.com/file/d/1r6E0U5LyYwjWenxy9yqh5QQ2mq1umWOW/view?usp=sharing")
-
-# # post <- readFasta("/Users/bust0037/Desktop/ragtag.scaffold.fasta")
-# n_chroms <- 18
-
-# pb <- progress::progress_bar$new(total = n_chroms)
-
-# out <- list()
-
-# for (i in 1:n_chroms) {
-
-#   pb$tick()
-
-#   dat <- strsplit(substr(as.character(post[i]), 1, 50000000), "")[[1]]
-  
-#   b <- rle(dat)
-
-#   # Create a data frame
-#   dt <- data.frame(number = b$values, lengths = b$lengths, scaff = i)
-#   # Get the end
-#   dt$end <- cumsum(dt$lengths)
-#   # Get the start
-#   dt$start <- dt$end - dt$lengths + 1
-
-#   # Select columns
-#   dt <- dt[, c("number", "start", "end", "scaff")]
-#   # Sort rows
-#   dt <- dt[order(dt$number), ]
-
-#   dt %>%
-#     filter(number == "N") -> N_dat
-
-#   out[[i]] <- N_dat
-
-# }
-
-# out <- do.call(rbind, out)
-
-
-# chroms <- data.frame(
-#   lengths = post@ranges@width[1:n_chroms],
-#   scaff = seq(1,n_chroms,1)
-# )
-
-# ggplot() +
-#   statebins:::geom_rrect(data = chroms, aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
-#   geom_rect(data = out, aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
-#   facet_grid(scaff~.) +
-#   scale_fill_viridis(end = 0.8) +
-#   theme_classic()
-
-# ggplot() +
-#   geom_rect(data = filter(chroms, scaff == 1 | scaff == 2), aes(xmin = 0, xmax = lengths, ymin = -1, ymax = 1, fill = scaff), color = "black") +
-#   geom_rect(data = filter(out, scaff == 1 | scaff == 2), aes(xmin = start, xmax = end, ymin = -0.95, ymax = 0.95), color = "white", fill = "white", size = 0.08) +
-#   facet_grid(scaff~.) +
-#   scale_y_continuous(limits = c(-2,2)) +
-#   scale_fill_viridis(end = 0.8) +
-#   theme_classic() +
-#   coord_polar()
-```
-<!-- # annotation {-} -->
-
-<!-- docker pull nanozoo/braker2 -->
-
-<!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
 
 # (PART) SEQUENCE ANALYSIS {-}
 
-<!-- start evolutionary analyses -->
 
 # homology {-}
 
@@ -5157,6 +4512,7 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 * Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.
 
+
 # alignments {-}
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" width="100%" style="display: block; margin: auto;" />
@@ -5196,6 +4552,7 @@ alignSequences(
 
 
 
+
 # phylogenies {-}
 
 ## buildTree {-}
@@ -5229,7 +4586,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-231-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-524-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -5257,7 +4614,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-232-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-525-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -5302,7 +4659,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-234-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-527-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -5318,7 +4675,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-235-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-528-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -5327,7 +4684,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-236-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-529-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -5398,7 +4755,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-238-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-531-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -5418,7 +4775,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-239-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-532-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -5496,7 +4853,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-244-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-537-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -5531,7 +4888,8 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-245-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-538-1.png" width="100%" style="display: block; margin: auto;" />
+
 
 # phylogenetic analyses {-}
 
@@ -5752,23 +5110,12 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-251-1.png" width="100%" style="display: block; margin: auto;" />
-
-# comparative genomics {-}
-
-GENESPACE: syntenic pan-genome annotations for eukaryotes
-
-
-## loading GFF files
-
-<!-- end -->
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
+<img src="index_files/figure-html/unnamed-chunk-560-1.png" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
+
 
 # (PART) ANALYTICAL REPORTS {-}
 
@@ -5919,7 +5266,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   geom_point() 
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-253-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" />
 
 - plot insets
 
@@ -5942,7 +5289,7 @@ ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
   theme_bw()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-254-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" />
 
 - image insets
 
@@ -5966,7 +5313,7 @@ ggplot() +
   theme_bw(12)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-255-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-28-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -6043,21 +5390,21 @@ Now, add them together to lay them out. Let's look at various ways to lay this o
 plot_grid(plot1, plot2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-259-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-32-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot1, plot2, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-260-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-33-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
 plot_grid(plot_grid(plot1,plot2), plot1, ncol = 1)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-261-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-34-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### exporting graphics {-}
 
@@ -6139,8 +5486,8 @@ Figures are critical tools for clearly and effectively communicating scientific 
 ### example captions {-}
 
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-264-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-264)Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.</p>
+<img src="index_files/figure-html/unnamed-chunk-37-1.png" alt="Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park &amp; Preserve, NOAT - Noatak National Preserve." width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-37)Figure 1: Carbon, nitrogen, and phosphorous in Alaskan lakes. A) A bar chart showing the abundance (in mg per L, x-axis) of the bound elements (C, N, and P) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). B) A bar chart showing the abundance (in mg per L, x-axis) of the free elements (Cl, S, F, Br, Na, K, Ca, and Mg) in various Alaskan lakes (lake names on y-axis) that are located in one of three parks in Alaska (park names on right y groupings). The data are from a public chemistry data repository. Each bar represents the result of a single measurement of a single analyte, the identity of which is coded using color as shown in the color legend. Abbreviations: BELA - Bering Land Bridge National Preserve, GAAR - Gates Of The Arctic National Park & Preserve, NOAT - Noatak National Preserve.</p>
 </div>
 
 ### buildCaption {-}
@@ -6378,37 +5725,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________
 
-<!-- # (PART) IMAGE ANALYSIS {-} -->
-
-<!-- start IMAGE ANALYSIS -->
-
-<!-- # image color analysis {-}
-
-For analyze color images we use an interactive app called by `analyzeImage()`. It takes two arguments: `share_link`, and `monolist_out_path`. `share_link` should be the Google Drive share link for the photo that you wish to analyze. `share_link` can also be the share link for a Google Drive folder, in which case the app will allow you to cycle through the photos in that folder one-by-one. `monolist_out_path` should be a path to a new or existing .csv file on your local sytem where the results are to be saved as you work. Below is an example. Remember, if you are on Mac you should use a path that has single slashes, for example: `/Users/bust0037/Desktop/output.csv`. If you are on PC you should use a path that has double slashes, for example: `C://Users//Busta_Lab//Desktop//output.csv`.
-
-
-``` r
-analyzeImage(
-  share_link = "https://drive.google.com/file/d/1rvfh9_DqEWlpaegGwfLZLdjjYEDlM0ZL/view?usp=sharing",
-  monolist_out_path = "/Users/bust0037/Desktop/output.csv"
-)
-```
-
-# images of mass spectra {-}
-
-
-``` r
-# analyzeMassSpectralImages()
-```
- -->
-
-
-<!-- end -->
-
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-________________________________________________________________________________________________
-
 # (PART) APPENDIX {-}
 
 <!-- start links -->
@@ -6523,7 +5839,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-272-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-43-1.png" width="100%" style="display: block; margin: auto;" />
 
 How do we fix this? We need to convert the column `group_number` into a list of factors that have the correct order (see below). For this, we will use the command `factor`, which will accept an argument called `levels` in which we can define the order the the characters should be in:
 
@@ -6565,7 +5881,7 @@ ggplot(periodic_table) +
   geom_point(aes(y = group_number, x = atomic_mass_rounded))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-274-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-45-1.png" width="100%" style="display: block; margin: auto;" />
 
 VICTORY!
 
@@ -6654,7 +5970,7 @@ ggplot(alaska_lake_data) +
   theme_classic()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-280-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-51-1.png" width="100%" style="display: block; margin: auto;" />
 <!-- end -->
 
 <!-- start templates -->
@@ -6663,20 +5979,17 @@ ggplot(alaska_lake_data) +
 
 ## matrix analyses
 
-### basic `runMatrixAnalysis()` template
+### basic `runMatrixAnalyses()` template
 
 
 ``` r
 
-runMatrixAnalysis(
+runMatrixAnalyses(
                 
   data = NULL,
 
   analysis = c("hclust", "pca", "pca_ord", "pca_dim"),
-
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
-    
+  
   columns_w_values_for_single_analyte = NULL,
 
   columns_w_sample_ID_info = NULL
@@ -6725,5 +6038,3 @@ runMatrixAnalysis(
   output_format = c("wide", "long"), # default = "wide", this chooses whether to output a wide or long format
 )
 ```
-
-<!-- end -->

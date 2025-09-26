@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>blast | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content="1.3 polyBlast  1.3.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
+<meta name="generator" content="bookdown 0.35 with bs4_book()">
+<meta property="og:title" content="blast | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content="1.3 polyBlast  1.3.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="blast | Integrated Bioanalytics">
+<meta name="twitter:description" content="1.3 polyBlast  1.3.1 setup On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example,...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.6/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.6/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.4.2/transition.js"></script><script src="libs/bs3compat-0.4.2/tabs.js"></script><script src="libs/bs3compat-0.4.2/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">DATA ANALYSIS IN R</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
+<li><a class="" href="dimensionality-reduction.html">dimensionality reduction</a></li>
+<li><a class="" href="clustering.html">clustering</a></li>
+<li><a class="" href="models.html">models</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li><a class="" href="special-topics.html">special topics</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="mass-spectrometric-analysis.html">mass spectrometric analysis</a></li>
+<li class="book-part">TRANSCRIPTOME ANALYSIS</li>
+<li><a class="" href="transcriptome-assembly.html">transcriptome assembly</a></li>
+<li class="book-part">EVOLUTIONARY ANALYSIS</li>
+<li><a class="active" href="blast.html">blast</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">LANGUAGE MODELS</li>
+<li><a class="" href="completiongpt.html">completionGPT</a></li>
+<li><a class="" href="analyzeliterature.html">analyzeLiterature</a></li>
+<li class="book-part">SCIENTIFIC WRITING</li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html">results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="blast" class="section level1 unnumbered">
+<h1>blast<a class="anchor" aria-label="anchor" href="#blast"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology.png" width="100%" style="display: block; margin: auto;"></div>
+<div id="polyblast" class="section level2" number="1.3">
+<h2>
+<span class="header-section-number">1.3</span> polyBlast<a class="anchor" aria-label="anchor" href="#polyblast"><i class="fas fa-link"></i></a>
+</h2>
+<div id="setup" class="section level3" number="1.3.1">
+<h3>
+<span class="header-section-number">1.3.1</span> setup<a class="anchor" aria-label="anchor" href="#setup"><i class="fas fa-link"></i></a>
+</h3>
+<p>On NCBI, you can search various sequence collections with one or more queries. However, often we want to search a custom library, or multiple libraries. For example, maybe we have downloaded some genomes of interest and want to run blast searches on them. That is what polyBlast() is designed to do. polyBlast() relies on the BLAST+ program available from <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&amp;DOC_TYPE=Download">NCBI BLAST+</a>. Download the program and then point this function to the executable via the <code>blast_module_directory_path</code> argument. You can search multiple sequence libraries at once using multiple queries, and all the usual blast configurations (blastp, blastn, tblastn, etc.) are available. Please note that searches with protein sequences or translated DNA sequences are 5–10-fold more sensitive than DNA:DNA sequence comparison.</p>
+<p>Let’s check out <code>polyBlast()</code> by looking at an example. For this example, we need to set up a few things:</p>
+<ul>
+<li>“named_subjects_list”: A named list of sequence collections (often transcriptomes) to search (one fasta for each collection, often one collection for each species or accession).</li>
+<li>“query_in_path”: One or more queries, all listed in a single fasta file.</li>
+<li>“sequences_of_interest_directory_path”: The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).</li>
+<li>“blast_module_directory_path”: The path to the folder of BLAST+ executable.</li>
+<li>“blast_mode”: The format is XYblastZ where X is subject type (the transcriptome or proteome, use “n” for nucleotide, “p” for amino acids). Y is whether the subjects should be translated (“t” for translate, “n” for no translation, if you choose “t” your subjects will not be searched for ORFs, every three base pairs are just translated verbatim). Z is the format of the query/queries (“n” for nucleotide, “p” for amino acids). Allowed formats: nnblastn, ntblastp, pnblastp.</li>
+<li>“e_value_cutoff”: Hits with a e-value below this cutoff will not be returned. Default = 1.</li>
+<li>“queries_in_outout”: TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.</li>
+<li>“monolist_out_path”: The path to where we want a summary file of the BLAST hits to be written.</li>
+</ul>
+<p>Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits (“monolist_out”, which is written to “monolist_out_path”), and the hits themselves, written as individual files to “sequences_of_interest_directory_path”. These two things can be used in downstream analyses, such as alignments. The function does not return an object.</p>
+<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">the_transcriptomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_glauca.fa"</span>,</span>
+<span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_tabacum.fa"</span>,</span>
+<span>  <span class="st">"/path_to/the_transcriptomes_or_proteomes/Nicotiana_benthamiana.fa"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">the_transcriptomes</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Nicotiana_glauca"</span>,</span>
+<span>  <span class="st">"Nicotiana_tabacum"</span>,</span>
+<span>  <span class="st">"Nicotiana_benthamiana"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">polyBlast</span><span class="op">(</span></span>
+<span>  named_subjects_list <span class="op">=</span> <span class="va">the_transcriptomes</span>,</span>
+<span>  query_in_path <span class="op">=</span> <span class="st">"/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa"</span>,</span>
+<span>  sequences_of_interest_directory_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_hit_sequences/"</span>,</span>
+<span>  blast_module_directory_path <span class="op">=</span> <span class="st">"/path_to/the_blast_module/"</span>,</span>
+<span>  blast_mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"nnblastn"</span>, <span class="st">"ntblastp"</span>, <span class="st">"pnblastp"</span>, <span class="st">"dc-megablast"</span><span class="op">)</span>, </span>
+<span>  e_value_cutoff <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  queries_in_output <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  monolist_out_path <span class="op">=</span> <span class="st">"/path_to/a_csv_file_that_will_list_all_blast_hits.csv"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="interpretation" class="section level3" number="1.3.2">
+<h3>
+<span class="header-section-number">1.3.2</span> interpretation<a class="anchor" aria-label="anchor" href="#interpretation"><i class="fas fa-link"></i></a>
+</h3>
+<p>The “30% identity rule-of-thumb” is too conservative. Statistically significant (E &lt; 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits &gt; 50) are far more sensitive and reliable than percent identity for inferring homology.</p>
+<p>The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as “false positive” hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:</p>
+<ul>
+<li>E-value &lt; 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.</li>
+<li>10e-100 &lt; E-value &lt; 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.</li>
+<li>10e-50 &lt; E-value &lt; 10e-10 Closely related sequences, could be a domain match or similar.</li>
+<li>10e-10 &lt; E-value &lt; 1 Could be a true homologue but it is a gray area.</li>
+<li>E-value &gt; 1 Proteins are most likely not related</li>
+<li>E-value &gt; 10 Hits are most likely junk unless the query sequence is very short.</li>
+</ul>
+<p>reference: <a href="https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html" class="uri">https://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/650/_E_value.html</a></p>
+<p>reference: Pearson W. R. (2013). An introduction to sequence similarity (“homology”) searching. Current protocols in bioinformatics, Chapter 3, Unit3.1. <a href="https://doi.org/10.1002/0471250953.bi0301s42" class="uri">https://doi.org/10.1002/0471250953.bi0301s42</a>.</p>
+<ul>
+<li>E-values and Bit-scores: Pfam-A is based around hidden Markov model (HMM) searches, as provided by the HMMER3 package. In HMMER3, like BLAST, E-values (expectation values) are calculated. The E-value is the number of hits that would be expected to have a score equal to or better than this value by chance alone. A good E-value is much less than 1. A value of 1 is what would be expected just by chance. In principle, all you need to decide on the significance of a match is the E-value.</li>
+</ul>
+<p>E-values are dependent on the size of the database searched, so we use a second system in-house for maintaining Pfam models, based on a bit score (see below), which is independent of the size of the database searched. For each Pfam family, we set a bit score gathering (GA) threshold by hand, such that all sequences scoring at or above this threshold appear in the full alignment. It works out that a bit score of 20 equates to an E-value of approximately 0.1, and a score 25 of to approximately 0.01. From the gathering threshold both a “trusted cutoff” (TC) and a “noise cutoff” (NC) are recorded automatically. The TC is the score for the next highest scoring match above the GA, and the NC is the score for the sequence next below the GA, i.e. the highest scoring sequence not included in the full alignment.</p>
+<ul>
+<li><p>Sequence versus domain scores: There’s an additional wrinkle in the scoring system. HMMER3 calculates two kinds of scores, the first for the sequence as a whole and the second for the domain(s) on that sequence. The “sequence score” is the total score of a sequence aligned to the model (the HMM); the “domain score” is the score for a single domain — these two scores are virtually identical where only one domain is present on a sequence. Where there are multiple occurrences of the domain on a sequence any individual match may be quite weak, but the sequence score is the sum of all the individual domain scores, since finding multiple instances of a domain increases our confidence that that sequence belongs to that protein family, i.e. truly matches the model.</p></li>
+<li><p>Meaning of bit-score for non-mathematicians: A bit score of 0 means that the likelihood of the match having been emitted by the model is equal to that of it having been emitted by the Null model (by chance). A bit score of 1 means that the match is twice as likely to have been emitted by the model than by the Null. A bit score of 2 means that the match is 4 times as likely to have been emitted by the model than by the Null. So, a bit score of 20 means that the match is 2 to the power 20 times as likely to have been emitted by the model than by the Null.</p></li>
+</ul>
+<!-- * bit-scores Taylor to write something? -->
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="transcriptome-assembly.html">transcriptome assembly</a></div>
+<div class="next"><a href="alignments.html">alignments</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#blast">blast</a></li>
+<li>
+<a class="nav-link" href="#polyblast"><span class="header-section-number">1.3</span> polyBlast</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#setup"><span class="header-section-number">1.3.1</span> setup</a></li>
+<li><a class="nav-link" href="#interpretation"><span class="header-section-number">1.3.2</span> interpretation</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2023-09-06.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>

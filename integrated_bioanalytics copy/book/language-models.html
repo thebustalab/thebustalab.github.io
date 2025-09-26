@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>language models | Integrated Bioanalytics</title>
+<meta name="author" content="Lucas Busta and members of the Busta lab">
+<meta name="description" content='see: https://magazine.sebastianraschka.com/p/understanding-large-language-models completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "", ...'>
+<meta name="generator" content="bookdown 0.39 with bs4_book()">
+<meta property="og:title" content="language models | Integrated Bioanalytics">
+<meta property="og:type" content="book">
+<meta property="og:description" content='see: https://magazine.sebastianraschka.com/p/understanding-large-language-models completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "", ...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="language models | Integrated Bioanalytics">
+<meta name="twitter:description" content='see: https://magazine.sebastianraschka.com/p/understanding-large-language-models completions You can run completions using: completionGPT(  system_prompt = "",  query = "",  model = "", ...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Roboto_Mono-0.4.9/font.css" rel="stylesheet">
+<link href="libs/Montserrat-0.4.9/font.css" rel="stylesheet">
+<script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-99618359-1', 'auto');
+      ga('send', 'pageview');
+
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="style/style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h2>
+        <a href="index.html" title="">Integrated Bioanalytics</a>
+      </h2>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">WELCOME</a></li>
+<li class="book-part">GETTING STARTED</li>
+<li><a class="" href="overview.html">overview</a></li>
+<li><a class="" href="installation.html">installation</a></li>
+<li class="book-part">DATA VISUALIZATION</li>
+<li><a class="" href="data-visualization-i.html">data visualization I</a></li>
+<li><a class="" href="data-visualization-ii.html">data visualization II</a></li>
+<li><a class="" href="data-visualization-iii.html">data visualization III</a></li>
+<li class="book-part">STATISTICAL METHODS</li>
+<li><a class="" href="data-wrangling-and-summaries.html">data wrangling and summaries</a></li>
+<li><a class="" href="dimensional-reduction.html">dimensional reduction</a></li>
+<li><a class="" href="flat-clustering.html">flat clustering</a></li>
+<li><a class="" href="heirarchical-clustering.html">heirarchical clustering</a></li>
+<li><a class="" href="comparing-means.html">comparing means</a></li>
+<li class="book-part">MODELS</li>
+<li><a class="" href="numerical-models.html">numerical models</a></li>
+<li><a class="active" href="language-models.html">language models</a></li>
+<li class="book-part">MIDTERM</li>
+<li><a class="" href="midterm.html">midterm</a></li>
+<li class="book-part">GC-MS DATA</li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
+<li><a class="" href="cdf-export.html">CDF export</a></li>
+<li class="book-part">SEQUENCE ANALYSIS</li>
+<li><a class="" href="homology.html">homology</a></li>
+<li><a class="" href="alignments.html">alignments</a></li>
+<li><a class="" href="phylogenies.html">phylogenies</a></li>
+<li><a class="" href="phylogenetic-analyses.html">phylogenetic analyses</a></li>
+<li><a class="" href="comparative-genomics.html">comparative genomics</a></li>
+<li class="book-part">SCIENTIFIC WRITING</li>
+<li><a class="" href="overview-1.html">overview</a></li>
+<li><a class="" href="figures-captions.html">figures &amp; captions</a></li>
+<li><a class="" href="results-and-discussion.html">results and discussion</a></li>
+<li><a class="" href="conclusion-and-introduction.html">conclusion and introduction</a></li>
+<li><a class="" href="abstract-and-title.html">abstract and title</a></li>
+<li class="book-part">APPENDIX</li>
+<li><a class="" href="links.html">links</a></li>
+<li><a class="" href="datasets.html">datasets</a></li>
+<li><a class="" href="r-faq.html">r faq</a></li>
+<li><a class="" href="templates.html">templates</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="language-models" class="section level1 unnumbered">
+<h1>language models<a class="anchor" aria-label="anchor" href="#language-models"><i class="fas fa-link"></i></a>
+</h1>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/llm.png" width="100%" style="display: block; margin: auto;"></div>
+<p>see: <a href="https://magazine.sebastianraschka.com/p/understanding-large-language-models" class="uri">https://magazine.sebastianraschka.com/p/understanding-large-language-models</a></p>
+<div id="completions" class="section level2 unnumbered">
+<h2>completions<a class="anchor" aria-label="anchor" href="#completions"><i class="fas fa-link"></i></a>
+</h2>
+<p>You can run completions using:</p>
+<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">completionGPT</span><span class="op">(</span></span>
+<span>  system_prompt <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  query <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  model <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  temperature <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  openai_api_key <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The <code>system_prompt</code> tells the model how to act. For example, you might say <code>system_prompt = "you are a helpful assistant"</code>.</p>
+<p>The <code>query</code> is the question you want to ask. For example, you might say: <code>query = "Below is some text from a scientific article, but I don't quite understand it. Could you explain it in simple terms? Text: The goal of the study presented was to compare Tanacetum balsamita L. (costmary) and Tanacetum vulgare L. (tansy) in terms of the antibacterial and antioxidant activity of their essential oils and hydroethanolic extracts, and to relate these activities with their chemical profiles. The species under investigation differed in their chemical composition and biological activities. The dominant compounds of the essential oils, as determined by Gas Chromatography-Mass Spectrometry (GC-MS), were β-thujone in costmary (84.43%) and trans-chrysanthenyl acetate in tansy (18.39%). Using High-Performance Liquid Chromatography with Diode-Array Detection (HPLC-DAD), the chemical composition of phenolic acids and flavonoids were determined. Cichoric acid was found to be the dominant phenolic compound in both species (3333.9 and 4311.3 mg per 100g, respectively). The essential oil and extract of costmary displayed stronger antibacterial activity (expressed as Minimum Inhibitory Concentration (MIC) and Minimum Bactericidal Concentration (MBC) values) than those of tansy. Conversely, tansy extract had higher antioxidant potential (determined by Ferric Reducing Antioxidant Power (FRAP) and DPPH assays) compared to costmary. In light of the observed antibacterial and antioxidant activities, the herbs of tansy and costmary could be considered as promising products for the pharmaceutical and food industries, specifically as antiseptic and preservative agents.</code></p>
+<p>Available options for <code>model</code> include “gpt-4o”, gpt-4”, “gpt-4-0613”, “gpt-3.5-turbo”, “gpt-3.5-turbo-0613”, “gpt-3.5-turbo-16k”, “gpt-3.5-turbo-16k-0613”, “text-davinci-003”, “text-davinci-002”, “text-curie-001”, “text-babbage-001”, “text-ada-001”. Note that you may hot have API access to gpt-4 unless you requested it from OpenAI.</p>
+<p>Temperature goes from 0 to 2 and adds randomness to the answer. Though that is a highly oversimplified and somewhat inaccurate explanation.</p>
+<p>You have to provide your OpenAI API key.</p>
+</div>
+<div id="createnewsletter" class="section level2 unnumbered">
+<h2>createNewsletter<a class="anchor" aria-label="anchor" href="#createnewsletter"><i class="fas fa-link"></i></a>
+</h2>
+<p>The <code>createNewsletter()</code> function provides an automated way to gather, organize, and share the latest research findings in specified focus areas. Using the createNewsletter function, you can input search terms that will be used as queries in a PubMed search. You also provide focus areas that gpt-3.5-turbo uses to rank the results of the PubMed searches. createNewsletter then compiles the n_articles_per_newsletter top ranked hits into a formatted newsletter. The image_prompt is used to create a header image for the newsletter. By modifying search_terms and focus_areas, you can tailor the newsletter to keep up with cutting-edge research in your field.</p>
+<p>With createNewsletter, you can optionally also monitor a directory on the computer system you are using. Anything in the monitored_directory (and its subdirectories) that was added within the past number of hours indicated in monitored_time_window that has a suffix matching monitored_file_suffix (only .txt files currently supported) will be added to the newsletter. This allows your newsletter to include not only PubMed search results but also files stored in a specific directory (like a collection of chunked .pdf files).</p>
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bustalab</span> <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://thebustalab.github.io/phylochemistry/phylochemistry.R"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">newsletter</span> <span class="op">&lt;-</span> <span class="fu">createNewsletter</span><span class="op">(</span></span>
+<span>    search_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>        <span class="st">"plant biochemistry"</span>, <span class="st">"plant genomics and genetics"</span>,</span>
+<span>        <span class="st">"cuticular waxes"</span>, <span class="st">"triterpenoid yeast engineering"</span>,</span>
+<span>        <span class="st">"plant triterpenoids"</span>, <span class="st">"plant ABC transporters"</span>, <span class="st">"plant specialized metabolism"</span>,</span>
+<span>        <span class="st">"plant metabolism"</span>, <span class="st">"plant metabolic evolution"</span>, <span class="st">"plant biochemistry"</span>, <span class="st">"plant metabolism"</span>,</span>
+<span>        <span class="st">"plant genomics"</span>, <span class="st">"cuticular wax"</span>, <span class="st">"triterpenoids"</span>, <span class="st">"plant ABC transporters"</span>,</span>
+<span>        <span class="st">"plant specialized metabolism"</span>,</span>
+<span>        <span class="st">"biosynthesis"</span>, <span class="st">"metabolic evolution"</span>,</span>
+<span>        <span class="st">"artificial intelligence"</span>, <span class="st">"large language models"</span>,</span>
+<span>        <span class="st">"protein language models"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    focus_areas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>        <span class="st">"phytochemistry"</span>, <span class="st">"plant biochemistry"</span>, <span class="st">"plant metabolism"</span>, <span class="st">"plant genomics"</span>,</span>
+<span>        <span class="st">"cuticular wax"</span>, <span class="st">"triterpenoids"</span>, <span class="st">"plant ABC transporters"</span>,</span>
+<span>        <span class="st">"plant specialized metabolism"</span>,</span>
+<span>        <span class="st">"biosynthesis"</span>, <span class="st">"metabolic evolution"</span>,</span>
+<span>        <span class="st">"artificial intelligence"</span>, <span class="st">"large language models"</span>,</span>
+<span>        <span class="st">"protein language models"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    n_articles_per_newsletter <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>    pubmed_api_key <span class="op">=</span> <span class="st">"api_key"</span>,</span>
+<span>    openai_api_key <span class="op">=</span> <span class="st">"api_key"</span>,</span>
+<span>    image_prompt <span class="op">=</span> <span class="st">"I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS: A modern, minimalist blog cover image for a phytochemistry blog post, WITHOUT ANY TEXT. The image should embody a minimalist aesthetic with simple, clean lines and a limited color palette. Depict abstract representations of the diverse themes in the blog post: medicinal plants, phytoremediation, plant growth, plant stress response, environmental microbiology, and plant biochemistry. Include stylized, minimalistic illustrations of Leonurus heterophyllus for medicinal plants, Ipomoea carnea for phytoremediation, a seedling for plant growth, Citrus reticulata for stress response, rice plants for arsenic stress response, abstract soil microbes for environmental microbiology, a sesame plant for disease resistance, and oat plants for cell wall synthesis. The composition should be harmoniously adjusted to ensure a balanced and aesthetically pleasing layout that captures the essence of phytochemistry and plant science research with a contemporary, streamlined look."</span>,</span>
+<span>    monitored_directory <span class="op">=</span> <span class="st">"/project_data/shared/general_lab_resources/literature/papers_chunked/"</span>,</span>
+<span>    monitored_time_window <span class="op">=</span> <span class="fl">336</span>,</span>
+<span>    monitored_file_suffix <span class="op">=</span> <span class="st">".1.txt"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">newsletter</span><span class="op">)</span></span></code></pre></div>
+<p>Finally, you can get this newsletter emailed to yourself using the following approach: (i) set up a Zapier account and a Zap that monitors a Google Sheet then send you an email with the contents of that sheet anytime it is updated; (ii) use the following code to update the sheet with the output of the newsletter; (iii) make an R script that contains the source() command, createNewsletter(), and the write_sheet command then have that script executed as a cron job daily, for example.</p>
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">gs4_auth</span><span class="op">(</span>path <span class="op">=</span> <span class="st">"your_auth_token"</span><span class="op">)</span></span>
+<span><span class="fu">write_sheet</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"content"</span> <span class="op">=</span> <span class="va">newsletter</span><span class="op">$</span><span class="va">newsletter</span><span class="op">$</span><span class="va">response</span><span class="op">)</span>,</span>
+<span>    sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, <span class="st">"your_sheet_share_link"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Here is an example of the newsletter:</p>
+<div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/newsletter.png" width="100%" style="display: block; margin: auto;"></div>
+</div>
+<div id="prompting-strategies" class="section level2 unnumbered">
+<h2>prompting strategies<a class="anchor" aria-label="anchor" href="#prompting-strategies"><i class="fas fa-link"></i></a>
+</h2>
+<p>Role and Goal-Based Constraints: These constraints narrow the AI’s response range, making it more appropriate and effective. Leveraging the AI’s pre-trained knowledge, they guide conversation within a specific persona.</p>
+<p>Step-by-Step Instructions: Clarity and organization in instructions are crucial. It’s recommended to use simple, direct language and to break down complex problems into steps. This approach, including the “Chain of Thought” method, helps the AI follow and effectively respond to the user’s request.</p>
+<p>Expertise and Pedagogy: The user’s knowledge and perspective play a vital role in guiding the AI. The user should have a clear vision of how the AI should respond and interact, especially in educational or pedagogical settings.</p>
+<p>Constraints: Setting rules or conditions within prompts helps guide the AI’s behavior and makes its responses more predictable. This includes defining roles (like a tutor), limiting response lengths, and controlling the flow of conversation.</p>
+<p>Personalization: Using prompts that solicit information and ask questions can help the AI adapt to different scenarios and provide more personalized responses.</p>
+<p>Examples and Few-Shot Learning: Providing the AI with a few examples helps it understand and adapt to new tasks better than with zero-shot learning.</p>
+<p>Asking for Specific Output: Experimenting with different types of outputs, such as images, charts, or documents, can leverage the AI’s capabilities.</p>
+<p>Appeals to Emotion: Recent research suggests that adding emotional phrases to requests can improve the quality of AI responses. Different phrases may be effective in different contexts.</p>
+<p>Testing and Feedback: It’s important to test prompts with various inputs and perspectives to ensure they are effective and helpful. Continuous tweaking based on feedback can improve the prompts further.</p>
+<p>Sharing and Collaboration: Sharing structured prompts allows others to learn and apply them in different contexts, fostering a collaborative environment for AI use.</p>
+<div id="structured-prompting" class="section level3 unnumbered">
+<h3>structured prompting<a class="anchor" aria-label="anchor" href="#structured-prompting"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="few-shot-learning" class="section level3 unnumbered">
+<h3>few shot learning<a class="anchor" aria-label="anchor" href="#few-shot-learning"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="prompt-engineering" class="section level3 unnumbered">
+<h3>prompt engineering<a class="anchor" aria-label="anchor" href="#prompt-engineering"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="chain-of-thought" class="section level3 unnumbered">
+<h3>chain of thought<a class="anchor" aria-label="anchor" href="#chain-of-thought"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="gpt-chains" class="section level3 unnumbered">
+<h3>gpt chains<a class="anchor" aria-label="anchor" href="#gpt-chains"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="fine-tuning" class="section level3 unnumbered">
+<h3>fine tuning<a class="anchor" aria-label="anchor" href="#fine-tuning"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="structured-response" class="section level3 unnumbered">
+<h3>structured response<a class="anchor" aria-label="anchor" href="#structured-response"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+<div id="retrieval-augemented-generation" class="section level3 unnumbered">
+<h3>retrieval-augemented generation<a class="anchor" aria-label="anchor" href="#retrieval-augemented-generation"><i class="fas fa-link"></i></a>
+</h3>
+</div>
+</div>
+<div id="section-9" class="section level2 unnumbered">
+<h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-9"><i class="fas fa-link"></i></a></h2>
+</div>
+<div id="further-reading-9" class="section level2 unnumbered">
+<h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-9"><i class="fas fa-link"></i></a>
+</h2>
+<!-- # analyzeLiterature {-}
+
+If you have access to the bustalab server, you can run the command `analyzeLiterature()` in an R chunk and connect to a shiny app that stores the Busta Lab's literature database. Here are some example questions that you can ask of our literature database:
+
+- Simple question: What are wax blooms?
+
+- Medium-Complexity question: How are ABC transporters involved in the movement of cuticle-related compounds?
+
+- High-Complexity question: Can you describe what is known about the transcriptional regulation of lipid transfer proteins in plants?
+
+- Can you explain - Conceptual: I don't understand the following passage, can you summarize it in simple terms?
+
+ "In earlier studies, different other compounds including β-amyrin were overproduced through using strong constitutive promoters [12], enhancers [13] and transcription factors [14]. The β-amyrin is the triterpenoids belongs to oleanane group [15], which harbors anti-hyperglycemic, anti-inflammatory, hypolipidemic effects along with several other pharmacological activities [16,17]. The β-amyrin synthase (βAS) is responsible to synthesize the β-amyrin from 2,3-oxidosqualene[18]. This 2,3-oxidosqualene is synthesized from squalene through squalene epoxidase (SQE), encoded by the ERG1 gene in S. cerevisiae [19]. Squalene is synthesized from farnesyl-pyrophosphate through the
+action of squalene synthase (SQS) (ERG9 gene); and this farnesyl-pyrophosphate (FPP) is synthesized by farnesyl diphosphate synthase (FPPS) (ERG20 gene), from isopentenyl pyrophosphate (IPP), a precursor supplied by mevalonate (MVA) pathway (Fig. 1). The 3-Hydroxy-3-Methyl glutaryl-CoA reductase (HMG1) [20,21] and squalene
+monooxygenase or SQE [22] are the rate-limiting enzymes of the terpenoid pathway in yeast. For the biosynthesis of triterpenoids, SQS and SQE are important enzymes [23] and were previously overexpressed for
+the overproduction of triterpenoids [14,24]."
+
+- Can you explain - Method/technique: Can you summarize the GAL4/RUBY assay in simple terms?  -->
+<!-- end -->
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="numerical-models.html">numerical models</a></div>
+<div class="next"><a href="midterm.html">midterm</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <h2>Note: Second Edition is under construction 🏗</h2>
+    <p>Now is a great time to provide feedback</p>
+        <ul class="list-unstyled">
+<li><a href="https://forms.gle/SZmB2Ct2exE2dBwv9">Provide feedback (5 min)</a></li>
+          <!-- <li><a href="https://geocompr.robinlovelace.net/#reproducibility">Install updated packages</a></li> -->
+          <!-- <li><a href="https://github.com/Robinlovelace/geocompr/issues">Open an issue <i class="fas fa-question"></i></a></li> -->
+          <!-- <li><a href="https://discord.gg/Te3gWeDwmf">Chat on Discord <i class="fab fa-discord"></i></a></li> -->
+        </ul>
+<hr>
+<nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#language-models">language models</a></li>
+<li><a class="nav-link" href="#completions">completions</a></li>
+<li><a class="nav-link" href="#createnewsletter">createNewsletter</a></li>
+<li>
+<a class="nav-link" href="#prompting-strategies">prompting strategies</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#structured-prompting">structured prompting</a></li>
+<li><a class="nav-link" href="#few-shot-learning">few shot learning</a></li>
+<li><a class="nav-link" href="#prompt-engineering">prompt engineering</a></li>
+<li><a class="nav-link" href="#chain-of-thought">chain of thought</a></li>
+<li><a class="nav-link" href="#gpt-chains">gpt chains</a></li>
+<li><a class="nav-link" href="#fine-tuning">fine tuning</a></li>
+<li><a class="nav-link" href="#structured-response">structured response</a></li>
+<li><a class="nav-link" href="#retrieval-augemented-generation">retrieval-augemented generation</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#section-9"></a></li>
+<li><a class="nav-link" href="#further-reading-9">further reading</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/blob/main/index.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/thebustalab/thebustalab.github.io/tree/master/integrated_bioanalytics/edit/main/index.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-01-16.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer>
+</body>
+</html>
