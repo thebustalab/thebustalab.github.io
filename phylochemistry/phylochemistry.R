@@ -15306,7 +15306,7 @@
                                 distance = distances
                             ), aes(x = index, y = distance)
                         ) + geom_point() + theme_bw() +
-                        geom_hline(yintercept = input$cluster_threshold)
+                        geom_hline(yintercept = input$n_clusters)
 
                     })
 
