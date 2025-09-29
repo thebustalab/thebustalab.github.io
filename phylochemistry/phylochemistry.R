@@ -15237,14 +15237,15 @@
                                         conditionalPanel( "input.selection == 'dbscan'",
 
                                             sliderInput(
-                                                inputId = "cluster_k", label = "k",
-                                                min = 1, max = 40, value = 2
+                                                inputId = "cluster_threshold", label = "Neighborhood size (epsilon or 'eps')",
+                                                min = 0, max = 50, value = 2, step = 0.05
                                             ),
 
                                             sliderInput(
-                                                inputId = "cluster_threshold", label = "threshold",
-                                                min = 0, max = 50, value = 2, step = 0.05
+                                                inputId = "cluster_k", label = "Number of neighbors required to form a cluster (MinPts)",
+                                                min = 1, max = 40, value = 2
                                             )
+
 
                                         ),
 
@@ -15276,7 +15277,7 @@
                             )
 
                 )
-                
+                            
                 server <- function(input, output, session) {
 
                     output$plot1 <- renderPlot({
@@ -15310,18 +15311,28 @@
                     })
 
                     output$plot2 <- renderPlot ({
-
                         if (analysis == "dbscan") {
                             clustering <- as_tibble(data.frame(
                                 sample_unique_ID = colnames(as.matrix(dist_matrix)),
-                                cluster = paste0("cluster_", fpc::dbscan(dist_matrix, eps = input$cluster_threshold , MinPts = input$cluster_k, scale = FALSE, method = "dist")[[1]])
+                                cluster = paste0("cluster_", fpc::dbscan(
+                                    dist_matrix, 
+                                    eps = input$cluster_threshold, 
+                                    MinPts = input$cluster_k, 
+                                    scale = FALSE, method = "dist"
+                                )[[1]])
                             ))
                             clustering$cluster[clustering$cluster == "cluster_0"] <- NA
                         }
 
                         if (analysis == "kmeans") {
-                            kmeans_clusters <- stats::kmeans(x = matrix, centers = input$n_clusters, nstart = 25, iter.max = 1000)$cluster
-                            clustering <- as_tibble(data.frame(sample_unique_ID = names(kmeans_clusters), cluster = paste0("cluster_", kmeans_clusters)))
+                            kmeans_clusters <- stats::kmeans(
+                                x = matrix, centers = input$n_clusters, 
+                                nstart = 25, iter.max = 1000
+                            )$cluster
+                            clustering <- as_tibble(data.frame(
+                                sample_unique_ID = names(kmeans_clusters), 
+                                cluster = paste0("cluster_", kmeans_clusters)
+                            ))
                         }
 
                         clustering <- cbind(
@@ -15329,12 +15340,24 @@
                             matrix[match(rownames(matrix), clustering$sample_unique_ID),]
                         )
 
-                        ggplot(clustering, aes_string(x = colnames(matrix)[1], y = colnames(matrix)[2], fill = "cluster")) +
-                            geom_point(shape = 21, size = 3, alpha = 0.6) +
+                        ggplot(clustering, aes_string(
+                            x = colnames(matrix)[1], 
+                            y = colnames(matrix)[2], 
+                            fill = "cluster"
+                        )) +
+                            # draw eps neighborhoods
+                            ggforce::geom_circle(
+                                aes(
+                                    x0 = !!sym(colnames(matrix)[1]), 
+                                    y0 = !!sym(colnames(matrix)[2]), 
+                                    r = input$cluster_threshold
+                                ),
+                                color = "black", inherit.aes = FALSE, alpha = 0.1
+                            ) +
+                            geom_point(shape = 21, size = 5, alpha = 0.6) +
                             theme_bw() +
                             scale_fill_manual(values = discrete_palette) +
                             coord_fixed()
-
                     })
 
                     session$onSessionEnded(function() { stopApp() })
@@ -15346,6 +15369,7 @@
                 runApp(shinyApp(ui, server))
 
             }
+
 
         #### pGroups
 
