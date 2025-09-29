@@ -15340,24 +15340,30 @@
                             matrix[match(rownames(matrix), clustering$sample_unique_ID),]
                         )
 
-                        ggplot(clustering, aes_string(
+                        plot <- ggplot(clustering, aes_string(
                             x = colnames(matrix)[1], 
                             y = colnames(matrix)[2], 
                             fill = "cluster"
-                        )) +
-                            # draw eps neighborhoods
-                            ggforce::geom_circle(
-                                aes(
-                                    x0 = !!sym(colnames(matrix)[1]), 
-                                    y0 = !!sym(colnames(matrix)[2]), 
-                                    r = input$cluster_threshold
-                                ),
-                                color = "black", inherit.aes = FALSE, alpha = 0.1
-                            ) +
+                        ))
+
+                        if (analysis == "dbscan") {
+                            plot <- plot + # draw eps neighborhoods
+                                ggforce::geom_circle(
+                                    aes(
+                                        x0 = !!sym(colnames(matrix)[1]), 
+                                        y0 = !!sym(colnames(matrix)[2]), 
+                                        r = input$cluster_threshold
+                                    ),
+                                    color = "black", inherit.aes = FALSE, alpha = 0.1
+                                )
+                        }
+
+                        plot <- plot +
                             geom_point(shape = 21, size = 5, alpha = 0.6) +
                             theme_bw() +
                             scale_fill_manual(values = discrete_palette) +
                             coord_fixed()
+                        plot
                     })
 
                     session$onSessionEnded(function() { stopApp() })
