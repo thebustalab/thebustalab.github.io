@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-09-26"
+date: "2025-09-28"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -2454,22 +2454,21 @@ Let's try k-means using `runMatrixAnalysis`. For this example, let's run it on t
 
 
 ``` r
-alaska_lake_data_pca <- runMatrixAnalysis(
-    data = alaska_lake_data,
+alaska_lake_data %>%
+  select(-element_type) %>%
+  pivot_wider(names_from = "element", values_from = "mg_per_L") -> alaska_lake_data_wide
+
+alaska_lake_data_pca <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
     analysis = c("pca"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
     columns_w_sample_ID_info = c("lake", "park")
 )
 
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+alaska_lake_data_pca_clusters <- runMatrixAnalyses(
     data = alaska_lake_data_pca,
     analysis = c("kmeans"),
     parameters = c(5),
-    column_w_names_of_multiple_analytes = NULL,
-    column_w_values_for_multiple_analytes = NULL,
     columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
     columns_w_sample_ID_info = "sample_unique_ID"
 )
@@ -2504,22 +2503,17 @@ There is another method to define clusters that we call dbscan. In this method, 
 
 
 ``` r
-alaska_lake_data_pca <- runMatrixAnalysis(
-    data = alaska_lake_data,
+alaska_lake_data_pca <- runMatrixAnalyses(
+    data = alaska_lake_data_wide,
     analysis = c("pca"),
-    column_w_names_of_multiple_analytes = "element",
-    column_w_values_for_multiple_analytes = "mg_per_L",
-    columns_w_values_for_single_analyte = c("water_temp", "pH"),
-    columns_w_additional_analyte_info = "element_type",
+    columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
     columns_w_sample_ID_info = c("lake", "park")
 ) 
 
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+alaska_lake_data_pca_clusters <- runMatrixAnalyses(
     data = alaska_lake_data_pca,
     analysis = c("dbscan"),
     parameters = c(4, 0.45),
-    column_w_names_of_multiple_analytes = NULL,
-    column_w_values_for_multiple_analytes = NULL,
     columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
     columns_w_sample_ID_info = "sample_unique_ID"
 )
@@ -2554,24 +2548,18 @@ One more important point: when using kmeans or dbscan, we can use the clusters a
 
 ``` r
 alaska_lake_data_pca <- runMatrixAnalysis(
-  data = alaska_lake_data,
+  data = alaska_lake_data_wide,
   analysis = c("pca"),
-  column_w_names_of_multiple_analytes = "element",
-  column_w_values_for_multiple_analytes = "mg_per_L",
-  columns_w_values_for_single_analyte = c("water_temp", "pH"),
-  columns_w_additional_analyte_info = "element_type",
+  columns_w_values_for_single_analyte = colnames(alaska_lake_data_wide)[3:dim(alaska_lake_data_wide)[2]],
   columns_w_sample_ID_info = c("lake", "park")
 )
 
-alaska_lake_data_pca_clusters <- runMatrixAnalysis(
+alaska_lake_data_pca_clusters <- runMatrixAnalyses(
   data = alaska_lake_data_pca,
   analysis = c("dbscan"),
   parameters = c(4, 0.45),
-  column_w_names_of_multiple_analytes = NULL,
-  column_w_values_for_multiple_analytes = NULL,
   columns_w_values_for_single_analyte = c("Dim.1", "Dim.2"),
-  columns_w_sample_ID_info = "sample_unique_ID",
-  columns_w_additional_analyte_info = colnames(alaska_lake_data_pca)[6:18]
+  columns_w_sample_ID_info = "sample_unique_ID"
 ) 
 
 alaska_lake_data_pca_clusters <- left_join(alaska_lake_data_pca_clusters, alaska_lake_data_pca)
@@ -2628,13 +2616,13 @@ plot_1 + plot_2
 
 ## further reading {-}
 
-http://www.sthda.com/english/wiki/wiki.php?id_contents=7940
+- STHDA DBSCAN tutorial: STHDA walks through the DBSCAN algorithm, explains how `eps` and `MinPts` control density-based clusters, and demonstrates complete R examples using the `dbscan` and `fpc` packages. [Read the STHDA DBSCAN guide](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940).
 
-https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/
+- Ryan Wingate on hierarchical vs. density-based clustering: Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach. [Review the walkthrough](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/).
 
-https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png
+- Ryan Wingate dendrogram reference: This figure distills the merge sequence from the accompanying tutorial into a color-coded dendrogram, making it easy to point out where to cut the tree when discussing flat clusters. [Open the dendrogram figure](https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png).
 
-https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/
+- GeeksforGeeks DBSCAN in R: GeeksforGeeks uses a step-by-step R workflow to run DBSCAN, visualize clusters, and explain how adjusting `eps` and `MinPts` affects noise handling. [Follow the tutorial](https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/).
 
 
 <!-- ## exercises {-}

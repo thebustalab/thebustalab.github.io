@@ -109,22 +109,21 @@
 <p>One we know within-group variances, we find the “elbow” point - the point with minimum angle theta - thus picking the outcome with a good balance of cluster number and within-cluster variance (illustrated above in <strong>B</strong> and <strong>C</strong>.)</p>
 <p>Let’s try k-means using <code>runMatrixAnalysis</code>. For this example, let’s run it on the PCA projection of the alaska lakes data set. We can set <code>analysis = "kmeans"</code>. When we do this, an application will load that will show us the threshold value for the number of clusters we want. We set the number of clusters and then close the app. In the context of markdown document, simply provide the number of clusters to the <code>parameters</code> argument:</p>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">element_type</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="st">"element"</span>, values_from <span class="op">=</span> <span class="st">"mg_per_L"</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">alaska_lake_data_wide</span></span>
+<span></span>
+<span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
-<span>    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
-<span>    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
-<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
-<span>    columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_pca</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>,</span>
-<span>    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Dim.1"</span>, <span class="st">"Dim.2"</span><span class="op">)</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"sample_unique_ID"</span></span>
 <span><span class="op">)</span></span>
@@ -152,22 +151,17 @@
 </h2>
 <p>There is another method to define clusters that we call dbscan. In this method, not all points are necessarily assigned to a cluster, and we define clusters according to a set of parameters, instead of simply defining the number of clusteres, as in kmeans. In interactive mode, <code>runMatrixAnalysis()</code> will again load an interactive means of selecting parameters for defining dbscan clusters (“k”, and “threshold”). In the context of markdown document, simply provide “k” and “threshold” to the <code>parameters</code> argument:</p>
 <div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<code class="sourceCode R"><span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
-<span>    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
-<span>    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
-<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
-<span>    columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
 <span><span class="op">)</span> </span>
 <span></span>
-<span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">alaska_lake_data_pca</span>,</span>
 <span>    analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>,</span>
 <span>    parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">0.45</span><span class="op">)</span>,</span>
-<span>    column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>    column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>    columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Dim.1"</span>, <span class="st">"Dim.2"</span><span class="op">)</span>,</span>
 <span>    columns_w_sample_ID_info <span class="op">=</span> <span class="st">"sample_unique_ID"</span></span>
 <span><span class="op">)</span></span>
@@ -196,24 +190,18 @@
 <p>One more important point: when using kmeans or dbscan, we can use the clusters as groupings for summary statistics. For example, suppose we want to see the differences in abundances of certain chemicals among the clusters:</p>
 <div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">alaska_lake_data</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">alaska_lake_data_wide</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pca"</span><span class="op">)</span>,</span>
-<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="st">"element"</span>,</span>
-<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="st">"mg_per_L"</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"water_temp"</span>, <span class="st">"pH"</span><span class="op">)</span>,</span>
-<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="st">"element_type"</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">alaska_lake_data_wide</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lake"</span>, <span class="st">"park"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalyses</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">alaska_lake_data_pca</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dbscan"</span><span class="op">)</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">0.45</span><span class="op">)</span>,</span>
-<span>  column_w_names_of_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  column_w_values_for_multiple_analytes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Dim.1"</span>, <span class="st">"Dim.2"</span><span class="op">)</span>,</span>
-<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="st">"sample_unique_ID"</span>,</span>
-<span>  columns_w_additional_analyte_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">alaska_lake_data_pca</span><span class="op">)</span><span class="op">[</span><span class="fl">6</span><span class="op">:</span><span class="fl">18</span><span class="op">]</span></span>
+<span>  columns_w_sample_ID_info <span class="op">=</span> <span class="st">"sample_unique_ID"</span></span>
 <span><span class="op">)</span> </span>
 <span></span>
 <span><span class="va">alaska_lake_data_pca_clusters</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">alaska_lake_data_pca_clusters</span>, <span class="va">alaska_lake_data_pca</span><span class="op">)</span></span>
@@ -270,10 +258,12 @@
 <div id="further-reading-5" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-5"><i class="fas fa-link"></i></a>
 </h2>
-<p><a href="http://www.sthda.com/english/wiki/wiki.php?id_contents=7940" class="uri">http://www.sthda.com/english/wiki/wiki.php?id_contents=7940</a></p>
-<p><a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/</a></p>
-<p><a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png" class="uri">https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png</a></p>
-<p><a href="https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/" class="uri">https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/</a></p>
+<ul>
+<li><p>STHDA DBSCAN tutorial: STHDA walks through the DBSCAN algorithm, explains how <code>eps</code> and <code>MinPts</code> control density-based clusters, and demonstrates complete R examples using the <code>dbscan</code> and <code>fpc</code> packages. <a href="http://www.sthda.com/english/wiki/wiki.php?id_contents=7940">Read the STHDA DBSCAN guide</a>.</p></li>
+<li><p>Ryan Wingate on hierarchical vs. density-based clustering: Ryan Wingate compares agglomerative methods with DBSCAN, showing how linkage choices and parameter tuning change the resulting partitions and offering intuition for when to use each approach. <a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/">Review the walkthrough</a>.</p></li>
+<li><p>Ryan Wingate dendrogram reference: This figure distills the merge sequence from the accompanying tutorial into a color-coded dendrogram, making it easy to point out where to cut the tree when discussing flat clusters. <a href="https://ryanwingate.com/intro-to-machine-learning/unsupervised/hierarchical-and-density-based-clustering/hierarchical-4.png">Open the dendrogram figure</a>.</p></li>
+<li><p>GeeksforGeeks DBSCAN in R: GeeksforGeeks uses a step-by-step R workflow to run DBSCAN, visualize clusters, and explain how adjusting <code>eps</code> and <code>MinPts</code> affects noise handling. <a href="https://www.geeksforgeeks.org/dbscan-clustering-in-r-programming/">Follow the tutorial</a>.</p></li>
+</ul>
 <!-- ## exercises {-}
 
 For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_chemistry`, available after you run the `source()` command. Do the following:
@@ -292,8 +282,7 @@ For this set of exercises, please use the dataset `hawaii_aquifers` or `tequila_
 
 7. Use the clusters defined by dbscan as groupings on which to run summary statistics for your two variables of interest.
 
-8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups. -->
-<!-- 
+8. Create a plot with three subpanels that shows: (i) the PCA analysis (colored by dbscan clusters), (ii) the ordination analysis, and (iii) the summary statistics for your two variables of interest within the dbscan groups. --><!-- 
 
 
 
@@ -375,9 +364,7 @@ Maybe something like this:
 
 {r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
 knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/images/Ex6Challenge.png', dpi = NA)
- -->
-<!-- end -->
-<!-- start comparing means -->
+ --><!-- end --><!-- start comparing means -->
 </div>
 </div>
   <div class="chapter-nav">
@@ -419,7 +406,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-26.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-28.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
