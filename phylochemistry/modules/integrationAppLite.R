@@ -224,7 +224,7 @@
                 CDF_csv_directory_path,
                 zoom_and_scroll_rate = 100,
                 baseline_window = 400,
-                zooming = FALSE
+                zooming = TRUE
             ) {
 
                 ## Set up monolists and status
