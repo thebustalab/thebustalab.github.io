@@ -1,69 +1,34 @@
 ###### Libraries
 
-    if ( !exists("packages") ) {
+    print("Loading packages...")
 
-        ## Define necessary libraries
+    ## Define necessary libraries
+        
+        CRAN_packages <- c(
+            "shiny",
+            "shinythemes",
+            "data.table",
+            "rhandsontable",
+            "dplyr",
+            "ggplot2",
+            "readr",
+            "tidyr",
+            "plyr"
+        )
+
+        Bioconductor_packages <- character(0)
+
+        Github_packages <- c(
+            # "HajkD/orthologr"
+        )
+
+        packages_needed <- c(CRAN_packages, Bioconductor_packages, Github_packages)[!c(CRAN_packages, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
+
+        skip_package_check <- tolower(Sys.getenv("SKIP_PACKAGE_CHECK", "false")) %in% c("true", "1", "yes")
+
+    ## Determine if anything needs to be installed
             
-            CRAN_packages <- c(
-                "gridExtra",
-                "ape",
-                "multcompView",
-                # "imager",
-                "shiny",
-                "DT",
-                "RColorBrewer",
-                "data.table",
-                "rhandsontable",
-                # "ips",
-                # "phangorn",
-                # "seqinr",
-                # "Rfast",
-                # "picante",
-                # "BiocManager",
-                "googlesheets4",
-                # "Hmisc",
-                # "ggforce",
-                # "network",
-                # "pracma",
-                # "ggnetwork",
-                # "FactoMineR",
-                "dplyr",
-                "stringr", 
-                "progress",
-                "tidyverse"
-                # "ggrepel",
-                # "cowplot",
-                # "rstatix",
-                # "agricolae",
-                # "ggpmisc",
-                # "exifr",
-                # "lubridate",
-                # "bio3d",
-                # "shipunov",
-                # "remotes",
-                # "gdata"
-            )
-
-            Bioconductor_packages <- c(
-                "ggtree"
-                # "xcms",
-                # "msa",
-                # "rtracklayer",
-                # "Biostrings",
-                # "GenomicRanges",
-                # "GenomicFeatures",
-                # "Rsamtools"
-            )
-
-            Github_packages <- c(
-                # "HajkD/orthologr"
-            )
-
-            packages_needed <- c(CRAN_packages, Bioconductor_packages, Github_packages)[!c(CRAN_packages, Bioconductor_packages, gsub(".*/", "", Github_packages)) %in% rownames(installed.packages())]
-
-        ## Determine if anything needs to be installed
-            
-            if (length(packages_needed) > 0) {
+            if (!skip_package_check && length(packages_needed) > 0) {
 
                 message <- paste0(
                     "You need to install the following packages before proceeding: ",
@@ -92,228 +57,150 @@
                 } else {
                     stop("Cannot load phylochemistry without the required packages. Exiting.")
                 }
+            } else if (skip_package_check && length(packages_needed) > 0) {
+                stop(
+                    paste0(
+                        "Required packages missing but SKIP_PACKAGE_CHECK is set. Missing: ",
+                        paste(packages_needed, collapse = ", ")
+                    )
+                )
             }
 
             message("Loading packages...")
             invisible(suppressMessages(suppressWarnings(lapply(c(CRAN_packages, Bioconductor_packages), library, character.only = TRUE))))
     
-    } else {
-    
-        message("Object 'packages' exists, not loading phylochemistry packages...")
-    
-    }
-
     ## Set up prioriy functions
 
         mutate <- dplyr::mutate
         summarize <- dplyr::summarize
         filter <- dplyr::filter
-        select <- dplyr::select
 
     ## Set up options
 
         options(readr.show_progress = FALSE)
         options(dplyr.summarise.inform = FALSE)
 
-    ## Set up better warning messages for some functions
-
-        shapiroTest <- function( data, ... ) {
-
-            if ( any(summarize(data, size = n())$size < 3) ) {
-                stop("One of the groups defined has fewer than 3 members. A Shapiro test cannot be run on such a group. Please filter your data or choose new groups.")
-            } else {
-                rstatix::shapiro_test(data = data, ...)
-            }
-
-        }
-
-        leveneTest <- function( data, ... ) {rstatix::levene_test( data = data, ... )}
-        tTest <- function( data, ... ) {rstatix::t_test( data = data, ... )}
-        wilcoxTest <- function( data, ... ) {rstatix::wilcox_test( data = data, ... )}
-        anovaTest <- function( data, ... ) {rstatix::anova_test( data = data, ... )}
-        tukeyTest <- function( data, ... ) {rstatix::tukey_hsd( data = data, ... )}
-        kruskalTest <- function( data, ... ) {rstatix::kruskal_test( data = data, ... )}
-        dunnTest <- function( data, ... ) {rstatix::dunn_test( data = data, ... )}
-
-    ## Set up lookups
-
-        ## Phred_ascii_33 lookup
-            phred33_lookup <- data.frame(rbind(
-                c("!","0"),c("\"","1"),c("#","2"),c("$","3"),c("%","4"),c("&","5"),c("'","6"),c("(","7"),c(")","8"),c("*","9"),c("+","10"),c(",","11"),c("-","12"),c(".","13"),c("/","14"),c("0","15"),c("1","16"),c("2","17"),c("3","18"),c("4","19"),c("5","20"),c("6","21"),c("7","22"),c("8","23"),c("9","24"),c(":","25"),c(";","26"),c("<","27"),c("=","28"),c(">","29"),c("?","30"),c("@","31"),c("A","32"),c("B","33"),c("C","34"),c("D","35"),c("E","36"),c("F","37"),c("G","38"),c("H","39"),c("I","40"),c("J","41"),c("K","42"),c("L","43"),c("M","44"),c("N","45"),c("O","46"),c("P","47"),c("Q","48"),c("R","49"),c("S","50"),c("T","51"),c("U","52"),c("V","53"),c("W","54"),c("X","55"),c("Y","56"),c("Z","57"),c("[","58"),c("\\","59"),c("]","60"),c("^","61"),c("_","62"),c("`","63"),c("a","64"),c("b","65"),c("c","66"),c("d","67"),c("e","68"),c("f","69"),c("g","70"),c("h","71"),c("i","72"),c("j","73"),c("k","74"),c("l","75"),c("m","76"),c("n","77"),c("o","78"),c("p","79"),c("q","80"),c("r","81"),c("s","82"),c("t","83"),c("u","84"),c("v","85"),c("w","86"),c("x","87"),c("y","88"),c("z","89")
-            ))
-
-###### Datasets
-
-    message("Loading MS Library...")
-
-        busta_spectral_library <- read_csv("https://thebustalab.github.io/R_For_Chemists_2/sample_data/busta_spectral_library_v1.csv", col_types = c(Compound_common_name = "c"))
-
 ###### Functions
 
-    #### readTree
+    print("Loading functions...")
 
-        #' Reads a phylogenetic tree
-        #'
-        #' @param tree_in_path The path to the phylogenetic tree
-        #' @importFrom ape read.tree
-        #' @examples
-        #' @export
-        #' readTree
+    #### extractChromatogramsFromCSVs
 
-        readTree <- function( tree_in_path ) {
+            #' Extract total ion chromatograms from csv files containing mass spectral data
+            #'
+            #' @param paths_to_cdf_csvs Paths to the cdf.csvs
+            #' @param path_to_existing_chromatograms_csv Path to an existing chromatograms.csv file. The function will append new chromatograms to this file that are not already in it.
+            #' @examples
+            #' @export
+            #' extractChromatogramsFromCSVs
 
-            ## Read and return the tree
-                return( ape::read.tree(file = tree_in_path) )
-        }
+                extractChromatogramsFromCSVs <- function( paths_to_cdf_csvs, path_to_existing_chromatograms_csv = NULL ) {
+
+                    ## If the chromatograms.csv already exists, figure out which chromatograms are already in there and don't analyze those
+                        if ( is.null(path_to_existing_chromatograms_csv) == FALSE ) {
+                            paths_to_cdf_csvs <- paths_to_cdf_csvs[!paths_to_cdf_csvs %in% unique(readMonolist(path_to_existing_chromatograms_csv)$path_to_cdf_csv)]
+                        }
+
+                    ## Extract the chromatograms from the full dataset
+                        chromatograms <- list()
+                        for ( file in 1:length(paths_to_cdf_csvs) ) {
+
+                            cat(paste("Reading data file ", paths_to_cdf_csvs[file], "\n", sep = ""))
+                                framedDataFile <- as.data.frame(data.table::fread(paths_to_cdf_csvs[file]))
+
+                            cat("   Extracting the total ion chromatogram...\n")
+                                framedDataFile$row_number <- seq_len(nrow(framedDataFile))
+                                chromatogram <- framedDataFile %>%
+                                    group_by(rt) %>%
+                                    summarize(
+                                        tic = sum(intensity),
+                                        rt_first_row_in_raw = min(row_number),
+                                        rt_last_row_in_raw = max(row_number),
+                                        .groups = "drop"
+                                    )
+                                chromatogram <- as.data.frame(chromatogram)
+                                chromatogram$rt <- as.numeric(chromatogram$rt)
+                                chromatogram$path_to_cdf_csv <- paths_to_cdf_csvs[file]
+
+                            cat("   Appending chromatogram to list...\n")
+                                chromatograms[[file]] <- chromatogram
+                        }
+
+                        chromatograms <- do.call(rbind, chromatograms)
+
+                    ## If the chromatograms file already exists, append to it, otherwise, return the chromatograms 
+                        if ( is.null(path_to_existing_chromatograms_csv) == FALSE ) {
+                            writeMonolist(
+                                monolist = rbind(
+                                    readMonolist(path_to_existing_chromatograms_csv),
+                                    chromatograms
+                                ),
+                                monolist_out_path = path_to_existing_chromatograms_csv
+                            )
+                        } else {
+                            return( chromatograms )        
+                        }                
+                }
+
+    #### writeCSV
+
+            #' Write a monolist to a CSV file
+            #'
+            #' This function allows the user to interactively select a location to save a monolist as a CSV file.
+            #'
+            #' @param monolist A data frame representing the monolist to be written to a CSV file.
+            #' @return None. The function writes the monolist to a file and does not return a value.
+            #' @examples
+            #' \dontrun{
+            #' # To write a monolist to a CSV file
+            #' writeCSV(monolist)
+            #' }
+            #' @export
+
+            writeCSV <- function(monolist) {
+                writeMonolist(monolist = monolist, monolist_out_path = file.choose(new = TRUE))
+            }
+
+    #### writeMonolist
+
+            #' Writes a monolist
+            #'
+            #' @param monolist The monolist to write out
+            #' @param monolist_out_path The path to where the monolist should be written
+            #' @examples
+            #' @export
+            #' writeMonolist
+
+            writeMonolist <- function( monolist, monolist_out_path, ... ) {
+                write.table(monolist, file = monolist_out_path, sep = ",", row.names = FALSE, ...)
+                # write_csv(monolist, file = monolist_out_path)
+            }
 
     #### readMonolist
 
-        #' Reads a monolist
+        #' Read a monolist from a CSV file or URL
         #'
-        #' @param monolist_in_path The path to the monolist (in .csv format) to be read
+        #' This function reads a monolist from a specified path or URL. The monolist should be in CSV format.
+        #'
+        #' @param monolist_in_path A string specifying the path or URL to the monolist CSV file.
+        #' @return A data frame containing the contents of the monolist.
         #' @examples
+        #' \dontrun{
+        #' # To read a monolist from a local file
+        #' monolist <- readMonolist("path/to/monolist.csv")
+        #'
+        #' # To read a monolist from a URL
+        #' monolist <- readMonolist("http://example.com/monolist.csv")
+        #' }
         #' @export
-        #' readMonolist
 
         readMonolist <- function( monolist_in_path ) {
-            monolist <- as.data.frame(data.table::fread(file = monolist_in_path))
+            if (length(grep("http", monolist_in_path)) > 0) {
+                monolist <- read_csv(monolist_in_path, show_col_types = FALSE)        
+            } else {
+                monolist <- as.data.frame(data.table::fread(file = monolist_in_path))
+            }
             return( monolist )
-        }
-
-    #### convertCDFstoCSVs
-
-        #' Convert mass spectral datafiles (CDF) into a csv file
-        #'
-        #' @param paths_to_cdfs Paths to CDF files
-        #' @param min_mz Smallest m/z value to process (acts like a filter)
-        #' @param max_mz Largest m/z value to process (acts like a filter)
-        #' @param min_rt (optional) Smallest retention time to process (acts like a filter)
-        #' @param max_rt (optional) Largest retention time to process (acts like a filter)
-        #' @param force Convert all CDF files, even if they've already been converted previously
-        #' @examples
-        #' @export
-        #' convertCDFstoCSVs
-
-            convertCDFstoCSVs <-    function(
-                                        paths_to_cdfs, 
-                                        min_mz = 50, 
-                                        max_mz = 800, 
-                                        min_rt = NULL, 
-                                        max_rt = NULL, 
-                                        force = FALSE
-                                    ) {
-
-                if ( force == FALSE ) {
-                    paths_to_cdfs <- paths_to_cdfs[!file.exists(paste0(paths_to_cdfs, ".csv"))]
-                }
-
-                if (length(paths_to_cdfs) > 0) {
-
-                    for (file in 1:length(paths_to_cdfs)) {
-
-                        cat(paste("Reading data file ", paths_to_cdfs[file], sep = ""))
-                            rawDataFile <- xcms::loadRaw(xcms::xcmsSource(paths_to_cdfs[file]))
-
-                        cat("   Framing data file ... \n")
-                            rt <- rawDataFile$rt
-                            scanindex <- rawDataFile$scanindex
-
-                            filteredRawDataFile <- list()
-                            for ( i in 1:(length(rt)-1) ) {
-                                filteredRawDataFile[[i]] <- data.frame(
-                                    mz = rawDataFile$mz[(scanindex[i]+1):(scanindex[i+1])],
-                                    intensity = rawDataFile$intensity[(scanindex[i]+1):(scanindex[i+1])],
-                                    rt = rt[i]
-                                )
-                            }
-                            framedDataFile <- do.call(rbind, filteredRawDataFile)
-                            framedDataFile$mz <- round(framedDataFile$mz, digits = 1)
-
-                        cat("   Merging duplicate rows ...\n")
-                            if ( dim(table(duplicated(paste(framedDataFile$mz, framedDataFile$rt, sep = "_")))) > 1 ) {
-                                framedDataFile %>% group_by(mz,rt) %>% summarize(intensity = sum(intensity), .groups = "drop") -> framedDataFile
-                                framedDataFile <- as.data.frame(framedDataFile)
-                            }
-
-                        cat("   Filling in blank m/z values ...\n")
-                            spreadDataFile <- tidyr::spread(framedDataFile, rt, intensity, fill = 0)
-                            
-                            numbers <- round(seq(min_mz, max_mz, 0.1), digits = 1)
-                            add <- numbers[!numbers %in% spreadDataFile$mz]
-                            addition <- spreadDataFile[1:length(add),]
-                            
-                            if ( length(add) > 0 ) {
-                                addition$mz <- add     
-                            }
-                            
-                            addition <- tidyr::pivot_longer(addition, cols = 2:dim(addition)[2], names_to = "rt", values_to = "intensity")
-                            addition$intensity <- 0
-                            addition$rt <- as.numeric(addition$rt)
-                            
-                            framedDataFile <- tidyr::pivot_longer(spreadDataFile, cols = 2:dim(spreadDataFile)[2], names_to = "rt", values_to = "intensity")
-
-                        cat("   still working ...\n")
-                            framedDataFile <- rbind(framedDataFile, addition)
-
-                        cat("   still working ... patience please\n")
-                            framedDataFile$rt <- as.numeric(framedDataFile$rt)
-                            framedDataFile <- framedDataFile[sort.list(framedDataFile$mz),]
-
-                        cat("   still working ... almost done\n")
-                            framedDataFile <- framedDataFile[sort.list(framedDataFile$rt),]
-                            rownames(framedDataFile) <- NULL
-
-                        if ( length(min_rt) > 0 ) {
-                            cat("   Filtering by minimum retention time thresholds ...\n")
-                                framedDataFile <- dplyr::filter(framedDataFile, rt > min_rt)
-                        }
-
-                        if ( length(max_rt) > 0 ) {
-                            cat("   Filtering by maximum retention time thresholds ...\n")
-                                framedDataFile <- dplyr::filter(framedDataFile, rt < max_rt)    
-                        }
-
-                        cat("   Writing out data file as CSV... \n\n")
-                            data.table::fwrite(framedDataFile, file = paste(paths_to_cdfs[file], ".csv", sep = ""), col.names = TRUE, row.names = FALSE)
-                    }
-                }
-            }
-
-    #### mergePeakLists
-
-        #' Merge multiple peaklists
-        #'
-        #' @param analysis_directory_path Path to the directory above all the peak lists
-        #' @examples
-        #' @export
-        #' mergePeakLists
-
-        mergePeakLists <- function(analysis_directory_path) {
-
-            paths_to_peak_monolists <- paste(
-                analysis_directory_path,
-                dir(analysis_directory_path),
-                "peaks_monolist.csv",
-                sep = "/"
-            )
-
-            peak_list <- list()
-            for (i in 1:length(paths_to_peak_monolists)) {
-                
-                if ( file.exists(paths_to_peak_monolists[i]) ) {
-
-                    data <- readMonolist(paths_to_peak_monolists[i])
-
-                    if (dim(data)[1] > 0) {
-                        peak_list[[i]] <- data[,1:9]
-                    }
-                
-                }
-            
-            }
-
-            do.call(rbind, peak_list)
-
         }
 
     #### integrationAppLite
@@ -321,137 +208,73 @@
         #' A Shiny app to integrate GC-FID and GC-MS data
         #'
         #' could not find function "." is from a plyr/dplyr issue
-        #' @param chromatograms A data frame containing columns: "rt", "tic", and "path_to_cdf_csv", which contain retention time, total ion chromatogram intensities, and paths to CDF.csv files generated by the convertCDFstoCSVs function.
+        #' @param chromatograms A data frame containing columns: "rt", "tic", and "path_to_cdf_csv", which contain retention time, total ion chromatogram intensities, and paths to pre-generated sample CSV files.
         #' @param x_axis_start A numeric value for the lower x-axis bounds on the plot generated by the app. Defaults to full length.
         #' @param x_axis_end A numeric value for the upper x-axis bounds on the plot generated by the app. Defaults to full length.
         #' @param samples_monolist_path A path to a .csv file containing metadata for the samples you wish to analyze. Requied columns are: "rt_offset", "baseline_window", and "path_to_cdf_csv", which are for aligning chromatograms, adjusting baseline determination, and defining the path to the CDF.csv files for each sample, respectively.
         #' @param samples_monolist_subset Optional, a numeric vector (for example, "c(1:10)"), defining a subset of samples to be loaded.
         #' @param peaks_monolist_path A path to a .csv file containing metadata for all peaks in the sample set. Required columns are: peak_start", "peak_end", "path_to_cdf_csv", "area", "peak_number_within_sample", "rt_offset", "peak_start_rt_offset", "peak_end_rt_offset". This file is automatically generated by the app.
         #' @param zoom_and_scroll_rate Defines intervals of zooming and scrolling movement while running the app
+        #' @param zooming Logical flag that, when TRUE, zooms the chromatogram view to the active brush range after updates (default FALSE).
         #' @examples
         #' @export
         #' integrationAppLite
 
         integrationAppLite <- function(
-                CDF_directory_path,
+                CDF_csv_directory_path,
                 zoom_and_scroll_rate = 100,
                 baseline_window = 400,
-                path_to_reference_library = busta_spectral_library
+                zooming = FALSE
             ) {
 
                 ## Set up monolists and status
                     samples_monolist_subset = NULL
 
-                    if ( .Platform$OS == "unix") {
+                    samples_monolist_path <- file.path(CDF_csv_directory_path, "samples_monolist.csv")
+                    peaks_monolist_path <- file.path(CDF_csv_directory_path, "peaks_monolist.csv")
+                    chromatograms_path <- file.path(CDF_csv_directory_path, "chromatograms.csv")
 
-                        samples_monolist_path <- paste0(CDF_directory_path, "/samples_monolist.csv")
-                        peaks_monolist_path <- paste0(CDF_directory_path, "/peaks_monolist.csv")
+                ## Identify pre-generated sample CSV files
 
+                    csv_candidates <- list.files(
+                        CDF_csv_directory_path,
+                        pattern = "\\.csv$",
+                        ignore.case = TRUE,
+                        full.names = TRUE
+                    )
+
+                    reserved_filenames <- c(
+                        basename(samples_monolist_path),
+                        basename(peaks_monolist_path),
+                        basename(chromatograms_path)
+                    )
+
+                    paths_to_cdf_csvs <- csv_candidates[!tolower(basename(csv_candidates)) %in% tolower(reserved_filenames)]
+
+                    if (length(paths_to_cdf_csvs) == 0) {
+                        stop(
+                            "No sample CSV files found. Provide pre-converted chromatographic CSV files in the target directory.",
+                            call. = FALSE
+                        )
                     }
-
-                    if ( .Platform$OS == "windows") {
-
-                        samples_monolist_path <- paste0(CDF_directory_path, "\\samples_monolist.csv")
-                        peaks_monolist_path <- paste0(CDF_directory_path, "\\peaks_monolist.csv")
-
-                    }
-                    
-                ## Covert CDF to csv, if necessary
-
-                    if ( .Platform$OS == "unix") {
-
-                         ## Extract paths_to_cdfs
-
-                            paths_to_cdfs <- paste(
-                                CDF_directory_path,
-                                dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path), ignore.case = TRUE)],
-                                sep = "/"
-                            )
-
-                        ## Remove any trailing slashes
-
-                            for ( i in 1:length(paths_to_cdfs)) {
-
-                                if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
-                                    paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
-                                }
-                                if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "/") {
-                                    paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
-                                }
-                            
-                            }
-                    }
-
-                    if ( .Platform$OS == "windows") {
-
-                        ## Extract paths_to_cdfs
-
-                            paths_to_cdfs <- paste(
-                                CDF_directory_path,
-                                dir(CDF_directory_path)[grep("*.CDF$", dir(CDF_directory_path), ignore.case = TRUE)],
-                                sep = "\\"
-                            )
-
-                        ## Remove any trailing slashes
-
-                            for ( i in 1:length(paths_to_cdfs)) {
-
-                                if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
-                                    paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
-                                }
-                                if (substr(paths_to_cdfs, nchar(paths_to_cdfs[i]), nchar(paths_to_cdfs[i])) == "\\") {
-                                    paths_to_cdfs <- substr(paths_to_cdfs, 0, nchar(paths_to_cdfs[i])-1)
-                                }
-                            
-                            }
-                    }
-
-                    convertCDFstoCSVs(paths_to_cdfs)
 
                 ## Recreate chromatograms.csv, if necessary
 
-                    paths_to_cdf_csvs <- paste0(paths_to_cdfs, ".csv")
-
-                    ## Handle chromatograms file
-
-                        if ( .Platform$OS == "unix") {
-
-                            # If chromatograms doesn't exist, make it 
-                                if (!file.exists(paste0(CDF_directory_path, "/chromatograms.csv"))) {
-                                    chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
-                                    writeMonolist(chromatograms, paste0(CDF_directory_path, "/chromatograms.csv"))
-                                } else {
-                                    # If it exists, check to see if all cdfs in this folder are in it, if not, recreate
-                                    chromatograms <- readMonolist(paste0(CDF_directory_path, "/chromatograms.csv"))
-                                    if (!all(paths_to_cdf_csvs %in% unique(chromatograms$path_to_cdf_csv))) {
-                                        chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
-                                        writeMonolist(chromatograms, paste0(CDF_directory_path, "/chromatograms.csv"))
-                                    }
-                                }
-
+                    if (!file.exists(chromatograms_path)) {
+                        chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
+                        writeMonolist(chromatograms, chromatograms_path)
+                    } else {
+                        chromatograms <- readMonolist(chromatograms_path)
+                        if (!all(paths_to_cdf_csvs %in% unique(chromatograms$path_to_cdf_csv))) {
+                            chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
+                            writeMonolist(chromatograms, chromatograms_path)
                         }
-
-                        if ( .Platform$OS == "windows") {
-
-                            # If chromatograms doesn't exist, make it 
-                                if (!file.exists(paste0(CDF_directory_path, "\\chromatograms.csv"))) {
-                                    chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
-                                    writeMonolist(chromatograms, paste0(CDF_directory_path, "\\chromatograms.csv"))
-                                } else {
-                                    # If it exists, check to see if all cdfs in this folder are in it, if not, recreate
-                                    chromatograms <- readMonolist(paste0(CDF_directory_path, "\\chromatograms.csv"))
-                                    if (!all(paths_to_cdf_csvs %in% unique(chromatograms$path_to_cdf_csv))) {
-                                        chromatograms <- extractChromatogramsFromCSVs(paths_to_cdf_csvs)
-                                        writeMonolist(chromatograms, paste0(CDF_directory_path, "\\chromatograms.csv"))
-                                    }
-                                }
-
-                        }
+                    }
 
                 ## Set up new samples monolist
                         
                     samples_monolist <- data.frame(
-                        Sample_ID = gsub("\\..*$", "", gsub(".*/", "", unique(chromatograms$path_to_cdf_csv))),
+                        Sample_ID = sub("\\.[^.]+$", "", basename(unique(chromatograms$path_to_cdf_csv))),
                         rt_offset = 0,
                         baseline_window = baseline_window,
                         path_to_cdf_csv = unique(chromatograms$path_to_cdf_csv)
@@ -476,6 +299,8 @@
 
                     x_axis_start <<- min(chromatograms$rt)
                     x_axis_end <<- max(chromatograms$rt)
+                    x_axis_start_default <- NULL
+                    x_axis_end_default <- NULL
                     
                 ## Set up new peak monolist if it doesn't exist
                     
@@ -504,15 +329,73 @@
 
                     ui <- fluidPage(
 
-                        tags$script('
-                        $(document).on("keypress", function (e) {
-                           Shiny.onInputChange("keypress", e.which);
-                        });
-                        '), 
+                        theme = shinythemes::shinytheme("yeti"),
 
-                        tabsetPanel(type = "tabs",
+                        sidebarLayout(
 
-                            tabPanel("Main",
+                            sidebarPanel(
+                                style = "overflow-y: auto; max-height: 90vh;",
+
+                                h4("GCMS Analysis App"),
+
+                                # img(
+                                #     src = "https://raw.githubusercontent.com/thebustalab/thebustalab.github.io/refs/heads/master/logo.png",
+                                #     height = "260px", 
+                                #     style = "border-radius:8px; margin-bottom:5px;"
+                                # ),
+
+                                tags$hr(),
+                                strong("Keyboard Shortcuts:"),
+                                tags$ul(
+                                    tags$li("Shift + Q => Update chromatogram"),
+                                    tags$li("------------------"),
+                                    tags$li("Shift + 6 => Detect peaks"),
+                                    tags$li("Shift + A => Add single peak"),
+                                    tags$li("Shift + G => Add global peak"),
+                                    tags$li("Shift + E => Excise single peak"),
+                                    tags$li("Shift + R => Remove global peak"),
+                                    tags$li("Shift + 0 => Remove ALL peaks"),
+                                    tags$li("Shift + Z => Save peak table"),
+                                    tags$li("------------------"),
+                                    tags$li("Shift + 1 => Extract MS from selection"),
+                                    tags$li("Shift + 2 => Zoom in on selected MS portion"),
+                                    tags$li("Shift + 3 => Subtract selection MS from current MS"),
+                                    tags$li("Shift + 4 => Library search"),
+                                    tags$li("Shift + 5 => Save current MS")
+                                ),
+
+                                verbatimTextOutput("key", placeholder = TRUE),
+
+                                h5("Messages"),
+                                verbatimTextOutput("message_window", placeholder = TRUE)
+                            ),
+
+                            mainPanel(
+
+                                tags$script('
+                                    $(document).on("keypress", function (e) {
+                                       Shiny.onInputChange("keypress", e.which);
+                                    });
+                                '),
+
+                                tags$head(
+                                    HTML(
+                                        "
+                                        <script>
+                                            var socket_timeout_interval
+                                            var n = 0
+                                            $(document).on('shiny:connected', function(event) {
+                                            socket_timeout_interval = setInterval(function(){
+                                            Shiny.onInputChange('count', n++)
+                                            }, 15000)
+                                            });
+                                            $(document).on('shiny:disconnected', function(event) {
+                                            clearInterval(socket_timeout_interval)
+                                            });
+                                        </script>
+                                        "
+                                    )
+                                ),
 
                                 verticalLayout(
 
@@ -542,22 +425,10 @@
                                       height = plot_height
                                     ),
 
-                                    verbatimTextOutput("key", placeholder = TRUE),
-
                                     rhandsontable::rHandsontableOutput("peak_table")
-                                )
-                            ),
+                                ),
 
-                            tabPanel("MS Library",
-
-                                verticalLayout(
-                                    
-                                    plotOutput(
-                                        outputId = "massSpectrumLookup",
-                                        height = 1200
-                                    )
-
-                                )
+                                textOutput("keepAlive")
                             )
                         )
                     )
@@ -566,21 +437,123 @@
 
                     server <- function(input, output, session) {
 
+                        messages <- reactiveVal(character())
+                        append_message <- function(text) {
+                            timestamp <- format(Sys.time(), "%H:%M:%S")
+                            current <- isolate(messages())
+                            messages(c(current, paste0("[", timestamp, "] ", text)))
+                        }
+                        append_message("App ready.")
+
+                        output$keepAlive <- renderText({
+                            req(input$count)
+                            paste("\nstayin' alive", input$count)
+                        })
+
                         ## Check keystoke value
                             output$key <- renderPrint({
                                 input$keypress
                             })
 
+                        output$message_window <- renderText({
+                            logs <- messages()
+                            if (length(logs) == 0) {
+                                "No messages yet."
+                            } else {
+                                paste(logs, collapse = "\n")
+                            }
+                        })
+
+                        read_ms_slice <- function(sample_path, sample_chrom_df, rt_start, rt_end) {
+                            if (is.null(sample_chrom_df) || nrow(sample_chrom_df) == 0) {
+                                return(data.frame())
+                            }
+
+                            has_row_lookup <- all(c("rt_first_row_in_raw", "rt_last_row_in_raw") %in% colnames(sample_chrom_df))
+
+                            if (has_row_lookup) {
+                                start_idx <- sample_chrom_df$rt_first_row_in_raw[which.min(abs(sample_chrom_df$rt - rt_start))]
+                                end_idx <- sample_chrom_df$rt_last_row_in_raw[which.min(abs(sample_chrom_df$rt - rt_end))]
+
+                                if (length(start_idx) == 0 || length(end_idx) == 0 || is.na(start_idx) || is.na(end_idx)) {
+                                    has_row_lookup <- FALSE
+                                } else {
+                                    start_line <- as.integer(floor(start_idx) + 1L)
+                                    end_line <- as.integer(floor(end_idx) + 1L)
+
+                                    if (start_line < 2L) {
+                                        start_line <- 2L
+                                    }
+                                    if (end_line < start_line) {
+                                        end_line <- start_line
+                                    }
+
+                                    header <- names(data.table::fread(sample_path, nrows = 0, showProgress = FALSE))
+                                    lines_to_read <- end_line - start_line + 1L
+
+                                    slice <- data.table::fread(
+                                        sample_path,
+                                        skip = start_line - 1L,
+                                        nrows = lines_to_read,
+                                        header = FALSE,
+                                        col.names = header,
+                                        showProgress = FALSE
+                                    )
+
+                                    slice <- as.data.frame(slice)
+                                }
+                            }
+
+                            if (!has_row_lookup) {
+                                slice <- as.data.frame(data.table::fread(sample_path, showProgress = FALSE))
+                            }
+
+                            dplyr::filter(slice, rt > rt_start, rt < rt_end)
+                        }
+
                         ## Keys to move chromatogram view - zoom in and out, move L and R
                             observeEvent(input$keypress, {
-                                if( input$keypress == 70 ) { x_axis_start <<- x_axis_start + zoom_and_scroll_rate } # Forward on "F"
-                                if( input$keypress == 70 ) { x_axis_end <<- x_axis_end + zoom_and_scroll_rate } # Forward on "F"
-                                if( input$keypress == 68 ) { x_axis_start <<- x_axis_start - zoom_and_scroll_rate } # Backward on "D"
-                                if( input$keypress == 68 ) { x_axis_end <<- x_axis_end - zoom_and_scroll_rate } # Backward on "D"
-                                if( input$keypress == 86 ) { x_axis_start <<- x_axis_start - zoom_and_scroll_rate } # Wider on "V"
-                                if( input$keypress == 86 ) { x_axis_end <<- x_axis_end + zoom_and_scroll_rate } # Wider on "V"
-                                if( input$keypress == 67 ) { x_axis_start <<- x_axis_start + zoom_and_scroll_rate } # Closer on "C"
-                                if( input$keypress == 67 ) { x_axis_end <<- x_axis_end - zoom_and_scroll_rate } # Closer on "C"
+
+                                if (zooming) {
+                                    if (is.null(x_axis_start_default)) {
+                                        x_axis_start_default <<- x_axis_start
+                                    }
+                                    if (is.null(x_axis_end_default)) {
+                                        x_axis_end_default <<- x_axis_end
+                                    }
+                                }
+
+                                adjust_axes <- function(delta_start, delta_end) {
+                                    rate_start <- delta_start
+                                    rate_end <- delta_end
+
+                                    if (zooming) {
+                                        proposed_start <- x_axis_start_default + rate_start
+                                        proposed_end <- x_axis_end_default + rate_end
+                                        if (proposed_start >= proposed_end) {
+                                            return(NULL)
+                                        }
+                                        x_axis_start_default <<- proposed_start
+                                        x_axis_end_default <<- proposed_end
+                                        x_axis_start <<- x_axis_start_default
+                                        x_axis_end <<- x_axis_end_default
+                                    } else {
+                                        proposed_start <- x_axis_start + rate_start
+                                        proposed_end <- x_axis_end + rate_end
+                                        if (proposed_start >= proposed_end) {
+                                            return(NULL)
+                                        }
+                                        x_axis_start <<- proposed_start
+                                        x_axis_end <<- proposed_end
+                                    }
+                                }
+
+                                step <- zoom_and_scroll_rate
+
+                                if (input$keypress == 70) { adjust_axes(step, step) }      # Forward on "F"
+                                if (input$keypress == 68) { adjust_axes(-step, -step) }   # Backward on "D"
+                                if (input$keypress == 86) { adjust_axes(-step, step) }    # Wider on "V"
+                                if (input$keypress == 67) { adjust_axes(step, -step) }    # Closer on "C"
                             })
 
                         ## Save manual changes to table on "Z" (90) keystroke
@@ -595,6 +568,9 @@
                                         if (!is.null(hot)) {
                                             writeMonolist(rhandsontable::hot_to_r(input$peak_table), peaks_monolist_path)
                                             print(peaks_monolist_path)
+                                            append_message(paste0("Peak table saved to ", peaks_monolist_path))
+                                        } else {
+                                            append_message("No peak table edits available to save.")
                                         }
 
                                 }
@@ -668,6 +644,68 @@
                                             chromatograms_updated$rt_offset <- samples_monolist$rt_offset[match(chromatograms_updated$path_to_cdf_csv, samples_monolist$path_to_cdf_csv)]
                                             chromatograms_updated$rt_rt_offset <- chromatograms_updated$rt + chromatograms_updated$rt_offset
                                             chromatograms_updated <<- chromatograms_updated
+
+                                        if (zooming) {
+                                            full_start <- min(chromatograms_updated$rt_rt_offset, na.rm = TRUE)
+                                            full_end <- max(chromatograms_updated$rt_rt_offset, na.rm = TRUE)
+
+                                            if (is.null(x_axis_start_default)) {
+                                                x_axis_start_default <<- full_start
+                                            }
+                                            if (is.null(x_axis_end_default)) {
+                                                x_axis_end_default <<- full_end
+                                            }
+
+                                            brush_info <- isolate(input$chromatogram_brush)
+
+                                            if (!is.null(brush_info)) {
+                                                selected_start <- suppressWarnings(as.numeric(brush_info$xmin))
+                                                selected_end <- suppressWarnings(as.numeric(brush_info$xmax))
+
+                                                if (!is.finite(selected_start) || !is.finite(selected_end)) {
+                                                    selected_start <- full_start
+                                                    selected_end <- full_end
+                                                }
+
+                                                if (selected_start == selected_end) {
+                                                    selected_start <- selected_start - zoom_and_scroll_rate/2
+                                                    selected_end <- selected_end + zoom_and_scroll_rate/2
+                                                }
+
+                                                if (selected_start < selected_end) {
+                                                    x_axis_start <<- selected_start
+                                                    x_axis_end <<- selected_end
+                                                    x_axis_start_default <<- selected_start
+                                                    x_axis_end_default <<- selected_end
+                                                }
+                                            } else {
+                                                x_axis_start_default <<- full_start
+                                                x_axis_end_default <<- full_end
+                                                x_axis_start <<- full_start
+                                                x_axis_end <<- full_end
+                                            }
+                                        } else {
+                                            x_axis_start <<- min(chromatograms_updated$rt_rt_offset, na.rm = TRUE)
+                                            x_axis_end <<- max(chromatograms_updated$rt_rt_offset, na.rm = TRUE)
+                                        }
+
+                                        ## Prepare chromatograms for plotting
+
+                                            chromatograms_for_plot <- dplyr::filter(
+                                                chromatograms_updated,
+                                                rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end
+                                            )
+
+                                            if (nrow(chromatograms_for_plot) == 0) {
+                                                append_message("No chromatogram data within the current zoom window. Resetting view.")
+                                                x_axis_start <<- min(chromatograms_updated$rt_rt_offset, na.rm = TRUE)
+                                                x_axis_end <<- max(chromatograms_updated$rt_rt_offset, na.rm = TRUE)
+                                                if (zooming) {
+                                                    x_axis_start_default <<- x_axis_start
+                                                    x_axis_end_default <<- x_axis_end
+                                                }
+                                                chromatograms_for_plot <- chromatograms_updated
+                                            }
 
                                         ## Plot with peaks, if any
                                             
@@ -760,18 +798,18 @@
 
                                                     ## Subset the chromatograms and peaks
 
-                                                        chromatograms_updated <- dplyr::filter(chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end)
+                                                        chromatograms_for_plot <- dplyr::filter(chromatograms_for_plot, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end)
                                                         peak_table <- dplyr::filter(peak_table, peak_start_rt_offset > x_axis_start & peak_end_rt_offset < x_axis_end)
 
                                                     ## Make chromatogram plot object
 
                                                         # Make their labels easy to read
-                                                            facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated$path_to_cdf_csv))
-                                                            names(facet_labels) <- chromatograms_updated$path_to_cdf_csv
+                                                            facet_labels <- sub("\\.csv$", "", basename(chromatograms_for_plot$path_to_cdf_csv), ignore.case = TRUE)
+                                                            names(facet_labels) <- chromatograms_for_plot$path_to_cdf_csv
 
                                                             p <-    ggplot() + 
-                                                                geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = baseline), color = "grey") +
-                                                                geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = tic)) +
+                                                                geom_line(data = chromatograms_for_plot, mapping = aes(x = rt_rt_offset, y = baseline), color = "grey") +
+                                                                geom_line(data = chromatograms_for_plot, mapping = aes(x = rt_rt_offset, y = tic)) +
                                                                 scale_x_continuous(limits = c(x_axis_start, x_axis_end)) +
                                                                 facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                                                 # facet_grid(path_to_cdf_csv~., labeller = labeller(path_to_cdf_csv = facet_labels)) +
@@ -788,7 +826,7 @@
                                                         for (peak in 1:dim(peak_table)[1]) {
                                                             
                                                             signal_for_this_peak <- dplyr::filter(
-                                                                chromatograms_updated[chromatograms_updated$path_to_cdf_csv == peak_table[peak,]$path_to_cdf_csv,], 
+                                                                chromatograms_for_plot[chromatograms_for_plot$path_to_cdf_csv == peak_table[peak,]$path_to_cdf_csv,], 
                                                                 rt_rt_offset > peak_table[peak,]$peak_start_rt_offset, 
                                                                 rt_rt_offset < peak_table[peak,]$peak_end_rt_offset
                                                             )
@@ -807,15 +845,13 @@
 
                                                 ## Make chromatogram plot object
 
-                                                    chromatograms_updated <- dplyr::filter(chromatograms_updated, rt_rt_offset > x_axis_start & rt_rt_offset < x_axis_end)
-                                                
                                                         # Make their labels easy to read
-                                                            facet_labels <- gsub(".CDF.csv", "", gsub(".*/", "", chromatograms_updated$path_to_cdf_csv))
-                                                            names(facet_labels) <- chromatograms_updated$path_to_cdf_csv
+                                                            facet_labels <- sub("\\.csv$", "", basename(chromatograms_for_plot$path_to_cdf_csv), ignore.case = TRUE)
+                                                            names(facet_labels) <- chromatograms_for_plot$path_to_cdf_csv
 
                                                         p <-  ggplot() + 
-                                                                geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = baseline), color = "grey") +
-                                                                geom_line(data = chromatograms_updated, mapping = aes(x = rt_rt_offset, y = tic)) +
+                                                                geom_line(data = chromatograms_for_plot, mapping = aes(x = rt_rt_offset, y = baseline), color = "grey") +
+                                                                geom_line(data = chromatograms_for_plot, mapping = aes(x = rt_rt_offset, y = tic)) +
                                                                 scale_x_continuous(limits = c(x_axis_start, x_axis_end)) +
                                                                 facet_grid(path_to_cdf_csv~., scales = "free_y", labeller = labeller(path_to_cdf_csv = facet_labels)) +
                                                                 # facet_grid(path_to_cdf_csv~., labeller = labeller(path_to_cdf_csv = facet_labels)) +
@@ -832,28 +868,9 @@
                                             
                                             p
                                     })
+                                    append_message("Chromatograms updated.")
                                 }
                             })
-
-                        ## Transfer chromatogram_brush info to selected_peak table
-                            
-                            output$selected_peak <- DT::renderDataTable(DT::datatable({
-
-                                if ( !is.null(input$chromatogram_brush )) {
-                                    peak_points <- brushedPoints(chromatograms_updated, input$chromatogram_brush)
-                                    peak_data <-  data.frame(
-                                        peak_start = min(peak_points$rt),
-                                        peak_end = max(peak_points$rt),
-                                        peak_ID = "unknown",
-                                        path_to_cdf_csv = peak_points$path_to_cdf_csv[1],
-                                        area = sum(peak_points$tic)
-                                    )
-                                    peak_data
-                                } else {
-                                    NULL
-                                }
-
-                            }))
 
                         ## Remove selected peaks with "R" (82) keystroke
                             
@@ -953,34 +970,50 @@
                                             sep = ","
                                         )
 
-                                        output$peak_table <- DT::renderDataTable(DT::datatable({
+                                        output$peak_table <- rhandsontable::renderRHandsontable(rhandsontable::rhandsontable({
                                             peak_table <- read.csv(peaks_monolist_path)
                                             peak_table
                                         }))
                                     }
                             })
 
-                        ## [MS1 extract ("shift+1"), update ("shift+2"), subtract ("shift+3"), library search ("shift+4"), save ("shift+5")]
+                        ## [MS1 extract ("shift+1"), update ("shift+2"), subtract ("shift+3"), library search ("shift+4" disabled), save ("shift+5")]
                             
                             observeEvent(input$keypress, {
 
                                 ## If "shift+1", MS from chromatogram brush -> MS_out_1
                                     if( input$keypress == 33 ) {
-                                        
-                                        framedDataFile <- isolate(as.data.frame(
-                                                            data.table::fread(as.character(
-                                                                brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                            ))
-                                        ))
-                                        framedDataFile <- isolate(dplyr::filter(
-                                                                framedDataFile, 
-                                                                rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                            ))
-                                        library(plyr)
+
+                                        if (is.null(input$chromatogram_brush)) {
+                                            cat("No chromatogram selection to extract MS from.\n")
+                                            return()
+                                        }
+
+                                        ret_start_MS <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                        ret_end_MS <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                        sample_name_MS <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
+
+                                        chromatogram_updated_MS <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == sample_name_MS)
+
+                                        if (nrow(chromatogram_updated_MS) == 0) {
+                                            cat("Could not locate chromatogram rows for the selected sample.\n")
+                                            return()
+                                        }
+
+                                        framedDataFile <- isolate(read_ms_slice(sample_name_MS, chromatogram_updated_MS, ret_start_MS, ret_end_MS))
+
+                                        if (nrow(framedDataFile) == 0) {
+                                            cat("No mass spectrum extracted for the selected region.\n")
+                                            return()
+                                        }
+
                                         framedDataFile$mz <- round(framedDataFile$mz, 1)
-                                        framedDataFile <- plyr::ddply(framedDataFile, .(mz), summarize, intensity = sum(intensity))
-                                        MS_out_1 <<- framedDataFile
+                                        MS_out_1 <- framedDataFile %>%
+                                            dplyr::group_by(mz) %>%
+                                            dplyr::summarize(intensity = sum(intensity), .groups = "drop") %>%
+                                            as.data.frame()
+
+                                        MS_out_1 <<- MS_out_1
 
                                     }
 
@@ -991,27 +1024,48 @@
                                         if (!exists("MS_out_1")) {
                                             cat("No mass spectrum extracted yet.\n")
                                             return()
-                                        } else {
-                                        
-                                            framedDataFile_to_subtract <- isolate(as.data.frame(
-                                                                data.table::fread(as.character(
-                                                                    brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1]
-                                                                ))
-                                            ))
-                                            framedDataFile_to_subtract <- isolate(dplyr::filter(
-                                                                    framedDataFile_to_subtract, 
-                                                                    rt > min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                                    rt < max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                                                ))
-                                            library(plyr)
-                                            framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
-                                            framedDataFile_to_subtract <- plyr::ddply(framedDataFile_to_subtract, .(mz), summarize, intensity = sum(intensity))
-                                            MS_out_1$intensity <- MS_out_1$intensity - framedDataFile_to_subtract$intensity
-                                            MS_out_1$intensity[MS_out_1$intensity < 0] <- 0
-                                            MS_out_1 <<- MS_out_1
-
                                         }
-                                        
+
+                                        if (is.null(input$chromatogram_brush)) {
+                                            cat("No chromatogram selection to subtract.\n")
+                                            return()
+                                        }
+
+                                        ret_start_sub <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                        ret_end_sub <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
+                                        sample_name_sub <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
+
+                                        chromatogram_updated_sub <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == sample_name_sub)
+
+                                        framedDataFile_to_subtract <- isolate(read_ms_slice(sample_name_sub, chromatogram_updated_sub, ret_start_sub, ret_end_sub))
+
+                                        if (nrow(framedDataFile_to_subtract) == 0) {
+                                            cat("Nothing to subtract for the selected region.\n")
+                                            return()
+                                        }
+
+                                        framedDataFile_to_subtract$mz <- round(framedDataFile_to_subtract$mz, 1)
+                                        framedDataFile_to_subtract <- framedDataFile_to_subtract %>%
+                                            dplyr::group_by(mz) %>%
+                                            dplyr::summarize(intensity = sum(intensity), .groups = "drop") %>%
+                                            as.data.frame()
+
+                                        subtraction <- dplyr::left_join(
+                                            MS_out_1,
+                                            framedDataFile_to_subtract,
+                                            by = "mz",
+                                            suffix = c("_orig", "_sub")
+                                        )
+                                        subtraction$intensity_sub[is.na(subtraction$intensity_sub)] <- 0
+
+                                        updated_MS <- subtraction %>%
+                                            dplyr::transmute(
+                                                mz = mz,
+                                                intensity = pmax(intensity_orig - intensity_sub, 0)
+                                            )
+
+                                        MS_out_1 <<- as.data.frame(updated_MS)
+
                                     }
 
                                 ## If "shift+1", or "shift+2", or "shift+3, make plot based on brush if any
@@ -1075,145 +1129,7 @@
                                 ## If "shift+4" library lookup
 
                                     if (input$keypress == 36) {
-                                            
-                                        message("Searching reference library for unknown spectrum...\n")
-
-                                            ## Round to nominal mass spectrum
-                                                MS_out_1$mz <- floor(MS_out_1$mz)
-                                                MS_out_1 %>%
-                                                    group_by(mz) %>%
-                                                    dplyr::summarize(intensity = sum(intensity)) -> MS_out_1
-                                                MS_out_1$intensity <- MS_out_1$intensity/max(MS_out_1$intensity)*100
-
-                                            ## Add zeros for mz values missing from unknown spectrum if necessary
-                                                mz_missing <- seq(min(MS_out_1$mz), max(MS_out_1$mz), 1)[!seq(min(MS_out_1$mz), max(MS_out_1$mz), 1) %in% MS_out_1$mz]
-                                                if (length(mz_missing) > 0) {
-                                                    MS_out_1 <- rbind(MS_out_1, data.frame(mz = mz_missing, intensity = 0))
-                                                    MS_out_1 <- MS_out_1[order(MS_out_1$mz),]
-                                                }
-
-                                            ## Bind it with metadata
-                                                unknown <- cbind(
-                                                    data.frame(
-                                                        Accession_number = "unknown",
-                                                        Compound_systematic_name = "unknown",
-                                                        Compound_common_name = "unknown",
-                                                        SMILES = NA,
-                                                        Source = "unknown"
-                                                    ),
-                                                    t(
-                                                        c(
-                                                            rep(0,min(MS_out_1$mz)-1),
-                                                            MS_out_1$intensity
-                                                        )
-                                                    )
-                                                )
-                                                colnames(unknown)[6:805] <- paste("mz_", c(seq(1,min(MS_out_1$mz)-1,1), MS_out_1$mz), sep = "")
-
-                                            ## Bind it to the library and run the lookup
-                                                lookup_data <- rbind(busta_spectral_library, unknown)
-                                                
-                                                hits <- runMatrixAnalysis(
-                                                    data = lookup_data,
-                                                    analysis = c("hclust"),
-                                                    column_w_names_of_multiple_analytes = NULL,
-                                                    column_w_values_for_multiple_analytes = NULL,
-                                                    columns_w_values_for_single_analyte = colnames(lookup_data)[6:805],
-                                                    columns_w_additional_analyte_info = NULL,
-                                                    columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
-                                                    transpose = FALSE,
-                                                    unknown_sample_ID_info = c("unknown_unknown"),
-                                                    scale_variance = TRUE,
-                                                    kmeans = "none",
-                                                    na_replacement = "drop",
-                                                    output_format = "long"
-                                                )
-
-                                            ## Find distance between tips
-
-                                                phylo <- runMatrixAnalysis(
-                                                    data = hits[!is.na(hits$sample_unique_ID),],
-                                                    analysis = c("hclust_phylo"),
-                                                    column_w_names_of_multiple_analytes = "analyte_name",
-                                                    column_w_values_for_multiple_analytes = "value",
-                                                    columns_w_values_for_single_analyte = NULL,
-                                                    columns_w_additional_analyte_info = NULL,
-                                                    columns_w_sample_ID_info = c("Accession_number", "Compound_systematic_name"),
-                                                    transpose = FALSE,
-                                                    unknown_sample_ID_info = NULL,
-                                                    scale_variance = TRUE,
-                                                    kmeans = "none",
-                                                    na_replacement = "drop",
-                                                    output_format = "long"
-                                                )
-
-                                                distances_1 <- as.data.frame(cophenetic.phylo(phylo)[,colnames(cophenetic.phylo(phylo)) == "unknown_unknown"])
-                                                distances_2 <- data.frame(
-                                                    sample_unique_ID = rownames(distances_1),
-                                                    distance = distances_1[,1]
-                                                )
-                                                distances_2$distance <- normalize(distances_2$distance, old_min = min(distances_2$distance), old_max = max(distances_2$distance), new_min = 100, new_max = 0)
-
-                                            ## Make the bar data
-
-                                                hits[!is.na(hits$sample_unique_ID),] %>%
-                                                    select(analyte_name, value, sample_unique_ID) %>%
-                                                    unique() -> bars
-
-                                                bars$analyte_name <- gsub(".*_", "", bars$analyte_name)
-
-                                                bars %>%
-                                                    group_by(sample_unique_ID) %>%
-                                                    arrange(desc(value)) -> bar_labels
-
-                                                bar_labels <- bar_labels[1:110,]
-
-                                            ## Order bar data
-
-                                                bars$sample_unique_ID <- factor(
-                                                    bars$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
-                                                )
-
-                                                distances_2$sample_unique_ID <- factor(
-                                                    distances_2$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
-                                                )
-
-                                                bar_labels$sample_unique_ID <- factor(
-                                                    bar_labels$sample_unique_ID, levels = distances_2$sample_unique_ID[order(distances_2$distance, decreasing = TRUE)]
-                                                )
-
-                                            ## Make the bar plot
-                                                
-                                                plot <- ggplot() +
-                                                    geom_col(data = bars, aes(x = as.numeric(as.character(analyte_name)), y = value)) +
-                                                    geom_text(data = unique(select(bars, sample_unique_ID)), aes(label = sample_unique_ID, x = 400, y = 90), hjust = 0.5, size = 4) +
-                                                    facet_grid(sample_unique_ID~.) +
-                                                    theme_bw() +
-                                                    scale_x_continuous(name = "m/z") +
-                                                    scale_y_continuous(name = "Relative intensity (%)") +
-                                                    geom_text(
-                                                            data = bar_labels,
-                                                            mapping = aes(
-                                                                x = as.numeric(as.character(analyte_name)),
-                                                                y = value + 5, label = analyte_name
-                                                            )
-                                                        ) +
-                                                    geom_text(
-                                                            data = distances_2,
-                                                            mapping = aes(
-                                                                x = 800,
-                                                                y = 75,
-                                                                label = paste0(
-                                                                    "Relative similarity to unknown: ",
-                                                                    round(distance, 2), "%"
-                                                                ), hjust = 1
-                                                            )
-                                                        )
-
-                                                output$massSpectrumLookup <- renderPlot({plot})
-
-                                        message("Done.\n")
-
+                                        message("Mass spectrum library lookup is disabled in this build.\n")
                                     }
                             
                                 ## If "shift+5" save mass spectrum
@@ -1252,3 +1168,5 @@
                     shinyApp(ui = ui, server = server)
 
             }
+
+    print("Done!")
