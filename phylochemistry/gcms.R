@@ -890,10 +890,10 @@
                                     })
                                     append_message("Chromatograms updated.")
                                 }
-                            
+                            })
 
                         ## Remove selected peaks with "R" (82) keystroke
-                            
+                             
                             observeEvent(input$keypress, {      
                                 if( input$keypress == 82 ) { # Update on "R"
 
