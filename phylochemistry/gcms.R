@@ -203,7 +203,7 @@
             return( monolist )
         }
 
-    #### integrationAppLite
+    #### analyzeGCMSdata
 
         #' A Shiny app to integrate GC-FID and GC-MS data
         #'
@@ -218,9 +218,9 @@
         #' @param zooming Logical flag that, when TRUE, zooms the chromatogram view to the active brush range after updates (default FALSE).
         #' @examples
         #' @export
-        #' integrationAppLite
+        #' analyzeGCMSdata
 
-        integrationAppLite <- function(
+        analyzeGCMSdata <- function(
                 CDF_csv_directory_path,
                 zoom_and_scroll_rate = 100,
                 baseline_window = 400,
