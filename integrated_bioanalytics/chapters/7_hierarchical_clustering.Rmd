@@ -8,6 +8,8 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 
 ## {-}
 
+## clustering
+
 So far we have been looking at how to plot raw data, summarize data, and reduce a data set's dimensionality. It's time to look at how to identify relationships between the samples in our data sets. For example: in the Alaska lakes dataset, which lake is most similar, chemically speaking, to Lake Narvakrak? Answering this requires calculating numeric distances between samples based on their chemical properties. For this, the first thing we need is a distance matrix:
 
 ```{r fig.align='center', echo=FALSE, include=identical(knitr:::pandoc_to(), 'html'), results="markup"}
@@ -75,8 +77,6 @@ ggtree() +
 
 Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:
 
-
-
 ```{r, fig.height = 4, fig.width = 5}
 alaska_lake_data_wide %>%
   filter(!lake %in% c("North_Killeak_Lake","White_Fish_Lake")) -> alaska_lake_data_wide_filtered
@@ -98,6 +98,60 @@ ggtree() +
     )
     
 ```
+
+## Annotating trees {-}
+
+Overlaying sample traits on a ggtree-based plot is straightforward when we combine `ggtree` with `ggplot2`. We begin by running the hierarchical clustering analysis and keeping its output for later plotting.
+
+```{r}
+hclust_out <- runMatrixAnalyses(
+  data = chemical_blooms,
+  analysis = c("hclust"),
+  columns_w_values_for_single_analyte = colnames(chemical_blooms)[2:10],
+  columns_w_sample_ID_info = "label"
+)
+```
+
+The object returned by `runMatrixAnalyses()` already contains the branch coordinates, so we can pass it directly to `ggtree()` and add tip labels while keeping the tree readable. Note that we should deliberately control the y-axis here, that will be key for aligning the tree with other plots later.
+
+```{r}
+tree_plot <- ggtree(hclust_out) +
+  geom_tiplab(size = 2, align = TRUE) +
+  scale_x_continuous(limits = c(0, 300)) +
+  scale_y_continuous(limits = c(0, 80)) +
+  theme_classic()
+tree_plot
+```
+
+Next, reshape the tip-level measurements to long form so each chemical becomes its own column of tiles. Because we reuse the `y` coordinate supplied by `ggtree`, the tiles inherit the same vertical order as the tips in the tree. Note that we remove the other columns in the hclust output for simplicity - they are only needed if we want to draw the full tree. Note that we also control the y-axis here to make sure it has the same bounds (limits) as the tree we made previously.
+
+```{r}
+heat_plot <- hclust_out %>%
+  filter(isTip) %>%
+  select(-parent, -node, -branch.length, -label, -isTip, -x, -branch, -angle, -bootstrap) %>%
+  pivot_longer(cols = 3:11, names_to = "chemical", values_to = "abundance") %>%
+  ggplot(aes(x = chemical, y = y, fill = abundance)) +
+  geom_tile() +
+  scale_y_continuous(limits = c(0, 80)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+heat_plot
+```
+
+With matching y scales, `plot_grid()` can align the tree and the heat map so the tiles line up with the corresponding samples. Using `align = "h"` snaps them together horizontally, and `axis = "tb"` keeps the panel heights consistent.
+
+```{r}
+plot_grid(tree_plot, heat_plot, axis = "tb", align = "h")
+```
+
+Note: if we were to instead build the heat map directly from the raw `chemical_blooms` table, the rows fall back to their alphabetical order and the heat map no longer matches the dendrogram ordering:
+
+```{r}
+chemical_blooms %>%
+  pivot_longer(cols = 2:10, names_to = "chemical", values_to = "abundance") %>%
+  ggplot(aes(x = chemical, y = label, fill = abundance)) +
+  geom_tile()
+```
+
 
 ## further reading {-}
 
