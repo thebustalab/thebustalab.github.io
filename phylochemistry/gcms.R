@@ -1,7 +1,5 @@
 ###### Libraries
 
-    print("Loading packages...")
-
     ## Define necessary libraries
         
         CRAN_packages <- c(
@@ -82,7 +80,7 @@
 
 ###### Functions
 
-    print("Loading functions...")
+    message("Loading functions...")
 
     #### extractChromatogramsFromCSVs
 
@@ -1169,4 +1167,4 @@
 
             }
 
-    print("Done!")
+    message("Done!")
