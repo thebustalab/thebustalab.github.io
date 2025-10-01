@@ -994,7 +994,7 @@ knitr:::include_graphics('https://thebustalab.github.io/integrated_bioanalytics/
 ```
  \
 
-3. In R or RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF file. Do not run the command on the CDF file itself, that will not work. For example, if my CDF file is called "sorghum_bicolor.CDF", and is inside the folder called `gc_data`, then I would run the following:
+3. In R or RStudio, run the `analyzeGCMSdata` command on the *folder* that contains your CDF.csv file. Do not run the command on the CDF.csv file itself, that will not work. For example, if my CDF.csv file is called "sorghum_bicolor.CDF.csv", and is inside the folder called `gc_data`, then I would run the following:
  \
 
 If you are on a Mac, *use single forward slashes*. For example:

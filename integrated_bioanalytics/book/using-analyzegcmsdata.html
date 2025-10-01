@@ -70,10 +70,6 @@
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="embedding-models.html">embedding models</a></li>
-<li class="book-part">GC-MS DATA</li>
-<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
-<li><a class="active" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
-<li><a class="" href="cdf-export.html">CDF export</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
 <li><a class="" href="homology.html">homology</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
@@ -87,6 +83,8 @@
 <li><a class="" href="datasets.html">datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="active" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
 </ul>
 
         <div class="book-extra">
@@ -106,12 +104,6 @@
 <li>shift + q = update</li>
 <li>shift + a = add selected peak</li>
 <li>shift + r = remove selected peak</li>
-<li>shift + g = add global peak
-<!-- * shift + f = forward
-* shift + d = backward
-* shift + c = zoom in
-* shift + v = zoom out -->
-</li>
 <li>shift + z = save table</li>
 </ul>
 <p>To control the mass spectrum window:</p>
@@ -119,25 +111,12 @@
 <li>shift+1 = extract mass spectra from highlighted chromatogram region, plot average mass spectrum in panel 1.</li>
 <li>shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.</li>
 <li>shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.</li>
-<li>shift+4 = search current spectrum in panel 1 against library of mass spectra (only available if you load via <code>phylochemistry</code>).</li>
-<li>shift+5 = save the current spectrum in panel 1 as a csv file (only available if you load via <code>phylochemistry</code>).</li>
 </ul>
-</div>
-<div id="advanced-usage-of-analyzegcmsdata" class="section level2 unnumbered">
-<h2>advanced usage of analyzeGCMSdata<a class="anchor" aria-label="anchor" href="#advanced-usage-of-analyzegcmsdata"><i class="fas fa-link"></i></a>
-</h2>
-<p>You can ask <code>analyzeGCMSdata</code> to extract single ion chromatograms if you wish. Just specify a list of ions as an argument. Note that specifying “0” corresponds to the total ion chromatogram and must be included as the first item in the list. Here’s an example:</p>
-<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">analyzeGCMSdata</span><span class="op">(</span><span class="st">"/Volumes/My_Drive/gc_data"</span>, ions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"0"</span>, <span class="st">"218"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><br></p>
-<p>Will return an interface that shows chromatograms for the total ion count and for ion 218.</p>
-<p>At this point, note that you have a new set of files in your data-containing folder. There will be one <code>*.CDF.csv</code> file for each CDF file you have in the folder. This contains a matrix of all the mass measurements in your entire sample - the abundance of each m/z value during each scan. There is also a <code>chromatograms.csv</code> file. This is a list of all the chromatograms (total ion + whatever single ions were specified). These can be useful for creating plots of chromatograms via ggplot.</p>
-<!-- Please watch this [overview video](https://drive.google.com/file/d/1Jv-EEwaLIxpQJSVZGD1NFkfZGOUaayKo/view?usp=sharing) for a demonstration of how to use the integration app. -->
 </div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></div>
-<div class="next"><a href="cdf-export.html">CDF export</a></div>
+<div class="empty"></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -152,7 +131,6 @@
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#using-analyzegcmsdata">using analyzeGCMSdata</a></li>
 <li><a class="nav-link" href="#basic-usage-of-analytegcmsdata">basic usage of analyteGCMSdata</a></li>
-<li><a class="nav-link" href="#advanced-usage-of-analyzegcmsdata">advanced usage of analyzeGCMSdata</a></li>
 </ul>
 
       <div class="book-extra">
@@ -170,7 +148,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-28.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-30.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

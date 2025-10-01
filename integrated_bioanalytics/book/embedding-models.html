@@ -70,10 +70,6 @@
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="active" href="embedding-models.html">embedding models</a></li>
-<li class="book-part">GC-MS DATA</li>
-<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
-<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
-<li><a class="" href="cdf-export.html">CDF export</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
 <li><a class="" href="homology.html">homology</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
@@ -87,6 +83,8 @@
 <li><a class="" href="datasets.html">datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
 </ul>
 
         <div class="book-extra">
@@ -149,10 +147,10 @@
 <span><span class="co">##  3 beta-amyrin synthase       β-Amyrin synthase (EsBAS) and…</span></span>
 <span><span class="co">##  4 friedelin synthase         Friedelin in Maytenus ilicifo…</span></span>
 <span><span class="co">##  5 friedelin synthase         Friedelin Synthase from Mayte…</span></span>
-<span><span class="co">##  6 friedelin synthase         Functional characterization o…</span></span>
+<span><span class="co">##  6 friedelin synthase         Genome Mining and Gene Expres…</span></span>
 <span><span class="co">##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    </span></span>
-<span><span class="co">##  8 sorghum bicolor            Progress in Optimization of A…</span></span>
-<span><span class="co">##  9 sorghum bicolor            Sorghum: A Multipurpose Crop. </span></span>
+<span><span class="co">##  8 sorghum bicolor            Grain and sweet sorghum (Sorg…</span></span>
+<span><span class="co">##  9 sorghum bicolor            Progress in Optimization of A…</span></span>
 <span><span class="co">## 10 cuticular wax biosynthesis Regulatory mechanisms underly…</span></span>
 <span><span class="co">## 11 cuticular wax biosynthesis Cuticular wax in wheat: biosy…</span></span>
 <span><span class="co">## 12 cuticular wax biosynthesis Update on Cuticular Wax Biosy…</span></span></code></pre></div>
@@ -194,7 +192,7 @@
 <span>      axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>      axis.ticks.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-482-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-481-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The <code>grep</code> function is used here to search for all column names in the <code>search_results</code> data frame that contain the word ‘embed’. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we’ve seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.</p>
 <div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
@@ -213,7 +211,7 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-483-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-482-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the <code>beer_components</code> dataset:</p>
 <div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="embedding-models.html#cb150-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">31</span></span>
 <span id="cb150-2"><a href="embedding-models.html#cb150-2" tabindex="-1"></a></span>
@@ -256,7 +254,7 @@
 <span id="cb150-39"><a href="embedding-models.html#cb150-39" tabindex="-1"></a>  <span class="co"># scale_x_continuous(expand = c(1,0)) +</span></span>
 <span id="cb150-40"><a href="embedding-models.html#cb150-40" tabindex="-1"></a>  <span class="co"># scale_y_continuous(expand = c(1,0)) +</span></span>
 <span id="cb150-41"><a href="embedding-models.html#cb150-41" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-484-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-483-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="protein-embeddings" class="section level2 unnumbered">
 <h2>protein embeddings<a class="anchor" aria-label="anchor" href="#protein-embeddings"><i class="fas fa-link"></i></a>
@@ -294,17 +292,17 @@
 <span><span class="va">ncbi_results</span></span>
 <span><span class="co">## AAStringSet object of length 100:</span></span>
 <span><span class="co">##       width seq                         names               </span></span>
-<span><span class="co">##   [1]   528 MTVLTEDLALDA...VLGALRLGGRII WP_344451332.1 pr...</span></span>
-<span><span class="co">##   [2]   576 MTYDALQRSSGV...PEELALPPLALS WP_298557538.1 pr...</span></span>
-<span><span class="co">##   [3]   528 MTVLTEDLALDA...VLGALRLGGRII WP_182846159.1 pr...</span></span>
-<span><span class="co">##   [4]   370 MSWIRSGVLNLI...ITLKYCKPGSGK WP_437223952.1 pr...</span></span>
-<span><span class="co">##   [5]   294 MADKEILARART...DRLITLRAYGWL WP_378157646.1 MU...</span></span>
+<span><span class="co">##   [1]   420 MNVRRRSSVAAL...FLISNRGKQQQP WP_446047032.1 pr...</span></span>
+<span><span class="co">##   [2]   574 MPPSALTESVGT...KDITGDGEGGRP WP_100808334.1 pr...</span></span>
+<span><span class="co">##   [3]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_100807397.1 pr...</span></span>
+<span><span class="co">##   [4]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_079257413.1 pr...</span></span>
+<span><span class="co">##   [5]   574 MPPSALTESVGT...KDITGDGEGGRP WP_079256239.1 pr...</span></span>
 <span><span class="co">##   ...   ... ...</span></span>
-<span><span class="co">##  [96]   906 MSPLVSRTSRSS...RRRAVTGAGGGS WP_444947572.1 pr...</span></span>
-<span><span class="co">##  [97]    74 LCQQDEDDGGIS...QRAGTTNLSNNC WP_444728713.1 pr...</span></span>
-<span><span class="co">##  [98]   293 MQSISANILDTL...GLLAIGSALSKN WP_444794537.1 pr...</span></span>
-<span><span class="co">##  [99]   576 MQEEKLNMMIEY...YKKKLSRTKIIT WP_444794536.1 pr...</span></span>
-<span><span class="co">## [100]   644 MSVFFSPEFTML...QSVRPQTFEYVP WP_306954195.1 pr...</span></span></code></pre></div>
+<span><span class="co">##  [96]   228 MNVRRSAAALAA...RSRSRCNGTAGA WP_445035452.1 pr...</span></span>
+<span><span class="co">##  [97]   399 MTGAIPFDQSML...LALSSCDTDWNW WP_445023051.1 pr...</span></span>
+<span><span class="co">##  [98]   735 MTEGTHLRRRGG...YPTSGLAGKVKL XP_004559187.1 la...</span></span>
+<span><span class="co">##  [99]   571 MSDFGLLPDVPA...DPSFRLPALTLS WP_444960309.1 pr...</span></span>
+<span><span class="co">## [100]   906 MSPLVSRTSRSS...RRRAVTGAGGGS WP_444947572.1 pr...</span></span></code></pre></div>
 <p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.</p>
 <div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
@@ -397,7 +395,7 @@ asdf --><hr>
 
   <div class="chapter-nav">
 <div class="prev"><a href="numerical-models.html">numerical models</a></div>
-<div class="next"><a href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></div>
+<div class="next"><a href="homology.html">homology</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <h2>Note: Second Edition is under construction 🏗</h2>
     <p>Now is a great time to provide feedback</p>
@@ -433,7 +431,7 @@ asdf --><hr>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-28.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-30.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

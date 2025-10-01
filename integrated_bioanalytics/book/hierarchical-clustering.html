@@ -70,10 +70,6 @@
 <li class="book-part">MODELS</li>
 <li><a class="" href="numerical-models.html">numerical models</a></li>
 <li><a class="" href="embedding-models.html">embedding models</a></li>
-<li class="book-part">GC-MS DATA</li>
-<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
-<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
-<li><a class="" href="cdf-export.html">CDF export</a></li>
 <li class="book-part">SEQUENCE ANALYSIS</li>
 <li><a class="" href="homology.html">homology</a></li>
 <li><a class="" href="alignments.html">alignments</a></li>
@@ -87,6 +83,8 @@
 <li><a class="" href="datasets.html">datasets</a></li>
 <li><a class="" href="r-faq.html">r faq</a></li>
 <li><a class="" href="templates.html">templates</a></li>
+<li><a class="" href="loading-analyzegcmsdata.html">loading analyzeGCMSdata</a></li>
+<li><a class="" href="using-analyzegcmsdata.html">using analyzeGCMSdata</a></li>
 </ul>
 
         <div class="book-extra">
@@ -168,7 +166,7 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tippoint.html">geom_tippoint</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">700</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-296-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-295-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Cool! Though that plot could use some tweaking… let’s try:</p>
 <div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AK_lakes_clustered</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -181,7 +179,7 @@
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span></span>
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.4</span>,<span class="fl">0.2</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-296-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>Very nice! Since North Killeak and White Fish are so different from the others, we could re-analyze the data with those two removed:</p>
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alaska_lake_data_wide</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -203,7 +201,7 @@
 <span>      legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>,<span class="fl">0.9</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="co">## Replacing NAs in your data with mean</span></span></code></pre></div>
-<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-298-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-297-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="further-reading-3" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-3"><i class="fas fa-link"></i></a>
@@ -250,7 +248,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-28.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-09-30.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
