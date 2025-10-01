@@ -978,11 +978,11 @@ runMatrixAnalysis(
 
 # loading analyzeGCMSdata {-}
 
-This page explains how to load a simple application for integrating and analyzing GC-MS data. With the app, you can analyze .CDF files. CDF files contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. To run the application, use the following guidelines:
+This page explains how to load a simple application for integrating and analyzing GC-MS data. With the app, you can analyze .CDF.csv files. CDF.csv files contain essentially all the data from a GC-MS run, and can be exported from most GC-MS systems using the software provided by the manufacturer. To run the application, use the following guidelines:
 
-1. Create a new folder on your hard drive and place your CDF file(s) into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF file is called "sorghum_bicolor.CDF", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF" file in that folder.
+1. Create a new folder on your hard drive and place your CDF.csv file into that folder. It doesn't matter what the name of that folder is, but it must not contain special characters (including a space ` ` in the name). For example, if my CDF.csv file is called "sorghum_bicolor.CDF.csv", then I might create a folder called `gc_data` on my hard drive, and place the "sorghum_bicolor.CDF.csv" file in that folder.
 
-2. In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the `analyzeGCMSdata` function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work.
+2. In R or RStudio, run the source command shown below. You will need to do this every time you re-open R or RStudio. This command will load the `analyzeGCMSdata` function into your R or RStudio environment. Note that you will need to be connected to the internet for this to work. The first time you run this command, a bunch of tools required for the analysis will be installed. It might take a while! Later runs of the command will not have this install portion - the app will just open straight away.
 
 ```{r, message = FALSE, eval = FALSE}
 source("https://thebustalab.github.io/phylochemistry/gcms.R")
@@ -1009,7 +1009,7 @@ analyzeGCMSdata("C:\\Users\\My_Profile\\gc_data")
 ```
  \
 
-The first time you open your CDF datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).
+The first time you open your CDF.csv datafile, it may take a while to load. Once the new RShiny window opens, press shift+q to load the chromatogram(s).
 
 # using analyzeGCMSdata {-}
 
@@ -1022,11 +1022,6 @@ To control the chromatogram window:
 * shift + q = update
 * shift + a = add selected peak
 * shift + r = remove selected peak
-* shift + g = add global peak
-<!-- * shift + f = forward
-* shift + d = backward
-* shift + c = zoom in
-* shift + v = zoom out -->
 * shift + z = save table
 
 To control the mass spectrum window:
@@ -1034,5 +1029,3 @@ To control the mass spectrum window:
 * shift+1 = extract mass spectra from highlighted chromatogram region, plot average mass spectrum in panel 1.
 * shift+2 = refresh mass spectrum in panel 1. This is used for zooming in on a region of the mass spectrum that you have highlighted. A spectrum needs to first be extracted for this to be possible.
 * shift+3 = extract mass spectra from highlighted chromatogram region, subtract their average from the mass spectrum in panel 1.
-* shift+4 = search current spectrum in panel 1 against library of mass spectra (only available if you load via `phylochemistry`).
-* shift+5 = save the current spectrum in panel 1 as a csv file (only available if you load via `phylochemistry`). 
