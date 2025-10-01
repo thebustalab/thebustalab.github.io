@@ -221,7 +221,7 @@
         analyzeGCMSdata <- function(
                 CDF_csv_directory_path,
                 zoom_and_scroll_rate = 100,
-                baseline_window = 400,
+                baseline_window = 100,
                 zooming = TRUE
             ) {
 
@@ -614,15 +614,37 @@
                                                 chromatogram$in_prelim_baseline <- FALSE
                                                 chromatogram$in_prelim_baseline[chromatogram$rt %in% prelim_baseline$rt] <- TRUE
 
-                                                y = prelim_baseline$min
-                                                x = prelim_baseline$rt
+                                                y <- prelim_baseline$min
+                                                x <- prelim_baseline$rt
+                                                valid_points <- which(!is.na(x) & !is.na(y))
+
+                                                fallback_baseline <- if (all(is.na(chromatogram$tic))) 0 else min(chromatogram$tic, na.rm = TRUE)
+                                                baseline_values <- rep(fallback_baseline, length(chromatogram$rt))
+
+                                                if (length(valid_points) >= 2) {
+                                                    baseline_values <- tryCatch(
+                                                        approx(
+                                                            x[valid_points],
+                                                            y[valid_points],
+                                                            xout = chromatogram$rt,
+                                                            rule = 2
+                                                        )$y,
+                                                        error = function(e) {
+                                                            baseline_values
+                                                        }
+                                                    )
+                                                } else if (length(valid_points) == 1) {
+                                                    baseline_values <- rep(y[valid_points], length(chromatogram$rt))
+                                                }
+
+                                                if (all(is.na(baseline_values))) {
+                                                    baseline_values <- rep(fallback_baseline, length(chromatogram$rt))
+                                                }
 
                                                 baseline2 <- data.frame(
-                                                              rt = chromatogram$rt,
-                                                              y = approx(x, y, xout = chromatogram$rt)$y
-                                                          )
-                                                baseline2 <- baseline2[!is.na(baseline2$y),]
-                                                chromatogram <- chromatogram[chromatogram$rt %in% baseline2$rt,]
+                                                    rt = chromatogram$rt,
+                                                    y = baseline_values
+                                                )
                                                 chromatogram$baseline <- baseline2$y
 
                                                 baselined_chromatograms[[chrom]] <- data.frame(
@@ -868,7 +890,7 @@
                                     })
                                     append_message("Chromatograms updated.")
                                 }
-                            })
+                            
 
                         ## Remove selected peaks with "R" (82) keystroke
                             
