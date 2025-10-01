@@ -899,7 +899,11 @@
 
                                     if ( !is.null(input$chromatogram_brush )) {
 
-                                        peak_points <- brushedPoints(chromatograms_updated, input$chromatogram_brush)
+                                        peak_points <- brushedPoints(
+                                            chromatograms_updated,
+                                            input$chromatogram_brush,
+                                            xvar = "rt_rt_offset"
+                                        )
                                         selection_start = min(peak_points$rt)
                                         selection_end = max(peak_points$rt)
                                         path_to_cdf_csv = peak_points$path_to_cdf_csv[1]
@@ -939,11 +943,11 @@
                                     
                                         write.table(
                                             x = data.frame(
-                                                    peak_start = min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
-                                                    peak_end = max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt),
+                                                    peak_start = min(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt),
+                                                    peak_end = max(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt),
                                                     peak_ID = "unknown",
-                                                    path_to_cdf_csv = brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1],
-                                                    area = sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$baseline)
+                                                    path_to_cdf_csv = brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$path_to_cdf_csv[1],
+                                                    area = sum(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$tic) - sum(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$baseline)
                                                 ),
                                             file = peaks_monolist_path,
                                             append = TRUE,
@@ -971,11 +975,11 @@
                                     if( input$keypress == 71 ) {
                                     
                                         x_peaks <-  data.frame(
-                                                        peak_start = min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
-                                                        peak_end = max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt_rt_offset),
+                                                        peak_start = min(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt_rt_offset),
+                                                        peak_end = max(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt_rt_offset),
                                                         peak_ID = "unknown",
                                                         path_to_cdf_csv = unique(chromatograms_updated$path_to_cdf_csv),
-                                                        area = sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$tic) - sum(brushedPoints(chromatograms_updated, input$chromatogram_brush)$baseline)
+                                                        area = sum(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$tic) - sum(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$baseline)
                                                     )
 
                                         x_peaks$peak_start <- x_peaks$peak_start - chromatograms_updated$rt_offset[match(x_peaks$path_to_cdf_csv, chromatograms_updated$path_to_cdf_csv)]
@@ -1009,9 +1013,9 @@
                                             return()
                                         }
 
-                                        ret_start_MS <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                        ret_end_MS <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                        sample_name_MS <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
+                                        ret_start_MS <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt)
+                                        ret_end_MS <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt)
+                                        sample_name_MS <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$path_to_cdf_csv[1])
 
                                         chromatogram_updated_MS <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == sample_name_MS)
 
@@ -1051,9 +1055,9 @@
                                             return()
                                         }
 
-                                        ret_start_sub <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                        ret_end_sub <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush)$rt)
-                                        sample_name_sub <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush)$path_to_cdf_csv[1])
+                                        ret_start_sub <- min(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt)
+                                        ret_end_sub <- max(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$rt)
+                                        sample_name_sub <- as.character(brushedPoints(chromatograms_updated, input$chromatogram_brush, xvar = "rt_rt_offset")$path_to_cdf_csv[1])
 
                                         chromatogram_updated_sub <- dplyr::filter(chromatograms_updated, path_to_cdf_csv == sample_name_sub)
 
@@ -1105,8 +1109,8 @@
                                                 if (isolate(is.null(input$massSpectra_1_brush))) {
                                                     MS1_low_x_limit <- 0; MS1_high_x_limit <- 800; MS1_high_y_limit <- 110
                                                 } else {
-                                                    MS1_low_x_limit <- isolate(min(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
-                                                    MS1_high_x_limit <- isolate(max(brushedPoints(MS_out_1, input$massSpectra_1_brush)$mz))
+                                                    MS1_low_x_limit <- isolate(min(brushedPoints(MS_out_1, input$massSpectra_1_brush, xvar = "mz")$mz))
+                                                    MS1_high_x_limit <- isolate(max(brushedPoints(MS_out_1, input$massSpectra_1_brush, xvar = "mz")$mz))
                                                     MS1_high_y_limit <- max(dplyr::filter(MS_out_1, mz > MS1_low_x_limit & mz < MS1_high_x_limit)$intensity) + 8
                                                 }
                                                 if (MS1_low_x_limit %in% c(Inf, -Inf) | MS1_high_x_limit %in% c(Inf, -Inf) | MS1_high_y_limit %in% c(Inf, -Inf)) {
