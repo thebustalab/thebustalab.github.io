@@ -256,7 +256,7 @@ library(multcompView)
 <span><span class="co">##   .y.       group1 group2    n1    n2 statistic    df      p</span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 abundance aquif… aquif…    12    12     -2.75  20.5 0.0121</span></span></code></pre></div>
-<p>A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that the two means are different. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let’s try that one out and compare the p-values from the two methods:</p>
+<p>A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let’s try that one out and compare the p-values from the two methods:</p>
 <div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data_1_6</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">wilcoxTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
@@ -264,7 +264,7 @@ library(multcompView)
 <span><span class="co">##   .y.       group1    group2       n1    n2 statistic      p</span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;  &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0282</span></span></code></pre></div>
-<p>A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.</p>
+<p>A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist. Interpreting the number in the same way, if the two groups really had identical distributions, we would get results this extreme only about 2.8% of the time.</p>
 </div>
 <div id="more-than-two-means" class="section level2 unnumbered">
 <h2>more than two means<a class="anchor" aria-label="anchor" href="#more-than-two-means"><i class="fas fa-link"></i></a>
@@ -329,7 +329,7 @@ library(multcompView)
 <span><span class="co">##     df1   df2 statistic       p</span></span>
 <span><span class="co">##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;   &lt;dbl&gt;</span></span>
 <span><span class="co">## 1     9    96      2.95 0.00387</span></span></code></pre></div>
-<p>Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p &lt; 0.05), and the variances are certainly different from one another (Levene test p &gt; 0.05).</p>
+<p>Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p &lt; 0.05), and the variances are certainly different from one another (Levene test p &lt; 0.05).</p>
 <p>Let’s assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.</p>
 <div id="anova-tukey-tests" class="section level3 unnumbered">
 <h3>ANOVA, Tukey tests<a class="anchor" aria-label="anchor" href="#anova-tukey-tests"><i class="fas fa-link"></i></a>
@@ -342,7 +342,7 @@ library(multcompView)
 <span><span class="co">## </span></span>
 <span><span class="co">##         Effect DFn DFd     F        p p&lt;.05   ges</span></span>
 <span><span class="co">## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471</span></span></code></pre></div>
-<p>A pretty small p-value! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey’s Honest Significant Difference test (implemented using <code>tukey_hsd</code>). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
+<p>A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. But, WHICH are different from one another though? For this, we need to run Tukey’s Honest Significant Difference test (implemented using <code>tukey_hsd</code>). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the <code>p.adj</code> column.</p>
 <div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">tukey_hsd</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
@@ -402,7 +402,7 @@ library(multcompView)
 <span><span class="co">##   .y.           n statistic    df             p method      </span></span>
 <span><span class="co">## * &lt;chr&gt;     &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;       </span></span>
 <span><span class="co">## 1 abundance   106      55.9     9 0.00000000807 Kruskal-Wal…</span></span></code></pre></div>
-<p>A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey’s HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let’s try:</p>
+<p>A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that data this extreme would be rare if all group medians were identical. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey’s HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let’s try:</p>
 <div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dunnTest</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">aquifer_code</span><span class="op">)</span></span>
@@ -594,11 +594,13 @@ library(multcompView)
 <div id="further-reading-6" class="section level2 unnumbered">
 <h2>further reading<a class="anchor" aria-label="anchor" href="#further-reading-6"><i class="fas fa-link"></i></a>
 </h2>
-<p>For more on comparing multiple means in R: <a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">www.datanovia.com</a></p>
-<p>For more on parametric versus non-parametric tests: <a href="https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/">Statistics by Jim</a></p>
-<p>For more on interpreting <em>p</em> values: [<a href="https://link.springer.com/article/10.1007/s00259-019-04467-5">The p value wars (again) by Ulrich Dirnagl</a>]</p>
-<p>Ten common statistical mistakes and their solutions: <a href="https://elifesciences.org/articles/48175">Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript</a></p>
-<p>How to think about very small p-values: <a href="https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue">Reporting p Values, by Wolfgang Huber</a></p>
+<ul>
+<li><p>Datanovia on comparing multiple means: This step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code. <a href="https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/">Open the Datanovia guide</a>.</p></li>
+<li><p>Statistics by Jim on parametric vs nonparametric tests: Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation. <a href="https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/">Read the comparison</a>.</p></li>
+<li><p>Ulrich Dirnagl on the p value wars: This short commentary captures the ongoing debates about redefining statistical significance, highlights the historical context of <em>p</em> &lt; 0.05, and weighs the risks of rigid thresholds versus broader inferential thinking. <a href="https://link.springer.com/article/10.1007/s00259-019-04467-5">Consider the perspective</a>.</p></li>
+<li><p>eLife forum on common statistical mistakes: The authors catalog frequent errors such as double dipping, underpowered designs, and misreported effect sizes, and pair each with pragmatic fixes for both authors and reviewers. <a href="https://elifesciences.org/articles/48175">Review the checklist</a>.</p></li>
+<li><p>Wolfgang Huber on tiny <em>p</em>-values: Huber explains why extremely small <em>p</em>-values emerge in high-throughput experiments, how to think about multiplicity and effect sizes, and what to report alongside adjusted significance. <a href="https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue">Study the reporting guidance</a>.</p></li>
+</ul>
 <!-- ## exercises {-}
 
 Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please complete the following:
@@ -609,9 +611,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 
 3. Choose a second analyte, different from the first one you chose. Considering all the aquifers (or all bottles of tequila) in the dataset, do any of them have the same abundance of this analyte? Again, don't forget about normality and homogeneity of variance tests. Use a plot to illustrate your answer. Be sure to describe the tests you ran in your figure caption, and how you interpreted the results of the tests.
 
-4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? -->
-<!-- end -->
-<hr>
+4. Repeat #3 above, but switch the type of test used (i.e. use non-parametric if you used parametric for #3 and vice-versa). Compare the *p* values and *p* groups obtained by the two methods. Use a graphic to illustrate this. Why are they different? --><!-- end --><hr>
 <hr>
 <hr>
 </div>
@@ -662,7 +662,7 @@ Using the `hawaii_aquifers` data set or the `tequila_chemistry` data set, please
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-01.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-05.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

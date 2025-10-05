@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-10-01"
+date: "2025-10-05"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3009,7 +3009,7 @@ K_data_1_6 %>%
 ## 1 abundance aquif… aquif…    12    12     -2.75  20.5 0.0121
 ```
 
-A p-value of 0.012! This is below 0.05, meaning that there is a 95% chance that the two means are different. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
+A p-value of 0.012! This is below 0.05, meaning that if the two aquifers truly had the same mean, we would only observe a difference at least this extreme about 1.2% of the time. That gives us fairly strong evidence that the means differ. Suppose that our data had not passed the Shapiro and/or Levene tests. We would then need to use a Wilcox test. The Wilcox test is a non-parametric test, which means that it does not use a normal distribution to model the data in order to make comparisons. This means that is a less powerful test than the t-test, which means that it is less likely to detect a difference in the means, assuming there is one. For fun, let's try that one out and compare the p-values from the two methods:
 
 
 ``` r
@@ -3021,7 +3021,7 @@ K_data_1_6 %>%
 ## 1 abundance aquifer_1 aquifer_6    12    12      33.5 0.0282
 ```
 
-A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist.
+A p-value of 0.028! This is higher than the value given by the t-test (0.012). That is because the Wilcox test is a less powerful test: it is less likely to detect differences in means, assuming they exist. Interpreting the number in the same way, if the two groups really had identical distributions, we would get results this extreme only about 2.8% of the time.
 
 ## more than two means {-}
 
@@ -3102,7 +3102,7 @@ K_data %>%
 ## 1     9    96      2.95 0.00387
 ```
 
-Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p < 0.05), and the variances are certainly different from one another (Levene test p > 0.05).
+Based on these tests, it looks like the data for aquifer 9 is significantly different from a normal distribution (Shaprio test p < 0.05), and the variances are certainly different from one another (Levene test p < 0.05).
 
 Let's assume for a second that our data passed these tests. This means that we could reasonably model our data with normal distributions and use a parametric test to compare means. This means that we can use an ANOVA to test for differences in means.
 
@@ -3120,7 +3120,7 @@ K_data %>%
 ## 1 aquifer_code   9  96 9.486 3.28e-10     * 0.471
 ```
 
-A pretty small p-value! There are definitely some significant differences among this group. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
+A pretty small p-value! Under the null hypothesis that all aquifers have the same mean, observing differences at least this extreme would be very unlikely, so we have evidence that at least one mean differs. But, WHICH are different from one another though? For this, we need to run Tukey's Honest Significant Difference test (implemented using `tukey_hsd`). This will essentially run t-test on all the pairs of study subjects that we can derive from our data set (in this example, aquifer_1 vs. aquifer_2, aquifer_1 vs. aquifer_3, etc.). After that, it will correct the p-values according to the number of comparisons that it performed. This controls the rate of type I error that we can expect from the test. These corrected values are provided to us in the `p.adj` column.
 
 
 ``` r
@@ -3196,7 +3196,7 @@ K_data %>%
 ## 1 abundance   106      55.9     9 0.00000000807 Kruskal-Wal…
 ```
 
-A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that some of the means are different. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
+A pretty small p-value! This is higher than the p-value from running ANOVA on the same data (remember, the Kruskal test is less powerful). Never the less, the value is still well below 0.05, meaning that data this extreme would be rare if all group medians were identical. So, how do we determine WHICH are different from one another? When we ran ANOVA the follow-up test (the post hoc test) was Tukey's HSD. After the Kruskal test, the post hoc test we use is the Dunn test. Let's try:
 
 
 ``` r
@@ -3419,15 +3419,15 @@ hawaii_aquifers %>%
 
 ## further reading {-}
 
-For more on comparing multiple means in R: [www.datanovia.com](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/)
+- Datanovia on comparing multiple means: This step-by-step tutorial shows how to run one-way and repeated-measures ANOVA in R, diagnose assumptions, and follow up with Tukey or pairwise comparisons using tidyverse-friendly code. [Open the Datanovia guide](https://www.datanovia.com/en/courses/comparing-multiple-means-in-r/).
 
-For more on parametric versus non-parametric tests: [Statistics by Jim](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/)
+- Statistics by Jim on parametric vs nonparametric tests: Jim Frost breaks down when parametric tests are appropriate, the trade-offs of switching to rank-based alternatives, and how violation of assumptions affects power and interpretation. [Read the comparison](https://statisticsbyjim.com/hypothesis-testing/nonparametric-parametric-tests/).
 
-For more on interpreting *p* values: [[The p value wars (again) by Ulrich Dirnagl](https://link.springer.com/article/10.1007/s00259-019-04467-5)]
+- Ulrich Dirnagl on the p value wars: This short commentary captures the ongoing debates about redefining statistical significance, highlights the historical context of *p* < 0.05, and weighs the risks of rigid thresholds versus broader inferential thinking. [Consider the perspective](https://link.springer.com/article/10.1007/s00259-019-04467-5).
 
-Ten common statistical mistakes and their solutions: [Science Forum: Ten common statistical mistakes to watch out for when writing or reviewing a manuscript](https://elifesciences.org/articles/48175)
+- eLife forum on common statistical mistakes: The authors catalog frequent errors such as double dipping, underpowered designs, and misreported effect sizes, and pair each with pragmatic fixes for both authors and reviewers. [Review the checklist](https://elifesciences.org/articles/48175).
 
-How to think about very small p-values: [Reporting p Values, by Wolfgang Huber](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue)
+- Wolfgang Huber on tiny *p*-values: Huber explains why extremely small *p*-values emerge in high-throughput experiments, how to think about multiplicity and effect sizes, and what to report alongside adjusted significance. [Study the reporting guidance](https://www.cell.com/cell-systems/fulltext/S2405-4712(19)30071-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471219300717%3Fshowall%3Dtrue).
 
 
 <!-- ## exercises {-}
@@ -4395,7 +4395,6 @@ search_results_ex_embed_pca %>%
 
 
 asdf -->
-
 
 
 ________________________________________________________________________________________________
