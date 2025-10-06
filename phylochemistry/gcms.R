@@ -839,7 +839,8 @@
                                                                 scale_fill_continuous(type = "viridis") +
                                                                 theme(
                                                                   legend.position = 'none',
-                                                                  legend.title = element_blank()
+                                                                  legend.title = element_blank(),
+                                                                  text = element_text(size = 24)
                                                                 )
 
                                                     ## Add peaks
@@ -881,7 +882,8 @@
                                                                 scale_fill_continuous(type = "viridis") +
                                                                 theme(
                                                                   legend.position = 'none',
-                                                                  legend.title = element_blank()
+                                                                  legend.title = element_blank(),
+                                                                  text = element_text(size = 24)
                                                                 )
                                             }
 
@@ -1146,7 +1148,8 @@
                                                                     MS_out_1
                                                                 },
                                                             mapping = aes(x = mz, y = intensity + 5, label = mz)
-                                                        )
+                                                        ) +
+                                                        theme(text = element_text(size = 24))
                                                 })
                                         }
                                     }
