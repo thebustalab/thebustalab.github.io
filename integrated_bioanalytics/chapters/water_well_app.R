@@ -1,264 +1,204 @@
 library(shiny)
-library(tidyverse)
+library(ggplot2)
+library(tibble)
+library(dplyr)
 
-set.seed(123)
-
-island <- tibble(
-  theta = seq(0, 2 * pi, length.out = 301)
-) %>% mutate(
-  radius = 1 + 0.15 * sin(3 * theta) + 0.1 * sin(5 * theta),
-  x = 2 * radius * cos(theta),
-  y = 2 * radius * sin(theta)
-)
-
-make_wells <- function(aquifer_name, y_shift) {
-  tibble(
-    id = 1:100,
-    theta = runif(100, 0, 2 * pi),
-    radius = sqrt(runif(100)) * 0.65,
-    z_score = rnorm(100)
-  ) %>% mutate(
-    x = 2 * radius * cos(theta),
-    y = 2 * radius * sin(theta) + y_shift,
-    aquifer = aquifer_name
-  ) %>% select(aquifer, id, x, y, z_score)
+empty_plot <- function(title) {
+  ggplot() +
+    theme_void(base_size = 14) +
+    labs(title = title)
 }
-
-well_locations <- bind_rows(
-  make_wells("Northern aquifer", y_shift = 1.1),
-  make_wells("Southern aquifer", y_shift = -1.1)
-) %>% mutate(well_key = paste(aquifer, id, sep = "_"))
-
-sample_default <- well_locations %>%
-  group_by(aquifer) %>%
-  slice_sample(n = 10) %>%
-  ungroup() %>%
-  pull(well_key)
 
 ui <- fluidPage(
   titlePanel("Island Water Wells"),
   fluidRow(
     column(
       width = 4,
-      h4("Aquifer distributions"),
+      h3("North Aquifer"),
       numericInput(
         "north_mean",
-        label = "Northern aquifer mean (ppm)",
+        label = "Mean potassium (ppm)",
         value = 60,
-        min = 0,
-        max = 200,
+        min = -1000,
+        max = 1000,
         step = 1
       ),
       numericInput(
         "north_sd",
-        label = "Northern aquifer sd (ppm)",
+        label = "SD (ppm)",
         value = 8,
         min = 0.1,
-        max = 50,
+        max = 500,
         step = 0.1
       ),
+      plotOutput("north_plot", height = "400px")
+    ),
+    column(
+      width = 4,
+      h3("South Aquifer"),
       numericInput(
         "south_mean",
-        label = "Southern aquifer mean (ppm)",
+        label = "Mean potassium (ppm)",
         value = 45,
-        min = 0,
-        max = 200,
+        min = -1000,
+        max = 1000,
         step = 1
       ),
       numericInput(
         "south_sd",
-        label = "Southern aquifer sd (ppm)",
+        label = "SD (ppm)",
         value = 6,
         min = 0.1,
-        max = 50,
+        max = 500,
         step = 0.1
       ),
-      actionButton("sample", "Sample 10 From Each Aquifer")
+      plotOutput("south_plot", height = "400px")
     ),
     column(
       width = 4,
-      plotOutput("abundance_plot", height = "520px")
-    ),
-    column(
-      width = 4,
-      plotOutput("island_plot", height = "520px")
+      h3("Sample"),
+      actionButton("sample_button", "Sample!"),
+      actionButton("rare_button", "Rare Sample"),
+      plotOutput("sample_plot", height = "400px")
     )
   )
 )
 
 server <- function(input, output, session) {
-  sampled_keys <- reactiveVal(sample_default)
-
-  wells_data <- reactive({
-    north_mean <- input$north_mean
-    north_sd <- input$north_sd
-    south_mean <- input$south_mean
-    south_sd <- input$south_sd
-
-    well_locations %>%
-      mutate(
-        potassium_ppm = case_when(
-          aquifer == "Northern aquifer" ~ north_mean + north_sd * z_score,
-          aquifer == "Southern aquifer" ~ south_mean + south_sd * z_score
-        )
-      )
+  north_samples <- reactive({
+    tibble(
+      idx = seq_len(1000),
+      aquifer = "North Aquifer",
+      value = rnorm(1000, mean = input$north_mean, sd = input$north_sd)
+    )
   })
 
-  observeEvent(input$sample, {
-    new_sample <- well_locations %>%
-      group_by(aquifer) %>%
-      slice_sample(n = 10) %>%
-      ungroup() %>%
-      pull(well_key)
-
-    sampled_keys(new_sample)
+  south_samples <- reactive({
+    tibble(
+      idx = seq_len(1000),
+      aquifer = "South Aquifer",
+      value = rnorm(1000, mean = input$south_mean, sd = input$south_sd)
+    )
   })
 
-  sampled_data <- reactive({
-    req(sampled_keys())
+  sampled_points <- reactiveVal(tibble(aquifer = character(), idx = integer(), value = numeric(), mode = character()))
 
-    wells_data() %>%
-      filter(well_key %in% sampled_keys())
+  observeEvent(input$sample_button, {
+    sample_df <- bind_rows(
+      north_samples() %>% slice_sample(n = 10, replace = FALSE),
+      south_samples() %>% slice_sample(n = 10, replace = FALSE)
+    ) %>% mutate(mode = "Random")
+
+    sampled_points(sample_df)
+  }, ignoreNULL = FALSE)
+
+  observeEvent(input$rare_button, {
+    north_data <- north_samples()
+    south_data <- south_samples()
+
+    north_threshold <- quantile(north_data$value, probs = 0.8)
+    south_threshold <- quantile(south_data$value, probs = 0.2)
+
+    north_pool <- north_data %>% filter(value >= north_threshold)
+    south_pool <- south_data %>% filter(value <= south_threshold)
+
+    north_pick <- if (nrow(north_pool) > 0) {
+      north_pool %>% slice_sample(n = min(10, nrow(north_pool)), replace = FALSE)
+    } else {
+      north_pool
+    }
+
+    south_pick <- if (nrow(south_pool) > 0) {
+      south_pool %>% slice_sample(n = min(10, nrow(south_pool)), replace = FALSE)
+    } else {
+      south_pool
+    }
+
+    sample_df <- bind_rows(north_pick, south_pick)
+
+    if (nrow(sample_df) > 0) {
+      sample_df <- sample_df %>% mutate(mode = "Rare")
+      sampled_points(sample_df)
+    } else {
+      showNotification("Rare sample unavailable: adjust mean/SD to create extreme values.", type = "warning")
+    }
   })
 
-  output$island_plot <- renderPlot({
-    wells_df <- wells_data()
-    sample_df <- sampled_data()
+  output$north_plot <- renderPlot({
+    sampled <- sampled_points()
+    fill_scale <- c(`TRUE` = "#DAA520", `FALSE` = "#3182bd")
 
-    ggplot() +
-      geom_polygon(
-        data = island,
-        aes(x = x, y = y),
-        fill = "#d9f0a3",
-        color = "#66a61e",
-        linewidth = 0.5
+    data <- north_samples() %>%
+      mutate(is_sample = idx %in% sampled$idx[sampled$aquifer == "North Aquifer"])
+
+    ggplot(data, aes(x = aquifer, y = value, fill = is_sample)) +
+      geom_dotplot(
+        binaxis = "y",
+        stackdir = "center",
+        stackratio = 0.6,
+        dotsize = 0.8,
+        binwidth = max(input$north_sd / 6, 0.5),
+        color = NA
       ) +
-      geom_point(
-        data = wells_df,
-        aes(x = x, y = y, color = aquifer),
-        alpha = 0.5,
-        size = 2
-      ) +
-      geom_point(
-        data = sample_df,
-        aes(x = x, y = y, color = aquifer),
-        size = 3.6,
-        stroke = 1.2
-      ) +
-      scale_color_manual(values = c("Northern aquifer" = "#3182bd", "Southern aquifer" = "#de2d26")) +
-      coord_equal() +
+      scale_fill_manual(values = fill_scale, guide = "none") +
       labs(
         x = NULL,
-        y = NULL,
-        subtitle = "Sampled wells are highlighted; adjust distributions on the left",
-        color = "Aquifer"
+        y = "Potassium abundance (ppm)"
       ) +
+      coord_flip() +
       theme_minimal(base_size = 14) +
-      theme(
-        panel.grid = element_blank(),
-        axis.text = element_blank(),
-        plot.subtitle = element_text(margin = margin(b = 10))
-      )
+      theme(axis.text.x = element_blank())
   })
 
-  output$abundance_plot <- renderPlot({
-    wells_df <- wells_data()
-    sample_df <- sampled_data()
+  output$south_plot <- renderPlot({
+    sampled <- sampled_points()
+    fill_scale <- c(`TRUE` = "#DAA520", `FALSE` = "#de2d26")
 
-    params <- tibble(
-      aquifer = c("Northern aquifer", "Southern aquifer"),
-      mean = c(input$north_mean, input$south_mean),
-      sd = c(input$north_sd, input$south_sd)
-    )
+    data <- south_samples() %>%
+      mutate(is_sample = idx %in% sampled$idx[sampled$aquifer == "South Aquifer"])
 
-    hist_df <- wells_df %>% mutate(panel = "Distribution")
-
-    density_df <- params %>%
-      pmap_dfr(function(aquifer, mean, sd) {
-        tibble(
-          aquifer = aquifer,
-          x = seq(mean - 4 * sd, mean + 4 * sd, length.out = 150),
-          density = dnorm(x, mean = mean, sd = sd)
-        )
-      }) %>%
-      mutate(panel = "Distribution")
-
-    range_ppm <- range(wells_df$potassium_ppm, na.rm = TRUE)
-    min_axis <- range_ppm[1]
-    axis_span <- diff(range_ppm)
-    if (!is.finite(axis_span) || axis_span == 0) {
-      axis_span <- max(1, abs(min_axis) * 0.1 + 1)
-    }
-    label_pos <- min_axis - 0.05 * axis_span
-
-    sample_vis <- sample_df %>%
-      group_by(aquifer) %>%
-      mutate(
-        panel = "Sampled wells",
-        sample_rank = as.integer(rank(potassium_ppm, ties.method = "first")),
-        min_axis = min_axis,
-        label_pos = label_pos,
-        well_label = paste0("Well ", id)
-      ) %>%
-      ungroup() %>%
-      arrange(aquifer, sample_rank)
-
-    ggplot() +
-      geom_histogram(
-        data = hist_df,
-        aes(x = potassium_ppm, fill = aquifer),
-        bins = 20,
-        color = "white",
-        boundary = 0,
-        alpha = 0.85
+    ggplot(data, aes(x = aquifer, y = value, fill = is_sample)) +
+      geom_dotplot(
+        binaxis = "y",
+        stackdir = "center",
+        stackratio = 0.6,
+        dotsize = 0.8,
+        binwidth = max(input$south_sd / 6, 0.5),
+        color = NA
       ) +
-      geom_point(
-        data = density_df,
-        aes(x = x, y = density, color = aquifer),
-        size = 1.2,
-        alpha = 0.9
-      ) +
-      geom_segment(
-        data = sample_vis,
-        aes(
-          x = min_axis,
-          xend = potassium_ppm,
-          y = sample_rank,
-          yend = sample_rank,
-          color = aquifer
-        ),
-        linewidth = 0.6,
-        alpha = 0.4
-      ) +
-      geom_point(
-        data = sample_vis,
-        aes(x = potassium_ppm, y = sample_rank, color = aquifer),
-        size = 3
-      ) +
-      geom_text(
-        data = sample_vis,
-        aes(x = label_pos, y = sample_rank, label = well_label, color = aquifer),
-        hjust = 1,
-        size = 3.2,
-        show.legend = FALSE
-      ) +
-      facet_grid(panel ~ aquifer, scales = "free_y", switch = "y") +
-      scale_color_manual(values = c("Northern aquifer" = "#3182bd", "Southern aquifer" = "#de2d26")) +
-      scale_fill_manual(values = c("Northern aquifer" = "#9ecae1", "Southern aquifer" = "#fcbba1")) +
+      scale_fill_manual(values = fill_scale, guide = "none") +
       labs(
-        x = "Potassium abundance (ppm)",
-        y = NULL,
-        title = "Aquifer potassium distributions and sampled wells"
+        x = NULL,
+        y = "Potassium abundance (ppm)"
       ) +
-      theme_minimal(base_size = 13) +
-      theme(
-        strip.text = element_text(face = "bold"),
-        strip.placement = "outside",
-        panel.grid.minor = element_blank(),
-        legend.position = "none",
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()
-      )
+      coord_flip() +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.x = element_blank())
+  })
+
+  output$sample_plot <- renderPlot({
+    sample_df <- sampled_points()
+    req(!is.null(sample_df))
+    req(nrow(sample_df) > 0)
+
+    title_suffix <- sample_df %>%
+      group_by(aquifer) %>%
+      summarise(n = n(), .groups = "drop") %>%
+      mutate(label = paste0(aquifer, ": ", n)) %>%
+      pull(label) %>%
+      paste(collapse = ", ")
+
+    ggplot(sample_df, aes(x = aquifer, y = value, fill = aquifer)) +
+      geom_boxplot(width = 0.6, alpha = 0.8, outlier.shape = 21, outlier.fill = "white") +
+      labs(
+        x = NULL,
+        y = "Potassium abundance (ppm)",
+        title = paste0(sample_df$mode[1], " samples (", title_suffix, ")")
+      ) +
+      coord_flip() +
+      scale_fill_manual(values = c("North Aquifer" = "#3182bd", "South Aquifer" = "#de2d26")) +
+      theme_minimal(base_size = 14) +
+      theme(legend.position = "none")
   })
 }
 
