@@ -34,7 +34,6 @@
             }
         }
 
-    
     ## Load packages in general
 
         if ( !exists("packages") ) {
@@ -1913,8 +1912,6 @@
                 return(as_tibble(parsed_results))
             }
 
-
-
         #### searchNCBI
 
             #' Search NCBI for protein or DNA sequences
@@ -1954,7 +1951,6 @@
                     return(readDNAStringSet(temp_fasta))
                 }
             }
-
 
         #### buildDomainLibrary
 
@@ -3547,7 +3543,6 @@
                     shinyApp(ui = ui, server = server)
                 }
             }
-
 
         #### readGFFs
 

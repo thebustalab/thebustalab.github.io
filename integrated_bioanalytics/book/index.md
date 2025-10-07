@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-10-05"
+date: "2025-10-07"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4408,9 +4408,9 @@ ________________________________________________________________________________
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png" width="100%" style="display: block; margin: auto;" />
 
-## NCBI blast {-}
+## blastNCBI {-}
 
-The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like "core_nt," you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. Here's a few examples, including how to approach this function if you're working with a StringSet object:
+The `blastNCBI()` function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like "core_nt," you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the `Biostrings` package is available because it supplies `DNAStringSet`.
 
 
 ``` r
@@ -4439,10 +4439,12 @@ Let's check out `polyBlast()` by looking at an example. For this example, we nee
 * "query_in_path": One or more queries, all listed in a single fasta file.
 * "sequences_of_interest_directory_path": The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).
 * "blast_module_directory_path": The path to the folder of BLAST+ executable.
-* "blast_mode": The format is XYblastZ where X is subject type (the transcriptome or proteome, use "n" for nucleotide, "p" for amino acids). Y is whether the subjects should be translated ("t" for translate, "n" for no translation, if you choose "t" your subjects will not be searched for ORFs, every three base pairs are just translated verbatim). Z is the format of the query/queries ("n" for nucleotide, "p" for amino acids). Allowed formats: nnblastn, ntblastp, pnblastp.
-* "e_value_cutoff": Hits with a e-value below this cutoff will not be returned. Default = 1.
-* "queries_in_outout": TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.
+* "blast_mode": The default shorthand is XYblastZ where X describes the subject type (`n` for nucleotide, `p` for amino acid), Y indicates whether subjects are translated (`t`) or not (`n`), and Z describes the query type (`n` or `p`). For example, `ntblastp` translates nucleotide subjects and compares them to protein queries. You can also supply specific BLAST+ presets such as `megablast`, `dc-megablast`, `blastx`, `tblastn`, or `tblastx` when you want BLAST to manage the translation behaviour for you.
+* "e_value_cutoff": Hits with an e-value greater than this cutoff are discarded. Default = 1.
+* "queries_in_output": TRUE/FALSE, should the queries be included in the output? Set to TRUE if you need the query sequences for downstream analyses like tree building.
 * "monolist_out_path": The path to where we want a summary file of the BLAST hits to be written.
+
+Different BLAST modes tailor the search to the molecule types you are comparing. In the XYblastZ naming scheme, `nnblastn` reproduces the classic nucleotide-vs-nucleotide search (`blastn`), `ntblastp` lines up with `tblastn`, and `pnblastp` matches `blastp`. Preset names such as `blastx`, `megablast`, or `dc-megablast` extend these basics to translated queries or alternate nucleotide heuristics, while `tblastx` translates both query and subject to compare inferred proteins. Pick the mode that matches the biology of your query and target sequences so the scoring and heuristics work in your favor.
 
 Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits ("monolist_out", which is written to "monolist_out_path"), and the hits themselves, written as individual files to "sequences_of_interest_directory_path". These two things can be used in downstream analyses, such as alignments. The function does not return an object.
 
@@ -4464,7 +4466,7 @@ polyBlast(
   named_subjects_list = the_transcriptomes,
   query_in_path = "/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa",
   sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
-  blast_module_directory_path = "/path_to/the_blast_module/",
+  blast_module_directory_path = "/path_to/the_blast_module/", # on bustalab server this is /project_data/shared/general_lab_resources/blast/
   blast_mode = c("nnblastn", "ntblastp", "pnblastp", "dc-megablast"), 
   e_value_cutoff = 1,
   queries_in_output = TRUE,
@@ -4500,22 +4502,22 @@ predictDomains(
 )
 ```
 
-## 3D similarity {-}
+<!-- ## 3D similarity {-} -->
 
-`foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1`
+<!-- `foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1` -->
 
 ## interpreting homology data {-}
 
-bitscore v evalue - with very low evalue (< 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!
+Bitscore versus e-value: when the expected value becomes extremely small (for example < 1e-250), R prints it as zero and you lose the ability to rank hits. In those cases rely on the bit score, which remains informative across the full range of alignments.
 
 The "30% identity rule-of-thumb" is too conservative. Statistically significant (E < 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits > 50) are far more sensitive and reliable than percent identity for inferring homology.
 
-The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:
+The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as "false positive" hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb from the CLC Genomics Workbench documentation—treat them as approximate, database-dependent guidelines:
 
-* E-value < 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
-* 10e-100 < E-value < 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
-* 10e-50 < E-value < 10e-10 Closely related sequences, could be a domain match or similar.
-* 10e-10 < E-value < 1 Could be a true homologue but it is a gray area.
+* E-value < 1e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.
+* 1e-100 < E-value < 1e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.
+* 1e-50 < E-value < 1e-10 Closely related sequences, could be a domain match or similar.
+* 1e-10 < E-value < 1 Could be a true homologue but it is a gray area.
 * E-value > 1 Proteins are most likely not related
 * E-value > 10 Hits are most likely junk unless the query sequence is very short.
 
@@ -4536,40 +4538,51 @@ E-values are dependent on the size of the database searched, so we use a second 
 
 <img src="https://thebustalab.github.io/integrated_bioanalytics/images/alignments.jpeg" width="100%" style="display: block; margin: auto;" />
 
+Multiple sequence alignments form the bridge between raw sequences and downstream phylogenetic analysis. In this chapter we first use `alignSequences()` to assemble consistent nucleotide, amino-acid, or codon alignments. This is easily accomplished from the monolist generated by `polyBlast()`, if your sequences were generated that way. Then we turn to `analyzeAlignment()` to diagnose gap-heavy or poorly conserved sites, interactively trim them away, and export a cleaned alignment for tree building.
+
 ## alignSequences {-}
 
-There are, of course, many tools for aligning sequences. `alignSequences()`, the alignment tool in phylochemistry, is designed to be both versatile (it can do nucleotide, amino acid, codon alignments, and more), and able to quily align different subsets of collections of sequences. There are three steps to make it work, which is a bit of work, but worth it in the end. Here is a list of the ingredients. If you used polyBlast(), then polyBlast() should have created all these ingredients for you. Following the list is an example. The function does not return an object, and should output a fasta containing the alignment to the alignment_out_path.
+There are, of course, many tools for aligning sequences. `alignSequences()`, from the phylochemistry toolkit, is designed to be flexible: it will align nucleotide, amino-acid, or codon sequences, and it can restrict the alignment to any subset of records in your BLAST monolist. If you already ran `polyBlast()`, most of the inputs outlined below should be ready to go. The function writes the aligned FASTA to `alignment_out_path` and returns nothing (invisibly).
 
-* "monolist": a data.frame that contains a list of all the sequences that are to be aligned. The first column should be an accession number that refers to a fasta file in the "sequences_of_interest_directory_path".
-
-* "subset": The monolist .csv also needs to contain at least one "subset_*" column. The most simple implementation of this is a column called "subset_all" which contains a TRUE entry in each row. This means that all the accessions will be aligned. It is possible to create additonal logical/boolean columns and specify those in this argument, which would cause only that subset of the collection of sequences to be aligned.
-
-* "alignment_out_path": a path to a directory that should contain the output alignment.
-
-* "sequences_of_interest_directory_path": a path to a directory that contains one fasta file for each of the accessions in the monolist.
-
-* "input_sequence_type": options are "nucl" or "amin" specifying what type of sequence is to be aligned.
-
-* "mode": options are "nucl_align", a basic nucleotide alignment, "amin_align", a basic amino acid alignment, "codon_align", a codon alignment, and "fragment_align", which will align all the sequences to a base fragment.
-
-* "base_fragment": a path to a fasta file containing the base fragment to which the subjects should be aligned.
+* `"monolist"`: a data frame where each row represents a hit of interest. It must contain an `accession` column whose values match individual FASTA files in `sequences_of_interest_directory_path`. The helper `readMonolist()` returns this object from the CSV generated by `polyBlast()`.
+* `"subset"`: the name of a logical column in the monolist (for example `subset_all`). Only rows where that column is `TRUE` are aligned. Create additional `subset_*` columns if you want multiple alignment configurations.
+* `"alignment_out_path"`: full file path (including filename) for the alignment that will be written, e.g. `/tmp/my_alignment.fa`. Existing files at this path are overwritten.
+* `"sequences_of_interest_directory_path"`: directory that stores one FASTA per accession, as produced by `polyBlast()`. The function normalises the path internally, so either absolute or relative locations are fine.
+* `"input_sequence_type"`: set to `"nucl"` when the subject FASTA files contain nucleotide sequences and `"amin"` for amino-acid sequences. Codon alignments start from nucleotides, while amino-acid alignments can start from either input type (translation happens automatically when needed).
+* `"mode"`: chooses the alignment strategy. `"nucl_align"` performs a straight nucleotide multiple sequence alignment. `"amin_align"` aligns amino-acid sequences (translated from nucleotides if required). `"codon_align"` translates to protein, aligns there, and then projects the alignment back to nucleotides. `"fragment_align"` is reserved for fragment-to-fragment workflows and currently expects a base fragment defined via `base_fragment`.
+* `"base_fragment"`: optional path to a FASTA file containing the fragment that other sequences should be aligned against. Only used when `mode = "fragment_align"`.
 
 
 ``` r
 alignSequences(
-  monolist = readMonolist("/path_to/a_csv_file_that_will_list_all_blast_hits.csv"), 
-  subset = "subset_all", 
-  alignment_directory_path = "/path_to/a_folder_for_alignments/", 
+  monolist = readMonolist("/path_to/a_csv_file_that_will_list_all_blast_hits.csv"),
+  subset = "subset_all",
+  alignment_out_path = "/path_to/a_folder_for_alignments/subset_all_amin_seqs_aligned.fa",
   sequences_of_interest_directory_path = "/path_to/a_folder_for_hit_sequences/",
-  input_sequence_type = "amin", 
-  mode = "amin_alignment",
+  input_sequence_type = "amin",
+  mode = "amin_align",
   base_fragment = NULL
 )
 ```
 
 ## analyzeAlignment {-}
 
+Once you have an alignment on disk, `analyzeAlignment()` helps you decide which positions to keep before phylogeny building. It reads a FASTA alignment, profiles each column for gap content and conservation, and launches a Shiny interface that lets you tune thresholds while inspecting the original and trimmed alignments alongside neighbour-joining trees. The function returns the trimmed alignment (as a `DNAStringSet` or `AAStringSet`) invisibly and also writes it to `<alignment_in_path>_trimmed`.
 
+* `"alignment_in_path"`: path to the FASTA alignment to review. This is typically the file produced by `alignSequences()`, e.g. `/tmp/subset_all_amin_seqs_aligned.fa`.
+* `"type"`: `"DNA"` for nucleotide alignments or `"AA"` for amino acids. This determines how the alignment is read, which tree scaffold is built, and which Biostrings container is used when writing the trimmed alignment.
+* `"jupyter"`: set to `TRUE` when launching from a Jupyter environment so the app claims an available internal port and prints the connection URL. Leave at the default `FALSE` for regular RStudio or terminal sessions.
+
+The interface plots gap percentages and conservation across the alignment, highlights the positions that survive the current filters, and previews the trimmed tree. When you click **Return Trimmed Alignment & Close App**, the filtered alignment is written to `<alignment_in_path>_trimmed` (with `_trimmed` appended) and returned to the caller.
+
+
+``` r
+analyzeAlignment(
+  alignment_in_path = "/path_to/a_folder_for_alignments/subset_all_amin_seqs_aligned.fa",
+  type = "AA",
+  jupyter = FALSE
+)
+```
 
 
 # phylogenies {-}

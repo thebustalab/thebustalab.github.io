@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>homology | Integrated Bioanalytics</title>
 <meta name="author" content="Lucas Busta and members of the Busta lab">
-<meta name="description" content="NCBI blast The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
+<meta name="description" content="blastNCBI The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
 <meta name="generator" content="bookdown 0.44 with bs4_book()">
 <meta property="og:title" content="homology | Integrated Bioanalytics">
 <meta property="og:type" content="book">
-<meta property="og:description" content="NCBI blast The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
+<meta property="og:description" content="blastNCBI The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="homology | Integrated Bioanalytics">
-<meta name="twitter:description" content="NCBI blast The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
+<meta name="twitter:description" content="blastNCBI The blastNCBI() function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or...">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
 <script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><link href="libs/Lato-0.4.10/font.css" rel="stylesheet">
@@ -96,10 +96,10 @@
 <h1>homology<a class="anchor" aria-label="anchor" href="#homology"><i class="fas fa-link"></i></a>
 </h1>
 <div class="inline-figure"><img src="https://thebustalab.github.io/integrated_bioanalytics/images/homology2.png" width="100%" style="display: block; margin: auto;"></div>
-<div id="ncbi-blast" class="section level2 unnumbered">
-<h2>NCBI blast<a class="anchor" aria-label="anchor" href="#ncbi-blast"><i class="fas fa-link"></i></a>
+<div id="blastncbi" class="section level2 unnumbered">
+<h2>blastNCBI<a class="anchor" aria-label="anchor" href="#blastncbi"><i class="fas fa-link"></i></a>
 </h2>
-<p>The <code>blastNCBI()</code> function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like “core_nt,” you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. Here’s a few examples, including how to approach this function if you’re working with a StringSet object:</p>
+<p>The <code>blastNCBI()</code> function provides a quick, programmatic way to search the NCBI database with custom sequences. By inputting a DNA sequence, the desired BLAST program (such as blastn or megablast), and selecting a database like “core_nt,” you can initiate a remote BLAST search directly through NCBI’s servers. The function then handles the submission, waits for the search to complete, and retrieves the results for further analysis. The output is a tibble with details about each significant hit, allowing you to analyze identity percentages, gaps, and scores for matches in an accessible format. This function is useful for researchers needing automated access to NCBI BLAST results directly in R without needing to manually manage BLAST requests or wait on a browser. These examples assume the <code>Biostrings</code> package is available because it supplies <code>DNAStringSet</code>.</p>
 <div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">blastNCBI</span><span class="op">(</span></span>
 <span>    query_sequence <span class="op">=</span> <span class="st">"AAGCTTGGAAATATTAAGTGAACAGGGAATAGAAAGGATACAACAAAAGGGAAGAACTTAGAGCA"</span>,</span>
@@ -124,11 +124,12 @@
 <li>“query_in_path”: One or more queries, all listed in a single fasta file.</li>
 <li>“sequences_of_interest_directory_path”: The path to a directory where the BLAST hits will be written as individual files (this will be useful later on).</li>
 <li>“blast_module_directory_path”: The path to the folder of BLAST+ executable.</li>
-<li>“blast_mode”: The format is XYblastZ where X is subject type (the transcriptome or proteome, use “n” for nucleotide, “p” for amino acids). Y is whether the subjects should be translated (“t” for translate, “n” for no translation, if you choose “t” your subjects will not be searched for ORFs, every three base pairs are just translated verbatim). Z is the format of the query/queries (“n” for nucleotide, “p” for amino acids). Allowed formats: nnblastn, ntblastp, pnblastp.</li>
-<li>“e_value_cutoff”: Hits with a e-value below this cutoff will not be returned. Default = 1.</li>
-<li>“queries_in_outout”: TRUE/FALSE, should the queries be included in the output? If you want to build a tree of BLAST hits and want the queries in the tree, then set this to be TRUE.</li>
+<li>“blast_mode”: The default shorthand is XYblastZ where X describes the subject type (<code>n</code> for nucleotide, <code>p</code> for amino acid), Y indicates whether subjects are translated (<code>t</code>) or not (<code>n</code>), and Z describes the query type (<code>n</code> or <code>p</code>). For example, <code>ntblastp</code> translates nucleotide subjects and compares them to protein queries. You can also supply specific BLAST+ presets such as <code>megablast</code>, <code>dc-megablast</code>, <code>blastx</code>, <code>tblastn</code>, or <code>tblastx</code> when you want BLAST to manage the translation behaviour for you.</li>
+<li>“e_value_cutoff”: Hits with an e-value greater than this cutoff are discarded. Default = 1.</li>
+<li>“queries_in_output”: TRUE/FALSE, should the queries be included in the output? Set to TRUE if you need the query sequences for downstream analyses like tree building.</li>
 <li>“monolist_out_path”: The path to where we want a summary file of the BLAST hits to be written.</li>
 </ul>
+<p>Different BLAST modes tailor the search to the molecule types you are comparing. In the XYblastZ naming scheme, <code>nnblastn</code> reproduces the classic nucleotide-vs-nucleotide search (<code>blastn</code>), <code>ntblastp</code> lines up with <code>tblastn</code>, and <code>pnblastp</code> matches <code>blastp</code>. Preset names such as <code>blastx</code>, <code>megablast</code>, or <code>dc-megablast</code> extend these basics to translated queries or alternate nucleotide heuristics, while <code>tblastx</code> translates both query and subject to compare inferred proteins. Pick the mode that matches the biology of your query and target sequences so the scoring and heuristics work in your favor.</p>
 <p>Once we have those things, we can set up the search (see below). There are two main outputs from the search: a list of the hits (“monolist_out”, which is written to “monolist_out_path”), and the hits themselves, written as individual files to “sequences_of_interest_directory_path”. These two things can be used in downstream analyses, such as alignments. The function does not return an object.</p>
 <div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">the_transcriptomes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
@@ -147,7 +148,7 @@
 <span>  named_subjects_list <span class="op">=</span> <span class="va">the_transcriptomes</span>,</span>
 <span>  query_in_path <span class="op">=</span> <span class="st">"/path_to/sequences_you_want_to_find_in_the_transcriptomes.fa"</span>,</span>
 <span>  sequences_of_interest_directory_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_hit_sequences/"</span>,</span>
-<span>  blast_module_directory_path <span class="op">=</span> <span class="st">"/path_to/the_blast_module/"</span>,</span>
+<span>  blast_module_directory_path <span class="op">=</span> <span class="st">"/path_to/the_blast_module/"</span>, <span class="co"># on bustalab server this is /project_data/shared/general_lab_resources/blast/</span></span>
 <span>  blast_mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"nnblastn"</span>, <span class="st">"ntblastp"</span>, <span class="st">"pnblastp"</span>, <span class="st">"dc-megablast"</span><span class="op">)</span>, </span>
 <span>  e_value_cutoff <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  queries_in_output <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -177,23 +178,20 @@
 <span>    fasta_in_path <span class="op">=</span> <span class="st">"/project_data/shared/kalanchoe_transporters/alignments/subset_cluster_3_amin_seqs.fa"</span>,</span>
 <span>    domain_library_in_path <span class="op">=</span> <span class="st">"/project_data/shared/kalanchoe_transporters/test.hmm"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-</div>
-<div id="d-similarity" class="section level2 unnumbered">
-<h2>3D similarity<a class="anchor" aria-label="anchor" href="#d-similarity"><i class="fas fa-link"></i></a>
-</h2>
-<p><code>foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1</code></p>
+<!-- ## 3D similarity {-} -->
+<!-- `foldseek easy-search /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/AHF22083.1.pdb /project_data/shared/kalanchoe_phylogeny/protein_structures/structures/ result.m8 /project_data/shared/kalanchoe_phylogeny/protein_structures/tmp --exhaustive-search 1` -->
 </div>
 <div id="interpreting-homology-data" class="section level2 unnumbered">
 <h2>interpreting homology data<a class="anchor" aria-label="anchor" href="#interpreting-homology-data"><i class="fas fa-link"></i></a>
 </h2>
-<p>bitscore v evalue - with very low evalue (&lt; 10^-250) R just assigns it a value of zero and all resolution is lost. so just use bitscore!</p>
+<p>Bitscore versus e-value: when the expected value becomes extremely small (for example &lt; 1e-250), R prints it as zero and you lose the ability to rank hits. In those cases rely on the bit score, which remains informative across the full range of alignments.</p>
 <p>The “30% identity rule-of-thumb” is too conservative. Statistically significant (E &lt; 10−6 – 10−3) protein homologs can share less than 20% identity. E-values and bit scores (bits &gt; 50) are far more sensitive and reliable than percent identity for inferring homology.</p>
-<p>The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as “false positive” hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb which can be used as loose guidelines:</p>
+<p>The expect value (E-value) can be changed in order to limit the number of hits to the most significant ones. The lower the E-value, the better the hit. The E-value is dependent on the length of the query sequence and the size of the database. For example, an alignment obtaining an E-value of 0.05 means that there is a 5 in 100 chance of occurring by chance alone. E-values are very dependent on the query sequence length and the database size. Short identical sequence may have a high E-value and may be regarded as “false positive” hits. This is often seen if one searches for short primer regions, small domain regions etc. The default threshold for the E-value on the BLAST web page is 10, the default for polyBlast is 1. Increasing this value will most likely generate more hits. Below are some rules of thumb from the CLC Genomics Workbench documentation—treat them as approximate, database-dependent guidelines:</p>
 <ul>
-<li>E-value &lt; 10e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.</li>
-<li>10e-100 &lt; E-value &lt; 10e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.</li>
-<li>10e-50 &lt; E-value &lt; 10e-10 Closely related sequences, could be a domain match or similar.</li>
-<li>10e-10 &lt; E-value &lt; 1 Could be a true homologue but it is a gray area.</li>
+<li>E-value &lt; 1e-100 Identical sequences. You will get long alignments across the entire query and hit sequence.</li>
+<li>1e-100 &lt; E-value &lt; 1e-50 Almost identical sequences. A long stretch of the query protein is matched to the database.</li>
+<li>1e-50 &lt; E-value &lt; 1e-10 Closely related sequences, could be a domain match or similar.</li>
+<li>1e-10 &lt; E-value &lt; 1 Could be a true homologue but it is a gray area.</li>
 <li>E-value &gt; 1 Proteins are most likely not related</li>
 <li>E-value &gt; 10 Hits are most likely junk unless the query sequence is very short.</li>
 </ul>
@@ -225,10 +223,9 @@
 <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#homology">homology</a></li>
-<li><a class="nav-link" href="#ncbi-blast">NCBI blast</a></li>
+<li><a class="nav-link" href="#blastncbi">blastNCBI</a></li>
 <li><a class="nav-link" href="#local-blast">local blast</a></li>
 <li><a class="nav-link" href="#hmmer">hmmer</a></li>
-<li><a class="nav-link" href="#d-similarity">3D similarity</a></li>
 <li><a class="nav-link" href="#interpreting-homology-data">interpreting homology data</a></li>
 </ul>
 
@@ -247,7 +244,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-05.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-07.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
