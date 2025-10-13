@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-10-07"
+date: "2025-10-12"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3494,14 +3494,12 @@ any(is.na(metabolomics_data))
 
 ## single linear regression {-}
 
-We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use `buildModel`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of ADP and AMP are related in our metabolomics dataset:
+We will start with some of the simplest models - linear models. There are a variety of ways to build linear models in R, but we will use `buildModel`, as mentioned above. First, we will use least squares regression to model the relationship between input and output variables. Suppose we want to know if the abundances of iso-Leucine and Valine are related in our metabolomics dataset:
 
 
 ``` r
 ggplot(metabolomics_data) +
-  geom_point(aes(x = ADP, y = AMP))
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
+  geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-441-1.png" width="100%" style="display: block; margin: auto;" />
@@ -3513,8 +3511,8 @@ It looks like there might be a relationship! Let's build an inferential model to
 basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = "ADP",
-  output_variable = "AMP"
+  input_variables = "iso-Leucine",
+  output_variable = "Valine"
 )
 names(basic_regression_model)
 ## [1] "model_type" "model"      "metrics"
@@ -3553,58 +3551,54 @@ basic_regression_model$metrics
 ## 5    0.00e+00
 ```
 
-It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for AMP (i.e. the slope, m), as well some other things (we will talk about them in a second).
+It shows us the r-squared, the total and residual sum of squares, the intercept (b in y = mx + b), and the coefficient for iso-Leucine (i.e. the slope, m), as well some other things (we will talk about them in a second).
 
-We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for ADP and AMP. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of ADP for each value of AMP in our data set. We can do that like this:
+We can also use a function called `predictWithModel` to make some predictions using the model. Let's try that for iso-Leucine and Valine. What we do is give it the model, and then tell it what values we want to predict for. In this case, we want to predict the abundance of Valine for each value of iso-Leucine in our data set. We can do that like this:
 
 
 ``` r
-AMP_values_predicted_from_ADP_values <- predictWithModel(
+predicted_Valine_values <- predictWithModel(
   data = metabolomics_data,
   model_type = "linear_regression",
   model = basic_regression_model$model
 )
-head(AMP_values_predicted_from_ADP_values)
+head(predicted_Valine_values)
 ## # A tibble: 6 × 1
 ##   value
 ##   <dbl>
-## 1  13.2
-## 2  13.4
-## 3  13.5
-## 4  13.4
-## 5  12.6
-## 6  13.2
+## 1  4.61
+## 2  4.80
+## 3  4.96
+## 4  4.78
+## 5  4.66
+## 6  4.69
 ```
 
-So, `predictWithModel` is using the model to predict AMP values from ADP. However, note that we have the measured AMP values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
+So, `predictWithModel` is using the model to predict Valine values from iso-Leucine. However, note that we have the measured Valine values in our data set. We can compare the predicted values to the measured values to see how well our model is doing. We can do that like this:
 
 
 ``` r
-ADP_values <- metabolomics_data$ADP
-
 predictions_from_basic_linear_model <- data.frame(
-    ADP_values = ADP_values,
-    AMP_values_predicted_from_ADP_values = AMP_values_predicted_from_ADP_values,
-    AMP_values_measured = metabolomics_data$AMP
+    iso_Leucine_values = metabolomics_data$`iso-Leucine`,
+    predicted_Valine_values = predicted_Valine_values,
+    measured_Valine_values = metabolomics_data$Valine
 )
-colnames(predictions_from_basic_linear_model)[2] <- "AMP_values_predicted_from_ADP_values"
+names(predictions_from_basic_linear_model)[2] <- "predicted_Valine_values"
 
 plot1 <- ggplot() +
     geom_line(
         data = predictions_from_basic_linear_model,
-        aes(x = ADP_values, y = AMP_values_predicted_from_ADP_values), color = "red"
+        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
     ) +
     geom_point(
         data = predictions_from_basic_linear_model,
-        aes(x = ADP_values, y = AMP_values_predicted_from_ADP_values), color = "red"
+        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
     ) +
     geom_point(
         data = metabolomics_data,
-        aes(x = ADP, y = AMP), color = "blue"
+        aes(x = `iso-Leucine`, y = Valine), color = "blue"
     )
 plot1
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-446-1.png" width="100%" style="display: block; margin: auto;" />
@@ -3614,11 +3608,9 @@ Very good. Now let's talk about evaluating the quality of our model. For this we
 
 ``` r
 ggplot(predictions_from_basic_linear_model) +
-  geom_point(aes(x = ADP_values, y = AMP_values_measured)) +
-  geom_line(aes(x = ADP_values, y = AMP_values_predicted_from_ADP_values)) +
-  geom_segment(aes(x = ADP_values, y = AMP_values_measured, xend = ADP_values, yend = AMP_values_predicted_from_ADP_values))
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
+  geom_point(aes(x = iso_Leucine_values, y = measured_Valine_values)) +
+  geom_line(aes(x = iso_Leucine_values, y = predicted_Valine_values)) +
+  geom_segment(aes(x = iso_Leucine_values, y = measured_Valine_values, xend = iso_Leucine_values, yend = predicted_Valine_values))
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-447-1.png" width="100%" style="display: block; margin: auto;" />
@@ -3628,9 +3620,9 @@ We can calculate the sum of the squared residuals:
 
 ``` r
 sum(
-  (predictions_from_basic_linear_model$AMP_values_measured - predictions_from_basic_linear_model$AMP_values_predicted_from_ADP_values)^2
+  (predictions_from_basic_linear_model$measured_Valine_values - predictions_from_basic_linear_model$predicted_Valine_values)^2
 , na.rm = TRUE)
-## [1] 20.50235
+## [1] 1.285459
 ```
 
 Cool! Let's call that the "residual sum of the squares". So... does that mean our model is good? I don't know. We have to compare that number to something. Let's compare it to a super simple model that is just defined by the mean y value of the input data.
@@ -3638,10 +3630,8 @@ Cool! Let's call that the "residual sum of the squares". So... does that mean ou
 
 ``` r
 ggplot(metabolomics_data) +
-  geom_point(aes(x = ADP, y = AMP)) +
-  geom_hline(aes(yintercept = mean(AMP, na.rm = TRUE)))
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
+  geom_point(aes(x = `iso-Leucine`, y = Valine)) +
+  geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE)))
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-449-1.png" width="100%" style="display: block; margin: auto;" />
@@ -3651,11 +3641,9 @@ A pretty bad model, I agree. How much better is our linear model that the flat l
 
 ``` r
 ggplot(metabolomics_data) +
-  geom_point(aes(x = ADP, y = AMP)) +
-  geom_hline(aes(yintercept = mean(ADP, na.rm = TRUE))) +
-  geom_segment(aes(x = ADP, y = AMP, xend = ADP, yend = mean(ADP, na.rm = TRUE)))
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
+  geom_point(aes(x = `iso-Leucine`, y = Valine)) +
+  geom_hline(aes(yintercept = mean(Valine, na.rm = TRUE))) +
+  geom_segment(aes(x = `iso-Leucine`, y = Valine, xend = `iso-Leucine`, yend = mean(Valine, na.rm = TRUE)))
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-450-1.png" width="100%" style="display: block; margin: auto;" />
@@ -3663,17 +3651,25 @@ ggplot(metabolomics_data) +
 ``` r
 
 sum(
-  (metabolomics_data$AMP - mean(metabolomics_data$AMP, na.rm = TRUE))^2
+  (metabolomics_data$Valine - mean(metabolomics_data$Valine, na.rm = TRUE))^2
 , na.rm = TRUE)
-## [1] 38.63462
+## [1] 2.154464
 ```
 
 Cool. Let's call that the "total sum of the squares", and now we can compare that to our "residual sum of the squares": 
 
 
 ``` r
-1-(20.1904/38.63)
-## [1] 0.4773389
+residual_sum_of_squares <- sum(
+  (predictions_from_basic_linear_model$measured_Valine_values - predictions_from_basic_linear_model$predicted_Valine_values)^2,
+  na.rm = TRUE
+)
+total_sum_of_squares <- sum(
+  (metabolomics_data$Valine - mean(metabolomics_data$Valine, na.rm = TRUE))^2,
+  na.rm = TRUE
+)
+1 - (residual_sum_of_squares / total_sum_of_squares)
+## [1] 0.403351
 ```
 
 Alright. That is our R squared value. It is equal to 1 minus the ratio of the "residual sum of the squares" to the "total sum of the squares". You can think of the R squared value as:
@@ -3686,36 +3682,32 @@ Now, let's put it all together and make it pretty:
 top <- ggplot() +
     geom_line(
         data = predictions_from_basic_linear_model,
-        aes(x = ADP_values, y = AMP_values_predicted_from_ADP_values), color = "red"
+        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
     ) +
     geom_point(
         data = predictions_from_basic_linear_model,
-        aes(x = ADP_values, y = AMP_values_predicted_from_ADP_values), color = "red"
+        aes(x = iso_Leucine_values, y = predicted_Valine_values), color = "red"
     ) +
     geom_point(
         data = metabolomics_data,
-        aes(x = ADP, y = AMP), color = "blue"
+        aes(x = `iso-Leucine`, y = Valine), color = "blue"
     ) +
     annotate(geom = "table",
-      x = 10,
-      y = 15,
+      x = 3.25,
+      y = 5,
       label = list(select(basic_regression_model$metrics, variable, value))
     ) +
-    coord_cartesian(ylim = c(10,16)) +
+    coord_cartesian(ylim = c(4.25,5.25)) +
     theme_bw()
 
 bottom <- ggplot(predictions_from_basic_linear_model) +
   geom_col(
-    aes(x = ADP_values, y = AMP_values_measured-AMP_values_predicted_from_ADP_values),
+    aes(x = iso_Leucine_values, y = measured_Valine_values - predicted_Valine_values),
     width = 0.03, color = "black", position = "dodge", alpha = 0.5
   ) +
   theme_bw()
 
 cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
-## Don't know how to automatically pick scale for object of
-## type <impute>. Defaulting to continuous.
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-452-1.png" width="100%" style="display: block; margin: auto;" />
@@ -3730,42 +3722,42 @@ Cool! Now let's try a multiple linear regression model. This is the same as a si
 basic_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = "ADP",
-  output_variable = "AMP"
+  input_variables = "iso-Leucine",
+  output_variable = "Valine"
 )
 
 multiple_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = colnames(metabolomics_data)[3:33],
-  output_variable = "AMP"
+  output_variable = "Valine"
 )
 
 ggplot() +
   geom_point(
     data = metabolomics_data,
-    aes(x = ADP, y = AMP), fill = "gold", shape = 21, color = "black"
+    aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black"
   ) +
   geom_line(aes(
-    x = metabolomics_data$ADP,
-    y = mean(metabolomics_data$AMP)
+    x = metabolomics_data$`iso-Leucine`,
+    y = mean(metabolomics_data$Valine)
   ), color = "grey") +
   geom_line(aes(
-    x = metabolomics_data$ADP,
-    y = predictWithModel(
+    x = metabolomics_data$`iso-Leucine`,
+    y = unlist(predictWithModel(
       data = metabolomics_data,
       model_type = "linear_regression",
       model = basic_regression_model$model
-    )),
+    ))),
     color = "maroon", size = 1
   ) +
   geom_line(aes(
-    x = metabolomics_data$ADP,
-    y = predictWithModel(
+    x = metabolomics_data$`iso-Leucine`,
+    y = unlist(predictWithModel(
       data = metabolomics_data,
       model_type = "linear_regression",
       model = multiple_regression_model$model
-    )),
+    ))),
     color = "black", size = 1, alpha = 0.6
   ) +
   theme_bw()
@@ -3801,7 +3793,7 @@ multiple_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = colnames(metabolomics_data)[3:10],
-  output_variable = "AMP"
+  output_variable = "Valine"
 )
 
 check_model(multiple_regression_model$model)
@@ -3828,7 +3820,7 @@ We can use the `buildModel()` function to make a random forest model. We need to
 - `data` specifies the dataset to be used for model training, here metabolomics_data.
 - `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
 - `input_variables` selects the features or predictors for the model, here using columns 3 to 33 from metabolomics_data as predictors.
-- `output_variable` is the target variable for prediction, in this case, "AMP".
+- `output_variable` is the target variable for prediction, in this case, "Valine".
 
 The optimization_parameters argument takes a list to define the grid of parameters for optimization, including n_vars_tried_at_split, n_trees, and min_leaf_size. The seq() function generates sequences of numbers and is used here to create ranges for each parameter:
 
@@ -3844,7 +3836,7 @@ random_forest_model <- buildModel2(
     data = metabolomics_data,
     model_type = "random_forest_regression",
     input_variables = colnames(metabolomics_data)[3:33],
-    output_variable = "AMP",
+    output_variable = "Valine",
     optimization_parameters = list(
       n_vars_tried_at_split = seq(1,24,3),
       n_trees = seq(1,40,2),
@@ -3889,19 +3881,19 @@ We can easily use the model to make predictions by using the `predictWithModel()
 ggplot() +
   geom_point(
     data = metabolomics_data,
-    aes(x = ADP, y = AMP), fill = "gold", shape = 21, color = "black"
+    aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black"
   ) +
   geom_line(aes(
-    x = metabolomics_data$ADP,
-    y = mean(metabolomics_data$AMP)
+    x = metabolomics_data[["iso-Leucine"]],
+    y = mean(metabolomics_data$Valine)
   ), color = "grey") +
   geom_line(aes(
-    x = metabolomics_data$ADP,
-    y = predictWithModel(
+    x = metabolomics_data[["iso-Leucine"]],
+    y = unlist(predictWithModel(
       data = metabolomics_data,
       model_type = "random_forest_regression",
       model = random_forest_model$model
-    )),
+    ))),
     color = "maroon", size = 1
   ) +
   theme_bw()
@@ -3950,7 +3942,7 @@ predictions <- predictWithModel(
 
 data.frame(
   real_status = metabolomics_data[35:40,]$patient_status,
-  predicted_status = predictions
+  predicted_status = unlist(predictions)
 )
 ```
 
