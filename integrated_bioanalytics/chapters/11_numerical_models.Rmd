@@ -47,7 +47,7 @@ ggplot(metabolomics_data) +
   geom_point(aes(x = `iso-Leucine`, y = Valine))
 ```
 
-It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
+It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
 
 ```{r}
 basic_regression_model <- buildModel2(
@@ -244,6 +244,43 @@ ggplot() +
       model = multiple_regression_model$model
     ))),
     color = "black", size = 1, alpha = 0.6
+  ) +
+  theme_bw()
+```
+
+Sometimes it is helpful to visualize how those 30 predictors combine once they are weighted by their regression coefficients. The weighted sum (often called the linear predictor) is simply the dot product of the input variables with their estimated coefficients. We can plot Valine against that derived single axis to see how the combined effect relates to the response:
+
+```{r, fig.width = 9, fig.height = 7, eval = FALSE}
+predictor_names <- colnames(metabolomics_data)[3:33]
+
+multiple_regression_model <- buildModel2(
+  data = metabolomics_data,
+  model_type = "linear_regression",
+  input_variables = predictor_names,
+  output_variable = "Valine"
+)
+
+coefs <- coef(multiple_regression_model$model)[predictor_names]
+linear_predictor <- as.numeric(as.matrix(metabolomics_data[, predictor_names]) %*% coefs)
+
+plot_data <- tibble(
+  linear_predictor = linear_predictor,
+  measured_valine = metabolomics_data$Valine,
+  predicted_valine = unlist(predictWithModel(
+    data = metabolomics_data,
+    model_type = "linear_regression",
+    model = multiple_regression_model$model
+  ))
+)
+
+plot_data %>%
+  arrange(linear_predictor) %>%
+  ggplot(aes(x = linear_predictor, y = measured_valine)) +
+  geom_point(color = "black", fill = "gold", shape = 21) +
+  geom_line(aes(y = predicted_valine), color = "maroon", linewidth = 1) +
+  labs(
+    x = "Weighted sum of predictors (Σ β_i * x_i)",
+    y = "Valine abundance"
   ) +
   theme_bw()
 ```
