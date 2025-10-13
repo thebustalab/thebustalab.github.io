@@ -117,7 +117,7 @@
 <li>
 <code>"base_fragment"</code>: optional path to a FASTA file containing the fragment that other sequences should be aligned against. Only used when <code>mode = "fragment_align"</code>.</li>
 </ul>
-<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">alignSequences</span><span class="op">(</span></span>
 <span>  monolist <span class="op">=</span> <span class="fu">readMonolist</span><span class="op">(</span><span class="st">"/path_to/a_csv_file_that_will_list_all_blast_hits.csv"</span><span class="op">)</span>,</span>
 <span>  subset <span class="op">=</span> <span class="st">"subset_all"</span>,</span>
@@ -141,7 +141,7 @@
 <code>"jupyter"</code>: set to <code>TRUE</code> when launching from a Jupyter environment so the app claims an available internal port and prints the connection URL. Leave at the default <code>FALSE</code> for regular RStudio or terminal sessions.</li>
 </ul>
 <p>The interface plots gap percentages and conservation across the alignment, highlights the positions that survive the current filters, and previews the trimmed tree. When you click <strong>Return Trimmed Alignment &amp; Close App</strong>, the filtered alignment is written to <code>&lt;alignment_in_path&gt;_trimmed</code> (with <code>_trimmed</code> appended) and returned to the caller.</p>
-<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">analyzeAlignment</span><span class="op">(</span></span>
 <span>  alignment_in_path <span class="op">=</span> <span class="st">"/path_to/a_folder_for_alignments/subset_all_amin_seqs_aligned.fa"</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"AA"</span>,</span>
@@ -184,7 +184,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-12.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-13.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

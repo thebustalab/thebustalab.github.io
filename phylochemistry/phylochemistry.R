@@ -16147,7 +16147,7 @@
 
         #### buildModel1.5
 
-            buildModel2 <- function(
+            buildModel1.5 <- function(
                 data,
                 model_type = c(
                     "linear_regression", "random_forest_regression",

@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-10-12"
+date: "2025-10-13"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3504,7 +3504,7 @@ ggplot(metabolomics_data) +
 
 <img src="index_files/figure-html/unnamed-chunk-441-1.png" width="100%" style="display: block; margin: auto;" />
 
-It looks like there might be a relationship! Let's build an inferential model to examine the details of that that relationship:
+It looks like there might be a relationship! Let's build an linear regression model and use it inferentially to examine the details of that that relationship:
 
 
 ``` r
@@ -3719,49 +3719,183 @@ Cool! Now let's try a multiple linear regression model. This is the same as a si
 
 ``` r
 
-basic_regression_model <- buildModel2(
+single_input_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = "iso-Leucine",
   output_variable = "Valine"
 )
 
-multiple_regression_model <- buildModel2(
+single_input_regression_model$metrics %>%
+  filter(type == "coefficient") %>%
+  arrange(desc(abs(value)))
+##        variable  value std_err        type p_value
+## 1   (Intercept) 2.7843  0.2459 coefficient       0
+## 2 `iso-Leucine` 0.5080  0.0648 coefficient       0
+##   p_value_adj
+## 1           0
+## 2           0
+
+multiple_input_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = colnames(metabolomics_data)[3:33],
+  input_variables = colnames(metabolomics_data)[3:32],
   output_variable = "Valine"
 )
 
-ggplot() +
-  geom_point(
-    data = metabolomics_data,
-    aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black"
-  ) +
-  geom_line(aes(
-    x = metabolomics_data$`iso-Leucine`,
-    y = mean(metabolomics_data$Valine)
-  ), color = "grey") +
-  geom_line(aes(
-    x = metabolomics_data$`iso-Leucine`,
-    y = unlist(predictWithModel(
-      data = metabolomics_data,
-      model_type = "linear_regression",
-      model = basic_regression_model$model
-    ))),
-    color = "maroon", size = 1
-  ) +
-  geom_line(aes(
-    x = metabolomics_data$`iso-Leucine`,
-    y = unlist(predictWithModel(
-      data = metabolomics_data,
-      model_type = "linear_regression",
-      model = multiple_regression_model$model
-    ))),
-    color = "black", size = 1, alpha = 0.6
-  ) +
-  theme_bw()
+multiple_input_regression_model$metrics %>% filter(type == "statistic")
+##               variable  value std_err      type p_value
+## 1            r_squared 0.8942      NA statistic      NA
+## 2    total_sum_squares 2.1545      NA statistic      NA
+## 3 residual_sum_squares 0.2280      NA statistic      NA
+##   p_value_adj
+## 1          NA
+## 2          NA
+## 3          NA
+
+multiple_input_regression_model$metrics %>%
+  filter(type == "coefficient") %>%
+  arrange(desc(abs(value)))
+##                        variable   value std_err        type
+## 1                   (Intercept) -8.4392  2.1225 coefficient
+## 2         `5-Aminovaleric Acid`  0.8629  0.0584 coefficient
+## 3                  Homocysteine -0.1139  0.0558 coefficient
+## 4     `Alpha-Ketoglutaric Acid` -0.0882  0.0780 coefficient
+## 5           `Pyroglutamic Acid`  0.0750  0.0507 coefficient
+## 6                    Cadaverine -0.0636  0.0531 coefficient
+## 7                     Glycerate -0.0594  0.0544 coefficient
+## 8                     Sarcosine  0.0547  0.0276 coefficient
+## 9                     Carnitine  0.0521  0.0433 coefficient
+## 10        `Glucose 1-phosphate`  0.0490  0.0361 coefficient
+## 11       `Phosphoglyceric Acid` -0.0465  0.0227 coefficient
+## 12              MethylSuccinate  0.0394  0.0508 coefficient
+## 13                     Tyramine  0.0264  0.0556 coefficient
+## 14                     Pyruvate  0.0183  0.0302 coefficient
+## 15                   Pipecolate  0.0175  0.0507 coefficient
+## 16   `2-Hydroxyisovaleric Acid` -0.0145  0.0198 coefficient
+## 17                      Betaine -0.0144  0.0244 coefficient
+## 18                      Taurine -0.0144  0.0394 coefficient
+## 19            `isoValeric Acid` -0.0141  0.0789 coefficient
+## 20          `1-Methylhistidine`  0.0137  0.0091 coefficient
+## 21                   Cysteamine  0.0116  0.0123 coefficient
+## 22     `2-Aminoisobutyric acid` -0.0106  0.0400 coefficient
+## 23             Guanidinoacetate  0.0105  0.0285 coefficient
+## 24               `Malonic Acid`  0.0093  0.0137 coefficient
+## 25                     Creatine  0.0087  0.0173 coefficient
+## 26            `N-AcetylGlycine` -0.0087  0.0161 coefficient
+## 27          `1-Methylhistamine` -0.0034  0.0140 coefficient
+## 28 `3-Methyl-2-Oxovaleric Acid`  0.0030  0.0152 coefficient
+## 29               `Fumaric Acid` -0.0026  0.0129 coefficient
+## 30                   Creatinine -0.0024  0.0381 coefficient
+## 31           `4-Hydroxyproline`  0.0001  0.0173 coefficient
+##       p_value p_value_adj
+## 1  0.00018570    0.005571
+## 2  0.00000000    0.000000
+## 3  0.04539385    1.000000
+## 4  0.26252957    1.000000
+## 5  0.14424229    1.000000
+## 6  0.23545690    1.000000
+## 7  0.27908387    1.000000
+## 8  0.05203798    1.000000
+## 9  0.23333675    1.000000
+## 10 0.17966959    1.000000
+## 11 0.04448459    1.000000
+## 12 0.44116148    1.000000
+## 13 0.63648128    1.000000
+## 14 0.54731576    1.000000
+## 15 0.73164052    1.000000
+## 16 0.46726689    1.000000
+## 17 0.55755863    1.000000
+## 18 0.71615475    1.000000
+## 19 0.85827398    1.000000
+## 20 0.13825735    1.000000
+## 21 0.34897953    1.000000
+## 22 0.79070612    1.000000
+## 23 0.71355085    1.000000
+## 24 0.50039850    1.000000
+## 25 0.61601809    1.000000
+## 26 0.59213968    1.000000
+## 27 0.81043509    1.000000
+## 28 0.84546515    1.000000
+## 29 0.84339908    1.000000
+## 30 0.95064942    1.000000
+## 31 0.99539331    1.000000
 ```
+
+Even though the multiple-input model predicts Valine more accurately overall (based on r-squared values), it is helpful to quantify which metabolites drive that improvement. The regression summary (`multiple_input_regression_model$metrics`) reports the coefficient estimate, standard error, and p-value for each predictor. To decide which variables are the most important contributors:
+
+- Coefficient value: magnitude and sign describe the expected change in the output when that predictor moves by one unit while all other variables are held constant. However, please note that because our predictors are on different scales, centering and scaling them (e.g., with `metabolomics_data %>% mutate(across(3:32, scale))`) lets us compare the absolute size of coefficients directly.
+- `p_value` (or an adjusted p-value when many metabolites are examined at once) is the p-value obtained by testing whether the predictors coefficient is significantly different from zero. Small p-values highlight predictors that are likely to matter after accounting for the rest of the variables.
+
+In this Valine model, `5-Aminovaleric Acid` has the largest absolute coefficient, so the third panel below plots its raw relationship with Valine alongside the two sets of predictions to highlight why it stands out in the summary table.
+
+
+
+``` r
+model_comparison_data <- data.frame(
+  measured_Valine_values = metabolomics_data$Valine,
+  single_input_predicted_Valine_values = predictWithModel(
+    data = metabolomics_data,
+    model_type = "linear_regression",
+    model = basic_regression_model$model
+  )$value,
+  multiple_input_predicted_Valine_values = predictWithModel(
+    data = metabolomics_data,
+    model_type = "linear_regression",
+    model = multiple_input_regression_model$model
+  )$value,
+  measured_5AA_values = metabolomics_data$`5-Aminovaleric Acid`
+)
+  
+plot1 <- ggplot(model_comparison_data) + geom_point(aes(
+  x = measured_Valine_values, y = single_input_predicted_Valine_values
+))
+
+plot2 <- ggplot(model_comparison_data) + geom_point(aes(
+  x = measured_Valine_values, y = multiple_input_predicted_Valine_values
+))
+
+plot3 <- ggplot(model_comparison_data) + geom_point(aes(
+  x = measured_Valine_values, y = measured_5AA_values
+))
+
+plot_grid(plot1, plot2, plot3, nrow = 1)
+```
+
+<img src="index_files/figure-html/unnamed-chunk-454-1.png" width="100%" style="display: block; margin: auto;" />
+
+
+
+
+
+<!-- # ggplot() + -->
+<!-- #   geom_point( -->
+<!-- #     data = metabolomics_data, -->
+<!-- #     aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black" -->
+<!-- #   ) + -->
+<!-- #   geom_line(aes( -->
+<!-- #     x = metabolomics_data$`iso-Leucine`, -->
+<!-- #     y = mean(metabolomics_data$Valine) -->
+<!-- #   ), color = "grey") + -->
+<!-- #   geom_line(aes( -->
+<!-- #     x = metabolomics_data$`iso-Leucine`, -->
+<!-- #     y = unlist(predictWithModel( -->
+<!-- #       data = metabolomics_data, -->
+<!-- #       model_type = "linear_regression", -->
+<!-- #       model = basic_regression_model$model -->
+<!-- #     ))), -->
+<!-- #     color = "maroon", size = 1 -->
+<!-- #   ) + -->
+<!-- #   geom_line(aes( -->
+<!-- #     x = metabolomics_data$`iso-Leucine`, -->
+<!-- #     y = unlist(predictWithModel( -->
+<!-- #       data = metabolomics_data, -->
+<!-- #       model_type = "linear_regression", -->
+<!-- #       model = multiple_regression_model$model -->
+<!-- #     ))), -->
+<!-- #     color = "black", size = 1, alpha = 0.6 -->
+<!-- #   ) + -->
+<!-- #   theme_bw() -->
 
 ## assessing regression models {-}
 
@@ -3799,7 +3933,7 @@ multiple_regression_model <- buildModel2(
 check_model(multiple_regression_model$model)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-454-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-455-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## random forests {-}
 
@@ -3819,7 +3953,7 @@ We can use the `buildModel()` function to make a random forest model. We need to
 
 - `data` specifies the dataset to be used for model training, here metabolomics_data.
 - `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
-- `input_variables` selects the features or predictors for the model, here using columns 3 to 33 from metabolomics_data as predictors.
+- `input_variables` selects the features or predictors for the model, here using columns 3 to 32 from metabolomics_data as predictors.
 - `output_variable` is the target variable for prediction, in this case, "Valine".
 
 The optimization_parameters argument takes a list to define the grid of parameters for optimization, including n_vars_tried_at_split, n_trees, and min_leaf_size. The seq() function generates sequences of numbers and is used here to create ranges for each parameter:
@@ -3835,7 +3969,7 @@ This setup creates a grid of parameter combinations where each combination of n_
 random_forest_model <- buildModel2(
     data = metabolomics_data,
     model_type = "random_forest_regression",
-    input_variables = colnames(metabolomics_data)[3:33],
+    input_variables = colnames(metabolomics_data)[3:32],
     output_variable = "Valine",
     optimization_parameters = list(
       n_vars_tried_at_split = seq(1,24,3),
@@ -4114,10 +4248,10 @@ select(search_results, term, title)
 ##  3 beta-amyrin synthase       β-Amyrin synthase (EsBAS) and…
 ##  4 friedelin synthase         Friedelin in Maytenus ilicifo…
 ##  5 friedelin synthase         Friedelin Synthase from Mayte…
-##  6 friedelin synthase         Genome Mining and Gene Expres…
+##  6 friedelin synthase         Functional characterization o…
 ##  7 sorghum bicolor            Sorghum (Sorghum bicolor).    
-##  8 sorghum bicolor            Grain and sweet sorghum (Sorg…
-##  9 sorghum bicolor            Progress in Optimization of A…
+##  8 sorghum bicolor            Progress in Optimization of A…
+##  9 sorghum bicolor            Grain and sweet sorghum (Sorg…
 ## 10 cuticular wax biosynthesis Regulatory mechanisms underly…
 ## 11 cuticular wax biosynthesis Cuticular wax in wheat: biosy…
 ## 12 cuticular wax biosynthesis Update on Cuticular Wax Biosy…
@@ -4168,7 +4302,7 @@ search_results_embedded %>%
     )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-491-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-493-1.png" width="100%" style="display: block; margin: auto;" />
 
 To examine the relationships between the publication titles, we perform PCA on the text embeddings. We use the runMatrixAnalysis function, specifying PCA as the analysis type and indicating which columns contain the embedding values. We visualize the results using a scatter plot, with each point representing a publication title, colored by the search term it corresponds to. The `grep` function is used here to search for all column names in the `search_results` data frame that contain the word 'embed'. This identifies and selects the columns that hold the embedding values, which will be used as the columns with values for single analytes for the PCA and enable the visualization below. While we've seen lots of PCA plots over the course of our explorations, note that this one is different in that it represents the relationships between the meaning of text passages (!) as opposed to relationships between samples for which we have made many measurements of numerical attributes.
 
@@ -4192,7 +4326,7 @@ runMatrixAnalysis(
     theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-492-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-494-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can also use embeddings to examine data that are not full sentences but rather just lists of terms, such as the descriptions of odors in the `beer_components` dataset:
 
@@ -4235,7 +4369,7 @@ ggplot(pca_out) +
   theme_minimal()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-493-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-495-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## protein embeddings {-}
 
@@ -4282,17 +4416,17 @@ ncbi_results <- searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
 ncbi_results
 ## AAStringSet object of length 100:
 ##       width seq                         names               
-##   [1]   420 MNVRRRSSVAAL...FLISNRGKQQQP WP_446047032.1 pr...
-##   [2]   574 MPPSALTESVGT...KDITGDGEGGRP WP_100808334.1 pr...
-##   [3]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_100807397.1 pr...
-##   [4]   428 MNIRRSVAALSL...GFLISGRKRRQL WP_079257413.1 pr...
-##   [5]   574 MPPSALTESVGT...KDITGDGEGGRP WP_079256239.1 pr...
+##   [1]   513 MVPYALPIHPGR...LGEFRRRLLANK CAN6220183.1 unna...
+##   [2]   586 MFGSVLTYVSLR...EYRCRVLAAGKQ CAN6181702.1 unna...
+##   [3]   329 MTDTDGTLAWLL...WDAAAAQPQPPR WP_289330907.1 MU...
+##   [4]   575 MNKRNEIEEMIR...LNALKKVQTVID WP_446787674.1 pr...
+##   [5]   290 MKDTLSIKLFKT...YTFYGLLALGTI WP_446787673.1 pr...
 ##   ...   ... ...
-##  [96]   228 MNVRRSAAALAA...RSRSRCNGTAGA WP_445035452.1 pr...
-##  [97]   399 MTGAIPFDQSML...LALSSCDTDWNW WP_445023051.1 pr...
-##  [98]   735 MTEGTHLRRRGG...YPTSGLAGKVKL XP_004559187.1 la...
-##  [99]   571 MSDFGLLPDVPA...DPSFRLPALTLS WP_444960309.1 pr...
-## [100]   906 MSPLVSRTSRSS...RRRAVTGAGGGS WP_444947572.1 pr...
+##  [96]   735 MSGTHIAPWRTP...LYARKFGNDSLL XP_020051874.1 te...
+##  [97]   717 MADPIAPWRTAA...LYSRKFGNEELL XP_015409667.1 te...
+##  [98]   700 MPPTLPEKTDYT...KFARTYPDYRLT XP_015402884.1 te...
+##  [99]   749 MPDHIGRWKNGG...LYSRKFGNEELQ XP_681529.2 terpe...
+## [100]   735 MAADHIGPWRTD...LYSRKFGNEELI XP_043139417.1 te...
 ```
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
@@ -4610,7 +4744,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-532-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-534-1.png" width="100%" style="display: block; margin: auto;" />
 
 Cool! We got our phylogeny. What happens if we want to build a phylogeny that has a species on it that isn't in our scaffold? For example, what if we want to build a phylogeny that includes *Arabidopsis neglecta*? We can include that name in our list of members:
 
@@ -4638,7 +4772,7 @@ tree
 plot(tree)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-533-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-535-1.png" width="100%" style="display: block; margin: auto;" />
 
 Note that `buildTree` informs us: "Scaffold newick tip Arabidopsis_thaliana substituted with Arabidopsis_neglecta". This means that *Arabidopsis neglecta* was grafted onto the tip originally occupied by *Arabidopsis thaliana*. This behaviour is useful when operating on a large phylogenetic scale (i.e. where *exact* phylogeny topology is not critical below the family level). However, if a person is interested in using an existing newick tree as a scaffold for a phylogeny where genus-level topology *is* critical, then beware! Your scaffold may not be appropriate if you see that message. When operating at the genus level, you probably want to use sequence data to build your phylogeny anyway. So let's look at how to do that:
 
@@ -4683,7 +4817,7 @@ test_tree_small <- buildTree(
 plot(test_tree_small)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-535-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-537-1.png" width="100%" style="display: block; margin: auto;" />
 
 Though this can get messy when there are lots of tip labels:
 
@@ -4699,7 +4833,7 @@ test_tree_big <- buildTree(
 plot(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-536-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-538-1.png" width="100%" style="display: block; margin: auto;" />
 
 One solution is to use `ggtree`, which by default doesn't show tip labels. `plot` can do that too, but `ggtree` does a bunch of other useful things, so I recommend that:
 
@@ -4708,7 +4842,7 @@ One solution is to use `ggtree`, which by default doesn't show tip labels. `plot
 ggtree(test_tree_big)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-537-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-539-1.png" width="100%" style="display: block; margin: auto;" />
 
 Another convenient fucntion is ggplot's `fortify`. This will convert your `phylo` object into a data frame:
 
@@ -4779,7 +4913,7 @@ ggtree(test_tree_big_fortified_w_data) +
   )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-539-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-541-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## collapseTree {-}
 
@@ -4799,7 +4933,7 @@ collapseTree(
 ggtree(test_tree_big_families) + geom_tiplab() + coord_cartesian(xlim = c(0,300))
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-540-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-542-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## trees and traits {-}
 
@@ -4877,7 +5011,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-545-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-547-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 Once our manual inspection is complete, we can make a new version of the plot in which the y axis text is removed from the trait plot and we can reduce the margin on the left side of the trait plot to make it look nicer:
@@ -4912,7 +5046,7 @@ plot_grid(
 )
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-546-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-548-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 # phylogenetic analyses {-}
@@ -5134,7 +5268,7 @@ ggtree(
   theme_void()
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-568-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-570-1.png" width="100%" style="display: block; margin: auto;" />
 
 ________________________________________________________________________________________________
 ________________________________________________________________________________________________

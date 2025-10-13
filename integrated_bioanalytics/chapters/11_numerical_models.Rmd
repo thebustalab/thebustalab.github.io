@@ -202,88 +202,105 @@ cowplot::plot_grid(top, bottom, ncol = 1, labels = "AUTO", rel_heights = c(2,1))
 
 Cool! Now let's try a multiple linear regression model. This is the same as a simple linear regression model, but with more than one predictor variable. Simple and multiple linear regression are both statistical methods used to explore the relationship between one or more independent variables (predictor variables) and a dependent variable (outcome variable). Simple linear regression involves one independent variable to predict the value of one dependent variable, utilizing a linear equation of the form y = mx + b. Multiple linear regression extends this concept to include two or more independent variables, with a typical form of  y = m1x1 + m2x2 + ... + b, allowing for a more complex representation of relationships among variables. While simple linear regression provides a straight-line relationship between the independent and dependent variables, multiple linear regression can model a multi-dimensional plane in the variable space, providing a more nuanced understanding of how the independent variables collectively influence the dependent variable. The complexity of multiple linear regression can offer more accurate predictions and insights, especially in scenarios where variables interact or are interdependent, although it also requires a more careful consideration of assumptions and potential multicollinearity among the independent variables. Let's try it with the first 30 metabolites in our data set:
 
-```{r, fig.width = 9, fig.height = 9, eval = FALSE}
+```{r, fig.width = 10, fig.height = 6}
 
-basic_regression_model <- buildModel2(
+single_input_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
   input_variables = "iso-Leucine",
   output_variable = "Valine"
 )
 
-multiple_regression_model <- buildModel2(
+single_input_regression_model$metrics %>%
+  filter(type == "coefficient") %>%
+  arrange(desc(abs(value)))
+
+multiple_input_regression_model <- buildModel2(
   data = metabolomics_data,
   model_type = "linear_regression",
-  input_variables = colnames(metabolomics_data)[3:33],
+  input_variables = colnames(metabolomics_data)[3:32],
   output_variable = "Valine"
 )
 
-ggplot() +
-  geom_point(
-    data = metabolomics_data,
-    aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black"
-  ) +
-  geom_line(aes(
-    x = metabolomics_data$`iso-Leucine`,
-    y = mean(metabolomics_data$Valine)
-  ), color = "grey") +
-  geom_line(aes(
-    x = metabolomics_data$`iso-Leucine`,
-    y = unlist(predictWithModel(
-      data = metabolomics_data,
-      model_type = "linear_regression",
-      model = basic_regression_model$model
-    ))),
-    color = "maroon", size = 1
-  ) +
-  geom_line(aes(
-    x = metabolomics_data$`iso-Leucine`,
-    y = unlist(predictWithModel(
-      data = metabolomics_data,
-      model_type = "linear_regression",
-      model = multiple_regression_model$model
-    ))),
-    color = "black", size = 1, alpha = 0.6
-  ) +
-  theme_bw()
+multiple_input_regression_model$metrics %>% filter(type == "statistic")
+
+multiple_input_regression_model$metrics %>%
+  filter(type == "coefficient") %>%
+  arrange(desc(abs(value)))
 ```
 
-Sometimes it is helpful to visualize how those 30 predictors combine once they are weighted by their regression coefficients. The weighted sum (often called the linear predictor) is simply the dot product of the input variables with their estimated coefficients. We can plot Valine against that derived single axis to see how the combined effect relates to the response:
+Even though the multiple-input model predicts Valine more accurately overall (based on r-squared values), it is helpful to quantify which metabolites drive that improvement. The regression summary (`multiple_input_regression_model$metrics`) reports the coefficient estimate, standard error, and p-value for each predictor. To decide which variables are the most important contributors:
 
-```{r, fig.width = 9, fig.height = 7, eval = FALSE}
-predictor_names <- colnames(metabolomics_data)[3:33]
+- Coefficient value: magnitude and sign describe the expected change in the output when that predictor moves by one unit while all other variables are held constant. However, please note that because our predictors are on different scales, centering and scaling them (e.g., with `metabolomics_data %>% mutate(across(3:32, scale))`) lets us compare the absolute size of coefficients directly.
+- `p_value` (or an adjusted p-value when many metabolites are examined at once) is the p-value obtained by testing whether the predictors coefficient is significantly different from zero. Small p-values highlight predictors that are likely to matter after accounting for the rest of the variables.
 
-multiple_regression_model <- buildModel2(
-  data = metabolomics_data,
-  model_type = "linear_regression",
-  input_variables = predictor_names,
-  output_variable = "Valine"
-)
+In this Valine model, `5-Aminovaleric Acid` has the largest absolute coefficient, so the third panel below plots its raw relationship with Valine alongside the two sets of predictions to highlight why it stands out in the summary table.
 
-coefs <- coef(multiple_regression_model$model)[predictor_names]
-linear_predictor <- as.numeric(as.matrix(metabolomics_data[, predictor_names]) %*% coefs)
 
-plot_data <- tibble(
-  linear_predictor = linear_predictor,
-  measured_valine = metabolomics_data$Valine,
-  predicted_valine = unlist(predictWithModel(
+```{r, fig.width = 10, fig.height = 6}
+model_comparison_data <- data.frame(
+  measured_Valine_values = metabolomics_data$Valine,
+  single_input_predicted_Valine_values = predictWithModel(
     data = metabolomics_data,
     model_type = "linear_regression",
-    model = multiple_regression_model$model
-  ))
+    model = basic_regression_model$model
+  )$value,
+  multiple_input_predicted_Valine_values = predictWithModel(
+    data = metabolomics_data,
+    model_type = "linear_regression",
+    model = multiple_input_regression_model$model
+  )$value,
+  measured_5AA_values = metabolomics_data$`5-Aminovaleric Acid`
 )
+  
+plot1 <- ggplot(model_comparison_data) + geom_point(aes(
+  x = measured_Valine_values, y = single_input_predicted_Valine_values
+))
 
-plot_data %>%
-  arrange(linear_predictor) %>%
-  ggplot(aes(x = linear_predictor, y = measured_valine)) +
-  geom_point(color = "black", fill = "gold", shape = 21) +
-  geom_line(aes(y = predicted_valine), color = "maroon", linewidth = 1) +
-  labs(
-    x = "Weighted sum of predictors (Σ β_i * x_i)",
-    y = "Valine abundance"
-  ) +
-  theme_bw()
+plot2 <- ggplot(model_comparison_data) + geom_point(aes(
+  x = measured_Valine_values, y = multiple_input_predicted_Valine_values
+))
+
+plot3 <- ggplot(model_comparison_data) + geom_point(aes(
+  x = measured_Valine_values, y = measured_5AA_values
+))
+
+plot_grid(plot1, plot2, plot3, nrow = 1)
+
 ```
+
+
+
+
+
+<!-- # ggplot() + -->
+<!-- #   geom_point( -->
+<!-- #     data = metabolomics_data, -->
+<!-- #     aes(x = `iso-Leucine`, y = Valine), fill = "gold", shape = 21, color = "black" -->
+<!-- #   ) + -->
+<!-- #   geom_line(aes( -->
+<!-- #     x = metabolomics_data$`iso-Leucine`, -->
+<!-- #     y = mean(metabolomics_data$Valine) -->
+<!-- #   ), color = "grey") + -->
+<!-- #   geom_line(aes( -->
+<!-- #     x = metabolomics_data$`iso-Leucine`, -->
+<!-- #     y = unlist(predictWithModel( -->
+<!-- #       data = metabolomics_data, -->
+<!-- #       model_type = "linear_regression", -->
+<!-- #       model = basic_regression_model$model -->
+<!-- #     ))), -->
+<!-- #     color = "maroon", size = 1 -->
+<!-- #   ) + -->
+<!-- #   geom_line(aes( -->
+<!-- #     x = metabolomics_data$`iso-Leucine`, -->
+<!-- #     y = unlist(predictWithModel( -->
+<!-- #       data = metabolomics_data, -->
+<!-- #       model_type = "linear_regression", -->
+<!-- #       model = multiple_regression_model$model -->
+<!-- #     ))), -->
+<!-- #     color = "black", size = 1, alpha = 0.6 -->
+<!-- #   ) + -->
+<!-- #   theme_bw() -->
 
 ## assessing regression models {-}
 
@@ -340,7 +357,7 @@ We can use the `buildModel()` function to make a random forest model. We need to
 
 - `data` specifies the dataset to be used for model training, here metabolomics_data.
 - `model_type` defines the type of model to build, with "random_forest_regression" indicating a random forest model for regression tasks.
-- `input_variables` selects the features or predictors for the model, here using columns 3 to 33 from metabolomics_data as predictors.
+- `input_variables` selects the features or predictors for the model, here using columns 3 to 32 from metabolomics_data as predictors.
 - `output_variable` is the target variable for prediction, in this case, "Valine".
 
 The optimization_parameters argument takes a list to define the grid of parameters for optimization, including n_vars_tried_at_split, n_trees, and min_leaf_size. The seq() function generates sequences of numbers and is used here to create ranges for each parameter:
@@ -355,7 +372,7 @@ This setup creates a grid of parameter combinations where each combination of n_
 random_forest_model <- buildModel2(
     data = metabolomics_data,
     model_type = "random_forest_regression",
-    input_variables = colnames(metabolomics_data)[3:33],
+    input_variables = colnames(metabolomics_data)[3:32],
     output_variable = "Valine",
     optimization_parameters = list(
       n_vars_tried_at_split = seq(1,24,3),
