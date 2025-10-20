@@ -16061,7 +16061,7 @@
                                     trees = optimization_parameters$n_trees,
                                     min_n = optimization_parameters$min_leaf_size
                                 ), # grid of values to try
-                                metrics = metric_set(accuracy) # metrics we care about
+                                metrics = yardstick::metric_set(yardstick::accuracy) # metrics we care about
                             )
 
                         # Check model parameters if you want
