@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-10-13"
+date: "2025-10-20"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -3972,13 +3972,14 @@ random_forest_model <- buildModel2(
     input_variables = colnames(metabolomics_data)[3:32],
     output_variable = "Valine",
     optimization_parameters = list(
-      n_vars_tried_at_split = seq(1,24,3),
-      n_trees = seq(1,40,2),
+      n_vars_tried_at_split = seq(1,20,5),
+      n_trees = seq(1,40,10),
       min_leaf_size = seq(1,3,1)
     )
 )
 
 names(random_forest_model)
+## [1] "model_type" "metrics"    "model"
 ```
 
 The above code builds our random forest model. It's output provides both the model itself and key components indicating the performance and configuration of the model. Here's a breakdown of each part of the output:
@@ -4001,12 +4002,14 @@ We can thus inspect the performance of the model based on the specific parameter
 
 ``` r
 random_forest_model$metrics %>%
-    ggplot(aes(x = mtry, y = trees, fill = mean)) +
-    facet_grid(.~min_n) +
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_leaf_size) +
     scale_fill_viridis(direction = -1) +
     geom_tile() +
     theme_bw()
 ```
+
+<img src="index_files/figure-html/unnamed-chunk-458-1.png" width="100%" style="display: block; margin: auto;" />
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
@@ -4033,6 +4036,8 @@ ggplot() +
   theme_bw()
 ```
 
+<img src="index_files/figure-html/unnamed-chunk-459-1.png" width="100%" style="display: block; margin: auto;" />
+
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
 
@@ -4043,7 +4048,7 @@ unknown <- metabolomics_data[35:40,]
 rfc <- buildModel2(
   data = metabolomics_data[c(1:34, 41:93),],
   model_type = "random_forest_classification",
-  input_variables = colnames(metabolomics_data)[3:126],
+  input_variables = colnames(metabolomics_data)[3:75],
   output_variable = "patient_status",
   optimization_parameters = list(
     n_vars_tried_at_split = seq(5,50,5),
@@ -4052,19 +4057,38 @@ rfc <- buildModel2(
   )
 )
 rfc$metrics %>% arrange(desc(mean))
+## # A tibble: 300 × 9
+##    n_vars_tried_at_split n_trees min_leaf_size .metric 
+##                    <dbl>   <dbl>         <dbl> <chr>   
+##  1                    25      20             2 accuracy
+##  2                     5      50             1 accuracy
+##  3                    10      60             2 accuracy
+##  4                     5      80             2 accuracy
+##  5                    10     100             2 accuracy
+##  6                     5      60             3 accuracy
+##  7                    10      70             3 accuracy
+##  8                    30      20             1 accuracy
+##  9                    25      50             2 accuracy
+## 10                    20      90             2 accuracy
+## # ℹ 290 more rows
+## # ℹ 5 more variables: .estimator <chr>, mean <dbl>,
+## #   std_err <dbl>, .config <chr>,
+## #   fold_cross_validation <int>
 ```
 
-Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:
+Cool! Our best settings lead to a model with >90% accuracy! We can also make predictions on unknown data with this model:
 
 
 ``` r
 rfc$metrics %>%
     ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
-    facet_grid(.~min_n) +
+    facet_grid(.~min_leaf_size) +
     scale_fill_viridis(direction = -1) +
     geom_tile() +
     theme_bw()
 ```
+
+<img src="index_files/figure-html/unnamed-chunk-461-1.png" width="100%" style="display: block; margin: auto;" />
 
 
 ``` r
@@ -4078,6 +4102,19 @@ data.frame(
   real_status = metabolomics_data[35:40,]$patient_status,
   predicted_status = unlist(predictions)
 )
+##                          real_status predicted_status
+## .pred_healthy1               healthy             0.90
+## .pred_healthy2               healthy             0.80
+## .pred_healthy3               healthy             0.90
+## .pred_healthy4        kidney_disease             0.10
+## .pred_healthy5        kidney_disease             0.00
+## .pred_healthy6        kidney_disease             0.05
+## .pred_kidney_disease1        healthy             0.10
+## .pred_kidney_disease2        healthy             0.20
+## .pred_kidney_disease3        healthy             0.10
+## .pred_kidney_disease4 kidney_disease             0.90
+## .pred_kidney_disease5 kidney_disease             1.00
+## .pred_kidney_disease6 kidney_disease             0.95
 ```
 
 ## {-}

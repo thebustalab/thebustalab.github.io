@@ -538,13 +538,14 @@ Now, let’s put it all together and make it pretty:</p>
 <span>    input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">32</span><span class="op">]</span>,</span>
 <span>    output_variable <span class="op">=</span> <span class="st">"Valine"</span>,</span>
 <span>    optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
-<span>      n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">24</span>,<span class="fl">3</span><span class="op">)</span>,</span>
-<span>      n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">40</span>,<span class="fl">2</span><span class="op">)</span>,</span>
+<span>      n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">20</span>,<span class="fl">5</span><span class="op">)</span>,</span>
+<span>      n_trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">40</span>,<span class="fl">10</span><span class="op">)</span>,</span>
 <span>      min_leaf_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">random_forest_model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">random_forest_model</span><span class="op">)</span></span>
+<span><span class="co">## [1] "model_type" "metrics"    "model"</span></span></code></pre></div>
 <p>The above code builds our random forest model. It’s output provides both the model itself and key components indicating the performance and configuration of the model. Here’s a breakdown of each part of the output:</p>
 <p><code>$model_type</code> tells us what type of model this is.</p>
 <p><code>$model</code> shows the configuration of the best random forest model that was created.</p>
@@ -559,11 +560,12 @@ Now, let’s put it all together and make it pretty:</p>
 <p>We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.</p>
 <div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">random_forest_model</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mtry</span>, y <span class="op">=</span> <span class="va">trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_n</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_vars_tried_at_split</span>, y <span class="op">=</span> <span class="va">n_trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_leaf_size</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-458-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>We can easily use the model to make predictions by using the <code>predictWithModel()</code> function:</p>
 <div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -585,6 +587,7 @@ Now, let’s put it all together and make it pretty:</p>
 <span>    color <span class="op">=</span> <span class="st">"maroon"</span>, size <span class="op">=</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-459-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to “random_forest_classification” instead of “random_forest_regression”. Let’s try that now:</p>
 <div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
@@ -593,7 +596,7 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="va">rfc</span> <span class="op">&lt;-</span> <span class="fu">buildModel2</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">34</span>, <span class="fl">41</span><span class="op">:</span><span class="fl">93</span><span class="op">)</span>,<span class="op">]</span>,</span>
 <span>  model_type <span class="op">=</span> <span class="st">"random_forest_classification"</span>,</span>
-<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">126</span><span class="op">]</span>,</span>
+<span>  input_variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">metabolomics_data</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">75</span><span class="op">]</span>,</span>
 <span>  output_variable <span class="op">=</span> <span class="st">"patient_status"</span>,</span>
 <span>  optimization_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
 <span>    n_vars_tried_at_split <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">50</span>,<span class="fl">5</span><span class="op">)</span>,</span>
@@ -601,15 +604,33 @@ Now, let’s put it all together and make it pretty:</p>
 <span>    min_leaf_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:</p>
+<span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 300 × 9</span></span>
+<span><span class="co">##    n_vars_tried_at_split n_trees min_leaf_size .metric </span></span>
+<span><span class="co">##                    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">##  1                    25      20             2 accuracy</span></span>
+<span><span class="co">##  2                     5      50             1 accuracy</span></span>
+<span><span class="co">##  3                    10      60             2 accuracy</span></span>
+<span><span class="co">##  4                     5      80             2 accuracy</span></span>
+<span><span class="co">##  5                    10     100             2 accuracy</span></span>
+<span><span class="co">##  6                     5      60             3 accuracy</span></span>
+<span><span class="co">##  7                    10      70             3 accuracy</span></span>
+<span><span class="co">##  8                    30      20             1 accuracy</span></span>
+<span><span class="co">##  9                    25      50             2 accuracy</span></span>
+<span><span class="co">## 10                    20      90             2 accuracy</span></span>
+<span><span class="co">## # ℹ 290 more rows</span></span>
+<span><span class="co">## # ℹ 5 more variables: .estimator &lt;chr&gt;, mean &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   std_err &lt;dbl&gt;, .config &lt;chr&gt;,</span></span>
+<span><span class="co">## #   fold_cross_validation &lt;int&gt;</span></span></code></pre></div>
+<p>Cool! Our best settings lead to a model with &gt;90% accuracy! We can also make predictions on unknown data with this model:</p>
 <div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rfc</span><span class="op">$</span><span class="va">metrics</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">n_vars_tried_at_split</span>, y <span class="op">=</span> <span class="va">n_trees</span>, fill <span class="op">=</span> <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_n</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">min_leaf_size</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">scale_fill_viridis</span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-461-1.png" width="100%" style="display: block; margin: auto;"></div>
 <div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu">predictWithModel</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">unknown</span>,</span>
@@ -620,7 +641,20 @@ Now, let’s put it all together and make it pretty:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
 <span>  real_status <span class="op">=</span> <span class="va">metabolomics_data</span><span class="op">[</span><span class="fl">35</span><span class="op">:</span><span class="fl">40</span>,<span class="op">]</span><span class="op">$</span><span class="va">patient_status</span>,</span>
 <span>  predicted_status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">predictions</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">##                          real_status predicted_status</span></span>
+<span><span class="co">## .pred_healthy1               healthy             0.90</span></span>
+<span><span class="co">## .pred_healthy2               healthy             0.80</span></span>
+<span><span class="co">## .pred_healthy3               healthy             0.90</span></span>
+<span><span class="co">## .pred_healthy4        kidney_disease             0.10</span></span>
+<span><span class="co">## .pred_healthy5        kidney_disease             0.00</span></span>
+<span><span class="co">## .pred_healthy6        kidney_disease             0.05</span></span>
+<span><span class="co">## .pred_kidney_disease1        healthy             0.10</span></span>
+<span><span class="co">## .pred_kidney_disease2        healthy             0.20</span></span>
+<span><span class="co">## .pred_kidney_disease3        healthy             0.10</span></span>
+<span><span class="co">## .pred_kidney_disease4 kidney_disease             0.90</span></span>
+<span><span class="co">## .pred_kidney_disease5 kidney_disease             1.00</span></span>
+<span><span class="co">## .pred_kidney_disease6 kidney_disease             0.95</span></span></code></pre></div>
 </div>
 <div id="section-14" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-14"><i class="fas fa-link"></i></a></h2>
@@ -768,7 +802,7 @@ model$metrics
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-13.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-20.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

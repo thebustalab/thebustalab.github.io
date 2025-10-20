@@ -368,15 +368,15 @@ The optimization_parameters argument takes a list to define the grid of paramete
 
 This setup creates a grid of parameter combinations where each combination of n_vars_tried_at_split, n_trees, and min_leaf_size defines a unique random forest model. The function will test each combination within this grid to identify the model that performs best according to a given evaluation criterion, effectively searching through a defined parameter space to optimize the random forest's performance. This approach allows for a systematic exploration of how different configurations affect the model's ability to predict the output variable, enabling the selection of the most effective model configuration based on the dataset and task at hand.
 
-```{r, cache = TRUE, eval = FALSE}
+```{r, cache = TRUE}
 random_forest_model <- buildModel2(
     data = metabolomics_data,
     model_type = "random_forest_regression",
     input_variables = colnames(metabolomics_data)[3:32],
     output_variable = "Valine",
     optimization_parameters = list(
-      n_vars_tried_at_split = seq(1,24,3),
-      n_trees = seq(1,40,2),
+      n_vars_tried_at_split = seq(1,20,5),
+      n_trees = seq(1,40,10),
       min_leaf_size = seq(1,3,1)
     )
 )
@@ -401,10 +401,10 @@ The above code builds our random forest model. It's output provides both the mod
 
 We can thus inspect the performance of the model based on the specific parameters used during configuration. This can help us understand if we are exploring the right parameter space - do we have good values for n_vars_tried_at_split and n_trees? In this case we are doing regression, and the performance metric reported is RMSE: root mean squared error. We want that value to be small! So smaller values for that metric indicate a better model.
 
-```{r, eval = FALSE}
+```{r}
 random_forest_model$metrics %>%
-    ggplot(aes(x = mtry, y = trees, fill = mean)) +
-    facet_grid(.~min_n) +
+    ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
+    facet_grid(.~min_leaf_size) +
     scale_fill_viridis(direction = -1) +
     geom_tile() +
     theme_bw()
@@ -412,7 +412,7 @@ random_forest_model$metrics %>%
 
 We can easily use the model to make predictions by using the `predictWithModel()` function:
 
-```{r, eval = FALSE}
+```{r}
 ggplot() +
   geom_point(
     data = metabolomics_data,
@@ -436,14 +436,14 @@ ggplot() +
 
 In addition to regression modeling, random forests can also be used to do classification modeling. In classification modeling, we are trying to predict a categorical outcome variable from a set of predictor variables. For example, we might want to predict whether a patient has a disease or not based on their metabolomics data. All we have to do is set the model_type to "random_forest_classification" instead of "random_forest_regression". Let's try that now:
 
-```{r, cache = TRUE, eval = FALSE}
+```{r}
 set.seed(123)
 unknown <- metabolomics_data[35:40,]
 
 rfc <- buildModel2(
   data = metabolomics_data[c(1:34, 41:93),],
   model_type = "random_forest_classification",
-  input_variables = colnames(metabolomics_data)[3:126],
+  input_variables = colnames(metabolomics_data)[3:75],
   output_variable = "patient_status",
   optimization_parameters = list(
     n_vars_tried_at_split = seq(5,50,5),
@@ -454,18 +454,18 @@ rfc <- buildModel2(
 rfc$metrics %>% arrange(desc(mean))
 ```
 
-Cool! Our best settings lead to a model with 90% accuracy! We can also make predictions on unknown data with this model:
+Cool! Our best settings lead to a model with >90% accuracy! We can also make predictions on unknown data with this model:
 
-```{r, eval = FALSE}
+```{r}
 rfc$metrics %>%
     ggplot(aes(x = n_vars_tried_at_split, y = n_trees, fill = mean)) +
-    facet_grid(.~min_n) +
+    facet_grid(.~min_leaf_size) +
     scale_fill_viridis(direction = -1) +
     geom_tile() +
     theme_bw()
 ```
 
-```{r, eval = FALSE}
+```{r}
 predictions <- predictWithModel(
   data = unknown,
   model_type = "random_forest_classification",
