@@ -288,46 +288,50 @@
 <p>By adding a mechanism called an “attention mechanism” to an autoencoder, we can create a simple form of a transformer. The attention mechanism works within the encoder and decoder, allowing each element of the input (e.g., an amino acid) to compare itself to every other element, generating attention scores that weigh how much attention one amino acid should give to another. This mechanism helps capture both local and long-range dependencies in protein sequences, enabling the model to focus on important areas regardless of their position in the sequence. Attention is beneficial because it captures interactions between distant amino acids, weighs relationships to account for protein folding and interactions, adjusts focus across sequences of varying lengths, captures different types of relationships like hydrophobic interactions or secondary structures, and provides contextualized embeddings that reflect the broader sequence environment rather than just local motifs. For more on attention mechanisms, check out the further reading section of this chapter.</p>
 <p>In this section, we will explore how to generate embeddings for protein sequences using a pre-trained protein language model and demonstrate how these embeddings can be used to analyze and visualize protein data effectively. First, we need some data. You can use the <code>OSC_sequences</code> object provided by the <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> code, though you can also use the <code>searchNCBI()</code> function to retrieve your own sequences. For example:</p>
 <div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ncbi_results</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"oxidosqualene cyclase"</span>, retmax <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
-<span><span class="va">ncbi_results</span></span>
-<span><span class="co">## AAStringSet object of length 100:</span></span>
-<span><span class="co">##       width seq                         names               </span></span>
-<span><span class="co">##   [1]   513 MVPYALPIHPGR...LGEFRRRLLANK CAN6220183.1 unna...</span></span>
-<span><span class="co">##   [2]   586 MFGSVLTYVSLR...EYRCRVLAAGKQ CAN6181702.1 unna...</span></span>
-<span><span class="co">##   [3]   329 MTDTDGTLAWLL...WDAAAAQPQPPR WP_289330907.1 MU...</span></span>
-<span><span class="co">##   [4]   575 MNKRNEIEEMIR...LNALKKVQTVID WP_446787674.1 pr...</span></span>
-<span><span class="co">##   [5]   290 MKDTLSIKLFKT...YTFYGLLALGTI WP_446787673.1 pr...</span></span>
-<span><span class="co">##   ...   ... ...</span></span>
-<span><span class="co">##  [96]   735 MSGTHIAPWRTP...LYARKFGNDSLL XP_020051874.1 te...</span></span>
-<span><span class="co">##  [97]   717 MADPIAPWRTAA...LYSRKFGNEELL XP_015409667.1 te...</span></span>
-<span><span class="co">##  [98]   700 MPPTLPEKTDYT...KFARTYPDYRLT XP_015402884.1 te...</span></span>
-<span><span class="co">##  [99]   749 MPDHIGRWKNGG...LYSRKFGNEELQ XP_681529.2 terpe...</span></span>
-<span><span class="co">## [100]   735 MAADHIGPWRTD...LYSRKFGNEELI XP_043139417.1 te...</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"diterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">g1</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span>, <span class="st">"__diterpene_synthase"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu">searchNCBI</span><span class="op">(</span>search_term <span class="op">=</span> <span class="st">"monoterpene synthase"</span>, retmax <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">g2</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">g2</span><span class="op">@</span><span class="va">ranges</span><span class="op">@</span><span class="va">NAMES</span>, <span class="st">"__monoterpene_synthase"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_sequences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span></code></pre></div>
 <p>Once you have some sequences, we can embed them with the function <code>embedAminoAcids()</code>. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.</p>
 <div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
-<span>  amino_acid_stringset <span class="op">=</span> <span class="va">OSC_sequences</span>,</span>
+<code class="sourceCode R"><span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">embedAminoAcids</span><span class="op">(</span></span>
+<span>  amino_acid_stringset <span class="op">=</span> <span class="va">all_sequences</span>,</span>
 <span>  biolm_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/biolm_api_key.txt"</span><span class="op">)</span>,</span>
 <span>  nvidia_api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="st">"/Users/bust0037/Documents/Websites/nvidia_api_key.txt"</span><span class="op">)</span>,</span>
-<span>  platform <span class="op">=</span> <span class="st">"biolm"</span></span>
+<span>  platform <span class="op">=</span> <span class="st">"nvidia"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">embedded_OSCs</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">embedded_OSCs</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">embedded_OSCs</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">embedded_OSCs</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">embedded_OSCs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></code></pre></div>
+<span><span class="va">all_sequences_embedded</span><span class="op">$</span><span class="va">product</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">all_sequences_embedded</span><span class="op">$</span><span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded</span> <span class="op">&lt;-</span> <span class="fu">select</span><span class="op">(</span><span class="va">all_sequences_embedded</span>, <span class="va">name</span>, <span class="va">product</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span>
+<span><span class="co">## # A tibble: 5 × 6</span></span>
+<span><span class="co">##   name           product embedding_1 embedding_2 embedding_3</span></span>
+<span><span class="co">##   &lt;chr&gt;          &lt;chr&gt;         &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 BFU15096.1 di… syntha…      0.0252      0.0187      0.0376</span></span>
+<span><span class="co">## 2 BFU11110.1 di… syntha…      0.0252      0.0187      0.0376</span></span>
+<span><span class="co">## 3 BFU07112.1 di… syntha…      0.0252      0.0187      0.0376</span></span>
+<span><span class="co">## 4 BFU03108.1 di… syntha…      0.0252      0.0187      0.0376</span></span>
+<span><span class="co">## 5 BFT99082.1 di… syntha…      0.0252      0.0187      0.0376</span></span>
+<span><span class="co">## # ℹ 1 more variable: embedding_4 &lt;dbl&gt;</span></span></code></pre></div>
 <p>Nice! Once we’ve bot the embeddings, we can run a PCA analysis to visualize them in 2D space:</p>
 <div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">embedded_OSCs</span>,</span>
+<code class="sourceCode R"><span><span class="va">all_sequences_embedded_pca</span> <span class="op">&lt;-</span> <span class="fu">runMatrixAnalysis</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">all_sequences_embedded</span>,</span>
 <span>  analysis <span class="op">=</span> <span class="st">"pca"</span>,</span>
-<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">embedded_OSCs</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">embedded_OSCs</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  columns_w_values_for_single_analyte <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">all_sequences_embedded</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  columns_w_sample_ID_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"product"</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span></span>
-<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">product</span><span class="op">)</span>,</span>
-<span>      shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2</span>, width <span class="op">=</span> <span class="fl">2</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
-<span>    <span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="va">all_sequences_embedded_pca</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">".*__"</span>, <span class="st">""</span>, <span class="va">all_sequences_embedded_pca</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">all_sequences_embedded_pca</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Dim.1</span>, y <span class="op">=</span> <span class="va">Dim.2</span>, fill <span class="op">=</span> <span class="va">name</span><span class="op">)</span>,</span>
+<span>    shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">2</span>, width <span class="op">=</span> <span class="fl">2</span>, alpha <span class="op">=</span> <span class="fl">0.6</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">discrete_palette</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="index_files/figure-html/unnamed-chunk-498-1.png" width="100%" style="display: block; margin: auto;"></div>
 </div>
 <div id="section-15" class="section level2 unnumbered">
 <h2 class="unnumbered"><a class="anchor" aria-label="anchor" href="#section-15"><i class="fas fa-link"></i></a></h2>
@@ -431,7 +435,7 @@ asdf --><hr>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-20.</p>
+    <p>"<strong>Integrated Bioanalytics</strong>" was written by Lucas Busta and members of the Busta lab. It was last built on 2025-10-22.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

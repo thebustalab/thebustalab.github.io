@@ -1,7 +1,7 @@
 --- 
 title: "Integrated Bioanalytics"
 author: "Lucas Busta and members of the Busta lab"
-date: "2025-10-20"
+date: "2025-10-22"
 site: bookdown::bookdown_site
 documentclass: krantz
 bibliography: [book.bib, packages.bib]
@@ -4449,56 +4449,60 @@ In this section, we will explore how to generate embeddings for protein sequence
 
 
 ``` r
-ncbi_results <- searchNCBI(search_term = "oxidosqualene cyclase", retmax = 100)
-ncbi_results
-## AAStringSet object of length 100:
-##       width seq                         names               
-##   [1]   513 MVPYALPIHPGR...LGEFRRRLLANK CAN6220183.1 unna...
-##   [2]   586 MFGSVLTYVSLR...EYRCRVLAAGKQ CAN6181702.1 unna...
-##   [3]   329 MTDTDGTLAWLL...WDAAAAQPQPPR WP_289330907.1 MU...
-##   [4]   575 MNKRNEIEEMIR...LNALKKVQTVID WP_446787674.1 pr...
-##   [5]   290 MKDTLSIKLFKT...YTFYGLLALGTI WP_446787673.1 pr...
-##   ...   ... ...
-##  [96]   735 MSGTHIAPWRTP...LYARKFGNDSLL XP_020051874.1 te...
-##  [97]   717 MADPIAPWRTAA...LYSRKFGNEELL XP_015409667.1 te...
-##  [98]   700 MPPTLPEKTDYT...KFARTYPDYRLT XP_015402884.1 te...
-##  [99]   749 MPDHIGRWKNGG...LYSRKFGNEELQ XP_681529.2 terpe...
-## [100]   735 MAADHIGPWRTD...LYSRKFGNEELI XP_043139417.1 te...
+g1 <- searchNCBI(search_term = "diterpene synthase", retmax = 10)
+g1@ranges@NAMES <- paste0(g1@ranges@NAMES, "__diterpene_synthase")
+
+g2 <- searchNCBI(search_term = "monoterpene synthase", retmax = 10)
+g2@ranges@NAMES <- paste0(g2@ranges@NAMES, "__monoterpene_synthase")
+
+all_sequences <- c(g1, g2)
 ```
 
 Once you have some sequences, we can embed them with the function `embedAminoAcids()`. An example is below. Note that we need to provide either a biolm API key or an NVIDIA api key, and specify which platform we wish to use. We also need to provide the amino acid sequences as an AAStringSet object. If you use the NVIDIA platform, the model esm2-650m will be used (note: esm2 truncates sequences longer than 1022 AA in length). If you use bioLM, you can pick between a number of models.
 
 
 ``` r
-embedded_OSCs <- embedAminoAcids(
-  amino_acid_stringset = OSC_sequences,
+all_sequences_embedded <- embedAminoAcids(
+  amino_acid_stringset = all_sequences,
   biolm_api_key = readLines("/Users/bust0037/Documents/Websites/biolm_api_key.txt"),
   nvidia_api_key = readLines("/Users/bust0037/Documents/Websites/nvidia_api_key.txt"),
-  platform = "biolm"
+  platform = "nvidia"
 )
-embedded_OSCs$product <- tolower(gsub(".*_", "", embedded_OSCs$name))
-embedded_OSCs <- select(embedded_OSCs, name, product, everything())
-embedded_OSCs[1:3,1:4]
+all_sequences_embedded$product <- tolower(gsub(".*_", "", all_sequences_embedded$name))
+all_sequences_embedded <- select(all_sequences_embedded, name, product, everything())
+all_sequences_embedded[1:5,1:6]
+## # A tibble: 5 × 6
+##   name           product embedding_1 embedding_2 embedding_3
+##   <chr>          <chr>         <dbl>       <dbl>       <dbl>
+## 1 BFU15096.1 di… syntha…      0.0252      0.0187      0.0376
+## 2 BFU11110.1 di… syntha…      0.0252      0.0187      0.0376
+## 3 BFU07112.1 di… syntha…      0.0252      0.0187      0.0376
+## 4 BFU03108.1 di… syntha…      0.0252      0.0187      0.0376
+## 5 BFT99082.1 di… syntha…      0.0252      0.0187      0.0376
+## # ℹ 1 more variable: embedding_4 <dbl>
 ```
 
 Nice! Once we've bot the embeddings, we can run a PCA analysis to visualize them in 2D space:
 
 
 ``` r
-runMatrixAnalysis(
-  data = embedded_OSCs,
+all_sequences_embedded_pca <- runMatrixAnalysis(
+  data = all_sequences_embedded,
   analysis = "pca",
-  columns_w_values_for_single_analyte = colnames(embedded_OSCs)[3:dim(embedded_OSCs)[2]],
+  columns_w_values_for_single_analyte = colnames(all_sequences_embedded)[3:dim(all_sequences_embedded)[2]],
   columns_w_sample_ID_info = c("name", "product")
-) %>%
-  ggplot() +
-    geom_jitter(
-      aes(x = Dim.1, y = Dim.2, fill = product),
-      shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
-    ) +
-    theme_minimal()
-
+)
+all_sequences_embedded_pca$name <- gsub(".*__", "", all_sequences_embedded_pca$name)
+ggplot(all_sequences_embedded_pca) +
+  geom_jitter(
+    aes(x = Dim.1, y = Dim.2, fill = name),
+    shape = 21, size = 5, height = 2, width = 2, alpha = 0.6
+  ) +
+  scale_fill_manual(values = discrete_palette) +
+  theme_minimal()
 ```
+
+<img src="index_files/figure-html/unnamed-chunk-498-1.png" width="100%" style="display: block; margin: auto;" />
 
 ## {-}
 
